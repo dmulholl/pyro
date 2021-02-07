@@ -1,0 +1,17 @@
+# Returns the nth element of the Fibonacci sequence, where n = 0 is the first.
+def fib(n) {
+    if n <= 1 {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+
+def $main() {
+    echo fib(0);
+    echo fib(1);
+    echo fib(2);
+    echo fib(3);
+    echo fib(4);
+    echo fib(5);
+    echo fib(6);
+}

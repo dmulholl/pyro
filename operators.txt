@@ -1,0 +1,15 @@
+-----------------------
+# Operator Precedence #
+-----------------------
+
+Name                Operators           Associativity
+
+Call                () .                Left                HIGH
+Unary               ! -                 Right
+Multiplication      / *                 Left
+Addition            - +                 Left
+Comparison          > >= < <=           Left
+Equality            == !=               Left
+Logical             and or              Left
+Assignment          =                   Right               LOW
+
