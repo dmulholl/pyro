@@ -1,11 +1,11 @@
 def simple_loop() {
-    for var i = 0; i < 5; i = i + 1 {
+    for var i = 0; i < 5; i += 1 {
         echo i;
     }
 }
 
 def complex_loop() {
-    for var i = 0; i < 10; i = i + 1 {
+    for var i = 0; i < 10; i += 1 {
         if i == 2 {
             continue;
         }
@@ -17,8 +17,8 @@ def complex_loop() {
 }
 
 def nested_loops() {
-    for var x = 0; x <= 2; x = x + 1 {
-        for var y = 0; y <= 2; y = y + 1 {
+    for var x = 0; x <= 2; x += 1 {
+        for var y = 0; y <= 2; y += 1 {
             echo x, y;
         }
     }
