@@ -178,7 +178,7 @@ class Parser:
         return self.assignment()
 
     def assignment(self):
-        expr = self.logical()
+        expr = self.conditional()
         if self.match("EQUAL", "PLUS_EQUAL", "MINUS_EQUAL"):
             operator_token = self.previous()
             value_expr = self.assignment()
@@ -190,6 +190,15 @@ class Parser:
                 return SetAttrExpr(expr.object, expr.name, value_expr)
             else:
                 self.error("Invalid assignment target.", operator_token)
+        return expr
+
+    def conditional(self):
+        expr = self.logical()
+        if self.match("QUESTION"):
+            true_branch = self.logical()
+            self.consume("COLON", "Expected ':' after '?'.")
+            false_branch = self.logical()
+            return ConditionalExpr(expr, true_branch, false_branch)
         return expr
 
     def logical(self):

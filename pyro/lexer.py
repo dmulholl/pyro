@@ -97,6 +97,10 @@ class Lexer:
             self.add_token("STAR")
         elif char == "/":
             self.add_token("SLASH")
+        elif char == "?":
+            self.add_token("QUESTION")
+        elif char == ":":
+            self.add_token("COLON")
 
         # Single or double character tokens.
         elif char == "+":

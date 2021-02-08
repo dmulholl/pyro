@@ -217,3 +217,18 @@ class SuperExpr(Expression):
         if method is None:
             sys.exit("Invalid superclass method name.")
         return method
+
+
+class ConditionalExpr(Expression):
+
+    def __init__(self, condition_expr, true_branch_expr, false_branch_expr):
+        self.condition = condition_expr
+        self.true_branch = true_branch_expr
+        self.false_branch = false_branch_expr
+
+    def eval(self, env):
+        if self.condition.eval(env):
+            return self.true_branch.eval(env)
+        else:
+            return self.false_branch.eval(env)
+
