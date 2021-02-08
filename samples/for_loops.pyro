@@ -32,4 +32,3 @@ def $main() {
     echo;
     nested_loops();
 }
-

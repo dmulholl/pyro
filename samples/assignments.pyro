@@ -22,4 +22,3 @@ def $main() {
     counter.count -= 2;
     echo counter.count;
 }
-
