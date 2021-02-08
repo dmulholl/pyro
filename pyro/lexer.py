@@ -93,16 +93,16 @@ class Lexer:
             self.add_token("DOT")
         elif char == ";":
             self.add_token("SEMICOLON")
-        elif char == "+":
-            self.add_token("PLUS")
-        elif char == "-":
-            self.add_token("MINUS")
         elif char == "*":
             self.add_token("STAR")
         elif char == "/":
             self.add_token("SLASH")
 
         # Single or double character tokens.
+        elif char == "+":
+            self.add_token("PLUS_EQUAL" if self.match("=") else "PLUS")
+        elif char == "-":
+            self.add_token("MINUS_EQUAL" if self.match("=") else "MINUS")
         elif char == "!":
             self.add_token("BANG_EQUAL" if self.match("=") else "BANG")
         elif char == "=":

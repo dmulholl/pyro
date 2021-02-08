@@ -179,15 +179,17 @@ class Parser:
 
     def assignment(self):
         expr = self.logical()
-        if self.match("EQUAL"):
-            token = self.previous()
-            value = self.assignment()
+        if self.match("EQUAL", "PLUS_EQUAL", "MINUS_EQUAL"):
+            operator_token = self.previous()
+            value_expr = self.assignment()
+            if operator_token.type in ("PLUS_EQUAL", "MINUS_EQUAL"):
+                value_expr = BinaryExpr(expr, operator_token, value_expr)
             if isinstance(expr, VariableExpr):
-                return AssignExpr(expr.token, value)
+                return AssignExpr(expr.token, value_expr)
             elif isinstance(expr, GetAttrExpr):
-                return SetAttrExpr(expr.object, expr.name, value)
+                return SetAttrExpr(expr.object, expr.name, value_expr)
             else:
-                self.error("Invalid assignment target.", token)
+                self.error("Invalid assignment target.", operator_token)
         return expr
 
     def logical(self):

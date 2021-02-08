@@ -46,9 +46,9 @@ class BinaryExpr(Expression):
             return left < right
         elif self.op.type == "LESS_EQUAL":
             return left <= right
-        elif self.op.type == "PLUS":
+        elif self.op.type in ("PLUS", "PLUS_EQUAL"):
             return left + right
-        elif self.op.type == "MINUS":
+        elif self.op.type in ("MINUS", "MINUS_EQUAL"):
             return left - right
         elif self.op.type == "SLASH":
             return left / right
