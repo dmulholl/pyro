@@ -28,6 +28,26 @@ def stringify(value):
     return str(value)
 
 
+def check_operands_are_floats_or_strings(left, right, op_token):
+    if isinstance(left, float) and isinstance(right, float):
+        return True
+    if isinstance(left, str) and isinstance(right, str):
+        return True
+    error(f"Incompatible operands for the '{op_token.text}' operator.", op_token)
+
+
+def check_operands_are_floats(left, right, op_token):
+    if isinstance(left, float) and isinstance(right, float):
+        return True
+    error(f"Incompatible operands for the '{op_token.text}' operator.", op_token)
+
+
+def check_operand_is_float(value, op_token):
+    if isinstance(value, float):
+        return True
+    error(f"Incompatible operand for the '{op_token.text}' operator.", op_token)
+
+
 class Break(Exception):
     pass
 

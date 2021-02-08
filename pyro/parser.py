@@ -261,6 +261,7 @@ class Parser:
         return expr
 
     def finish_call(self, callee_expr):
+        left_paren_token = self.previous()
         arguments = []
         if not self.check("RIGHT_PAREN"):
             while True:
@@ -268,7 +269,7 @@ class Parser:
                 if not self.match("COMMA"):
                     break
         self.consume("RIGHT_PAREN", "Expected ')' after arguments.")
-        return CallExpr(callee_expr, arguments)
+        return CallExpr(callee_expr, left_paren_token, arguments)
 
     def primary(self):
         if self.match("SELF"):

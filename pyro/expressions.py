@@ -20,6 +20,7 @@ class UnaryExpr(Expression):
     def eval(self, env):
         value = self.expr.eval(env)
         if self.op.type == "MINUS":
+            runtime.check_operand_is_float(value, self.op)
             return -value
         elif self.op.type == "BANG":
             return not runtime.is_truthy(value)
@@ -39,20 +40,28 @@ class BinaryExpr(Expression):
         left = self.left.eval(env)
         right = self.right.eval(env)
         if self.op.type == "GREATER":
+            runtime.check_operands_are_floats_or_strings(left, right, self.op)
             return left > right
         elif self.op.type == "GREATER_EQUAL":
+            runtime.check_operands_are_floats_or_strings(left, right, self.op)
             return left >= right
         elif self.op.type == "LESS":
+            runtime.check_operands_are_floats_or_strings(left, right, self.op)
             return left < right
         elif self.op.type == "LESS_EQUAL":
+            runtime.check_operands_are_floats_or_strings(left, right, self.op)
             return left <= right
         elif self.op.type in ("PLUS", "PLUS_EQUAL"):
+            runtime.check_operands_are_floats_or_strings(left, right, self.op)
             return left + right
         elif self.op.type in ("MINUS", "MINUS_EQUAL"):
+            runtime.check_operands_are_floats(left, right, self.op)
             return left - right
         elif self.op.type == "SLASH":
+            runtime.check_operands_are_floats(left, right, self.op)
             return left / right
         elif self.op.type == "STAR":
+            runtime.check_operands_are_floats(left, right, self.op)
             return left * right
         elif self.op.type == "BANG_EQUAL":
             return left != right
@@ -138,8 +147,9 @@ class AssignExpr(Expression):
 
 class CallExpr(Expression):
 
-    def __init__(self, callee_expr, arg_expr_list):
+    def __init__(self, callee_expr, left_paren_token, arg_expr_list):
         self.callee = callee_expr
+        self.token = left_paren_token
         self.args = arg_expr_list
 
     def __str__(self):
@@ -147,13 +157,13 @@ class CallExpr(Expression):
 
     def eval(self, env):
         callee = self.callee.eval(env)
+        if not hasattr(callee, "call"):
+            runtime.error(f"Object is not callable.", self.token)
+        if len(self.args) != callee.arity():
+            runtime.error(f"Invalid number of arguments.", self.token)
         args = []
         for arg in self.args:
             args.append(arg.eval(env))
-        if not hasattr(callee, "call"):
-            sys.exit(f"Cannot call {callee}.")
-        if len(args) != callee.arity():
-            sys.exit("Wrong number of arguments.")
         return callee.call(args)
 
 
@@ -170,7 +180,7 @@ class GetAttrExpr(Expression):
         instance_obj = self.object.eval(env)
         if isinstance(instance_obj, runtime.PyroInstance):
             return instance_obj.get(self.name)
-        sys.exit("Invalid get.")
+        runtime.error(f"Invalid attribute '{self.name.text}', not an instance object.", self.name)
 
 
 class SetAttrExpr(Expression):
@@ -185,11 +195,11 @@ class SetAttrExpr(Expression):
 
     def eval(self, env):
         instance_obj = self.object.eval(env)
-        if not isinstance(instance_obj, runtime.PyroInstance):
-            sys.exit("Invalid set.")
-        value = self.value.eval(env)
-        instance_obj.set(self.name, value)
-        return value
+        if isinstance(instance_obj, runtime.PyroInstance):
+            value = self.value.eval(env)
+            instance_obj.set(self.name, value)
+            return value
+        runtime.error(f"Invalid attribute '{self.name.text}', not an instance object.", self.name)
 
 
 class SelfExpr(Expression):
@@ -215,7 +225,7 @@ class SuperExpr(Expression):
         instance_obj = env.get_str("self")
         method = superclass_obj.find_and_bind_method(instance_obj, self.attr_token.text)
         if method is None:
-            sys.exit("Invalid superclass method name.")
+            runtime.error(f"Invalid superclass method name '{self.attr_token.text}'.", self.attr_token)
         return method
 
 
