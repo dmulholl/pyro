@@ -39,7 +39,7 @@ def run(argparser):
 
 
 def main():
-    argparser = argslib.ArgParser()
+    argparser = argslib.ArgParser(version=__version__)
     argparser.command("debug_tokens", callback=cmd_debug_tokens)
     argparser.command("debug_expr", callback=cmd_debug_expr)
     argparser.parse()
