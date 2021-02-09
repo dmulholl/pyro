@@ -7,11 +7,7 @@ def fib(n) {
 }
 
 def $main() {
-    echo fib(0);
-    echo fib(1);
-    echo fib(2);
-    echo fib(3);
-    echo fib(4);
-    echo fib(5);
-    echo fib(6);
+    for var i = 0; i < 20; i += 1 {
+        echo fib(i);
+    }
 }
