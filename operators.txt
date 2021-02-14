@@ -1,11 +1,12 @@
------------------------
-# Operator Precedence #
------------------------
+            -----------------------
+            # Operator Precedence #
+            -----------------------
 
 Name                Operators           Associativity
 
 Call                () .                Left                HIGH
 Unary               ! -                 Right
+*Bitwise            & |                 Left
 Multiplication      / *                 Left
 Addition            - +                 Left
 Comparison          > >= < <=           Left
