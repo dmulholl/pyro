@@ -24,7 +24,6 @@ def nested_loops() {
     }
 }
 
-
 def $main() {
     simple_loop();
     echo;
