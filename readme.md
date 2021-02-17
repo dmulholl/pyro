@@ -2,6 +2,6 @@
 
 A prototype programming language implemented in Python using a recursive-descent parser and a tree-walking interpreter.
 
-To run a sample script:
+Run a sample script by supplying its filepath to the interpreter as a command line argument:
 
     $ python -m pyro samples/fibonacci.pyro
