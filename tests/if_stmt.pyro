@@ -1,0 +1,34 @@
+# Test the 'if' clause.
+var foo = 1;
+
+if foo == 1 {
+    assert true;
+} else if foo == 2 {
+    assert false;
+} else {
+    assert false;
+}
+
+
+# Test the 'else if' clause.
+var bar = 2;
+
+if bar == 1 {
+    assert false;
+} else if bar == 2 {
+    assert true;
+} else {
+    assert false;
+}
+
+
+# Test the 'else' clause.
+var baz = 3;
+
+if baz == 1 {
+    assert false;
+} else if baz == 2 {
+    assert false;
+} else {
+    assert true;
+}

@@ -1,0 +1,72 @@
+var foo = ["alpha", "beta", "gamma", "delta"];
+
+assert foo[0] == "alpha";
+assert foo[1] == "beta";
+assert foo[2] == "gamma";
+assert foo[3] == "delta";
+
+foo[0] = "epsilon";
+assert foo[0] == "epsilon";
+
+foo[0] += "-zeta";
+foo[1] += "-eta";
+assert foo[0] == "epsilon-zeta";
+assert foo[1] == "beta-eta";
+
+
+var bar = [1, 2, 3];
+var sum = 0;
+
+loop var i = 0; i < bar:count(); i += 1 {
+    sum += bar[i];
+}
+
+assert sum = 1 + 2 + 3;
+
+bar[1] -= 2;
+assert bar[1] == 0;
+
+
+var baz = $tup(42, "bar", 3.14);
+
+assert baz[0] == 42;
+assert baz[1] == "bar";
+assert baz[2] == 3.14;
+
+
+var bam = {"abc" = 123, "def" = 456};
+
+assert bam["abc"] == 123;
+assert bam["def"] == 456;
+
+bam["abc"] = 999;
+assert bam["abc"] == 999;
+
+bam["ghi"] = "new value";
+assert bam["ghi"] == "new value";
+
+
+class VecWrapper {
+    var vec;
+
+    def $init() {
+        self.vec = ["foo", "bar", "baz"];
+    }
+
+    def $get_index(key) {
+        return self.vec[key];
+    }
+
+    def $set_index(key, value) {
+        self.vec[key] = value;
+        return value;
+    }
+}
+
+var wrap = VecWrapper();
+assert wrap[0] == "foo";
+assert wrap[1] == "bar";
+assert wrap[2] == "baz";
+
+wrap[1] = "new value";
+assert wrap[1] == "new value";

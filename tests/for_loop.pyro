@@ -1,0 +1,53 @@
+var numbers = $tup(1, 2, 3, 4, 5);
+var sum1 = 0;
+var sum2 = 0;
+
+
+for n in numbers {
+    sum1 += n;
+}
+
+assert sum1 == 1 + 2 + 3 + 4 + 5;
+
+
+for n in numbers {
+    if n == 2 {
+        continue;
+    }
+    if n == 4 {
+        break;
+    }
+    sum2 += n;
+}
+
+assert sum2 == 1 + 3;
+
+
+class Range {
+    var next = 0;
+    var max;
+
+    def $init(max) {
+        self.max = max;
+    }
+
+    def $iter() {
+        return self;
+    }
+
+    def $next() {
+        if self.next < self.max {
+            self.next += 1;
+            return self.next - 1;
+        }
+        return $err();
+    }
+}
+
+var sum3 = 0;
+
+for i in Range(5) {
+    sum3 += i;
+}
+
+assert sum3 == 0 + 1 + 2 + 3 + 4;

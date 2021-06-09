@@ -1,0 +1,26 @@
+class A {
+    def foo() {
+        return "a-foo";
+    }
+}
+
+
+class B < A {
+    def foo() {
+        return "b-foo";
+    }
+
+    def super_foo() {
+        return super:foo();
+    }
+}
+
+
+class C < B {
+}
+
+
+# Verify that `super` is lexically-scoped, i.e. even though the method is called on an instance
+# of C the `super` in B resolves lexically to A.
+var c = C();
+assert c:super_foo() == "a-foo";

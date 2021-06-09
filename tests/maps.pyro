@@ -1,0 +1,58 @@
+assert $is_map("foobar") == false;
+
+var foo = $map();
+assert $is_map(foo) == true;
+assert foo:count() == 0;
+
+foo:set("alpha", 123);
+assert foo:count() == 1;
+
+foo:set("beta", 456);
+assert foo:count() == 2;
+
+foo:set("gamma", 789);
+assert foo:count() == 3;
+
+assert foo:get("alpha") == 123;
+assert foo:get("beta") == 456;
+assert foo:get("gamma") == 789;
+
+foo:set(1, null);
+foo:set(2, true);
+foo:set(3, false);
+
+assert foo:count() == 6;
+assert foo:get(1) == null;
+assert foo:get(2) == true;
+assert foo:get(3) == false;
+
+foo:set(4, "foo");
+foo:set(4.0, "bar");
+
+assert foo:get(4) == "foo";
+assert foo:get(4.0) == "bar";
+
+assert $is_err(foo:get("undefined"));
+
+var bound_method = foo:get;
+assert bound_method("alpha") == 123;
+assert bound_method(4) == "foo";
+
+assert foo:count() == 8;
+foo:del("alpha");
+assert foo:count() == 7;
+assert $is_err(foo:get("alpha"));
+
+assert foo:contains("beta") == true;
+assert foo:contains("undefined") == false;
+
+
+var bar = {
+    "abc" = 123,
+    "def" = 456,
+};
+
+assert $is_map(bar);
+assert bar:count() == 2;
+assert bar:get("abc") == 123;
+assert bar:get("def") == 456;

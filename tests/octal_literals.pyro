@@ -1,0 +1,11 @@
+assert 0o0 == 0;
+assert 0o1 == 1;
+
+assert 0o00 == 0;
+assert 0o01 == 1;
+
+assert 0o11 == 9;
+assert 0o77 == 63;
+
+assert 0o77_77 == 4095;
+assert 0o_77__7_7__ == 4095;

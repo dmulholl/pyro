@@ -1,0 +1,5 @@
+var e = 2.72;
+
+def mul(a, b) {
+    return a * b;
+}

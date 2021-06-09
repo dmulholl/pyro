@@ -1,0 +1,14 @@
+assert 0x0 == 0;
+assert 0x1 == 1;
+
+assert 0x00 == 0;
+assert 0x01 == 1;
+
+assert 0x11 == 17;
+assert 0xFF == 255;
+assert 0xff == 255;
+
+assert 0xFF_ff == 65535;
+assert 0x_FF__f_f__ == 65535;
+
+assert 0x_dead_beef == 3735928559;

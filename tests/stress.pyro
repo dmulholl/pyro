@@ -1,0 +1,49 @@
+var string = "";
+var sum = 0;
+var tup;
+var map = $map();
+
+loop var i = 0; i < 1000; i += 1 {
+    var blah = "blah";
+    var flah = "flah";
+    string += blah;
+    string += flah;
+    sum += i * 2 + 357;
+    tup = $tup(string, sum);
+    map:set(i, sum);
+}
+
+
+def fib(n) {
+    if n < 2 {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+
+var fib_sum = 0;
+
+loop var i = 0; i < 25; i = i + 1 {
+    fib_sum += fib(i);
+}
+
+
+class Foo {
+    var x;
+    var y;
+    var z;
+
+    def $init() {
+        self.x = "foo";
+        self.y = "bar";
+    }
+
+    def bar() {
+        self.z = self.x + self.y;
+    }
+}
+
+loop var i = 0; i < 1000; i += 1 {
+    var foo = Foo();
+    foo:bar();
+}

@@ -1,0 +1,54 @@
+class Shape {
+    var colour;
+
+    def $init(colour) {
+        self.colour = colour;
+    }
+
+    def area() {
+        return null;
+    }
+
+    def get_colour() {
+        return self.colour;
+    }
+}
+
+
+class Square < Shape {
+    var side;
+
+    def $init(colour, side) {
+        super:$init(colour);
+        self.side = side;
+    }
+
+    def area() {
+        return self.side * self.side;
+    }
+}
+
+
+class RedSquare < Square {
+    def $init(side) {
+        super:$init("red", side);
+    }
+}
+
+
+var shape = Shape("blue");
+assert shape.colour == "blue";
+assert shape:get_colour() == "blue";
+assert shape:area() == null;
+
+
+var square = Square("green", 5);
+assert square.colour == "green";
+assert square:get_colour() == "green";
+assert square:area() == 25;
+
+
+var red_square = RedSquare(3);
+assert red_square.colour == "red";
+assert red_square:get_colour() == "red";
+assert red_square:area() == 9;

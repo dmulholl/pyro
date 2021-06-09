@@ -1,0 +1,35 @@
+class A {
+    def foo() {
+        return "a-foo";
+    }
+
+    def bar() {
+        return "a-bar";
+    }
+}
+
+
+class B < A {
+    def foo() {
+        return "b-foo";
+    }
+}
+
+
+class C < B {
+}
+
+
+var a = A();
+assert a:foo() == "a-foo";
+assert a:bar() == "a-bar";
+
+
+var b = B();
+assert b:foo() == "b-foo";
+assert b:bar() == "a-bar";
+
+
+var c = C();
+assert c:foo() == "b-foo";
+assert c:bar() == "a-bar";

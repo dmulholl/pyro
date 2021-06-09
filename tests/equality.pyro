@@ -1,0 +1,32 @@
+assert 1 == 1;
+assert 1 != 2;
+assert 1 != 1.0;
+assert 1 != null;
+assert 1 != true;
+assert 1 != false;
+assert 1 != "foo";
+
+assert 1.0 == 1.0;
+assert 1.0 != 2.0;
+assert 1.0 != 1;
+assert 1.0 != null;
+assert 1.0 != true;
+assert 1.0 != false;
+assert 1.0 != "foo";
+
+assert "foo" == "foo";
+assert "foo" != "bar";
+assert "foo" != null;
+assert "foo" != true;
+assert "foo" != false;
+assert "foo" != 1.0;
+assert "foo" != 1;
+
+assert true == true;
+assert false == false;
+assert true != false;
+
+assert null == null;
+assert null != true;
+assert null != false;
+

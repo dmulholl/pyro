@@ -1,0 +1,18 @@
+assert !$is_tup("foobar");
+
+var foo = $tup();
+assert $is_tup(foo);
+assert foo:count() == 0;
+
+var bar = $tup(123);
+assert $is_tup(bar);
+assert bar:count() == 1;
+assert bar:get(0) == 123;
+
+var baz = $tup(123, "abc", true);
+assert $is_tup(baz);
+assert baz:count() == 3;
+assert baz:get(0) == 123;
+assert baz:get(1) == "abc";
+assert baz:get(2) == true;
+

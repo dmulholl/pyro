@@ -1,0 +1,17 @@
+var index = 0;
+var sum = 0;
+
+loop {
+    index += 1;
+    if index == 3 {
+        continue;
+    }
+    if index == 5 {
+        break;
+    }
+    sum += index;
+}
+
+assert index == 5;
+assert sum == 1 + 2 + 4;
+

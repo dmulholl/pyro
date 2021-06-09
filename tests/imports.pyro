@@ -1,0 +1,41 @@
+var foobar;
+assert !$is_mod(foobar);
+
+import $std;
+assert $is_mod($std);
+assert $is_f64($std::math::pi);
+assert $std::math::abs(-1) == 1;
+
+import $std::math;
+assert $is_mod(math);
+assert $is_f64(math::pi);
+assert math::abs(-1) == 1;
+
+import $std::math as alias;
+assert $is_mod(alias);
+assert $is_f64(alias::pi);
+assert alias::abs(-1) == 1;
+
+import lib1;
+assert $is_mod(lib1);
+assert lib1::pi == 3.14;
+assert lib1::add(1, 2) == 3;
+
+import lib2;
+assert $is_mod(lib2);
+assert lib2::pi == 3.14;
+assert lib2::add(1, 2) == 3;
+
+import lib2::lib3;
+assert $is_mod(lib3);
+assert lib3::e == 2.72;
+assert lib3::mul(2, 3) == 6;
+
+import lib4;
+assert $is_mod(lib4);
+
+import lib4::lib5;
+assert $is_mod(lib5);
+assert lib5::e == 2.72;
+assert lib5::mul(2, 3) == 6;
+

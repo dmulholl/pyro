@@ -1,0 +1,69 @@
+class Point {
+    var x, y;
+    var func;
+
+    def $init() {
+        self.x = 1;
+        self.y = 2;
+    }
+
+    def get_x() {
+        return self.x;
+    }
+
+    def set_x(arg) {
+        self.x = arg;
+    }
+
+    def get_y() {
+        return self.y;
+    }
+
+    def set_y(arg) {
+        self.y = arg;
+    }
+
+    def get_closure() {
+        def closure() {
+            return self.x;
+        }
+        return closure;
+    }
+}
+
+var p = Point();
+assert p.x == 1;
+assert p.y == 2;
+assert p:get_x() == 1;
+assert p:get_y() == 2;
+
+p.x = 3;
+p.y = 4;
+assert p.x == 3;
+assert p.y == 4;
+assert p:get_x() == 3;
+assert p:get_y() == 4;
+
+var closure = p:get_closure();
+assert closure() == 3;
+
+p.x = 5;
+assert closure() == 5;
+
+p:set_x(7);
+assert p.x == 7;
+
+var get_x = p:get_x;
+assert get_x() == 7;
+
+var set_x = p:set_x;
+set_x(9);
+assert get_x() == 9;
+assert p.x == 9;
+
+def func() {
+    return 123;
+}
+
+p.func = func;
+assert p.func() == 123;

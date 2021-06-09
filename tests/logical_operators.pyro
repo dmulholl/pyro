@@ -1,0 +1,18 @@
+assert (true && true) == true;
+assert (true && false) == false;
+assert (false && true) == false;
+assert (false && false) == false;
+
+assert (true || true) == true;
+assert (true || false) == true;
+assert (false || true) == true;
+assert (false || false) == false;
+
+assert (1 || 2 || 3) == 1;
+assert (1 && 2 && 3) == 3;
+
+assert (1 && 2 || 3) == 2;
+assert (1 || 2 && 3) == 3;
+
+assert !true == false;
+assert !false == true;

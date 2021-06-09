@@ -1,0 +1,68 @@
+# Test closing over a local variable.
+def make_closure_over_local() {
+    var local = "local";
+
+    def closure() {
+        return local;
+    }
+
+    return closure;
+}
+
+var foo = make_closure_over_local();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert foo() == "local";
+
+
+# Test closing over an argument.
+def make_closure_over_arg(arg) {
+    def closure() {
+        return arg;
+    }
+
+    return closure;
+}
+
+var bar = make_closure_over_arg("apples");
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert bar() == "apples";
+
+var baz = make_closure_over_arg("oranges");
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert baz() == "oranges";
+
+
+# Test closing over a variable multiple scopes up.
+def outer() {
+    var x = 123;
+
+    def middle() {
+        def inner() {
+            return x;
+        }
+        return inner;
+    }
+
+    return middle;
+}
+
+var middle = outer();
+var inner = middle();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert inner() == 123;
+
+
+# This is the simplest kind of closure - when inner() executes, x is still on the stack.
+def outer() {
+    var x = 123;
+
+    def inner() {
+        return x;
+    }
+
+    return inner();
+}
+
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert outer() == 123;
+

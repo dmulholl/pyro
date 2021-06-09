@@ -1,0 +1,79 @@
+var foo = "foo";
+assert foo == "foo";
+assert "foo" == foo;
+assert "foo" == "foo";
+assert foo:byte_count() == 3;
+assert foo:byte(0) == 102;
+assert foo:byte(1) == 111;
+assert foo:byte(2) == 111;
+
+assert "\n":byte_count() == 1;
+assert "\n":byte(0) == 10;
+
+assert "\\":byte_count() == 1;
+assert "\\":byte(0) == 92;
+
+assert "\"":byte_count() == 1;
+assert "\"":byte(0) == 34;
+
+assert "\x21" == "!";
+assert "\x21":byte_count() == 1;
+assert "\x21":byte(0) == 33;
+
+assert "\u0021" == "!";
+assert "\u0021":byte_count() == 1;
+assert "\u0021":byte(0) == 33;
+
+assert "\u20ac" == "€";
+assert "\u20ac":byte_count() == 3;
+assert "\u20ac":byte(0) == 226;
+assert "\u20ac":byte(1) == 130;
+assert "\u20ac":byte(2) == 172;
+
+assert "\U000020ac" == "€";
+assert "\U000020ac":byte_count() == 3;
+assert "\U000020ac":byte(0) == 226;
+assert "\U000020ac":byte(1) == 130;
+assert "\U000020ac":byte(2) == 172;
+
+var bar = `bar`;
+assert bar == `bar`;
+assert bar == "bar";
+assert `bar` == "bar";
+assert bar:byte_count() == 3;
+assert bar:byte(0) == 98;
+assert bar:byte(1) == 97;
+assert bar:byte(2) == 114;
+
+assert `\`:byte_count() == 1;
+assert `\`:byte(0) == 92;
+
+assert `\n`:byte_count() == 2;
+assert `\x21`:byte_count() == 4;
+assert `\u1234`:byte_count() == 6;
+
+assert $is_str("foo");
+assert !$is_str(123);
+
+assert $str("foo") == "foo";
+assert $str(123) == "123";
+assert $str(123.456) == "123.456";
+
+var sum = 0;
+for byte in "abc":bytes() {
+    sum += byte;
+}
+assert sum == 97 + 98 + 99;
+
+assert "":is_ascii();
+assert "abc":is_ascii();
+assert !"a\xFFb":is_ascii();
+assert !"a§b€c👍d":is_ascii();
+
+assert "":is_utf8();
+assert "abc":is_utf8();
+assert "a§b€c👍d":is_utf8();
+assert !"a\x80b":is_utf8();
+
+assert "foo BAR 123":to_ascii_upper() == "FOO BAR 123";
+assert "foo BAR 123":to_ascii_lower() == "foo bar 123";

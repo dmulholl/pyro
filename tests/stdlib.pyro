@@ -1,0 +1,11 @@
+assert $is_mod($std);
+assert !$is_mod(123);
+
+assert $is_mod($std::math);
+assert $std::math::abs(-1) == 1;
+
+var math = $std::math;
+assert math::abs(-1) == 1;
+
+var abs = $std::math::abs;
+assert abs(-1) == 1;

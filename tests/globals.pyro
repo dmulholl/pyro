@@ -1,0 +1,12 @@
+var foo = "blah";
+assert foo == "blah";
+
+var bar = 5 + 3 * 2;
+assert bar == 11;
+
+var baz;
+var bam;
+baz = bam = 2 * 3 + 4 * 5;
+assert baz == 26;
+assert bam == 26;
+assert baz == bam;

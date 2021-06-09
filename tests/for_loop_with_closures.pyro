@@ -1,0 +1,16 @@
+var closures = $vec();
+
+for i in $tup(1, 2, 3) {
+    def closure() {
+        return i;
+    }
+    closures:append(closure);
+}
+
+var sum = 0;
+
+for closure in closures {
+    sum += closure();
+}
+
+assert sum = 1 + 2 + 3;

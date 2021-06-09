@@ -1,0 +1,18 @@
+# ------------------- #
+# Operator Precedence #
+# ------------------- #
+
+Level               Operators           Associativity      Precedence
+-----               ---------           -------------      ----------
+
+Call                () . : ::           Left                HIGH
+Unary               ! - try             Right
+*Bitwise            and or xor          Left
+*Power              **                  Left
+Multiplication      / *                 Left
+Addition            - +                 Left
+Comparison          > >= < <=           Left
+Equality            == !=               Left
+Logical             && || ?? !!         Left
+Conditional         ?|                  None
+Assignment          = += -=             Right               LOW

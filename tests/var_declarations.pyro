@@ -1,0 +1,7 @@
+var foo, bar;
+assert foo == null;
+assert bar == null;
+
+var baz = 123, bam = "value";
+assert baz == 123;
+assert bam == "value";

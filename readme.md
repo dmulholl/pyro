@@ -1,7 +1,5 @@
 # Pyro
 
-A prototype programming language implemented in Python using a recursive-descent parser and a tree-walking interpreter.
+Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
 
-Run a sample script by supplying its filepath to the interpreter as a command line argument:
-
-    $ python -m pyro samples/fibonacci.pyro
+This is an experimental project - it isn't suitable yet for any kind of real world use.

@@ -1,0 +1,19 @@
+var foo = "global";
+{
+    var bar = "local";
+    var x;
+    var y;
+
+    loop x = 0; x < 10; x += 1 {
+        loop y = 0; y < 10; y += 1 {
+            if y == 5 {
+                break;
+            }
+            assert bar == "local";
+        }
+    }
+    assert bar == "local";
+    assert x == 10;
+    assert y == 5;
+}
+assert foo = "global";

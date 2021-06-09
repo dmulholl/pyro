@@ -1,0 +1,21 @@
+class A {
+    def foo() {
+        return "a-foo";
+    }
+}
+
+
+class B < A {
+    def foo() {
+        return "b-foo";
+    }
+
+    def get_closure() {
+        return super:foo;
+    }
+}
+
+
+var b = B();
+var closure = b:get_closure();
+assert closure() == "a-foo";

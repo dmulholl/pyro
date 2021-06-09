@@ -1,0 +1,13 @@
+var x = "global";
+
+def outer() {
+    var x = "outer";
+
+    def inner() {
+        return x;
+    }
+
+    return inner();
+}
+
+assert outer() == "outer";

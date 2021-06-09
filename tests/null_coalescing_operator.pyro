@@ -1,0 +1,7 @@
+assert (123 ?? 456) == 123;
+assert (null ?? 456) == 456;
+assert (123 ?? null) == 123;
+
+assert (123 ?? 456 ?? 789) == 123;
+assert (null ?? 456 ?? 789) == 456;
+assert (null ?? null ?? 789) == 789;

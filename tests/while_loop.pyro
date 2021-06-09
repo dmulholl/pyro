@@ -1,0 +1,19 @@
+var foo = "global";
+
+{
+    var bar = "local";
+    var sum = 0;
+    var i = 3;
+
+    while i > 0 {
+        sum += i;
+        i = i - 1;
+        assert bar == "local";
+    }
+
+    assert sum == 3 + 2 + 1;
+    assert i == 0;
+    assert bar == "local";
+}
+
+assert foo == "global";

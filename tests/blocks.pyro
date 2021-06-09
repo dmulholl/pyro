@@ -1,0 +1,10 @@
+var foo = "global";
+{
+    var foo = "outer";
+    {
+        var foo = "inner";
+        assert foo == "inner";
+    }
+    assert foo == "outer";
+}
+assert foo == "global";

@@ -1,0 +1,25 @@
+var foo = $vec();
+assert $is_vec(foo);
+assert foo:count() == 0;
+
+foo:append("foo");
+foo:append("bar");
+assert foo:count() == 2;
+assert foo:get(0) == "foo";
+assert foo:get(1) == "bar";
+
+foo:set(1, "foobar");
+assert foo:count() == 2;
+assert foo:get(1) == "foobar";
+
+var bar = $vec(10, null);
+assert $is_vec(bar);
+assert bar:count() == 10;
+assert bar:get(5) == null;
+
+var baz = ["foo", 123, true];
+assert $is_vec(baz);
+assert baz:count() == 3;
+assert baz:get(0) == "foo";
+assert baz:get(1) == 123;
+assert baz:get(2) == true;

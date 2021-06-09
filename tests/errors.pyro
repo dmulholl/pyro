@@ -1,0 +1,12 @@
+assert $is_err("foobar") == false;
+
+var foo = $err();
+assert $is_err(foo) == true;
+assert foo:count() == 0;
+
+var bar = $err(123, "bar");
+assert $is_err(bar) == true;
+assert bar:count() == 2;
+assert bar:get(0) == 123;
+assert bar:get(1) == "bar";
+

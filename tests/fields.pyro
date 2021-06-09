@@ -1,0 +1,21 @@
+class Point {
+    var x, y;
+    var bar;
+}
+
+var foo = Point();
+foo.x = 1;
+foo.y = 2;
+assert foo.x + foo.y == 3;
+
+foo.bar = Point();
+foo.bar.x = 3;
+foo.bar.y = 4;
+
+assert foo.bar.x + foo.bar.y == 7;
+
+foo.x += 1;
+assert foo.x == 2;
+
+foo.x -= 2;
+assert foo.x == 0;

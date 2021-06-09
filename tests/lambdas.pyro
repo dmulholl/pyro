@@ -1,0 +1,26 @@
+var foo = def() {
+    return 123;
+};
+
+assert foo() == 123;
+
+
+var bar = def(a, b) {
+    return a + b;
+};
+
+assert bar(1, 2) == 3;
+
+
+var baz = def() { return 123; }();
+assert baz == 123;
+
+
+def make_closure(arg) {
+    return def() {
+        return arg * 2;
+    };
+}
+
+var closure = make_closure(5);
+assert closure() == 10;

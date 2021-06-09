@@ -1,0 +1,48 @@
+# Capturing two distinct but identically named variables from within a single function.
+var g1;
+var g2;
+
+def outer1() {
+    {
+        var x = "one";
+        def one() {
+            return x;
+        }
+        g1 = one;
+    }
+    {
+        var x = "two";
+        def two() {
+            return x;
+        }
+        g2 = two;
+    }
+}
+
+outer1();
+
+assert g1() == "one";
+assert g2() == "two";
+
+
+# Capturing the loop variable. Both closures capture the same `i` variable.
+var g3;
+var g4;
+
+def outer2() {
+    loop var i = 0; i < 2; i += 1 {
+        def closure() {
+            return i;
+        }
+
+        if g3 == null {
+            g3 = closure;
+        } else {
+            g4 = closure;
+        }
+    }
+}
+
+outer2();
+assert g3() == 2;
+assert g4() == 2;

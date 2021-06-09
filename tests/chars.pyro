@@ -1,0 +1,42 @@
+# 1-byte utf8 literals.
+assert $is_char('A');
+assert $str('A') == "A";
+assert $i64('A') == 0x41;
+assert $char(0x41) == 'A';
+
+# 2-byte utf8 literals.
+assert $is_char('§');
+assert $str('§') == "§";
+assert $i64('§') == 0xA7;
+assert $char(0xA7) == '§';
+
+# 3-byte utf8 literals.
+assert $is_char('€');
+assert $str('€') == "€";
+assert $i64('€') == 0x20AC;
+assert $char(0x20AC) == '€';
+
+# 4-byte utf8 literals.
+assert $is_char('𐀀');
+assert $str('𐀀') == "𐀀";
+assert $i64('𐀀') == 0x10000;
+assert $char(0x10000) == '𐀀';
+assert $is_char('👍');
+assert $str('👍') == "👍";
+assert $i64('👍') == 0x1F44D;
+assert $char(0x1F44D) == '👍';
+
+var foo = "a§b€c👍d";
+assert foo:char(0) == 'a';
+assert foo:char(1) == '§';
+assert foo:char(2) == 'b';
+assert foo:char(3) == '€';
+assert foo:char(4) == 'c';
+assert foo:char(5) == '👍';
+assert foo:char(6) == 'd';
+
+assert "":char_count() == 0;
+assert "a":char_count() == 1;
+assert "abc":char_count() == 3;
+assert "a§b€c👍d":char_count() == 7;
+
