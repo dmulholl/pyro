@@ -16,3 +16,17 @@ assert baz:get(0) == 123;
 assert baz:get(1) == "abc";
 assert baz:get(2) == true;
 
+assert foo == $tup();
+assert bar == $tup(123);
+assert baz == $tup(123, "abc", true);
+
+var map = {
+    123 = "alpha",
+    $tup(123, 456) = "beta",
+    $tup(789, "foo") = "gamma",
+};
+
+assert map[$tup(123, 456)] == "beta";
+
+var bam = $tup(789, "foo");
+assert map[bam] == "gamma";
