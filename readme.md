@@ -1,8 +1,6 @@
 # Pyro
 
-Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
-
-This is an experimental project - it's at an early stage and isn't suitable yet for any kind of real world use.
+Pyro is a dynamically-typed, garbage-collected scripting language implemented in C. (This is an experimental project - it's at an early stage and isn't suitable yet for any kind of real world use.)
 
 To build the binary:
 
