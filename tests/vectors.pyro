@@ -20,6 +20,14 @@ assert bar:get(5) == null;
 var baz = ["foo", 123, true];
 assert $is_vec(baz);
 assert baz:count() == 3;
+
 assert baz:get(0) == "foo";
 assert baz:get(1) == 123;
 assert baz:get(2) == true;
+
+assert baz[0] == "foo";
+assert baz[1] == 123;
+assert baz[2] == true;
+
+baz[0] = "bar";
+assert baz[0] == "bar";

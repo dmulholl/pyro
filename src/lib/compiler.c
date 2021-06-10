@@ -1365,7 +1365,7 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
     }
 
     else if (match(parser, TOKEN_DEF)) {
-        parse_function_definition(parser, TYPE_FUNCTION, syntoken("*lambda*"));
+        parse_function_definition(parser, TYPE_FUNCTION, syntoken("<lambda>"));
     }
 
     else if (match(parser, TOKEN_LEFT_BRACKET)) {
@@ -2221,9 +2221,9 @@ static void parse_statement(Parser* parser) {
 }
 
 
-/* =========================== */
-/* ~~~~~~~~ Interface ~~~~~~~~ */
-/* =========================== */
+/* ==================================== */
+/* ~~~~~~~~ Compiler Interface ~~~~~~~~ */
+/* ==================================== */
 
 
 ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id, ObjModule* module) {
@@ -2238,7 +2238,7 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
     vm->parser = &parser;
 
     FnCompiler compiler;
-    init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("*module*"));
+    init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("<module>"));
 
     // Prime the token pump.
     advance(&parser);

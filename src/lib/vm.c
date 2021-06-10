@@ -15,7 +15,6 @@
 #define PEEK(distance)      pyro_peek(vm, distance)
 
 
-// Print a formatted string to the VM's output stream.
 void pyro_out(PyroVM* vm, const char* format, ...) {
     if (vm->out_file) {
         va_list args;
@@ -26,7 +25,7 @@ void pyro_out(PyroVM* vm, const char* format, ...) {
 }
 
 
-// Print a formatted string to the VM's error stream.
+// Write a printf-style formatted string to the VM's error stream, unless that stream is NULL.
 void pyro_err(PyroVM* vm, const char* format, ...) {
     if (vm->err_file) {
         va_list args;

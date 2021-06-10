@@ -16,11 +16,13 @@ char* pyro_str_copy(PyroVM* vm, const char* source, size_t n);
 char* pyro_str_cat(PyroVM* vm, const char* a, const char* b);
 void pyro_str_append(PyroVM* vm, char** a_ptr, const char* b);
 
+// String hash functions, 32-bit versions.
 uint32_t pyro_fnv1a_32(const char* string, size_t length);
 uint32_t pyro_fnv1a_32_opt(const char* string, size_t length);
 uint32_t pyro_djb2_32(const char* string, size_t length);
 uint32_t pyro_sdbm_32(const char* string, size_t length);
 
+// String hash functions, 64-bit versions.
 uint64_t pyro_fnv1a_64(const char* string, size_t length);
 uint64_t pyro_fnv1a_64_opt(const char* string, size_t length);
 uint64_t pyro_djb2_64(const char* string, size_t length);

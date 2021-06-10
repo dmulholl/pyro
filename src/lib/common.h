@@ -26,7 +26,7 @@ typedef struct ObjStr ObjStr;
 typedef struct ObjMap ObjMap;
 typedef struct ObjClass ObjClass;
 
-// Selects the hashing function for strings.
+// Selects the hash function for strings.
 #ifndef PYRO_STRING_HASH
     #define PYRO_STRING_HASH pyro_fnv1a_64
 #endif

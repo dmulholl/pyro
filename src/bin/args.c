@@ -1005,7 +1005,7 @@ void ap_print(ArgParser* parser) {
     puts("\nArguments:");
     if (parser->positional_args->count > 0) {
         for (int i = 0; i < parser->positional_args->count; i++) {
-            printf("  %s\n", parser->positional_args->entries[i]);
+            printf("  %s\n", ap_arg(parser, i));
         }
     } else {
         puts("  [none]");

@@ -46,7 +46,6 @@ assert $is_err(foo:get("alpha"));
 assert foo:contains("beta") == true;
 assert foo:contains("undefined") == false;
 
-
 var bar = {
     "abc" = 123,
     "def" = 456,
@@ -56,3 +55,9 @@ assert $is_map(bar);
 assert bar:count() == 2;
 assert bar:get("abc") == 123;
 assert bar:get("def") == 456;
+
+assert bar["abc"] == 123;
+assert bar["def"] == 456;
+
+bar["abc"] = 789;
+assert bar["abc"] == 789;

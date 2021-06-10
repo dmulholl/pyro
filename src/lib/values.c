@@ -864,7 +864,6 @@ ObjStr* ObjStr_empty(PyroVM* vm) {
 
 
 // Create a new string object by copying [length] bytes from [src], processing backslashed escapes.
-// (The length of the processed string will always be <= the length of the source.)
 ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
     if (length == 0) {
         return ObjStr_empty(vm);

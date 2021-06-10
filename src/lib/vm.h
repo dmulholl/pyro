@@ -94,19 +94,25 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 Value pyro_call_method(PyroVM* vm, Value method, int arg_count);
 
 void pyro_panic(PyroVM* vm, const char* format, ...);
+
+// Write a printf-style formatted string to the VM's output stream, unless that stream is NULL.
 void pyro_out(PyroVM* vm, const char* format, ...);
+
+// Write a printf-style formatted string to the VM's error stream, unless that stream is NULL.
 void pyro_err(PyroVM* vm, const char* format, ...);
+
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module);
 
 
-// Peek at a value on the stack without popping it.
-// Pass [distance] = 0 to peek at the value on top of the stack, 1 to peek at the value below, etc.
+// Peek at a value on the stack without popping it. Pass [distance = 0] to peek at the value on
+// top of the stack, [distance = 1] to peek at the value below that, etc.
 static inline Value pyro_peek(PyroVM* vm, int distance) {
     return vm->stack_top[-1 - distance];
 }
 
 
+// Push a value onto the stack.
 static inline void pyro_push(PyroVM* vm, Value value) {
     if (vm->stack_top == vm->stack_max) {
         pyro_panic(vm, "Stack overflow.");
@@ -117,6 +123,7 @@ static inline void pyro_push(PyroVM* vm, Value value) {
 }
 
 
+// Pop the top value from the stack.
 static inline Value pyro_pop(PyroVM* vm) {
     vm->stack_top--;
     return *vm->stack_top;

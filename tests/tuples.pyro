@@ -12,9 +12,14 @@ assert bar:get(0) == 123;
 var baz = $tup(123, "abc", true);
 assert $is_tup(baz);
 assert baz:count() == 3;
+
 assert baz:get(0) == 123;
 assert baz:get(1) == "abc";
 assert baz:get(2) == true;
+
+assert baz[0] == 123;
+assert baz[1] == "abc";
+assert baz[2] == true;
 
 assert foo == $tup();
 assert bar == $tup(123);

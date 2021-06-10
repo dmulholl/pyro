@@ -260,21 +260,24 @@ void free_object(PyroVM* vm, Obj* object) {
         pyro_out(vm, "   %p free object %s\n", (void*)object, pyro_stringify_obj_type(object->type));
     #endif
 
+    #define FREE_OBJECT(vm, type, pointer) \
+        reallocate(vm, pointer, sizeof(type), 0)
+
     switch(object->type) {
         case OBJ_BOUND_METHOD: {
-            FREE(vm, ObjBoundMethod, object);
+            FREE_OBJECT(vm, ObjBoundMethod, object);
             break;
         }
 
         case OBJ_CLASS: {
-            FREE(vm, ObjClass, object);
+            FREE_OBJECT(vm, ObjClass, object);
             break;
         }
 
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             FREE_ARRAY(vm, ObjUpvalue*, closure->upvalues, closure->upvalue_count);
-            FREE(vm, ObjClosure, object);
+            FREE_OBJECT(vm, ObjClosure, object);
             break;
         }
 
@@ -283,7 +286,7 @@ void free_object(PyroVM* vm, Obj* object) {
             FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
             FREE_ARRAY(vm, Value, fn->constants, fn->constants_capacity);
             FREE_ARRAY(vm, uint16_t, fn->bpl, fn->bpl_capacity);
-            FREE(vm, ObjFn, object);
+            FREE_OBJECT(vm, ObjFn, object);
             break;
         }
 
@@ -298,22 +301,22 @@ void free_object(PyroVM* vm, Obj* object) {
         case OBJ_WEAKREF_MAP: {
             ObjMap* map = (ObjMap*)object;
             FREE_ARRAY(vm, MapEntry, map->entries, map->capacity);
-            FREE(vm, ObjMap, object);
+            FREE_OBJECT(vm, ObjMap, object);
             break;
         }
 
         case OBJ_MAP_ITER: {
-            FREE(vm, ObjMapIter, object);
+            FREE_OBJECT(vm, ObjMapIter, object);
             break;
         }
 
         case OBJ_MODULE: {
-            FREE(vm, ObjModule, object);
+            FREE_OBJECT(vm, ObjModule, object);
             break;
         }
 
         case OBJ_NATIVE_FN: {
-            FREE(vm, ObjNativeFn, object);
+            FREE_OBJECT(vm, ObjNativeFn, object);
             break;
         }
 
@@ -321,12 +324,12 @@ void free_object(PyroVM* vm, Obj* object) {
             ObjStr* string = (ObjStr*)object;
             ObjMap_remove(vm->strings, OBJ_VAL(string));
             FREE_ARRAY(vm, char, string->bytes, string->length + 1);
-            FREE(vm, ObjStr, object);
+            FREE_OBJECT(vm, ObjStr, object);
             break;
         }
 
         case OBJ_STR_ITER: {
-            FREE(vm, ObjStrIter, object);
+            FREE_OBJECT(vm, ObjStrIter, object);
             break;
         }
 
@@ -337,27 +340,29 @@ void free_object(PyroVM* vm, Obj* object) {
         }
 
         case OBJ_TUP_ITER: {
-            FREE(vm, ObjTupIter, object);
+            FREE_OBJECT(vm, ObjTupIter, object);
             break;
         }
 
         case OBJ_UPVALUE: {
-            FREE(vm, ObjUpvalue, object);
+            FREE_OBJECT(vm, ObjUpvalue, object);
             break;
         }
 
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
             FREE_ARRAY(vm, Value, vec->values, vec->capacity);
-            FREE(vm, ObjVec, object);
+            FREE_OBJECT(vm, ObjVec, object);
             break;
         }
 
         case OBJ_VEC_ITER: {
-            FREE(vm, ObjVecIter, object);
+            FREE_OBJECT(vm, ObjVecIter, object);
             break;
         }
     }
+
+    #undef FREE_OBJECT
 }
 
 
