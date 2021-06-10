@@ -246,11 +246,13 @@ void* reallocate(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) {
 
     void* result = realloc(pointer, new_size);
     if (result == NULL) {
-        // TODO: actually handle this.
-        printf("failed to allocate memory\n");
-        assert(false);
-        exit(1);
+        pyro_err(vm, "Error: Out of memory.\n");
+        free(pointer);
+        vm->exit_flag = true;
+        vm->exit_code = 127;
+        return NULL;
     }
+
     return result;
 }
 
@@ -380,15 +382,20 @@ void mark_object(PyroVM* vm, Obj* object) {
 
     // Add the object to the worklist of grey objects.
     if (vm->grey_count == vm->grey_capacity) {
-        vm->grey_capacity = GROW_CAPACITY(vm->grey_capacity);
-        vm->grey_stack = (Obj**)realloc(vm->grey_stack, sizeof(Obj*) * vm->grey_capacity);
-        if (vm->grey_stack == NULL) {
-            // Todo: handle this.
-            printf("failed to allocate grey stack\n");
-            assert(false);
-            exit(1);
+        size_t new_capacity = GROW_CAPACITY(vm->grey_capacity);
+        void* new_array = realloc(vm->grey_stack, sizeof(Obj*) * new_capacity);
+
+        if (new_array == NULL) {
+            pyro_err(vm, "Error: Out of memory.\n");
+            vm->exit_flag = true;
+            vm->exit_code = 127;
+            return;
         }
+
+        vm->grey_capacity = new_capacity;
+        vm->grey_stack = new_array;
     }
+
     vm->grey_stack[vm->grey_count++] = object;
 }
 
