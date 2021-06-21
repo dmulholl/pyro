@@ -1,7 +1,6 @@
 #include "utf8.h"
 
 
-// Attempts to read a utf-8-encoded unicode codepoint from the buffer [src].
 bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out) {
     if (src_len == 0) {
         return false;
@@ -67,9 +66,6 @@ bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out)
 }
 
 
-// Writes a unicode codepoint to the buffer [dst], encoded as utf-8.
-// Returns the number of bytes written (between 1 and 4).
-// Does not check that [codepoint] is within the valid range for unicode codepoints.
 uint8_t pyro_write_utf8_codepoint(uint32_t codepoint, uint8_t dst[]) {
     if (codepoint <= 0x7f) {
         dst[0] = codepoint;
@@ -91,4 +87,3 @@ uint8_t pyro_write_utf8_codepoint(uint32_t codepoint, uint8_t dst[]) {
         return 4;
     }
 }
-

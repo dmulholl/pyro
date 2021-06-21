@@ -1051,6 +1051,7 @@ static void get_named_variable(Parser* parser, Token name) {
     emit_u16(parser, const_index);
 }
 
+
 // Emits bytecode to set the named variable to the value on top of the stack.
 static void set_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->compiler, &name);

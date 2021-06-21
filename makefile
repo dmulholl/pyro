@@ -10,7 +10,7 @@ LGC = -D PYRO_DEBUG_LOG_GC
 
 TRACE = -D PYRO_DEBUG_TRACE_EXECUTION -D PYRO_DEBUG_PRINT_CODE
 
-FILES = src/lib/*.c src/std/*.c src/bin/*.c
+FILES = src/lib/*.c src/std/*.c src/cli/*.c
 
 # ------------- #
 # Phony Targets #
