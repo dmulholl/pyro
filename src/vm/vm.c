@@ -2,7 +2,7 @@
 #include "opcodes.h"
 #include "debug.h"
 #include "compiler.h"
-#include "memory.h"
+#include "heap.h"
 #include "values.h"
 #include "utils.h"
 
@@ -25,7 +25,6 @@ void pyro_out(PyroVM* vm, const char* format, ...) {
 }
 
 
-// Write a printf-style formatted string to the VM's error stream, unless that stream is NULL.
 void pyro_err(PyroVM* vm, const char* format, ...) {
     if (vm->err_file) {
         va_list args;
@@ -36,8 +35,43 @@ void pyro_err(PyroVM* vm, const char* format, ...) {
 }
 
 
+void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
+    if (file) {
+        for (size_t i = vm->frame_count; i > 0; i--) {
+            CallFrame* frame = &vm->frames[i - 1];
+            ObjFn* fn = frame->closure->fn;
+
+            size_t line_number = 1;
+            if (frame->ip > fn->code) {
+                size_t ip = frame->ip - fn->code - 1;
+                line_number = ObjFn_get_line_number(fn, ip);
+            }
+
+            fprintf(file, "%s:%zu\n", fn->source->bytes, line_number);
+            fprintf(file, "  --> in %s\n", fn->name->bytes);
+        }
+    }
+}
+
+
+void pyro_memory_error(PyroVM* vm) {
+    vm->mem_err_flag = true;
+    vm->halt_flag = true;
+    vm->exit_code = 127;
+
+    if (vm->err_file) {
+        fprintf(vm->err_file, "Error: Out of memory.\n");
+        if (vm->frame_count > 0) {
+            fprintf(vm->err_file, "\n");
+            pyro_print_stack_trace(vm, vm->err_file);
+        }
+    }
+}
+
+
 void pyro_panic(PyroVM* vm, const char* format, ...) {
     vm->panic_flag = true;
+    vm->halt_flag = true;
     vm->exit_code = 1;
 
     if (vm->err_file == NULL || vm->try_depth > 0) {
@@ -47,9 +81,14 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
     if (vm->frame_count > 0) {
         CallFrame* frame = &vm->frames[vm->frame_count - 1];
         ObjFn* fn = frame->closure->fn;
-        size_t ip = frame->ip - fn->code - 1;
-        size_t line = ObjFn_get_line_number(fn, ip);
-        fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line);
+
+        size_t line_number = 1;
+        if (frame->ip > fn->code) {
+            size_t ip = frame->ip - fn->code - 1;
+            line_number = ObjFn_get_line_number(fn, ip);
+        }
+
+        fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line_number);
     }
 
     fprintf(vm->err_file, "Error: ");
@@ -61,14 +100,7 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
 
     if (vm->frame_count > 1) {
         fprintf(vm->err_file, "\n");
-        for (size_t i = vm->frame_count; i > 0; i--) {
-            CallFrame* frame = &vm->frames[i - 1];
-            ObjFn* fn = frame->closure->fn;
-            size_t ip = frame->ip - fn->code - 1;
-            size_t line = ObjFn_get_line_number(fn, ip);
-            fprintf(vm->err_file, "%s:%zu\n", fn->source->bytes, line);
-            fprintf(vm->err_file, "  --> in %s\n", fn->name->bytes);
-        }
+        pyro_print_stack_trace(vm, vm->err_file);
     }
 }
 
@@ -341,7 +373,7 @@ static void run(PyroVM* vm) {
     #define READ_STRING()       AS_STR(READ_CONSTANT())
 
     for (;;) {
-        if (vm->exit_flag || vm->panic_flag) {
+        if (vm->halt_flag) {
             return;
         }
 
@@ -671,7 +703,7 @@ static void run(PyroVM* vm) {
                     }
 
                     module = pyro_import_module(vm, i + 1, args);
-                    if (vm->panic_flag || vm->exit_flag) {
+                    if (vm->halt_flag) {
                         break;
                     }
                     if (IS_NULL(module)) {
@@ -1097,12 +1129,13 @@ static void run(PyroVM* vm) {
                 call_value(vm, callee, 0);
                 run(vm);
 
-                if (vm->exit_flag) {
+                if (vm->exit_flag || vm->mem_err_flag) {
                     return;
                 }
 
                 if (vm->panic_flag) {
                     vm->panic_flag = false;
+                    vm->halt_flag = false;
                     vm->exit_code = 0;
                     vm->stack_top = stashed_stack_top - 1;
                     PUSH(ERR_VAL(vm->empty_tuple));
@@ -1119,7 +1152,7 @@ static void run(PyroVM* vm) {
             }
 
             default:
-                printf("ERROR: unknown opcode!\n");
+                printf("ERROR: invalid opcode!\n");
                 exit(1);
         }
     }
@@ -1160,6 +1193,8 @@ PyroVM* pyro_new_vm() {
     vm->next_gc_threshold = PYRO_INIT_GC_THRESHOLD;
     vm->exit_flag = false;
     vm->panic_flag = false;
+    vm->halt_flag = false;
+    vm->mem_err_flag = false;
     vm->exit_code = 0;
     vm->out_file = stdout;
     vm->err_file = stderr;
@@ -1257,14 +1292,17 @@ void pyro_free_vm(PyroVM* vm) {
 }
 
 
-void pyro_exec(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+    vm->halt_flag = false;
     vm->panic_flag = false;
     vm->exit_flag = false;
+    vm->mem_err_flag = false;
     vm->exit_code = 0;
 
     ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id, vm->main_module);
     if (fn == NULL) {
         vm->panic_flag = true;
+        vm->halt_flag = true;
         vm->exit_code = 1;
         return;
     }
@@ -1278,20 +1316,20 @@ void pyro_exec(PyroVM* vm, const char* src_code, size_t src_len, const char* src
     run(vm);
     pyro_pop(vm);
 
-    if (vm->exit_flag || vm->panic_flag) {
+    if (vm->halt_flag) {
         reset_stack(vm);
     }
     assert(vm->stack_top == vm->stack);
 }
 
 
-void pyro_exec_file(PyroVM* vm, const char* path) {
+void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
     FileData fd;
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
         return;
     }
 
-    pyro_exec(vm, fd.data, fd.size, path);
+    pyro_exec_code_as_main(vm, fd.data, fd.size, path);
     FREE_ARRAY(vm, char, fd.data, fd.size);
 }
 
@@ -1350,8 +1388,10 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                     continue;
                 }
 
+                vm->halt_flag = false;
                 vm->panic_flag = false;
                 vm->exit_flag = false;
+                vm->mem_err_flag = false;
                 vm->exit_code = 0;
 
                 pyro_push(vm, entry.value);
@@ -1359,15 +1399,24 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 run(vm);
                 pyro_pop(vm);
 
-                if (vm->exit_flag || vm->panic_flag) {
+                if (vm->halt_flag) {
                     reset_stack(vm);
                 }
                 assert(vm->stack_top == vm->stack);
 
                 if (vm->exit_flag) {
                     pyro_out(vm, "-- EXIT (%d) %s\n", vm->exit_code, name->bytes);
-                    tests_passed += 1;
-                } else if (vm->panic_flag) {
+                    tests_failed += 1;
+                    break;
+                }
+
+                if (vm->mem_err_flag) {
+                    pyro_out(vm, "-- MEMORY ERROR %s\n", name->bytes);
+                    tests_failed += 1;
+                    break;
+                }
+
+                if (vm->panic_flag) {
                     pyro_out(vm, "-- FAIL %s\n", name->bytes);
                     tests_failed += 1;
                 } else {
@@ -1525,7 +1574,6 @@ void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int ar
 }
 
 
-
 int pyro_get_exit_code(PyroVM* vm) {
     return vm->exit_code;
 }
@@ -1538,6 +1586,16 @@ bool pyro_get_exit_flag(PyroVM* vm) {
 
 bool pyro_get_panic_flag(PyroVM* vm) {
     return vm->panic_flag;
+}
+
+
+bool pyro_get_halt_flag(PyroVM* vm) {
+    return vm->halt_flag;
+}
+
+
+bool pyro_get_mem_err_flag(PyroVM* vm) {
+    return vm->mem_err_flag;
 }
 
 
@@ -1564,8 +1622,7 @@ void pyro_set_args(PyroVM* vm, int argc, char** argv) {
 }
 
 
-// Directory path must not end in a trailing slash.
-void pyro_add_import_dir(PyroVM* vm, const char* path) {
+void pyro_add_import_root(PyroVM* vm, const char* path) {
     Value path_value = STR_VAL(path);
     pyro_push(vm, path_value);
     ObjVec_append(vm->import_dirs, path_value, vm);

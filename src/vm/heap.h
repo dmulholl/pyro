@@ -1,5 +1,5 @@
-#ifndef pyro_memory_h
-#define pyro_memory_h
+#ifndef pyro_heap_h
+#define pyro_heap_h
 
 #include "common.h"
 #include "values.h"
@@ -26,8 +26,10 @@
     reallocate(vm, pointer, sizeof(type) * (capacity), 0)
 
 
-// All dynamic memory management is funneled through this function: allocating, reallocating,
-// and freeing. [old_size] and [new_size] are both in bytes. To allocate a new block of memory
+// This function is a wrapper around the C standard library's `realloc` and `free`; it adds
+// bookkeeping and triggers for the garbage collector. All the VM's dynamic memory management is
+// funneled through this single function: allocating, reallocating, and freeing.
+// [old_size] and [new_size] are both in bytes. To allocate a new block of memory
 // use [pointer = NULL] and [old_size = 0]. To free a block of memory set [new_size = 0].
 void* reallocate(PyroVM* vm, void* pointer, size_t old_size, size_t new_size);
 

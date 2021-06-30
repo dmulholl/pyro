@@ -11,6 +11,7 @@
 #include <inttypes.h>
 #include <ctype.h>
 #include <errno.h>
+
 #include <libgen.h>
 
 #include "../pyro.h"
@@ -26,16 +27,16 @@ static void run_file(ArgParser* parser) {
     free(args);
 
     char* path_copy = strdup(path);
-    pyro_add_import_dir(vm, dirname(path_copy));
+    pyro_add_import_root(vm, dirname(path_copy));
     free(path_copy);
 
-    pyro_exec_file(vm, path);
-    if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+    pyro_exec_file_as_main(vm, path);
+    if (pyro_get_halt_flag(vm)) {
         exit(pyro_get_exit_code(vm));
     }
 
     pyro_run_main_func(vm);
-    if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+    if (pyro_get_halt_flag(vm)) {
         exit(pyro_get_exit_code(vm));
     }
 
@@ -48,36 +49,45 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         return;
     }
 
-    int tests_passed = 0;
-    int tests_failed = 0;
+    int funcs_passed = 0;
+    int funcs_failed = 0;
     int files_passed = 0;
     int files_failed = 0;
 
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_arg(cmd_parser, i);
-        PyroVM* vm = pyro_new_vm();
-
         printf("## Testing: %s\n", path);
 
+        PyroVM* vm = pyro_new_vm();
+
         char* path_copy = strdup(path);
-        pyro_add_import_dir(vm, dirname(path_copy));
+        pyro_add_import_root(vm, dirname(path_copy));
         free(path_copy);
 
         if (!ap_found(cmd_parser, "errors")) {
             pyro_set_err_file(vm, NULL);
         }
 
-        pyro_exec_file(vm, path);
+        pyro_exec_file_as_main(vm, path);
 
         if (pyro_get_exit_flag(vm)) {
             printf("-- EXIT (%d)\n\n", pyro_get_exit_code(vm));
-            files_passed += 1;
+            files_failed += 1;
+            pyro_free_vm(vm);
             continue;
         }
 
         if (pyro_get_panic_flag(vm)) {
             printf("-- FAIL\n\n");
             files_failed += 1;
+            pyro_free_vm(vm);
+            continue;
+        }
+
+        if (pyro_get_mem_err_flag(vm)) {
+            printf("-- MEMORY ERROR\n\n");
+            files_failed += 1;
+            pyro_free_vm(vm);
             continue;
         }
 
@@ -85,8 +95,8 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         int failed = 0;
         pyro_run_test_funcs(vm, &passed, &failed);
 
-        tests_passed += passed;
-        tests_failed += failed;
+        funcs_passed += passed;
+        funcs_failed += failed;
 
         if (passed + failed == 0) {
             printf("-- PASS\n\n");
@@ -114,8 +124,8 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         "    [%d/%d files passed, %d/%d test functions passed.]\n",
         files_passed,
         files_passed + files_failed,
-        tests_passed,
-        tests_passed + tests_failed
+        funcs_passed,
+        funcs_passed + funcs_failed
     );
 
     printf("--------\n");

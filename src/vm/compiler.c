@@ -1,7 +1,7 @@
 #include "compiler.h"
 #include "debug.h"
 #include "opcodes.h"
-#include "memory.h"
+#include "heap.h"
 #include "vm.h"
 #include "utf8.h"
 #include "utils.h"

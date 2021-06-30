@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "heap.h"
 #include "vm.h"
 #include "compiler.h"
 
@@ -244,16 +244,7 @@ void* reallocate(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) {
         return NULL;
     }
 
-    void* result = realloc(pointer, new_size);
-    if (result == NULL) {
-        pyro_err(vm, "Error: Out of memory.\n");
-        free(pointer);
-        vm->exit_flag = true;
-        vm->exit_code = 127;
-        return NULL;
-    }
-
-    return result;
+    return realloc(pointer, new_size);
 }
 
 

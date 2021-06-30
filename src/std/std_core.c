@@ -1,10 +1,10 @@
 #include "std_core.h"
 
-#include "../lib/values.h"
-#include "../lib/vm.h"
-#include "../lib/utils.h"
-#include "../lib/memory.h"
-#include "../lib/utf8.h"
+#include "../vm/values.h"
+#include "../vm/vm.h"
+#include "../vm/utils.h"
+#include "../vm/heap.h"
+#include "../vm/utf8.h"
 
 
 // ---- //
@@ -726,6 +726,7 @@ static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
     vm->exit_flag = true;
+    vm->halt_flag = true;
     vm->exit_code = args[0].as.i64;
     return NULL_VAL();
 }

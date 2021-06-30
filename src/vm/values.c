@@ -1,5 +1,5 @@
 #include "values.h"
-#include "memory.h"
+#include "heap.h"
 #include "vm.h"
 #include "utils.h"
 #include "utf8.h"
