@@ -27,9 +27,9 @@ bool pyro_get_mem_err_flag(PyroVM* vm);
 
 void pyro_set_args(PyroVM* vm, int argc, char** argv);
 
-// Append an entry to the list of directories checked when attempting to import a module.
-// [path] should be a directory path without a trailing slash. Use "." for the current working
-// directory, "" for the root directory.
+// This function appends an entry to the list of directories checked when attempting to import a
+// module. [path] should be a directory path, optionally ending with a single trailing slash '/'.
+// Use "." for the current working directory, "/" for the root directory.
 void pyro_add_import_root(PyroVM* vm, const char* path);
 
 #endif

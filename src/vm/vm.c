@@ -54,7 +54,11 @@ void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
 }
 
 
-void pyro_memory_error(PyroVM* vm) {
+void pyro_out_of_memory(PyroVM* vm) {
+    if (vm->mem_err_flag) {
+        return;
+    }
+
     vm->mem_err_flag = true;
     vm->halt_flag = true;
     vm->exit_code = 127;
@@ -70,6 +74,10 @@ void pyro_memory_error(PyroVM* vm) {
 
 
 void pyro_panic(PyroVM* vm, const char* format, ...) {
+    if (vm->mem_err_flag) {
+        return;
+    }
+
     vm->panic_flag = true;
     vm->halt_flag = true;
     vm->exit_code = 1;
@@ -109,17 +117,29 @@ static Value pyro_import_module(PyroVM* vm, int arg_count, Value* args) {
     for (size_t i = 0; i < vm->import_dirs->count; i++) {
         ObjStr* base = AS_STR(vm->import_dirs->values[i]);
 
-        size_t path_length = base->length + 1;
+        bool has_trailing_slash = false;
+        if (base->length > 0 && base->bytes[base->length - 1] == '/') {
+            has_trailing_slash = true;
+        }
+
+        size_t path_length = has_trailing_slash ? base->length : base->length + 1;
         for (int j = 0; j < arg_count; j++) {
             path_length += AS_STR(args[j])->length + 1;
         }
-        path_length += 4 + 5; // add space for a [pyro] or [self.pyro] suffix
+        path_length += 4 + 5; // add space for a [.pyro] or [/self.pyro] suffix
+
+        char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
+        if (path == NULL) {
+            pyro_out_of_memory(vm);
+            return NULL_VAL();
+        }
 
         // We start with path = BASE/
-        char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
         memcpy(path, base->bytes, base->length);
         size_t path_count = base->length;
-        path[path_count++] = '/';
+        if (!has_trailing_slash) {
+            path[path_count++] = '/';
+        }
 
         // Given 'import foo::bar::baz', assemble path = BASE/foo/bar/baz/
         for (int j = 0; j < arg_count; j++) {
