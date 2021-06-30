@@ -1,0 +1,13 @@
+class Foo {
+    def $init(arg) {
+        if arg == "panic" {
+            $panic("oh no!");
+        }
+    }
+}
+
+var foo1 = try Foo("okay");
+assert !$is_err(foo1);
+
+var foo2 = try Foo("panic");
+assert $is_err(foo2);
