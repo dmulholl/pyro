@@ -84,7 +84,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
             continue;
         }
 
-        if (pyro_get_mem_err_flag(vm)) {
+        if (pyro_get_memory_error_flag(vm)) {
             printf("-- MEMORY ERROR\n\n");
             files_failed += 1;
             pyro_free_vm(vm);

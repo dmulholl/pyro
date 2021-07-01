@@ -23,8 +23,9 @@ int pyro_get_exit_code(PyroVM* vm);
 bool pyro_get_exit_flag(PyroVM* vm);
 bool pyro_get_panic_flag(PyroVM* vm);
 bool pyro_get_halt_flag(PyroVM* vm);
-bool pyro_get_mem_err_flag(PyroVM* vm);
+bool pyro_get_memory_error_flag(PyroVM* vm);
 
+// This function sets the content of the global $args variable, a tuple of strings.
 void pyro_set_args(PyroVM* vm, int argc, char** argv);
 
 // This function appends an entry to the list of directories checked when attempting to import a

@@ -54,12 +54,12 @@ void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
 }
 
 
-void pyro_out_of_memory(PyroVM* vm) {
-    if (vm->mem_err_flag) {
+void pyro_memory_error(PyroVM* vm) {
+    if (vm->memory_error_flag) {
         return;
     }
 
-    vm->mem_err_flag = true;
+    vm->memory_error_flag = true;
     vm->halt_flag = true;
     vm->exit_code = 127;
 
@@ -74,7 +74,7 @@ void pyro_out_of_memory(PyroVM* vm) {
 
 
 void pyro_panic(PyroVM* vm, const char* format, ...) {
-    if (vm->mem_err_flag) {
+    if (vm->memory_error_flag) {
         return;
     }
 
@@ -130,7 +130,7 @@ static Value pyro_import_module(PyroVM* vm, int arg_count, Value* args) {
 
         char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
         if (path == NULL) {
-            pyro_out_of_memory(vm);
+            pyro_memory_error(vm);
             return NULL_VAL();
         }
 
@@ -1149,7 +1149,7 @@ static void run(PyroVM* vm) {
                 call_value(vm, callee, 0);
                 run(vm);
 
-                if (vm->exit_flag || vm->mem_err_flag) {
+                if (vm->exit_flag || vm->memory_error_flag) {
                     return;
                 }
 
@@ -1214,7 +1214,7 @@ PyroVM* pyro_new_vm() {
     vm->exit_flag = false;
     vm->panic_flag = false;
     vm->halt_flag = false;
-    vm->mem_err_flag = false;
+    vm->memory_error_flag = false;
     vm->exit_code = 0;
     vm->out_file = stdout;
     vm->err_file = stderr;
@@ -1316,7 +1316,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     vm->halt_flag = false;
     vm->panic_flag = false;
     vm->exit_flag = false;
-    vm->mem_err_flag = false;
+    vm->memory_error_flag = false;
     vm->exit_code = 0;
 
     ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id, vm->main_module);
@@ -1411,7 +1411,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 vm->halt_flag = false;
                 vm->panic_flag = false;
                 vm->exit_flag = false;
-                vm->mem_err_flag = false;
+                vm->memory_error_flag = false;
                 vm->exit_code = 0;
 
                 pyro_push(vm, entry.value);
@@ -1430,7 +1430,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                     break;
                 }
 
-                if (vm->mem_err_flag) {
+                if (vm->memory_error_flag) {
                     pyro_out(vm, "-- MEMORY ERROR %s\n", name->bytes);
                     tests_failed += 1;
                     break;
@@ -1614,8 +1614,8 @@ bool pyro_get_halt_flag(PyroVM* vm) {
 }
 
 
-bool pyro_get_mem_err_flag(PyroVM* vm) {
-    return vm->mem_err_flag;
+bool pyro_get_memory_error_flag(PyroVM* vm) {
+    return vm->memory_error_flag;
 }
 
 

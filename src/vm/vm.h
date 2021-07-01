@@ -27,7 +27,7 @@ struct PyroVM {
     bool halt_flag;
     bool exit_flag;
     bool panic_flag;
-    bool mem_err_flag;
+    bool memory_error_flag;
     int exit_code;
     int try_depth;
 
