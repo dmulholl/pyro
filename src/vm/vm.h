@@ -96,6 +96,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 Value pyro_call_method(PyroVM* vm, Value method, int arg_count);
 
 void pyro_panic(PyroVM* vm, const char* format, ...);
+void pyro_memory_error(PyroVM* vm);
 
 // Write a printf-style formatted string to the VM's output stream, unless that stream is NULL.
 void pyro_out(PyroVM* vm, const char* format, ...);

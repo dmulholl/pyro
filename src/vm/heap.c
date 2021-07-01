@@ -225,7 +225,7 @@ static void trace_references(PyroVM* vm) {
 }
 
 
-void* reallocate(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) {
+void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) {
     vm->bytes_allocated -= old_size;
     vm->bytes_allocated += new_size;
 
@@ -254,7 +254,7 @@ void free_object(PyroVM* vm, Obj* object) {
     #endif
 
     #define FREE_OBJECT(vm, type, pointer) \
-        reallocate(vm, pointer, sizeof(type), 0)
+        pyro_realloc(vm, pointer, sizeof(type), 0)
 
     switch(object->type) {
         case OBJ_BOUND_METHOD: {
@@ -286,7 +286,7 @@ void free_object(PyroVM* vm, Obj* object) {
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             int num_fields = instance->obj.class->field_initializers->count;
-            reallocate(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(Value), 0);
+            pyro_realloc(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(Value), 0);
             break;
         }
 
@@ -328,7 +328,7 @@ void free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
-            reallocate(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);
+            pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);
             break;
         }
 

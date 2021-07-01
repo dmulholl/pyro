@@ -63,12 +63,24 @@ void pyro_memory_error(PyroVM* vm) {
     vm->halt_flag = true;
     vm->exit_code = 127;
 
-    if (vm->err_file) {
-        fprintf(vm->err_file, "Error: Out of memory.\n");
-        if (vm->frame_count > 0) {
-            fprintf(vm->err_file, "\n");
-            pyro_print_stack_trace(vm, vm->err_file);
+    if (vm->frame_count > 0) {
+        CallFrame* frame = &vm->frames[vm->frame_count - 1];
+        ObjFn* fn = frame->closure->fn;
+
+        size_t line_number = 1;
+        if (frame->ip > fn->code) {
+            size_t ip = frame->ip - fn->code - 1;
+            line_number = ObjFn_get_line_number(fn, ip);
         }
+
+        pyro_err(vm, "%s:%zu\n  ", fn->source->bytes, line_number);
+    }
+
+    pyro_err(vm, "Error: Out of memory.\n");
+
+    if (vm->frame_count > 1) {
+        pyro_err(vm, "\n");
+        pyro_print_stack_trace(vm, vm->err_file);
     }
 }
 

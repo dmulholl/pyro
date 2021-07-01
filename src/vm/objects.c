@@ -1,0 +1,834 @@
+#include "values.h"
+#include "heap.h"
+#include "vm.h"
+#include "utils.h"
+#include "opcodes.h"
+
+
+#define ALLOCATE_OBJECT(vm, type, type_enum) \
+    (type*)allocate_object(vm, sizeof(type), type_enum)
+
+
+#define ALLOCATE_FLEX_OBJECT(vm, type, type_enum, value_count, value_type) \
+    (type*)allocate_object(vm, sizeof(type) + value_count * sizeof(value_type), type_enum)
+
+
+// This function creates a new heap-allocated object and adds it to the VM's linked list.
+// It triggers a memory error and returns NULL if the attempt to allocate memory fails.
+static Obj* allocate_object(PyroVM* vm, size_t size, ObjType type) {
+    Obj* object = pyro_realloc(vm, NULL, 0, size);
+    if (object == NULL) {
+        pyro_memory_error(vm);
+        return NULL;
+    }
+
+    object->type = type;
+    object->is_marked = false;
+    object->class = NULL;
+
+    object->next = vm->objects;
+    vm->objects = object;
+
+    #ifdef PYRO_DEBUG_LOG_GC
+        pyro_out(vm, ">> %p allocate %zu bytes for %s\n", (void*)object, size, pyro_stringify_obj_type(type));
+    #endif
+
+    return object;
+}
+
+
+// ------ //
+// ObjTup //
+// ------ //
+
+
+ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
+    ObjTup* tup = ALLOCATE_FLEX_OBJECT(vm, ObjTup, OBJ_TUP, count, Value);
+    if (tup == NULL) {
+        return NULL;
+    }
+
+    tup->obj.class = vm->tup_class;
+    tup->count = count;
+    for (size_t i = 0; i < count; i++) {
+        tup->values[i] = NULL_VAL();
+    }
+    return tup;
+}
+
+
+uint64_t ObjTup_hash(ObjTup* tup) {
+    uint64_t hash = 0;
+    for (size_t i = 0; i < tup->count; i++) {
+        hash ^= pyro_hash(tup->values[i]);
+    }
+    return hash;
+}
+
+
+bool ObjTup_check_equal(ObjTup* a, ObjTup* b) {
+    if (a->count == b->count) {
+        for (size_t i = 0; i < a->count; i++) {
+            if (!pyro_check_equal(a->values[i], b->values[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+
+ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm) {
+    ObjTupIter* iter = ALLOCATE_OBJECT(vm, ObjTupIter, OBJ_TUP_ITER);
+    if (iter == NULL) {
+        return NULL;
+    }
+
+    iter->obj.class = vm->tup_iter_class;
+    iter->tup = tup;
+    iter->next_index = 0;
+    return iter;
+}
+
+
+// ---------- //
+// ObjClosure //
+// ---------- //
+
+
+ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn) {
+    ObjClosure* closure = ALLOCATE_OBJECT(vm, ObjClosure, OBJ_CLOSURE);
+    if (closure == NULL) {
+        return NULL;
+    }
+
+    closure->fn = fn;
+    closure->upvalues = NULL;
+    closure->upvalue_count = 0;
+
+    if (fn->upvalue_count > 0) {
+        pyro_push(vm, OBJ_VAL(closure));
+        closure->upvalues = ALLOCATE_ARRAY(vm, ObjUpvalue*, fn->upvalue_count);
+        pyro_pop(vm);
+
+        if (closure->upvalues == NULL) {
+            pyro_memory_error(vm);
+            return NULL;
+        }
+
+        closure->upvalue_count = fn->upvalue_count;
+        for (int i = 0; i < fn->upvalue_count; i++) {
+            closure->upvalues[i] = NULL;
+        }
+    }
+
+    return closure;
+}
+
+
+// ---------- //
+// ObjUpvalue //
+// ---------- //
+
+
+ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
+    ObjUpvalue* upvalue = ALLOCATE_OBJECT(vm, ObjUpvalue, OBJ_UPVALUE);
+    upvalue->location = addr;
+    upvalue->closed = NULL_VAL();
+    upvalue->next = NULL;
+    return upvalue;
+}
+
+
+// -------- //
+// ObjClass //
+// -------- //
+
+
+ObjClass* ObjClass_new(PyroVM* vm, ObjStr* name) {
+    ObjClass* class = ALLOCATE_OBJECT(vm, ObjClass, OBJ_CLASS);
+    class->name = name;
+    class->methods = NULL;
+    class->field_initializers = NULL;
+    class->field_indexes = NULL;
+
+    pyro_push(vm, OBJ_VAL(class));
+    class->methods = ObjMap_new(vm);
+    class->field_initializers = ObjVec_new(vm);
+    class->field_indexes = ObjMap_new(vm);
+    pyro_pop(vm);
+
+    return class;
+}
+
+
+// ----------- //
+// ObjInstance //
+// ----------- //
+
+
+ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
+    int num_fields = class->field_initializers->count;
+    ObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, ObjInstance, OBJ_INSTANCE, num_fields, Value);
+    instance->obj.class = class;
+    memcpy(instance->fields, class->field_initializers->values, sizeof(Value) * num_fields);
+    return instance;
+}
+
+
+// ------ //
+// ObjMap //
+// ------ //
+
+
+static MapEntry* find_entry(MapEntry* entries, size_t capacity, Value key) {
+    // Capacity is always a power of 2 so we can use bitwise-AND as a fast
+    // modulo operator, i.e. this is equivalent to: index = key_hash % capacity.
+    size_t index = (size_t)pyro_hash(key) & (capacity - 1);
+    MapEntry* tombstone = NULL;
+
+    for (;;) {
+        MapEntry* entry = &entries[index];
+
+        if (IS_EMPTY(entry->key)) {
+            return tombstone == NULL ? entry : tombstone;
+        } else if (IS_TOMBSTONE(entry->key)) {
+            if (tombstone == NULL) tombstone = entry;
+        } else if (pyro_check_equal(key, entry->key)) {
+            return entry;
+        }
+
+        index = (index + 1) & (capacity - 1);
+    }
+}
+
+
+static ObjStr* find_string(ObjMap* map, const char* string, size_t length, uint64_t hash) {
+    if (map->count == 0) {
+        return NULL;
+    }
+
+    size_t index = (size_t)hash & (map->capacity - 1);
+
+    for (;;) {
+        MapEntry* entry = &map->entries[index];
+
+        if (IS_EMPTY(entry->key)) {
+            return NULL;
+        }
+
+        if (IS_STR(entry->key)) {
+            if (AS_STR(entry->key)->length == length) {
+                if (AS_STR(entry->key)->hash == hash) {
+                    if (memcmp(AS_STR(entry->key)->bytes, string, length) == 0) {
+                        return AS_STR(entry->key);
+                    }
+                }
+            }
+        }
+
+        index = (index + 1) & (map->capacity - 1);
+    }
+}
+
+
+static void resize_map(ObjMap* map, size_t new_capacity, PyroVM* vm) {
+    MapEntry* new_entries = ALLOCATE_ARRAY(vm, MapEntry, new_capacity);
+    for (size_t i = 0; i < new_capacity; i++) {
+        new_entries[i].key = EMPTY_VAL();
+    }
+
+    size_t new_count = 0;
+    for (size_t i = 0; i < map->capacity; i++) {
+        MapEntry* entry = &map->entries[i];
+        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+        MapEntry* dest = find_entry(new_entries, new_capacity, entry->key);
+        dest->key = entry->key;
+        dest->value = entry->value;
+        new_count++;
+    }
+
+    FREE_ARRAY(vm, MapEntry, map->entries, map->capacity);
+    map->entries = new_entries;
+    map->capacity = new_capacity;
+    map->count = new_count;
+    map->tombstone_count = 0;
+    map->max_load_threshold = new_capacity * PYRO_MAX_HASHMAP_LOAD;
+}
+
+
+ObjMap* ObjMap_new(PyroVM* vm) {
+    ObjMap* map = ALLOCATE_OBJECT(vm, ObjMap, OBJ_MAP);
+    map->count = 0;
+    map->capacity = 0;
+    map->tombstone_count = 0;
+    map->entries = NULL;
+    map->max_load_threshold = 0;
+    map->obj.class = vm->map_class;
+    return map;
+}
+
+
+ObjMap* ObjMap_weakref(PyroVM* vm) {
+    ObjMap* map = ObjMap_new(vm);
+    map->obj.type = OBJ_WEAKREF_MAP;
+    return map;
+}
+
+
+// Returns true if a new entry was added to the map, false if an existing entry was updated.
+bool ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
+    if (map->count == map->max_load_threshold) {
+        size_t new_capacity = GROW_CAPACITY(map->capacity);
+        resize_map(map, new_capacity, vm);
+    }
+
+    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    bool is_new_key = false;
+
+    if (IS_EMPTY(entry->key)) {
+        is_new_key = true;
+        map->count++;
+    } else if (IS_TOMBSTONE(entry->key)) {
+        is_new_key = true;
+        map->tombstone_count--;
+    }
+
+    entry->key = key;
+    entry->value = value;
+    return is_new_key;
+}
+
+
+// Returns true if the key was found in the map.
+bool ObjMap_get(ObjMap* map, Value key, Value* value) {
+    if (map->count == 0) {
+        return false;
+    }
+
+    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+        return false;
+    }
+
+    *value = entry->value;
+    return true;
+}
+
+
+// Returns true if a matching entry was found.
+bool ObjMap_remove(ObjMap* map, Value key) {
+    if (map->count == 0) {
+        return false;
+    }
+
+    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+        return false;
+    }
+
+    entry->key = TOMBSTONE_VAL();
+    map->tombstone_count++;
+    return true;
+}
+
+
+// Copies all the entries from [src] to [dst].
+void ObjMap_copy(ObjMap* src, ObjMap* dst, PyroVM* vm) {
+    for (size_t i = 0; i < src->capacity; i++) {
+        MapEntry* entry = &src->entries[i];
+        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+        ObjMap_set(dst, entry->key, entry->value, vm);
+    }
+}
+
+
+ObjMapIter* ObjMapIter_new(ObjMap* map, MapIterType iter_type, PyroVM* vm) {
+    ObjMapIter* iter = ALLOCATE_OBJECT(vm, ObjMapIter, OBJ_MAP_ITER);
+    iter->obj.class = vm->map_iter_class;
+    iter->map = map;
+    iter->iter_type = iter_type;
+    iter->next_index = 0;
+    return iter;
+}
+
+
+Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm) {
+    while (iterator->next_index < iterator->map->capacity) {
+        MapEntry* entry = &iterator->map->entries[iterator->next_index];
+        iterator->next_index++;
+
+        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        switch (iterator->iter_type) {
+            case MAP_ITER_KEYS:
+                return entry->key;
+
+            case MAP_ITER_VALUES:
+                return entry->value;
+
+            case MAP_ITER_ENTRIES: {
+                ObjTup* tup = ObjTup_new(2, vm);
+                tup->values[0] = entry->key;
+                tup->values[1] = entry->value;
+                return OBJ_VAL(tup);
+            }
+        }
+    }
+
+    return ERR_VAL(vm->empty_tuple);
+}
+
+
+// ------ //
+// ObjStr //
+// ------ //
+
+
+// Create a new string object taking ownership of the heap-allocated array [bytes].
+// [length] is the number of bytes in the string, not including the terminating null.
+static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t hash) {
+    ObjStr* string = ALLOCATE_OBJECT(vm, ObjStr, OBJ_STR);
+    string->length = length;
+    string->hash = hash;
+    string->bytes = bytes;
+    string->obj.class = vm->str_class;
+
+    pyro_push(vm, OBJ_VAL(string));
+    ObjMap_set(vm->strings, OBJ_VAL(string), NULL_VAL(), vm);
+    pyro_pop(vm);
+
+    return string;
+}
+
+
+// Create a new string object by taking ownership of a pre-existing heap-allocated, null-terminated
+// byte array where [length] is the number of bytes in the string and [length + 1] is the
+// number of bytes in the array.
+ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm) {
+    // Verify that the interned strings pool has been initialized.
+    assert(vm->strings != NULL);
+
+    uint64_t hash = PYRO_STRING_HASH(src, length);
+    ObjStr* interned = find_string(vm->strings, src, length, hash);
+    if (interned) {
+        FREE_ARRAY(vm, char, src, length + 1);
+        return interned;
+    }
+
+    return allocate_string(vm, src, length, hash);
+}
+
+
+// Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
+ObjStr* ObjStr_empty(PyroVM* vm) {
+    if (vm->empty_string) {
+        return vm->empty_string;
+    }
+    char* bytes = ALLOCATE_ARRAY(vm, char, 1);
+    bytes[0] = '\0';
+    return ObjStr_take(bytes, 0, vm);
+}
+
+
+// Create a new string object by copying [length] bytes from [src], processing backslashed escapes.
+ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
+    if (length == 0) {
+        return ObjStr_empty(vm);
+    }
+
+    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    size_t count = pyro_unescape_string(src, length, dst);
+    dst[count] = '\0';
+
+    // If there were no backslashed escapes, [count] will be equal to [length].
+    // If there were escapes, [count] will be less than [length].
+    if (count < length) {
+        dst = REALLOCATE_ARRAY(vm, char, dst, length + 1, count + 1);
+    }
+
+    return ObjStr_take(dst, count, vm);
+}
+
+
+// Create a new string object by copying [length] bytes from [src], ignoring backslashed escapes.
+ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
+    if (length == 0) {
+        return ObjStr_empty(vm);
+    }
+
+    // Verify that the interned strings pool has been initialized.
+    assert(vm->strings != NULL);
+
+    uint64_t hash = PYRO_STRING_HASH(src, length);
+    ObjStr* interned = find_string(vm->strings, src, length, hash);
+    if (interned) {
+        return interned;
+    }
+
+    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    memcpy(dst, src, length);
+    dst[length] = '\0';
+    return allocate_string(vm, dst, length, hash);
+}
+
+
+// Create a new string object by concatenating two source strings.
+ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
+    if (src1->length == 0) return src2;
+    if (src2->length == 0) return src1;
+
+    size_t length = src1->length + src2->length;
+    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    memcpy(dst, src1->bytes, src1->length);
+    memcpy(dst + src1->length, src2->bytes, src2->length);
+    dst[length] = '\0';
+    return ObjStr_take(dst, length, vm);
+}
+
+
+ObjStrIter* ObjStrIter_new(ObjStr* string, StrIterType iter_type, PyroVM* vm) {
+    ObjStrIter* iter = ALLOCATE_OBJECT(vm, ObjStrIter, OBJ_STR_ITER);
+    iter->obj.class = vm->str_iter_class;
+    iter->string = string;
+    iter->iter_type = iter_type;
+    iter->next_index = 0;
+    return iter;
+}
+
+
+// ----- //
+// ObjFn //
+// ----- //
+
+
+ObjFn* ObjFn_new(PyroVM* vm) {
+    ObjFn* fn = ALLOCATE_OBJECT(vm, ObjFn, OBJ_FN);
+    fn->arity = 0;
+    fn->upvalue_count = 0;
+    fn->name = NULL;
+    fn->source = NULL;
+    fn->module = NULL;
+
+    fn->code = NULL;
+    fn->code_count = 0;
+    fn->code_capacity = 0;
+
+    fn->constants = NULL;
+    fn->constants_count = 0;
+    fn->constants_capacity = 0;
+
+    fn->first_line_number = 0;
+    fn->bpl = NULL;
+    fn->bpl_capacity = 0;
+
+    return fn;
+}
+
+
+void ObjFn_write(ObjFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
+    if (fn->code_count == fn->code_capacity) {
+        size_t old_capacity = fn->code_capacity;
+        fn->code_capacity = GROW_CAPACITY(old_capacity);
+        fn->code = REALLOCATE_ARRAY(vm, uint8_t, fn->code, old_capacity, fn->code_capacity);
+    }
+    fn->code[fn->code_count++] = byte;
+
+    if (fn->first_line_number == 0) {
+        fn->first_line_number = line_number;
+    }
+
+    size_t offset = line_number - fn->first_line_number;
+
+    if (fn->bpl_capacity < offset + 1) {
+        size_t old_capacity = fn->bpl_capacity;
+        fn->bpl_capacity += offset + 1 + 8; // allocating 8 spares is arbitrary
+        fn->bpl = REALLOCATE_ARRAY(vm, uint16_t, fn->bpl, old_capacity, fn->bpl_capacity);
+        for (size_t i = old_capacity; i < fn->bpl_capacity; i++) {
+            fn->bpl[i] = 0;
+        }
+    }
+
+    fn->bpl[offset] += 1;
+}
+
+
+// This method returns the source code line number corresponding to the bytecode instruction at
+// index [ip].
+size_t ObjFn_get_line_number(ObjFn* fn, size_t ip) {
+    size_t offset = 0;
+    size_t sum = 0;
+
+    while (offset < fn->bpl_capacity) {
+        sum += fn->bpl[offset];
+        if (sum > ip) {
+            break;
+        }
+        offset++;
+    }
+
+    return fn->first_line_number + offset;
+}
+
+
+// This method adds a value to the function's constant table and returns its index. If an identical
+// value is already present in the table it avoids adding a duplicate and returns the index of
+// the existing entry instead.
+size_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
+    for (size_t i = 0; i < fn->constants_count; i++) {
+        if (pyro_check_equal(value, fn->constants[i])) {
+            return i;
+        }
+    }
+
+    if (fn->constants_count == fn->constants_capacity) {
+        size_t new_capacity = GROW_CAPACITY(fn->constants_capacity);
+        pyro_push(vm, value);
+        Value* new_array = REALLOCATE_ARRAY(vm, Value, fn->constants, fn->constants_capacity, new_capacity);
+        pyro_pop(vm);
+
+        if (new_array == NULL) {
+            pyro_memory_error(vm);
+            return 0;
+        }
+
+        fn->constants_capacity = new_capacity;
+        fn->constants = new_array;
+    }
+
+    fn->constants[fn->constants_count++] = value;
+    return fn->constants_count - 1;
+}
+
+
+// Returns the length in bytes of the arguments for the opcode at the specified index.
+size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
+    switch (fn->code[ip]) {
+        case OP_ASSERT:
+        case OP_ADD:
+        case OP_CLOSE_UPVALUE:
+        case OP_DUP:
+        case OP_EQUAL:
+        case OP_FLOAT_DIV:
+        case OP_GREATER:
+        case OP_GREATER_EQUAL:
+        case OP_INHERIT:
+        case OP_ITER:
+        case OP_ITER_NEXT:
+        case OP_LESS:
+        case OP_LESS_EQUAL:
+        case OP_LOAD_FALSE:
+        case OP_LOAD_NULL:
+        case OP_LOAD_TRUE:
+        case OP_MULTIPLY:
+        case OP_NEGATE:
+        case OP_NOT:
+        case OP_NOT_EQUAL:
+        case OP_POP:
+        case OP_RETURN:
+        case OP_SUBTRACT:
+        case OP_TRUNC_DIV:
+        case OP_TRY:
+        case OP_GET_INDEX:
+        case OP_SET_INDEX:
+        case OP_DUP2:
+            return 0;
+
+        case OP_CALL:
+        case OP_ECHO:
+        case OP_GET_LOCAL:
+        case OP_GET_UPVALUE:
+        case OP_IMPORT:
+        case OP_SET_LOCAL:
+        case OP_SET_UPVALUE:
+            return 1;
+
+        case OP_BREAK:
+        case OP_CLASS:
+        case OP_DEFINE_GLOBAL:
+        case OP_FIELD:
+        case OP_GET_FIELD:
+        case OP_GET_GLOBAL:
+        case OP_GET_MEMBER:
+        case OP_GET_METHOD:
+        case OP_GET_SUPER_METHOD:
+        case OP_JUMP:
+        case OP_JUMP_IF_ERR:
+        case OP_JUMP_IF_FALSE:
+        case OP_JUMP_IF_NOT_ERR:
+        case OP_JUMP_IF_NOT_NULL:
+        case OP_JUMP_IF_TRUE:
+        case OP_LOAD_CONSTANT:
+        case OP_LOOP:
+        case OP_MAKE_MAP:
+        case OP_MAKE_VEC:
+        case OP_METHOD:
+        case OP_POP_JUMP_IF_FALSE:
+        case OP_SET_FIELD:
+        case OP_SET_GLOBAL:
+            return 2;
+
+        case OP_INVOKE_METHOD:
+        case OP_INVOKE_SUPER_METHOD:
+            return 3;
+
+        // 2 bytes for the constant index, plus two for each upvalue.
+        case OP_CLOSURE: {
+            uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
+            ObjFn* closure_fn = AS_FN(fn->constants[const_index]);
+            return 2 + closure_fn->upvalue_count * 2;
+        }
+
+        default:
+            printf("Compiler Error: unhandled opcode.\n");
+            assert(false);
+            exit(1);
+    }
+}
+
+
+// ----------- //
+// ObjNativeFn //
+// ----------- //
+
+
+ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arity) {
+    ObjNativeFn* native = ALLOCATE_OBJECT(vm, ObjNativeFn, OBJ_NATIVE_FN);
+    native->fn_ptr = fn_ptr;
+    native->name = name;
+    native->arity = arity;
+    return native;
+}
+
+
+// -------------- //
+// ObjBoundMethod //
+// -------------- //
+
+
+ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method) {
+    ObjBoundMethod* bound = ALLOCATE_OBJECT(vm, ObjBoundMethod, OBJ_BOUND_METHOD);
+    bound->receiver = receiver;
+    bound->method = method;
+    return bound;
+}
+
+
+// --------- //
+// ObjModule //
+// --------- //
+
+
+ObjModule* ObjModule_new(PyroVM* vm) {
+    ObjModule* module = ALLOCATE_OBJECT(vm, ObjModule, OBJ_MODULE);
+    module->globals = NULL;
+    module->submodules = NULL;
+
+    pyro_push(vm, OBJ_VAL(module));
+    module->globals = ObjMap_new(vm);
+    module->submodules = ObjMap_new(vm);
+    pyro_pop(vm);
+
+    return module;
+}
+
+
+// ------ //
+// ObjVec //
+// ------ //
+
+
+ObjVec* ObjVec_new(PyroVM* vm) {
+    ObjVec* vec = ALLOCATE_OBJECT(vm, ObjVec, OBJ_VEC);
+    vec->count = 0;
+    vec->capacity = 0;
+    vec->values = NULL;
+    vec->obj.class = vm->vec_class;
+    return vec;
+}
+
+
+ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
+    ObjVec* vec = ObjVec_new(vm);
+
+    pyro_push(vm, OBJ_VAL(vec));
+    Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
+    pyro_pop(vm);
+
+    vec->capacity = capacity;
+    vec->count = 0;
+    vec->values = value_array;
+
+    return vec;
+}
+
+
+ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm) {
+    ObjVec* vec = ObjVec_new(vm);
+
+    pyro_push(vm, OBJ_VAL(vec));
+    Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
+    pyro_pop(vm);
+
+    vec->capacity = capacity;
+    vec->count = capacity;
+    vec->values = value_array;
+
+    for (size_t i = 0; i < capacity; i++) {
+        vec->values[i] = fill_value;
+    }
+
+    return vec;
+}
+
+
+void ObjVec_append(ObjVec* vec, Value value, PyroVM* vm) {
+    if (vec->count == vec->capacity) {
+        size_t old_capacity = vec->capacity;
+        vec->capacity = GROW_CAPACITY(old_capacity);
+        vec->values = REALLOCATE_ARRAY(vm, Value, vec->values, old_capacity, vec->capacity);
+    }
+    vec->values[vec->count++] = value;
+}
+
+
+Value ObjVec_get(ObjVec* vec, size_t index, PyroVM* vm) {
+    if (index >= 0 && index < vec->count) {
+        return vec->values[index];
+    }
+    pyro_panic(vm, "Index out of range.");
+    return NULL_VAL();
+}
+
+
+void ObjVec_set(ObjVec* vec, size_t index, Value value, PyroVM* vm) {
+    if (index >= 0 && index < vec->count) {
+        vec->values[index] = value;
+        return;
+    }
+    pyro_panic(vm, "Index out of range.");
+}
+
+
+void ObjVec_copy(ObjVec* src, ObjVec* dst, PyroVM* vm) {
+    for (size_t i = 0; i < src->count; i++) {
+        ObjVec_append(dst, src->values[i], vm);
+    }
+}
+
+
+ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm) {
+    ObjVecIter* iter = ALLOCATE_OBJECT(vm, ObjVecIter, OBJ_VEC_ITER);
+    iter->obj.class = vm->vec_iter_class;
+    iter->vec = vec;
+    iter->next_index = 0;
+    return iter;
+}
+
