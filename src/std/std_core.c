@@ -85,32 +85,7 @@ static Value map_iter_iter(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMapIter* iterator = AS_MAP_ITER(args[-1]);
-
-    while (iterator->next_index < iterator->map->capacity) {
-        MapEntry* entry = &iterator->map->entries[iterator->next_index];
-        iterator->next_index++;
-
-        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
-            continue;
-        }
-
-        switch (iterator->iter_type) {
-            case MAP_ITER_KEYS:
-                return entry->key;
-
-            case MAP_ITER_VALUES:
-                return entry->value;
-
-            case MAP_ITER_ENTRIES: {
-                ObjTup* tup = ObjTup_new(2, vm);
-                tup->values[0] = entry->key;
-                tup->values[1] = entry->value;
-                return OBJ_VAL(tup);
-            }
-        }
-    }
-
-    return ERR_VAL(vm->empty_tuple);
+    return ObjMapIter_next(iterator, vm);
 }
 
 

@@ -153,6 +153,7 @@ typedef struct {
 } ObjMapIter;
 
 ObjMapIter* ObjMapIter_new(ObjMap* map, MapIterType iter_type, PyroVM* vm);
+Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm);
 
 
 /* ------ */
