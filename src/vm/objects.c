@@ -241,21 +241,25 @@ static ObjStr* find_string(ObjMap* map, const char* string, size_t length, uint6
 }
 
 
-static void resize_map(ObjMap* map, size_t new_capacity, PyroVM* vm) {
+static bool resize_map(ObjMap* map, size_t new_capacity, PyroVM* vm) {
     MapEntry* new_entries = ALLOCATE_ARRAY(vm, MapEntry, new_capacity);
+    if (!new_entries) {
+        return false;
+    }
+
     for (size_t i = 0; i < new_capacity; i++) {
         new_entries[i].key = EMPTY_VAL();
     }
 
     size_t new_count = 0;
     for (size_t i = 0; i < map->capacity; i++) {
-        MapEntry* entry = &map->entries[i];
-        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+        MapEntry* src = &map->entries[i];
+        if (IS_EMPTY(src->key) || IS_TOMBSTONE(src->key)) {
             continue;
         }
-        MapEntry* dest = find_entry(new_entries, new_capacity, entry->key);
-        dest->key = entry->key;
-        dest->value = entry->value;
+        MapEntry* dst = find_entry(new_entries, new_capacity, src->key);
+        dst->key = src->key;
+        dst->value = src->value;
         new_count++;
     }
 
@@ -265,6 +269,7 @@ static void resize_map(ObjMap* map, size_t new_capacity, PyroVM* vm) {
     map->count = new_count;
     map->tombstone_count = 0;
     map->max_load_threshold = new_capacity * PYRO_MAX_HASHMAP_LOAD;
+    return true;
 }
 
 
@@ -294,27 +299,61 @@ ObjMap* ObjMap_new_weakref(PyroVM* vm) {
 }
 
 
-// Returns true if a new entry was added to the map, false if an existing entry was updated.
-bool ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
-    if (map->count == map->max_load_threshold) {
+// Returns 0 if the entry was not added because additional memory could not be allocated.
+// Returns 1 if a new entry was successfully added to the map.
+// Returns 2 if an existing entry was successfully updated.
+int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
+    if (map->capacity == 0) {
         size_t new_capacity = GROW_CAPACITY(map->capacity);
-        resize_map(map, new_capacity, vm);
+        if (!resize_map(map, new_capacity, vm)) {
+            return 0;
+        }
     }
 
     MapEntry* entry = find_entry(map->entries, map->capacity, key);
-    bool is_new_key = false;
 
     if (IS_EMPTY(entry->key)) {
-        is_new_key = true;
+        if (map->count == map->max_load_threshold) {
+            size_t new_capacity = GROW_CAPACITY(map->capacity);
+            if (!resize_map(map, new_capacity, vm)) {
+                return 0;
+            }
+            entry = find_entry(map->entries, map->capacity, key);
+        }
+        entry->key = key;
+        entry->value = value;
         map->count++;
-    } else if (IS_TOMBSTONE(entry->key)) {
-        is_new_key = true;
+        return 1;
+    }
+
+    if (IS_TOMBSTONE(entry->key)) {
+        entry->key = key;
+        entry->value = value;
         map->tombstone_count--;
+        return 1;
     }
 
     entry->key = key;
     entry->value = value;
-    return is_new_key;
+    return 2;
+}
+
+
+// Attempts to update an existing entry. Returns true if successful, false if no corresponding
+// entry exists.
+bool ObjMap_update(ObjMap* map, Value key, Value value, PyroVM* vm) {
+    if (map->count == 0) {
+        return false;
+    }
+
+    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+        return false;
+    }
+
+    entry->key = key;
+    entry->value = value;
+    return true;
 }
 
 

@@ -141,9 +141,10 @@ struct ObjMap {
 ObjMap* ObjMap_new(PyroVM* vm);
 ObjMap* ObjMap_new_weakref(PyroVM* vm);
 bool ObjMap_get(ObjMap* map, Value key, Value* value);
-bool ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm);
+int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm);
 bool ObjMap_remove(ObjMap* map, Value key);
 void ObjMap_copy(ObjMap* src, ObjMap* dst, PyroVM* vm);
+bool ObjMap_update(ObjMap* map, Value key, Value value, PyroVM* vm);
 
 typedef struct {
     Obj obj;

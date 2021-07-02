@@ -1,12 +1,30 @@
-var foo = "blah";
-assert foo == "blah";
+var foo = "foo";
+assert foo == "foo";
 
 var bar = 5 + 3 * 2;
 assert bar == 11;
 
 var baz;
 var bam;
+
 baz = bam = 2 * 3 + 4 * 5;
+
 assert baz == 26;
 assert bam == 26;
 assert baz == bam;
+
+baz = "new baz";
+assert baz == "new baz";
+
+def change_foo() {
+    foo = "new foo";
+}
+
+change_foo();
+assert foo == "new foo";
+
+{
+    bar = "new bar";
+}
+
+assert bar = "new bar";

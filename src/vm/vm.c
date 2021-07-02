@@ -1072,10 +1072,8 @@ static void run(PyroVM* vm) {
             case OP_SET_GLOBAL: {
                 Value name = READ_CONSTANT();
                 ObjMap* globals = frame->closure->fn->module->globals;
-                if (ObjMap_set(globals, name, pyro_peek(vm, 0), vm)) {
-                    ObjMap_remove(globals, name);
-                    if (ObjMap_set(vm->globals, name, pyro_peek(vm, 0), vm)) {
-                        ObjMap_remove(vm->globals, name);
+                if (!ObjMap_update(globals, name, PEEK(0), vm)) {
+                    if (!ObjMap_update(vm->globals, name, PEEK(0), vm)) {
                         pyro_panic(vm, "Undefined variable '%s'.", AS_STR(name)->bytes);
                     }
                 }
