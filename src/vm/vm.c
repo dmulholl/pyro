@@ -1413,7 +1413,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
         MapEntry entry = vm->main_module->globals->entries[i];
         if (IS_STR(entry.key) && IS_CLOSURE(entry.value)) {
             ObjStr* name = AS_STR(entry.key);
-            if (name->length > 5 && memcmp(name->bytes, "test_", 5) == 0) {
+            if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                 if (AS_CLOSURE(entry.value)->fn->arity > 0) {
                     pyro_out(vm, "-- Invalid test function (%s), too many args.\n", name->bytes);
                     tests_failed += 1;
