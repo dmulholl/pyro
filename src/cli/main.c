@@ -71,21 +71,21 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         pyro_exec_file_as_main(vm, path);
 
         if (pyro_get_exit_flag(vm)) {
-            printf("-- EXIT (%d)\n\n", pyro_get_exit_code(vm));
+            printf("-- \x1B[31mEXIT\x1B[39m (%d)\n\n", pyro_get_exit_code(vm));
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
         }
 
         if (pyro_get_panic_flag(vm)) {
-            printf("-- FAIL\n\n");
+            printf("-- \x1B[31mFAIL\x1B[39m\n\n");
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
         }
 
         if (pyro_get_memory_error_flag(vm)) {
-            printf("-- MEMORY ERROR\n\n");
+            printf("-- \1B[31mMEMORY ERROR\x1B[39m\n\n");
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
@@ -102,7 +102,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
             printf("-- PASS\n\n");
             files_passed += 1;
         } else if (failed > 0) {
-            printf("-- FAIL (%d/%d)\n\n", passed, passed + failed);
+            printf("-- \x1B[31mFAIL\x1B[39m (%d/%d)\n\n", passed, passed + failed);
             files_failed += 1;
         } else {
             printf("-- PASS (%d/%d)\n\n", passed, passed + failed);
