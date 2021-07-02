@@ -176,6 +176,9 @@ static Value vec_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = ObjTup_new(arg_count, vm);
+    if (tup == NULL) {
+        return OBJ_VAL(vm->empty_error);
+    }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
     return OBJ_VAL(tup);
 }
@@ -236,6 +239,9 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
         return OBJ_VAL(vm->empty_error);
     }
     ObjTup* tup = ObjTup_new_err(arg_count, vm);
+    if (tup == NULL) {
+        return OBJ_VAL(vm->empty_error);
+    }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
     return OBJ_VAL(tup);
 }

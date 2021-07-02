@@ -139,7 +139,7 @@ struct ObjMap {
 };
 
 ObjMap* ObjMap_new(PyroVM* vm);
-ObjMap* ObjMap_weakref(PyroVM* vm);
+ObjMap* ObjMap_new_weakref(PyroVM* vm);
 bool ObjMap_get(ObjMap* map, Value key, Value* value);
 bool ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm);
 bool ObjMap_remove(ObjMap* map, Value key);

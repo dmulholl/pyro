@@ -14,11 +14,9 @@
 
 
 // This function creates a new heap-allocated object and adds it to the VM's linked list.
-// It triggers a memory error and returns NULL if the attempt to allocate memory fails.
 static Obj* allocate_object(PyroVM* vm, size_t size, ObjType type) {
     Obj* object = pyro_realloc(vm, NULL, 0, size);
     if (object == NULL) {
-        pyro_memory_error(vm);
         return NULL;
     }
 
@@ -272,6 +270,10 @@ static void resize_map(ObjMap* map, size_t new_capacity, PyroVM* vm) {
 
 ObjMap* ObjMap_new(PyroVM* vm) {
     ObjMap* map = ALLOCATE_OBJECT(vm, ObjMap, OBJ_MAP);
+    if (!map) {
+        return NULL;
+    }
+
     map->count = 0;
     map->capacity = 0;
     map->tombstone_count = 0;
@@ -282,8 +284,11 @@ ObjMap* ObjMap_new(PyroVM* vm) {
 }
 
 
-ObjMap* ObjMap_weakref(PyroVM* vm) {
+ObjMap* ObjMap_new_weakref(PyroVM* vm) {
     ObjMap* map = ObjMap_new(vm);
+    if (!map) {
+        return NULL;
+    }
     map->obj.type = OBJ_WEAKREF_MAP;
     return map;
 }

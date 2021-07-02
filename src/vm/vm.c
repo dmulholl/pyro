@@ -1271,8 +1271,20 @@ PyroVM* pyro_new_vm() {
     vm->map_iter_class = ObjClass_new(vm, NULL);
     vm->str_iter_class = ObjClass_new(vm, NULL);
 
+    if (
+        !vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class ||
+        !vm->tup_iter_class || !vm->vec_class || !vm->map_class || !vm->str_iter_class
+    ) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
     // We need to initialize the interned string pool before we create any strings.
-    vm->strings = ObjMap_weakref(vm);
+    vm->strings = ObjMap_new_weakref(vm);
+    if (!vm->strings) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
 
     // Now we can safely assign names to the classes created above.
     vm->map_class->name = STR_OBJ("$map");
