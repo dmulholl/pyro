@@ -58,7 +58,7 @@ struct PyroVM {
     Obj* objects;
 
     // Canned objects.
-    ObjTup* empty_tuple;
+    ObjTup* empty_error;
     ObjStr* empty_string;
     ObjStr* str_init;
     ObjStr* str_str;

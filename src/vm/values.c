@@ -7,7 +7,7 @@
 
 // Returns the value's class if it exists, otherwise NULL;
 ObjClass* pyro_get_class(Value value) {
-    if ((IS_OBJ(value) || IS_ERR(value)) && AS_OBJ(value)->class) {
+    if (IS_OBJ(value) && AS_OBJ(value)->class) {
         return AS_OBJ(value)->class;
     }
     return NULL;
@@ -16,7 +16,7 @@ ObjClass* pyro_get_class(Value value) {
 
 // Returns the method if it exists, otherwise NULL_VAL().
 Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
-    if ((IS_OBJ(receiver) || IS_ERR(receiver)) && AS_OBJ(receiver)->class) {
+    if (IS_OBJ(receiver) && AS_OBJ(receiver)->class) {
         Value method;
         if (ObjMap_get(AS_OBJ(receiver)->class->methods, OBJ_VAL(method_name), &method)) {
             return method;
@@ -46,9 +46,10 @@ bool pyro_check_equal(Value a, Value b) {
                 if (a.as.obj->type == OBJ_TUP && b.as.obj->type == OBJ_TUP) {
                     return ObjTup_check_equal(AS_TUP(a), AS_TUP(b));
                 }
+                if (a.as.obj->type == OBJ_ERR && b.as.obj->type == OBJ_ERR) {
+                    return ObjTup_check_equal(AS_TUP(a), AS_TUP(b));
+                }
                 return a.as.obj == b.as.obj;
-            case VAL_ERR:
-                return ObjTup_check_equal(AS_TUP(a), AS_TUP(b));
             case VAL_TOMBSTONE:
                 return true;
             case VAL_EMPTY:
@@ -75,12 +76,11 @@ uint64_t pyro_hash(Value value) {
             switch (value.as.obj->type) {
                 case OBJ_STR: return AS_STR(value)->hash;
                 case OBJ_TUP: return ObjTup_hash(AS_TUP(value));
+                case OBJ_ERR: return ObjTup_hash(AS_TUP(value));
                 default: return (uint64_t)value.as.obj;
             }
         case VAL_CHAR:
             return value.as.u32;
-        case VAL_ERR:
-            return ObjTup_hash(AS_TUP(value));
         default:
             return 0;
     }
@@ -178,6 +178,7 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
             return ObjStr_take(string, strlen(string), vm);
         }
 
+        case OBJ_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             char* string = pyro_str_fmt(vm, "<%d-tuple>", tup->count);
@@ -224,9 +225,6 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value, bool call_method) {
 
         case VAL_NULL:
             return vm->str_null;
-
-        case VAL_ERR:
-            return STR_OBJ("<error>");
 
         case VAL_I64: {
             char* string = pyro_str_fmt(vm, "%lld", value.as.i64);
@@ -353,6 +351,7 @@ void pyro_debug_object(PyroVM* vm, Obj* object) {
             break;
         }
 
+        case OBJ_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             pyro_out(vm, "<%d-tuple>", tup->count);
@@ -400,10 +399,6 @@ void pyro_debug_value(PyroVM* vm, Value value) {
 
         case VAL_NULL:
             pyro_out(vm, "null");
-            break;
-
-        case VAL_ERR:
-            pyro_out(vm, "<error>");
             break;
 
         case VAL_I64:
@@ -470,6 +465,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_BOUND_METHOD: return "<method>";
         case OBJ_CLASS: return "<class>";
         case OBJ_CLOSURE: return "<closure>";
+        case OBJ_ERR: return "<err>";
         case OBJ_FN: return "<fn>";
         case OBJ_INSTANCE: return "<instance>";
         case OBJ_MAP: return "<map>";

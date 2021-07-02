@@ -1170,7 +1170,7 @@ static void run(PyroVM* vm) {
                     vm->halt_flag = false;
                     vm->exit_code = 0;
                     vm->stack_top = stashed_stack_top - 1;
-                    PUSH(ERR_VAL(vm->empty_tuple));
+                    PUSH(OBJ_VAL(vm->empty_error));
                     close_upvalues(vm, stashed_stack_top);
                     vm->frame_count = stashed_frame_count;
                     frame = &vm->frames[vm->frame_count - 1];
@@ -1242,7 +1242,7 @@ PyroVM* pyro_new_vm() {
     vm->strings = NULL;
     vm->globals = NULL;
     vm->modules = NULL;
-    vm->empty_tuple = NULL;
+    vm->empty_error = NULL;
     vm->empty_string = NULL;
     vm->str_init = NULL;
     vm->str_str = NULL;
@@ -1285,7 +1285,7 @@ PyroVM* pyro_new_vm() {
     vm->str_iter_class->name = STR_OBJ("$str_iter");
 
     // Canned objects, mostly static strings.
-    vm->empty_tuple = ObjTup_new(0, vm);
+    vm->empty_error = ObjTup_new_err(0, vm);
     vm->empty_string = ObjStr_empty(vm);
     vm->str_init = STR_OBJ("$init");
     vm->str_str = STR_OBJ("$str");

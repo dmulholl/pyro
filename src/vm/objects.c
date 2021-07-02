@@ -57,6 +57,16 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
 }
 
 
+ObjTup* ObjTup_new_err(size_t count, PyroVM* vm) {
+    ObjTup* tup = ObjTup_new(count, vm);
+    if (tup == NULL) {
+        return NULL;
+    }
+    tup->obj.type = OBJ_ERR;
+    return tup;
+}
+
+
 uint64_t ObjTup_hash(ObjTup* tup) {
     uint64_t hash = 0;
     for (size_t i = 0; i < tup->count; i++) {
@@ -383,7 +393,7 @@ Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm) {
         }
     }
 
-    return ERR_VAL(vm->empty_tuple);
+    return OBJ_VAL(vm->empty_error);
 }
 
 

@@ -48,7 +48,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->strings);
 
     // The VM's pool of canned objects.
-    mark_object(vm, (Obj*)vm->empty_tuple);
+    mark_object(vm, (Obj*)vm->empty_error);
     mark_object(vm, (Obj*)vm->empty_string);
     mark_object(vm, (Obj*)vm->str_init);
     mark_object(vm, (Obj*)vm->str_str);
@@ -178,6 +178,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
+        case OBJ_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             for (size_t i = 0; i < tup->count; i++) {
@@ -326,6 +327,7 @@ void free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
+        case OBJ_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);

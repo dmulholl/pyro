@@ -40,7 +40,7 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_get(map, args[0], &value)) {
         return value;
     }
-    return ERR_VAL(vm->empty_tuple);
+    return OBJ_VAL(vm->empty_error);
 }
 
 
@@ -165,7 +165,7 @@ static Value vec_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
         return iterator->vec->values[iterator->next_index - 1];
     }
 
-    return ERR_VAL(vm->empty_tuple);
+    return OBJ_VAL(vm->empty_error);
 }
 
 
@@ -175,9 +175,6 @@ static Value vec_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
-    if (arg_count == 0) {
-        return OBJ_VAL(vm->empty_tuple);
-    }
     ObjTup* tup = ObjTup_new(arg_count, vm);
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
     return OBJ_VAL(tup);
@@ -225,7 +222,7 @@ static Value tup_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
         return iterator->tup->values[iterator->next_index - 1];
     }
 
-    return ERR_VAL(vm->empty_tuple);
+    return OBJ_VAL(vm->empty_error);
 }
 
 
@@ -236,11 +233,11 @@ static Value tup_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        return ERR_VAL(vm->empty_tuple);
+        return OBJ_VAL(vm->empty_error);
     }
-    ObjTup* tup = ObjTup_new(arg_count, vm);
+    ObjTup* tup = ObjTup_new_err(arg_count, vm);
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
-    return ERR_VAL(tup);
+    return OBJ_VAL(tup);
 }
 
 
@@ -414,7 +411,7 @@ static Value str_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
             iter->next_index++;
             return I64_VAL(byte_value);
         }
-        return ERR_VAL(vm->empty_tuple);
+        return OBJ_VAL(vm->empty_error);
     }
 
     if (iter->next_index < str->length) {
@@ -428,7 +425,7 @@ static Value str_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "String contains invalid utf-8 at byte index %zu.", iter->next_index);
     }
 
-    return ERR_VAL(vm->empty_tuple);
+    return OBJ_VAL(vm->empty_error);
 }
 
 
@@ -781,10 +778,18 @@ static Value fn_is_char(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 void pyro_load_std_core(PyroVM* vm) {
+    // Create the base standard library module.
     ObjModule* mod_std = pyro_define_module_1(vm, "$std");
+
+    // Register [$std] as a global variable so it doesn't need to be explicitly imported.
     pyro_define_global(vm, "$std", OBJ_VAL(mod_std));
 
-    pyro_define_global(vm, "$args", OBJ_VAL(vm->empty_tuple));
+    ObjTup* tup = ObjTup_new(0, vm);
+    if (tup) {
+        pyro_push(vm, OBJ_VAL(tup));
+        pyro_define_global(vm, "$args", OBJ_VAL(tup));
+        pyro_pop(vm);
+    }
 
     pyro_define_global_fn(vm, "$exit", fn_exit, 1);
     pyro_define_global_fn(vm, "$panic", fn_panic, 1);

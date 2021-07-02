@@ -15,7 +15,6 @@ typedef enum {
     VAL_I64,
     VAL_F64,
     VAL_OBJ,
-    VAL_ERR,
     VAL_TOMBSTONE,
     VAL_EMPTY,
     VAL_CHAR,
@@ -58,6 +57,7 @@ typedef enum {
     OBJ_MODULE,
     OBJ_VEC,
     OBJ_VEC_ITER,
+    OBJ_ERR,
 } ObjType;
 
 
@@ -331,6 +331,7 @@ ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method);
 /* ObjTup */
 /* ------ */
 
+
 typedef struct {
     Obj obj;
     size_t count;
@@ -338,6 +339,7 @@ typedef struct {
 } ObjTup;
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm);
+ObjTup* ObjTup_new_err(size_t count, PyroVM* vm);
 uint64_t ObjTup_hash(ObjTup* tup);
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b);
 
@@ -360,7 +362,6 @@ ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 #define IS_I64(value)               ((value).type == VAL_I64)
 #define IS_F64(value)               ((value).type == VAL_F64)
 #define IS_OBJ(value)               ((value).type == VAL_OBJ)
-#define IS_ERR(value)               ((value).type == VAL_ERR)
 #define IS_TOMBSTONE(value)         ((value).type == VAL_TOMBSTONE)
 #define IS_EMPTY(value)             ((value).type == VAL_EMPTY)
 #define IS_CHAR(value)              ((value).type == VAL_CHAR)
@@ -369,7 +370,6 @@ ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 #define I64_VAL(c_i64)              ((Value){VAL_I64, {.i64 = c_i64}})
 #define F64_VAL(c_f64)              ((Value){VAL_F64, {.f64 = c_f64}})
 #define OBJ_VAL(c_ptr)              ((Value){VAL_OBJ, {.obj = (Obj*)c_ptr}})
-#define ERR_VAL(c_ptr)              ((Value){VAL_ERR, {.obj = (Obj*)c_ptr}})
 #define TOMBSTONE_VAL()             ((Value){VAL_TOMBSTONE, {.i64 = 0}})
 #define EMPTY_VAL()                 ((Value){VAL_EMPTY, {.i64 = 0}})
 #define NULL_VAL()                  ((Value){VAL_NULL, {.i64 = 0}})
@@ -386,6 +386,7 @@ ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 #define IS_TUP(value)               pyro_is_obj_of_type(value, OBJ_TUP)
 #define IS_MOD(value)               pyro_is_obj_of_type(value, OBJ_MODULE)
 #define IS_VEC(value)               pyro_is_obj_of_type(value, OBJ_VEC)
+#define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
 
 #define AS_OBJ(value)               ((value).as.obj)
 #define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
