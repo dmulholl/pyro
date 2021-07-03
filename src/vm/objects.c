@@ -299,9 +299,6 @@ ObjMap* ObjMap_new_weakref(PyroVM* vm) {
 }
 
 
-// Returns 0 if the entry was not added because additional memory could not be allocated.
-// Returns 1 if a new entry was successfully added to the map.
-// Returns 2 if an existing entry was successfully updated.
 int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
     if (map->capacity == 0) {
         size_t new_capacity = GROW_CAPACITY(map->capacity);
@@ -339,9 +336,7 @@ int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
 }
 
 
-// Attempts to update an existing entry. Returns true if successful, false if no corresponding
-// entry exists.
-bool ObjMap_update(ObjMap* map, Value key, Value value, PyroVM* vm) {
+bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
     if (map->count == 0) {
         return false;
     }
@@ -391,7 +386,7 @@ bool ObjMap_remove(ObjMap* map, Value key) {
 
 
 // Copies all the entries from [src] to [dst].
-void ObjMap_copy(ObjMap* src, ObjMap* dst, PyroVM* vm) {
+void ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->capacity; i++) {
         MapEntry* entry = &src->entries[i];
         if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
@@ -871,7 +866,7 @@ void ObjVec_set(ObjVec* vec, size_t index, Value value, PyroVM* vm) {
 }
 
 
-void ObjVec_copy(ObjVec* src, ObjVec* dst, PyroVM* vm) {
+void ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->count; i++) {
         ObjVec_append(dst, src->values[i], vm);
     }

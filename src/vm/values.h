@@ -141,10 +141,20 @@ struct ObjMap {
 ObjMap* ObjMap_new(PyroVM* vm);
 ObjMap* ObjMap_new_weakref(PyroVM* vm);
 bool ObjMap_get(ObjMap* map, Value key, Value* value);
-int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm);
 bool ObjMap_remove(ObjMap* map, Value key);
-void ObjMap_copy(ObjMap* src, ObjMap* dst, PyroVM* vm);
-bool ObjMap_update(ObjMap* map, Value key, Value value, PyroVM* vm);
+
+// Adds a new entry to the map or updates an existing entry.
+// - Returns 0 if the entry was not added because additional memory could not be allocated.
+// - Returns 1 if a new entry was successfully added to the map.
+// - Returns 2 if an existing entry was successfully updated.
+int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm);
+
+// Copy all entries from [src] to [dst].
+void ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm);
+
+// Attempts to update an existing entry. Returns [true] if successful, [false] if no corresponding
+// entry was found.
+bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm);
 
 typedef struct {
     Obj obj;
@@ -175,7 +185,9 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
 void ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
 Value ObjVec_get(ObjVec* vec, size_t index, PyroVM* vm);
 void ObjVec_set(ObjVec* vec, size_t index, Value value, PyroVM* vm);
-void ObjVec_copy(ObjVec* src, ObjVec* dst, PyroVM* vm);
+
+// Copy all entries from [src] to [dst].
+void ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
 
 typedef struct {
     Obj obj;
@@ -431,6 +443,12 @@ char* pyro_stringify_obj_type(ObjType type);
 ObjClass* pyro_get_class(Value value);
 Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name);
 bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name);
+
+// Performs a lexicographic comparison using byte values.
+// - Returns -1 if a < b.
+// - Returns 0 if a == b.
+// - Returns 1 if a > b.
+int pyro_compare_strings(ObjStr* a, ObjStr* b);
 
 static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;

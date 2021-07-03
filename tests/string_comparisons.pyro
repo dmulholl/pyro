@@ -1,0 +1,43 @@
+assert "" < "" == false;
+assert "" < "abc" == true;
+assert "abc" < "" == false;
+assert "abc" < "abc" == false;
+assert "abc" < "def" == true;
+assert "def" < "abc" == false;
+assert "abc" < "abca" == true;
+assert "abca" < "abc" == false;
+assert "abc" < "abcd" == true;
+assert "abcd" < "abc" == false;
+
+assert "" <= "" == true;
+assert "" <= "abc" == true;
+assert "abc" <= "" == false;
+assert "abc" <= "abc" == true;
+assert "abc" <= "def" == true;
+assert "def" <= "abc" == false;
+assert "abc" <= "abca" == true;
+assert "abca" <= "abc" == false;
+assert "abc" <= "abcd" == true;
+assert "abcd" <= "abc" == false;
+
+assert "" > "" == false;
+assert "" > "abc" == false;
+assert "abc" > "" == true;
+assert "abc" > "abc" == false;
+assert "abc" > "def" == false;
+assert "def" > "abc" == true;
+assert "abc" > "abca" == false;
+assert "abca" > "abc" == true;
+assert "abc" > "abcd" == false;
+assert "abcd" > "abc" == true;
+
+assert "" >= "" == true;
+assert "" >= "abc" == false;
+assert "abc" >= "" == true;
+assert "abc" >= "abc" == true;
+assert "abc" >= "def" == false;
+assert "def" >= "abc" == true;
+assert "abc" >= "abca" == false;
+assert "abca" >= "abc" == true;
+assert "abc" >= "abcd" == false;
+assert "abcd" >= "abc" == true;

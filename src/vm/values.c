@@ -483,3 +483,22 @@ char* pyro_stringify_obj_type(ObjType type) {
     }
 }
 
+
+int pyro_compare_strings(ObjStr* a, ObjStr* b) {
+    if (a == b) {
+        return 0;
+    }
+
+    size_t min_len = a->length < b->length ? a->length : b->length;
+
+    for (size_t i = 0; i < min_len; i++) {
+        if (a->bytes[i] < b->bytes[i]) return -1;
+        if (a->bytes[i] > b->bytes[i]) return 1;
+    }
+
+    return a->length < b->length ? -1 : 1;
+}
+
+
+
+

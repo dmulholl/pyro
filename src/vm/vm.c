@@ -687,6 +687,14 @@ static void run(PyroVM* vm) {
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 > b.as.f64));
                             break;
+                        case VAL_OBJ:
+                            if (IS_STR(a) && IS_STR(b)) {
+                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
+                                PUSH(BOOL_VAL(result > 0));
+                            } else {
+                                pyro_panic(vm, "Operands to '>' must both be numbers or strings.");
+                            }
+                            break;
                         default:
                             pyro_panic(vm, "Operands to '>' must both be numbers.");
                     }
@@ -708,6 +716,14 @@ static void run(PyroVM* vm) {
                             break;
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 >= b.as.f64));
+                            break;
+                        case VAL_OBJ:
+                            if (IS_STR(a) && IS_STR(b)) {
+                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
+                                PUSH(BOOL_VAL(result >= 0));
+                            } else {
+                                pyro_panic(vm, "Operands to '>=' must both be numbers or strings.");
+                            }
                             break;
                         default:
                             pyro_panic(vm, "Operands to '>=' must both be numbers.");
@@ -772,9 +788,9 @@ static void run(PyroVM* vm) {
                 // "Copy-down inheritance". We copy all the superclass's methods into the subclass's
                 // method table. This means that there's no extra runtime work involved in looking
                 // up an inherited method.
-                ObjMap_copy(superclass->methods, subclass->methods, vm);
-                ObjMap_copy(superclass->field_indexes, subclass->field_indexes, vm);
-                ObjVec_copy(superclass->field_initializers, subclass->field_initializers, vm);
+                ObjMap_copy_entries(superclass->methods, subclass->methods, vm);
+                ObjMap_copy_entries(superclass->field_indexes, subclass->field_indexes, vm);
+                ObjVec_copy_entries(superclass->field_initializers, subclass->field_initializers, vm);
 
                 pyro_pop(vm); // the subclass
                 break;
@@ -868,8 +884,16 @@ static void run(PyroVM* vm) {
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 < b.as.f64));
                             break;
+                        case VAL_OBJ:
+                            if (IS_STR(a) && IS_STR(b)) {
+                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
+                                PUSH(BOOL_VAL(result < 0));
+                            } else {
+                                pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
+                            }
+                            break;
                         default:
-                            pyro_panic(vm, "Operands to '<' must both be numbers.");
+                            pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
                     }
                 } else {
                     pyro_panic(vm, "Operands to '<' must both be the same type.");
@@ -890,8 +914,16 @@ static void run(PyroVM* vm) {
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 <= b.as.f64));
                             break;
+                        case VAL_OBJ:
+                            if (IS_STR(a) && IS_STR(b)) {
+                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
+                                PUSH(BOOL_VAL(result <= 0));
+                            } else {
+                                pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
+                            }
+                            break;
                         default:
-                            pyro_panic(vm, "Operands to '<=' must both be numbers.");
+                            pyro_panic(vm, "Operands to '<=' must both be numbers or strings.");
                     }
                 } else {
                     pyro_panic(vm, "Operands to '<=' must both be the same type.");
@@ -1072,8 +1104,8 @@ static void run(PyroVM* vm) {
             case OP_SET_GLOBAL: {
                 Value name = READ_CONSTANT();
                 ObjMap* globals = frame->closure->fn->module->globals;
-                if (!ObjMap_update(globals, name, PEEK(0), vm)) {
-                    if (!ObjMap_update(vm->globals, name, PEEK(0), vm)) {
+                if (!ObjMap_update_entry(globals, name, PEEK(0), vm)) {
+                    if (!ObjMap_update_entry(vm->globals, name, PEEK(0), vm)) {
                         pyro_panic(vm, "Undefined variable '%s'.", AS_STR(name)->bytes);
                     }
                 }

@@ -38,4 +38,3 @@ check::
 
 clean::
 	rm -f ./out/*
-
