@@ -735,6 +735,7 @@ static Value fn_is_nan(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+// True if the value is positive or negative infinity.
 static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
     return BOOL_VAL(IS_F64(args[0]) && isinf(args[0].as.f64));
 }
