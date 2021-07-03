@@ -93,7 +93,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         }
 
         if (pyro_get_memory_error_flag(vm)) {
-            printf("-- \1B[31mMEMORY ERROR\x1B[39m\n\n");
+            printf("-- \x1B[31mMEMORY ERROR\x1B[39m\n\n");
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
@@ -134,11 +134,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         funcs_passed + funcs_failed
     );
 
-    if (files_failed > 0) {
-        exit(1);
-    } else {
-        exit(0);
-    }
+    exit(files_failed > 0 ? 1 : 0);
 }
 
 
