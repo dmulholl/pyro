@@ -29,7 +29,7 @@ static void sweep(PyroVM* vm) {
 // Mark every root object as reachable. (A root object is an object the VM can access directly
 // without going through another object.)
 static void mark_roots(PyroVM* vm) {
-    // Mark local variables and temporary values on the stack.
+    // Local variables and temporary values on the stack.
     for (Value* slot = vm->stack; slot < vm->stack_top; slot++) {
         mark_value(vm, *slot);
     }
@@ -43,9 +43,6 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->vec_iter_class);
     mark_object(vm, (Obj*)vm->map_iter_class);
     mark_object(vm, (Obj*)vm->str_iter_class);
-
-    // The pool of interned strings. This map is a collection of *weak* references.
-    mark_object(vm, (Obj*)vm->strings);
 
     // The VM's pool of canned objects.
     mark_object(vm, (Obj*)vm->empty_error);
@@ -61,14 +58,12 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_get_index);
     mark_object(vm, (Obj*)vm->str_set_index);
 
-    // The map of global variables.
+    // Other object fields.
     mark_object(vm, (Obj*)vm->globals);
-
-    // The tree of imported modules.
     mark_object(vm, (Obj*)vm->modules);
-
+    mark_object(vm, (Obj*)vm->strings);
     mark_object(vm, (Obj*)vm->main_module);
-    mark_object(vm, (Obj*)vm->import_dirs);
+    mark_object(vm, (Obj*)vm->import_roots);
 
     // Each CallFrame in the call stack has a pointer to an ObjClosure.
     for (int i = 0; i < vm->frame_count; i++) {

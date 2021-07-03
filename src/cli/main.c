@@ -19,13 +19,17 @@
 
 
 static void run_file(ArgParser* parser) {
-    char* path = ap_arg(parser, 0);
     PyroVM* vm = pyro_new_vm();
+    if (!vm) {
+        fprintf(stderr, "Error: Unable to initialize VM.\n");
+        exit(1);
+    }
 
     char** args = ap_args(parser);
     pyro_set_args(vm, ap_count_args(parser), args);
     free(args);
 
+    char* path = ap_arg(parser, 0);
     char* path_copy = strdup(path);
     pyro_add_import_root(vm, dirname(path_copy));
     free(path_copy);
@@ -59,6 +63,10 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         printf("## Testing: %s\n", path);
 
         PyroVM* vm = pyro_new_vm();
+        if (!vm) {
+            fprintf(stderr, "Error: Unable to initialize VM.\n");
+            exit(1);
+        }
 
         char* path_copy = strdup(path);
         pyro_add_import_root(vm, dirname(path_copy));
@@ -112,23 +120,19 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         pyro_free_vm(vm);
     }
 
-    printf("--------\n");
-
     if (files_failed > 0) {
-        printf("! FAIL !");
+        printf("  \x1B[7m FAIL \x1B[0m");
     } else {
-        printf("* PASS *");
+        printf("  \x1B[7m PASS \x1B[0m");
     }
 
     printf(
-        "    [%d/%d files passed, %d/%d test functions passed.]\n",
+        "  Files: %d/%d · Tests: %d/%d\n",
         files_passed,
         files_passed + files_failed,
         funcs_passed,
         funcs_passed + funcs_failed
     );
-
-    printf("--------\n");
 
     if (files_failed > 0) {
         exit(1);

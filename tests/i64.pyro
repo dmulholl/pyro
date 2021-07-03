@@ -17,7 +17,7 @@ assert $i64(-1.5) == -1;
 # -2^63. This is INT64_MIN.
 assert $i64(-9223372036854775808.0) == -9223372036854775807 - 1;
 
-# 2^62. INT64_MAX (2^63 - 1) isn't exactly representable as a f64 so we use 2^62 instead.
+# 2^62. INT64_MAX (2^63 - 1) isn't exactly representable as 64-bit float so we check 2^62 instead.
 assert $i64(4611686018427387904.0) == 4611686018427387904;
 
 # -2^64. This is out-of-range for a 64-bit int so $i64() will panic.

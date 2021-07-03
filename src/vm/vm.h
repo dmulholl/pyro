@@ -22,7 +22,7 @@ struct PyroVM {
     ObjClass* map_iter_class;
     ObjClass* str_iter_class;
 
-    ObjVec* import_dirs;
+    ObjVec* import_roots;
 
     bool halt_flag;
     bool exit_flag;

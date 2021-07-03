@@ -126,8 +126,8 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
 
 
 static Value pyro_import_module(PyroVM* vm, int arg_count, Value* args) {
-    for (size_t i = 0; i < vm->import_dirs->count; i++) {
-        ObjStr* base = AS_STR(vm->import_dirs->values[i]);
+    for (size_t i = 0; i < vm->import_roots->count; i++) {
+        ObjStr* base = AS_STR(vm->import_roots->values[i]);
 
         bool has_trailing_slash = false;
         if (base->length > 0 && base->bytes[base->length - 1] == '/') {
@@ -1289,7 +1289,7 @@ PyroVM* pyro_new_vm() {
     vm->map_iter_class = NULL;
     vm->str_iter_class = NULL;
     vm->main_module = NULL;
-    vm->import_dirs = NULL;
+    vm->import_roots = NULL;
 
     // We need to initialize these classes before we create any objects.
     vm->map_class = ObjClass_new(vm, NULL);
@@ -1343,7 +1343,7 @@ PyroVM* pyro_new_vm() {
     vm->globals = ObjMap_new(vm);
     vm->modules = ObjMap_new(vm);
     vm->main_module = ObjModule_new(vm);
-    vm->import_dirs = ObjVec_new(vm);
+    vm->import_roots = ObjVec_new(vm);
 
     pyro_load_std_core(vm);
     pyro_load_std_math(vm);
@@ -1699,6 +1699,6 @@ void pyro_set_args(PyroVM* vm, int argc, char** argv) {
 void pyro_add_import_root(PyroVM* vm, const char* path) {
     Value path_value = STR_VAL(path);
     pyro_push(vm, path_value);
-    ObjVec_append(vm->import_dirs, path_value, vm);
+    ObjVec_append(vm->import_roots, path_value, vm);
     pyro_pop(vm);
 }
