@@ -1,0 +1,11 @@
+assert $is_f64(1.0);
+assert !$is_f64(1);
+assert !$is_f64("foo");
+
+assert $is_f64($f64(1.0));
+assert $f64(1.0) == 1.0;
+
+assert $f64(1) == 1.0;
+assert $f64(-1) == -1.0;
+
+assert $f64(4294967296) == 4294967296.0;

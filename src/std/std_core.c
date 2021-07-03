@@ -740,18 +740,43 @@ static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
+    switch (args[0].type) {
+        case VAL_I64:
+            return F64_VAL((double)args[0].as.i64);
+        case VAL_F64:
+            return args[0];
+        default:
+            pyro_panic(vm, "Invalid argument to $f64().");
+            return NULL_VAL();
+    }
+}
+
+
 static Value fn_is_f64(PyroVM* vm, size_t arg_count, Value* args) {
     return BOOL_VAL(IS_F64(args[0]));
 }
 
 
 static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
-    if (IS_CHAR(args[0])) {
-        return I64_VAL((int64_t)args[0].as.u32);
+    switch (args[0].type) {
+        case VAL_I64:
+            return args[0];
+        case VAL_F64: {
+            // Check that the value is inside the range -2^63 to 2^63 - 1. (Note that both
+            // double literals are powers of 2 so they're exactly representable.)
+            if (args[0].as.f64 >= -9223372036854775808.0 && args[0].as.f64 < 9223372036854775808.0) {
+                return I64_VAL((int64_t)args[0].as.f64);
+            }
+            pyro_panic(vm, "Floating-point value is out-of-range for $i64().");
+            return NULL_VAL();
+        }
+        case VAL_CHAR:
+            return I64_VAL((int64_t)args[0].as.u32);
+        default:
+            pyro_panic(vm, "Invalid argument to $i64().");
+            return NULL_VAL();
     }
-
-    pyro_panic(vm, "Invalid argument to $i64().");
-    return NULL_VAL();
 }
 
 
@@ -803,6 +828,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
     pyro_define_global_fn(vm, "$is_inf", fn_is_inf, 1);
+
+    pyro_define_global_fn(vm, "$f64", fn_f64, 1);
     pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);
 
     pyro_define_global_fn(vm, "$i64", fn_i64, 1);
