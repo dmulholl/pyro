@@ -58,6 +58,8 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
     int files_passed = 0;
     int files_failed = 0;
 
+    double start_time = clock();
+
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_arg(cmd_parser, i);
         printf("## Testing: %s\n", path);
@@ -72,7 +74,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         pyro_add_import_root(vm, dirname(path_copy));
         free(path_copy);
 
-        if (!ap_found(cmd_parser, "errors")) {
+        if (!ap_found(cmd_parser, "verbose")) {
             pyro_set_err_file(vm, NULL);
         }
 
@@ -120,21 +122,60 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         pyro_free_vm(vm);
     }
 
-    if (files_failed > 0) {
-        printf("  \x1B[7m FAIL \x1B[0m");
-    } else {
-        printf("  \x1B[7m PASS \x1B[0m");
-    }
+    double time = (clock() - start_time) / CLOCKS_PER_SEC;
 
-    printf(
-        "  Files: %d/%d · Tests: %d/%d\n",
-        files_passed,
-        files_passed + files_failed,
-        funcs_passed,
-        funcs_passed + funcs_failed
-    );
+    printf("  \x1B[7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS");
+    printf("  Files: %d/%d", files_passed, files_passed + files_failed);
+    printf(" · Tests: %d/%d", funcs_passed, funcs_passed + funcs_failed);
+    printf(" · Time: %f secs\n", time);
 
     exit(files_failed > 0 ? 1 : 0);
+}
+
+
+static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
+    if (ap_count_args(cmd_parser) == 0) {
+        return;
+    }
+
+    int iterations = ap_int_value(cmd_parser, "num-iterations");
+    if (iterations < 1) {
+        fprintf(stderr, "Error: invalid number of iterations.\n");
+        exit(1);
+    }
+
+    double start_time = clock();
+
+    for (int i = 0; i < ap_count_args(cmd_parser); i++) {
+        char* path = ap_arg(cmd_parser, i);
+        printf("## Timing: %s\n", path);
+
+        PyroVM* vm = pyro_new_vm();
+        if (!vm) {
+            fprintf(stderr, "Error: Unable to initialize VM.\n");
+            exit(1);
+        }
+
+        char* path_copy = strdup(path);
+        pyro_add_import_root(vm, dirname(path_copy));
+        free(path_copy);
+
+        pyro_exec_file_as_main(vm, path);
+        if (pyro_get_halt_flag(vm)) {
+            exit(pyro_get_exit_code(vm));
+        }
+
+        pyro_run_time_funcs(vm, iterations);
+        if (pyro_get_halt_flag(vm)) {
+            exit(pyro_get_exit_code(vm));
+        }
+
+        pyro_free_vm(vm);
+        printf("\n");
+    }
+
+    double time = (clock() - start_time) / CLOCKS_PER_SEC;
+    printf("Total Runtime: %f secs\n", time);
 }
 
 
@@ -146,7 +187,12 @@ int main(int argc, char* argv[]) {
     ArgParser* test_cmd = ap_cmd(parser, "test");
     ap_helptext(test_cmd, "Usage: pyro test [files]");
     ap_callback(test_cmd, cmd_test_callback);
-    ap_flag(test_cmd, "errors e");
+    ap_flag(test_cmd, "verbose v");
+
+    ArgParser* time_cmd = ap_cmd(parser, "time");
+    ap_helptext(time_cmd, "Usage: pyro time [files]");
+    ap_callback(time_cmd, cmd_time_callback);
+    ap_int_opt(time_cmd, "num-iterations n", 1000);
 
     ap_parse(parser, argc, argv);
 

@@ -1517,6 +1517,39 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
 }
 
 
+void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
+    for (size_t i = 0; i < vm->main_module->globals->capacity; i++) {
+        MapEntry entry = vm->main_module->globals->entries[i];
+        if (IS_STR(entry.key) && IS_CLOSURE(entry.value)) {
+            ObjStr* name = AS_STR(entry.key);
+            if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
+                if (AS_CLOSURE(entry.value)->fn->arity > 0) {
+                    pyro_out(vm, "-- Invalid time function (%s), too many args.\n", name->bytes);
+                    continue;
+                }
+
+                double start_time = clock();
+
+                for (size_t j = 0; j < num_iterations; j++) {
+                    pyro_push(vm, entry.value);
+                    call_value(vm, entry.value, 0);
+                    run(vm);
+                    pyro_pop(vm);
+
+                    if (vm->halt_flag) {
+                        reset_stack(vm);
+                        return;
+                    }
+                }
+
+                double time = (clock() - start_time) / CLOCKS_PER_SEC;
+                pyro_out(vm, "-- %s --> %f secs\n", name->bytes, time / num_iterations);
+            }
+        }
+    }
+}
+
+
 // Call a method from a native function. Returns the value returned by the method.
 // Before calling this function the receiver and the method's arguments should be pushed onto the
 // stack. These values (and the return value of the method) will be popped off the stack before this

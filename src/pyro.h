@@ -18,6 +18,7 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* path);
 
 void pyro_run_main_func(PyroVM* vm);
 void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed);
+void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
 
 int pyro_get_exit_code(PyroVM* vm);
 bool pyro_get_exit_flag(PyroVM* vm);
