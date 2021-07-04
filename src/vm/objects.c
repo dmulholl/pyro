@@ -881,3 +881,20 @@ ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm) {
     return iter;
 }
 
+
+/* -------- */
+/* ObjRange */
+/* -------- */
+
+
+ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm) {
+    ObjRange* iter = ALLOCATE_OBJECT(vm, ObjRange, OBJ_RANGE);
+    if (!iter) {
+        return NULL;
+    }
+    iter->obj.class = vm->range_class;
+    iter->next = start;
+    iter->stop = stop;
+    iter->step = step;
+    return iter;
+}

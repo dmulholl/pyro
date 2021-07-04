@@ -58,6 +58,7 @@ typedef enum {
     OBJ_VEC,
     OBJ_VEC_ITER,
     OBJ_ERR,
+    OBJ_RANGE,
 } ObjType;
 
 
@@ -365,6 +366,21 @@ typedef struct {
 ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 
 
+/* -------- */
+/* ObjRange */
+/* -------- */
+
+
+typedef struct {
+    Obj obj;
+    int64_t next;
+    int64_t stop;
+    int64_t step;
+} ObjRange;
+
+ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm);
+
+
 /* ------ */
 /* Macros */
 /* ------ */
@@ -400,6 +416,7 @@ ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 #define IS_MOD(value)               pyro_is_obj_of_type(value, OBJ_MODULE)
 #define IS_VEC(value)               pyro_is_obj_of_type(value, OBJ_VEC)
 #define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
+#define IS_RANGE(value)             pyro_is_obj_of_type(value, OBJ_RANGE)
 
 #define AS_OBJ(value)               ((value).as.obj)
 #define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
@@ -417,6 +434,7 @@ ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 #define AS_VEC_ITER(value)          ((ObjVecIter*)AS_OBJ(value))
 #define AS_MAP_ITER(value)          ((ObjMapIter*)AS_OBJ(value))
 #define AS_STR_ITER(value)          ((ObjStrIter*)AS_OBJ(value))
+#define AS_RANGE(value)             ((ObjRange*)AS_OBJ(value))
 
 // Make a string object or value by copying a C string.
 #define STR_OBJ(c_string)           ObjStr_copy_raw(c_string, strlen(c_string), vm)

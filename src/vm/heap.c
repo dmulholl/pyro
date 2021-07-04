@@ -43,6 +43,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->vec_iter_class);
     mark_object(vm, (Obj*)vm->map_iter_class);
     mark_object(vm, (Obj*)vm->str_iter_class);
+    mark_object(vm, (Obj*)vm->range_class);
 
     // The VM's pool of canned objects.
     mark_object(vm, (Obj*)vm->empty_error);
@@ -164,6 +165,9 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
+        case OBJ_RANGE:
+            break;
+
         case OBJ_STR:
             break;
 
@@ -207,7 +211,6 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         }
 
         case OBJ_WEAKREF_MAP:
-            // This map type holds weak references to its keys and values.
             break;
     }
 }
@@ -306,6 +309,11 @@ void free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_NATIVE_FN: {
             FREE_OBJECT(vm, ObjNativeFn, object);
+            break;
+        }
+
+        case OBJ_RANGE: {
+            FREE_OBJECT(vm, ObjRange, object);
             break;
         }
 

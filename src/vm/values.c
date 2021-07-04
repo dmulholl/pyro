@@ -472,6 +472,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_MAP_ITER: return "<map iter>";
         case OBJ_MODULE: return "<module>";
         case OBJ_NATIVE_FN: return "<native fn>";
+        case OBJ_RANGE: return "<range>";
         case OBJ_STR: return "<str>";
         case OBJ_STR_ITER: return "<str iter>";
         case OBJ_TUP: return "<tup>";

@@ -1226,8 +1226,8 @@ static void run(PyroVM* vm) {
             }
 
             default:
-                printf("ERROR: invalid opcode!\n");
-                exit(1);
+                pyro_panic(vm, "Invalid opcode.");
+                break;
         }
     }
 
@@ -1302,6 +1302,7 @@ PyroVM* pyro_new_vm() {
     vm->str_iter_class = NULL;
     vm->main_module = NULL;
     vm->import_roots = NULL;
+    vm->range_class = NULL;
 
     // We need to initialize these classes before we create any objects.
     vm->map_class = ObjClass_new(vm, NULL);
@@ -1312,10 +1313,12 @@ PyroVM* pyro_new_vm() {
     vm->vec_iter_class = ObjClass_new(vm, NULL);
     vm->map_iter_class = ObjClass_new(vm, NULL);
     vm->str_iter_class = ObjClass_new(vm, NULL);
+    vm->range_class = ObjClass_new(vm, NULL);
 
     if (
         !vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class ||
-        !vm->tup_iter_class || !vm->vec_class || !vm->map_class || !vm->str_iter_class
+        !vm->tup_iter_class || !vm->vec_class || !vm->map_class || !vm->str_iter_class ||
+        !vm->range_class
     ) {
         pyro_free_vm(vm);
         return NULL;
@@ -1337,6 +1340,7 @@ PyroVM* pyro_new_vm() {
     vm->vec_iter_class->name = STR_OBJ("$vec_iter");
     vm->map_iter_class->name = STR_OBJ("$map_iter");
     vm->str_iter_class->name = STR_OBJ("$str_iter");
+    vm->range_class->name = STR_OBJ("$range");
 
     // Canned objects, mostly static strings.
     vm->empty_error = ObjTup_new_err(0, vm);
