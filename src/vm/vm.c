@@ -687,6 +687,9 @@ static void run(PyroVM* vm) {
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 > b.as.f64));
                             break;
+                        case VAL_CHAR:
+                            pyro_push(vm, BOOL_VAL(a.as.u32 > b.as.u32));
+                            break;
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
@@ -716,6 +719,9 @@ static void run(PyroVM* vm) {
                             break;
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 >= b.as.f64));
+                            break;
+                        case VAL_CHAR:
+                            pyro_push(vm, BOOL_VAL(a.as.u32 >= b.as.u32));
                             break;
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
@@ -884,6 +890,9 @@ static void run(PyroVM* vm) {
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 < b.as.f64));
                             break;
+                        case VAL_CHAR:
+                            pyro_push(vm, BOOL_VAL(a.as.u32 < b.as.u32));
+                            break;
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
@@ -913,6 +922,9 @@ static void run(PyroVM* vm) {
                             break;
                         case VAL_F64:
                             pyro_push(vm, BOOL_VAL(a.as.f64 <= b.as.f64));
+                            break;
+                        case VAL_CHAR:
+                            pyro_push(vm, BOOL_VAL(a.as.u32 <= b.as.u32));
                             break;
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
