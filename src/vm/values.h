@@ -59,6 +59,7 @@ typedef enum {
     OBJ_VEC_ITER,
     OBJ_ERR,
     OBJ_RANGE,
+    OBJ_BUF,
 } ObjType;
 
 
@@ -184,8 +185,6 @@ ObjVec* ObjVec_new(PyroVM* vm);
 ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm);
 ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm);
 void ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
-Value ObjVec_get(ObjVec* vec, size_t index, PyroVM* vm);
-void ObjVec_set(ObjVec* vec, size_t index, Value value, PyroVM* vm);
 
 // Copy all entries from [src] to [dst].
 void ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
@@ -382,6 +381,22 @@ ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm);
 
 
 /* ------ */
+/* ObjBuf */
+/* ------ */
+
+
+typedef struct {
+    Obj obj;
+    size_t count;
+    size_t capacity;
+    uint8_t* bytes;
+} ObjBuf;
+
+ObjBuf* ObjBuf_new(PyroVM* vm);
+bool ObjBuf_append(ObjBuf* buf, uint8_t byte, PyroVM* vm);
+
+
+/* ------ */
 /* Macros */
 /* ------ */
 
@@ -417,6 +432,7 @@ ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm);
 #define IS_VEC(value)               pyro_is_obj_of_type(value, OBJ_VEC)
 #define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
 #define IS_RANGE(value)             pyro_is_obj_of_type(value, OBJ_RANGE)
+#define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
 
 #define AS_OBJ(value)               ((value).as.obj)
 #define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
@@ -435,6 +451,7 @@ ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm);
 #define AS_MAP_ITER(value)          ((ObjMapIter*)AS_OBJ(value))
 #define AS_STR_ITER(value)          ((ObjStrIter*)AS_OBJ(value))
 #define AS_RANGE(value)             ((ObjRange*)AS_OBJ(value))
+#define AS_BUF(value)               ((ObjBuf*)AS_OBJ(value))
 
 // Make a string object or value by copying a C string.
 #define STR_OBJ(c_string)           ObjStr_copy_raw(c_string, strlen(c_string), vm)

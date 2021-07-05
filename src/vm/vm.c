@@ -1281,6 +1281,7 @@ PyroVM* pyro_new_vm() {
     vm->str_class = NULL;
     vm->tup_class = NULL;
     vm->vec_class = NULL;
+    vm->buf_class = NULL;
     vm->strings = NULL;
     vm->globals = NULL;
     vm->modules = NULL;
@@ -1309,6 +1310,7 @@ PyroVM* pyro_new_vm() {
     vm->str_class = ObjClass_new(vm, NULL);
     vm->tup_class = ObjClass_new(vm, NULL);
     vm->vec_class = ObjClass_new(vm, NULL);
+    vm->buf_class = ObjClass_new(vm, NULL);
     vm->tup_iter_class = ObjClass_new(vm, NULL);
     vm->vec_iter_class = ObjClass_new(vm, NULL);
     vm->map_iter_class = ObjClass_new(vm, NULL);
@@ -1316,7 +1318,7 @@ PyroVM* pyro_new_vm() {
     vm->range_class = ObjClass_new(vm, NULL);
 
     if (
-        !vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class ||
+        !vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class || !vm->buf_class ||
         !vm->tup_iter_class || !vm->vec_class || !vm->map_class || !vm->str_iter_class ||
         !vm->range_class
     ) {
@@ -1336,6 +1338,7 @@ PyroVM* pyro_new_vm() {
     vm->str_class->name = STR_OBJ("$str");
     vm->tup_class->name = STR_OBJ("$tup");
     vm->vec_class->name = STR_OBJ("$vec");
+    vm->buf_class->name = STR_OBJ("$buf");
     vm->tup_iter_class->name = STR_OBJ("$tup_iter");
     vm->vec_iter_class->name = STR_OBJ("$vec_iter");
     vm->map_iter_class->name = STR_OBJ("$map_iter");

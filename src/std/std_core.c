@@ -132,7 +132,12 @@ static Value vec_append(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_get(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (IS_I64(args[0])) {
-        return ObjVec_get(vec, args[0].as.i64, vm);
+        int64_t index = args[0].as.i64;
+        if (index >= 0 && (size_t)index < vec->count) {
+            return vec->values[index];
+        }
+        pyro_panic(vm, "Index out of range.");
+        return NULL_VAL();
     }
     pyro_panic(vm, "Invalid index type, expected an integer.");
     return NULL_VAL();
@@ -142,8 +147,13 @@ static Value vec_get(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_set(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (IS_I64(args[0])) {
-        ObjVec_set(vec, args[0].as.i64, args[1], vm);
-        return args[1];
+        int64_t index = args[0].as.i64;
+        if (index >= 0 && (size_t)index < vec->count) {
+            vec->values[index] = args[1];
+            return args[1];
+        }
+        pyro_panic(vm, "Index out of range.");
+        return NULL_VAL();
     }
     pyro_panic(vm, "Invalid index type, expected an integer.");
     return NULL_VAL();
@@ -547,6 +557,112 @@ static Value range_next(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     return OBJ_VAL(vm->empty_error);
+}
+
+
+/* ------- */
+/* Buffers */
+/* ------- */
+
+
+static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return OBJ_VAL(vm->empty_error);
+    }
+    return OBJ_VAL(buf);
+}
+
+
+static Value fn_is_buf(PyroVM* vm, size_t arg_count, Value* args) {
+    return BOOL_VAL(IS_BUF(args[0]));
+}
+
+
+static Value buf_count(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+    return I64_VAL(buf->count);
+}
+
+
+static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, "Invalid argument to :write_byte().");
+        return NULL_VAL();
+    }
+
+    int64_t value = args[0].as.i64;
+    if (value < 0 || value > 255) {
+        pyro_panic(vm, "Out-of-range argument (%d) to :write_byte().", value);
+        return NULL_VAL();
+    }
+
+    bool result = ObjBuf_append(buf, value, vm);
+    return BOOL_VAL(result);
+}
+
+
+static Value buf_to_str(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+
+    if (buf->count == 0) {
+        return OBJ_VAL(vm->empty_string);
+    }
+
+    if (buf->capacity > buf->count + 1) {
+        buf->bytes = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, buf->count + 1);
+        buf->capacity = buf->count + 1;
+    }
+    buf->bytes[buf->count] = '\0';
+
+    ObjStr* string = ObjStr_take((char*)buf->bytes, buf->count, vm);
+    if (!string) {
+        return OBJ_VAL(vm->empty_error);
+    }
+
+    buf->count = 0;
+    buf->capacity = 0;
+    buf->bytes = NULL;
+
+    return OBJ_VAL(string);
+}
+
+
+static Value buf_get(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+    if (IS_I64(args[0])) {
+        int64_t index = args[0].as.i64;
+        if (index >= 0 && (size_t)index < buf->count) {
+            return I64_VAL(buf->bytes[index]);
+        }
+        pyro_panic(vm, "Index out of range.");
+        return NULL_VAL();
+    }
+    pyro_panic(vm, "Invalid index type, expected an integer.");
+    return NULL_VAL();
+}
+
+
+static Value buf_set(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+    if (IS_I64(args[0])) {
+        int64_t index = args[0].as.i64;
+        if (index >= 0 && (size_t)index < buf->count) {
+            int64_t value = args[1].as.i64;
+            if (value >= 0 && value <= 255) {
+                buf->bytes[index] = value;
+                return args[1];
+            }
+            pyro_panic(vm, "Byte value out of range.");
+            return NULL_VAL();
+        }
+        pyro_panic(vm, "Index out of range.");
+        return NULL_VAL();
+    }
+    pyro_panic(vm, "Invalid index type, expected an integer.");
+    return NULL_VAL();
 }
 
 
@@ -978,5 +1094,15 @@ void pyro_load_std_core(PyroVM* vm) {
 
     pyro_define_global_fn(vm, "$err", fn_err, -1);
     pyro_define_global_fn(vm, "$is_err", fn_is_err, 1);
+
+    pyro_define_global_fn(vm, "$buf", fn_buf, 0);
+    pyro_define_global_fn(vm, "$is_buf", fn_is_buf, 1);
+    pyro_define_method(vm, vm->buf_class, "to_str", buf_to_str, 0);
+    pyro_define_method(vm, vm->buf_class, "write_byte", buf_write_byte, 1);
+    pyro_define_method(vm, vm->buf_class, "count", buf_count, 0);
+    pyro_define_method(vm, vm->buf_class, "get", buf_get, 1);
+    pyro_define_method(vm, vm->buf_class, "set", buf_set, 2);
+    pyro_define_method(vm, vm->buf_class, "$get_index", buf_get, 1);
+    pyro_define_method(vm, vm->buf_class, "$set_index", buf_set, 2);
 }
 

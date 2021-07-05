@@ -39,6 +39,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_class);
     mark_object(vm, (Obj*)vm->tup_class);
     mark_object(vm, (Obj*)vm->vec_class);
+    mark_object(vm, (Obj*)vm->buf_class);
     mark_object(vm, (Obj*)vm->tup_iter_class);
     mark_object(vm, (Obj*)vm->vec_iter_class);
     mark_object(vm, (Obj*)vm->map_iter_class);
@@ -93,6 +94,9 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             mark_object(vm, (Obj*)bound->method);
             break;
         }
+
+        case OBJ_BUF:
+            break;
 
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
@@ -258,6 +262,13 @@ void free_object(PyroVM* vm, Obj* object) {
     switch(object->type) {
         case OBJ_BOUND_METHOD: {
             FREE_OBJECT(vm, ObjBoundMethod, object);
+            break;
+        }
+
+        case OBJ_BUF: {
+            ObjBuf* buf = (ObjBuf*)object;
+            FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
+            FREE_OBJECT(vm, ObjBuf, object);
             break;
         }
 

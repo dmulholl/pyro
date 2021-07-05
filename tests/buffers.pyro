@@ -1,0 +1,29 @@
+var foo = $buf();
+assert $is_buf(foo);
+assert !$is_buf("foo");
+assert foo:count() == 0;
+
+foo:write_byte(0x61);
+assert foo:count() == 1;
+
+foo:write_byte(0x62);
+assert foo:count() == 2;
+
+foo:write_byte(0x63);
+assert foo:count() == 3;
+
+var string = foo:to_str();
+assert string == "abc";
+assert foo:count() == 0;
+
+foo:write_byte(0x64);
+assert foo:count() == 1;
+assert foo:get(0) == 0x64;
+
+foo:set(0, 0x65);
+assert foo:count() == 1;
+assert foo:get(0) == 0x65;
+
+assert foo[0] == 0x65;
+foo[0] = 0x66;
+assert foo[0] == 0x66;

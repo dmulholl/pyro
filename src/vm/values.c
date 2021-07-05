@@ -174,7 +174,7 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
 
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
-            char* string = pyro_str_fmt(vm, "<fn %s>", native->name->bytes);
+            char* string = pyro_str_fmt(vm, "<native fn %s>", native->name->bytes);
             return ObjStr_take(string, strlen(string), vm);
         }
 
@@ -463,6 +463,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
 char* pyro_stringify_obj_type(ObjType type) {
     switch (type) {
         case OBJ_BOUND_METHOD: return "<method>";
+        case OBJ_BUF: return "<buf>";
         case OBJ_CLASS: return "<class>";
         case OBJ_CLOSURE: return "<closure>";
         case OBJ_ERR: return "<err>";

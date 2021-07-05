@@ -848,24 +848,6 @@ void ObjVec_append(ObjVec* vec, Value value, PyroVM* vm) {
 }
 
 
-Value ObjVec_get(ObjVec* vec, size_t index, PyroVM* vm) {
-    if (index >= 0 && index < vec->count) {
-        return vec->values[index];
-    }
-    pyro_panic(vm, "Index out of range.");
-    return NULL_VAL();
-}
-
-
-void ObjVec_set(ObjVec* vec, size_t index, Value value, PyroVM* vm) {
-    if (index >= 0 && index < vec->count) {
-        vec->values[index] = value;
-        return;
-    }
-    pyro_panic(vm, "Index out of range.");
-}
-
-
 void ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->count; i++) {
         ObjVec_append(dst, src->values[i], vm);
@@ -898,3 +880,38 @@ ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm) {
     iter->step = step;
     return iter;
 }
+
+
+/* ------ */
+/* ObjBuf */
+/* ------ */
+
+
+ObjBuf* ObjBuf_new(PyroVM* vm) {
+    ObjBuf* buf = ALLOCATE_OBJECT(vm, ObjBuf, OBJ_BUF);
+    if (!buf) {
+        return NULL;
+    }
+    buf->count = 0;
+    buf->capacity = 0;
+    buf->bytes = NULL;
+    buf->obj.class = vm->buf_class;
+    return buf;
+}
+
+
+bool ObjBuf_append(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
+    if (buf->count + 1 >= buf->capacity) {
+        size_t new_capacity = GROW_CAPACITY(buf->capacity);
+        uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
+        if (!new_array) {
+            return false;
+        }
+        buf->capacity = new_capacity;
+        buf->bytes = new_array;
+    }
+    buf->bytes[buf->count++] = byte;
+    return true;
+}
+
+
