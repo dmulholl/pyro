@@ -900,9 +900,22 @@ ObjBuf* ObjBuf_new(PyroVM* vm) {
 }
 
 
-bool ObjBuf_append(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
-    if (buf->count + 1 >= buf->capacity) {
+bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
+    return ObjBuf_append_bytes(buf, 1, &byte, false, vm);
+}
+
+
+bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline, PyroVM* vm) {
+    size_t req_capacity = buf->count + count + 1;
+    if (newline) {
+        req_capacity++;
+    }
+
+    if (req_capacity > buf->capacity) {
         size_t new_capacity = GROW_CAPACITY(buf->capacity);
+        while (new_capacity < req_capacity) {
+            new_capacity = GROW_CAPACITY(new_capacity);
+        }
         uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
         if (!new_array) {
             return false;
@@ -910,8 +923,14 @@ bool ObjBuf_append(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
         buf->capacity = new_capacity;
         buf->bytes = new_array;
     }
-    buf->bytes[buf->count++] = byte;
+
+    memcpy(&buf->bytes[buf->count], bytes, count);
+    buf->count += count;
+
+    if (newline) {
+        buf->bytes[buf->count++] = '\n';
+    }
+
     return true;
 }
-
 

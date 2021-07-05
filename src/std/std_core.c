@@ -7,6 +7,226 @@
 #include "../vm/utf8.h"
 
 
+// --------------------- //
+// Formatting & Printing //
+// --------------------- //
+
+
+static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count < 2) {
+        pyro_panic(vm, "Expected 2 or more arguments for $fmt(), found %d.", arg_count);
+        return OBJ_VAL(vm->empty_string);
+    }
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "First argument to $fmt() should be a format string.");
+        return OBJ_VAL(vm->empty_string);
+    }
+
+    ObjStr* fmt_str = AS_STR(args[0]);
+
+    char fmt_spec_buffer[16];
+    size_t fmt_spec_count = 0;
+
+    char* out_buffer = ALLOCATE_ARRAY(vm, char, 8);
+    size_t out_capacity = 8;
+    size_t out_count = 0;
+
+    size_t fmt_str_index = 0;
+    size_t next_arg_index = 1;
+
+    while (fmt_str_index < fmt_str->length) {
+        if (out_count + 1 == out_capacity) {
+            size_t new_capacity = out_capacity * 2;
+            out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
+            out_capacity = new_capacity;
+        }
+
+        if (fmt_str_index < fmt_str->length - 1) {
+            if (fmt_str->bytes[fmt_str_index] == '\\') {
+                if (fmt_str->bytes[fmt_str_index + 1] == '{') {
+                    out_buffer[out_count++] = '{';
+                    fmt_str_index += 2;
+                    continue;
+                }
+            }
+        }
+
+        if (fmt_str->bytes[fmt_str_index] == '{') {
+            fmt_str_index++;
+            while (fmt_str_index < fmt_str->length && fmt_str->bytes[fmt_str_index] != '}') {
+                if (fmt_spec_count == 15) {
+                    pyro_panic(vm, "Too many characters in format specifier.");
+                    FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                    return OBJ_VAL(vm->empty_string);
+                }
+                fmt_spec_buffer[fmt_spec_count++] = fmt_str->bytes[fmt_str_index++];
+            }
+            if (fmt_str_index == fmt_str->length) {
+                pyro_panic(vm, "Missing '}' in format string.");
+                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                return OBJ_VAL(vm->empty_string);
+            }
+            fmt_str_index++;
+            fmt_spec_buffer[fmt_spec_count] = '\0';
+
+            if (next_arg_index == arg_count) {
+                pyro_panic(vm, "Too few arguments for format string.");
+                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                return OBJ_VAL(vm->empty_string);
+            }
+            Value arg = args[next_arg_index++];
+
+            ObjStr* formatted;
+            if (fmt_spec_count == 0) {
+                formatted = pyro_stringify_value(vm, arg, true);
+            } else {
+                formatted = pyro_format_value(vm, arg, fmt_spec_buffer);
+            }
+            if (vm->exit_flag || vm->panic_flag) {
+                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                return OBJ_VAL(vm->empty_string);
+            }
+
+            if (out_capacity - out_count - 1 < formatted->length) {
+                int new_capacity = out_capacity + formatted->length + 1;
+                pyro_push(vm, OBJ_VAL(formatted));
+                out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
+                out_capacity = new_capacity;
+                pyro_pop(vm);
+            }
+
+            memcpy(&out_buffer[out_count], formatted->bytes, formatted->length);
+            out_count += formatted->length;
+            fmt_spec_count = 0;
+            continue;
+        }
+
+        out_buffer[out_count++] = fmt_str->bytes[fmt_str_index++];
+    }
+
+    out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, out_count + 1);
+    out_buffer[out_count] = '\0';
+    return OBJ_VAL(ObjStr_take(out_buffer, out_count, vm));
+}
+
+
+static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        pyro_panic(vm, "Expected 1 or more arguments for $eprint(), found 0.");
+        return NULL_VAL();
+    }
+
+    if (arg_count == 1) {
+        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        pyro_err(vm, "%s", string->bytes);
+        return NULL_VAL();
+    }
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "First argument to $eprint() should be a format string.");
+        return NULL_VAL();
+    }
+
+    Value formatted = fn_fmt(vm, arg_count, args);
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+    pyro_err(vm, "%s", AS_STR(formatted)->bytes);
+    return NULL_VAL();
+}
+
+
+static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        pyro_panic(vm, "Expected 1 or more arguments for $print(), found 0.");
+        return NULL_VAL();
+    }
+
+    if (arg_count == 1) {
+        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        pyro_out(vm, "%s", string->bytes);
+        return NULL_VAL();
+    }
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "First argument to $print() should be a format string.");
+        return NULL_VAL();
+    }
+
+    Value formatted = fn_fmt(vm, arg_count, args);
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+    pyro_out(vm, "%s", AS_STR(formatted)->bytes);
+    return NULL_VAL();
+}
+
+
+static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        pyro_err(vm, "\n");
+        return NULL_VAL();
+    }
+
+    if (arg_count == 1) {
+        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        pyro_err(vm, "%s\n", string->bytes);
+        return NULL_VAL();
+    }
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "First argument to $eprintln() should be a format string.");
+        return NULL_VAL();
+    }
+
+    Value formatted = fn_fmt(vm, arg_count, args);
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+    pyro_err(vm, "%s\n", AS_STR(formatted)->bytes);
+    return NULL_VAL();
+}
+
+
+static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        pyro_out(vm, "\n");
+        return NULL_VAL();
+    }
+
+    if (arg_count == 1) {
+        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        pyro_out(vm, "%s\n", string->bytes);
+        return NULL_VAL();
+    }
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "First argument to $println() should be a format string.");
+        return NULL_VAL();
+    }
+
+    Value formatted = fn_fmt(vm, arg_count, args);
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+    pyro_out(vm, "%s\n", AS_STR(formatted)->bytes);
+    return NULL_VAL();
+}
+
+
 // ---- //
 // Maps //
 // ---- //
@@ -599,8 +819,68 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
 
-    bool result = ObjBuf_append(buf, value, vm);
+    bool result = ObjBuf_append_byte(buf, value, vm);
     return BOOL_VAL(result);
+}
+
+
+static Value buf_write_be_u16(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, "Invalid argument to :write_be_u16().");
+        return NULL_VAL();
+    }
+
+    int64_t value = args[0].as.i64;
+    if (value < 0 || value > UINT16_MAX) {
+        pyro_panic(vm, "Out-of-range argument (%d) to :write_be_u16().", value);
+        return NULL_VAL();
+    }
+
+    uint8_t byte1 = (value >> 8) & 0xFF;    // MSB
+    uint8_t byte2 = value & 0xFF;           // LSB
+
+    if (!ObjBuf_append_byte(buf, byte1, vm)) {
+        return BOOL_VAL(false);
+    }
+
+    if (!ObjBuf_append_byte(buf, byte2, vm)) {
+        buf->count--;
+        return BOOL_VAL(false);
+    }
+
+    return BOOL_VAL(true);
+}
+
+
+static Value buf_write_le_u16(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, "Invalid argument to :write_be_u16().");
+        return NULL_VAL();
+    }
+
+    int64_t value = args[0].as.i64;
+    if (value < 0 || value > UINT16_MAX) {
+        pyro_panic(vm, "Out-of-range argument (%d) to :write_be_u16().", value);
+        return NULL_VAL();
+    }
+
+    uint8_t byte1 = (value >> 8) & 0xFF;    // MSB
+    uint8_t byte2 = value & 0xFF;           // LSB
+
+    if (!ObjBuf_append_byte(buf, byte2, vm)) {
+        return BOOL_VAL(false);
+    }
+
+    if (!ObjBuf_append_byte(buf, byte1, vm)) {
+        buf->count--;
+        return BOOL_VAL(false);
+    }
+
+    return BOOL_VAL(true);
 }
 
 
@@ -666,223 +946,75 @@ static Value buf_set(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-// --------------------- //
-// Formatting & Printing //
-// --------------------- //
+static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
 
-
-static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
-    if (arg_count < 2) {
-        pyro_panic(vm, "Expected 2 or more arguments for $fmt(), found %d.", arg_count);
-        return OBJ_VAL(vm->empty_string);
-    }
-
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "First argument to $fmt() should be a format string.");
-        return OBJ_VAL(vm->empty_string);
-    }
-
-    ObjStr* fmt_str = AS_STR(args[0]);
-
-    char fmt_spec_buffer[16];
-    size_t fmt_spec_count = 0;
-
-    char* out_buffer = ALLOCATE_ARRAY(vm, char, 8);
-    size_t out_capacity = 8;
-    size_t out_count = 0;
-
-    size_t fmt_str_index = 0;
-    size_t next_arg_index = 1;
-
-    while (fmt_str_index < fmt_str->length) {
-        if (out_count + 1 == out_capacity) {
-            size_t new_capacity = out_capacity * 2;
-            out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
-            out_capacity = new_capacity;
-        }
-
-        if (fmt_str_index < fmt_str->length - 1) {
-            if (fmt_str->bytes[fmt_str_index] == '\\') {
-                if (fmt_str->bytes[fmt_str_index + 1] == '{') {
-                    out_buffer[out_count++] = '{';
-                    fmt_str_index += 2;
-                    continue;
-                }
-            }
-        }
-
-        if (fmt_str->bytes[fmt_str_index] == '{') {
-            fmt_str_index++;
-            while (fmt_str_index < fmt_str->length && fmt_str->bytes[fmt_str_index] != '}') {
-                if (fmt_spec_count == 15) {
-                    pyro_panic(vm, "Too many characters in format specifier.");
-                    FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                    return OBJ_VAL(vm->empty_string);
-                }
-                fmt_spec_buffer[fmt_spec_count++] = fmt_str->bytes[fmt_str_index++];
-            }
-            if (fmt_str_index == fmt_str->length) {
-                pyro_panic(vm, "Missing '}' in format string.");
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                return OBJ_VAL(vm->empty_string);
-            }
-            fmt_str_index++;
-            fmt_spec_buffer[fmt_spec_count] = '\0';
-
-            if (next_arg_index == arg_count) {
-                pyro_panic(vm, "Too few arguments for format string.");
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                return OBJ_VAL(vm->empty_string);
-            }
-            Value arg = args[next_arg_index++];
-
-            ObjStr* formatted;
-            if (fmt_spec_count == 0) {
-                formatted = pyro_stringify_value(vm, arg, true);
-            } else {
-                formatted = pyro_format_value(vm, arg, fmt_spec_buffer);
-            }
-            if (vm->exit_flag || vm->panic_flag) {
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                return OBJ_VAL(vm->empty_string);
-            }
-
-            if (out_capacity - out_count - 1 < formatted->length) {
-                int new_capacity = out_capacity + formatted->length + 1;
-                pyro_push(vm, OBJ_VAL(formatted));
-                out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
-                out_capacity = new_capacity;
-                pyro_pop(vm);
-            }
-
-            memcpy(&out_buffer[out_count], formatted->bytes, formatted->length);
-            out_count += formatted->length;
-            fmt_spec_count = 0;
-            continue;
-        }
-
-        out_buffer[out_count++] = fmt_str->bytes[fmt_str_index++];
-    }
-
-    out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, out_count + 1);
-    out_buffer[out_count] = '\0';
-    return OBJ_VAL(ObjStr_take(out_buffer, out_count, vm));
-}
-
-
-static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        pyro_panic(vm, "Expected 1 or more arguments for $eprint(), found 0.");
+        pyro_panic(vm, "Expected 1 or more arguments for :write(), found 0.");
         return NULL_VAL();
     }
 
     if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0], true);
-        if (vm->exit_flag || vm->panic_flag) {
+        if (vm->halt_flag) {
             return NULL_VAL();
         }
-        pyro_err(vm, "%s", string->bytes);
-        return NULL_VAL();
+        pyro_push(vm, OBJ_VAL(string));
+        bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, false, vm);
+        pyro_pop(vm);
+        return BOOL_VAL(result);
     }
 
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, "First argument to $eprint() should be a format string.");
+        pyro_panic(vm, "First argument to :write() should be a format string.");
         return NULL_VAL();
     }
 
     Value formatted = fn_fmt(vm, arg_count, args);
-    if (vm->exit_flag || vm->panic_flag) {
+    if (vm->halt_flag) {
         return NULL_VAL();
     }
-    pyro_err(vm, "%s", AS_STR(formatted)->bytes);
-    return NULL_VAL();
+    ObjStr* string = AS_STR(formatted);
+    pyro_push(vm, formatted);
+    bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, false, vm);
+    pyro_pop(vm);
+    return BOOL_VAL(result);
 }
 
 
-static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
+static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+
     if (arg_count == 0) {
-        pyro_panic(vm, "Expected 1 or more arguments for $print(), found 0.");
-        return NULL_VAL();
+        bool result = ObjBuf_append_byte(buf, '\n', vm);
+        return BOOL_VAL(result);
     }
 
     if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0], true);
-        if (vm->exit_flag || vm->panic_flag) {
+        if (vm->halt_flag) {
             return NULL_VAL();
         }
-        pyro_out(vm, "%s", string->bytes);
-        return NULL_VAL();
+        pyro_push(vm, OBJ_VAL(string));
+        bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, true, vm);
+        pyro_pop(vm);
+        return BOOL_VAL(result);
     }
 
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, "First argument to $print() should be a format string.");
+        pyro_panic(vm, "First argument to :writeln() should be a format string.");
         return NULL_VAL();
     }
 
     Value formatted = fn_fmt(vm, arg_count, args);
-    if (vm->exit_flag || vm->panic_flag) {
+    if (vm->halt_flag) {
         return NULL_VAL();
     }
-    pyro_out(vm, "%s", AS_STR(formatted)->bytes);
-    return NULL_VAL();
-}
-
-
-static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
-    if (arg_count == 0) {
-        pyro_err(vm, "\n");
-        return NULL_VAL();
-    }
-
-    if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
-        if (vm->exit_flag || vm->panic_flag) {
-            return NULL_VAL();
-        }
-        pyro_err(vm, "%s\n", string->bytes);
-        return NULL_VAL();
-    }
-
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "First argument to $eprintln() should be a format string.");
-        return NULL_VAL();
-    }
-
-    Value formatted = fn_fmt(vm, arg_count, args);
-    if (vm->exit_flag || vm->panic_flag) {
-        return NULL_VAL();
-    }
-    pyro_err(vm, "%s\n", AS_STR(formatted)->bytes);
-    return NULL_VAL();
-}
-
-
-static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
-    if (arg_count == 0) {
-        pyro_out(vm, "\n");
-        return NULL_VAL();
-    }
-
-    if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
-        if (vm->exit_flag || vm->panic_flag) {
-            return NULL_VAL();
-        }
-        pyro_out(vm, "%s\n", string->bytes);
-        return NULL_VAL();
-    }
-
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "First argument to $println() should be a format string.");
-        return NULL_VAL();
-    }
-
-    Value formatted = fn_fmt(vm, arg_count, args);
-    if (vm->exit_flag || vm->panic_flag) {
-        return NULL_VAL();
-    }
-    pyro_out(vm, "%s\n", AS_STR(formatted)->bytes);
-    return NULL_VAL();
+    ObjStr* string = AS_STR(formatted);
+    pyro_push(vm, formatted);
+    bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, true, vm);
+    pyro_pop(vm);
+    return BOOL_VAL(result);
 }
 
 
@@ -1098,11 +1230,15 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$buf", fn_buf, 0);
     pyro_define_global_fn(vm, "$is_buf", fn_is_buf, 1);
     pyro_define_method(vm, vm->buf_class, "to_str", buf_to_str, 0);
-    pyro_define_method(vm, vm->buf_class, "write_byte", buf_write_byte, 1);
     pyro_define_method(vm, vm->buf_class, "count", buf_count, 0);
     pyro_define_method(vm, vm->buf_class, "get", buf_get, 1);
     pyro_define_method(vm, vm->buf_class, "set", buf_set, 2);
     pyro_define_method(vm, vm->buf_class, "$get_index", buf_get, 1);
     pyro_define_method(vm, vm->buf_class, "$set_index", buf_set, 2);
+    pyro_define_method(vm, vm->buf_class, "write_byte", buf_write_byte, 1);
+    pyro_define_method(vm, vm->buf_class, "write_be_u16", buf_write_be_u16, 1);
+    pyro_define_method(vm, vm->buf_class, "write_le_u16", buf_write_le_u16, 1);
+    pyro_define_method(vm, vm->buf_class, "write", buf_write, -1);
+    pyro_define_method(vm, vm->buf_class, "writeln", buf_writeln, -1);
 }
 

@@ -27,3 +27,39 @@ assert foo:get(0) == 0x65;
 assert foo[0] == 0x65;
 foo[0] = 0x66;
 assert foo[0] == 0x66;
+
+
+var bar = $buf();
+bar:write_be_u16(0xAABB);
+assert bar:count() == 2;
+assert bar[0] == 0xAA;
+assert bar[1] == 0xBB;
+
+
+var baz = $buf();
+baz:write_le_u16(0xAABB);
+assert baz:count() == 2;
+assert baz[0] == 0xBB;
+assert baz[1] == 0xAA;
+
+
+var fmt1 = $buf();
+fmt1:write(123);
+fmt1:write("foo");
+assert fmt1:count() == 6;
+assert fmt1:to_str() == "123foo";
+
+
+var fmt2 = $buf();
+fmt2:write("{} and {}", 123, "foo");
+assert fmt2:to_str() == "123 and foo";
+
+
+var fmt3 = $buf();
+fmt3:writeln("foo");
+assert fmt3:to_str() == "foo\n";
+
+
+var fmt4 = $buf();
+fmt4:writeln("{} and {}", 123, "foo");
+assert fmt4:to_str() == "123 and foo\n";
