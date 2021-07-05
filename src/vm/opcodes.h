@@ -65,6 +65,7 @@ typedef enum {
     OP_GET_INDEX,
     OP_SET_INDEX,
     OP_DUP2,
+    OP_POWER,
 } OpCode;
 
 #endif

@@ -20,6 +20,7 @@ typedef enum {
     TOKEN_COMMA,
     TOKEN_DOT,
     TOKEN_SEMICOLON,
+    TOKEN_CARET,
 
     // One or two character tokens.
     TOKEN_BANG, TOKEN_BANG_EQUAL, TOKEN_BANG_BANG,
@@ -466,6 +467,7 @@ Token next_token(Lexer* lexer) {
         case ';': return make_token(lexer, TOKEN_SEMICOLON);
         case ',': return make_token(lexer, TOKEN_COMMA);
         case '.': return make_token(lexer, TOKEN_DOT);
+        case '^': return make_token(lexer, TOKEN_CARET);
         case '-': return make_token(lexer, match_char(lexer, '=') ? TOKEN_MINUS_EQUAL : TOKEN_MINUS);
         case '+': return make_token(lexer, match_char(lexer, '=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
         case '/': return make_token(lexer, match_char(lexer, '/') ? TOKEN_SLASH_SLASH : TOKEN_SLASH);
@@ -1480,6 +1482,15 @@ static void parse_try_expr(Parser* parser) {
 }
 
 
+static void parse_power_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
+    parse_call_expr(parser, can_assign, can_assign_in_parens);
+    if (match(parser, TOKEN_CARET)) {
+        parse_unary_expr(parser, false, can_assign_in_parens);
+        emit_byte(parser, OP_POWER);
+    }
+}
+
+
 static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     if (match(parser, TOKEN_MINUS)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
@@ -1491,7 +1502,7 @@ static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in
         parse_try_expr(parser);
         emit_byte(parser, OP_TRY);
     } else {
-        parse_call_expr(parser, can_assign, can_assign_in_parens);
+        parse_power_expr(parser, can_assign, can_assign_in_parens);
     }
 }
 

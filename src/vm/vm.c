@@ -557,18 +557,18 @@ static void run(PyroVM* vm) {
                 if (a.type == b.type) {
                     switch (a.type) {
                         case VAL_I64:
-                            pyro_push(vm, F64_VAL((double)a.as.i64 / (double)b.as.i64));
+                            PUSH(F64_VAL((double)a.as.i64 / (double)b.as.i64));
                             break;
                         case VAL_F64:
-                            pyro_push(vm, F64_VAL(a.as.f64 / b.as.f64));
+                            PUSH(F64_VAL(a.as.f64 / b.as.f64));
                             break;
                         default:
                             pyro_panic(vm, "Operands to '/' must both be numbers.");
                     }
                 } else if (IS_I64(a) && IS_F64(b)) {
-                    pyro_push(vm, F64_VAL((double)a.as.i64 / b.as.f64));
+                    PUSH(F64_VAL((double)a.as.i64 / b.as.f64));
                 } else if (IS_F64(a) && IS_I64(b)) {
-                    pyro_push(vm, F64_VAL(a.as.f64 / (double)b.as.i64));
+                    PUSH(F64_VAL(a.as.f64 / (double)b.as.i64));
                 } else {
                     pyro_panic(vm, "Operands to '/' must both be numbers.");
                 }
@@ -1075,6 +1075,25 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_POWER: {
+                Value b = POP();
+                Value a = POP();
+
+                if (IS_I64(a) && IS_I64(b)) {
+                    PUSH(F64_VAL(pow((double)a.as.i64, (double)b.as.i64)));
+                } else if (IS_F64(a) && IS_F64(b)) {
+                    PUSH(F64_VAL(pow(a.as.f64, b.as.f64)));
+                } else if (IS_I64(a) && IS_F64(b)) {
+                    PUSH(F64_VAL(pow((double)a.as.i64, b.as.f64)));
+                } else if (IS_F64(a) && IS_I64(b)) {
+                    PUSH(F64_VAL(pow(a.as.f64, (double)b.as.i64)));
+                } else {
+                    pyro_panic(vm, "Operands to '^' must both be numbers.");
+                }
+
+                break;
+            }
+
             case OP_RETURN: {
                 Value result = pyro_pop(vm);
 
@@ -1169,24 +1188,17 @@ static void run(PyroVM* vm) {
             }
 
             case OP_TRUNC_DIV: {
-                Value b = pyro_pop(vm);
-                Value a = pyro_pop(vm);
+                Value b = POP();
+                Value a = POP();
 
-                if (a.type == b.type) {
-                    switch (a.type) {
-                        case VAL_I64:
-                            pyro_push(vm, I64_VAL(a.as.i64 / b.as.i64));
-                            break;
-                        case VAL_F64:
-                            pyro_push(vm, F64_VAL(trunc(a.as.f64 / b.as.f64)));
-                            break;
-                        default:
-                            pyro_panic(vm, "Operands to '//' must both be numbers.");
-                    }
+                if (IS_I64(a) && IS_I64(b)) {
+                    PUSH(I64_VAL(a.as.i64 / b.as.i64));
+                } else if (IS_F64(a) && IS_F64(b)) {
+                    PUSH(F64_VAL(trunc(a.as.f64 / b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
-                    pyro_push(vm, F64_VAL(trunc((double)a.as.i64 / b.as.f64)));
+                    PUSH(F64_VAL(trunc((double)a.as.i64 / b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
-                    pyro_push(vm, F64_VAL(trunc(a.as.f64 / (double)b.as.i64)));
+                    PUSH(F64_VAL(trunc(a.as.f64 / (double)b.as.i64)));
                 } else {
                     pyro_panic(vm, "Operands to '//' must both be numbers.");
                 }
