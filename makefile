@@ -2,7 +2,7 @@
 # Variables #
 # --------- #
 
-CFLAGS = -Wall -Wextra --std=c99 --pedantic -Wno-unused-parameter -Wno-unused-function
+CFLAGS = -Wall -Wextra --std=c11 --pedantic -Wno-unused-parameter -Wno-unused-function
 
 SGC = -D PYRO_DEBUG_STRESS_GC
 
