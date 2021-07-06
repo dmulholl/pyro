@@ -1,0 +1,32 @@
+assert $is_bool(true);
+assert $is_bool(false);
+assert !$is_bool("foo");
+assert !$is_bool(123);
+assert $is_bool($bool(123));
+
+assert $bool(true) == true;
+assert $bool(false) == false;
+assert $bool(null) == false;
+
+var err1 = $err();
+assert $bool(err1) == false;
+
+var err2 = $err("foo", 123);
+assert $bool(err2) == false;
+
+assert $bool(-1) == true;
+assert $bool(0) == false;
+assert $bool(-0) == false;
+assert $bool(1) == true;
+
+assert $bool(-1.0) == true;
+assert $bool(0.0) == false;
+assert $bool(-0.0) == false;
+assert $bool(1.0) == true;
+
+assert $bool("") == true;
+assert $bool("foo") == true;
+assert $bool($tup()) == true;
+assert $bool($tup("foo")) == true;
+assert $bool($map()) == true;
+assert $bool($vec()) == true;

@@ -464,7 +464,7 @@ static void run(PyroVM* vm) {
 
             case OP_ASSERT: {
                 Value test_expr = pyro_pop(vm);
-                if (pyro_is_falsey(test_expr)) {
+                if (!pyro_is_truthy(test_expr)) {
                     pyro_panic(vm, "Assert failed.");
                 }
                 break;
@@ -845,7 +845,7 @@ static void run(PyroVM* vm) {
 
             case OP_JUMP_IF_FALSE: {
                 uint16_t offset = READ_U16();
-                if (pyro_is_falsey(pyro_peek(vm, 0))) {
+                if (!pyro_is_truthy(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
                 break;
@@ -869,7 +869,7 @@ static void run(PyroVM* vm) {
 
             case OP_JUMP_IF_TRUE: {
                 uint16_t offset = READ_U16();
-                if (!pyro_is_falsey(pyro_peek(vm, 0))) {
+                if (pyro_is_truthy(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
                 break;
@@ -1059,7 +1059,7 @@ static void run(PyroVM* vm) {
 
             case OP_NOT: {
                 Value operand = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(pyro_is_falsey(operand)));
+                pyro_push(vm, BOOL_VAL(!pyro_is_truthy(operand)));
                 break;
             }
 
@@ -1076,7 +1076,7 @@ static void run(PyroVM* vm) {
 
             case OP_POP_JUMP_IF_FALSE: {
                 uint16_t offset = READ_U16();
-                if (pyro_is_falsey(pyro_pop(vm))) {
+                if (!pyro_is_truthy(pyro_pop(vm))) {
                     frame->ip += offset;
                 }
                 break;

@@ -5,6 +5,29 @@
 #include "utf8.h"
 
 
+bool pyro_is_truthy(Value value) {
+    switch (value.type) {
+        case VAL_NULL:
+            return false;
+        case VAL_BOOL:
+            return value.as.boolean;
+        case VAL_I64:
+            return value.as.i64 != 0;
+        case VAL_F64:
+            return value.as.f64 != 0.0;
+        case VAL_OBJ:
+            switch (value.as.obj->type) {
+                case OBJ_ERR: return false;
+                default: return true;
+            }
+        case VAL_CHAR:
+            return value.as.u32 != 0;
+        default:
+            return true;
+    }
+}
+
+
 // Returns the value's class if it exists, otherwise NULL;
 ObjClass* pyro_get_class(Value value) {
     if (IS_OBJ(value) && AS_OBJ(value)->class) {

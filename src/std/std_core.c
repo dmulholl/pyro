@@ -703,9 +703,9 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-/* ------ */
-/* Ranges */
-/* ------ */
+// ------ //
+// Ranges //
+// ------ //
 
 
 static Value fn_range(PyroVM* vm, size_t arg_count, Value* args) {
@@ -1129,6 +1129,16 @@ static Value fn_is_char(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_bool(PyroVM* vm, size_t arg_count, Value* args) {
+    return BOOL_VAL(pyro_is_truthy(args[0]));
+}
+
+
+static Value fn_is_bool(PyroVM* vm, size_t arg_count, Value* args) {
+    return BOOL_VAL(IS_BOOL(args[0]));
+}
+
+
 // ------------ //
 // Registration //
 // ------------ //
@@ -1163,6 +1173,9 @@ void pyro_load_std_core(PyroVM* vm) {
 
     pyro_define_global_fn(vm, "$char", fn_char, 1);
     pyro_define_global_fn(vm, "$is_char", fn_is_char, 1);
+
+    pyro_define_global_fn(vm, "$bool", fn_bool, 1);
+    pyro_define_global_fn(vm, "$is_bool", fn_is_bool, 1);
 
     pyro_define_global_fn(vm, "$fmt", fn_fmt, -1);
     pyro_define_global_fn(vm, "$print", fn_print, -1);

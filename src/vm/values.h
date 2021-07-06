@@ -490,12 +490,6 @@ static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
-static inline bool pyro_is_falsey(Value value) {
-    return IS_NULL(value) || (IS_BOOL(value) && !value.as.boolean) || IS_ERR(value);
-}
-
-static inline bool pyro_is_truthy(Value value) {
-    return !pyro_is_falsey(value);
-}
+bool pyro_is_truthy(Value value);
 
 #endif
