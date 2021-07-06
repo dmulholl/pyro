@@ -60,6 +60,7 @@ typedef enum {
     OBJ_ERR,
     OBJ_RANGE,
     OBJ_BUF,
+    OBJ_FILE,
 } ObjType;
 
 
@@ -380,9 +381,9 @@ typedef struct {
 ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm);
 
 
-/* ------ */
-/* ObjBuf */
-/* ------ */
+// ------ //
+// ObjBuf //
+// ------ //
 
 
 typedef struct {
@@ -395,6 +396,19 @@ typedef struct {
 ObjBuf* ObjBuf_new(PyroVM* vm);
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline, PyroVM* vm);
+
+
+// ------- //
+// ObjFile //
+// ------- //
+
+
+typedef struct {
+    Obj obj;
+    FILE* stream;
+} ObjFile;
+
+ObjFile* ObjFile_new(PyroVM* vm);
 
 
 /* ------ */
@@ -434,6 +448,7 @@ bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline
 #define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
 #define IS_RANGE(value)             pyro_is_obj_of_type(value, OBJ_RANGE)
 #define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
+#define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
 
 #define AS_OBJ(value)               ((value).as.obj)
 #define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
@@ -453,6 +468,7 @@ bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline
 #define AS_STR_ITER(value)          ((ObjStrIter*)AS_OBJ(value))
 #define AS_RANGE(value)             ((ObjRange*)AS_OBJ(value))
 #define AS_BUF(value)               ((ObjBuf*)AS_OBJ(value))
+#define AS_FILE(value)              ((ObjFile*)AS_OBJ(value))
 
 // Make a string object or value by copying a C string.
 #define STR_OBJ(c_string)           ObjStr_copy_raw(c_string, strlen(c_string), vm)

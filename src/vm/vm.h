@@ -23,6 +23,7 @@ struct PyroVM {
     ObjClass* map_iter_class;
     ObjClass* str_iter_class;
     ObjClass* range_class;
+    ObjClass* file_class;
 
     ObjVec* import_roots;
 

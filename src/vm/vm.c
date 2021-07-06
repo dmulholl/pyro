@@ -1320,6 +1320,7 @@ PyroVM* pyro_new_vm() {
     vm->main_module = NULL;
     vm->import_roots = NULL;
     vm->range_class = NULL;
+    vm->file_class = NULL;
 
     // We need to initialize these classes before we create any objects.
     vm->map_class = ObjClass_new(vm, NULL);
@@ -1332,11 +1333,12 @@ PyroVM* pyro_new_vm() {
     vm->map_iter_class = ObjClass_new(vm, NULL);
     vm->str_iter_class = ObjClass_new(vm, NULL);
     vm->range_class = ObjClass_new(vm, NULL);
+    vm->file_class = ObjClass_new(vm, NULL);
 
     if (
         !vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class || !vm->buf_class ||
         !vm->tup_iter_class || !vm->vec_class || !vm->map_class || !vm->str_iter_class ||
-        !vm->range_class
+        !vm->range_class || !vm->file_class
     ) {
         pyro_free_vm(vm);
         return NULL;
@@ -1360,6 +1362,7 @@ PyroVM* pyro_new_vm() {
     vm->map_iter_class->name = STR_OBJ("$map_iter");
     vm->str_iter_class->name = STR_OBJ("$str_iter");
     vm->range_class->name = STR_OBJ("$range");
+    vm->file_class->name = STR_OBJ("$file");
 
     // Canned objects, mostly static strings.
     vm->empty_error = ObjTup_new_err(0, vm);

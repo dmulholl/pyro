@@ -441,10 +441,17 @@ Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm) {
 // ------ //
 
 
-// Create a new string object taking ownership of the heap-allocated array [bytes].
-// [length] is the number of bytes in the string, not including the terminating null.
+// Creates a new string object taking ownership of a null-terminated, heap-allocated byte array,
+// where [length] is the number of bytes in the array, not including the terminating null. The
+// caller should already have verified that an identical string does not exist in the interned
+// strings pool. Returns NULL if the attempt to allocate memory for the object fails -- in this
+// case the input array is not altered or freed.
 static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t hash) {
     ObjStr* string = ALLOCATE_OBJECT(vm, ObjStr, OBJ_STR);
+    if (!string) {
+        return NULL;
+    }
+
     string->length = length;
     string->hash = hash;
     string->bytes = bytes;
@@ -458,11 +465,11 @@ static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t 
 }
 
 
-// Create a new string object by taking ownership of a pre-existing heap-allocated, null-terminated
-// byte array where [length] is the number of bytes in the string and [length + 1] is the
-// number of bytes in the array.
+// Creates a new string object taking ownership of a null-terminated, heap-allocated byte array,
+// where [length] is the number of bytes in the array, not including the terminating null. Returns
+// NULL if the attempt to allocate memory for the object fails -- in this case the input array is
+// not altered or freed.
 ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm) {
-    // Verify that the interned strings pool has been initialized.
     assert(vm->strings != NULL);
 
     uint64_t hash = PYRO_STRING_HASH(src, length);
@@ -481,9 +488,21 @@ ObjStr* ObjStr_empty(PyroVM* vm) {
     if (vm->empty_string) {
         return vm->empty_string;
     }
+
     char* bytes = ALLOCATE_ARRAY(vm, char, 1);
+    if (!bytes) {
+        return NULL;
+    }
+
     bytes[0] = '\0';
-    return ObjStr_take(bytes, 0, vm);
+
+    ObjStr* string = ObjStr_take(bytes, 0, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, bytes, 1);
+        return NULL;
+    }
+
+    return string;
 }
 
 
@@ -494,6 +513,10 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
     }
 
     char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
     size_t count = pyro_unescape_string(src, length, dst);
     dst[count] = '\0';
 
@@ -503,7 +526,13 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
         dst = REALLOCATE_ARRAY(vm, char, dst, length + 1, count + 1);
     }
 
-    return ObjStr_take(dst, count, vm);
+    ObjStr* string = ObjStr_take(dst, count, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, count + 1);
+        return NULL;
+    }
+
+    return string;
 }
 
 
@@ -513,19 +542,28 @@ ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
         return ObjStr_empty(vm);
     }
 
-    // Verify that the interned strings pool has been initialized.
-    assert(vm->strings != NULL);
-
     uint64_t hash = PYRO_STRING_HASH(src, length);
+    assert(vm->strings != NULL);
     ObjStr* interned = find_string(vm->strings, src, length, hash);
     if (interned) {
         return interned;
     }
 
     char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
     memcpy(dst, src, length);
     dst[length] = '\0';
-    return allocate_string(vm, dst, length, hash);
+
+    ObjStr* string = allocate_string(vm, dst, length, hash);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, length + 1);
+        return NULL;
+    }
+
+    return string;
 }
 
 
@@ -536,10 +574,21 @@ ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
 
     size_t length = src1->length + src2->length;
     char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
     memcpy(dst, src1->bytes, src1->length);
     memcpy(dst + src1->length, src2->bytes, src2->length);
     dst[length] = '\0';
-    return ObjStr_take(dst, length, vm);
+
+    ObjStr* string = ObjStr_take(dst, length, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, length + 1);
+        return NULL;
+    }
+
+    return string;
 }
 
 
@@ -936,3 +985,18 @@ bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline
     return true;
 }
 
+
+// ------- //
+// ObjFile //
+// ------- //
+
+
+ObjFile* ObjFile_new(PyroVM* vm) {
+    ObjFile* file = ALLOCATE_OBJECT(vm, ObjFile, OBJ_FILE);
+    if (!file) {
+        return NULL;
+    }
+    file->stream = NULL;
+    file->obj.class = vm->file_class;
+    return file;
+}

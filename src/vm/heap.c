@@ -45,6 +45,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->map_iter_class);
     mark_object(vm, (Obj*)vm->str_iter_class);
     mark_object(vm, (Obj*)vm->range_class);
+    mark_object(vm, (Obj*)vm->file_class);
 
     // The VM's pool of canned objects.
     mark_object(vm, (Obj*)vm->empty_error);
@@ -115,6 +116,9 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             }
             break;
         }
+
+        case OBJ_FILE:
+            break;
 
         case OBJ_FN: {
             ObjFn* fn = (ObjFn*)object;
@@ -281,6 +285,18 @@ void free_object(PyroVM* vm, Obj* object) {
             ObjClosure* closure = (ObjClosure*)object;
             FREE_ARRAY(vm, ObjUpvalue*, closure->upvalues, closure->upvalue_count);
             FREE_OBJECT(vm, ObjClosure, object);
+            break;
+        }
+
+        case OBJ_FILE: {
+            ObjFile* file = (ObjFile*)object;
+            if (file->stream) {
+                if (file->stream != stdout && file->stream != stdin && file->stream != stderr) {
+                    fclose(file->stream);
+                    file->stream = NULL;
+                }
+            }
+            FREE_OBJECT(vm, ObjFile, object);
             break;
         }
 

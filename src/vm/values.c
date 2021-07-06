@@ -148,6 +148,10 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
             return ObjStr_take(string, strlen(string), vm);
         }
 
+        case OBJ_BUF: {
+            return STR_OBJ("<buf>");
+        }
+
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
             if (class->name == NULL) {
@@ -164,6 +168,10 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
             }
             char* string = pyro_str_fmt(vm, "<fn %s>", closure->fn->name->bytes);
             return ObjStr_take(string, strlen(string), vm);
+        }
+
+        case OBJ_FILE: {
+            return STR_OBJ("<file>");
         }
 
         case OBJ_FN: {
@@ -191,8 +199,7 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
         }
 
         case OBJ_MODULE: {
-            char* string = pyro_str_fmt(vm, "<module %p>", object);
-            return ObjStr_take(string, strlen(string), vm);
+            return STR_OBJ("<module>");
         }
 
         case OBJ_NATIVE_FN: {
@@ -230,8 +237,7 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
         }
 
         default: {
-            char* string = pyro_str_fmt(vm, "<object %p>", object);
-            return ObjStr_take(string, strlen(string), vm);
+            return STR_OBJ("<object>");
         }
     }
 }
@@ -490,6 +496,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_CLASS: return "<class>";
         case OBJ_CLOSURE: return "<closure>";
         case OBJ_ERR: return "<err>";
+        case OBJ_FILE: return "<file>";
         case OBJ_FN: return "<fn>";
         case OBJ_INSTANCE: return "<instance>";
         case OBJ_MAP: return "<map>";

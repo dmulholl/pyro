@@ -1018,6 +1018,126 @@ static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+// ----- //
+// Files //
+// ----- //
+
+
+static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    size_t count = 0;
+    size_t capacity = 0;
+    uint8_t* array = NULL;
+
+    while (true) {
+        if (count + 1 > capacity) {
+            size_t new_capacity = GROW_CAPACITY(capacity);
+            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
+            if (!new_array) {
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                return OBJ_VAL(vm->empty_error);
+            }
+            capacity = new_capacity;
+            array = new_array;
+        }
+
+        int c = fgetc(file->stream);
+
+        if (c == EOF) {
+            if (ferror(file->stream)) {
+                pyro_panic(vm, "I/O read error.");
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                return NULL_VAL();
+            }
+            break;
+        }
+
+        array[count++] = c;
+    }
+
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        return OBJ_VAL(vm->empty_error);
+    }
+
+    buf->count = count;
+    buf->capacity = capacity;
+    buf->bytes = array;
+
+    return OBJ_VAL(buf);
+}
+
+
+static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    size_t count = 0;
+    size_t capacity = 0;
+    uint8_t* array = NULL;
+
+    while (true) {
+        if (count + 1 > capacity) {
+            size_t new_capacity = GROW_CAPACITY(capacity);
+            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
+            if (!new_array) {
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                return OBJ_VAL(vm->empty_error);
+            }
+            capacity = new_capacity;
+            array = new_array;
+        }
+
+        int c = fgetc(file->stream);
+
+        if (c == EOF) {
+            if (ferror(file->stream)) {
+                pyro_panic(vm, "I/O read error.");
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                return NULL_VAL();
+            }
+            break;
+        }
+
+        array[count++] = c;
+
+        if (c == '\n') {
+            break;
+        }
+    }
+
+    if (count == 0) {
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        return NULL_VAL();
+    }
+
+    while (count > 0 && (array[count - 1] == '\n' || array[count - 1] == '\r')) {
+        count--;
+    }
+
+    if (count == 0) {
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        return OBJ_VAL(vm->empty_string);
+    }
+
+    if (capacity > count + 1) {
+        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
+        capacity = count + 1;
+    }
+
+    array[count] = '\0';
+
+    ObjStr* string = ObjStr_take((char*)array, count, vm);
+    if (!string) {
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        return OBJ_VAL(vm->empty_error);
+    }
+
+    return OBJ_VAL(string);
+}
+
+
 // ----------- //
 // Miscellanea //
 // ----------- //
@@ -1151,10 +1271,34 @@ void pyro_load_std_core(PyroVM* vm) {
     // Register [$std] as a global variable so it doesn't need to be explicitly imported.
     pyro_define_global(vm, "$std", OBJ_VAL(mod_std));
 
-    ObjTup* tup = ObjTup_new(0, vm);
-    if (tup) {
-        pyro_push(vm, OBJ_VAL(tup));
-        pyro_define_global(vm, "$args", OBJ_VAL(tup));
+    ObjTup* args = ObjTup_new(0, vm);
+    if (args) {
+        pyro_push(vm, OBJ_VAL(args));
+        pyro_define_global(vm, "$args", OBJ_VAL(args));
+        pyro_pop(vm);
+    }
+
+    ObjFile* stdin_file = ObjFile_new(vm);
+    if (stdin_file) {
+        stdin_file->stream = stdin;
+        pyro_push(vm, OBJ_VAL(stdin_file));
+        pyro_define_global(vm, "$stdin", OBJ_VAL(stdin_file));
+        pyro_pop(vm);
+    }
+
+    ObjFile* stdout_file = ObjFile_new(vm);
+    if (stdout_file) {
+        stdout_file->stream = stdout;
+        pyro_push(vm, OBJ_VAL(stdout_file));
+        pyro_define_global(vm, "$stdout", OBJ_VAL(stdout_file));
+        pyro_pop(vm);
+    }
+
+    ObjFile* stderr_file = ObjFile_new(vm);
+    if (stderr_file) {
+        stderr_file->stream = stderr;
+        pyro_push(vm, OBJ_VAL(stderr_file));
+        pyro_define_global(vm, "$stderr", OBJ_VAL(stderr_file));
         pyro_pop(vm);
     }
 
@@ -1253,5 +1397,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->buf_class, "write_le_u16", buf_write_le_u16, 1);
     pyro_define_method(vm, vm->buf_class, "write", buf_write, -1);
     pyro_define_method(vm, vm->buf_class, "writeln", buf_writeln, -1);
+
+    pyro_define_method(vm, vm->file_class, "read", file_read, 0);
+    pyro_define_method(vm, vm->file_class, "read_line", file_read_line, 0);
 }
 
