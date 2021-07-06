@@ -21,6 +21,7 @@ typedef enum {
     TOKEN_DOT,
     TOKEN_SEMICOLON,
     TOKEN_CARET,
+    TOKEN_PERCENT,
 
     // One or two character tokens.
     TOKEN_BANG, TOKEN_BANG_EQUAL, TOKEN_BANG_BANG,
@@ -468,6 +469,7 @@ Token next_token(Lexer* lexer) {
         case ',': return make_token(lexer, TOKEN_COMMA);
         case '.': return make_token(lexer, TOKEN_DOT);
         case '^': return make_token(lexer, TOKEN_CARET);
+        case '%': return make_token(lexer, TOKEN_PERCENT);
         case '-': return make_token(lexer, match_char(lexer, '=') ? TOKEN_MINUS_EQUAL : TOKEN_MINUS);
         case '+': return make_token(lexer, match_char(lexer, '=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
         case '/': return make_token(lexer, match_char(lexer, '/') ? TOKEN_SLASH_SLASH : TOKEN_SLASH);
@@ -1519,6 +1521,9 @@ static void parse_multiplicative_expr(Parser* parser, bool can_assign, bool can_
         } else if (match(parser, TOKEN_SLASH_SLASH)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_TRUNC_DIV);
+        } else if (match(parser, TOKEN_PERCENT)) {
+            parse_unary_expr(parser, false, can_assign_in_parens);
+            emit_byte(parser, OP_MODULO);
         } else {
             break;
         }

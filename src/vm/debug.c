@@ -172,6 +172,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u16_instruction(vm, "OP_MAKE_VEC", fn, ip);
         case OP_METHOD:
             return constant_instruction(vm, "OP_METHOD", fn, ip);
+        case OP_MODULO:
+            return atomic_instruction(vm, "OP_MOD", ip);
         case OP_MULTIPLY:
             return atomic_instruction(vm, "OP_MULTIPLY", ip);
         case OP_NEGATE:

@@ -555,12 +555,16 @@ static void run(PyroVM* vm) {
                 Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
+                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(F64_VAL((double)a.as.i64 / (double)b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
+                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(F64_VAL(a.as.f64 / b.as.f64));
                 } else if (IS_I64(a) && IS_F64(b)) {
+                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(F64_VAL((double)a.as.i64 / b.as.f64));
                 } else if (IS_F64(a) && IS_I64(b)) {
+                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(F64_VAL(a.as.f64 / (double)b.as.i64));
                 } else {
                     pyro_panic(vm, "Operands to '/' must both be numbers.");
@@ -1002,6 +1006,23 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_MODULO: {
+                Value b = POP();
+                Value a = POP();
+
+                if (IS_I64(a) && IS_I64(b)) {
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, "Modulo by zero.");
+                        break;
+                    }
+                    PUSH(I64_VAL(a.as.i64 % b.as.i64));
+                } else {
+                    pyro_panic(vm, "Operands to '%%' must both be integers.");
+                }
+
+                break;
+            }
+
             case OP_MULTIPLY: {
                 Value b = POP();
                 Value a = POP();
@@ -1171,12 +1192,16 @@ static void run(PyroVM* vm) {
                 Value a = POP();
 
                 if (IS_I64(a) && IS_I64(b)) {
+                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(I64_VAL(a.as.i64 / b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
+                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(F64_VAL(trunc(a.as.f64 / b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
+                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(F64_VAL(trunc((double)a.as.i64 / b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
+                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
                     PUSH(F64_VAL(trunc(a.as.f64 / (double)b.as.i64)));
                 } else {
                     pyro_panic(vm, "Operands to '//' must both be numbers.");

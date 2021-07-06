@@ -8,8 +8,8 @@ Level               Operators           Associativity      Precedence
 Call                () . : ::           Left                HIGH
 Power               ^                   Right
 Unary               ! - try             Right
-*Bitwise            and or xor          Left
-Multiplication      / *                 Left
+*Bitwise            not and or xor      Left
+Multiplication      / // * %            Left
 Addition            - +                 Left
 Comparison          > >= < <=           Left
 Equality            == !=               Left
