@@ -482,9 +482,10 @@ ObjFile* ObjFile_new(PyroVM* vm);
 
 uint64_t pyro_hash(Value value);
 bool pyro_check_equal(Value a, Value b);
+bool pyro_is_truthy(Value value);
 
-void pyro_debug_value(PyroVM* vm, Value value);
-void pyro_debug_object(PyroVM* vm, Obj* object);
+void pyro_dump_value(PyroVM* vm, Value value);
+void pyro_dump_object(PyroVM* vm, Obj* object);
 
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
 ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object);
@@ -505,7 +506,5 @@ int pyro_compare_strings(ObjStr* a, ObjStr* b);
 static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
-
-bool pyro_is_truthy(Value value);
 
 #endif

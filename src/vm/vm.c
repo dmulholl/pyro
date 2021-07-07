@@ -416,7 +416,7 @@ static void run(PyroVM* vm) {
             }
             for (Value* slot = vm->stack; slot < vm->stack_top; slot++) {
                 pyro_out(vm, "[ ");
-                pyro_debug_value(vm, *slot);
+                pyro_dump_value(vm, *slot);
                 pyro_out(vm, " ]");
             }
             pyro_out(vm, "\n");

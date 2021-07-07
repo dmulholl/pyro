@@ -14,7 +14,7 @@ static size_t atomic_instruction(PyroVM* vm, const char* name, size_t ip) {
 static size_t constant_instruction(PyroVM* vm, const char* name, ObjFn* fn, size_t ip) {
     uint16_t index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
     pyro_out(vm, "%-24s %4d    ", name, index);
-    pyro_debug_value(vm, fn->constants[index]);
+    pyro_dump_value(vm, fn->constants[index]);
     pyro_out(vm, "\n");
     return ip + 3;
 }
@@ -49,7 +49,7 @@ static size_t invoke_instruction(PyroVM* vm, const char* name, ObjFn* fn, size_t
     uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
     uint8_t arg_count = fn->code[ip + 3];
     pyro_out(vm, "%-24s %4d    ", name, const_index);
-    pyro_debug_value(vm, fn->constants[const_index]);
+    pyro_dump_value(vm, fn->constants[const_index]);
     pyro_out(vm, "    (%d args)\n", arg_count);
     return ip + 4;
 }
@@ -82,7 +82,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             ip += 3;
 
             pyro_out(vm, "%-24s %4d    ", "OP_CLOSURE", const_index);
-            pyro_debug_value(vm, fn->constants[const_index]);
+            pyro_dump_value(vm, fn->constants[const_index]);
             pyro_out(vm, "\n");
 
             ObjFn* wrapped_fn = AS_FN(fn->constants[const_index]);
@@ -217,7 +217,7 @@ void pyro_disassemble_function(PyroVM* vm, ObjFn* fn) {
     pyro_out(vm, "== %s constants ==\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
     for (size_t i = 0; i < fn->constants_count; i++) {
         pyro_out(vm, "%04d    ", i);
-        pyro_debug_value(vm, fn->constants[i]);
+        pyro_dump_value(vm, fn->constants[i]);
         pyro_out(vm, "\n");
     }
     pyro_out(vm, "\n");

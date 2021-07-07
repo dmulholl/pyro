@@ -28,18 +28,23 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
     char fmt_spec_buffer[16];
     size_t fmt_spec_count = 0;
 
-    char* out_buffer = ALLOCATE_ARRAY(vm, char, 8);
-    size_t out_capacity = 8;
+    char* out_buffer = NULL;
+    size_t out_capacity = 0;
     size_t out_count = 0;
 
     size_t fmt_str_index = 0;
     size_t next_arg_index = 1;
 
     while (fmt_str_index < fmt_str->length) {
-        if (out_count + 1 == out_capacity) {
-            size_t new_capacity = out_capacity * 2;
-            out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
+        if (out_count + 2 > out_capacity) {
+            size_t new_capacity = GROW_CAPACITY(out_capacity);
+            char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
+            if (!new_array) {
+                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                return OBJ_VAL(vm->empty_error);
+            }
             out_capacity = new_capacity;
+            out_buffer = new_array;
         }
 
         if (fmt_str_index < fmt_str->length - 1) {
@@ -83,17 +88,31 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             } else {
                 formatted = pyro_format_value(vm, arg, fmt_spec_buffer);
             }
-            if (vm->exit_flag || vm->panic_flag) {
+
+            if (vm->halt_flag) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 return OBJ_VAL(vm->empty_string);
             }
 
-            if (out_capacity - out_count - 1 < formatted->length) {
-                int new_capacity = out_capacity + formatted->length + 1;
+            if (!formatted) {
+                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                return OBJ_VAL(vm->empty_error);
+            }
+
+            if (out_count + formatted->length + 1 > out_capacity) {
+                size_t new_capacity = out_count + formatted->length + 1;
+
                 pyro_push(vm, OBJ_VAL(formatted));
-                out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
-                out_capacity = new_capacity;
+                char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
                 pyro_pop(vm);
+
+                if (!new_array) {
+                    FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                    return OBJ_VAL(vm->empty_error);
+                }
+
+                out_capacity = new_capacity;
+                out_buffer = new_array;
             }
 
             memcpy(&out_buffer[out_count], formatted->bytes, formatted->length);
@@ -105,9 +124,19 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
         out_buffer[out_count++] = fmt_str->bytes[fmt_str_index++];
     }
 
-    out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, out_count + 1);
+    if (out_capacity > out_count + 1) {
+        out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, out_count + 1);
+        out_capacity = out_count + 1;
+    }
     out_buffer[out_count] = '\0';
-    return OBJ_VAL(ObjStr_take(out_buffer, out_count, vm));
+
+    ObjStr* string = ObjStr_take(out_buffer, out_count, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, out_buffer, out_capacity);
+        return OBJ_VAL(vm->empty_error);
+    }
+
+    return OBJ_VAL(string);
 }
 
 
@@ -122,8 +151,13 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return NULL_VAL();
         }
+
+        if (!string) {
+            return BOOL_VAL(false);
+        }
+
         pyro_err(vm, "%s", string->bytes);
-        return NULL_VAL();
+        return BOOL_VAL(true);
     }
 
     if (!IS_STR(args[0])) {
@@ -135,8 +169,13 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
+
+    if (IS_ERR(formatted)) {
+        return BOOL_VAL(false);
+    }
+
     pyro_err(vm, "%s", AS_STR(formatted)->bytes);
-    return NULL_VAL();
+    return BOOL_VAL(true);
 }
 
 
@@ -151,8 +190,13 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return NULL_VAL();
         }
-        pyro_out(vm, "%s", string->bytes);
-        return NULL_VAL();
+
+        if (!string) {
+            return BOOL_VAL(false);
+        }
+
+        pyro_err(vm, "%s", string->bytes);
+        return BOOL_VAL(true);
     }
 
     if (!IS_STR(args[0])) {
@@ -164,8 +208,13 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
+
+    if (IS_ERR(formatted)) {
+        return BOOL_VAL(false);
+    }
+
     pyro_out(vm, "%s", AS_STR(formatted)->bytes);
-    return NULL_VAL();
+    return BOOL_VAL(true);
 }
 
 
@@ -180,8 +229,13 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return NULL_VAL();
         }
+
+        if (!string) {
+            return BOOL_VAL(false);
+        }
+
         pyro_err(vm, "%s\n", string->bytes);
-        return NULL_VAL();
+        return BOOL_VAL(true);
     }
 
     if (!IS_STR(args[0])) {
@@ -193,8 +247,13 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
+
+    if (IS_ERR(formatted)) {
+        return BOOL_VAL(false);
+    }
+
     pyro_err(vm, "%s\n", AS_STR(formatted)->bytes);
-    return NULL_VAL();
+    return BOOL_VAL(true);
 }
 
 
@@ -209,8 +268,13 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return NULL_VAL();
         }
+
+        if (!string) {
+            return BOOL_VAL(false);
+        }
+
         pyro_out(vm, "%s\n", string->bytes);
-        return NULL_VAL();
+        return BOOL_VAL(true);
     }
 
     if (!IS_STR(args[0])) {
@@ -222,8 +286,13 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
+
+    if (IS_ERR(formatted)) {
+        return BOOL_VAL(false);
+    }
+
     pyro_out(vm, "%s\n", AS_STR(formatted)->bytes);
-    return NULL_VAL();
+    return BOOL_VAL(true);
 }
 
 
@@ -959,6 +1028,9 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return NULL_VAL();
         }
+        if (!string) {
+            return BOOL_VAL(false);
+        }
         pyro_push(vm, OBJ_VAL(string));
         bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, false, vm);
         pyro_pop(vm);
@@ -974,10 +1046,15 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
+    if (IS_ERR(formatted)) {
+        return BOOL_VAL(false);
+    }
     ObjStr* string = AS_STR(formatted);
+
     pyro_push(vm, formatted);
     bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, false, vm);
     pyro_pop(vm);
+
     return BOOL_VAL(result);
 }
 
@@ -995,6 +1072,9 @@ static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return NULL_VAL();
         }
+        if (!string) {
+            return BOOL_VAL(false);
+        }
         pyro_push(vm, OBJ_VAL(string));
         bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, true, vm);
         pyro_pop(vm);
@@ -1010,10 +1090,15 @@ static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
+    if (IS_ERR(formatted)) {
+        return BOOL_VAL(false);
+    }
     ObjStr* string = AS_STR(formatted);
+
     pyro_push(vm, formatted);
     bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, true, vm);
     pyro_pop(vm);
+
     return BOOL_VAL(result);
 }
 

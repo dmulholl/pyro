@@ -111,20 +111,18 @@ uint64_t pyro_hash(Value value) {
 
 
 ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
-    if (object->class) {
-        Value method;
-        if (ObjMap_get(object->class->methods, OBJ_VAL(vm->str_str), &method)) {
-            pyro_push(vm, OBJ_VAL(object));
-            Value stringified = pyro_call_method(vm, method, 0);
-            if (vm->halt_flag) {
-                return vm->empty_string;
-            }
-            if (IS_STR(stringified)) {
-                return AS_STR(stringified);
-            }
-            pyro_panic(vm, "Invalid type returned by $str() method.");
-            return vm->empty_string;
+    Value method;
+    if (object->class && ObjMap_get(object->class->methods, OBJ_VAL(vm->str_str), &method)) {
+        pyro_push(vm, OBJ_VAL(object));
+        Value stringified = pyro_call_method(vm, method, 0);
+        if (vm->halt_flag) {
+            return NULL;
         }
+        if (IS_STR(stringified)) {
+            return AS_STR(stringified);
+        }
+        pyro_panic(vm, "Invalid type returned by $str() method.");
+        return NULL;
     }
 
     switch (object->type) {
@@ -226,11 +224,18 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
 }
 
 
-// Returns NULL if there was a formatting or memory allocation error.
-// 1 - This function allocates memory and can trigger the GC.
-// 2 - This function assumes that any object passed to it has been fully initialized.
-// 3 - This function can call into Pyro code.
+// This function constructs and returns the default string representation of a value. A lot can go
+// wrong here:
+//
+// 1 - This function attempts to allocate memory and can trigger the GC.
+// 2 - This function assumes that any object passed into it has been fully initialized.
+// 3 - This function can call into Pyro code to execute an object's :$str() method.
 // 4 - This function can trigger a panic, exit, or memory error, setting the halt flag.
+//
+// The caller should check the halt flag immediately on return. If it's set the caller should clean
+// up any allocated resources and unwind the call stack.
+//
+// This function returns NULL if memory could not be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_BOOL:
@@ -286,36 +291,20 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
 }
 
 
-
-void pyro_debug_object(PyroVM* vm, Obj* object) {
+// This function dumps an object to the VM's output stream for debugging. It does not allocate
+// memory or call into Pyro code. It cannot result in the panic, exit, or memory-error flags being
+// set.
+void pyro_dump_object(PyroVM* vm, Obj* object) {
     switch (object->type) {
-
         case OBJ_STR: {
             ObjStr* string = (ObjStr*)object;
             pyro_out(vm, "\"%s\"", string->bytes);
             break;
         }
 
-        case OBJ_STR_ITER: {
-            pyro_out(vm, "<iter>");
+        case OBJ_BOUND_METHOD:
+            pyro_out(vm, "<method>");
             break;
-        }
-
-        case OBJ_BOUND_METHOD: {
-            ObjBoundMethod* bound = (ObjBoundMethod*)object;
-            if (bound->method->type == OBJ_CLOSURE) {
-                ObjClosure* closure = (ObjClosure*)bound->method;
-                if (closure->fn->name == NULL) {
-                    pyro_out(vm, "<method>");
-                } else {
-                    pyro_out(vm, "<method %s>", closure->fn->name->bytes);
-                }
-            } else {
-                ObjNativeFn* native = (ObjNativeFn*)bound->method;
-                pyro_out(vm, "<method %s>", native->name->bytes);
-            }
-            break;
-        }
 
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
@@ -330,9 +319,9 @@ void pyro_debug_object(PyroVM* vm, Obj* object) {
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             if (closure->fn->name == NULL) {
-                pyro_out(vm, "<fn>");
+                pyro_out(vm, "<closure>");
             } else {
-                pyro_out(vm, "<fn %s>", closure->fn->name->bytes);
+                pyro_out(vm, "<closure %s>", closure->fn->name->bytes);
             }
             break;
         }
@@ -358,11 +347,6 @@ void pyro_debug_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MAP_ITER: {
-            pyro_out(vm, "<iter>");
-            break;
-        }
-
         case OBJ_MODULE: {
             pyro_out(vm, "<module>");
             break;
@@ -375,46 +359,50 @@ void pyro_debug_object(PyroVM* vm, Obj* object) {
         }
 
         case OBJ_ERR:
-        case OBJ_TUP: {
-            ObjTup* tup = (ObjTup*)object;
-            pyro_out(vm, "<%d-tuple>", tup->count);
+            pyro_out(vm, "<err>");
             break;
-        }
 
-        case OBJ_TUP_ITER: {
-            pyro_out(vm, "<iter>");
+        case OBJ_TUP:
+            pyro_out(vm, "<tup>");
             break;
-        }
 
-        case OBJ_UPVALUE: {
+        case OBJ_UPVALUE:
             pyro_out(vm, "<upvalue>");
             break;
-        }
 
-        case OBJ_VEC: {
+        case OBJ_VEC:
             pyro_out(vm, "<vec>");
             break;
-        }
 
-        case OBJ_VEC_ITER: {
+        case OBJ_FILE:
+            pyro_out(vm, "<file>");
+            break;
+
+        case OBJ_BUF:
+            pyro_out(vm, "<buf>");
+            break;
+
+        case OBJ_MAP_ITER:
+        case OBJ_TUP_ITER:
+        case OBJ_VEC_ITER:
+        case OBJ_STR_ITER:
             pyro_out(vm, "<iter>");
             break;
-        }
 
-        case OBJ_WEAKREF_MAP: {
+        case OBJ_WEAKREF_MAP:
             pyro_out(vm, "<weakref map>");
             break;
-        }
 
-        default: {
+        default:
             pyro_out(vm, "<object>");
             break;
-        }
     }
 }
 
 
-void pyro_debug_value(PyroVM* vm, Value value) {
+// This function dumps a value to the VM's output stream for debugging. It does not allocate memory
+// or call into Pyro code. It cannot result in the panic, exit, or memory-error flags being set.
+void pyro_dump_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_BOOL:
             pyro_out(vm, "%s", value.as.boolean ? "true" : "false");
@@ -433,7 +421,7 @@ void pyro_debug_value(PyroVM* vm, Value value) {
             break;
 
         case VAL_OBJ:
-            pyro_debug_object(vm, AS_OBJ(value));
+            pyro_dump_object(vm, AS_OBJ(value));
             break;
 
         default:
@@ -445,40 +433,57 @@ void pyro_debug_value(PyroVM* vm, Value value) {
 
 ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
     if (IS_I64(value)) {
-        char* formatted = pyro_str_fmt(vm, format, value.as.i64);
-        if (formatted == NULL) {
+        char* array = pyro_str_fmt(vm, format, value.as.i64);
+        if (array == NULL) {
             pyro_panic(vm, "Error applying format specifier {%s}.", format);
-            return vm->empty_string;
+            return NULL;
         }
-        return ObjStr_take(formatted, strlen(formatted), vm);
+
+        ObjStr* string = ObjStr_take(array, strlen(array), vm);
+        if (!string) {
+            FREE_ARRAY(vm, char, array, strlen(array) + 1);
+            return NULL;
+        }
+
+        return string;
     }
 
     if (IS_F64(value)) {
-        char* formatted = pyro_str_fmt(vm, format, value.as.f64);
-        if (formatted == NULL) {
+        char* array = pyro_str_fmt(vm, format, value.as.f64);
+        if (array == NULL) {
             pyro_panic(vm, "Error applying format specifier {%s}.", format);
-            return vm->empty_string;
+            return NULL;
         }
-        return ObjStr_take(formatted, strlen(formatted), vm);
+
+        ObjStr* string = ObjStr_take(array, strlen(array), vm);
+        if (!string) {
+            FREE_ARRAY(vm, char, array, strlen(array) + 1);
+            return NULL;
+        }
+
+        return string;
     }
 
     Value fmt_method = pyro_get_method(vm, value, vm->str_fmt);
     if (!IS_NULL(fmt_method)) {
         pyro_push(vm, value);
         pyro_push(vm, OBJ_VAL(ObjStr_copy_raw(format, strlen(format), vm)));
-        Value formatted = pyro_call_method(vm, fmt_method, 1);
-        if (vm->exit_flag || vm->panic_flag) {
-            return vm->empty_string;
+        Value result = pyro_call_method(vm, fmt_method, 1);
+
+        if (vm->halt_flag) {
+            return NULL;
         }
-        if (IS_STR(formatted)) {
-            return AS_STR(formatted);
+
+        if (IS_STR(result)) {
+            return AS_STR(result);
         }
+
         pyro_panic(vm, "Invalid type returned by $fmt() method.");
-        return vm->empty_string;
+        return NULL;
     }
 
     pyro_panic(vm, "No handler for format specifier {%s}.", format);
-    return vm->empty_string;
+    return NULL;
 }
 
 
