@@ -952,15 +952,12 @@ ObjBuf* ObjBuf_new(PyroVM* vm) {
 
 
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
-    return ObjBuf_append_bytes(buf, 1, &byte, false, vm);
+    return ObjBuf_append_bytes(buf, 1, &byte, vm);
 }
 
 
-bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline, PyroVM* vm) {
+bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
     size_t req_capacity = buf->count + count + 1;
-    if (newline) {
-        req_capacity++;
-    }
 
     if (req_capacity > buf->capacity) {
         size_t new_capacity = GROW_CAPACITY(buf->capacity);
@@ -977,10 +974,6 @@ bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline
 
     memcpy(&buf->bytes[buf->count], bytes, count);
     buf->count += count;
-
-    if (newline) {
-        buf->bytes[buf->count++] = '\n';
-    }
 
     return true;
 }

@@ -53,13 +53,3 @@ assert fmt1:to_str() == "123foo";
 var fmt2 = $buf();
 fmt2:write("{} and {}", 123, "foo");
 assert fmt2:to_str() == "123 and foo";
-
-
-var fmt3 = $buf();
-fmt3:writeln("foo");
-assert fmt3:to_str() == "foo\n";
-
-
-var fmt4 = $buf();
-fmt4:writeln("{} and {}", 123, "foo");
-assert fmt4:to_str() == "123 and foo\n";

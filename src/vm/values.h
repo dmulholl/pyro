@@ -395,7 +395,7 @@ typedef struct {
 
 ObjBuf* ObjBuf_new(PyroVM* vm);
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
-bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, bool newline, PyroVM* vm);
+bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 
 
 // ------- //

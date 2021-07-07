@@ -1032,7 +1032,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
             return BOOL_VAL(false);
         }
         pyro_push(vm, OBJ_VAL(string));
-        bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, false, vm);
+        bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm);
         pyro_pop(vm);
         return BOOL_VAL(result);
     }
@@ -1052,51 +1052,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* string = AS_STR(formatted);
 
     pyro_push(vm, formatted);
-    bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, false, vm);
-    pyro_pop(vm);
-
-    return BOOL_VAL(result);
-}
-
-
-static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
-
-    if (arg_count == 0) {
-        bool result = ObjBuf_append_byte(buf, '\n', vm);
-        return BOOL_VAL(result);
-    }
-
-    if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
-        if (vm->halt_flag) {
-            return NULL_VAL();
-        }
-        if (!string) {
-            return BOOL_VAL(false);
-        }
-        pyro_push(vm, OBJ_VAL(string));
-        bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, true, vm);
-        pyro_pop(vm);
-        return BOOL_VAL(result);
-    }
-
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "First argument to :writeln() should be a format string.");
-        return NULL_VAL();
-    }
-
-    Value formatted = fn_fmt(vm, arg_count, args);
-    if (vm->halt_flag) {
-        return NULL_VAL();
-    }
-    if (IS_ERR(formatted)) {
-        return BOOL_VAL(false);
-    }
-    ObjStr* string = AS_STR(formatted);
-
-    pyro_push(vm, formatted);
-    bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, true, vm);
+    bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm);
     pyro_pop(vm);
 
     return BOOL_VAL(result);
@@ -1110,6 +1066,17 @@ static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
     return BOOL_VAL(IS_FILE(args[0]));
+}
+
+
+static Value file_flush(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    if (file->stream) {
+        fflush(file->stream);
+    }
+
+    return NULL_VAL();
 }
 
 
@@ -1498,10 +1465,10 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->buf_class, "write_be_u16", buf_write_be_u16, 1);
     pyro_define_method(vm, vm->buf_class, "write_le_u16", buf_write_le_u16, 1);
     pyro_define_method(vm, vm->buf_class, "write", buf_write, -1);
-    pyro_define_method(vm, vm->buf_class, "writeln", buf_writeln, -1);
 
     pyro_define_global_fn(vm, "$is_file", fn_is_file, 1);
     pyro_define_method(vm, vm->file_class, "close", file_close, 0);
+    pyro_define_method(vm, vm->file_class, "flush", file_flush, 0);
     pyro_define_method(vm, vm->file_class, "read", file_read, 0);
     pyro_define_method(vm, vm->file_class, "read_line", file_read_line, 0);
 }
