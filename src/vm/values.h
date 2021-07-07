@@ -486,8 +486,8 @@ bool pyro_check_equal(Value a, Value b);
 void pyro_debug_value(PyroVM* vm, Value value);
 void pyro_debug_object(PyroVM* vm, Obj* object);
 
-ObjStr* pyro_stringify_value(PyroVM* vm, Value value, bool call_method);
-ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method);
+ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
+ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object);
 ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format);
 
 char* pyro_stringify_obj_type(ObjType type);

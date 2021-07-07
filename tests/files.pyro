@@ -1,0 +1,5 @@
+assert !$is_file(123);
+
+assert $is_file($stdin);
+assert $is_file($stdout);
+assert $is_file($stderr);

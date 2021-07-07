@@ -79,7 +79,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
             ObjStr* formatted;
             if (fmt_spec_count == 0) {
-                formatted = pyro_stringify_value(vm, arg, true);
+                formatted = pyro_stringify_value(vm, arg);
             } else {
                 formatted = pyro_format_value(vm, arg, fmt_spec_buffer);
             }
@@ -118,7 +118,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
@@ -147,7 +147,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
@@ -176,7 +176,7 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
@@ -205,7 +205,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
@@ -488,7 +488,7 @@ static Value fn_is_err(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
-    return OBJ_VAL(pyro_stringify_value(vm, args[0], true));
+    return OBJ_VAL(pyro_stringify_value(vm, args[0]));
 }
 
 
@@ -955,7 +955,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
@@ -991,7 +991,7 @@ static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0], true);
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
@@ -1021,6 +1021,23 @@ static Value buf_writeln(PyroVM* vm, size_t arg_count, Value* args) {
 // ----- //
 // Files //
 // ----- //
+
+
+static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
+    return BOOL_VAL(IS_FILE(args[0]));
+}
+
+
+static Value file_close(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    if (file->stream) {
+        fclose(file->stream);
+        file->stream = NULL;
+    }
+
+    return NULL_VAL();
+}
 
 
 static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
@@ -1398,6 +1415,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->buf_class, "write", buf_write, -1);
     pyro_define_method(vm, vm->buf_class, "writeln", buf_writeln, -1);
 
+    pyro_define_global_fn(vm, "$is_file", fn_is_file, 1);
+    pyro_define_method(vm, vm->file_class, "close", file_close, 0);
     pyro_define_method(vm, vm->file_class, "read", file_read, 0);
     pyro_define_method(vm, vm->file_class, "read_line", file_read_line, 0);
 }

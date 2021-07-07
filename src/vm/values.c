@@ -110,13 +110,13 @@ uint64_t pyro_hash(Value value) {
 }
 
 
-ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
-    if (call_method && object->class) {
+ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
+    if (object->class) {
         Value method;
         if (ObjMap_get(object->class->methods, OBJ_VAL(vm->str_str), &method)) {
             pyro_push(vm, OBJ_VAL(object));
             Value stringified = pyro_call_method(vm, method, 0);
-            if (vm->panic_flag || vm->exit_flag) {
+            if (vm->halt_flag) {
                 return vm->empty_string;
             }
             if (IS_STR(stringified)) {
@@ -128,37 +128,36 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
     }
 
     switch (object->type) {
-        case OBJ_STR: {
-            return (ObjStr*)object;
-        }
+        case OBJ_STR: return (ObjStr*)object;
+        case OBJ_MODULE: return STR_OBJ("<module>");
+        case OBJ_ERR: return STR_OBJ("<err>");
+        case OBJ_TUP: return STR_OBJ("<tup>");
+        case OBJ_UPVALUE: return STR_OBJ("<upvalue>");
+        case OBJ_VEC: return STR_OBJ("<vec>");
+        case OBJ_MAP: return STR_OBJ("<map>");
+        case OBJ_BUF: return STR_OBJ("<buf>");
+        case OBJ_FILE: return STR_OBJ("<file>");
+        case OBJ_FN: return STR_OBJ("<fn>");
+        case OBJ_BOUND_METHOD: return STR_OBJ("<method>");
+        case OBJ_STR_ITER: return STR_OBJ("<iterator>");
+        case OBJ_MAP_ITER: return STR_OBJ("<iterator>");
+        case OBJ_VEC_ITER: return STR_OBJ("<iterator>");
+        case OBJ_TUP_ITER: return STR_OBJ("<iterator>");
 
-        case OBJ_STR_ITER: {
-            return STR_OBJ("<iterator>");
-        }
-
-        case OBJ_BOUND_METHOD: {
-            ObjBoundMethod* bound = (ObjBoundMethod*)object;
-            ObjStr* name;
-            if (bound->method->type == OBJ_CLOSURE) {
-                name = ((ObjClosure*)bound->method)->fn->name;
-            } else {
-                name = ((ObjNativeFn*)bound->method)->name;
+        case OBJ_NATIVE_FN: {
+            ObjNativeFn* native = (ObjNativeFn*)object;
+            char* array = pyro_str_fmt(vm, "<fn %s>", native->name->bytes);
+            if (!array) {
+                return NULL;
             }
-            char* string = pyro_str_fmt(vm, "<method %s>", name->bytes);
-            return ObjStr_take(string, strlen(string), vm);
-        }
 
-        case OBJ_BUF: {
-            return STR_OBJ("<buf>");
-        }
-
-        case OBJ_CLASS: {
-            ObjClass* class = (ObjClass*)object;
-            if (class->name == NULL) {
-                return STR_OBJ("<class>");
+            ObjStr* string = ObjStr_take(array, strlen(array), vm);
+            if (!string) {
+                FREE_ARRAY(vm, char, array, strlen(array) + 1);
+                return NULL;
             }
-            char* string = pyro_str_fmt(vm, "<class %s>", class->name->bytes);
-            return ObjStr_take(string, strlen(string), vm);
+
+            return string;
         }
 
         case OBJ_CLOSURE: {
@@ -166,88 +165,73 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object, bool call_method) {
             if (closure->fn->name == NULL) {
                 return STR_OBJ("<fn>");
             }
-            char* string = pyro_str_fmt(vm, "<fn %s>", closure->fn->name->bytes);
-            return ObjStr_take(string, strlen(string), vm);
-        }
 
-        case OBJ_FILE: {
-            return STR_OBJ("<file>");
-        }
-
-        case OBJ_FN: {
-            ObjFn* fn = (ObjFn*)object;
-            if (fn->name == NULL) {
-                return STR_OBJ("<fn>");
+            char* array = pyro_str_fmt(vm, "<fn %s>", closure->fn->name->bytes);
+            if (!array) {
+                return NULL;
             }
-            char* string = pyro_str_fmt(vm, "<fn %s>", fn->name->bytes);
-            return ObjStr_take(string, strlen(string), vm);
+
+            ObjStr* string = ObjStr_take(array, strlen(array), vm);
+            if (!string) {
+                FREE_ARRAY(vm, char, array, strlen(array) + 1);
+                return NULL;
+            }
+
+            return string;
+        }
+
+        case OBJ_CLASS: {
+            ObjClass* class = (ObjClass*)object;
+            if (class->name == NULL) {
+                return STR_OBJ("<class>");
+            }
+
+            char* array = pyro_str_fmt(vm, "<class %s>", class->name->bytes);
+            if (!array) {
+                return NULL;
+            }
+
+            ObjStr* string = ObjStr_take(array, strlen(array), vm);
+            if (!string) {
+                FREE_ARRAY(vm, char, array, strlen(array) + 1);
+                return NULL;
+            }
+
+            return string;
         }
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
-            char* string = pyro_str_fmt(vm, "<instance %s>", instance->obj.class->name->bytes);
-            return ObjStr_take(string, strlen(string), vm);
+            if (instance->obj.class->name == NULL) {
+                return STR_OBJ("<instance>");
+            }
+
+            char* array = pyro_str_fmt(vm, "<instance %s>", instance->obj.class->name->bytes);
+            if (!array) {
+                return NULL;
+            }
+
+            ObjStr* string = ObjStr_take(array, strlen(array), vm);
+            if (!string) {
+                FREE_ARRAY(vm, char, array, strlen(array) + 1);
+                return NULL;
+            }
+
+            return string;
         }
 
-        case OBJ_MAP: {
-            char* string = pyro_str_fmt(vm, "<map %p>", object);
-            return ObjStr_take(string, strlen(string), vm);
-        }
-
-        case OBJ_MAP_ITER: {
-            return STR_OBJ("<iterator>");
-        }
-
-        case OBJ_MODULE: {
-            return STR_OBJ("<module>");
-        }
-
-        case OBJ_NATIVE_FN: {
-            ObjNativeFn* native = (ObjNativeFn*)object;
-            char* string = pyro_str_fmt(vm, "<native fn %s>", native->name->bytes);
-            return ObjStr_take(string, strlen(string), vm);
-        }
-
-        case OBJ_ERR:
-        case OBJ_TUP: {
-            ObjTup* tup = (ObjTup*)object;
-            char* string = pyro_str_fmt(vm, "<%d-tuple>", tup->count);
-            return ObjStr_take(string, strlen(string), vm);
-        }
-
-        case OBJ_TUP_ITER: {
-            return STR_OBJ("<iterator>");
-        }
-
-        case OBJ_UPVALUE: {
-            return STR_OBJ("<upvalue>");
-        }
-
-        case OBJ_VEC: {
-            char* string = pyro_str_fmt(vm, "<vec %p>", object);
-            return ObjStr_take(string, strlen(string), vm);
-        }
-
-        case OBJ_VEC_ITER: {
-            return STR_OBJ("<iterator>");
-        }
-
-        case OBJ_WEAKREF_MAP: {
-            return STR_OBJ("<weakref map>");
-        }
-
-        default: {
+        default:
             return STR_OBJ("<object>");
-        }
     }
 }
 
 
+// Returns NULL if there was a formatting or memory allocation error.
 // 1 - This function allocates memory and can trigger the GC.
 // 2 - This function assumes that any object passed to it has been fully initialized.
 // 3 - This function can call into Pyro code.
-// 4 - This function can trigger a panic or an exit.
-ObjStr* pyro_stringify_value(PyroVM* vm, Value value, bool call_method) {
+// 4 - This function can trigger a panic, exit, or memory error, setting the halt flag.
+ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_BOOL:
             return value.as.boolean ? vm->str_true : vm->str_false;
@@ -256,29 +240,39 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value, bool call_method) {
             return vm->str_null;
 
         case VAL_I64: {
-            char* string = pyro_str_fmt(vm, "%lld", value.as.i64);
-            return ObjStr_take(string, strlen(string), vm);
+            char* array = pyro_str_fmt(vm, "%lld", value.as.i64);
+            if (!array) {
+                return NULL;
+            }
+
+            ObjStr* string = ObjStr_take(array, strlen(array), vm);
+            if (!string) {
+                FREE_ARRAY(vm, char, array, strlen(array) + 1);
+                return NULL;
+            }
+
+            return string;
         }
 
         case VAL_F64: {
-            char* formatted = pyro_str_fmt(vm, "%.6f", value.as.f64);
-            size_t orig_len = strlen(formatted);
+            char* array = pyro_str_fmt(vm, "%.6f", value.as.f64);
+            size_t orig_len = strlen(array);
             size_t trim_len = orig_len;
 
-            while (formatted[trim_len - 1] == '0') {
+            while (array[trim_len - 1] == '0') {
                 trim_len--;
             }
-            if (formatted[trim_len - 1] == '.') {
+            if (array[trim_len - 1] == '.') {
                 trim_len++;
             }
 
-            ObjStr* string = ObjStr_copy_raw(formatted, trim_len, vm);
-            FREE_ARRAY(vm, char, formatted, orig_len + 1);
+            ObjStr* string = ObjStr_copy_raw(array, trim_len, vm);
+            FREE_ARRAY(vm, char, array, orig_len + 1);
             return string;
         }
 
         case VAL_OBJ:
-            return pyro_stringify_object(vm, AS_OBJ(value), call_method);
+            return pyro_stringify_object(vm, AS_OBJ(value));
 
         case VAL_CHAR: {
             char buffer[4];

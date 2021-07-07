@@ -51,7 +51,7 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
 }
 
 
-// Prints to an automatically-allocated null-terminated string.
+// This function prints to an automatically-allocated null-terminated string.
 // Returns NULL if an encoding error occurs or if sufficient memory cannot be allocated.
 // The caller is responsible for freeing the returned string via:
 // FREE_ARRAY(vm, char, string, strlen(string) + 1).

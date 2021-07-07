@@ -530,15 +530,26 @@ static void run(PyroVM* vm) {
 
             case OP_ECHO: {
                 int count = READ_BYTE();
+
                 for (int i = count; i > 0; i--) {
                     Value value = vm->stack_top[-i];
-                    ObjStr* stringified = pyro_stringify_value(vm, value, true);
-                    fprintf(vm->out_file, "%s", stringified->bytes);
+                    ObjStr* string = pyro_stringify_value(vm, value);
+                    if (vm->halt_flag) {
+                        return;
+                    }
+
+                    if (!string) {
+                        pyro_panic(vm, "Unable to allocate string for value.");
+                        return;
+                    }
+
+                    pyro_out(vm, "%s", string->bytes);
                     if (i > 1) {
                         fprintf(vm->out_file, " ");
                     }
                 }
-                fprintf(vm->out_file, "\n");
+
+                pyro_out(vm, "\n");
                 vm->stack_top -= count;
                 break;
             }
