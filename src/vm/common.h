@@ -66,4 +66,9 @@ typedef struct ObjClass ObjClass;
     #define PYRO_E 2.7182818284590452354
 #endif
 
+// Size in bytes of the buffer for recording panic messages.
+#ifndef PYRO_PANIC_BUFFER_SIZE
+    #define PYRO_PANIC_BUFFER_SIZE 256
+#endif
+
 #endif

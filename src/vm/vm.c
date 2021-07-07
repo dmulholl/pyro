@@ -94,7 +94,15 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
     vm->halt_flag = true;
     vm->exit_code = 1;
 
-    if (vm->err_file == NULL || vm->try_depth > 0) {
+    if (vm->try_depth > 0) {
+        va_list args;
+        va_start(args, format);
+        vsnprintf(vm->panic_buffer, PYRO_PANIC_BUFFER_SIZE, format, args);
+        va_end(args);
+        return;
+    }
+
+    if (vm->err_file == NULL) {
         return;
     }
 
@@ -1239,10 +1247,24 @@ static void run(PyroVM* vm) {
                     vm->halt_flag = false;
                     vm->exit_code = 0;
                     vm->stack_top = stashed_stack_top - 1;
-                    PUSH(OBJ_VAL(vm->empty_error));
                     close_upvalues(vm, stashed_stack_top);
                     vm->frame_count = stashed_frame_count;
                     frame = &vm->frames[vm->frame_count - 1];
+
+                    ObjStr* err_msg = ObjStr_copy_raw(vm->panic_buffer, strlen(vm->panic_buffer), vm);
+                    if (err_msg) {
+                        PUSH(OBJ_VAL(err_msg));
+                        ObjTup* err = ObjTup_new_err(1, vm);
+                        POP();
+                        if (err) {
+                            err->values[0] = OBJ_VAL(err_msg);
+                            PUSH(OBJ_VAL(err));
+                        } else {
+                            PUSH(OBJ_VAL(vm->empty_error));
+                        }
+                    } else {
+                        PUSH(OBJ_VAL(vm->empty_error));
+                    }
                 }
 
                 assert(vm->stack_top == stashed_stack_top);

@@ -48,6 +48,9 @@ struct PyroVM {
     ObjMap* modules;
     ObjModule* main_module;
 
+    // Buffer for recording panic messages inside 'try' expressions.
+    char panic_buffer[PYRO_PANIC_BUFFER_SIZE];
+
     // Interned string pool.
     ObjMap* strings;
 
