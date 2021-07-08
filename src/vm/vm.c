@@ -8,6 +8,7 @@
 
 #include "../std/std_core.h"
 #include "../std/std_math.h"
+#include "../std/std_pyro.h"
 
 
 #define PUSH(value)         pyro_push(vm, value)
@@ -1417,6 +1418,7 @@ PyroVM* pyro_new_vm() {
     vm->import_roots = ObjVec_new(vm);
 
     pyro_load_std_core(vm);
+    pyro_load_std_pyro(vm);
     pyro_load_std_math(vm);
 
     return vm;
