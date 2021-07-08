@@ -1031,13 +1031,19 @@ static void run(PyroVM* vm) {
                 Value a = POP();
 
                 if (IS_I64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) {
-                        pyro_panic(vm, "Modulo by zero.");
-                        break;
-                    }
+                    if (b.as.i64 == 0) { pyro_panic(vm, "Modulo by zero."); break; }
                     PUSH(I64_VAL(a.as.i64 % b.as.i64));
+                } else if (IS_F64(a) && IS_F64(b)) {
+                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Modulo by zero."); break; }
+                    PUSH(F64_VAL(fmod(a.as.f64, b.as.f64)));
+                } else if (IS_I64(a) && IS_F64(b)) {
+                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Modulo by zero."); break; }
+                    PUSH(F64_VAL(fmod((double)a.as.i64, b.as.f64)));
+                } else if (IS_F64(a) && IS_I64(b)) {
+                    if (b.as.i64 == 0) { pyro_panic(vm, "Modulo by zero."); break; }
+                    PUSH(F64_VAL(fmod(a.as.f64, (double)b.as.i64)));
                 } else {
-                    pyro_panic(vm, "Operands to '%%' must both be integers.");
+                    pyro_panic(vm, "Operands to '%%' must both be numbers.");
                 }
 
                 break;
