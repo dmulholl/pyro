@@ -48,8 +48,19 @@ fmt1:write(123);
 fmt1:write("foo");
 assert fmt1:count() == 6;
 assert fmt1:to_str() == "123foo";
+assert fmt1:count() == 0;
 
 
 var fmt2 = $buf();
 fmt2:write("{} and {}", 123, "foo");
 assert fmt2:to_str() == "123 and foo";
+assert fmt2:count() == 0;
+
+
+var fmt3 = $buf();
+fmt3:write("foo");
+assert fmt3:count() == 3;
+assert $str(fmt3) == "foo";
+assert fmt3:count() == 3;
+assert $str(fmt3) == "foo";
+assert fmt3:count() == 3;

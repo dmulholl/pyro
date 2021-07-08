@@ -955,27 +955,12 @@ static Value buf_write_le_u16(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value buf_to_str(PyroVM* vm, size_t arg_count, Value* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
-
-    if (buf->count == 0) {
-        return OBJ_VAL(vm->empty_string);
-    }
-
-    if (buf->capacity > buf->count + 1) {
-        buf->bytes = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, buf->count + 1);
-        buf->capacity = buf->count + 1;
-    }
-    buf->bytes[buf->count] = '\0';
-
-    ObjStr* string = ObjStr_take((char*)buf->bytes, buf->count, vm);
-    if (!string) {
+    ObjStr* string = ObjBuf_to_str(buf, vm);
+    if (string) {
+        return OBJ_VAL(string);
+    } else {
         return OBJ_VAL(vm->empty_error);
     }
-
-    buf->count = 0;
-    buf->capacity = 0;
-    buf->bytes = NULL;
-
-    return OBJ_VAL(string);
 }
 
 
@@ -1391,7 +1376,7 @@ static Value fn_is_i64(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_char(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
         int64_t arg = args[0].as.i64;
-        if (arg > 0 && arg <= UINT32_MAX) {
+        if (arg >= 0 && arg <= UINT32_MAX) {
             return CHAR_VAL((uint32_t)arg);
         }
     }

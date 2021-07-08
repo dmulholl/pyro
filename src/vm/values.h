@@ -193,6 +193,7 @@ ObjVec* ObjVec_new(PyroVM* vm);
 ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm);
 ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm);
 void ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
+ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm);
 
 // Copy all entries from [src] to [dst].
 void ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
@@ -363,6 +364,7 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm);
 ObjTup* ObjTup_new_err(size_t count, PyroVM* vm);
 uint64_t ObjTup_hash(ObjTup* tup);
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b);
+ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm);
 
 typedef struct {
     Obj obj;
@@ -403,6 +405,7 @@ typedef struct {
 ObjBuf* ObjBuf_new(PyroVM* vm);
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
+ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm);
 
 
 // ------- //

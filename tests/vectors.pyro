@@ -31,3 +31,8 @@ assert baz[2] == true;
 
 baz[0] = "bar";
 assert baz[0] == "bar";
+
+assert $str($vec()) == "[]";
+
+var vec = ["foo", 123, 'a', true];
+assert $str(vec) == `["foo", 123, 'a', true]`;

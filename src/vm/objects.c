@@ -87,6 +87,65 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b) {
 }
 
 
+ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '(', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < tup->count; i++) {
+        if (IS_STR(tup->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        } else if (IS_CHAR(tup->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        ObjStr* string = pyro_stringify_value(vm, tup->values[i]);
+        if (vm->halt_flag || !string) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(string));
+        if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+            pyro_pop(vm);
+            pyro_pop(vm);
+            return NULL;
+        }
+        pyro_pop(vm);
+
+        if (IS_STR(tup->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        } else if (IS_CHAR(tup->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        if (i + 1 < tup->count) {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
+                pyro_pop(vm);
+                return NULL;
+            }
+        }
+    }
+
+    if (!ObjBuf_append_byte(buf, ')', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    ObjStr* string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm);
+    return string;
+}
+
+
 ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm) {
     ObjTupIter* iter = ALLOCATE_OBJECT(vm, ObjTupIter, OBJ_TUP_ITER);
     if (iter == NULL) {
@@ -900,6 +959,65 @@ void ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 }
 
 
+ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '[', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < vec->count; i++) {
+        if (IS_STR(vec->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        } else if (IS_CHAR(vec->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        ObjStr* string = pyro_stringify_value(vm, vec->values[i]);
+        if (vm->halt_flag || !string) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(string));
+        if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+            pyro_pop(vm);
+            pyro_pop(vm);
+            return NULL;
+        }
+        pyro_pop(vm);
+
+        if (IS_STR(vec->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        } else if (IS_CHAR(vec->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        if (i + 1 < vec->count) {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
+                pyro_pop(vm);
+                return NULL;
+            }
+        }
+    }
+
+    if (!ObjBuf_append_byte(buf, ']', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    ObjStr* string = ObjBuf_to_str(buf, vm);
+    pyro_pop(vm);
+    return string;
+}
+
+
 ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm) {
     ObjVecIter* iter = ALLOCATE_OBJECT(vm, ObjVecIter, OBJ_VEC_ITER);
     iter->obj.class = vm->vec_iter_class;
@@ -970,6 +1088,33 @@ bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) 
     buf->count += count;
 
     return true;
+}
+
+
+// This function converts the contents of the buffer into a string, leaving a valid but empty
+// buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
+// case the buffer is unchanged.
+ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm) {
+    if (buf->count == 0) {
+        return vm->empty_string;
+    }
+
+    if (buf->capacity > buf->count + 1) {
+        buf->bytes = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, buf->count + 1);
+        buf->capacity = buf->count + 1;
+    }
+    buf->bytes[buf->count] = '\0';
+
+    ObjStr* string = ObjStr_take((char*)buf->bytes, buf->count, vm);
+    if (!string) {
+        return NULL;
+    }
+
+    buf->count = 0;
+    buf->capacity = 0;
+    buf->bytes = NULL;
+
+    return string;
 }
 
 

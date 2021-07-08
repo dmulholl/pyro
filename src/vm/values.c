@@ -128,10 +128,7 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
     switch (object->type) {
         case OBJ_STR: return (ObjStr*)object;
         case OBJ_MODULE: return STR_OBJ("<module>");
-        case OBJ_ERR: return STR_OBJ("<err>");
-        case OBJ_TUP: return STR_OBJ("<tup>");
         case OBJ_UPVALUE: return STR_OBJ("<upvalue>");
-        case OBJ_VEC: return STR_OBJ("<vec>");
         case OBJ_MAP: return STR_OBJ("<map>");
         case OBJ_FILE: return STR_OBJ("<file>");
         case OBJ_FN: return STR_OBJ("<fn>");
@@ -140,6 +137,17 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_MAP_ITER: return STR_OBJ("<iterator>");
         case OBJ_VEC_ITER: return STR_OBJ("<iterator>");
         case OBJ_TUP_ITER: return STR_OBJ("<iterator>");
+
+        case OBJ_ERR:
+        case OBJ_TUP: {
+            ObjTup* tup = (ObjTup*)object;
+            return ObjTup_stringify(tup, vm);
+        }
+
+        case OBJ_VEC: {
+            ObjVec* vec = (ObjVec*)object;
+            return ObjVec_stringify(vec, vm);
+        }
 
         case OBJ_BUF: {
             ObjBuf* buf = (ObjBuf*)object;
