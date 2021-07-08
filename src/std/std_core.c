@@ -1207,6 +1207,58 @@ static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    if (arg_count == 0) {
+        pyro_panic(vm, "Expected 1 or more arguments for :write(), found 0.");
+        return NULL_VAL();
+    }
+
+    if (arg_count == 1) {
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        if (!string) {
+            pyro_panic(vm, "Unable to allocate memory for string.");
+            return NULL_VAL();
+        }
+
+        size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
+
+        if (n < string->length) {
+            pyro_panic(vm, "I/O write error.");
+            return NULL_VAL();
+        }
+        return I64_VAL((int64_t)n);
+    }
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "First argument to :write() should be a format string.");
+        return NULL_VAL();
+    }
+
+    Value formatted = fn_fmt(vm, arg_count, args);
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+    if (IS_ERR(formatted)) {
+        pyro_panic(vm, "Unable to allocate memory for string.");
+        return NULL_VAL();
+    }
+    ObjStr* string = AS_STR(formatted);
+
+    size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
+
+    if (n < string->length) {
+        pyro_panic(vm, "I/O write error.");
+        return NULL_VAL();
+    }
+    return I64_VAL((int64_t)n);
+}
+
+
 // ----------- //
 // Miscellanea //
 // ----------- //
@@ -1471,5 +1523,6 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->file_class, "flush", file_flush, 0);
     pyro_define_method(vm, vm->file_class, "read", file_read, 0);
     pyro_define_method(vm, vm->file_class, "read_line", file_read_line, 0);
+    pyro_define_method(vm, vm->file_class, "write", file_write, -1);
 }
 
