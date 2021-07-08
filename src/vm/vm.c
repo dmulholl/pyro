@@ -86,7 +86,7 @@ void pyro_memory_error(PyroVM* vm) {
 
 
 void pyro_panic(PyroVM* vm, const char* format, ...) {
-    if (vm->memory_error_flag) {
+    if (vm->halt_flag) {
         return;
     }
 

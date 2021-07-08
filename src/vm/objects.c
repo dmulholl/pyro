@@ -465,10 +465,6 @@ static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t 
 }
 
 
-// Creates a new string object taking ownership of a null-terminated, heap-allocated byte array,
-// where [length] is the number of bytes in the array, not including the terminating null. Returns
-// NULL if the attempt to allocate memory for the object fails -- in this case the input array is
-// not altered or freed.
 ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm) {
     assert(vm->strings != NULL);
 
@@ -506,7 +502,6 @@ ObjStr* ObjStr_empty(PyroVM* vm) {
 }
 
 
-// Create a new string object by copying [length] bytes from [src], processing backslashed escapes.
 ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
     if (length == 0) {
         return ObjStr_empty(vm);
@@ -536,7 +531,6 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
 }
 
 
-// Create a new string object by copying [length] bytes from [src], ignoring backslashed escapes.
 ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
     if (length == 0) {
         return ObjStr_empty(vm);

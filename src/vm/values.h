@@ -97,13 +97,20 @@ struct ObjStr {
     char* bytes;
 };
 
-// Create a new string object by copying [length] bytes from [src], ignoring backslashed escapes.
+// Creates a new string object by copying [length] bytes from [src], ignoring backslashed escapes.
+// If [length] is 0, [src] can be NULL. Returns NULL if the attempt to allocate memory for the
+// string object fails.
 ObjStr* ObjStr_copy_raw(const char* source, size_t length, PyroVM* vm);
 
-// Create a new string object by copying [length] bytes from [src], processing backslashed escapes.
+// Creates a new string object by copying [length] bytes from [src], processing backslashed escapes.
+// If [length] is 0, [src] can be NULL. Returns NULL if the attempt to allocate memory for the
+// string object fails.
 ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm);
 
-// Create a new string object by taking ownership of [src].
+// Creates a new string object taking ownership of a null-terminated, heap-allocated byte array,
+// [src], where [length] is the number of bytes in the array, not including the terminating null.
+// Returns NULL if the attempt to allocate memory for the new string object fails -- in this case
+// the input array is not altered or freed.
 ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm);
 
 // Create a new string object by concatenating two source strings.

@@ -1064,6 +1064,34 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
 // ----- //
 
 
+static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid filename argument, must be a string.");
+        return NULL_VAL();
+    }
+
+    if (!IS_STR(args[1])) {
+        pyro_panic(vm, "Invalid mode argument, must be a string.");
+        return NULL_VAL();
+    }
+
+    ObjFile* file = ObjFile_new(vm);
+    if (!file) {
+        pyro_panic(vm, "Failed to allocate memory for file object.");
+        return NULL_VAL();
+    }
+
+    FILE* stream = fopen(AS_STR(args[0])->bytes, AS_STR(args[1])->bytes);
+    if (!stream) {
+        pyro_panic(vm, "Failed to open file '%s'.", AS_STR(args[0])->bytes);
+        return NULL_VAL();
+    }
+
+    file->stream = stream;
+    return OBJ_VAL(file);
+}
+
+
 static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
     return BOOL_VAL(IS_FILE(args[0]));
 }
@@ -1216,22 +1244,30 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
-        if (vm->halt_flag) {
-            return NULL_VAL();
+        if (IS_BUF(args[0])) {
+            ObjBuf* buf = AS_BUF(args[0]);
+            size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, file->stream);
+            if (n < buf->count) {
+                pyro_panic(vm, "I/O write error.");
+                return NULL_VAL();
+            }
+            return I64_VAL((int64_t)n);
+        } else {
+            ObjStr* string = pyro_stringify_value(vm, args[0]);
+            if (vm->halt_flag) {
+                return NULL_VAL();
+            }
+            if (!string) {
+                pyro_panic(vm, "Unable to allocate memory for string.");
+                return NULL_VAL();
+            }
+            size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
+            if (n < string->length) {
+                pyro_panic(vm, "I/O write error.");
+                return NULL_VAL();
+            }
+            return I64_VAL((int64_t)n);
         }
-        if (!string) {
-            pyro_panic(vm, "Unable to allocate memory for string.");
-            return NULL_VAL();
-        }
-
-        size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
-
-        if (n < string->length) {
-            pyro_panic(vm, "I/O write error.");
-            return NULL_VAL();
-        }
-        return I64_VAL((int64_t)n);
     }
 
     if (!IS_STR(args[0])) {
@@ -1518,6 +1554,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->buf_class, "write_le_u16", buf_write_le_u16, 1);
     pyro_define_method(vm, vm->buf_class, "write", buf_write, -1);
 
+    pyro_define_global_fn(vm, "$file", fn_file, 2);
     pyro_define_global_fn(vm, "$is_file", fn_is_file, 1);
     pyro_define_method(vm, vm->file_class, "close", file_close, 0);
     pyro_define_method(vm, vm->file_class, "flush", file_flush, 0);

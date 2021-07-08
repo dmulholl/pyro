@@ -133,7 +133,6 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_UPVALUE: return STR_OBJ("<upvalue>");
         case OBJ_VEC: return STR_OBJ("<vec>");
         case OBJ_MAP: return STR_OBJ("<map>");
-        case OBJ_BUF: return STR_OBJ("<buf>");
         case OBJ_FILE: return STR_OBJ("<file>");
         case OBJ_FN: return STR_OBJ("<fn>");
         case OBJ_BOUND_METHOD: return STR_OBJ("<method>");
@@ -141,6 +140,11 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_MAP_ITER: return STR_OBJ("<iterator>");
         case OBJ_VEC_ITER: return STR_OBJ("<iterator>");
         case OBJ_TUP_ITER: return STR_OBJ("<iterator>");
+
+        case OBJ_BUF: {
+            ObjBuf* buf = (ObjBuf*)object;
+            return ObjStr_copy_raw((char*)buf->bytes, buf->count, vm);
+        }
 
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
