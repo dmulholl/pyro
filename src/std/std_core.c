@@ -1152,6 +1152,51 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+// Attempts to read [n] bytes from the file into a byte buffer. May read less than [n] bytes if the
+// end of the file is reached first. Returns the byte buffer or [NULL] if the end of the file had
+// already been reached before the method was called. Panics if an I/O read error occurs, if the
+// argument is invalid, or if memory cannot be allocated for the buffer.
+static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
+        pyro_panic(vm, "Invalid argument to :read_bytes(), must be a non-negative integer.");
+        return NULL_VAL();
+    }
+
+    if (feof(file->stream)) {
+        return NULL_VAL();
+    }
+
+    size_t num_bytes = args[0].as.i64;
+
+    ObjBuf* buf = ObjBuf_new_with_cap(num_bytes, vm);
+    if (!buf) {
+        pyro_panic(vm, "Failed to allocate memory for buffer.");
+        return NULL_VAL();
+    }
+
+    if (num_bytes == 0) {
+        return OBJ_VAL(buf);
+    }
+
+    size_t n = fread(buf->bytes, sizeof(uint8_t), num_bytes, file->stream);
+    buf->count = n;
+
+    if (n < num_bytes) {
+        if (ferror(file->stream)) {
+            pyro_panic(vm, "I/O read error.");
+            return NULL_VAL();
+        }
+        if (n == 0) {
+            return NULL_VAL();
+        }
+    }
+
+    return OBJ_VAL(buf);
+}
+
+
 static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
 
@@ -1545,6 +1590,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->file_class, "flush", file_flush, 0);
     pyro_define_method(vm, vm->file_class, "read", file_read, 0);
     pyro_define_method(vm, vm->file_class, "read_line", file_read_line, 0);
+    pyro_define_method(vm, vm->file_class, "read_bytes", file_read_bytes, 1);
     pyro_define_method(vm, vm->file_class, "write", file_write, -1);
 }
 

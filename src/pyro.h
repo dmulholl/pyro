@@ -7,7 +7,7 @@
 
 typedef struct PyroVM PyroVM;
 
-PyroVM* pyro_new_vm();
+PyroVM* pyro_new_vm(void);
 void pyro_free_vm(PyroVM* vm);
 
 void pyro_set_err_file(PyroVM* vm, FILE* file);
