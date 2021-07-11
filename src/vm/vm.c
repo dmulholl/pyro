@@ -9,6 +9,7 @@
 #include "../std/std_core.h"
 #include "../std/std_math.h"
 #include "../std/std_pyro.h"
+#include "../std/std_prng.h"
 
 
 #define PUSH(value)         pyro_push(vm, value)
@@ -1308,10 +1309,12 @@ static void reset_stack(PyroVM* vm) {
 
 PyroVM* pyro_new_vm() {
     PyroVM* vm = malloc(sizeof(PyroVM));
-    if (vm == NULL) {
+    if (!vm) {
         return NULL;
     }
 
+    // Initialize or zero-out all fields before attempting to allocate memory. This needs to be
+    // done before any objects are allocated or the GC will segfault.
     vm->stack_top = vm->stack;
     vm->stack_max = vm->stack + PYRO_STACK_SIZE;
     vm->frame_count = 0;
@@ -1330,8 +1333,6 @@ PyroVM* pyro_new_vm() {
     vm->err_file = stderr;
     vm->parser = NULL;
     vm->try_depth = 0;
-
-    // NB: all object fields must be zeroed before any objects are allocated or the GC will segfault.
     vm->objects = NULL;
     vm->map_class = NULL;
     vm->str_class = NULL;
@@ -1361,6 +1362,14 @@ PyroVM* pyro_new_vm() {
     vm->import_roots = NULL;
     vm->range_class = NULL;
     vm->file_class = NULL;
+    vm->mt64 = NULL;
+
+    // Initialize the PRNG.
+    vm->mt64 = pyro_new_mt64();
+    if (!vm->mt64) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
 
     // We need to initialize these classes before we create any objects.
     vm->map_class = ObjClass_new(vm, NULL);
@@ -1375,8 +1384,7 @@ PyroVM* pyro_new_vm() {
     vm->range_class = ObjClass_new(vm, NULL);
     vm->file_class = ObjClass_new(vm, NULL);
 
-    if (
-        !vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class || !vm->buf_class ||
+    if (!vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class || !vm->buf_class ||
         !vm->tup_iter_class || !vm->vec_class || !vm->map_class || !vm->str_iter_class ||
         !vm->range_class || !vm->file_class
     ) {
@@ -1426,6 +1434,7 @@ PyroVM* pyro_new_vm() {
     pyro_load_std_core(vm);
     pyro_load_std_pyro(vm);
     pyro_load_std_math(vm);
+    pyro_load_std_prng(vm);
 
     return vm;
 }
@@ -1439,6 +1448,7 @@ void pyro_free_vm(PyroVM* vm) {
         object = next;
     }
 
+    free(vm->mt64);
     free(vm->grey_stack);
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);

@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "values.h"
+#include "../lib/mt64/mt64.h"
 
 
 typedef struct {
@@ -25,8 +26,6 @@ struct PyroVM {
     ObjClass* range_class;
     ObjClass* file_class;
 
-    ObjVec* import_roots;
-
     bool halt_flag;
     bool exit_flag;
     bool panic_flag;
@@ -44,9 +43,13 @@ struct PyroVM {
     Value* stack_top;
     Value* stack_max;
 
+    // 64-bit Mersenne Twister PRNG.
+    MT64* mt64;
+
     ObjMap* globals;
     ObjMap* modules;
     ObjModule* main_module;
+    ObjVec* import_roots;
 
     // Buffer for recording panic messages inside 'try' expressions.
     char panic_buffer[PYRO_PANIC_BUFFER_SIZE];

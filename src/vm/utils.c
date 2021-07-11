@@ -204,7 +204,7 @@ uint64_t pyro_fnv1a_64_opt(const char* string, size_t length) {
 
 // String hash: DJB2, 32-bit version.
 uint32_t pyro_djb2_32(const char* string, size_t length) {
-    uint32_t hash = 5381;
+    uint32_t hash = UINT32_C(5381);
 
     // Function: hash(i) = hash(i - 1) * 33 + string[i]
     for (size_t i = 0; i < length; i++) {
@@ -217,7 +217,7 @@ uint32_t pyro_djb2_32(const char* string, size_t length) {
 
 // String hash: DJB2, 64-bit version.
 uint64_t pyro_djb2_64(const char* string, size_t length) {
-    uint64_t hash = 5381;
+    uint64_t hash = UINT64_C(5381);
 
     // Function: hash(i) = hash(i - 1) * 33 + string[i]
     for (size_t i = 0; i < length; i++) {

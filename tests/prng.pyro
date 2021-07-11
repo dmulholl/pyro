@@ -1,0 +1,1 @@
+assert $std::prng::test_mt64();
