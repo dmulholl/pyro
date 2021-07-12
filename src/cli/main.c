@@ -21,6 +21,70 @@
 static const char* VERSION = "0.2.0.dev";
 
 
+static const char* HELPTEXT =
+    "Usage: pyro [file]\n"
+    "\n"
+    "  The Pyro programming language.\n"
+    "\n"
+    "Arguments:\n"
+    "  [file]               Script to run. Will open the REPL if omitted.\n"
+    "\n"
+    "Flags:\n"
+    "  -h, --help           Print this help text and exit.\n"
+    "  -v, --version        Print the version number and exit.\n"
+    "\n"
+    "Commands:\n"
+    "  test                 Run unit tests.\n"
+    "  time                 Run timing functions.\n"
+    "\n"
+    "Command Help:\n"
+    "  help <command>       Print the specified command's help text.\n"
+    ;
+
+
+static const char* TEST_HELPTEXT =
+    "Usage: pyro test [files]\n"
+    "\n"
+    "  This command runs unit tests. Each input file is executed in a new VM\n"
+    "  instance.\n"
+    "\n"
+    "  For each input file, Pyro first executes the file, then runs any test\n"
+    "  functions it contains, i.e. functions whose names begin with '$test_'.\n"
+    "  A test function passes if it executes without panicking.\n"
+    "\n"
+    "Arguments:\n"
+    "  [files]              Input files to test.\n"
+    "\n"
+    "Flags:\n"
+    "  -h, --help           Print this help text and exit.\n"
+    "  -v, --verbose        Show error output.\n"
+    ;
+
+
+static const char* TIME_HELPTEXT =
+    "Usage: pyro time [files]\n"
+    "\n"
+    "  This command runs timing functions. Each input file is executed in a\n"
+    "  new VM instance.\n"
+    "\n"
+    "  For each input file, Pyro first executes the file, then runs any timing\n"
+    "  functions it contains, i.e. functions whose names begin with '$time_'.\n"
+    "\n"
+    "  By default Pyro runs each timing function 1000 times, then prints the\n"
+    "  mean execution time. The number of iterations can be customized using\n"
+    "  the --num-iterations option.\n"
+    "\n"
+    "Arguments:\n"
+    "  [files]                      Input files to test.\n"
+    "\n"
+    "Options:\n"
+    "  -n, --num-iterations <int>   Number of times to run each function.\n"
+    "\n"
+    "Flags:\n"
+    "  -h, --help                   Print this help text and exit.\n"
+    ;
+
+
 static bool has_open_quote(const char* code, size_t code_count) {
     bool in_quotes = false;
     size_t index = 0;
@@ -170,6 +234,8 @@ static void run_repl(void) {
             continue;
         }
 
+        // This fixes the reported line number for syntax errors at the end of the input,
+        // e.g. a missing trailing semicolon.
         if (code[code_count - 1] == '\n') {
             code_count--;
         }
@@ -351,16 +417,16 @@ static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
 
 int main(int argc, char* argv[]) {
     ArgParser* parser = ap_new();
-    ap_helptext(parser, "Usage: pyro [file]");
+    ap_helptext(parser, HELPTEXT);
     ap_version(parser, VERSION);
 
     ArgParser* test_cmd = ap_cmd(parser, "test");
-    ap_helptext(test_cmd, "Usage: pyro test [files]");
+    ap_helptext(test_cmd, TEST_HELPTEXT);
     ap_callback(test_cmd, cmd_test_callback);
     ap_flag(test_cmd, "verbose v");
 
     ArgParser* time_cmd = ap_cmd(parser, "time");
-    ap_helptext(time_cmd, "Usage: pyro time [files]");
+    ap_helptext(time_cmd, TIME_HELPTEXT);
     ap_callback(time_cmd, cmd_time_callback);
     ap_int_opt(time_cmd, "num-iterations n", 1000);
 
