@@ -18,6 +18,176 @@
 #include "args.h"
 
 
+static const char* VERSION = "0.2.0.dev";
+
+
+static bool has_open_quote(const char* code, size_t code_count) {
+    bool in_quotes = false;
+    size_t index = 0;
+
+    while (index < code_count) {
+        char c = code[index++];
+
+        if (c == '`') {
+            in_quotes = true;
+            while (index < code_count) {
+                if (code[index++] == '`') {
+                    in_quotes = false;
+                    break;
+                }
+            }
+        }
+
+        else if (c == '"') {
+            in_quotes = true;
+            while (index < code_count) {
+                c = code[index++];
+                if (c == '\\') {
+                    index++;
+                } else if (c == '"') {
+                    in_quotes = false;
+                    break;
+                }
+            }
+        }
+
+        else if (c == '\'') {
+            in_quotes = true;
+            while (index < code_count) {
+                c = code[index++];
+                if (c == '\\') {
+                    index++;
+                } else if (c == '\'') {
+                    in_quotes = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    return in_quotes;
+}
+
+
+static int count_brackets(const char* code, size_t code_count) {
+    int bracket_count = 0;
+    size_t index = 0;
+
+    while (index < code_count) {
+        char c = code[index++];
+
+        if (c == '(' || c == '[' || c == '{') {
+            bracket_count++;
+        }
+
+        else if (c == ')' || c == ']' || c == '}') {
+            bracket_count--;
+        }
+
+        else if (c == '`') {
+            while (index < code_count && code[index++] != '`');
+        }
+
+        else if (c == '"') {
+            while (index < code_count) {
+                c = code[index++];
+                if (c == '\\') {
+                    index++;
+                } else if (c == '"') {
+                    break;
+                }
+            }
+        }
+
+        else if (c == '\'') {
+            while (index < code_count) {
+                c = code[index++];
+                if (c == '\\') {
+                    index++;
+                } else if (c == '\'') {
+                    break;
+                }
+            }
+        }
+    }
+
+    return bracket_count;
+}
+
+
+static void run_repl(void) {
+    PyroVM* vm = pyro_new_vm();
+    if (!vm) {
+        fprintf(stderr, "Error: Unable to initialize VM.\n");
+        exit(1);
+    }
+
+    pyro_add_import_root(vm, ".");
+
+    printf("Pyro %s -- Type 'exit' to quit.\n", VERSION);
+
+    char* code = NULL;
+    size_t code_count = 0;
+
+    for (;;) {
+        if (code) {
+            printf("... ");
+        } else {
+            printf(">>> ");
+        }
+
+        char* line = NULL;
+        size_t line_capacity = 0;
+        ssize_t line_count = getline(&line, &line_capacity, stdin);
+
+        if (line_count == -1) {
+            if (feof(stdin)) {
+                printf("EOF\n");
+                exit(0);
+            } else {
+                fprintf(stderr, "Error: Failed to read input from STDIN.\n");
+                exit(1);
+            }
+        }
+
+        if (strcmp(line, "exit\n") == 0) {
+            exit(0);
+        }
+
+        code = realloc(code, code_count + line_count);
+        if (!code) {
+            fprintf(stderr, "Error: Failed to allocate memory for input.\n");
+            exit(1);
+        }
+
+        memcpy(&code[code_count], line, line_count);
+        code_count += line_count;
+        free(line);
+
+        // If the code contains unclosed quotes or more opening brackets than closing brackets,
+        // read and append another line of input.
+        if (has_open_quote(code, code_count) || count_brackets(code, code_count) > 0) {
+            continue;
+        }
+
+        if (code[code_count - 1] == '\n') {
+            code_count--;
+        }
+
+        pyro_exec_code_as_main(vm, code, code_count, "repl");
+        if (pyro_get_exit_flag(vm) || pyro_get_memory_error_flag(vm)) {
+            exit(pyro_get_exit_code(vm));
+        }
+
+        free(code);
+        code = NULL;
+        code_count = 0;
+    }
+
+    pyro_free_vm(vm);
+}
+
+
 static void run_file(ArgParser* parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
@@ -182,7 +352,7 @@ static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
 int main(int argc, char* argv[]) {
     ArgParser* parser = ap_new();
     ap_helptext(parser, "Usage: pyro [file]");
-    ap_version(parser, "0.2.0.dev");
+    ap_version(parser, VERSION);
 
     ArgParser* test_cmd = ap_cmd(parser, "test");
     ap_helptext(test_cmd, "Usage: pyro test [files]");
@@ -200,8 +370,7 @@ int main(int argc, char* argv[]) {
         if (ap_count_args(parser) > 0) {
             run_file(parser);
         } else {
-            fprintf(stderr, "Error: Missing argument.\n");
-            exit(1);
+            run_repl();
         }
     }
 

@@ -539,9 +539,9 @@ static void run(PyroVM* vm) {
             }
 
             case OP_ECHO: {
-                int count = READ_BYTE();
+                uint8_t arg_count = READ_BYTE();
 
-                for (int i = count; i > 0; i--) {
+                for (int i = arg_count; i > 0; i--) {
                     Value value = vm->stack_top[-i];
                     ObjStr* string = pyro_stringify_value(vm, value);
                     if (vm->halt_flag) {
@@ -560,7 +560,7 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_out(vm, "\n");
-                vm->stack_top -= count;
+                vm->stack_top -= arg_count;
                 break;
             }
 
