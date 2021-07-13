@@ -67,6 +67,7 @@ typedef enum {
     OP_DUP2,
     OP_POWER,
     OP_MODULO,
+    OP_BITWISE_NOT,
 } OpCode;
 
 #endif

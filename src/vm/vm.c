@@ -482,6 +482,16 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_BITWISE_NOT: {
+                Value operand = pyro_pop(vm);
+                if (IS_I64(operand)) {
+                    pyro_push(vm, I64_VAL(~operand.as.i64));
+                } else {
+                    pyro_panic(vm, "Bitwise 'not' requires an integer operand.");
+                }
+                break;
+            }
+
             case OP_CALL: {
                 int arg_count = READ_BYTE();
                 Value callee = pyro_peek(vm, arg_count);

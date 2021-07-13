@@ -44,6 +44,7 @@ typedef enum {
     TOKEN_INT,
     TOKEN_HEX_INT,
     TOKEN_OCTAL_INT,
+    TOKEN_BINARY_INT,
     TOKEN_FLOAT,
     TOKEN_CHAR,
 
@@ -57,6 +58,7 @@ typedef enum {
     TOKEN_IF, TOKEN_IMPORT, TOKEN_IN,
     TOKEN_LOOP,
     TOKEN_NULL,
+    TOKEN_NOT,
     TOKEN_OR,
     TOKEN_RETURN,
     TOKEN_SELF, TOKEN_SUPER,
@@ -148,6 +150,12 @@ static bool is_hex(char c) {
 
 static bool is_octal(char c) {
     if (c >= '0' && c <= '7') return true;
+    return false;
+}
+
+
+static bool is_binary(char c) {
+    if (c == '0' || c == '1') return true;
     return false;
 }
 
@@ -284,6 +292,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
             break;
 
         case 'n':
+            if (check_keyword(lexer, "not")) return TOKEN_NOT;
             if (check_keyword(lexer, "null")) return TOKEN_NULL;
             break;
 
@@ -465,6 +474,14 @@ Token next_token(Lexer* lexer) {
             next_char(lexer);
         }
         return make_token(lexer, TOKEN_OCTAL_INT);
+    }
+
+    if (c == '0' && (peek(lexer) == 'b' || peek(lexer) == 'B')) {
+        next_char(lexer);
+        while (is_binary(peek(lexer)) || peek(lexer) == '_') {
+            next_char(lexer);
+        }
+        return make_token(lexer, TOKEN_BINARY_INT);
     }
 
     if (is_digit(c)) {
@@ -1144,6 +1161,36 @@ static int64_t parse_hex_literal(Parser* parser) {
 }
 
 
+static int64_t parse_binary_literal(Parser* parser) {
+    char buffer[64 + 1];
+    size_t count = 0;
+
+    for (size_t i = 2; i < parser->previous.length; i++) {
+        if (parser->previous.start[i] == '_') {
+            continue;
+        }
+        if (count == 64) {
+            err_at_prev(parser, "Too many digits in binary literal (max: 64).");
+            return 0;
+        }
+        buffer[count++] = parser->previous.start[i];
+    }
+
+    if (count == 0) {
+        err_at_prev(parser, "Invalid binary literal (zero digits).");
+    }
+
+    buffer[count] = '\0';
+    errno = 0;
+    int64_t value = strtoll(buffer, NULL, 2);
+    if (errno != 0) {
+        err_at_prev(parser, "Invalid binary literal (out of range).");
+    }
+
+    return value;
+}
+
+
 static int64_t parse_octal_literal(Parser* parser) {
     char buffer[22 + 1];
     size_t count = 0;
@@ -1307,6 +1354,11 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
 
     else if (match(parser, TOKEN_HEX_INT)) {
         int64_t value = parse_hex_literal(parser);
+        emit_constant(parser, I64_VAL(value));
+    }
+
+    else if (match(parser, TOKEN_BINARY_INT)) {
+        int64_t value = parse_binary_literal(parser);
         emit_constant(parser, I64_VAL(value));
     }
 
@@ -1516,6 +1568,9 @@ static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in
     } else if (match(parser, TOKEN_TRY)) {
         parse_try_expr(parser);
         emit_byte(parser, OP_TRY);
+    } else if (match(parser, TOKEN_NOT)) {
+        parse_unary_expr(parser, false, can_assign_in_parens);
+        emit_byte(parser, OP_BITWISE_NOT);
     } else {
         parse_power_expr(parser, can_assign, can_assign_in_parens);
     }

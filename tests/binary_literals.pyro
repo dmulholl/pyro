@@ -1,0 +1,13 @@
+assert 0b0 == 0;
+assert 0b1 == 1;
+
+assert 0b00 == 0;
+assert 0b01 == 1;
+assert 0b10 == 2;
+assert 0b11 == 3;
+
+assert 0b1111_1111 == 255;
+assert 0b1_0000_0000 == 256;
+assert 0b__1__0__ == 2;
+
+assert 0B11 == 3;
