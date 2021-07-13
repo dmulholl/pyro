@@ -37,7 +37,7 @@ struct PyroVM {
     FILE* err_file;
 
     CallFrame frames[PYRO_MAX_CALL_FRAMES];
-    int frame_count;
+    size_t frame_count;
 
     Value stack[PYRO_STACK_SIZE];
     Value* stack_top;

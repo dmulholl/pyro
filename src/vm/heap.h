@@ -4,7 +4,7 @@
 #include "common.h"
 #include "values.h"
 
-// Increase the capacity of an array. Capacity will always be a power of 2.
+// Increase the capacity of an array.
 #define GROW_CAPACITY(capacity) \
     ((capacity) < 8 ? 8 : (capacity) * 2)
 
@@ -23,14 +23,23 @@
 
 // This function is a wrapper around the C standard library's `realloc` and `free`; it adds
 // bookkeeping and triggers for the garbage collector. All the VM's dynamic memory management is
-// funneled through this single function: allocating, reallocating, and freeing.
-// [old_size] and [new_size] are both in bytes. To allocate a new block of memory
-// use [pointer = NULL] and [old_size = 0]. To free a block of memory set [new_size = 0].
+// funneled through this single function: allocating, reallocating, and freeing. [old_size] and
+// [new_size] are both in bytes. To allocate a new block of memory use [pointer = NULL] and
+// [old_size = 0]. To free a block of memory set [new_size = 0].
 void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size);
 
-void free_object(PyroVM* vm, Obj* object);
-void collect_garbage(PyroVM* vm);
-void mark_value(PyroVM* vm, Value value);
-void mark_object(PyroVM* vm, Obj* object);
+// This frees the object along with any heap-allocated memory it owns. This function should only
+// be called from two places -- (1) from inside the garbage collector, and (2) from inside the
+// pyro_free_vm() function.
+void pyro_free_object(PyroVM* vm, Obj* object);
+
+// Triggers the garbage collector.
+void pyro_collect_garbage(PyroVM* vm);
+
+// Marks a value as reachable from the set of VM roots.
+void pyro_mark_value(PyroVM* vm, Value value);
+
+// Marks an object as reachable from the set of VM roots.
+void pyro_mark_object(PyroVM* vm, Obj* object);
 
 #endif

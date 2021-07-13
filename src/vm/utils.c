@@ -4,11 +4,13 @@
 #include "utf8.h"
 
 
-// Attempts to read the content of a file from the filesystem.
-// Returns [true] if the file has been successfully loaded. In this case [fd.data] should be freed
-// using FREE_ARRAY(vm, char, fd.data, fd.size).
-// Panics and returns [false] in case of error.
-// If the file has zero length the return value will be true and [fd.data] will be NULL.
+// Attempts to read the content of a file from the filesystem. Returns [true] if the file has been
+// successfully loaded. In this case [fd.data] should be freed using
+//
+//   FREE_ARRAY(vm, char, fd.data, fd.size)
+//
+// Panics and returns [false] in case of error. If the file has zero length the return value will
+// be true and [fd.data] will be NULL.
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
     FILE* file = fopen(path, "rb");
     if (file == NULL) {
@@ -51,21 +53,23 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
 }
 
 
-// This function prints to an automatically-allocated null-terminated string.
-// Returns NULL if an encoding error occurs or if sufficient memory cannot be allocated.
-// The caller is responsible for freeing the returned string via:
-// FREE_ARRAY(vm, char, string, strlen(string) + 1).
-// TODO: print first to a static buffer then memcpy to the output array if it fits?
+// This function prints to an automatically-allocated null-terminated string. Returns NULL if an
+// encoding error occurs or if sufficient memory cannot be allocated. The caller is responsible for
+// freeing the returned string via:
+//
+//   FREE_ARRAY(vm, char, string, strlen(string) + 1)
+//
+// Possible optimization: print first to a static buffer then memcpy to the output array if it fits.
 char* pyro_str_fmt(PyroVM* vm, const char* fmtstr, ...) {
     va_list args;
 
-    // Figure out how much memory we need to allocate. `len` will be the output string length,
-    // not counting the terminating null, so we'll need to allocate len + 1 bytes.
+    // Figure out how much memory we need to allocate. [len] will be the output string length,
+    // not counting the terminating null, so we'll need to allocate [len + 1] bytes.
     va_start(args, fmtstr);
     int len = vsnprintf(NULL, 0, fmtstr, args);
     va_end(args);
 
-    // If `len` is negative, an encoding error occurred.
+    // If [len] is negative, an encoding error occurred.
     if (len < 0) {
         return NULL;
     }
@@ -127,8 +131,8 @@ char* pyro_str_cat(PyroVM* vm, const char* a, const char* b) {
 
 
 // Given two strings A and B, this function appends B to A, automatically allocating memory as
-// necessary. String A should be heap-allocated or NULL; string B can be allocated anywhere.
-// If the memory allocation fails, the output A will be NULL.
+// necessary. String A should be heap-allocated or NULL; string B can be allocated anywhere. If
+// the memory allocation fails, the output A will be NULL.
 void pyro_str_append(PyroVM* vm, char** a_ptr, const char* b) {
     if (b == NULL) {
         return;
@@ -254,24 +258,6 @@ uint64_t pyro_sdbm_64(const char* string, size_t length) {
 }
 
 
-// Convert a hex digit to its corresponding integer value.
-int pyro_hex_to_int(char c) {
-    if (c >= '0' && c <= '9') return c - '0';
-    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
-    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
-    return -1;
-}
-
-
-// Returns true if the character is a valid hex digit, [0-9A-Fa-f].
-bool pyro_is_hex(char c) {
-    if (c >= '0' && c <= '9') return true;
-    if (c >= 'A' && c <= 'F') return true;
-    if (c >= 'a' && c <= 'f') return true;
-    return false;
-}
-
-
 bool pyro_file_exists(const char* path) {
     return access(path, F_OK) == 0;
 }
@@ -287,9 +273,15 @@ bool pyro_dir_exists(const char* path) {
 }
 
 
-// Copies [src_len] bytes from the string [src] to [dst], replacing backslashed escapes.
-// Does not add a terminating null to [dst].
-// Returns the number of bytes written to [dst] - this will be less than or equal to [src_len].
+// Converts an ASCII hex digit to its corresponding integer value.
+static inline uint8_t hex_to_int(char c) {
+   return (c > '9') ? (c &~ 0x20) - 'A' + 10 : (c - '0');
+}
+
+
+// Copies [src_len] bytes from the string [src] to [dst], replacing backslashed escapes. Does not
+// add a terminating null to [dst]. Returns the number of bytes written to [dst] -- this will be
+// less than or equal to [src_len].
 size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
     if (src_len == 0) {
         return 0;
@@ -336,10 +328,10 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
                 // 8-bit hex-encoded byte value: \xXX.
                 case 'x':
                     if (src_len - i > 3 &&
-                        pyro_is_hex(src[i + 2]) &&
-                        pyro_is_hex(src[i + 3])
+                        isxdigit(src[i + 2]) &&
+                        isxdigit(src[i + 3])
                     ) {
-                        dst[count++] = (pyro_hex_to_int(src[i + 2]) << 4) | pyro_hex_to_int(src[i + 3]);
+                        dst[count++] = (hex_to_int(src[i + 2]) << 4) | hex_to_int(src[i + 3]);
                         i += 3;
                     } else {
                         dst[count++] = src[i];
@@ -349,16 +341,16 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
                 // 16-bit hex-encoded unicode code point: \uXXXX. Output as utf-8.
                 case 'u': {
                     if (src_len - i > 5 &&
-                        pyro_is_hex(src[i + 2]) &&
-                        pyro_is_hex(src[i + 3]) &&
-                        pyro_is_hex(src[i + 4]) &&
-                        pyro_is_hex(src[i + 5])
+                        isxdigit(src[i + 2]) &&
+                        isxdigit(src[i + 3]) &&
+                        isxdigit(src[i + 4]) &&
+                        isxdigit(src[i + 5])
                     ) {
                         uint16_t codepoint =
-                            (pyro_hex_to_int(src[i + 2]) << 12) |
-                            (pyro_hex_to_int(src[i + 3]) << 8)  |
-                            (pyro_hex_to_int(src[i + 4]) << 4)  |
-                            (pyro_hex_to_int(src[i + 5]));
+                            (hex_to_int(src[i + 2]) << 12) |
+                            (hex_to_int(src[i + 3]) << 8)  |
+                            (hex_to_int(src[i + 4]) << 4)  |
+                            (hex_to_int(src[i + 5]));
                         i += 5;
                         count += pyro_write_utf8_codepoint(codepoint, (uint8_t*)&dst[count]);
                     } else {
@@ -370,24 +362,24 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
                 // 32-bit hex-encoded unicode code point: \UXXXXXXXX. Output as utf-8.
                 case 'U': {
                     if (src_len - i > 9 &&
-                        pyro_is_hex(src[i + 2]) &&
-                        pyro_is_hex(src[i + 3]) &&
-                        pyro_is_hex(src[i + 4]) &&
-                        pyro_is_hex(src[i + 5]) &&
-                        pyro_is_hex(src[i + 6]) &&
-                        pyro_is_hex(src[i + 7]) &&
-                        pyro_is_hex(src[i + 8]) &&
-                        pyro_is_hex(src[i + 9])
+                        isxdigit(src[i + 2]) &&
+                        isxdigit(src[i + 3]) &&
+                        isxdigit(src[i + 4]) &&
+                        isxdigit(src[i + 5]) &&
+                        isxdigit(src[i + 6]) &&
+                        isxdigit(src[i + 7]) &&
+                        isxdigit(src[i + 8]) &&
+                        isxdigit(src[i + 9])
                     ) {
                         uint32_t codepoint =
-                            (pyro_hex_to_int(src[i + 2]) << 28) |
-                            (pyro_hex_to_int(src[i + 3]) << 24) |
-                            (pyro_hex_to_int(src[i + 4]) << 20) |
-                            (pyro_hex_to_int(src[i + 5]) << 16) |
-                            (pyro_hex_to_int(src[i + 6]) << 12) |
-                            (pyro_hex_to_int(src[i + 7]) << 8)  |
-                            (pyro_hex_to_int(src[i + 8]) << 4)  |
-                            (pyro_hex_to_int(src[i + 9]));
+                            (hex_to_int(src[i + 2]) << 28) |
+                            (hex_to_int(src[i + 3]) << 24) |
+                            (hex_to_int(src[i + 4]) << 20) |
+                            (hex_to_int(src[i + 5]) << 16) |
+                            (hex_to_int(src[i + 6]) << 12) |
+                            (hex_to_int(src[i + 7]) << 8)  |
+                            (hex_to_int(src[i + 8]) << 4)  |
+                            (hex_to_int(src[i + 9]));
                         i += 9;
                         count += pyro_write_utf8_codepoint(codepoint, (uint8_t*)&dst[count]);
                     } else {
@@ -406,4 +398,3 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
 
     return count;
 }
-

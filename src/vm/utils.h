@@ -28,9 +28,6 @@ uint64_t pyro_fnv1a_64_opt(const char* string, size_t length);
 uint64_t pyro_djb2_64(const char* string, size_t length);
 uint64_t pyro_sdbm_64(const char* string, size_t length);
 
-int pyro_hex_to_int(char c);
-bool pyro_is_hex(char c);
-
 bool pyro_file_exists(const char* path);
 bool pyro_dir_exists(const char* path);
 

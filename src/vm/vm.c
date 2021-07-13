@@ -408,7 +408,7 @@ static void invoke_method(PyroVM* vm, ObjStr* method_name, int arg_count) {
 
 static void run(PyroVM* vm) {
     CallFrame* frame = &vm->frames[vm->frame_count - 1];
-    int frame_count_on_entry = vm->frame_count;
+    size_t frame_count_on_entry = vm->frame_count;
     assert(frame_count_on_entry >= 1);
 
     #define READ_BYTE()         (*frame->ip++)
@@ -1252,7 +1252,7 @@ static void run(PyroVM* vm) {
             case OP_TRY: {
                 vm->try_depth++;
                 Value* stashed_stack_top = vm->stack_top;
-                int stashed_frame_count = vm->frame_count;
+                size_t stashed_frame_count = vm->frame_count;
 
                 Value callee = PEEK(0);
                 call_value(vm, callee, 0);
@@ -1456,7 +1456,7 @@ void pyro_free_vm(PyroVM* vm) {
     Obj* object = vm->objects;
     while (object != NULL) {
         Obj* next = object->next;
-        free_object(vm, object);
+        pyro_free_object(vm, object);
         object = next;
     }
 

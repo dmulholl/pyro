@@ -3,79 +3,56 @@
 #include "compiler.h"
 
 
-static void sweep(PyroVM* vm) {
-    Obj* previous = NULL;
-    Obj* object = vm->objects;
-
-    while (object != NULL) {
-        if (object->is_marked) {
-            object->is_marked = false;
-            previous = object;
-            object = object->next;
-        } else {
-            Obj* not_marked = object;
-            object = object->next;
-            if (previous == NULL) {
-                vm->objects = object;
-            } else {
-                previous->next = object;
-            }
-            free_object(vm, not_marked);
-        }
-    }
-}
-
-
 // Mark every root object as reachable. (A root object is an object the VM can access directly
 // without going through another object.)
 static void mark_roots(PyroVM* vm) {
     // Local variables and temporary values on the stack.
     for (Value* slot = vm->stack; slot < vm->stack_top; slot++) {
-        mark_value(vm, *slot);
+        pyro_mark_value(vm, *slot);
     }
 
     // Classes for builtin types.
-    mark_object(vm, (Obj*)vm->map_class);
-    mark_object(vm, (Obj*)vm->str_class);
-    mark_object(vm, (Obj*)vm->tup_class);
-    mark_object(vm, (Obj*)vm->vec_class);
-    mark_object(vm, (Obj*)vm->buf_class);
-    mark_object(vm, (Obj*)vm->tup_iter_class);
-    mark_object(vm, (Obj*)vm->vec_iter_class);
-    mark_object(vm, (Obj*)vm->map_iter_class);
-    mark_object(vm, (Obj*)vm->str_iter_class);
-    mark_object(vm, (Obj*)vm->range_class);
-    mark_object(vm, (Obj*)vm->file_class);
+    pyro_mark_object(vm, (Obj*)vm->map_class);
+    pyro_mark_object(vm, (Obj*)vm->str_class);
+    pyro_mark_object(vm, (Obj*)vm->tup_class);
+    pyro_mark_object(vm, (Obj*)vm->vec_class);
+    pyro_mark_object(vm, (Obj*)vm->buf_class);
+    pyro_mark_object(vm, (Obj*)vm->tup_iter_class);
+    pyro_mark_object(vm, (Obj*)vm->vec_iter_class);
+    pyro_mark_object(vm, (Obj*)vm->map_iter_class);
+    pyro_mark_object(vm, (Obj*)vm->str_iter_class);
+    pyro_mark_object(vm, (Obj*)vm->range_class);
+    pyro_mark_object(vm, (Obj*)vm->file_class);
 
     // The VM's pool of canned objects.
-    mark_object(vm, (Obj*)vm->empty_error);
-    mark_object(vm, (Obj*)vm->empty_string);
-    mark_object(vm, (Obj*)vm->str_init);
-    mark_object(vm, (Obj*)vm->str_str);
-    mark_object(vm, (Obj*)vm->str_true);
-    mark_object(vm, (Obj*)vm->str_false);
-    mark_object(vm, (Obj*)vm->str_null);
-    mark_object(vm, (Obj*)vm->str_fmt);
-    mark_object(vm, (Obj*)vm->str_iter);
-    mark_object(vm, (Obj*)vm->str_next);
-    mark_object(vm, (Obj*)vm->str_get_index);
-    mark_object(vm, (Obj*)vm->str_set_index);
+    pyro_mark_object(vm, (Obj*)vm->empty_error);
+    pyro_mark_object(vm, (Obj*)vm->empty_string);
+    pyro_mark_object(vm, (Obj*)vm->str_init);
+    pyro_mark_object(vm, (Obj*)vm->str_str);
+    pyro_mark_object(vm, (Obj*)vm->str_true);
+    pyro_mark_object(vm, (Obj*)vm->str_false);
+    pyro_mark_object(vm, (Obj*)vm->str_null);
+    pyro_mark_object(vm, (Obj*)vm->str_fmt);
+    pyro_mark_object(vm, (Obj*)vm->str_iter);
+    pyro_mark_object(vm, (Obj*)vm->str_next);
+    pyro_mark_object(vm, (Obj*)vm->str_get_index);
+    pyro_mark_object(vm, (Obj*)vm->str_set_index);
 
     // Other object fields.
-    mark_object(vm, (Obj*)vm->globals);
-    mark_object(vm, (Obj*)vm->modules);
-    mark_object(vm, (Obj*)vm->strings);
-    mark_object(vm, (Obj*)vm->main_module);
-    mark_object(vm, (Obj*)vm->import_roots);
+    pyro_mark_object(vm, (Obj*)vm->globals);
+    pyro_mark_object(vm, (Obj*)vm->modules);
+    pyro_mark_object(vm, (Obj*)vm->strings);
+    pyro_mark_object(vm, (Obj*)vm->main_module);
+    pyro_mark_object(vm, (Obj*)vm->import_roots);
 
     // Each CallFrame in the call stack has a pointer to an ObjClosure.
-    for (int i = 0; i < vm->frame_count; i++) {
-        mark_object(vm, (Obj*)vm->frames[i].closure);
+    for (size_t i = 0; i < vm->frame_count; i++) {
+        pyro_mark_object(vm, (Obj*)vm->frames[i].closure);
     }
 
     // The VM's linked-list of open upvalues.
     for (ObjUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
-        mark_object(vm, (Obj*)upvalue);
+        pyro_mark_object(vm, (Obj*)upvalue);
     }
 
     // If we're in the middle of compiling, mark any objects directly accessible by the compiler.
@@ -91,8 +68,8 @@ static void blacken_object(PyroVM* vm, Obj* object) {
     switch (object->type) {
         case OBJ_BOUND_METHOD: {
             ObjBoundMethod* bound = (ObjBoundMethod*)object;
-            mark_value(vm, bound->receiver);
-            mark_object(vm, (Obj*)bound->method);
+            pyro_mark_value(vm, bound->receiver);
+            pyro_mark_object(vm, (Obj*)bound->method);
             break;
         }
 
@@ -101,18 +78,18 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
-            mark_object(vm, (Obj*)class->name);
-            mark_object(vm, (Obj*)class->methods);
-            mark_object(vm, (Obj*)class->field_initializers);
-            mark_object(vm, (Obj*)class->field_indexes);
+            pyro_mark_object(vm, (Obj*)class->name);
+            pyro_mark_object(vm, (Obj*)class->methods);
+            pyro_mark_object(vm, (Obj*)class->field_initializers);
+            pyro_mark_object(vm, (Obj*)class->field_indexes);
             break;
         }
 
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
-            mark_object(vm, (Obj*)closure->fn);
+            pyro_mark_object(vm, (Obj*)closure->fn);
             for (int i = 0; i < closure->upvalue_count; i++) {
-                mark_object(vm, (Obj*)closure->upvalues[i]);
+                pyro_mark_object(vm, (Obj*)closure->upvalues[i]);
             }
             break;
         }
@@ -122,21 +99,21 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_FN: {
             ObjFn* fn = (ObjFn*)object;
-            mark_object(vm, (Obj*)fn->name);
-            mark_object(vm, (Obj*)fn->source);
-            mark_object(vm, (Obj*)fn->module);
+            pyro_mark_object(vm, (Obj*)fn->name);
+            pyro_mark_object(vm, (Obj*)fn->source);
+            pyro_mark_object(vm, (Obj*)fn->module);
             for (size_t i = 0; i < fn->constants_count; i++) {
-                mark_value(vm, fn->constants[i]);
+                pyro_mark_value(vm, fn->constants[i]);
             }
             break;
         }
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
-            mark_object(vm, (Obj*)instance->obj.class);
+            pyro_mark_object(vm, (Obj*)instance->obj.class);
             int num_fields = instance->obj.class->field_initializers->count;
             for (int i = 0; i < num_fields; i++) {
-                mark_value(vm, instance->fields[i]);
+                pyro_mark_value(vm, instance->fields[i]);
             }
             break;
         }
@@ -148,28 +125,28 @@ static void blacken_object(PyroVM* vm, Obj* object) {
                 if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
-                mark_value(vm, entry->key);
-                mark_value(vm, entry->value);
+                pyro_mark_value(vm, entry->key);
+                pyro_mark_value(vm, entry->value);
             }
             break;
         }
 
         case OBJ_MAP_ITER: {
             ObjMapIter* iter = (ObjMapIter*)object;
-            mark_object(vm, (Obj*)iter->map);
+            pyro_mark_object(vm, (Obj*)iter->map);
             break;
         }
 
         case OBJ_MODULE: {
             ObjModule* module = (ObjModule*)object;
-            mark_object(vm, (Obj*)module->globals);
-            mark_object(vm, (Obj*)module->submodules);
+            pyro_mark_object(vm, (Obj*)module->globals);
+            pyro_mark_object(vm, (Obj*)module->submodules);
             break;
         }
 
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
-            mark_object(vm, (Obj*)native->name);
+            pyro_mark_object(vm, (Obj*)native->name);
             break;
         }
 
@@ -181,7 +158,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_STR_ITER: {
             ObjStrIter* iter = (ObjStrIter*)object;
-            mark_object(vm, (Obj*)iter->string);
+            pyro_mark_object(vm, (Obj*)iter->string);
             break;
         }
 
@@ -189,32 +166,32 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             for (size_t i = 0; i < tup->count; i++) {
-                mark_value(vm, tup->values[i]);
+                pyro_mark_value(vm, tup->values[i]);
             }
             break;
         }
 
         case OBJ_TUP_ITER: {
             ObjTupIter* iter = (ObjTupIter*)object;
-            mark_object(vm, (Obj*)iter->tup);
+            pyro_mark_object(vm, (Obj*)iter->tup);
             break;
         }
 
         case OBJ_UPVALUE:
-            mark_value(vm, ((ObjUpvalue*)object)->closed);
+            pyro_mark_value(vm, ((ObjUpvalue*)object)->closed);
             break;
 
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
             for (size_t i = 0; i < vec->count; i++) {
-                mark_value(vm, vec->values[i]);
+                pyro_mark_value(vm, vec->values[i]);
             }
             break;
         }
 
         case OBJ_VEC_ITER: {
             ObjVecIter* iter = (ObjVecIter*)object;
-            mark_object(vm, (Obj*)iter->vec);
+            pyro_mark_object(vm, (Obj*)iter->vec);
             break;
         }
 
@@ -232,17 +209,45 @@ static void trace_references(PyroVM* vm) {
 }
 
 
+static void sweep(PyroVM* vm) {
+    Obj* previous = NULL;
+    Obj* object = vm->objects;
+
+    while (object != NULL) {
+        if (object->is_marked) {
+            object->is_marked = false;
+            previous = object;
+            object = object->next;
+        } else {
+            Obj* not_marked = object;
+            object = object->next;
+            if (previous == NULL) {
+                vm->objects = object;
+            } else {
+                previous->next = object;
+            }
+            pyro_free_object(vm, not_marked);
+        }
+    }
+}
+
+
+// ---------------- //
+// Public Interface //
+// ---------------- //
+
+
 void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) {
     vm->bytes_allocated -= old_size;
     vm->bytes_allocated += new_size;
 
     if (new_size > old_size) {
         #ifdef PYRO_DEBUG_STRESS_GC
-            collect_garbage(vm);
+            pyro_collect_garbage(vm);
         #endif
 
         if (vm->bytes_allocated > vm->next_gc_threshold) {
-            collect_garbage(vm);
+            pyro_collect_garbage(vm);
         }
     }
 
@@ -255,7 +260,7 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) 
 }
 
 
-void free_object(PyroVM* vm, Obj* object) {
+void pyro_free_object(PyroVM* vm, Obj* object) {
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_out(vm, "   %p free object %s\n", (void*)object, pyro_stringify_obj_type(object->type));
     #endif
@@ -391,8 +396,7 @@ void free_object(PyroVM* vm, Obj* object) {
 }
 
 
-// Mark an object as reachable.
-void mark_object(PyroVM* vm, Obj* object) {
+void pyro_mark_object(PyroVM* vm, Obj* object) {
     if (object == NULL || object->is_marked) {
         return;
     }
@@ -423,15 +427,14 @@ void mark_object(PyroVM* vm, Obj* object) {
 }
 
 
-// Mark a value as reachable.
-void mark_value(PyroVM* vm, Value value) {
+void pyro_mark_value(PyroVM* vm, Value value) {
     if (IS_OBJ(value)) {
-        mark_object(vm, AS_OBJ(value));
+        pyro_mark_object(vm, AS_OBJ(value));
     }
 }
 
 
-void collect_garbage(PyroVM* vm) {
+void pyro_collect_garbage(PyroVM* vm) {
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_out(vm, "-- gc begin\n");
         size_t before = vm->bytes_allocated;

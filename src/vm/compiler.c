@@ -566,11 +566,10 @@ typedef struct {
 } Local;
 
 
-// If `is_local` is true the upvalue is capturing a local variable from the immediately surrounding
-// function; `index` is the slot index of this local.
-// If `is_local` is false the upvalue is capturing a chained upvalue from the immediately surrounding
-// function referencing a captured local from a higher scope; `index` is the upvalue index of the
-// captured upvalue.
+// If [is_local] is true the upvalue is capturing a local variable from the immediately surrounding
+// function; [index] is the slot index of this local. If [is_local] is false the upvalue is
+// capturing a chained upvalue from the immediately surrounding function referencing a captured
+// local from a higher scope; [index] is the upvalue index of the captured upvalue.
 typedef struct {
     uint8_t index;
     bool is_local;
@@ -626,9 +625,9 @@ struct Parser {
 };
 
 
-/* -------------------- */
-/* Forward Declarations */
-/* -------------------- */
+// -------------------- //
+// Forward Declarations //
+// -------------------- //
 
 
 static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in_parens);
@@ -637,9 +636,9 @@ static void parse_function_definition(Parser* parser, FnType type, Token name);
 static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens);
 
 
-/* ----------------- */
-/* Parsing Utilities */
-/* ----------------- */
+// ----------------- //
+// Parsing Utilities //
+// ----------------- //
 
 
 static void err_at_token(Parser* parser, Token* token, const char* message) {
@@ -840,12 +839,12 @@ static void init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, 
 }
 
 
-static ObjFn* end_compiler(Parser* parser) {
+static ObjFn* end_fn_compiler(Parser* parser) {
     emit_return(parser);
 
     ObjFn* fn = parser->compiler->fn;
 
-    #ifdef PYRO_DEBUG_PRINT_CODE
+    #ifdef PYRO_DEBUG_DUMP_BYTECODE
         if (!parser->had_error) {
             pyro_disassemble_function(parser->vm, fn);
         }
@@ -870,7 +869,7 @@ static int resolve_local(Parser* parser, FnCompiler* compiler, Token* name) {
 }
 
 
-// `index` is the closed-over local variable's slot index.
+// [index] is the closed-over local variable's slot index.
 // Returns the index of the newly created upvalue in the function's upvalue list.
 static int add_upvalue(Parser* parser, FnCompiler* compiler, uint8_t index, bool is_local) {
     int upvalue_count = compiler->fn->upvalue_count;
@@ -993,9 +992,9 @@ static uint16_t consume_variable_name(Parser* parser, const char* error_message)
 }
 
 
-// Emit bytecode to discard all local variables at scope depth greater than or equal to [depth].
-// Returns the number of locals discarded.
-// This doesn't decremement the local count as it's called directly by break statements.
+// Emits bytecode to discard all local variables at scope depth greater than or equal to [depth].
+// Returns the number of locals discarded. (This function doesn't decremement the local count as
+// it's called directly by break statements.)
 static int discard_locals(Parser* parser, int depth) {
     int local_count = parser->compiler->local_count;
 
@@ -1045,9 +1044,9 @@ static void patch_jump(Parser* parser, size_t index) {
 }
 
 
-/* ------------------ */
-/* Expression Parsers */
-/* ------------------ */
+// ------------------ //
+// Expression Parsers //
+// ------------------ //
 
 
 static uint8_t parse_argument_list(Parser* parser) {
@@ -1247,7 +1246,12 @@ static int64_t parse_int_literal(Parser* parser) {
 }
 
 
-// Max length of 24 charcters is arbitrary.
+// So, figuring out the maximum possible length of a 64-bit IEEE 754 float literal is complicated.
+// Possible answers [here][1] include 24 characters and... 1079 characters! Setting a 24 character
+// maximum for now but I may want to revisit this at some point.
+//
+// [1]: https://stackoverflow.com/questions/1701055/
+//
 static double parse_float_literal(Parser* parser) {
     char buffer[24 + 1];
     size_t count = 0;
@@ -1278,7 +1282,7 @@ static uint32_t parse_char_literal(Parser* parser) {
     const char* start = parser->previous.start + 1;
     size_t length = parser->previous.length - 2;
 
-    // The longest valid literal is a unicode escape sequence of the form: '\UXXXXXXXX'.
+    // The longest valid character literal is a unicode escape sequence of the form: '\UXXXXXXXX'.
     if (length == 0 || length > 10) {
         err_at_prev(parser, "Invalid character literal.");
         return 0;
@@ -1539,7 +1543,7 @@ static void parse_try_expr(Parser* parser) {
     parse_unary_expr(parser, false, false);
     emit_byte(parser, OP_RETURN);
 
-    ObjFn* fn = end_compiler(parser);
+    ObjFn* fn = end_fn_compiler(parser);
     emit_op_u16(parser, OP_CLOSURE, make_constant(parser, OBJ_VAL(fn)));
 
     for (int i = 0; i < fn->upvalue_count; i++) {
@@ -1715,9 +1719,9 @@ static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in
 }
 
 
-/* ----------------- */
-/* Statement Parsers */
-/* ----------------- */
+// ----------------- //
+// Statement Parsers //
+// ----------------- //
 
 
 static void parse_echo_stmt(Parser* parser) {
@@ -1924,7 +1928,7 @@ static void parse_for_in_stmt(Parser* parser) {
 }
 
 
-static void parse_cstyle_loop_stmt(Parser* parser) {
+static void parse_c_style_loop_stmt(Parser* parser) {
     // Push a new scope to wrap any loop variables declared in the initializer.
     begin_scope(parser);
 
@@ -2003,7 +2007,7 @@ static void parse_cstyle_loop_stmt(Parser* parser) {
 }
 
 
-static void parse_inf_loop_stmt(Parser* parser) {
+static void parse_infinite_loop_stmt(Parser* parser) {
     LoopCompiler loop;
     loop.start_index = parser->compiler->fn->code_count;
     loop.start_depth = parser->compiler->scope_depth;
@@ -2116,7 +2120,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     parse_block(parser);
 
     // Create the function object.
-    ObjFn* fn = end_compiler(parser);
+    ObjFn* fn = end_fn_compiler(parser);
     emit_op_u16(parser, OP_CLOSURE, make_constant(parser, OBJ_VAL(fn)));
 
     for (int i = 0; i < fn->upvalue_count; i++) {
@@ -2286,9 +2290,9 @@ static void parse_statement(Parser* parser) {
         parse_while_stmt(parser);
     } else if (match(parser, TOKEN_LOOP)) {
         if (match(parser, TOKEN_LEFT_BRACE)) {
-            parse_inf_loop_stmt(parser);
+            parse_infinite_loop_stmt(parser);
         } else {
-            parse_cstyle_loop_stmt(parser);
+            parse_c_style_loop_stmt(parser);
         }
     } else if (match(parser, TOKEN_FOR)) {
         parse_for_in_stmt(parser);
@@ -2343,7 +2347,7 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
         }
     }
 
-    ObjFn* fn = end_compiler(&parser);
+    ObjFn* fn = end_fn_compiler(&parser);
     vm->parser = NULL;
     return fn;
 }
@@ -2356,7 +2360,7 @@ void pyro_mark_compiler_roots(PyroVM* vm) {
     if (vm->parser != NULL) {
         FnCompiler* compiler = vm->parser->compiler;
         while (compiler != NULL) {
-            mark_object(vm, (Obj*)compiler->fn);
+            pyro_mark_object(vm, (Obj*)compiler->fn);
             compiler = compiler->enclosing;
         }
     }

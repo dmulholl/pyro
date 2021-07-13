@@ -4,9 +4,9 @@
 #include "common.h"
 
 
-/* ------ */
-/* Values */
-/* ------ */
+// ------ //
+// Values //
+// ------ //
 
 
 typedef enum {
@@ -15,9 +15,9 @@ typedef enum {
     VAL_I64,
     VAL_F64,
     VAL_OBJ,
-    VAL_TOMBSTONE,
-    VAL_EMPTY,
     VAL_CHAR,
+    VAL_EMPTY,
+    VAL_TOMBSTONE,
 } ValueType;
 
 
@@ -34,9 +34,9 @@ typedef struct {
 } Value;
 
 
-/* ------- */
-/* Objects */
-/* ------- */
+// ------- //
+// Objects //
+// ------- //
 
 
 typedef enum {
@@ -85,9 +85,9 @@ struct Obj {
 };
 
 
-/* ------ */
-/* ObjStr */
-/* ------ */
+// ------ //
+// ObjStr //
+// ------ //
 
 
 struct ObjStr {
@@ -113,7 +113,7 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm);
 // the input array is not altered or freed.
 ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm);
 
-// Create a new string object by concatenating two source strings.
+// Creates a new string object by concatenating two source strings.
 ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
 
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
@@ -129,9 +129,9 @@ typedef struct {
 ObjStrIter* ObjStrIter_new(ObjStr* string, StrIterType iter_type, PyroVM* vm);
 
 
-/* ------ */
-/* ObjMap */
-/* ------ */
+// ------ //
+// ObjMap //
+// ------ //
 
 
 typedef struct {
@@ -177,9 +177,9 @@ ObjMapIter* ObjMapIter_new(ObjMap* map, MapIterType iter_type, PyroVM* vm);
 Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm);
 
 
-/* ------ */
-/* ObjVec */
-/* ------ */
+// ------ //
+// ObjVec //
+// ------ //
 
 
 typedef struct {
@@ -207,9 +207,9 @@ typedef struct {
 ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm);
 
 
-/* --------- */
-/* ObjModule */
-/* --------- */
+// --------- //
+// ObjModule //
+// --------- //
 
 
 typedef struct {
@@ -221,9 +221,9 @@ typedef struct {
 ObjModule* ObjModule_new(PyroVM* vm);
 
 
-/* ----- */
-/* ObjFn */
-/* ----- */
+// ----- //
+// ObjFn //
+// ----- //
 
 
 typedef struct {
@@ -257,9 +257,9 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip);
 size_t ObjFn_get_line_number(ObjFn* fn, size_t ip);
 
 
-/* ----------- */
-/* ObjNativeFn */
-/* ----------- */
+// ----------- //
+// ObjNativeFn //
+// ----------- //
 
 
 typedef Value (*NativeFn)(PyroVM* vm, size_t arg_count, Value* args);
@@ -274,9 +274,9 @@ typedef struct {
 ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arity);
 
 
-/* -------- */
-/* ObjClass */
-/* -------- */
+// -------- //
+// ObjClass //
+// -------- //
 
 
 struct ObjClass {
@@ -290,9 +290,9 @@ struct ObjClass {
 ObjClass* ObjClass_new(PyroVM* vm, ObjStr* name);
 
 
-/* ----------- */
-/* ObjInstance */
-/* ----------- */
+// ----------- //
+// ObjInstance //
+// ----------- //
 
 
 typedef struct {
@@ -303,9 +303,9 @@ typedef struct {
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class);
 
 
-/* ---------- */
-/* ObjUpvalue */
-/* ---------- */
+// ---------- //
+// ObjUpvalue //
+// ---------- //
 
 
 // The [next] pointer is used by the VM to maintain a linked list of open upvalues pointing to
@@ -320,9 +320,9 @@ typedef struct ObjUpvalue {
 ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* slot);
 
 
-/* ---------- */
-/* ObjClosure */
-/* ---------- */
+// ---------- //
+// ObjClosure //
+// ---------- //
 
 
 typedef struct {
@@ -335,9 +335,9 @@ typedef struct {
 ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* func);
 
 
-/* -------------- */
-/* ObjBoundMethod */
-/* -------------- */
+// -------------- //
+// ObjBoundMethod //
+// -------------- //
 
 
 typedef struct {
@@ -349,9 +349,9 @@ typedef struct {
 ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method);
 
 
-/* ------ */
-/* ObjTup */
-/* ------ */
+// ------ //
+// ObjTup //
+// ------ //
 
 
 typedef struct {
@@ -375,9 +375,9 @@ typedef struct {
 ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 
 
-/* -------- */
-/* ObjRange */
-/* -------- */
+// -------- //
+// ObjRange //
+// -------- //
 
 
 typedef struct {
@@ -422,9 +422,9 @@ typedef struct {
 ObjFile* ObjFile_new(PyroVM* vm);
 
 
-/* ------ */
-/* Macros */
-/* ------ */
+// ------ //
+// Macros //
+// ------ //
 
 
 #define IS_BOOL(value)              ((value).type == VAL_BOOL)
@@ -486,9 +486,9 @@ ObjFile* ObjFile_new(PyroVM* vm);
 #define STR_VAL(c_string)           OBJ_VAL(STR_OBJ(c_string))
 
 
-/* --------- */
-/* Functions */
-/* --------- */
+// --------- //
+// Functions //
+// --------- //
 
 
 uint64_t pyro_hash(Value value);
@@ -514,6 +514,7 @@ bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name);
 // - Returns 1 if a > b.
 int pyro_compare_strings(ObjStr* a, ObjStr* b);
 
+// Returns [true] if the value is an object of the specified type.
 static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }

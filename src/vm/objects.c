@@ -411,7 +411,6 @@ bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
 }
 
 
-// Returns true if the key was found in the map.
 bool ObjMap_get(ObjMap* map, Value key, Value* value) {
     if (map->count == 0) {
         return false;
@@ -427,7 +426,6 @@ bool ObjMap_get(ObjMap* map, Value key, Value* value) {
 }
 
 
-// Returns true if a matching entry was found.
 bool ObjMap_remove(ObjMap* map, Value key) {
     if (map->count == 0) {
         return false;
@@ -444,7 +442,6 @@ bool ObjMap_remove(ObjMap* map, Value key) {
 }
 
 
-// Copies all the entries from [src] to [dst].
 void ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->capacity; i++) {
         MapEntry* entry = &src->entries[i];
@@ -538,7 +535,6 @@ ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm) {
 }
 
 
-// Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
 ObjStr* ObjStr_empty(PyroVM* vm) {
     if (vm->empty_string) {
         return vm->empty_string;
@@ -620,7 +616,6 @@ ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
 }
 
 
-// Create a new string object by concatenating two source strings.
 ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
     if (src1->length == 0) return src2;
     if (src2->length == 0) return src1;
@@ -1028,9 +1023,9 @@ ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm) {
 }
 
 
-/* -------- */
-/* ObjRange */
-/* -------- */
+// -------- //
+// ObjRange //
+// -------- //
 
 
 ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm) {
@@ -1046,9 +1041,9 @@ ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm) {
 }
 
 
-/* ------ */
-/* ObjBuf */
-/* ------ */
+// ------ //
+// ObjBuf //
+// ------ //
 
 
 ObjBuf* ObjBuf_new(PyroVM* vm) {
