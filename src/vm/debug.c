@@ -180,8 +180,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_MULTIPLY", ip);
         case OP_NEGATE:
             return atomic_instruction(vm, "OP_NEGATE", ip);
-        case OP_NOT:
-            return atomic_instruction(vm, "OP_NOT", ip);
+        case OP_LOGICAL_NOT:
+            return atomic_instruction(vm, "OP_LOGICAL_NOT", ip);
         case OP_NOT_EQUAL:
             return atomic_instruction(vm, "OP_NOT_EQUAL", ip);
         case OP_POP:

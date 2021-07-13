@@ -33,7 +33,7 @@ typedef enum {
     OP_MULTIPLY,
     OP_FLOAT_DIV,
     OP_TRUNC_DIV,
-    OP_NOT,
+    OP_LOGICAL_NOT,
     OP_NEGATE,
     OP_ECHO,
     OP_JUMP,

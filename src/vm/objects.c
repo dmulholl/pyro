@@ -780,7 +780,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_LOAD_TRUE:
         case OP_MULTIPLY:
         case OP_NEGATE:
-        case OP_NOT:
+        case OP_LOGICAL_NOT:
         case OP_NOT_EQUAL:
         case OP_POP:
         case OP_RETURN:
