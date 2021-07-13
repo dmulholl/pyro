@@ -39,6 +39,8 @@ void pyro_err(PyroVM* vm, const char* format, ...) {
 
 void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
     if (file) {
+        fprintf(file, "Traceback (most recent function first):\n\n");
+
         for (size_t i = vm->frame_count; i > 0; i--) {
             CallFrame* frame = &vm->frames[i - 1];
             ObjFn* fn = frame->closure->fn;
@@ -50,7 +52,7 @@ void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
             }
 
             fprintf(file, "%s:%zu\n", fn->source->bytes, line_number);
-            fprintf(file, "  --> in %s\n", fn->name->bytes);
+            fprintf(file, "  [%zu] --> in %s\n", i, fn->name->bytes);
         }
     }
 }

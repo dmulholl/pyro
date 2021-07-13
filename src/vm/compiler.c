@@ -125,6 +125,19 @@ static bool is_alpha_or_digit(char c) {
 }
 
 
+static bool is_whitespace(char c) {
+    switch (c) {
+        case '\n':
+        case '\r':
+        case ' ':
+        case '\t':
+            return true;
+        default:
+            return false;
+    }
+}
+
+
 static bool is_hex(char c) {
     if (c >= '0' && c <= '9') return true;
     if (c >= 'A' && c <= 'F') return true;
@@ -2250,9 +2263,16 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
     parser.class_compiler = NULL;
     parser.had_error = false;
     parser.src_id = src_id;
-    init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
     parser.vm = vm;
     vm->parser = &parser;
+
+    // Strip any trailing whitespace. This ensures we report the correct line number for syntax
+    // errors at the end of the input, e.g. a missing trailing semicolon.
+    while (src_len > 0 && is_whitespace(src_code[src_len - 1])) {
+        src_len--;
+    }
+
+    init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
     FnCompiler compiler;
     init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("<module>"));

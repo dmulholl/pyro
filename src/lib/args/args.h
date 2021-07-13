@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Args: a C99 library for parsing command line arguments.
-// Version: 2.1.3 (customized)
+// Version: 2.1.4 (customized)
 // -----------------------------------------------------------------------------
 
 #ifndef args_h

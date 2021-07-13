@@ -15,7 +15,7 @@
 #include <libgen.h>
 
 #include "../pyro.h"
-#include "args.h"
+#include "../lib/args/args.h"
 
 
 static const char* VERSION = "0.2.0.dev";
@@ -232,12 +232,6 @@ static void run_repl(void) {
         // read and append another line of input.
         if (has_open_quote(code, code_count) || count_brackets(code, code_count) > 0) {
             continue;
-        }
-
-        // This fixes the reported line number for syntax errors at the end of the input,
-        // e.g. a missing trailing semicolon.
-        if (code[code_count - 1] == '\n') {
-            code_count--;
         }
 
         pyro_exec_code_as_main(vm, code, code_count, "repl");

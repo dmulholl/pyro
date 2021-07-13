@@ -425,7 +425,7 @@ void mark_object(PyroVM* vm, Obj* object) {
 
 // Mark a value as reachable.
 void mark_value(PyroVM* vm, Value value) {
-    if (IS_OBJ(value) || IS_ERR(value)) {
+    if (IS_OBJ(value)) {
         mark_object(vm, AS_OBJ(value));
     }
 }
