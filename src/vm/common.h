@@ -1,6 +1,7 @@
 #ifndef pyro_common_h
 #define pyro_common_h
 
+// C standard library.
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -15,11 +16,14 @@
 #include <ctype.h>
 #include <errno.h>
 
+// POSIX only.
 #include <dirent.h>
 #include <unistd.h>
 
+// Local includes.
 #include "../pyro.h"
 
+// Forward declarations.
 typedef struct Parser Parser;
 typedef struct Obj Obj;
 typedef struct ObjStr ObjStr;

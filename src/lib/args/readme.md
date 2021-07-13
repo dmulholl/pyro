@@ -8,6 +8,6 @@ This version has been customized so the first non-positional argument turns off 
 
     $ pyro -a -b script.pyro -c -d
 
-we want `-a` and `-b` to be parsed as options for the Pyro binary but we want to pass `-c` and `-d` on as options for the script file.
+we want `-a` and `-b` to be parsed as options for the Pyro binary but we want to pass `-c` and `-d` on as arguments for the script file.
 
 This change only affects the root parser &mdash; arguments to commands are parsed as before.

@@ -1807,11 +1807,11 @@ void pyro_set_out_file(PyroVM* vm, FILE* file) {
 }
 
 
-void pyro_set_args(PyroVM* vm, int argc, char** argv) {
+void pyro_set_args(PyroVM* vm, size_t argc, char** argv) {
     ObjTup* args = ObjTup_new(argc, vm);
     pyro_push(vm, OBJ_VAL(args));
 
-    for (int i = 0; i < argc; i++) {
+    for (size_t i = 0; i < argc; i++) {
         args->values[i] = STR_VAL(argv[i]);
     }
 
