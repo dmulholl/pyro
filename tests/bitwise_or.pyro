@@ -1,0 +1,6 @@
+assert 0b0 or 0b0 == 0b0;
+assert 0b0 or 0b1 == 0b1;
+assert 0b1 or 0b0 == 0b1;
+assert 0b1 or 0b1 == 0b1;
+
+assert 0b1100 or 0b1010 == 0b1110;

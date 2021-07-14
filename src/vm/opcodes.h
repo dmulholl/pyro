@@ -68,6 +68,9 @@ typedef enum {
     OP_POWER,
     OP_MODULO,
     OP_BITWISE_NOT,
+    OP_BITWISE_XOR,
+    OP_BITWISE_AND,
+    OP_BITWISE_OR,
 } OpCode;
 
 #endif

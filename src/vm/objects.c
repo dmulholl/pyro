@@ -788,6 +788,9 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_POWER:
         case OP_MODULO:
         case OP_BITWISE_NOT:
+        case OP_BITWISE_XOR:
+        case OP_BITWISE_AND:
+        case OP_BITWISE_OR:
             return 0;
 
         case OP_CALL:

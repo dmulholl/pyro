@@ -64,6 +64,7 @@ typedef enum {
     TOKEN_TRUE, TOKEN_TRY,
     TOKEN_VAR,
     TOKEN_WHILE,
+    TOKEN_XOR,
 
     // Synthetic tokens.
     TOKEN_ERROR,
@@ -319,6 +320,10 @@ static TokenType get_identifier_type(Lexer* lexer) {
 
         case 'w':
             if (check_keyword(lexer, "while")) return TOKEN_WHILE;
+            break;
+
+        case 'x':
+            if (check_keyword(lexer, "xor")) return TOKEN_XOR;
             break;
     }
 
@@ -1580,20 +1585,39 @@ static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in
 }
 
 
-static void parse_multiplicative_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
+static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     parse_unary_expr(parser, can_assign, can_assign_in_parens);
     while (true) {
-        if (match(parser, TOKEN_STAR)) {
+        if (match(parser, TOKEN_XOR)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
+            emit_byte(parser, OP_BITWISE_XOR);
+        } else if (match(parser, TOKEN_AND)) {
+            parse_unary_expr(parser, false, can_assign_in_parens);
+            emit_byte(parser, OP_BITWISE_AND);
+        } else if (match(parser, TOKEN_OR)) {
+            parse_unary_expr(parser, false, can_assign_in_parens);
+            emit_byte(parser, OP_BITWISE_OR);
+        } else {
+            break;
+        }
+    }
+}
+
+
+static void parse_multiplicative_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
+    parse_bitwise_expr(parser, can_assign, can_assign_in_parens);
+    while (true) {
+        if (match(parser, TOKEN_STAR)) {
+            parse_bitwise_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_MULTIPLY);
         } else if (match(parser, TOKEN_SLASH)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_bitwise_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_FLOAT_DIV);
         } else if (match(parser, TOKEN_SLASH_SLASH)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_bitwise_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_TRUNC_DIV);
         } else if (match(parser, TOKEN_PERCENT)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_bitwise_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_MODULO);
         } else {
             break;
