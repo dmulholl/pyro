@@ -137,7 +137,7 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
 }
 
 
-static Value pyro_import_module(PyroVM* vm, int arg_count, Value* args) {
+static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
 
@@ -147,7 +147,7 @@ static Value pyro_import_module(PyroVM* vm, int arg_count, Value* args) {
         }
 
         size_t path_length = has_trailing_slash ? base->length : base->length + 1;
-        for (int j = 0; j < arg_count; j++) {
+        for (uint8_t j = 0; j < arg_count; j++) {
             path_length += AS_STR(args[j])->length + 1;
         }
         path_length += 4 + 5; // add space for a [.pyro] or [/self.pyro] suffix
@@ -166,7 +166,7 @@ static Value pyro_import_module(PyroVM* vm, int arg_count, Value* args) {
         }
 
         // Given 'import foo::bar::baz', assemble path = BASE/foo/bar/baz/
-        for (int j = 0; j < arg_count; j++) {
+        for (uint8_t j = 0; j < arg_count; j++) {
             ObjStr* name = AS_STR(args[j]);
             memcpy(path + path_count, name->bytes, name->length);
             path_count += name->length;
@@ -218,7 +218,7 @@ static Value pyro_import_module(PyroVM* vm, int arg_count, Value* args) {
 }
 
 
-static void call_closure(PyroVM* vm, ObjClosure* closure, int arg_count) {
+static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
     if (arg_count != closure->fn->arity) {
         pyro_panic(
             vm,
@@ -242,7 +242,7 @@ static void call_closure(PyroVM* vm, ObjClosure* closure, int arg_count) {
 }
 
 
-static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, int arg_count) {
+static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
     if (fn->arity == arg_count || fn->arity == -1) {
         Value result = fn->fn_ptr(vm, arg_count, vm->stack_top - arg_count);
         vm->stack_top -= (arg_count + 1);
@@ -253,7 +253,7 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, int arg_count) {
 }
 
 
-static void call_value(PyroVM* vm, Value callee, int arg_count) {
+static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
     if (IS_OBJ(callee)) {
         switch(AS_OBJ(callee)->type) {
             case OBJ_BOUND_METHOD: {
@@ -379,7 +379,7 @@ static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
 }
 
 
-static void invoke_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, int arg_count) {
+static void invoke_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
     Value method;
     if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method)) {
         pyro_panic(vm, "Invalid method name '%s'.", method_name->bytes);
@@ -394,7 +394,7 @@ static void invoke_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, 
 }
 
 
-static void invoke_method(PyroVM* vm, ObjStr* method_name, int arg_count) {
+static void invoke_method(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
     Value receiver = pyro_peek(vm, arg_count);
     ObjClass* class = pyro_get_class(receiver);
 
@@ -526,7 +526,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_CALL: {
-                int arg_count = READ_BYTE();
+                uint8_t arg_count = READ_BYTE();
                 Value callee = pyro_peek(vm, arg_count);
                 call_value(vm, callee, arg_count);
                 frame = &vm->frames[vm->frame_count - 1];
@@ -586,7 +586,7 @@ static void run(PyroVM* vm) {
             case OP_ECHO: {
                 uint8_t arg_count = READ_BYTE();
 
-                for (int i = arg_count; i > 0; i--) {
+                for (uint8_t i = arg_count; i > 0; i--) {
                     Value value = vm->stack_top[-i];
                     ObjStr* string = pyro_stringify_value(vm, value);
                     if (vm->halt_flag) {
@@ -805,13 +805,13 @@ static void run(PyroVM* vm) {
             }
 
             case OP_IMPORT: {
-                int arg_count = READ_BYTE();
+                uint8_t arg_count = READ_BYTE();
                 Value* args = vm->stack_top - arg_count;
 
                 ObjMap* supermod_map = vm->modules;
                 Value module;
 
-                for (int i = 0; i < arg_count; i++) {
+                for (uint8_t i = 0; i < arg_count; i++) {
                     Value name = args[i];
 
                     if (ObjMap_get(supermod_map, name, &module)) {
@@ -867,7 +867,7 @@ static void run(PyroVM* vm) {
 
             case OP_INVOKE_METHOD: {
                 ObjStr* method_name = READ_STRING();
-                int arg_count = READ_BYTE();
+                uint8_t arg_count = READ_BYTE();
                 invoke_method(vm, method_name, arg_count);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
@@ -875,7 +875,7 @@ static void run(PyroVM* vm) {
 
             case OP_INVOKE_SUPER_METHOD: {
                 ObjStr* method_name = READ_STRING();
-                int arg_count = READ_BYTE();
+                uint8_t arg_count = READ_BYTE();
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
                 invoke_from_class(vm, superclass, method_name, arg_count);
                 frame = &vm->frames[vm->frame_count - 1];
@@ -1708,7 +1708,7 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
 // function returns.
 // The called method can panic or $exit() so the caller should check vm->exit_flag and
 // vm->panic_flag before using the result.
-Value pyro_call_method(PyroVM* vm, Value method, int arg_count) {
+Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count) {
     if (IS_NATIVE_FN(method)) {
         call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
         return pyro_pop(vm);

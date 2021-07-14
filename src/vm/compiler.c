@@ -2134,10 +2134,10 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     consume(parser, TOKEN_LEFT_PAREN, "Expected '(' before function parameters.");
     if (!check(parser, TOKEN_RIGHT_PAREN)) {
         do {
-            compiler.fn->arity++;
-            if (compiler.fn->arity > 255) {
+            if (compiler.fn->arity == 255) {
                 err_at_curr(parser, "Too many parameters (max: 255).");
             }
+            compiler.fn->arity++;
             uint16_t index = consume_variable_name(parser, "Expected parameter name.");
             define_variable(parser, index);
         } while (match(parser, TOKEN_COMMA));

@@ -126,6 +126,7 @@ typedef struct {
     size_t next_index;
 } ObjStrIter;
 
+// Creates a new string iterator. Returns NULL if the attempt to allocate memory fails.
 ObjStrIter* ObjStrIter_new(ObjStr* string, StrIterType iter_type, PyroVM* vm);
 
 
@@ -159,8 +160,10 @@ bool ObjMap_remove(ObjMap* map, Value key);
 // - Returns 2 if an existing entry was successfully updated.
 int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm);
 
-// Copy all entries from [src] to [dst].
-void ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm);
+// Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false] if
+// the operation failed because memory could not be allocated for the new entries. The operation
+// may fail after some of the entries have successfully been copied.
+bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm);
 
 // Attempts to update an existing entry. Returns [true] if successful, [false] if no corresponding
 // entry was found.
@@ -192,11 +195,11 @@ typedef struct {
 ObjVec* ObjVec_new(PyroVM* vm);
 ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm);
 ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm);
-void ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
+bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
 ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm);
 
-// Copy all entries from [src] to [dst].
-void ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
+// Copies all entries from [src] to [dst].
+bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
 
 typedef struct {
     Obj obj;
@@ -228,11 +231,13 @@ ObjModule* ObjModule_new(PyroVM* vm);
 
 typedef struct {
     Obj obj;
-    int arity;
     int upvalue_count;
     ObjStr* name;
     ObjStr* source;
     ObjModule* module;
+
+    // The number of arguments required by the function.
+    uint8_t arity;
 
     // The function's bytecode, stored as a dynamic array of bytes.
     uint8_t* code;
@@ -244,14 +249,16 @@ typedef struct {
     size_t constants_count;
     size_t constants_capacity;
 
-    // Number of bytecode bytes per line of source code.
+    // This information lets us reconstruct the source code line number corresponding to each
+    // bytecode instruction. The [bpl] array stores the number of bytecode bytes per line of
+    // source code, where the array index is the offset from [first_line_number].
     size_t first_line_number;
     uint16_t* bpl;
     size_t bpl_capacity;
 } ObjFn;
 
 ObjFn* ObjFn_new(PyroVM* vm);
-void ObjFn_write(ObjFn* fn, uint8_t byte, size_t line_number, PyroVM* vm);
+bool ObjFn_write(ObjFn* fn, uint8_t byte, size_t line_number, PyroVM* vm);
 size_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm);
 size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip);
 size_t ObjFn_get_line_number(ObjFn* fn, size_t ip);
@@ -262,13 +269,15 @@ size_t ObjFn_get_line_number(ObjFn* fn, size_t ip);
 // ----------- //
 
 
+// Signature definition for Pyro functions and methods natively implemented in C.
 typedef Value (*NativeFn)(PyroVM* vm, size_t arg_count, Value* args);
 
+// [arity = -1] means that the function accepts a variable number of arguments.
 typedef struct {
     Obj obj;
-    int arity;
     NativeFn fn_ptr;
     ObjStr* name;
+    int arity;
 } ObjNativeFn;
 
 ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arity);
@@ -491,22 +500,65 @@ ObjFile* ObjFile_new(PyroVM* vm);
 // --------- //
 
 
-uint64_t pyro_hash(Value value);
-bool pyro_check_equal(Value a, Value b);
-bool pyro_is_truthy(Value value);
+// Returns the value's class object if it has one, otherwise NULL;
+ObjClass* pyro_get_class(Value value);
 
-void pyro_dump_value(PyroVM* vm, Value value);
+// Returns the named method if it is defined for the value, otherwise NULL_VAL().
+Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name);
+
+// Returns [true] if the named method is defined for the value.
+bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name);
+
+// This function dumps an object to the VM's output stream for debugging. It doesn't allocate
+// memory or call into Pyro code.
 void pyro_dump_object(PyroVM* vm, Obj* object);
 
+// This function dumps a value to the VM's output stream for debugging. It doesn't allocate memory
+// or call into Pyro code.
+void pyro_dump_value(PyroVM* vm, Value value);
+
+// Returns the value's 64-bit hash.
+uint64_t pyro_hash(Value value);
+
+// Returns [true] if the values are equal.
+bool pyro_check_equal(Value a, Value b);
+
+// Returns [true] if the value is truthy.
+bool pyro_is_truthy(Value value);
+
+// This function constructs and returns the default string representation of a value. A lot can go
+// wrong here:
+//
+// 1 - This function attempts to allocate memory and can trigger the GC.
+// 2 - This function assumes that any object passed into it has been fully initialized.
+// 3 - This function can call into Pyro code to execute an object's :$str() method.
+// 4 - This function can trigger a panic, exit, or memory error, setting the halt flag.
+//
+// The caller should check the halt flag immediately on return. If the flag is set the caller should
+// clean up any allocated resources and unwind the call stack.
+//
+// This function returns NULL if sufficient memory could not be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
+
+// As for [pyro_stringify_value].
 ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object);
+
+// This function constructs and returns the formatted string representation of a value using the
+// format string [format]. A lot can go wrong here:
+//
+// 1 - This function attempts to allocate memory and can trigger the GC.
+// 2 - This function assumes that any object passed into it has been fully initialized.
+// 3 - This function can call into Pyro code to execute an object's :$fmt() method.
+// 4 - This function can trigger a panic, exit, or memory error, setting the halt flag.
+//
+// The caller should check the halt flag immediately on return. If the flag is set the caller should
+// clean up any allocated resources and unwind the call stack.
+//
+// This function returns NULL if sufficient memory could not be allocated for the string.
 ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format);
 
+// Returns a pointer to a static string. Can be safely called from the GC.
 char* pyro_stringify_obj_type(ObjType type);
-
-ObjClass* pyro_get_class(Value value);
-Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name);
-bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name);
 
 // Performs a lexicographic comparison using byte values.
 // - Returns -1 if a < b.

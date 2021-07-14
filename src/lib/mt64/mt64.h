@@ -1,8 +1,9 @@
 // 64-bit Mersenne Twister PRNG (MT19937-64).
 //
-// The code in this module is adapted from the original implementation by the algorithm's inventors,
-// Takuji Nishimura and Makoto Matsumoto, which was released under a 3-clause BSD license. See the
-// accompanying readme.md file for the original source code comment and license text.
+// The Mersenne Twister implementation in this module is adapted from the original implementation
+// by the algorithm's inventors, Takuji Nishimura and Makoto Matsumoto, which was released under a
+// 3-clause BSD license. See the accompanying readme.md file for the original source code comment
+// and license text.
 //
 // Ref: http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/emt.html (2021-07-08)
 

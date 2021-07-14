@@ -102,7 +102,7 @@ ObjModule* pyro_define_module_1(PyroVM* vm, const char* name);
 ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name);
 ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name);
 
-Value pyro_call_method(PyroVM* vm, Value method, int arg_count);
+Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 
 void pyro_panic(PyroVM* vm, const char* format, ...);
 void pyro_memory_error(PyroVM* vm);

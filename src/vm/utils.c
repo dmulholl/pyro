@@ -4,13 +4,6 @@
 #include "utf8.h"
 
 
-// Attempts to read the content of a file from the filesystem. Returns [true] if the file has been
-// successfully loaded. In this case [fd.data] should be freed using
-//
-//   FREE_ARRAY(vm, char, fd.data, fd.size)
-//
-// Panics and returns [false] in case of error. If the file has zero length the return value will
-// be true and [fd.data] will be NULL.
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
     FILE* file = fopen(path, "rb");
     if (file == NULL) {
@@ -53,12 +46,6 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
 }
 
 
-// This function prints to an automatically-allocated null-terminated string. Returns NULL if an
-// encoding error occurs or if sufficient memory cannot be allocated. The caller is responsible for
-// freeing the returned string via:
-//
-//   FREE_ARRAY(vm, char, string, strlen(string) + 1)
-//
 // Possible optimization: print first to a static buffer then memcpy to the output array if it fits.
 char* pyro_str_fmt(PyroVM* vm, const char* fmtstr, ...) {
     va_list args;
@@ -87,7 +74,6 @@ char* pyro_str_fmt(PyroVM* vm, const char* fmtstr, ...) {
 }
 
 
-// Duplicates a null-terminated string, automatically allocating memory for the copy.
 char* pyro_str_dup(PyroVM* vm, const char* source) {
     size_t length = strlen(source);
     char* dest = ALLOCATE_ARRAY(vm, char, length + 1);
@@ -100,7 +86,6 @@ char* pyro_str_dup(PyroVM* vm, const char* source) {
 }
 
 
-// Duplicates an n-character portion of a string, automatically allocating memory for the copy.
 char* pyro_str_copy(PyroVM* vm, const char* source, size_t n) {
     char* dest = ALLOCATE_ARRAY(vm, char, n + 1);
     if (dest == NULL) {
@@ -112,7 +97,6 @@ char* pyro_str_copy(PyroVM* vm, const char* source, size_t n) {
 }
 
 
-// Creates a new string by concatenating two strings, automatically allocating memory for the copy.
 char* pyro_str_cat(PyroVM* vm, const char* a, const char* b) {
     size_t len_a = strlen(a);
     size_t len_b = strlen(b);
@@ -127,26 +111,6 @@ char* pyro_str_cat(PyroVM* vm, const char* a, const char* b) {
     memcpy(dest + len_a, b, len_b);
     dest[length] = '\0';
     return dest;
-}
-
-
-// Given two strings A and B, this function appends B to A, automatically allocating memory as
-// necessary. String A should be heap-allocated or NULL; string B can be allocated anywhere. If
-// the memory allocation fails, the output A will be NULL.
-void pyro_str_append(PyroVM* vm, char** a_ptr, const char* b) {
-    if (b == NULL) {
-        return;
-    } else if (*a_ptr == NULL) {
-        *a_ptr = pyro_str_dup(vm, b);
-    } else {
-        size_t len_a = strlen(*a_ptr);
-        size_t len_b = strlen(b);
-        size_t length = len_a + len_b;
-
-        *a_ptr = REALLOCATE_ARRAY(vm, char, *a_ptr, len_a + 1, length + 1);
-        memcpy(*a_ptr + len_a, b, len_b);
-        *(*a_ptr + length) = '\0';
-    }
 }
 
 
@@ -279,9 +243,6 @@ static inline uint8_t hex_to_int(char c) {
 }
 
 
-// Copies [src_len] bytes from the string [src] to [dst], replacing backslashed escapes. Does not
-// add a terminating null to [dst]. Returns the number of bytes written to [dst] -- this will be
-// less than or equal to [src_len].
 size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
     if (src_len == 0) {
         return 0;

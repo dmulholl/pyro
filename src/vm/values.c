@@ -28,7 +28,6 @@ bool pyro_is_truthy(Value value) {
 }
 
 
-// Returns the value's class if it exists, otherwise NULL;
 ObjClass* pyro_get_class(Value value) {
     if (IS_OBJ(value) && AS_OBJ(value)->class) {
         return AS_OBJ(value)->class;
@@ -37,7 +36,6 @@ ObjClass* pyro_get_class(Value value) {
 }
 
 
-// Returns the method if it exists, otherwise NULL_VAL().
 Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
     if (IS_OBJ(receiver) && AS_OBJ(receiver)->class) {
         Value method;
@@ -236,18 +234,6 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
 }
 
 
-// This function constructs and returns the default string representation of a value. A lot can go
-// wrong here:
-//
-// 1 - This function attempts to allocate memory and can trigger the GC.
-// 2 - This function assumes that any object passed into it has been fully initialized.
-// 3 - This function can call into Pyro code to execute an object's :$str() method.
-// 4 - This function can trigger a panic, exit, or memory error, setting the halt flag.
-//
-// The caller should check the halt flag immediately on return. If it's set the caller should clean
-// up any allocated resources and unwind the call stack.
-//
-// This function returns NULL if memory could not be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_BOOL:
@@ -273,6 +259,10 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
 
         case VAL_F64: {
             char* array = pyro_str_fmt(vm, "%.6f", value.as.f64);
+            if (!array) {
+                return NULL;
+            }
+
             size_t orig_len = strlen(array);
             size_t trim_len = orig_len;
 
@@ -303,9 +293,6 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
 }
 
 
-// This function dumps an object to the VM's output stream for debugging. It does not allocate
-// memory or call into Pyro code. It cannot result in the panic, exit, or memory-error flags being
-// set.
 void pyro_dump_object(PyroVM* vm, Obj* object) {
     switch (object->type) {
         case OBJ_STR: {
@@ -412,8 +399,6 @@ void pyro_dump_object(PyroVM* vm, Obj* object) {
 }
 
 
-// This function dumps a value to the VM's output stream for debugging. It does not allocate memory
-// or call into Pyro code. It cannot result in the panic, exit, or memory-error flags being set.
 void pyro_dump_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_BOOL:
@@ -499,7 +484,6 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
 }
 
 
-// Returns a pointer to a static string. Can be safely called from the GC.
 char* pyro_stringify_obj_type(ObjType type) {
     switch (type) {
         case OBJ_BOUND_METHOD: return "<method>";
@@ -541,7 +525,3 @@ int pyro_compare_strings(ObjStr* a, ObjStr* b) {
 
     return a->length < b->length ? -1 : 1;
 }
-
-
-
-
