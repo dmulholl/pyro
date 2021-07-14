@@ -12,11 +12,6 @@
 #include "../std/std_prng.h"
 
 
-#define PUSH(value)         pyro_push(vm, value)
-#define POP()               pyro_pop(vm)
-#define PEEK(distance)      pyro_peek(vm, distance)
-
-
 void pyro_out(PyroVM* vm, const char* format, ...) {
     if (vm->out_file) {
         va_list args;
@@ -358,7 +353,7 @@ static void define_field(PyroVM* vm, ObjStr* name) {
     Value init_value = pyro_peek(vm, 0);
     ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
-    int field_index = class->field_initializers->count;
+    size_t field_index = class->field_initializers->count;
     ObjVec_append(class->field_initializers, init_value, vm);
     ObjMap_set(class->field_indexes, OBJ_VAL(name), I64_VAL(field_index), vm);
     pyro_pop(vm);
@@ -440,13 +435,13 @@ static void run(PyroVM* vm) {
         switch (instruction = READ_BYTE()) {
 
             case OP_ADD: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
 
                 if (a.type == b.type) {
                     switch (a.type) {
                         case VAL_I64:
-                            PUSH(I64_VAL(a.as.i64 + b.as.i64));
+                            pyro_push(vm, I64_VAL(a.as.i64 + b.as.i64));
                             break;
                         case VAL_F64:
                             pyro_push(vm, F64_VAL(a.as.f64 + b.as.f64));
@@ -483,8 +478,8 @@ static void run(PyroVM* vm) {
             }
 
             case OP_BITWISE_AND: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 & b.as.i64));
                 } else {
@@ -494,8 +489,8 @@ static void run(PyroVM* vm) {
             }
 
             case OP_BITWISE_OR: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 | b.as.i64));
                 } else {
@@ -515,8 +510,8 @@ static void run(PyroVM* vm) {
             }
 
             case OP_BITWISE_XOR: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 ^ b.as.i64));
                 } else {
@@ -572,14 +567,14 @@ static void run(PyroVM* vm) {
 
             // Duplicate the top item on the stack.
             case OP_DUP: {
-                PUSH(PEEK(0));
+                pyro_push(vm, pyro_peek(vm, 0));
                 break;
             }
 
             // Duplicate the top 2 items on the stack.
             case OP_DUP2: {
-                PUSH(PEEK(1));
-                PUSH(PEEK(1));
+                pyro_push(vm, pyro_peek(vm, 1));
+                pyro_push(vm, pyro_peek(vm, 1));
                 break;
             }
 
@@ -610,9 +605,9 @@ static void run(PyroVM* vm) {
             }
 
             case OP_EQUAL: {
-                Value b = POP();
-                Value a = POP();
-                PUSH(BOOL_VAL(pyro_check_equal(a, b)));
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
+                pyro_push(vm, BOOL_VAL(pyro_check_equal(a, b)));
                 break;
             }
 
@@ -622,16 +617,16 @@ static void run(PyroVM* vm) {
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(F64_VAL((double)a.as.i64 / (double)b.as.i64));
+                    pyro_push(vm, F64_VAL((double)a.as.i64 / (double)b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(F64_VAL(a.as.f64 / b.as.f64));
+                    pyro_push(vm, F64_VAL(a.as.f64 / b.as.f64));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(F64_VAL((double)a.as.i64 / b.as.f64));
+                    pyro_push(vm, F64_VAL((double)a.as.i64 / b.as.f64));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(F64_VAL(a.as.f64 / (double)b.as.i64));
+                    pyro_push(vm, F64_VAL(a.as.f64 / (double)b.as.i64));
                 } else {
                     pyro_panic(vm, "Operands to '/' must both be numbers.");
                 }
@@ -756,7 +751,7 @@ static void run(PyroVM* vm) {
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                PUSH(BOOL_VAL(result > 0));
+                                pyro_push(vm, BOOL_VAL(result > 0));
                             } else {
                                 pyro_panic(vm, "Operands to '>' must both be numbers or strings.");
                             }
@@ -789,7 +784,7 @@ static void run(PyroVM* vm) {
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                PUSH(BOOL_VAL(result >= 0));
+                                pyro_push(vm, BOOL_VAL(result >= 0));
                             } else {
                                 pyro_panic(vm, "Operands to '>=' must both be numbers or strings.");
                             }
@@ -828,9 +823,9 @@ static void run(PyroVM* vm) {
                         break;
                     }
 
-                    PUSH(module);
+                    pyro_push(vm, module);
                     ObjMap_set(supermod_map, name, module, vm);
-                    POP();
+                    pyro_pop(vm);
 
                     supermod_map = AS_MOD(module)->submodules;
                 }
@@ -889,7 +884,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_ITER_NEXT: {
-                PUSH(PEEK(0));
+                pyro_push(vm, pyro_peek(vm, 0));
                 invoke_method(vm, vm->str_next, 0);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
@@ -959,7 +954,7 @@ static void run(PyroVM* vm) {
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                PUSH(BOOL_VAL(result < 0));
+                                pyro_push(vm, BOOL_VAL(result < 0));
                             } else {
                                 pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
                             }
@@ -992,7 +987,7 @@ static void run(PyroVM* vm) {
                         case VAL_OBJ:
                             if (IS_STR(a) && IS_STR(b)) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                PUSH(BOOL_VAL(result <= 0));
+                                pyro_push(vm, BOOL_VAL(result <= 0));
                             } else {
                                 pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
                             }
@@ -1032,8 +1027,8 @@ static void run(PyroVM* vm) {
             }
 
             case OP_LSHIFT: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, I64_VAL(a.as.i64 << b.as.i64));
@@ -1050,7 +1045,7 @@ static void run(PyroVM* vm) {
                 uint16_t entry_count = READ_U16();
 
                 ObjMap* map = ObjMap_new(vm);
-                PUSH(OBJ_VAL(map));
+                pyro_push(vm, OBJ_VAL(map));
 
                 if (entry_count == 0) {
                     break;
@@ -1061,7 +1056,7 @@ static void run(PyroVM* vm) {
                 }
 
                 vm->stack_top -= (entry_count * 2 + 1);
-                PUSH(OBJ_VAL(map));
+                pyro_push(vm, OBJ_VAL(map));
                 break;
             }
 
@@ -1069,7 +1064,7 @@ static void run(PyroVM* vm) {
                 uint16_t item_count = READ_U16();
 
                 if (item_count == 0) {
-                    PUSH(OBJ_VAL(ObjVec_new(vm)));
+                    pyro_push(vm, OBJ_VAL(ObjVec_new(vm)));
                     break;
                 }
 
@@ -1078,7 +1073,7 @@ static void run(PyroVM* vm) {
                 vec->count = item_count;
 
                 vm->stack_top -= item_count;
-                PUSH(OBJ_VAL(vec));
+                pyro_push(vm, OBJ_VAL(vec));
                 break;
             }
 
@@ -1088,21 +1083,21 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MODULO: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) { pyro_panic(vm, "Modulo by zero."); break; }
-                    PUSH(I64_VAL(a.as.i64 % b.as.i64));
+                    pyro_push(vm, I64_VAL(a.as.i64 % b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) { pyro_panic(vm, "Modulo by zero."); break; }
-                    PUSH(F64_VAL(fmod(a.as.f64, b.as.f64)));
+                    pyro_push(vm, F64_VAL(fmod(a.as.f64, b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) { pyro_panic(vm, "Modulo by zero."); break; }
-                    PUSH(F64_VAL(fmod((double)a.as.i64, b.as.f64)));
+                    pyro_push(vm, F64_VAL(fmod((double)a.as.i64, b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) { pyro_panic(vm, "Modulo by zero."); break; }
-                    PUSH(F64_VAL(fmod(a.as.f64, (double)b.as.i64)));
+                    pyro_push(vm, F64_VAL(fmod(a.as.f64, (double)b.as.i64)));
                 } else {
                     pyro_panic(vm, "Operands to '%%' must both be numbers.");
                 }
@@ -1111,17 +1106,17 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MULTIPLY: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
-                    PUSH(I64_VAL(a.as.i64 * b.as.i64));
+                    pyro_push(vm, I64_VAL(a.as.i64 * b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
-                    PUSH(F64_VAL(a.as.f64 * b.as.f64));
+                    pyro_push(vm, F64_VAL(a.as.f64 * b.as.f64));
                 } else if (IS_I64(a) && IS_F64(b)) {
-                    PUSH(F64_VAL((double)a.as.i64 * b.as.f64));
+                    pyro_push(vm, F64_VAL((double)a.as.i64 * b.as.f64));
                 } else if (IS_F64(a) && IS_I64(b)) {
-                    PUSH(F64_VAL(a.as.f64 * (double)b.as.i64));
+                    pyro_push(vm, F64_VAL(a.as.f64 * (double)b.as.i64));
                 } else {
                     pyro_panic(vm, "Operands to '*' must both be numbers.");
                 }
@@ -1170,17 +1165,17 @@ static void run(PyroVM* vm) {
             }
 
             case OP_POWER: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
-                    PUSH(F64_VAL(pow((double)a.as.i64, (double)b.as.i64)));
+                    pyro_push(vm, F64_VAL(pow((double)a.as.i64, (double)b.as.i64)));
                 } else if (IS_F64(a) && IS_F64(b)) {
-                    PUSH(F64_VAL(pow(a.as.f64, b.as.f64)));
+                    pyro_push(vm, F64_VAL(pow(a.as.f64, b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
-                    PUSH(F64_VAL(pow((double)a.as.i64, b.as.f64)));
+                    pyro_push(vm, F64_VAL(pow((double)a.as.i64, b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
-                    PUSH(F64_VAL(pow(a.as.f64, (double)b.as.i64)));
+                    pyro_push(vm, F64_VAL(pow(a.as.f64, (double)b.as.i64)));
                 } else {
                     pyro_panic(vm, "Operands to '^' must both be numbers.");
                 }
@@ -1205,8 +1200,8 @@ static void run(PyroVM* vm) {
             }
 
             case OP_RSHIFT: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, I64_VAL(a.as.i64 >> b.as.i64));
@@ -1244,8 +1239,8 @@ static void run(PyroVM* vm) {
             case OP_SET_GLOBAL: {
                 Value name = READ_CONSTANT();
                 ObjMap* globals = frame->closure->fn->module->globals;
-                if (!ObjMap_update_entry(globals, name, PEEK(0), vm)) {
-                    if (!ObjMap_update_entry(vm->globals, name, PEEK(0), vm)) {
+                if (!ObjMap_update_entry(globals, name, pyro_peek(vm, 0), vm)) {
+                    if (!ObjMap_update_entry(vm->globals, name, pyro_peek(vm, 0), vm)) {
                         pyro_panic(vm, "Undefined variable '%s'.", AS_STR(name)->bytes);
                     }
                 }
@@ -1271,8 +1266,8 @@ static void run(PyroVM* vm) {
             }
 
             case OP_SUBTRACT: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 - b.as.i64));
@@ -1290,21 +1285,21 @@ static void run(PyroVM* vm) {
             }
 
             case OP_TRUNC_DIV: {
-                Value b = POP();
-                Value a = POP();
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(I64_VAL(a.as.i64 / b.as.i64));
+                    pyro_push(vm, I64_VAL(a.as.i64 / b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(F64_VAL(trunc(a.as.f64 / b.as.f64)));
+                    pyro_push(vm, F64_VAL(trunc(a.as.f64 / b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(F64_VAL(trunc((double)a.as.i64 / b.as.f64)));
+                    pyro_push(vm, F64_VAL(trunc((double)a.as.i64 / b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
-                    PUSH(F64_VAL(trunc(a.as.f64 / (double)b.as.i64)));
+                    pyro_push(vm, F64_VAL(trunc(a.as.f64 / (double)b.as.i64)));
                 } else {
                     pyro_panic(vm, "Operands to '//' must both be numbers.");
                 }
@@ -1317,7 +1312,7 @@ static void run(PyroVM* vm) {
                 Value* stashed_stack_top = vm->stack_top;
                 size_t stashed_frame_count = vm->frame_count;
 
-                Value callee = PEEK(0);
+                Value callee = pyro_peek(vm, 0);
                 call_value(vm, callee, 0);
                 run(vm);
 
@@ -1336,17 +1331,17 @@ static void run(PyroVM* vm) {
 
                     ObjStr* err_msg = ObjStr_copy_raw(vm->panic_buffer, strlen(vm->panic_buffer), vm);
                     if (err_msg) {
-                        PUSH(OBJ_VAL(err_msg));
+                        pyro_push(vm, OBJ_VAL(err_msg));
                         ObjTup* err = ObjTup_new_err(1, vm);
-                        POP();
+                        pyro_pop(vm);
                         if (err) {
                             err->values[0] = OBJ_VAL(err_msg);
-                            PUSH(OBJ_VAL(err));
+                            pyro_push(vm, OBJ_VAL(err));
                         } else {
-                            PUSH(OBJ_VAL(vm->empty_error));
+                            pyro_push(vm, OBJ_VAL(vm->empty_error));
                         }
                     } else {
-                        PUSH(OBJ_VAL(vm->empty_error));
+                        pyro_push(vm, OBJ_VAL(vm->empty_error));
                     }
                 }
 
@@ -1523,8 +1518,11 @@ void pyro_free_vm(PyroVM* vm) {
         object = next;
     }
 
-    free(vm->mt64);
     free(vm->grey_stack);
+    vm->bytes_allocated -= vm->grey_capacity;
+
+    free(vm->mt64);
+
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);
 }
@@ -1702,12 +1700,6 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
 }
 
 
-// Call a method from a native function. Returns the value returned by the method.
-// Before calling this function the receiver and the method's arguments should be pushed onto the
-// stack. These values (and the return value of the method) will be popped off the stack before this
-// function returns.
-// The called method can panic or $exit() so the caller should check vm->exit_flag and
-// vm->panic_flag before using the result.
 Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count) {
     if (IS_NATIVE_FN(method)) {
         call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
@@ -1720,7 +1712,7 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count) {
 }
 
 
-// Define a new top-level module.
+// TODO: handle memory allocation failure.
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1737,7 +1729,7 @@ ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
 }
 
 
-// Define a new 2nd level module where [parent] is a top-level module.
+// TODO: handle memory allocation failure.
 ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1761,8 +1753,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
 }
 
 
-// Define a new 3rd level module where [grandparent] is a top-level module and [parent] is a
-// submodule of [grandparent].
+// TODO: handle memory allocation failure.
 ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1792,6 +1783,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 }
 
 
+// TODO: handle memory allocation failure.
 void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value member) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1802,6 +1794,7 @@ void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value m
 }
 
 
+// TODO: handle memory allocation failure.
 void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1813,6 +1806,7 @@ void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, Nati
 }
 
 
+// TODO: handle memory allocation failure.
 void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1824,6 +1818,7 @@ void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn 
 }
 
 
+// TODO: handle memory allocation failure.
 void pyro_define_global(PyroVM* vm, const char* name, Value value) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1834,6 +1829,7 @@ void pyro_define_global(PyroVM* vm, const char* name, Value value) {
 }
 
 
+// TODO: handle memory allocation failure.
 void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
@@ -1880,6 +1876,7 @@ void pyro_set_out_file(PyroVM* vm, FILE* file) {
 }
 
 
+// TODO: handle memory allocation failure.
 void pyro_set_args(PyroVM* vm, size_t argc, char** argv) {
     ObjTup* args = ObjTup_new(argc, vm);
     pyro_push(vm, OBJ_VAL(args));
@@ -1893,6 +1890,7 @@ void pyro_set_args(PyroVM* vm, size_t argc, char** argv) {
 }
 
 
+// TODO: handle memory allocation failure.
 void pyro_add_import_root(PyroVM* vm, const char* path) {
     Value path_value = STR_VAL(path);
     pyro_push(vm, path_value);

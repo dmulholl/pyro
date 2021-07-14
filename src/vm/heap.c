@@ -412,12 +412,13 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
         size_t new_capacity = GROW_CAPACITY(vm->grey_capacity);
         void* new_array = realloc(vm->grey_stack, sizeof(Obj*) * new_capacity);
 
-        if (new_array == NULL) {
-            pyro_err(vm, "Error: Out of memory.\n");
-            vm->exit_flag = true;
-            vm->exit_code = 127;
+        if (!new_array) {
+            pyro_memory_error(vm);
             return;
         }
+
+        vm->bytes_allocated -= vm->grey_capacity;
+        vm->bytes_allocated += new_capacity;
 
         vm->grey_capacity = new_capacity;
         vm->grey_stack = new_array;
