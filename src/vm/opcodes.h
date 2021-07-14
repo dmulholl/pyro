@@ -71,6 +71,8 @@ typedef enum {
     OP_BITWISE_XOR,
     OP_BITWISE_AND,
     OP_BITWISE_OR,
+    OP_LSHIFT,
+    OP_RSHIFT,
 } OpCode;
 
 #endif

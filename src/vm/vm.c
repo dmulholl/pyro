@@ -1031,6 +1031,21 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_LSHIFT: {
+                Value b = POP();
+                Value a = POP();
+                if (IS_I64(a) && IS_I64(b)) {
+                    if (b.as.i64 >= 0) {
+                        pyro_push(vm, I64_VAL(a.as.i64 << b.as.i64));
+                    } else {
+                        pyro_panic(vm, "Right operand to '<<' cannot be negative.");
+                    }
+                } else {
+                    pyro_panic(vm, "Operands to '<<' must both be integers.");
+                }
+                break;
+            }
+
             case OP_MAKE_MAP: {
                 uint16_t entry_count = READ_U16();
 
@@ -1186,6 +1201,21 @@ static void run(PyroVM* vm) {
                 }
 
                 frame = &vm->frames[vm->frame_count - 1];
+                break;
+            }
+
+            case OP_RSHIFT: {
+                Value b = POP();
+                Value a = POP();
+                if (IS_I64(a) && IS_I64(b)) {
+                    if (b.as.i64 >= 0) {
+                        pyro_push(vm, I64_VAL(a.as.i64 >> b.as.i64));
+                    } else {
+                        pyro_panic(vm, "Right operand to '>>' cannot be negative.");
+                    }
+                } else {
+                    pyro_panic(vm, "Operands to '>>' must both be integers.");
+                }
                 break;
             }
 

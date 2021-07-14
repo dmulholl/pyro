@@ -26,8 +26,8 @@ typedef enum {
     // One or two character tokens.
     TOKEN_BANG, TOKEN_BANG_EQUAL, TOKEN_BANG_BANG,
     TOKEN_EQUAL, TOKEN_EQUAL_EQUAL,
-    TOKEN_GREATER, TOKEN_GREATER_EQUAL,
-    TOKEN_LESS, TOKEN_LESS_EQUAL,
+    TOKEN_GREATER, TOKEN_GREATER_EQUAL, TOKEN_GREATER_GREATER,
+    TOKEN_LESS, TOKEN_LESS_EQUAL, TOKEN_LESS_LESS,
     TOKEN_PLUS, TOKEN_PLUS_EQUAL,
     TOKEN_MINUS, TOKEN_MINUS_EQUAL,
     TOKEN_COLON, TOKEN_COLON_COLON,
@@ -504,19 +504,30 @@ Token next_token(Lexer* lexer) {
         case '.': return make_token(lexer, TOKEN_DOT);
         case '^': return make_token(lexer, TOKEN_CARET);
         case '%': return make_token(lexer, TOKEN_PERCENT);
+
         case '-': return make_token(lexer, match_char(lexer, '=') ? TOKEN_MINUS_EQUAL : TOKEN_MINUS);
         case '+': return make_token(lexer, match_char(lexer, '=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
         case '/': return make_token(lexer, match_char(lexer, '/') ? TOKEN_SLASH_SLASH : TOKEN_SLASH);
         case '=': return make_token(lexer, match_char(lexer, '=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
-        case '<': return make_token(lexer, match_char(lexer, '=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
-        case '>': return make_token(lexer, match_char(lexer, '=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
         case ':': return make_token(lexer, match_char(lexer, ':') ? TOKEN_COLON_COLON : TOKEN_COLON);
         case '*': return make_token(lexer, match_char(lexer, '*') ? TOKEN_STAR_STAR : TOKEN_STAR);
         case '|': return make_token(lexer, match_char(lexer, '|') ? TOKEN_BAR_BAR : TOKEN_BAR);
         case '?': return make_token(lexer, match_char(lexer, '?') ? TOKEN_HOOK_HOOK: TOKEN_HOOK);
+
         case '"': return read_string(lexer);
         case '`': return read_raw_string(lexer);
         case '\'': return read_char(lexer);
+
+        case '<':
+            if (match_char(lexer, '<')) return make_token(lexer, TOKEN_LESS_LESS);
+            if (match_char(lexer, '=')) return make_token(lexer, TOKEN_LESS_EQUAL);
+            return make_token(lexer, TOKEN_LESS);
+
+        case '>':
+            if (match_char(lexer, '>')) return make_token(lexer, TOKEN_GREATER_GREATER);
+            if (match_char(lexer, '=')) return make_token(lexer, TOKEN_GREATER_EQUAL);
+            return make_token(lexer, TOKEN_GREATER);
+
         case '!':
             if (match_char(lexer, '=')) return make_token(lexer, TOKEN_BANG_EQUAL);
             if (match_char(lexer, '!')) return make_token(lexer, TOKEN_BANG_BANG);
@@ -1597,6 +1608,12 @@ static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_
         } else if (match(parser, TOKEN_OR)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_BITWISE_OR);
+        } else if (match(parser, TOKEN_LESS_LESS)) {
+            parse_unary_expr(parser, false, can_assign_in_parens);
+            emit_byte(parser, OP_LSHIFT);
+        } else if (match(parser, TOKEN_GREATER_GREATER)) {
+            parse_unary_expr(parser, false, can_assign_in_parens);
+            emit_byte(parser, OP_RSHIFT);
         } else {
             break;
         }
