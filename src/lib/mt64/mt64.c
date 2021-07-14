@@ -64,6 +64,85 @@ void pyro_init_mt64(MT64* mt, uint64_t seed) {
 }
 
 
+// Intializes the generator's state vector using an array of seed values. The algorithm will use
+// up to the first [N] values from the array.
+void pyro_init_mt64_with_array(MT64* mt, uint64_t array[], size_t array_length) {
+    pyro_init_mt64(mt, UINT64_C(19650218));
+
+    size_t i = 0;
+    size_t j = 0;
+
+    uint64_t k = (N > array_length ? N : array_length);
+
+    uint64_t n1 = UINT64_C(3935559000370003845);
+    uint64_t n2 =  UINT64_C(2862933555777941757);
+
+    for (; k; k--) {
+        mt->vec[i] = (mt->vec[i] ^ ((mt->vec[i-1] ^ (mt->vec[i-1] >> 62)) * n1)) + array[j] + j;
+        i++;
+        j++;
+        if (i >= N) {
+            mt->vec[0] = mt->vec[N-1];
+            i = 1;
+        }
+        if (j >= array_length) {
+            j = 0;
+        }
+    }
+
+    for (k = N - 1; k; k--) {
+        mt->vec[i] = (mt->vec[i] ^ ((mt->vec[i-1] ^ (mt->vec[i-1] >> 62)) * n2)) - i;
+        i++;
+        if (i >= N) {
+            mt->vec[0] = mt->vec[N-1];
+            i = 1;
+        }
+    }
+
+    mt->vec[0] = UINT64_C(1) << 63;
+}
+
+
+// Simple hash combiner. Returns h1 * 3 + h2. This is safer than simply using XOR to combine the
+// hashes as XOR maps pairwise identical values to zero.
+static inline uint64_t hash_combine(uint64_t h1, uint64_t h2) {
+    return (h1 << 1) + h1 + h2;
+}
+
+
+// Generates an automatic seed value using locally available sources of entropy. This is intended
+// to be fast and cross-platform rather than of especially high quality.
+static uint64_t gen_auto_seed(MT64* mt) {
+    // This is the default seed from the original algorithm.
+    uint64_t seed = UINT64_C(5489);
+
+    // The current unix timestamp in seconds.
+    seed = hash_combine(seed, (uint64_t)time(NULL));
+
+    // The number of clock ticks since the program was launched.
+    seed = hash_combine(seed, (uint64_t)clock());
+
+    // The next available heap address.
+    void* malloc_addr = malloc(sizeof(int));
+    free(malloc_addr);
+    seed = hash_combine(seed, (uint64_t)malloc_addr);
+
+    // The address of a local variable.
+    seed = hash_combine(seed, (uint64_t)&seed);
+
+    // The address of the generator instance itself.
+    seed = hash_combine(seed, (uint64_t)mt);
+
+    // The address of a local function.
+    seed = hash_combine(seed, (uint64_t)&gen_auto_seed);
+
+    // The address of a standard library function.
+    seed = hash_combine(seed, (uint64_t)&time);
+
+    return seed;
+}
+
+
 // Generates a random integer on the closed interval [0, 2^64 - 1].
 uint64_t pyro_mt64_gen_u64(MT64* mt) {
     size_t j;
@@ -75,7 +154,8 @@ uint64_t pyro_mt64_gen_u64(MT64* mt) {
 
         // If the generator hasn't already been initialized, initialize it with a default seed.
         if (mt->i == N + 1) {
-            pyro_init_mt64(mt, time(NULL));
+            uint64_t seed = gen_auto_seed(mt);
+            pyro_init_mt64(mt, seed);
         }
 
         for (j = 0; j < N - M; j++) {

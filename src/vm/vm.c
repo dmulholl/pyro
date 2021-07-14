@@ -1631,8 +1631,8 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
                     }
                 }
 
-                double time = (clock() - start_time) / CLOCKS_PER_SEC;
-                pyro_out(vm, "-- %s --> %f secs\n", name->bytes, time / num_iterations);
+                double runtime = (double)(clock() - start_time) / CLOCKS_PER_SEC;
+                pyro_out(vm, "-- %s --> %f secs\n", name->bytes, runtime / num_iterations);
             }
         }
     }
