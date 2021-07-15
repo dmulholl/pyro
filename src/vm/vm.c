@@ -550,7 +550,7 @@ static void run(PyroVM* vm) {
                 ObjClosure* closure = ObjClosure_new(vm, fn);
                 pyro_push(vm, OBJ_VAL(closure));
 
-                for (int i = 0; i < closure->upvalue_count; i++) {
+                for (size_t i = 0; i < closure->upvalue_count; i++) {
                     uint8_t is_local = READ_BYTE();
                     uint8_t index = READ_BYTE();
                     if (is_local) {

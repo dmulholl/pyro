@@ -232,7 +232,7 @@ ObjModule* ObjModule_new(PyroVM* vm);
 
 typedef struct {
     Obj obj;
-    int upvalue_count;
+    size_t upvalue_count;
     ObjStr* name;
     ObjStr* source;
     ObjModule* module;
@@ -340,7 +340,7 @@ typedef struct {
     Obj obj;
     ObjFn* fn;
     ObjUpvalue** upvalues;
-    int upvalue_count;
+    size_t upvalue_count;
 } ObjClosure;
 
 ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* func);

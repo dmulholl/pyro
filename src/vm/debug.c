@@ -94,7 +94,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             pyro_out(vm, "\n");
 
             ObjFn* wrapped_fn = AS_FN(fn->constants[const_index]);
-            for (int i = 0; i < wrapped_fn->upvalue_count; i++) {
+            for (size_t i = 0; i < wrapped_fn->upvalue_count; i++) {
                 int is_local = wrapped_fn->code[ip++];
                 int index = wrapped_fn->code[ip++];
                 pyro_out(vm, "%04d    |      <%s %d>\n", ip - 2, is_local ? "local" : "upvalue", index);

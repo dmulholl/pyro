@@ -887,11 +887,11 @@ static int resolve_local(Parser* parser, FnCompiler* compiler, Token* name) {
 // [index] is the closed-over local variable's slot index.
 // Returns the index of the newly created upvalue in the function's upvalue list.
 static int add_upvalue(Parser* parser, FnCompiler* compiler, uint8_t index, bool is_local) {
-    int upvalue_count = compiler->fn->upvalue_count;
+    size_t upvalue_count = compiler->fn->upvalue_count;
 
     // Dont add duplicate upvalues unnecessarily if a closure references the same variable in a
     // surrounding function multiple times.
-    for (int i = 0; i < upvalue_count; i++) {
+    for (size_t i = 0; i < upvalue_count; i++) {
         Upvalue* upvalue = &compiler->upvalues[i];
         if (upvalue->index == index && upvalue->is_local == is_local) {
             return i;
@@ -1561,7 +1561,7 @@ static void parse_try_expr(Parser* parser) {
     ObjFn* fn = end_fn_compiler(parser);
     emit_op_u16(parser, OP_CLOSURE, make_constant(parser, OBJ_VAL(fn)));
 
-    for (int i = 0; i < fn->upvalue_count; i++) {
+    for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
         emit_byte(parser, compiler.upvalues[i].index);
     }
@@ -2163,7 +2163,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     ObjFn* fn = end_fn_compiler(parser);
     emit_op_u16(parser, OP_CLOSURE, make_constant(parser, OBJ_VAL(fn)));
 
-    for (int i = 0; i < fn->upvalue_count; i++) {
+    for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
         emit_byte(parser, compiler.upvalues[i].index);
     }

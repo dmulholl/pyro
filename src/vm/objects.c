@@ -185,7 +185,7 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn) {
         }
 
         closure->upvalue_count = fn->upvalue_count;
-        for (int i = 0; i < fn->upvalue_count; i++) {
+        for (size_t i = 0; i < fn->upvalue_count; i++) {
             closure->upvalues[i] = NULL;
         }
     }

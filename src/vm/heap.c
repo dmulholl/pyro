@@ -88,7 +88,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             pyro_mark_object(vm, (Obj*)closure->fn);
-            for (int i = 0; i < closure->upvalue_count; i++) {
+            for (size_t i = 0; i < closure->upvalue_count; i++) {
                 pyro_mark_object(vm, (Obj*)closure->upvalues[i]);
             }
             break;
@@ -177,9 +177,11 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_UPVALUE:
-            pyro_mark_value(vm, ((ObjUpvalue*)object)->closed);
+        case OBJ_UPVALUE: {
+            ObjUpvalue* upvalue = (ObjUpvalue*)object;
+            pyro_mark_value(vm, upvalue->closed);
             break;
+        }
 
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
