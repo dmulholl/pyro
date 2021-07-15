@@ -969,6 +969,10 @@ ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
         return NULL;
     }
 
+    if (capacity == 0) {
+        return vec;
+    }
+
     pyro_push(vm, OBJ_VAL(vec));
     Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
     pyro_pop(vm);
@@ -978,7 +982,6 @@ ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
     }
 
     vec->capacity = capacity;
-    vec->count = 0;
     vec->values = value_array;
 
     return vec;

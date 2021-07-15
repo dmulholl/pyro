@@ -55,12 +55,14 @@ bool pyro_get_halt_flag(PyroVM* vm);
 // Returns the status of the VM's memory_error flag.
 bool pyro_get_memory_error_flag(PyroVM* vm);
 
-// This function sets the content of the global $args variable, a tuple of strings.
-void pyro_set_args(PyroVM* vm, size_t argc, char** argv);
+// This function sets the content of the global $args variable, a tuple of strings. Returns [true]
+// on success, [false] if memory could not be allocated for the tuple.
+bool pyro_set_args(PyroVM* vm, size_t argc, char** argv);
 
 // This function appends an entry to the list of directories checked when attempting to import a
 // module. [path] should be a directory path, optionally ending with a single trailing slash '/'.
-// Use "." for the current working directory, "/" for the root directory.
-void pyro_add_import_root(PyroVM* vm, const char* path);
+// Use "." for the current working directory, "/" for the root directory. Returns [true] if the
+// entry was successfully added, [false] if memory could not be allocated for the entry.
+bool pyro_add_import_root(PyroVM* vm, const char* path);
 
 #endif

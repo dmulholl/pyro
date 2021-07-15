@@ -12,126 +12,6 @@
 #include "../std/std_prng.h"
 
 
-void pyro_out(PyroVM* vm, const char* format, ...) {
-    if (vm->out_file) {
-        va_list args;
-        va_start(args, format);
-        vfprintf(vm->out_file, format, args);
-        va_end(args);
-    }
-}
-
-
-void pyro_err(PyroVM* vm, const char* format, ...) {
-    if (vm->err_file) {
-        va_list args;
-        va_start(args, format);
-        vfprintf(vm->err_file, format, args);
-        va_end(args);
-    }
-}
-
-
-void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
-    if (file) {
-        fprintf(file, "Traceback (most recent function first):\n\n");
-
-        for (size_t i = vm->frame_count; i > 0; i--) {
-            CallFrame* frame = &vm->frames[i - 1];
-            ObjFn* fn = frame->closure->fn;
-
-            size_t line_number = 1;
-            if (frame->ip > fn->code) {
-                size_t ip = frame->ip - fn->code - 1;
-                line_number = ObjFn_get_line_number(fn, ip);
-            }
-
-            fprintf(file, "%s:%zu\n", fn->source->bytes, line_number);
-            fprintf(file, "  [%zu] --> in %s\n", i, fn->name->bytes);
-        }
-    }
-}
-
-
-void pyro_memory_error(PyroVM* vm) {
-    if (vm->memory_error_flag) {
-        return;
-    }
-
-    vm->memory_error_flag = true;
-    vm->halt_flag = true;
-    vm->exit_code = 127;
-
-    if (vm->frame_count > 0) {
-        CallFrame* frame = &vm->frames[vm->frame_count - 1];
-        ObjFn* fn = frame->closure->fn;
-
-        size_t line_number = 1;
-        if (frame->ip > fn->code) {
-            size_t ip = frame->ip - fn->code - 1;
-            line_number = ObjFn_get_line_number(fn, ip);
-        }
-
-        pyro_err(vm, "%s:%zu\n  ", fn->source->bytes, line_number);
-    }
-
-    pyro_err(vm, "Error: Out of memory.\n");
-
-    if (vm->frame_count > 1) {
-        pyro_err(vm, "\n");
-        pyro_print_stack_trace(vm, vm->err_file);
-    }
-}
-
-
-void pyro_panic(PyroVM* vm, const char* format, ...) {
-    if (vm->halt_flag) {
-        return;
-    }
-
-    vm->panic_flag = true;
-    vm->halt_flag = true;
-    vm->exit_code = 1;
-
-    if (vm->try_depth > 0) {
-        va_list args;
-        va_start(args, format);
-        vsnprintf(vm->panic_buffer, PYRO_PANIC_BUFFER_SIZE, format, args);
-        va_end(args);
-        return;
-    }
-
-    if (vm->err_file == NULL) {
-        return;
-    }
-
-    if (vm->frame_count > 0) {
-        CallFrame* frame = &vm->frames[vm->frame_count - 1];
-        ObjFn* fn = frame->closure->fn;
-
-        size_t line_number = 1;
-        if (frame->ip > fn->code) {
-            size_t ip = frame->ip - fn->code - 1;
-            line_number = ObjFn_get_line_number(fn, ip);
-        }
-
-        fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line_number);
-    }
-
-    fprintf(vm->err_file, "Error: ");
-    va_list args;
-    va_start(args, format);
-    vfprintf(vm->err_file, format, args);
-    va_end(args);
-    fprintf(vm->err_file, "\n");
-
-    if (vm->frame_count > 1) {
-        fprintf(vm->err_file, "\n");
-        pyro_print_stack_trace(vm, vm->err_file);
-    }
-}
-
-
 static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
@@ -649,10 +529,7 @@ static void run(PyroVM* vm) {
                 Value field_name = READ_CONSTANT();
 
                 if (!IS_INSTANCE(pyro_peek(vm, 0))) {
-                    pyro_panic(vm,
-                        "Invalid field access '.%s', receiver does not have fields.",
-                        AS_STR(field_name)->bytes
-                    );
+                    pyro_panic(vm, "Invalid field access '%s'.", AS_STR(field_name)->bytes);
                     break;
                 }
 
@@ -702,7 +579,7 @@ static void run(PyroVM* vm) {
 
                 if (!IS_MOD(pyro_peek(vm, 0))) {
                     pyro_panic(vm,
-                        "Invalid member access '::%s', receiver is not a module.",
+                        "Invalid member access '%s', receiver is not a module.",
                         AS_STR(member_name)->bytes
                     );
                     break;
@@ -728,7 +605,7 @@ static void run(PyroVM* vm) {
                 if (class) {
                     bind_method(vm, class, method_name);
                 } else {
-                    pyro_panic(vm, "Invalid method access ':%s', receiver does not have methods.", method_name->bytes);
+                    pyro_panic(vm, "Invalid method access '%s'.", method_name->bytes);
                 }
 
                 break;
@@ -1059,14 +936,23 @@ static void run(PyroVM* vm) {
                 uint16_t entry_count = READ_U16();
 
                 ObjMap* map = ObjMap_new(vm);
-                pyro_push(vm, OBJ_VAL(map));
+                if (!map) {
+                    pyro_panic(vm, "Failed to allocate memory for map literal.");
+                    break;
+                }
 
+                // Push the map on the stack so it doesn't get gc'd while we're adding entries.
+                pyro_push(vm, OBJ_VAL(map));
                 if (entry_count == 0) {
                     break;
                 }
 
+                // The entries are stored on the stack as [..][key][value][..] pairs.
                 for (Value* slot = vm->stack_top - entry_count * 2 - 1; slot < vm->stack_top - 1; slot += 2) {
-                    ObjMap_set(map, slot[0], slot[1], vm);
+                    if (!ObjMap_set(map, slot[0], slot[1], vm)) {
+                        pyro_panic(vm, "Failed to allocate memory for map literal.");
+                        break;
+                    }
                 }
 
                 vm->stack_top -= (entry_count * 2 + 1);
@@ -1077,12 +963,17 @@ static void run(PyroVM* vm) {
             case OP_MAKE_VEC: {
                 uint16_t item_count = READ_U16();
 
-                if (item_count == 0) {
-                    pyro_push(vm, OBJ_VAL(ObjVec_new(vm)));
+                ObjVec* vec = ObjVec_new_with_cap(item_count, vm);
+                if (!vec) {
+                    pyro_panic(vm, "Failed to allocate memory for vector literal.");
                     break;
                 }
 
-                ObjVec* vec = ObjVec_new_with_cap(item_count, vm);
+                if (item_count == 0) {
+                    pyro_push(vm, OBJ_VAL(vec));
+                    break;
+                }
+
                 memcpy(vec->values, vm->stack_top - item_count, sizeof(Value) * item_count);
                 vec->count = item_count;
 
@@ -1574,6 +1465,126 @@ void pyro_free_vm(PyroVM* vm) {
 }
 
 
+void pyro_out(PyroVM* vm, const char* format, ...) {
+    if (vm->out_file) {
+        va_list args;
+        va_start(args, format);
+        vfprintf(vm->out_file, format, args);
+        va_end(args);
+    }
+}
+
+
+void pyro_err(PyroVM* vm, const char* format, ...) {
+    if (vm->err_file) {
+        va_list args;
+        va_start(args, format);
+        vfprintf(vm->err_file, format, args);
+        va_end(args);
+    }
+}
+
+
+void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
+    if (file) {
+        fprintf(file, "Traceback (most recent function first):\n\n");
+
+        for (size_t i = vm->frame_count; i > 0; i--) {
+            CallFrame* frame = &vm->frames[i - 1];
+            ObjFn* fn = frame->closure->fn;
+
+            size_t line_number = 1;
+            if (frame->ip > fn->code) {
+                size_t ip = frame->ip - fn->code - 1;
+                line_number = ObjFn_get_line_number(fn, ip);
+            }
+
+            fprintf(file, "%s:%zu\n", fn->source->bytes, line_number);
+            fprintf(file, "  [%zu] --> in %s\n", i, fn->name->bytes);
+        }
+    }
+}
+
+
+void pyro_memory_error(PyroVM* vm) {
+    if (vm->memory_error_flag) {
+        return;
+    }
+
+    vm->memory_error_flag = true;
+    vm->halt_flag = true;
+    vm->exit_code = 127;
+
+    if (vm->frame_count > 0) {
+        CallFrame* frame = &vm->frames[vm->frame_count - 1];
+        ObjFn* fn = frame->closure->fn;
+
+        size_t line_number = 1;
+        if (frame->ip > fn->code) {
+            size_t ip = frame->ip - fn->code - 1;
+            line_number = ObjFn_get_line_number(fn, ip);
+        }
+
+        pyro_err(vm, "%s:%zu\n  ", fn->source->bytes, line_number);
+    }
+
+    pyro_err(vm, "Error: Out of memory.\n");
+
+    if (vm->frame_count > 1) {
+        pyro_err(vm, "\n");
+        pyro_print_stack_trace(vm, vm->err_file);
+    }
+}
+
+
+void pyro_panic(PyroVM* vm, const char* format, ...) {
+    if (vm->halt_flag) {
+        return;
+    }
+
+    vm->panic_flag = true;
+    vm->halt_flag = true;
+    vm->exit_code = 1;
+
+    if (vm->try_depth > 0) {
+        va_list args;
+        va_start(args, format);
+        vsnprintf(vm->panic_buffer, PYRO_PANIC_BUFFER_SIZE, format, args);
+        va_end(args);
+        return;
+    }
+
+    if (vm->err_file == NULL) {
+        return;
+    }
+
+    if (vm->frame_count > 0) {
+        CallFrame* frame = &vm->frames[vm->frame_count - 1];
+        ObjFn* fn = frame->closure->fn;
+
+        size_t line_number = 1;
+        if (frame->ip > fn->code) {
+            size_t ip = frame->ip - fn->code - 1;
+            line_number = ObjFn_get_line_number(fn, ip);
+        }
+
+        fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line_number);
+    }
+
+    fprintf(vm->err_file, "Error: ");
+    va_list args;
+    va_start(args, format);
+    vfprintf(vm->err_file, format, args);
+    va_end(args);
+    fprintf(vm->err_file, "\n");
+
+    if (vm->frame_count > 1) {
+        fprintf(vm->err_file, "\n");
+        pyro_print_stack_trace(vm, vm->err_file);
+    }
+}
+
+
 void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     vm->halt_flag = false;
     vm->panic_flag = false;
@@ -1922,24 +1933,36 @@ void pyro_set_out_file(PyroVM* vm, FILE* file) {
 }
 
 
-// TODO: handle memory allocation failure.
-void pyro_set_args(PyroVM* vm, size_t argc, char** argv) {
-    ObjTup* args = ObjTup_new(argc, vm);
-    pyro_push(vm, OBJ_VAL(args));
-
-    for (size_t i = 0; i < argc; i++) {
-        args->values[i] = STR_VAL(argv[i]);
+bool pyro_set_args(PyroVM* vm, size_t argc, char** argv) {
+    ObjTup* tup = ObjTup_new(argc, vm);
+    if (!tup) {
+        return false;
     }
 
-    pyro_define_global(vm, "$args", OBJ_VAL(args));
+    pyro_push(vm, OBJ_VAL(tup));
+
+    for (size_t i = 0; i < argc; i++) {
+        ObjStr* string = STR_OBJ(argv[i]);
+        if (!string) {
+            pyro_pop(vm);
+            return false;
+        }
+        tup->values[i] = OBJ_VAL(string);
+    }
+
+    pyro_define_global(vm, "$args", OBJ_VAL(tup));
     pyro_pop(vm);
+    return true;
 }
 
 
-// TODO: handle memory allocation failure.
-void pyro_add_import_root(PyroVM* vm, const char* path) {
-    Value path_value = STR_VAL(path);
-    pyro_push(vm, path_value);
-    ObjVec_append(vm->import_roots, path_value, vm);
-    pyro_pop(vm);
+bool pyro_add_import_root(PyroVM* vm, const char* path) {
+    ObjStr* string = STR_OBJ(path);
+    if (string) {
+        pyro_push(vm, OBJ_VAL(string));
+        bool result = ObjVec_append(vm->import_roots, OBJ_VAL(string), vm);
+        pyro_pop(vm);
+        return result;
+    }
+    return false;
 }
