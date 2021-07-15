@@ -216,13 +216,13 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
 // -------- //
 
 
-ObjClass* ObjClass_new(PyroVM* vm, ObjStr* name) {
+ObjClass* ObjClass_new(PyroVM* vm) {
     ObjClass* class = ALLOCATE_OBJECT(vm, ObjClass, OBJ_CLASS);
     if (!class) {
         return NULL;
     }
 
-    class->name = name;
+    class->name = NULL;
     class->methods = NULL;
     class->field_initializers = NULL;
     class->field_indexes = NULL;

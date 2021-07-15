@@ -529,7 +529,13 @@ static void run(PyroVM* vm) {
             }
 
             case OP_CLASS: {
-                pyro_push(vm, OBJ_VAL(ObjClass_new(vm, READ_STRING())));
+                ObjClass* class = ObjClass_new(vm);
+                if (class) {
+                    class->name = READ_STRING();
+                    pyro_push(vm, OBJ_VAL(class));
+                } else {
+                    pyro_memory_error(vm);
+                }
                 break;
             }
 
@@ -1442,17 +1448,17 @@ PyroVM* pyro_new_vm() {
     }
 
     // We need to initialize these classes before we create any objects.
-    vm->map_class = ObjClass_new(vm, NULL);
-    vm->str_class = ObjClass_new(vm, NULL);
-    vm->tup_class = ObjClass_new(vm, NULL);
-    vm->vec_class = ObjClass_new(vm, NULL);
-    vm->buf_class = ObjClass_new(vm, NULL);
-    vm->tup_iter_class = ObjClass_new(vm, NULL);
-    vm->vec_iter_class = ObjClass_new(vm, NULL);
-    vm->map_iter_class = ObjClass_new(vm, NULL);
-    vm->str_iter_class = ObjClass_new(vm, NULL);
-    vm->range_class = ObjClass_new(vm, NULL);
-    vm->file_class = ObjClass_new(vm, NULL);
+    vm->map_class = ObjClass_new(vm);
+    vm->str_class = ObjClass_new(vm);
+    vm->tup_class = ObjClass_new(vm);
+    vm->vec_class = ObjClass_new(vm);
+    vm->buf_class = ObjClass_new(vm);
+    vm->tup_iter_class = ObjClass_new(vm);
+    vm->vec_iter_class = ObjClass_new(vm);
+    vm->map_iter_class = ObjClass_new(vm);
+    vm->str_iter_class = ObjClass_new(vm);
+    vm->range_class = ObjClass_new(vm);
+    vm->file_class = ObjClass_new(vm);
 
     if (!vm->map_class || !vm->str_class || !vm->tup_class || !vm->vec_class || !vm->buf_class ||
         !vm->tup_iter_class || !vm->vec_class || !vm->map_class || !vm->str_iter_class ||
@@ -1468,19 +1474,6 @@ PyroVM* pyro_new_vm() {
         pyro_free_vm(vm);
         return NULL;
     }
-
-    // Now we can safely assign names to the classes created above.
-    vm->map_class->name = STR_OBJ("$map");
-    vm->str_class->name = STR_OBJ("$str");
-    vm->tup_class->name = STR_OBJ("$tup");
-    vm->vec_class->name = STR_OBJ("$vec");
-    vm->buf_class->name = STR_OBJ("$buf");
-    vm->tup_iter_class->name = STR_OBJ("$tup_iter");
-    vm->vec_iter_class->name = STR_OBJ("$vec_iter");
-    vm->map_iter_class->name = STR_OBJ("$map_iter");
-    vm->str_iter_class->name = STR_OBJ("$str_iter");
-    vm->range_class->name = STR_OBJ("$range");
-    vm->file_class->name = STR_OBJ("$file");
 
     // Canned objects, mostly static strings.
     vm->empty_error = ObjTup_new_err(0, vm);

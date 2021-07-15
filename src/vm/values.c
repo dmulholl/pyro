@@ -29,7 +29,7 @@ bool pyro_is_truthy(Value value) {
 
 
 ObjClass* pyro_get_class(Value value) {
-    if (IS_OBJ(value) && AS_OBJ(value)->class) {
+    if (IS_OBJ(value)) {
         return AS_OBJ(value)->class;
     }
     return NULL;

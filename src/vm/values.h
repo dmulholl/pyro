@@ -77,6 +77,7 @@ typedef enum {
 } StrIterType;
 
 
+// The [class] field may be NULL.
 struct Obj {
     Obj* next;
     ObjClass* class;
@@ -288,6 +289,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arit
 // -------- //
 
 
+// The [name] field may be NULL.
 struct ObjClass {
     Obj obj;
     ObjStr* name;
@@ -296,7 +298,7 @@ struct ObjClass {
     ObjMap* field_indexes;
 };
 
-ObjClass* ObjClass_new(PyroVM* vm, ObjStr* name);
+ObjClass* ObjClass_new(PyroVM* vm);
 
 
 // ----------- //
