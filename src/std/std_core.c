@@ -41,6 +41,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
             if (!new_array) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                pyro_panic(vm, "Out of memory.");
                 return NULL_VAL();
             }
             out_capacity = new_capacity;
@@ -61,23 +62,23 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             fmt_str_index++;
             while (fmt_str_index < fmt_str->length && fmt_str->bytes[fmt_str_index] != '}') {
                 if (fmt_spec_count == 15) {
-                    pyro_panic(vm, "Too many characters in format specifier.");
                     FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                    pyro_panic(vm, "Too many characters in format specifier.");
                     return NULL_VAL();
                 }
                 fmt_spec_buffer[fmt_spec_count++] = fmt_str->bytes[fmt_str_index++];
             }
             if (fmt_str_index == fmt_str->length) {
-                pyro_panic(vm, "Missing '}' in format string.");
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                pyro_panic(vm, "Missing '}' in format string.");
                 return NULL_VAL();
             }
             fmt_str_index++;
             fmt_spec_buffer[fmt_spec_count] = '\0';
 
             if (next_arg_index == arg_count) {
-                pyro_panic(vm, "Too few arguments for format string.");
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                pyro_panic(vm, "Too few arguments for format string.");
                 return NULL_VAL();
             }
             Value arg = args[next_arg_index++];
@@ -96,6 +97,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
             if (!formatted) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                pyro_panic(vm, "Out of memory.");
                 return NULL_VAL();
             }
 
@@ -108,6 +110,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
                 if (!new_array) {
                     FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                    pyro_panic(vm, "Out of memory.");
                     return NULL_VAL();
                 }
 
@@ -133,6 +136,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* string = ObjStr_take(out_buffer, out_count, vm);
     if (!string) {
         FREE_ARRAY(vm, char, out_buffer, out_capacity);
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
 
@@ -169,11 +173,6 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
 
-    if (IS_NULL(formatted)) {
-        pyro_panic(vm, "Failed to format output string, insufficient memory.");
-        return NULL_VAL();
-    }
-
     pyro_err(vm, "%s", AS_STR(formatted)->bytes);
     return NULL_VAL();
 }
@@ -190,12 +189,10 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return NULL_VAL();
         }
-
         if (!string) {
             pyro_panic(vm, "Failed to format output string, insufficient memory.");
             return NULL_VAL();
         }
-
         pyro_err(vm, "%s", string->bytes);
         return NULL_VAL();
     }
@@ -207,11 +204,6 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
 
     Value formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
-        return NULL_VAL();
-    }
-
-    if (IS_NULL(formatted)) {
-        pyro_panic(vm, "Failed to format output string, insufficient memory.");
         return NULL_VAL();
     }
 
@@ -249,11 +241,6 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
 
-    if (IS_NULL(formatted)) {
-        pyro_panic(vm, "Failed to format output string, insufficient memory.");
-        return NULL_VAL();
-    }
-
     pyro_err(vm, "%s\n", AS_STR(formatted)->bytes);
     return NULL_VAL();
 }
@@ -288,11 +275,6 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
 
-    if (IS_NULL(formatted)) {
-        pyro_panic(vm, "Failed to format output string, insufficient memory.");
-        return NULL_VAL();
-    }
-
     pyro_out(vm, "%s\n", AS_STR(formatted)->bytes);
     return NULL_VAL();
 }
@@ -305,11 +287,11 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_map(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = ObjMap_new(vm);
-    if (map) {
-        return OBJ_VAL(map);
-    } else {
+    if (!map) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
+    return OBJ_VAL(map);
 }
 
 
@@ -326,7 +308,10 @@ static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return BOOL_VAL(ObjMap_set(map, args[0], args[1], vm));
+    if (!ObjMap_set(map, args[0], args[1], vm)) {
+        pyro_panic(vm, "Out of memory.");
+    }
+    return NULL_VAL();
 }
 
 
@@ -357,6 +342,7 @@ static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjMapIter* iterator = ObjMapIter_new(map, MAP_ITER_KEYS, vm);
     if (!iterator) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     return OBJ_VAL(iterator);
@@ -367,6 +353,7 @@ static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjMapIter* iterator = ObjMapIter_new(map, MAP_ITER_VALUES, vm);
     if (!iterator) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     return OBJ_VAL(iterator);
@@ -377,6 +364,7 @@ static Value map_entries(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjMapIter* iterator = ObjMapIter_new(map, MAP_ITER_ENTRIES, vm);
     if (!iterator) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     return OBJ_VAL(iterator);
@@ -403,6 +391,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         ObjVec* vec = ObjVec_new(vm);
         if (!vec) {
+            pyro_panic(vm, "Out of memory.");
             return NULL_VAL();
         }
         return OBJ_VAL(vec);
@@ -433,6 +422,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         if (!vec) {
             pyro_pop(vm); // next_method
             pyro_pop(vm); // iterator
+            pyro_panic(vm, "Out of memory.");
             return NULL_VAL();
         }
         pyro_push(vm, OBJ_VAL(vec)); // keep safe from the GC
@@ -454,6 +444,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_pop(vm); // vec
                 pyro_pop(vm); // next_method
                 pyro_pop(vm); // iterator
+                pyro_panic(vm, "Out of memory.");
                 return NULL_VAL();
             }
             pyro_pop(vm); // next_value
@@ -469,6 +460,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
             ObjVec* vec = ObjVec_new_with_cap_and_fill((size_t)args[0].as.i64, args[1], vm);
             if (!vec) {
+                pyro_panic(vm, "Out of memory.");
                 return NULL_VAL();
             }
             return OBJ_VAL(vec);
@@ -498,8 +490,10 @@ static Value vec_count(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value vec_append(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    bool result = ObjVec_append(vec, args[0], vm);
-    return BOOL_VAL(result);
+    if (!ObjVec_append(vec, args[0], vm)) {
+        pyro_panic(vm, "Out of memory.");
+    }
+    return NULL_VAL();
 }
 
 
@@ -564,7 +558,8 @@ static Value vec_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = ObjTup_new(arg_count, vm);
     if (tup == NULL) {
-        return OBJ_VAL(vm->empty_error);
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
     return OBJ_VAL(tup);
@@ -630,6 +625,7 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     }
     ObjTup* tup = ObjTup_new_err(arg_count, vm);
     if (!tup) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
@@ -650,6 +646,7 @@ static Value fn_is_err(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* string = pyro_stringify_value(vm, args[0]);
     if (!string) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     return OBJ_VAL(string);
@@ -687,6 +684,7 @@ static Value str_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     ObjStrIter* iterator = ObjStrIter_new(str, STR_ITER_BYTES, vm);
     if (!iterator) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     return OBJ_VAL(iterator);
@@ -710,6 +708,7 @@ static Value str_chars(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     ObjStrIter* iterator = ObjStrIter_new(str, STR_ITER_CHARS, vm);
     if (!iterator) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     return OBJ_VAL(iterator);
@@ -842,6 +841,7 @@ static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
 
     char* array = ALLOCATE_ARRAY(vm, char, str->length + 1);
     if (!array) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     memcpy(array, str->bytes, str->length + 1);
@@ -854,6 +854,8 @@ static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* new_string = ObjStr_take(array, str->length, vm);
     if (!new_string) {
+        FREE_ARRAY(vm, char, array, str->length + 1);
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
 
@@ -869,6 +871,7 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
 
     char* array = ALLOCATE_ARRAY(vm, char, str->length + 1);
     if (!array) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
     memcpy(array, str->bytes, str->length + 1);
@@ -881,6 +884,8 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* new_string = ObjStr_take(array, str->length, vm);
     if (!new_string) {
+        FREE_ARRAY(vm, char, array, str->length + 1);
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
 
@@ -924,8 +929,10 @@ static Value fn_range(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjRange* range = ObjRange_new(start, stop, step, vm);
     if (!range) {
-        return OBJ_VAL(vm->empty_error);
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
     }
+
     return OBJ_VAL(range);
 }
 
@@ -973,7 +980,8 @@ static Value range_next(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
     ObjBuf* buf = ObjBuf_new(vm);
     if (!buf) {
-        return OBJ_VAL(vm->empty_error);
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
     }
     return OBJ_VAL(buf);
 }
@@ -1004,8 +1012,11 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
 
-    bool result = ObjBuf_append_byte(buf, value, vm);
-    return BOOL_VAL(result);
+    if (!ObjBuf_append_byte(buf, value, vm)) {
+        pyro_panic(vm, "Out of memory.");
+    }
+
+    return NULL_VAL();
 }
 
 
@@ -1072,11 +1083,11 @@ static Value buf_write_le_u16(PyroVM* vm, size_t arg_count, Value* args) {
 static Value buf_to_str(PyroVM* vm, size_t arg_count, Value* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
     ObjStr* string = ObjBuf_to_str(buf, vm);
-    if (string) {
-        return OBJ_VAL(string);
-    } else {
+    if (!string) {
+        pyro_panic(vm, "Out of memory.");
         return NULL_VAL();
     }
+    return OBJ_VAL(string);
 }
 
 
@@ -1137,9 +1148,11 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
             return BOOL_VAL(false);
         }
         pyro_push(vm, OBJ_VAL(string));
-        bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm);
+        if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+            pyro_panic(vm, "Out of memory.");
+        }
         pyro_pop(vm);
-        return BOOL_VAL(result);
+        return NULL_VAL();
     }
 
     if (!IS_STR(args[0])) {
@@ -1151,16 +1164,15 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
-    if (IS_NULL(formatted)) {
-        return BOOL_VAL(false);
-    }
     ObjStr* string = AS_STR(formatted);
 
     pyro_push(vm, formatted);
-    bool result = ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm);
+    if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+        pyro_panic(vm, "Out of memory.");
+    }
     pyro_pop(vm);
 
-    return BOOL_VAL(result);
+    return NULL_VAL();
 }
 
 
@@ -1433,10 +1445,6 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return NULL_VAL();
     }
-    if (IS_NULL(formatted)) {
-        pyro_panic(vm, "Failed to allocate memory for string.");
-        return NULL_VAL();
-    }
     ObjStr* string = AS_STR(formatted);
 
     size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
@@ -1491,7 +1499,6 @@ static Value fn_is_nan(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-// True if the value is positive or negative infinity.
 static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
     return BOOL_VAL(IS_F64(args[0]) && isinf(args[0].as.f64));
 }
@@ -1503,6 +1510,8 @@ static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
             return F64_VAL((double)args[0].as.i64);
         case VAL_F64:
             return args[0];
+        case VAL_CHAR:
+            return F64_VAL((double)args[0].as.u32);
         default:
             pyro_panic(vm, "Invalid argument to $f64().");
             return NULL_VAL();
@@ -1521,7 +1530,7 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
             return args[0];
         case VAL_F64: {
             // Check that the value is inside the range -2^63 to 2^63 - 1. (Note that both
-            // double literals are powers of 2 so they're exactly representable.)
+            // double literals below are powers of 2 so they're exactly representable.)
             if (args[0].as.f64 >= -9223372036854775808.0 && args[0].as.f64 < 9223372036854775808.0) {
                 return I64_VAL((int64_t)args[0].as.f64);
             }
