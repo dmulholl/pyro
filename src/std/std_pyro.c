@@ -1,6 +1,7 @@
 #include "std_pyro.h"
 
 #include "../vm/vm.h"
+#include "../vm/heap.h"
 
 
 static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
@@ -13,6 +14,12 @@ static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
+    pyro_collect_garbage(vm);
+    return NULL_VAL();
+}
+
+
 void pyro_load_std_pyro(PyroVM* vm) {
     ObjModule* mod_pyro = pyro_define_module_2(vm, "$std", "pyro");
 
@@ -20,5 +27,6 @@ void pyro_load_std_pyro(PyroVM* vm) {
 
     pyro_define_member_fn(vm, mod_pyro, "hash", fn_hash, 1);
     pyro_define_member_fn(vm, mod_pyro, "memory", fn_memory, 0);
+    pyro_define_member_fn(vm, mod_pyro, "gc", fn_memory, 0);
 }
 

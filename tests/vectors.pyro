@@ -34,5 +34,19 @@ assert baz[0] == "bar";
 
 assert $str($vec()) == "[]";
 
-var vec = ["foo", 123, 'a', true];
-assert $str(vec) == `["foo", 123, 'a', true]`;
+var vec1 = ["foo", 123, 'a', true];
+assert $str(vec1) == `["foo", 123, 'a', true]`;
+
+var range = $range(10);
+var vec2 = $vec(range);
+assert vec2:count() == 10;
+assert vec2[0] == 0;
+assert vec2[1] == 1;
+assert vec2[2] == 2;
+
+var vec3 = [true, false, null];
+var vec4 = $vec(vec3);
+assert vec4:count() == 3;
+assert vec4[0] == true;
+assert vec4[1] == false;
+assert vec4[2] == null;

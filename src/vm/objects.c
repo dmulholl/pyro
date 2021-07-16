@@ -994,6 +994,10 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
         return NULL;
     }
 
+    if (capacity == 0) {
+        return vec;
+    }
+
     pyro_push(vm, OBJ_VAL(vec));
     Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
     pyro_pop(vm);
