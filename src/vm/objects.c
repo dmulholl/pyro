@@ -180,7 +180,6 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn) {
         pyro_pop(vm);
 
         if (closure->upvalues == NULL) {
-            pyro_memory_error(vm);
             return NULL;
         }
 

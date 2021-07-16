@@ -33,13 +33,13 @@ struct PyroVM {
     // Exit signal, set by the $exit() function.
     bool exit_flag;
 
-    // Error signal, set by the $panic() function or by the VM itself.
+    // Signals that an error has occurred.
     bool panic_flag;
 
-    // Error signal, indicates an unrecoverable memory error.
-    bool memory_error_flag;
+    // Signals that the error is unrecoverable.
+    bool hard_panic;
 
-    // Halt signal, true if any of [exit_flag], [panic_flag], or [memory_error_flag] is set.
+    // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;
 
     // Exit code, defaults to zero, can be set by $exit() or by the VM itself.
@@ -155,9 +155,6 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 
 // Called to signal that an error has occurred.
 void pyro_panic(PyroVM* vm, const char* format, ...);
-
-// Called to signal that an unrecoverable memory error has occurred.
-void pyro_memory_error(PyroVM* vm);
 
 // Writes a printf-style formatted string to the VM's output stream, unless that stream is NULL.
 void pyro_out(PyroVM* vm, const char* format, ...);

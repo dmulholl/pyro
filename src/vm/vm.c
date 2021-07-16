@@ -13,6 +13,12 @@
 
 
 static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
+    ObjModule* module = ObjModule_new(vm);
+    if (!module) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
 
@@ -27,9 +33,12 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         }
         path_length += 4 + 5; // add space for a [.pyro] or [/self.pyro] suffix
 
+        pyro_push(vm, OBJ_VAL(module));
         char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
-        if (path == NULL) {
-            pyro_memory_error(vm);
+        pyro_pop(vm);
+
+        if (!path) {
+            pyro_panic(vm, "Out of memory.");
             return NULL_VAL();
         }
 
@@ -54,11 +63,10 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         path[path_count] = '\0';
 
         if (pyro_file_exists(path)) {
-            ObjModule* module = ObjModule_new(vm);
             pyro_push(vm, OBJ_VAL(module));
             pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_length + 1);
             pyro_pop(vm);
+            FREE_ARRAY(vm, char, path, path_length + 1);
             return OBJ_VAL(module);
         }
 
@@ -68,11 +76,10 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         path[path_count] = '\0';
 
         if (pyro_file_exists(path)) {
-            ObjModule* module = ObjModule_new(vm);
             pyro_push(vm, OBJ_VAL(module));
             pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_length + 1);
             pyro_pop(vm);
+            FREE_ARRAY(vm, char, path, path_length + 1);
             return OBJ_VAL(module);
         }
 
@@ -81,7 +88,6 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         path[path_count] = '\0';
 
         if (pyro_dir_exists(path)) {
-            ObjModule* module = ObjModule_new(vm);
             FREE_ARRAY(vm, char, path, path_length + 1);
             return OBJ_VAL(module);
         }
@@ -414,7 +420,7 @@ static void run(PyroVM* vm) {
                     class->name = READ_STRING();
                     pyro_push(vm, OBJ_VAL(class));
                 } else {
-                    pyro_memory_error(vm);
+                    pyro_panic(vm, "Out of memory.");
                 }
                 break;
             }
@@ -428,6 +434,11 @@ static void run(PyroVM* vm) {
             case OP_CLOSURE: {
                 ObjFn* fn = AS_FN(READ_CONSTANT());
                 ObjClosure* closure = ObjClosure_new(vm, fn);
+                if (!closure) {
+                    pyro_panic(vm, "Out of memory.");
+                    break;
+                }
+
                 pyro_push(vm, OBJ_VAL(closure));
 
                 for (size_t i = 0; i < closure->upvalue_count; i++) {
@@ -1221,7 +1232,7 @@ static void run(PyroVM* vm) {
                 call_value(vm, callee, 0);
                 run(vm);
 
-                if (vm->exit_flag || vm->memory_error_flag) {
+                if (vm->exit_flag || vm->hard_panic) {
                     return;
                 }
 
@@ -1301,8 +1312,8 @@ PyroVM* pyro_new_vm() {
     vm->next_gc_threshold = PYRO_INIT_GC_THRESHOLD;
     vm->exit_flag = false;
     vm->panic_flag = false;
+    vm->hard_panic = false;
     vm->halt_flag = false;
-    vm->memory_error_flag = false;
     vm->exit_code = 0;
     vm->out_file = stdout;
     vm->err_file = stderr;
@@ -1506,47 +1517,12 @@ void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
 }
 
 
-void pyro_memory_error(PyroVM* vm) {
-    if (vm->memory_error_flag) {
-        return;
-    }
-
-    vm->memory_error_flag = true;
-    vm->halt_flag = true;
-    vm->exit_code = 127;
-
-    if (vm->frame_count > 0) {
-        CallFrame* frame = &vm->frames[vm->frame_count - 1];
-        ObjFn* fn = frame->closure->fn;
-
-        size_t line_number = 1;
-        if (frame->ip > fn->code) {
-            size_t ip = frame->ip - fn->code - 1;
-            line_number = ObjFn_get_line_number(fn, ip);
-        }
-
-        pyro_err(vm, "%s:%zu\n  ", fn->source->bytes, line_number);
-    }
-
-    pyro_err(vm, "Error: Out of memory.\n");
-
-    if (vm->frame_count > 1) {
-        pyro_err(vm, "\n");
-        pyro_print_stack_trace(vm, vm->err_file);
-    }
-}
-
-
 void pyro_panic(PyroVM* vm, const char* format, ...) {
-    if (vm->halt_flag) {
-        return;
-    }
-
     vm->panic_flag = true;
     vm->halt_flag = true;
     vm->exit_code = 1;
 
-    if (vm->try_depth > 0) {
+    if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
         va_start(args, format);
         vsnprintf(vm->panic_buffer, PYRO_PANIC_BUFFER_SIZE, format, args);
@@ -1561,13 +1537,11 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
     if (vm->frame_count > 0) {
         CallFrame* frame = &vm->frames[vm->frame_count - 1];
         ObjFn* fn = frame->closure->fn;
-
         size_t line_number = 1;
         if (frame->ip > fn->code) {
             size_t ip = frame->ip - fn->code - 1;
             line_number = ObjFn_get_line_number(fn, ip);
         }
-
         fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line_number);
     }
 
@@ -1587,13 +1561,14 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
 
 void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     vm->halt_flag = false;
-    vm->panic_flag = false;
     vm->exit_flag = false;
-    vm->memory_error_flag = false;
+    vm->panic_flag = false;
+    vm->hard_panic = false;
     vm->exit_code = 0;
 
     ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id, vm->main_module);
-    if (fn == NULL) {
+    if (!fn) {
+        // The compiler will already have printed an error message.
         vm->panic_flag = true;
         vm->halt_flag = true;
         vm->exit_code = 1;
@@ -1603,6 +1578,10 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     pyro_push(vm, OBJ_VAL(fn));
     ObjClosure* closure = ObjClosure_new(vm, fn);
     pyro_pop(vm);
+    if (!closure) {
+        pyro_panic(vm, "Out of memory.");
+        return;
+    }
 
     pyro_push(vm, OBJ_VAL(closure));
     call_value(vm, OBJ_VAL(closure), 0);
@@ -1635,7 +1614,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
 
     ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path, module);
     FREE_ARRAY(vm, char, fd.data, fd.size);
-    if (fn == NULL) {
+    if (!fn) {
         pyro_panic(vm, "Failed to compile file '%s'.", path);
         return;
     }
@@ -1643,6 +1622,10 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     pyro_push(vm, OBJ_VAL(fn));
     ObjClosure* closure = ObjClosure_new(vm, fn);
     pyro_pop(vm);
+    if (!closure) {
+        pyro_panic(vm, "Out of memory.");
+        return;
+    }
 
     pyro_push(vm, OBJ_VAL(closure));
     call_value(vm, OBJ_VAL(closure), 0);
@@ -1682,9 +1665,9 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 }
 
                 vm->halt_flag = false;
-                vm->panic_flag = false;
                 vm->exit_flag = false;
-                vm->memory_error_flag = false;
+                vm->panic_flag = false;
+                vm->hard_panic = false;
                 vm->exit_code = 0;
 
                 pyro_push(vm, entry.value);
@@ -1703,8 +1686,8 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                     break;
                 }
 
-                if (vm->memory_error_flag) {
-                    pyro_out(vm, "-- MEMORY ERROR %s\n", name->bytes);
+                if (vm->hard_panic) {
+                    pyro_out(vm, "-- HARD PANIC %s\n", name->bytes);
                     tests_failed += 1;
                     break;
                 }
@@ -1712,9 +1695,10 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 if (vm->panic_flag) {
                     pyro_out(vm, "-- FAIL %s\n", name->bytes);
                     tests_failed += 1;
-                } else {
-                    tests_passed += 1;
+                    continue;
                 }
+
+                tests_passed += 1;
             }
         }
     }
@@ -1913,13 +1897,13 @@ bool pyro_get_panic_flag(PyroVM* vm) {
 }
 
 
-bool pyro_get_halt_flag(PyroVM* vm) {
-    return vm->halt_flag;
+bool pyro_get_hard_panic_flag(PyroVM* vm) {
+    return vm->hard_panic;
 }
 
 
-bool pyro_get_memory_error_flag(PyroVM* vm) {
-    return vm->memory_error_flag;
+bool pyro_get_halt_flag(PyroVM* vm) {
+    return vm->halt_flag;
 }
 
 

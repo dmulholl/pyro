@@ -399,7 +399,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
 
 void pyro_mark_object(PyroVM* vm, Obj* object) {
-    if (object == NULL || object->is_marked) {
+    if (object == NULL || object->is_marked || vm->panic_flag) {
         return;
     }
 
@@ -407,15 +407,13 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
         pyro_out(vm, "   %p mark %s\n", (void*)object, pyro_stringify_obj_type(object->type));
     #endif
 
-    object->is_marked = true;
-
-    // Add the object to the worklist of grey objects.
     if (vm->grey_count == vm->grey_capacity) {
         size_t new_capacity = GROW_CAPACITY(vm->grey_capacity);
         void* new_array = realloc(vm->grey_stack, sizeof(Obj*) * new_capacity);
 
         if (!new_array) {
-            pyro_memory_error(vm);
+            vm->hard_panic = true;
+            pyro_panic(vm, "Out of memory.");
             return;
         }
 
@@ -426,6 +424,7 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
         vm->grey_stack = new_array;
     }
 
+    object->is_marked = true;
     vm->grey_stack[vm->grey_count++] = object;
 }
 
@@ -438,16 +437,26 @@ void pyro_mark_value(PyroVM* vm, Value value) {
 
 
 void pyro_collect_garbage(PyroVM* vm) {
+    assert(!vm->panic_flag);
+
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_out(vm, "-- gc begin\n");
         size_t before = vm->bytes_allocated;
     #endif
 
-        mark_roots(vm);
-        trace_references(vm);
-        sweep(vm);
+    mark_roots(vm);
+    if (vm->panic_flag) {
+        return;
+    }
 
-        vm->next_gc_threshold = vm->bytes_allocated * PYRO_GC_HEAP_GROW_FACTOR;
+    trace_references(vm);
+    if (vm->panic_flag) {
+        return;
+    }
+
+    sweep(vm);
+
+    vm->next_gc_threshold = vm->bytes_allocated * PYRO_GC_HEAP_GROW_FACTOR;
 
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_out(vm, "-- gc end\n");

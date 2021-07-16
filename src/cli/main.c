@@ -244,7 +244,7 @@ static void run_repl(void) {
         }
 
         pyro_exec_code_as_main(vm, code, code_count, "repl");
-        if (pyro_get_exit_flag(vm) || pyro_get_memory_error_flag(vm)) {
+        if (pyro_get_exit_flag(vm) || pyro_get_hard_panic_flag(vm)) {
             exit(pyro_get_exit_code(vm));
         }
 
@@ -328,13 +328,6 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
 
         if (pyro_get_panic_flag(vm)) {
             printf("-- \x1B[31mFAIL\x1B[39m\n\n");
-            files_failed += 1;
-            pyro_free_vm(vm);
-            continue;
-        }
-
-        if (pyro_get_memory_error_flag(vm)) {
-            printf("-- \x1B[31mMEMORY ERROR\x1B[39m\n\n");
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
