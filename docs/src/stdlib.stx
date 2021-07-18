@@ -1,5 +1,6 @@
 ---
 title: The Standard Library
+meta_title: The Pyro Standard Library
 ---
 
 The standard library is a collection of modules written in C and built into the Pyro binary.

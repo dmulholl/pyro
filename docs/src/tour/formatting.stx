@@ -1,5 +1,6 @@
 ---
 title: String Formatting
+meta_title: Pyro String Formatting
 ---
 
 Use the `$fmt()` function to interpolate values into a string:

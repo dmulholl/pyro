@@ -1,5 +1,6 @@
 ---
 title: Modules
+meta_title: Pyro Modules
 ---
 
 A module is a Pyro file loaded as a library. Modules are loaded using the `import` keyword.
