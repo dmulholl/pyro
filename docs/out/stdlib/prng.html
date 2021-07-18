@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Standard Library &mdash; $std::prng</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-stdlib-prng node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a><ul>
+<li><a href="../tour/classes.html">Classes</a></li>
+<li><a href="../tour/modules.html">Modules</a></li>
+<li><a href="../tour/operators.html">Operators</a></li>
+<li><a href="../tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a><ul>
+<li><a href="../stdlib/math.html">math</a></li>
+<li><a href="../stdlib/prng.html">prng</a></li>
+<li><a href="../stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1><code>$std::prng</code></h1>
+                
+                <hr>
+            </header>
+            <p>
+This module uses a 64-bit <a href="https://en.wikipedia.org/wiki/Mersenne_Twister">Mersenne Twister</a> to generate pseudo-random numbers.
+</p>
+<p>
+The output of the generator is completely deterministic and depends only on the initial seed value, i.e. the sequence of numbers generated will always be identical for a given seed.
+</p>
+<p>
+The generator is automatically initialized at startup using a random seed but you can reinitialize the generator at any time by calling <code>seed(arg)</code>. This reseeds the generator using the argument's 64-bit hash value.
+</p>
+<h3 id="functions">
+Functions
+</h3>
+<dl>
+<div>
+<dt>
+<code>rand_float()</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random <code>$f64</code> from the half-open interval <code>[0, 1)</code>, i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>rand_int(n)</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[0, n)</code>, i.e. the interval from zero up to but not including <code>n</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>seed(arg)</code>
+</dt>
+<dd>
+<p>
+Seeds the generator using the argument's 64-bit hash.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

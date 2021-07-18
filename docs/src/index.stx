@@ -1,0 +1,36 @@
+---
+title: Home
+---
+
+[1]: https://github.com/dmulholl/pyro
+
+
+Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
+This means that it lives in roughly the same neighbourhood in programming language space as languages like Python or Ruby.
+
+::: code pyro
+    def fib(n) {
+        if n < 2 {
+            return n;
+        }
+        return fib(n - 1) + fib(n - 2);
+    }
+
+Unlike Python or Ruby, Pyro isn't ready for real-world use. It's an experimental language that I'm building primarily for my own edutainment.
+
+
+### Source
+
+You can find Pyro's source code on [Github][1].
+
+
+
+### Contributing
+
+I'm not currently accepting pull requests as the core codebase isn't yet stable enough. Bug reports and feature suggestions are very welcome.
+
+
+
+### License
+
+MIT.

@@ -1,0 +1,465 @@
+---
+title: A Tour of Pyro
+---
+
+[1]: https://en.wikipedia.org/wiki/IEEE_754
+
+Pyro begs, borrows, and steals from every language I've ever used, but it drags Python down a back alley and leaves it naked, bleeding, and penniless. If you've used Python you'll find many aspects of Pyro's design philosophy familiar.
+
+::: insert toc
+
+
+### Comments
+
+Comments begin with a `#` symbol and run to the end of the line:
+
+::: code pyro
+    # Full line comment.
+    var foo = 123; # Partial line comment.
+
+
+
+### Variables
+
+Variables are declared using the `var` keyword:
+
+::: code pyro
+    var foo = 123;
+
+Variables must be declared before use. If an initial value isn't specified the variable has the value `null`.
+
+::: code pyro
+    var foo;
+    assert foo == null;
+
+You can declare multiple variables in a single statement:
+
+::: code pyro
+    var foo, bar;
+    var baz = 123, bam = 456;
+
+Variables have lexical scope and declarations inside blocks will shadow outer declarations:
+
+::: code pyro
+    var foo = 123;
+
+    {
+        var foo == 456;
+        assert foo == 456;
+    }
+
+    assert foo == 123;
+
+Identifier names (this includes variables, functions, and classes) should begin with a letter or an underscore and contain only letters, numbers, and underscores.
+
+Names beginning with a `$` symbol are `$pecial` --- this namespace is reserved by the language for builtin variables and functions.
+
+
+
+### Numbers
+
+Pyro has two numeric types: `$i64` for 64-bit signed integers, and `$f64` for 64-bit [IEEE 754 floats][1].
+Both behave as you'd expect and support the usual range of numeric operations.
+
+::: table
+
+    +       | Addition. Returns an integer if both operands are integers or a float if either or both are floats.
+    -       | Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
+    *       | Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
+    /       | Floating-point division. Both operands will be converted to floats and the result will be a float.
+    //      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
+    %       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
+    ^       | Power operator. Both operands are converted to floats and the result is a float.
+
+Integer literals can use binary, octal, decimal, or hex notation:
+
+::: code pyro
+    var a = 0b101;      # a == 5
+    var b = 0o101;      # b == 65
+    var c = 101;        # c == 101
+    var d = 0x101;      # d == 257
+
+Integer literals can use underscores to improve readability:
+
+::: code pyro
+    var a = 123_456;
+    var b = 0b1010_0101;
+
+Float literals require a decimal point and can also use underscores to improve readability:
+
+::: code pyro
+    var foo = 1.0;
+    var pi = 3.141_592_654;
+
+
+
+### Strings
+
+A string, `$str`, is an immutable array of bytes.
+
+::: code pyro
+    var string = "hello pyro";
+
+Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding --- a string can contain any sequence of byte values including null bytes or invalid UTF-8.
+
+You can find a full description of the string type [here](@root/builtins//#strings).
+
+
+
+### Characters
+
+A character, `$char`, is an unsigned 32-bit integer representing a Unicode code point.
+
+Character literals use single quotes:
+
+::: code pyro
+    var c1 = 'a';
+    var c2 = '€';
+    var c3 = '🔥';
+
+You can find a full description of the character type [here](@root/builtins//#characters).
+
+
+
+### Booleans
+
+A boolean value is either `true` or `false`.
+You can convert any value to a boolean using the `$bool(arg)` function.
+
+::: code pyro
+    assert $bool(123) == true;
+    assert $bool(null) == false;
+
+Values which convert to `true` are **truthy**, values which convert to `false` are **falsey**.
+
+The values `false` and `null` are falsey, as is any `$err` value, the integer value `0`, and the floating-point value `0.0`. All other values are truthy.
+
+
+
+
+### Nulls
+
+Uninitialized variables have the default value `null`.
+
+::: code pyro
+    var foo;
+    assert foo == null;
+
+You can use the null-coalescing operator `??` to supply a default value in place of a `null`:
+
+::: code pyro
+    var foo = maybe_null() ?? "default";
+
+
+
+
+### Equality
+
+Pyro has a strict concept of equality --- two objects are equal if they have the same type and the same value.
+
+::: code pyro
+    assert 1 == 1;        # True.
+    assert 1.0 == 1.0;    # True.
+    assert 1 == 1.0;      # False. $i64 != $f64.
+
+Note that characters don't compare equal to their integer value without conversion:
+
+::: code pyro
+    assert 'a' == 'a';          # True.
+    assert 'a' == 61;           # False. $char != $i64.
+    assert $i64('a') == 61;     # True.
+    assert 'a' == $char(61);    # True.
+
+Note that a `$map` can have three distinct keys with the values `61`, `61.0`, and `'a'`, even though the values are numerically equivalent. (Pyro's strict concept of equality is partly designed to enable fast map lookups without needing to consider all possible conversions.)
+
+Strings are equal if they have the same content:
+
+::: code pyro
+    var foo = "foobar";
+    var bar = "foobar";
+    assert foo == bar;
+
+Tuples are equal if they have the same length and their elements are equal:
+
+::: code pyro
+    var foo = $tup("foo", 123);
+    var bar = $tup("foo", 123);
+    assert foo == bar;
+
+Other objects are equal only if they are the same object:
+
+::: code pyro
+    class Foo {}
+
+    var foo1 = Foo();
+    var foo2 = Foo();
+
+    assert foo1 == foo1;    # True.
+    assert foo1 == foo2;    # False.
+
+
+
+### Printing
+
+The `echo` statement prints to the standard output stream. It's useful for simple printing and debugging.
+
+::: code pyro
+    echo "hello pyro";
+
+You can `echo` any value --- `echo` stringifies its argument before printing it.
+(It's equivalent to calling `$str(arg)` on the argument first and printing the result.)
+
+Pyro also has a family of `$print()` functions with support for format strings:
+
+::: code pyro
+    $print("hello pyro");               # "hello pyro"
+    $print("{} and {}", "foo", "bar");  # "foo and bar"
+    $print("{} and {}", 123, 456);      # "123 and 456"
+
+See the [string formatting](@root/tour/formatting//) documentation for details.
+
+
+
+
+
+### Loops
+
+Pyro has support for several different looping constructs.
+The simplest is the infinite loop:
+
+::: code pyro
+    var i = 0;
+
+    loop {
+        i += 1;
+        if i == 5 {
+            break;
+        }
+    }
+
+    assert i == 5;
+
+The `loop` statement also supports C-style loops with an initializer, a condition, and an incrementing expression:
+
+::: code pyro
+    loop var i = 0; i < 10; i += 1 {
+        echo i;
+    }
+
+The `for` keyword in Pyro is reserved for looping over iterators:
+
+::: code pyro
+    var vec = ["foo", "bar", "baz"];
+
+    for item in vec {
+        echo item;
+    }
+
+Finally, Pyro supports `while` loops:
+
+::: code pyro
+    var i = 0;
+
+    while i < 10 {
+        i += 1;
+    }
+
+    assert i == 10;
+
+All the looping constructs support `break` and `continue`.
+
+
+
+
+
+### Conditions
+
+Conditional statements in Pyro look like this:
+
+::: code pyro
+    if money > 100 {
+        echo "we have lots of money";
+    }
+
+Conditional statements evaluate the truthiness of their conditions.
+As you'd expect, they support optional `else if` and `else` clauses:
+
+::: code pyro
+    if money > 100 {
+        echo "we have lots of money";
+    } else if money > 10 {
+        echo "we have some money";
+    } else {
+        echo "we're poor";
+    }
+
+Pyro also has support for conditional expressions using the ternary operator `?|`:
+
+::: code pyro
+    var status = money > 100 ? "rich" | "poor";
+
+
+
+
+
+### Functions
+
+Function definitions look like this:
+
+::: code pyro
+    def add(a, b) {
+        return a + b;
+    }
+
+Inner functions declared inside outer functions can capture the outer function's local variables, including its parameters:
+
+
+::: code pyro
+    def make_adder(increment) {
+        def adder(num) {
+            return num + increment;
+        }
+        return adder;
+    }
+
+    var adds_one = make_adder(1);
+    adds_one(0);  # 1
+    adds_one(1);  # 2
+
+    var adds_two = make_adder(2);
+    adds_two(0);  # 2;
+    adds_two(1);  # 3;
+
+Functions are first-class citizens in Pyro, meaning you can pass them around just like any other value.
+You can also declare and use functions anonymously:
+
+::: code pyro
+    var add = def(a, b) {
+        return a + b;
+    };
+
+    add(1, 2);  # 3
+    add(3, 4);  # 7
+
+
+
+
+
+
+### Classes
+
+Class definitions look like this:
+
+::: code pyro
+    class Person {
+        var name;
+        var occupation = "programmer";
+
+        def $init(name) {
+            self.name = name;
+        }
+
+        def info() {
+            echo self.name + " is a " + self.occupation + ".";
+        }
+    }
+
+Create an instance of a class by calling its name:
+
+::: code pyro
+    >>> var dave = Person("Dave");
+
+Arguments are passed on to the optional initializer method, `$init()`.
+
+Call a method on an instance using the method access operator, `:`:
+
+::: code pyro
+    >>> dave:info();
+    Dave is a programmer.
+
+Get or set an instance's fields using the field access operator, `.`:
+
+::: code pyro
+    >>> dave.occupation = "pointy headed manager";
+    >>> dave:info();
+    Dave is a pointy headed manager.
+
+Boo Dave.
+
+Classes are complex enough to deserve a page of their own which you can find [here](@root/tour/classes//).
+
+
+
+### Errors
+
+Pyro has an error type, `$err`, which a function can return to indicate failure.
+An `$err` is a specialized kind of tuple under the hood so it supports all the same methods and operators as a `$tup`.
+
+::: code pyro
+    var foo = $err();
+    var bar = $err("oops!", 123);
+
+You can check if a value is an `$err` using the `$is_err(arg)` function.
+Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`:
+
+::: code pyro
+    var foo = might_fail() !! "default";
+
+
+
+
+### Panics
+
+A panic in Pyro is similar to an exception in other languages --- it indicates that the program has attempted to do something impossible like divide by zero or read from a file that doesn't exist.
+
+An unhandled panic will result in the program exiting with an error message and a non-zero status code.
+
+You can catch a panic using a `try` expression:
+
+::: code pyro
+    var foo = try might_panic();
+
+A `try` expression returns the value of its operand if it evaluates without panicking or an `$err` if it panics.
+
+`try` is a unary operator with the same precedence as `!` or `-` so you should wrap lower-precedence expressions in brackets:
+
+::: code pyro
+    var foo = try (1 / 1);  # 1
+    var bar = try (1 / 0);  # $err
+
+Note that you can use the error-coalescing operator `!!` to provide a default value for a panicking expression:
+
+::: code pyro
+    var foo = try (1 / 1) !! 0;  # 1
+    var bar = try (1 / 0) !! 0;  # 0
+
+
+
+
+### Modules
+
+A module is a Pyro file loaded as a library. Modules are loaded using the `import` keyword.
+
+Assume we have a file called `math.pyro` containing math functions:
+
+::: code pyro
+    import math;
+
+    var foo = math::abs(-1);
+
+Modules can contain submodules. Assume we have a directory called `math` containing a file called `trig.pyro`:
+
+::: code pyro
+    import math::trig;
+
+    var foo = trig::cos(1);
+
+Modules are complex enough to deserve a page of their own which you can find [here](@root/tour/modules//).
+
+
+### Source Code
+
+Source code outside of string literals is assumed to be UTF-8 encoded.
+String literals can contain arbitrary byte sequences including null bytes and invalid UTF-8.
+
+

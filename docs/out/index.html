@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Home</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        
+    </head>
+    <body class="node homepage">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="tour.html">Language Tour</a><ul>
+<li><a href="tour/classes.html">Classes</a></li>
+<li><a href="tour/modules.html">Modules</a></li>
+<li><a href="tour/operators.html">Operators</a></li>
+<li><a href="tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="globals.html">Globals</a></li>
+<li><a href="stdlib.html">Standard Library</a><ul>
+<li><a href="stdlib/math.html">math</a></li>
+<li><a href="stdlib/prng.html">prng</a></li>
+<li><a href="stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Home</h1>
+                
+                <hr>
+            </header>
+            <p>
+Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
+This means that it lives in roughly the same neighbourhood in programming language space as languages like Python or Ruby.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="mi">2</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>
+Unlike Python or Ruby, Pyro isn't ready for real-world use. It's an experimental language that I'm building primarily for my own edutainment.
+</p>
+<h3 id="source">
+Source
+</h3>
+<p>
+You can find Pyro's source code on <a href="https://github.com/dmulholl/pyro">Github</a>.
+</p>
+<h3 id="contributing">
+Contributing
+</h3>
+<p>
+I'm not currently accepting pull requests as the core codebase isn't yet stable enough. Bug reports and feature suggestions are very welcome.
+</p>
+<h3 id="license">
+License
+</h3>
+<p>
+MIT.
+</p>
+        </article>
+        
+    </body>
+</html>

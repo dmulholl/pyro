@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Quickstart Tutorial</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-quickstart node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="tour.html">Language Tour</a><ul>
+<li><a href="tour/classes.html">Classes</a></li>
+<li><a href="tour/modules.html">Modules</a></li>
+<li><a href="tour/operators.html">Operators</a></li>
+<li><a href="tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="globals.html">Globals</a></li>
+<li><a href="stdlib.html">Standard Library</a><ul>
+<li><a href="stdlib/math.html">math</a></li>
+<li><a href="stdlib/prng.html">prng</a></li>
+<li><a href="stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Quickstart Tutorial</h1>
+                
+                <hr>
+            </header>
+            <p>
+You'll need a C compiler to build Pyro from source &mdash;
+note that only POSIX builds are currently supported (Mac, Linux, BSD, etc.).
+</p>
+<p>
+First, download the repository from Github:
+</p>
+<pre>
+$ git clone https://github.com/dmulholl/pyro
+</pre>
+<p>
+<code>cd</code> into the <code>pyro</code> directory and run <code>make</code>:
+</p>
+<pre>
+$ cd pyro
+$ make
+</pre>
+<p>
+The binary will be created as <code>out/pyro</code>.
+You can run the binary directly from the <code>out</code> directory or place it somewhere on your system's <code>$PATH</code>.
+</p>
+<p>
+Try running the binary with the <code>--help</code> flag to view the command line help:
+</p>
+<pre>
+$ pyro --help
+
+Usage: pyro [file]
+
+  The Pyro programming language.
+
+Arguments:
+  [file]             Script to run. Will open the REPL
+                     if omitted.
+
+Flags:
+  -h, --help         Print this help text and exit.
+  -v, --version      Print the version number and exit.
+
+Commands:
+  test               Run unit tests.
+  time               Run timing functions.
+
+Command Help:
+  help &lt;command&gt;     Print the command&#x27;s help text.
+</pre>
+<p>
+Let's make a simple test script.
+Create a file called <code>hello.pyro</code> and add the following line:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Run the script by supplying its filename to the binary:
+</p>
+<pre>
+$ pyro hello.pyro
+hello world
+</pre>
+<p>
+That's it, you can officially add Pyro to the list of languages on your CV.
+</p>
+        </article>
+        
+    </body>
+</html>

@@ -1,0 +1,34 @@
+---
+title: <code>$std::prng</code>
+meta_title: Pyro Standard Library &mdash; $std::prng
+---
+
+[1]: https://en.wikipedia.org/wiki/Mersenne_Twister
+
+
+This module uses a 64-bit [Mersenne Twister][1] to generate pseudo-random numbers.
+
+The output of the generator is completely deterministic and depends only on the initial seed value, i.e. the sequence of numbers generated will always be identical for a given seed.
+
+The generator is automatically initialized at startup using a random seed but you can reinitialize the generator at any time by calling `seed(arg)`. This reseeds the generator using the argument's 64-bit hash value.
+
+
+
+### Functions
+
+
+[[ `rand_float()` ]]
+
+    Returns a uniformly-distributed random `$f64` from the half-open interval `[0, 1)`, i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
+
+
+[[ `rand_int(n)` ]]
+
+    Returns a uniformly-distributed random `$i64` from the half-open interval `[0, n)`, i.e. the interval from zero up to but not including `n`.
+
+
+[[ `seed(arg)` ]]
+
+    Seeds the generator using the argument's 64-bit hash.
+
+

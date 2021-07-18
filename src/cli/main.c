@@ -18,7 +18,7 @@
 #include "../lib/args/args.h"
 
 
-static const char* VERSION = "0.2.0.dev";
+static const char* VERSION = "0.2.0";
 
 
 static const char* HELPTEXT =

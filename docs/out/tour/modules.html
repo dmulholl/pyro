@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Modules</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-tour-modules node-tour node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a><ul>
+<li><a href="../tour/classes.html">Classes</a></li>
+<li><a href="../tour/modules.html">Modules</a></li>
+<li><a href="../tour/operators.html">Operators</a></li>
+<li><a href="../tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a><ul>
+<li><a href="../stdlib/math.html">math</a></li>
+<li><a href="../stdlib/prng.html">prng</a></li>
+<li><a href="../stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Modules</h1>
+                
+                <hr>
+            </header>
+            <p>
+A module is a Pyro file loaded as a library. Modules are loaded using the <code>import</code> keyword.
+</p>
+<p>
+Assume we have a file called <code>math.pyro</code> containing math functions:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</pre>
+<p>
+Use the member access operator <code>::</code> to access a module's top-level variables, functions, and classes.
+</p>
+<h3 id="submodules">
+Submodules
+</h3>
+<p>
+Modules can contain submodules. Assume we have a directory called <code>math</code> containing a file called <code>trig.pyro</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre>
+<p>
+The top-level module <code>math</code> can live alongside the directory that contains its submodules:
+</p>
+<pre>
+root/
+|-- math.pyro
+|-- math/
+    |-- trig.pyro
+</pre>
+<p>
+Alternatively, it can live inside the <code>math</code> directory in a file called <code>self.pyro</code>:
+</p>
+<pre>
+root/
+|-- math/
+    |-- self.pyro
+    |-- trig.pyro
+</pre>
+<p>
+Finally, the top-level <code>math</code> module can be empty and simply function as a container for its submodules:
+</p>
+<pre>
+root/
+|-- math/
+    |-- trig.pyro
+</pre>
+<p>
+Submodules can contain submodules of their own &mdash; there's no hard limit to how deep the nesting can go.
+</p>
+<h3 id="aliasing">
+Aliasing
+</h3>
+<p>
+You can import a module under an alias using an <code>import ... as ...</code> statement:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span> <span class="kn">as</span> <span class="nx">alias</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">alias</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</pre>
+<p>
+Submodules can similarly be aliased:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span> <span class="kn">as</span> <span class="nx">alias</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">alias</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre>
+<h3 id="import-roots">
+Import Roots
+</h3>
+<p>
+The standard library's <code>$std::pyro::import_roots</code> vector contains the list of root directories that Pyro checks when attempting to import a module.
+</p>
+<p>
+Currently, if Pyro is executing a script it checks the parent directory containing that script. If the REPL is executing it checks the current working directory.
+</p>
+<p>
+You can add or remove entries from the <code>import_roots</code> vector to customize Pyro's default behaviour.
+</p>
+        </article>
+        
+    </body>
+</html>

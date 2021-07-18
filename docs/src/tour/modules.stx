@@ -1,0 +1,79 @@
+---
+title: Modules
+---
+
+A module is a Pyro file loaded as a library. Modules are loaded using the `import` keyword.
+
+Assume we have a file called `math.pyro` containing math functions:
+
+::: code pyro
+    import math;
+
+    var foo = math::abs(-1);
+
+Use the member access operator `::` to access a module's top-level variables, functions, and classes.
+
+
+
+### Submodules
+
+Modules can contain submodules. Assume we have a directory called `math` containing a file called `trig.pyro`:
+
+::: code pyro
+    import math::trig;
+
+    var foo = trig::cos(1);
+
+The top-level module `math` can live alongside the directory that contains its submodules:
+
+::: code
+    root/
+    |-- math.pyro
+    |-- math/
+        |-- trig.pyro
+
+Alternatively, it can live inside the `math` directory in a file called `self.pyro`:
+
+::: code
+    root/
+    |-- math/
+        |-- self.pyro
+        |-- trig.pyro
+
+Finally, the top-level `math` module can be empty and simply function as a container for its submodules:
+
+::: code
+    root/
+    |-- math/
+        |-- trig.pyro
+
+Submodules can contain submodules of their own --- there's no hard limit to how deep the nesting can go.
+
+
+
+### Aliasing
+
+You can import a module under an alias using an `import ... as ...` statement:
+
+::: code pyro
+    import math as alias;
+
+    var foo = alias::abs(-1);
+
+Submodules can similarly be aliased:
+
+::: code pyro
+    import math::trig as alias;
+
+    var foo = alias::cos(1);
+
+
+
+### Import Roots
+
+The standard library's `$std::pyro::import_roots` vector contains the list of root directories that Pyro checks when attempting to import a module.
+
+Currently, if Pyro is executing a script it checks the parent directory containing that script. If the REPL is executing it checks the current working directory.
+
+You can add or remove entries from the `import_roots` vector to customize Pyro's default behaviour.
+

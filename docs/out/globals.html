@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Globals</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-globals node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="tour.html">Language Tour</a><ul>
+<li><a href="tour/classes.html">Classes</a></li>
+<li><a href="tour/modules.html">Modules</a></li>
+<li><a href="tour/operators.html">Operators</a></li>
+<li><a href="tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="globals.html">Globals</a></li>
+<li><a href="stdlib.html">Standard Library</a><ul>
+<li><a href="stdlib/math.html">math</a></li>
+<li><a href="stdlib/prng.html">prng</a></li>
+<li><a href="stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Globals</h1>
+                
+                <hr>
+            </header>
+            <p>
+Global variables and functions are available in all modules &mdash; you don't need to import anything to use them.
+All globals live in the <code>$pecial</code> namespace so they won't interfere with your own code.
+</p>
+<ul class="stx-toc">
+<li>
+<a href="#global-variables">Global Variables</a>
+</li>
+<li>
+<a href="#global-functions">Global Functions</a>
+</li>
+</ul>
+<h3 id="global-variables">
+Global Variables
+</h3>
+<dl>
+<div>
+<dt>
+<code>$args</code>
+</dt>
+<dd>
+<p>
+A tuple of strings containing the program's command line arguments.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$stderr</code>
+</dt>
+<dd>
+<p>
+A <code>$file</code> object pointing to the standard error stream.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$stdin</code>
+</dt>
+<dd>
+<p>
+A <code>$file</code> object pointing to the standard input stream.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$stdout</code>
+</dt>
+<dd>
+<p>
+A <code>$file</code> object pointing to the standard output stream.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="global-functions">
+Global Functions
+</h3>
+<dl>
+<div>
+<dt>
+<code>$bool(arg)</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to a <code>$bool</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$buf()</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$buf</code> object.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$char(arg)</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to a <code>$char</code>. Panics if the argument is not convertible.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$clock()</code>
+</dt>
+<dd>
+<p>
+Returns the number of seconds since the program was launched as an <code>$f64</code>.
+This function is a wrapper around the C standard library's <code>clock()</code> function.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$eprint(arg)</code> <br> <code>$eprint(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Prints to the error stream.
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
+</p>
+<p>
+This function can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$eprintln()</code> <br> <code>$eprintln(arg)</code> <br> <code>$eprintln(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Like <code>$eprint()</code> but adds a terminating newline.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$err()</code> <br> <code>$err(arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$err</code> object.
+The arguments provide the error's values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$exit(code)</code>
+</dt>
+<dd>
+<p>
+Instructs the program to exit with the specified exit code, where <code>code</code> is an integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$f64(arg)</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to an <code>$f64</code>. Panics if the argument is not convertible.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$file(path, mode)</code>
+</dt>
+<dd>
+<p>
+Opens a file using the C function <code>fopen()</code>.
+<code>path</code> and <code>mode</code> should both be strings.
+Panics on failure.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$fmt(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Returns the new string created by interpolating the argument values into the format string &mdash; see the <a href="tour/formatting.html">string formatting</a> documentation for details. This function can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$i64(arg)</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to an <code>$i64</code>. Panics if the argument is not convertible.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_bool(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$bool</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_buf(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$buf</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_char(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$char</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_err(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>$err</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_f64(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>$f64</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_file(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$file</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_i64(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>$i64</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_inf(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is floating-point infinity (positive or negative).
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_map(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$map</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_mod(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a module, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_nan(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is the floating-point value <code>NaN</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_range(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$range</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_str(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$str</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_tup(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$tup</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_vec(arg)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>$vec</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$map()</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$map</code> object.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$panic(message)</code>
+</dt>
+<dd>
+<p>
+Panics with the specified error message.
+<code>message</code> should be a string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$print(arg)</code> <br> <code>$print(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Prints to the output stream.
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
+</p>
+<p>
+This function can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$println()</code> <br> <code>$println(arg)</code> <br> <code>$println(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Like <code>$print()</code> but adds a terminating newline.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$range(stop)</code> <br> <code>$range(start, stop)</code> <br> <code>$range(start, stop, step)</code>
+</dt>
+<dd>
+<p>
+Returns an integer iterator over the half-open interval <code>[start, stop)</code>.
+<code>start</code> defaults to <code>0</code>, <code>step</code> defaults to <code>1</code> if not specified.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$str(arg)</code>
+</dt>
+<dd>
+<p>
+Stringifies the argument, i.e. returns its default string representation.
+If the argument has a <code>:str()</code> method, the output of this method will be returned.
+This function can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$tup()</code> <br> <code>$tup(arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$tup</code> object.
+The arguments provide the tuple's values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$vec()</code> <br> <code>$vec(iterable)</code> <br> <code>$vec(size, fill_value)</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$vec</code> object.
+If called with zero arguments, creates an empty vector.
+If called with a single iterable argument, fills the new vector by iterating over the argument.
+If called with two arguments, creates a vector with the specified initial size and fill value.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

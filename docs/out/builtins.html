@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Builtin Types</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-builtins node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="tour.html">Language Tour</a><ul>
+<li><a href="tour/classes.html">Classes</a></li>
+<li><a href="tour/modules.html">Modules</a></li>
+<li><a href="tour/operators.html">Operators</a></li>
+<li><a href="tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="globals.html">Globals</a></li>
+<li><a href="stdlib.html">Standard Library</a><ul>
+<li><a href="stdlib/math.html">math</a></li>
+<li><a href="stdlib/prng.html">prng</a></li>
+<li><a href="stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Builtin Types</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#strings">Strings</a>
+</li>
+<li>
+<a href="#characters">Characters</a>
+</li>
+<li>
+<a href="#vectors">Vectors</a>
+</li>
+<li>
+<a href="#hash-maps">Hash Maps</a>
+</li>
+<li>
+<a href="#tuples">Tuples</a>
+</li>
+<li>
+<a href="#errors">Errors</a>
+</li>
+<li>
+<a href="#ranges">Ranges</a>
+</li>
+<li>
+<a href="#byte-buffers">Byte Buffers</a>
+</li>
+<li>
+<a href="#files">Files</a>
+</li>
+</ul>
+<h3 id="strings">
+Strings
+</h3>
+<p>
+A string, <code>$str</code>, is an immutable array of bytes.
+</p>
+<dl>
+<div>
+<dt>
+<code>$str(arg)</code>
+</dt>
+<dd>
+<p>
+Stringifies the argument, i.e. returns its default string representation.
+If the argument has a <code>:str()</code> method, the output of this method will be returned.
+This function can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding &mdash; a string can contain any sequence of byte values including null bytes or invalid UTF-8.
+</p>
+<p>
+String literals come in two flavours &mdash; regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
+</p>
+<p>
+Regular string literals use double quotes:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;a string&quot;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;a string</span>
+<span class="s">with multiple</span>
+<span class="s">lines&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Regular string literals process all the usual backslashed escapes:
+</p>
+<table>
+<tbody>
+<tr>
+<td>
+<code>\\</code>
+</td>
+<td>
+backslash
+</td>
+</tr>
+<tr>
+<td>
+<code>\0</code>
+</td>
+<td>
+null byte
+</td>
+</tr>
+<tr>
+<td>
+<code>\&quot;</code>
+</td>
+<td>
+double quote
+</td>
+</tr>
+<tr>
+<td>
+<code>\&#x27;</code>
+</td>
+<td>
+single quote
+</td>
+</tr>
+<tr>
+<td>
+<code>\b</code>
+</td>
+<td>
+backspace
+</td>
+</tr>
+<tr>
+<td>
+<code>\n</code>
+</td>
+<td>
+newline
+</td>
+</tr>
+<tr>
+<td>
+<code>\r</code>
+</td>
+<td>
+carriage return
+</td>
+</tr>
+<tr>
+<td>
+<code>\t</code>
+</td>
+<td>
+tab
+</td>
+</tr>
+<tr>
+<td>
+<code>\x##</code>
+</td>
+<td>
+8-bit hex-encoded byte value
+</td>
+</tr>
+<tr>
+<td>
+<code>\u####</code>
+</td>
+<td>
+16-bit hex-encoded unicode code point (output as UTF-8)
+</td>
+</tr>
+<tr>
+<td>
+<code>\U########</code>
+</td>
+<td>
+32-bit hex-encoded unicode code point (output as UTF-8)
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Raw string literals use backticks:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">`a raw string`</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">`a raw string</span>
+<span class="s">with multiple</span>
+<span class="s">lines`</span><span class="p">;</span>
+</pre>
+<p>
+Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
+</p>
+<p>
+Strings can be concatenated using the <code>+</code> operator:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;abc&quot;</span> <span class="o">+</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="s">&quot;abcdef&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Strings have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:byte(index)</code>
+</dt>
+<dd>
+<p>
+Returns the byte value at <code>index</code> as an <code>$i64</code> in the range <code>[0, 255]</code>.
+Will panic if <code>index</code> isn't an integer or is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:byte_count()</code>
+</dt>
+<dd>
+<p>
+Returns the number of bytes in the string as an <code>$i64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:bytes()</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's bytes as <code>$i64</code> values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:char(index)</code>
+</dt>
+<dd>
+<p>
+Returns the <code>$char</code> at <code>index</code>, where <code>index</code> is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
+Will panic if <code>index</code> isn't an integer or is out of range.
+</p>
+<p>
+(This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+Note that it will panic if it encounters invalid UTF-8 along the way.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:char_count()</code>
+</dt>
+<dd>
+<p>
+Returns the number of UTF-8 encoded Unicode code points in the string as an <code>$i64</code>.
+</p>
+<p>
+(This is a potentially expensive method as it needs to traverse the string.
+Note that it will panic if it encounters invalid UTF-8.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:chars()</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's <code>$char</code> values, i.e. UTF-8 encoded Unicode code points.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii()</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty or contains only byte values in the range <code>[0, 127]</code>.
+(This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_utf8()</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty or contains only valid UTF-8.
+(This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to_ascii_lower()</code>
+</dt>
+<dd>
+<p>
+Returns a new string with all ASCII uppercase characters converted to lowercase.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to_ascii_upper()</code>
+</dt>
+<dd>
+<p>
+Returns a new string with all ASCII lowercase characters converted to uppercase.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="characters">
+Characters
+</h3>
+<p>
+A character, <code>$char</code>, is an unsigned 32-bit integer representing a Unicode code point.
+</p>
+<dl>
+<div>
+<dt>
+<code>$char(arg)</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to a <code>$char</code>. Panics if the argument is not convertible.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Character literals use single quotes:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">c3</span> <span class="p">=</span> <span class="sc">&#39;🔥&#39;</span><span class="p">;</span>
+</pre>
+<p>
+A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="sc">&#39;\x61&#39;</span><span class="p">;</span>    <span class="c1"># c1 == &#39;a&#39;</span>
+<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="sc">&#39;\u20AC&#39;</span><span class="p">;</span>  <span class="c1"># c2 == &#39;€&#39;</span>
+</pre>
+<p>
+Character literals support all the same backslashed escape sequences as strings.
+</p>
+<p>
+You can convert a character to a string using the <code>$str()</code> function or to an integer using the <code>$i64()</code> function:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;a&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">97</span><span class="p">;</span>
+</pre>
+<p>
+You can covert an integer to a character using the <code>$char()</code> function:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$char</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+</pre>
+<p>
+This function will panic if the integer is out of range for the <code>$char</code> type.
+</p>
+<h3 id="vectors">
+Vectors
+</h3>
+<p>
+A vector, <code>$vec</code>, is a dynamic array of values.
+</p>
+<dl>
+<div>
+<dt>
+<code>$vec()</code> <br> <code>$vec(iterable)</code> <br> <code>$vec(size, fill_value)</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$vec</code> object.
+If called with zero arguments, creates an empty vector.
+If called with a single iterable argument, fills the new vector by iterating over the argument.
+If called with two arguments, creates a vector with the specified initial size and fill value.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Alternatively, you can create a vector using literal syntax:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+</pre>
+<p>
+You can index into a vector to get or set entries:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">vec</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+
+<span class="nx">vec</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="nx">vec</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+</pre>
+<p>
+Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+</p>
+<p>
+Vectors are iterable:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">]</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Vectors have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:append(value)</code>
+</dt>
+<dd>
+<p>
+Appends a value to the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:count()</code>
+</dt>
+<dd>
+<p>
+Returns the number of entries in the vector as an <code>$i64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:get(index)</code>
+</dt>
+<dd>
+<p>
+Returns the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:set(index, value)</code>
+</dt>
+<dd>
+<p>
+Sets the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="hash-maps">
+Hash Maps
+</h3>
+<p>
+A hash map, <code>$map</code>, is an unordered collection of key-value pairs.
+</p>
+<dl>
+<div>
+<dt>
+<code>$map()</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$map</code> object.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Alternatively, you can create a map using literal syntax:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="s">&quot;foo&quot;</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s">&quot;bar&quot;</span> <span class="p">=</span> <span class="mi">456</span><span class="p">,</span>
+<span class="p">};</span>
+</pre>
+<p>
+You can index into a map to get or set entries:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">map</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">map</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+
+<span class="nx">map</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="nx">map</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+</pre>
+<p>
+Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+</p>
+<p>
+Maps have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:contains(key)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the map contains <code>key</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:count()</code>
+</dt>
+<dd>
+<p>
+Returns the number of entries in the map as an <code>$i64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:del(key)</code>
+</dt>
+<dd>
+<p>
+Deletes the entry associated with <code>key</code> if it exists.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:entries()</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over <code>(key, value)</code> tuples.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:get(key)</code>
+</dt>
+<dd>
+<p>
+Returns the value associated with <code>key</code> or <code>$err</code> if <code>key</code> was not found.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:keys()</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the map's keys.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:set(key, value)</code>
+</dt>
+<dd>
+<p>
+Adds a new entry to the map or updates an existing entry.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:values()</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the map's values.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="tuples">
+Tuples
+</h3>
+<p>
+A tuple, <code>$tup</code>, is an immutable array of values.
+</p>
+<dl>
+<div>
+<dt>
+<code>$tup()</code> <br> <code>$tup(arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$tup</code> object.
+The arguments provide the tuple's values.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+You can index into a tuple to get (but not set) entries:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">tup</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">tup</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+</pre>
+<p>
+Indexing is equivalent to using the <code>:get()</code> method as shown.
+</p>
+<p>
+Tuples are iterable:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Tuples have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:count()</code>
+</dt>
+<dd>
+<p>
+Returns the number of entries in the tuple as an <code>$i64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:get(index)</code>
+</dt>
+<dd>
+<p>
+Returns the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="errors">
+Errors
+</h3>
+<p>
+The error type, <code>$err</code>, can be returned by functions to indicate failure.
+</p>
+<dl>
+<div>
+<dt>
+<code>$err()</code> <br> <code>$err(arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$err</code> object.
+The arguments provide the error's values.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Errors are a specialized variant of tuples and support all the same methods and operations.
+</p>
+<p>
+You can use the <code>$is_err(arg)</code> function to check if a value is an <code>$err</code>.
+Alternatively, you can use the error-coalescing operator <code>!!</code> to supply a default value for an operation that might fail:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+</pre>
+<h3 id="ranges">
+Ranges
+</h3>
+<p>
+A range object, <code>$range</code>, is an iterator over a range of integers.
+</p>
+<dl>
+<div>
+<dt>
+<code>$range(stop)</code> <br> <code>$range(start, stop)</code> <br> <code>$range(start, stop, step)</code>
+</dt>
+<dd>
+<p>
+Returns an integer iterator over the half-open interval <code>[start, stop)</code>.
+<code>start</code> defaults to <code>0</code>, <code>step</code> defaults to <code>1</code> if not specified.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Ranges are useful with <code>for</code> loops:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+<span class="o">...</span>     <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+<span class="o">...</span> <span class="p">}</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">4</span>
+</pre>
+<p>
+Note that the interval doesn't include the <code>stop</code> boundary itself.
+</p>
+<h3 id="byte-buffers">
+Byte Buffers
+</h3>
+<p>
+A byte buffer, <code>$buf</code>, is a dynamic array of bytes.
+</p>
+<dl>
+<div>
+<dt>
+<code>$buf()</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$buf</code> object.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+You can index into a buffer to get or set byte values:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+
+<span class="nx">buf</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="nx">buf</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+</pre>
+<p>
+Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+</p>
+<p>
+Buffers have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:count()</code>
+</dt>
+<dd>
+<p>
+Returns the number of bytes in the buffer as an <code>$i64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:get(index)</code>
+</dt>
+<dd>
+<p>
+Returns the byte value at <code>index</code> as an <code>$i64</code> in the range <code>[0, 255]</code>.
+Will panic if <code>index</code> isn't an integer or is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:set(index, byte)</code>
+</dt>
+<dd>
+<p>
+Sets the byte value at <code>index</code> to <code>byte</code> where <code>byte</code> is an <code>$i64</code> in the range <code>[0, 255]</code>.
+Will panic if <code>index</code> isn't an integer or is out of range.
+Will panic if <code>byte</code> isn't an integer or is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to_str()</code>
+</dt>
+<dd>
+<p>
+Converts the content of the buffer into a string, leaving a valid but empty buffer object behind.
+Returns the new string.
+</p>
+<p>
+Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write(arg)</code> <br> <code>:write(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a string to the buffer.
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
+</p>
+<p>
+This method can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write_byte(byte)</code>
+</dt>
+<dd>
+<p>
+Appends <code>byte</code> to the buffer where <code>byte</code> is an <code>$i64</code> in the range <code>[0, 255]</code>.
+Will panic if <code>byte</code> is not an integer or is out of range.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="files">
+Files
+</h3>
+<p>
+A file object, <code>$file</code>, is a wrapper around a readable or writable byte stream.
+</p>
+<dl>
+<div>
+<dt>
+<code>$file(path, mode)</code>
+</dt>
+<dd>
+<p>
+Opens a file using the C function <code>fopen()</code>.
+<code>path</code> and <code>mode</code> should both be strings.
+Panics on failure.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Mode options:
+</p>
+<table>
+<tbody>
+<tr>
+<td>
+<code>&quot;r&quot;</code>
+</td>
+<td>
+Opens a file for reading. The file must exist.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;w&quot;</code>
+</td>
+<td>
+Creates an empty file for writing. If the file already exists, its content will be erased.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;a&quot;</code>
+</td>
+<td>
+Opens a file for appending. The file will be created if it does not exist.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;r+&quot;</code>
+</td>
+<td>
+Opens a file for both reading and writing. The file must exist.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;w+&quot;</code>
+</td>
+<td>
+Creates an empty file for both reading and writing. If the file already exists, its content will be erased.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;a+&quot;</code>
+</td>
+<td>
+Opens a file for both reading and appending. The file will be created if it does not exist.
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Files have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:close()</code>
+</dt>
+<dd>
+<p>
+Closes the file stream.
+You can safely call <code>close()</code> on a file multiple times.
+If the file hasn't been explicitly closed it will be automatically closed by the garbage collector before the file object is destroyed.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:flush()</code>
+</dt>
+<dd>
+<p>
+Flushes the file stream.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read()</code>
+</dt>
+<dd>
+<p>
+Reads the content of the file into a byte buffer, <code>$buf</code>.
+Returns the new buffer.
+Panics if an I/O error occurs or if sufficient memory cannot be allocated for the buffer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_bytes(n)</code>
+</dt>
+<dd>
+<p>
+Attempts to read <code>n</code> bytes from the file into a byte buffer, <code>$buf</code>, where <code>n</code> is an <code>$i64</code>.
+May read less than <code>n</code> bytes if the end of the file is reached first.
+</p>
+<p>
+Returns the new byte buffer or <code>null</code> if the end of the file had already been reached before the method was called.
+</p>
+<p>
+Panics if an I/O read error occurs, if the argument is invalid, or if sufficient memory cannot be allocated for the buffer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_line()</code>
+</dt>
+<dd>
+<p>
+Reads the next line of input from the file and returns it as a string.
+Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
+</p>
+<p>
+Returns the string or <code>null</code> if the end of the file had already been reached before the method was called.
+</p>
+<p>
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write(arg)</code> <br> <code>:write(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a string or buffer to the file.
+</p>
+<p>
+If <code>arg</code> is a <code>$buf</code>, its content will be written to the file directly.
+Otherwise, calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
+</p>
+<p>
+Returns the number of bytes written.
+</p>
+<p>
+Panics if an I/O write error occurs or if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

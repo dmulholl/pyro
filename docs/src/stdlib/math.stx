@@ -1,0 +1,90 @@
+---
+title: <code>$std::math</code>
+meta_title: Pyro Standard Library &mdash; $std::math
+---
+
+This module provides a Pyro interface to the C standard library's mathematical functions.
+
+
+
+### Variables
+
+
+[[ `e` ]]
+
+    Euler's constant as an `$f64`.
+
+
+[[ `inf` ]]
+
+    Floating-point positive infinity as an `$f64`.
+
+
+[[ `nan` ]]
+
+    Floating-point NaN (Not-A-Number) as an `$f64`.
+
+
+[[ `pi` ]]
+
+    Pi as an `$f64`.
+
+
+
+### Functions
+
+
+[[ `abs(x)` ]]
+
+    Returns the absolute value of `x`, where `x` is an `$i64` or an `$f64`. The output type is the same as the input type.
+
+
+[[ `acos(x)` ]]
+
+    Returns the arc cosine of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `asin(x)` ]]
+
+    Returns the arc sine of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `atan(x)` ]]
+
+    Returns the arc tangent of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `cos(x)` ]]
+
+    Returns the cosine of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `ln(x)` ]]
+
+    Returns the natural logarithm (i.e. the base-e logarithm) of `x` as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `log(b, x)` ]]
+
+    Returns the base `b` logarithm of `x` as an `$f64`. Each argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `log2(x)` ]]
+
+    Returns the base-2 logarithm of `x` as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `log10(x)` ]]
+
+    Returns the base-10 logarithm of `x` as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `sin(x)` ]]
+
+    Returns the sine of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `tan(x)` ]]
+
+    Returns the tangent of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+

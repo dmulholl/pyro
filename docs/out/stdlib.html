@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>The Standard Library</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-stdlib node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="tour.html">Language Tour</a><ul>
+<li><a href="tour/classes.html">Classes</a></li>
+<li><a href="tour/modules.html">Modules</a></li>
+<li><a href="tour/operators.html">Operators</a></li>
+<li><a href="tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="globals.html">Globals</a></li>
+<li><a href="stdlib.html">Standard Library</a><ul>
+<li><a href="stdlib/math.html">math</a></li>
+<li><a href="stdlib/prng.html">prng</a></li>
+<li><a href="stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>The Standard Library</h1>
+                
+                <hr>
+            </header>
+            <p>
+The standard library is a collection of modules written in C and built into the Pyro binary.
+</p>
+<p>
+All standard library modules are submodules of the root module <code>$std</code>.
+This root module is imported automatically so you can access the content of its submodules without using an explicit <code>import</code> statement, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">math</span><span class="p">::</span><span class="nx">pi</span><span class="p">;</span>
+</pre>
+<p>
+Alternatively, you can explicitly import the submodule you want to use, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">math</span><span class="p">;</span>
+
+<span class="k">echo</span> <span class="nx">math</span><span class="p">::</span><span class="nx">pi</span><span class="p">;</span>
+</pre>
+<h3 id="standard-library-modules">
+Standard Library Modules
+</h3>
+<ul>
+<li>
+<a href="stdlib/math.html">math</a>
+</li>
+<li>
+<a href="stdlib/prng.html">prng</a>
+</li>
+<li>
+<a href="stdlib/pyro.html">pyro</a>
+</li>
+</ul>
+        </article>
+        
+    </body>
+</html>

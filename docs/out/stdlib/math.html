@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Standard Library &mdash; $std::math</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-stdlib-math node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a><ul>
+<li><a href="../tour/classes.html">Classes</a></li>
+<li><a href="../tour/modules.html">Modules</a></li>
+<li><a href="../tour/operators.html">Operators</a></li>
+<li><a href="../tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a><ul>
+<li><a href="../stdlib/math.html">math</a></li>
+<li><a href="../stdlib/prng.html">prng</a></li>
+<li><a href="../stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1><code>$std::math</code></h1>
+                
+                <hr>
+            </header>
+            <p>
+This module provides a Pyro interface to the C standard library's mathematical functions.
+</p>
+<h3 id="variables">
+Variables
+</h3>
+<dl>
+<div>
+<dt>
+<code>e</code>
+</dt>
+<dd>
+<p>
+Euler's constant as an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>inf</code>
+</dt>
+<dd>
+<p>
+Floating-point positive infinity as an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>nan</code>
+</dt>
+<dd>
+<p>
+Floating-point NaN (Not-A-Number) as an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>pi</code>
+</dt>
+<dd>
+<p>
+Pi as an <code>$f64</code>.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="functions">
+Functions
+</h3>
+<dl>
+<div>
+<dt>
+<code>abs(x)</code>
+</dt>
+<dd>
+<p>
+Returns the absolute value of <code>x</code>, where <code>x</code> is an <code>$i64</code> or an <code>$f64</code>. The output type is the same as the input type.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>acos(x)</code>
+</dt>
+<dd>
+<p>
+Returns the arc cosine of <code>x</code> in radians as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>asin(x)</code>
+</dt>
+<dd>
+<p>
+Returns the arc sine of <code>x</code> in radians as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>atan(x)</code>
+</dt>
+<dd>
+<p>
+Returns the arc tangent of <code>x</code> in radians as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>cos(x)</code>
+</dt>
+<dd>
+<p>
+Returns the cosine of <code>x</code> as an <code>$f64</code>, where <code>x</code> is in radians. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>ln(x)</code>
+</dt>
+<dd>
+<p>
+Returns the natural logarithm (i.e. the base-e logarithm) of <code>x</code> as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>log(b, x)</code>
+</dt>
+<dd>
+<p>
+Returns the base <code>b</code> logarithm of <code>x</code> as an <code>$f64</code>. Each argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>log2(x)</code>
+</dt>
+<dd>
+<p>
+Returns the base-2 logarithm of <code>x</code> as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>log10(x)</code>
+</dt>
+<dd>
+<p>
+Returns the base-10 logarithm of <code>x</code> as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>sin(x)</code>
+</dt>
+<dd>
+<p>
+Returns the sine of <code>x</code> as an <code>$f64</code>, where <code>x</code> is in radians. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>tan(x)</code>
+</dt>
+<dd>
+<p>
+Returns the tangent of <code>x</code> as an <code>$f64</code>, where <code>x</code> is in radians. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

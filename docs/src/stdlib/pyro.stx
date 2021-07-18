@@ -1,0 +1,35 @@
+---
+title: <code>$std::pyro</code>
+meta_title: Pyro Standard Library &mdash; $std::pyro
+---
+
+A utility module for interacting with the Pyro VM.
+
+
+
+### Variables
+
+
+[[ `import_roots` ]]
+
+    A vector of strings containing the root directory paths that Pyro checks when attempting to import a module. Directory paths can end with an optional trailing slash. A single dot `.` indicates the current working directory, a single slash `/` indicates the system root directory.
+
+
+
+### Functions
+
+
+[[ `gc()` ]]
+
+    Runs the garbage collector.
+
+
+[[ `hash(arg)` ]]
+
+    Returns the argument's 64-bit hash value as an `$i64`.
+
+
+[[ `memory()` ]]
+
+    Returns the VM's current memory allocation in bytes as an `$i64`.
+

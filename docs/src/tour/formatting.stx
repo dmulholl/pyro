@@ -1,0 +1,31 @@
+---
+title: String Formatting
+---
+
+Use the `$fmt()` function to interpolate values into a string:
+
+[[ `$fmt(format_string, arg1, arg2, ...)` ]]
+
+    Returns the new string created by interpolating the argument values into the format string.
+
+A format string is a string containing `{}` placeholders:
+
+
+::: code pyro
+    var foo = $fmt("{} and {}", 123, 456);
+    assert foo == "123 and 456";
+
+    var bar == $fmt("{} and {}", "foo", "bar");
+    assert bar == "foo and bar";
+
+An empty placeholder `{}` is equivalent to calling `$str(arg)` on the value and interpolating the resulting string.
+
+A placeholder can contain a format specifier --- if the value has a `:$fmt(specifier)` method defined, this method will be called and the resulting string will be used.
+
+(The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(specifier)` method.)
+
+For integers and floats the format specifier is handled directly by the C runtime so you can use `printf`--style formatting directives:
+
+::: code pyro
+    assert $fmt("{%.2f}", 1.23456) == "1.23";
+    assert $fmt("{%04i}", 99) == "0099";

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Operators</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-tour-operators node-tour node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a><ul>
+<li><a href="../tour/classes.html">Classes</a></li>
+<li><a href="../tour/modules.html">Modules</a></li>
+<li><a href="../tour/operators.html">Operators</a></li>
+<li><a href="../tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a><ul>
+<li><a href="../stdlib/math.html">math</a></li>
+<li><a href="../stdlib/prng.html">prng</a></li>
+<li><a href="../stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Operators</h1>
+                
+                <hr>
+            </header>
+            <p>
+Operator precedence in the table below goes from high at the top to low at the bottom. Operators at the same level have the same precedence.
+</p>
+<table>
+<thead>
+<tr>
+<th>
+Level
+</th>
+<th>
+Operators
+</th>
+<th>
+Associativity
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Call
+</td>
+<td>
+<code>()</code> <code>.</code> <code>:</code> <code>::</code>
+</td>
+<td>
+Left
+</td>
+</tr>
+<tr>
+<td>
+Power
+</td>
+<td>
+<code>^</code>
+</td>
+<td>
+Right
+</td>
+</tr>
+<tr>
+<td>
+Unary
+</td>
+<td>
+<code>!</code> <code>-</code> <code>try</code> <code>not</code>
+</td>
+<td>
+Right
+</td>
+</tr>
+<tr>
+<td>
+Bitwise
+</td>
+<td>
+<code>and</code> <code>or</code> <code>xor</code> <code>&gt;&gt;</code> <code>&lt;&lt;</code>
+</td>
+<td>
+Left
+</td>
+</tr>
+<tr>
+<td>
+Multiplication
+</td>
+<td>
+<code>*</code> <code>/</code> <code>//</code> <code>%</code>
+</td>
+<td>
+Left
+</td>
+</tr>
+<tr>
+<td>
+Addition
+</td>
+<td>
+<code>+</code> <code>-</code>
+</td>
+<td>
+Left
+</td>
+</tr>
+<tr>
+<td>
+Comparison
+</td>
+<td>
+<code>&gt;</code> <code>&gt;=</code> <code>&lt;</code> <code>&lt;=</code>
+</td>
+<td>
+Left
+</td>
+</tr>
+<tr>
+<td>
+Equality
+</td>
+<td>
+<code>==</code> <code>!=</code>
+</td>
+<td>
+Left
+</td>
+</tr>
+<tr>
+<td>
+Logical
+</td>
+<td>
+<code>&amp;&amp;</code> <code>||</code> <code>??</code> <code>!!</code>
+</td>
+<td>
+Left
+</td>
+</tr>
+<tr>
+<td>
+Conditional
+</td>
+<td>
+<code>?|</code>
+</td>
+<td>
+None
+</td>
+</tr>
+<tr>
+<td>
+Assignment
+</td>
+<td>
+<code>=</code> <code>+=</code> <code>-=</code>
+</td>
+<td>
+Right
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Note that conditional expressions using the ternary operator <code>?|</code> can't be nested. (Checkmate, Satan.)
+</p>
+<h3 id="logical-operators">
+Logical Operators
+</h3>
+<p>
+The logical operators <code>||</code> and <code>&amp;&amp;</code> are short-circuiting and evaluate the truthiness of their operands.
+</p>
+<p>
+The value of the logical-OR expression <code>a || b</code> is the value of the first operand if that operand is truthy, otherwise the value of the second operand.
+</p>
+<p>
+This means you can use the <code>||</code> operator to swap in a default value in place of a falsey expression:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The value of the logical-AND expresson <code>a &amp;&amp; b</code> is the value of the first operand if that operand is falsey, otherwise the value of the second operand.
+</p>
+<p>
+This means you can use the <code>&amp;&amp;</code> operator to conditionally chain a sequence of expressions:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">func1</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">func2</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">func3</span><span class="p">();</span>
+</pre>
+<p>
+<code>func2()</code> will only be called if <code>func1()</code> returns a truthy value; <code>func3()</code> will only be called if <code>func2()</code> returns a truthy value. (I can't think of a good reason to use this but I still want to.)
+</p>
+<h3 id="the-conditional-operator">
+The Conditional Operator
+</h3>
+<p>
+The conditional or ternary operator takes three operands. It looks like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">condition</span> <span class="o">?</span> <span class="nx">expr1</span> <span class="o">|</span> <span class="nx">expr2</span><span class="p">;</span>
+</pre>
+<p>
+The value of the expression is <code>expr1</code> if <code>condition</code> evaluates as truthy, otherwise <code>expr2</code>.
+</p>
+        </article>
+        
+    </body>
+</html>

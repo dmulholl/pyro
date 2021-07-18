@@ -1,0 +1,17 @@
+---
+title: FAQ
+---
+
+::: insert toc
+
+
+### What problem does Pyro solve?
+
+It solves the problem that I wanted to build a programming language.
+
+
+### Why is it called Pyro?
+
+I built the first prototype version in Python and it burned through CPU cycles. I think that qualifies as *blazingly fast* for marketing purposes.
+
+

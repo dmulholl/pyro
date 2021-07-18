@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>A Tour of Pyro</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-tour node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="tour.html">Language Tour</a><ul>
+<li><a href="tour/classes.html">Classes</a></li>
+<li><a href="tour/modules.html">Modules</a></li>
+<li><a href="tour/operators.html">Operators</a></li>
+<li><a href="tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="globals.html">Globals</a></li>
+<li><a href="stdlib.html">Standard Library</a><ul>
+<li><a href="stdlib/math.html">math</a></li>
+<li><a href="stdlib/prng.html">prng</a></li>
+<li><a href="stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>A Tour of Pyro</h1>
+                
+                <hr>
+            </header>
+            <p>
+Pyro begs, borrows, and steals from every language I've ever used, but it drags Python down a back alley and leaves it naked, bleeding, and penniless. If you've used Python you'll find many aspects of Pyro's design philosophy familiar.
+</p>
+<ul class="stx-toc">
+<li>
+<a href="#comments">Comments</a>
+</li>
+<li>
+<a href="#variables">Variables</a>
+</li>
+<li>
+<a href="#numbers">Numbers</a>
+</li>
+<li>
+<a href="#strings">Strings</a>
+</li>
+<li>
+<a href="#characters">Characters</a>
+</li>
+<li>
+<a href="#booleans">Booleans</a>
+</li>
+<li>
+<a href="#nulls">Nulls</a>
+</li>
+<li>
+<a href="#equality">Equality</a>
+</li>
+<li>
+<a href="#printing">Printing</a>
+</li>
+<li>
+<a href="#loops">Loops</a>
+</li>
+<li>
+<a href="#conditions">Conditions</a>
+</li>
+<li>
+<a href="#functions">Functions</a>
+</li>
+<li>
+<a href="#classes">Classes</a>
+</li>
+<li>
+<a href="#errors">Errors</a>
+</li>
+<li>
+<a href="#panics">Panics</a>
+</li>
+<li>
+<a href="#modules">Modules</a>
+</li>
+<li>
+<a href="#source-code">Source Code</a>
+</li>
+</ul>
+<h3 id="comments">
+Comments
+</h3>
+<p>
+Comments begin with a <code>#</code> symbol and run to the end of the line:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="c1"># Full line comment.</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span> <span class="c1"># Partial line comment.</span>
+</pre>
+<h3 id="variables">
+Variables
+</h3>
+<p>
+Variables are declared using the <code>var</code> keyword:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+</pre>
+<p>
+Variables must be declared before use. If an initial value isn't specified the variable has the value <code>null</code>.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
+</pre>
+<p>
+You can declare multiple variables in a single statement:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">baz</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span> <span class="nx">bam</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+</pre>
+<p>
+Variables have lexical scope and declarations inside blocks will shadow outer declarations:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+
+<span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
+    <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+</pre>
+<p>
+Identifier names (this includes variables, functions, and classes) should begin with a letter or an underscore and contain only letters, numbers, and underscores.
+</p>
+<p>
+Names beginning with a <code>$</code> symbol are <code>$pecial</code> &mdash; this namespace is reserved by the language for builtin variables and functions.
+</p>
+<h3 id="numbers">
+Numbers
+</h3>
+<p>
+Pyro has two numeric types: <code>$i64</code> for 64-bit signed integers, and <code>$f64</code> for 64-bit <a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754 floats</a>.
+Both behave as you'd expect and support the usual range of numeric operations.
+</p>
+<table>
+<tbody>
+<tr>
+<td>
++
+</td>
+<td>
+Addition. Returns an integer if both operands are integers or a float if either or both are floats.
+</td>
+</tr>
+<tr>
+<td>
+-
+</td>
+<td>
+Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
+</td>
+</tr>
+<tr>
+<td>
+*
+</td>
+<td>
+Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
+</td>
+</tr>
+<tr>
+<td>
+/
+</td>
+<td>
+Floating-point division. Both operands will be converted to floats and the result will be a float.
+</td>
+</tr>
+<tr>
+<td>
+//
+</td>
+<td>
+Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
+</td>
+</tr>
+<tr>
+<td>
+%
+</td>
+<td>
+Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
+</td>
+</tr>
+<tr>
+<td>
+^
+</td>
+<td>
+Power operator. Both operands are converted to floats and the result is a float.
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Integer literals can use binary, octal, decimal, or hex notation:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">a</span> <span class="p">=</span> <span class="mb">0b101</span><span class="p">;</span>      <span class="c1"># a == 5</span>
+<span class="kd">var</span> <span class="nx">b</span> <span class="p">=</span> <span class="mo">0o101</span><span class="p">;</span>      <span class="c1"># b == 65</span>
+<span class="kd">var</span> <span class="nx">c</span> <span class="p">=</span> <span class="mi">101</span><span class="p">;</span>        <span class="c1"># c == 101</span>
+<span class="kd">var</span> <span class="nx">d</span> <span class="p">=</span> <span class="mh">0x101</span><span class="p">;</span>      <span class="c1"># d == 257</span>
+</pre>
+<p>
+Integer literals can use underscores to improve readability:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">a</span> <span class="p">=</span> <span class="mi">123_456</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">b</span> <span class="p">=</span> <span class="mb">0b1010_0101</span><span class="p">;</span>
+</pre>
+<p>
+Float literals require a decimal point and can also use underscores to improve readability:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">pi</span> <span class="p">=</span> <span class="mf">3.141_592_654</span><span class="p">;</span>
+</pre>
+<h3 id="strings">
+Strings
+</h3>
+<p>
+A string, <code>$str</code>, is an immutable array of bytes.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">string</span> <span class="p">=</span> <span class="s">&quot;hello pyro&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding &mdash; a string can contain any sequence of byte values including null bytes or invalid UTF-8.
+</p>
+<p>
+You can find a full description of the string type <a href="builtins.html#strings">here</a>.
+</p>
+<h3 id="characters">
+Characters
+</h3>
+<p>
+A character, <code>$char</code>, is an unsigned 32-bit integer representing a Unicode code point.
+</p>
+<p>
+Character literals use single quotes:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">c3</span> <span class="p">=</span> <span class="sc">&#39;🔥&#39;</span><span class="p">;</span>
+</pre>
+<p>
+You can find a full description of the character type <a href="builtins.html#characters">here</a>.
+</p>
+<h3 id="booleans">
+Booleans
+</h3>
+<p>
+A boolean value is either <code>true</code> or <code>false</code>.
+You can convert any value to a boolean using the <code>$bool(arg)</code> function.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$bool</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$bool</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span> <span class="o">==</span> <span class="kc">false</span><span class="p">;</span>
+</pre>
+<p>
+Values which convert to <code>true</code> are <b>truthy</b>, values which convert to <code>false</code> are <b>falsey</b>.
+</p>
+<p>
+The values <code>false</code> and <code>null</code> are falsey, as is any <code>$err</code> value, the integer value <code>0</code>, and the floating-point value <code>0.0</code>. All other values are truthy.
+</p>
+<h3 id="nulls">
+Nulls
+</h3>
+<p>
+Uninitialized variables have the default value <code>null</code>.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
+</pre>
+<p>
+You can use the null-coalescing operator <code>??</code> to supply a default value in place of a <code>null</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+</pre>
+<h3 id="equality">
+Equality
+</h3>
+<p>
+Pyro has a strict concept of equality &mdash; two objects are equal if they have the same type and the same value.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>        <span class="c1"># True.</span>
+<span class="k">assert</span> <span class="mf">1.0</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">;</span>    <span class="c1"># True.</span>
+<span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">;</span>      <span class="c1"># False. $i64 != $f64.</span>
+</pre>
+<p>
+Note that characters don't compare equal to their integer value without conversion:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="sc">&#39;a&#39;</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>          <span class="c1"># True.</span>
+<span class="k">assert</span> <span class="sc">&#39;a&#39;</span> <span class="o">==</span> <span class="mi">61</span><span class="p">;</span>           <span class="c1"># False. $char != $i64.</span>
+<span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">61</span><span class="p">;</span>     <span class="c1"># True.</span>
+<span class="k">assert</span> <span class="sc">&#39;a&#39;</span> <span class="o">==</span> <span class="nx">$char</span><span class="p">(</span><span class="mi">61</span><span class="p">);</span>    <span class="c1"># True.</span>
+</pre>
+<p>
+Note that a <code>$map</code> can have three distinct keys with the values <code>61</code>, <code>61.0</code>, and <code>&#x27;a&#x27;</code>, even though the values are numerically equivalent. (Pyro's strict concept of equality is partly designed to enable fast map lookups without needing to consider all possible conversions.)
+</p>
+<p>
+Strings are equal if they have the same content:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
+</pre>
+<p>
+Tuples are equal if they have the same length and their elements are equal:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
+</pre>
+<p>
+Other objects are equal only if they are the same object:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{}</span>
+
+<span class="kd">var</span> <span class="nx">foo1</span> <span class="p">=</span> <span class="nx">Foo</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">foo2</span> <span class="p">=</span> <span class="nx">Foo</span><span class="p">();</span>
+
+<span class="k">assert</span> <span class="nx">foo1</span> <span class="o">==</span> <span class="nx">foo1</span><span class="p">;</span>    <span class="c1"># True.</span>
+<span class="k">assert</span> <span class="nx">foo1</span> <span class="o">==</span> <span class="nx">foo2</span><span class="p">;</span>    <span class="c1"># False.</span>
+</pre>
+<h3 id="printing">
+Printing
+</h3>
+<p>
+The <code>echo</code> statement prints to the standard output stream. It's useful for simple printing and debugging.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="s">&quot;hello pyro&quot;</span><span class="p">;</span>
+</pre>
+<p>
+You can <code>echo</code> any value &mdash; <code>echo</code> stringifies its argument before printing it.
+(It's equivalent to calling <code>$str(arg)</code> on the argument first and printing the result.)
+</p>
+<p>
+Pyro also has a family of <code>$print()</code> functions with support for format strings:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">$print</span><span class="p">(</span><span class="s">&quot;hello pyro&quot;</span><span class="p">);</span>               <span class="c1"># &quot;hello pyro&quot;</span>
+<span class="nx">$print</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">);</span>  <span class="c1"># &quot;foo and bar&quot;</span>
+<span class="nx">$print</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>      <span class="c1"># &quot;123 and 456&quot;</span>
+</pre>
+<p>
+See the <a href="tour/formatting.html">string formatting</a> documentation for details.
+</p>
+<h3 id="loops">
+Loops
+</h3>
+<p>
+Pyro has support for several different looping constructs.
+The simplest is the infinite loop:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">loop</span> <span class="p">{</span>
+    <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="nx">i</span> <span class="o">==</span> <span class="mi">5</span> <span class="p">{</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">i</span> <span class="o">==</span> <span class="mi">5</span><span class="p">;</span>
+</pre>
+<p>
+The <code>loop</code> statement also supports C-style loops with an initializer, a condition, and an incrementing expression:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">loop</span> <span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+The <code>for</code> keyword in Pyro is reserved for looping over iterators:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">vec</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Finally, Pyro supports <code>while</code> loops:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">while</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span> <span class="p">{</span>
+    <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">i</span> <span class="o">==</span> <span class="mi">10</span><span class="p">;</span>
+</pre>
+<p>
+All the looping constructs support <code>break</code> and <code>continue</code>.
+</p>
+<h3 id="conditions">
+Conditions
+</h3>
+<p>
+Conditional statements in Pyro look like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">if</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;we have lots of money&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Conditional statements evaluate the truthiness of their conditions.
+As you'd expect, they support optional <code>else if</code> and <code>else</code> clauses:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">if</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;we have lots of money&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">10</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;we have some money&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;we&#39;re poor&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Pyro also has support for conditional expressions using the ternary operator <code>?|</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">status</span> <span class="p">=</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="o">?</span> <span class="s">&quot;rich&quot;</span> <span class="o">|</span> <span class="s">&quot;poor&quot;</span><span class="p">;</span>
+</pre>
+<h3 id="functions">
+Functions
+</h3>
+<p>
+Function definitions look like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Inner functions declared inside outer functions can capture the outer function's local variables, including its parameters:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">make_adder</span><span class="p">(</span><span class="nx">increment</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">def</span> <span class="nx">adder</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">num</span> <span class="o">+</span> <span class="nx">increment</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">adder</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">adds_one</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nx">adds_one</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>  <span class="c1"># 1</span>
+<span class="nx">adds_one</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>  <span class="c1"># 2</span>
+
+<span class="kd">var</span> <span class="nx">adds_two</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="nx">adds_two</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>  <span class="c1"># 2;</span>
+<span class="nx">adds_two</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>  <span class="c1"># 3;</span>
+</pre>
+<p>
+Functions are first-class citizens in Pyro, meaning you can pass them around just like any other value.
+You can also declare and use functions anonymously:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">add</span> <span class="p">=</span> <span class="kd">def</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>  <span class="c1"># 3</span>
+<span class="nx">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>  <span class="c1"># 7</span>
+</pre>
+<h3 id="classes">
+Classes
+</h3>
+<p>
+Class definitions look like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">occupation</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s">&quot; is a &quot;</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">occupation</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+Create an instance of a class by calling its name:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="o">&gt;&gt;&gt;</span> <span class="kd">var</span> <span class="nx">dave</span> <span class="p">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
+</pre>
+<p>
+Arguments are passed on to the optional initializer method, <code>$init()</code>.
+</p>
+<p>
+Call a method on an instance using the method access operator, <code>:</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="o">&gt;&gt;&gt;</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
+<span class="nx">Dave</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">programmer</span><span class="p">.</span>
+</pre>
+<p>
+Get or set an instance's fields using the field access operator, <code>.</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="o">&gt;&gt;&gt;</span> <span class="nx">dave</span><span class="p">.</span><span class="nx">occupation</span> <span class="p">=</span> <span class="s">&quot;pointy headed manager&quot;</span><span class="p">;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
+<span class="nx">Dave</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">pointy</span> <span class="nx">headed</span> <span class="nx">manager</span><span class="p">.</span>
+</pre>
+<p>
+Boo Dave.
+</p>
+<p>
+Classes are complex enough to deserve a page of their own which you can find <a href="tour/classes.html">here</a>.
+</p>
+<h3 id="errors">
+Errors
+</h3>
+<p>
+Pyro has an error type, <code>$err</code>, which a function can return to indicate failure.
+An <code>$err</code> is a specialized kind of tuple under the hood so it supports all the same methods and operators as a <code>$tup</code>.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+</pre>
+<p>
+You can check if a value is an <code>$err</code> using the <code>$is_err(arg)</code> function.
+Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator <code>!!</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+</pre>
+<h3 id="panics">
+Panics
+</h3>
+<p>
+A panic in Pyro is similar to an exception in other languages &mdash; it indicates that the program has attempted to do something impossible like divide by zero or read from a file that doesn't exist.
+</p>
+<p>
+An unhandled panic will result in the program exiting with an error message and a non-zero status code.
+</p>
+<p>
+You can catch a panic using a <code>try</code> expression:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
+</pre>
+<p>
+A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>$err</code> if it panics.
+</p>
+<p>
+<code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">1</span><span class="p">);</span>  <span class="c1"># 1</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">);</span>  <span class="c1"># $err</span>
+</pre>
+<p>
+Note that you can use the error-coalescing operator <code>!!</code> to provide a default value for a panicking expression:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 1</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0</span>
+</pre>
+<h3 id="modules">
+Modules
+</h3>
+<p>
+A module is a Pyro file loaded as a library. Modules are loaded using the <code>import</code> keyword.
+</p>
+<p>
+Assume we have a file called <code>math.pyro</code> containing math functions:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</pre>
+<p>
+Modules can contain submodules. Assume we have a directory called <code>math</code> containing a file called <code>trig.pyro</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre>
+<p>
+Modules are complex enough to deserve a page of their own which you can find <a href="tour/modules.html">here</a>.
+</p>
+<h3 id="source-code">
+Source Code
+</h3>
+<p>
+Source code outside of string literals is assumed to be UTF-8 encoded.
+String literals can contain arbitrary byte sequences including null bytes and invalid UTF-8.
+</p>
+        </article>
+        
+    </body>
+</html>

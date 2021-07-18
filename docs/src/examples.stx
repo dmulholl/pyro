@@ -1,0 +1,57 @@
+---
+title: Examples
+---
+
+::: insert toc
+
+
+### Fibonacci numbers
+
+This function returns the n-th Fibonacci number:
+
+::: code pyro
+    def fib(n) {
+        if n < 2 {
+            return n;
+        }
+        return fib(n - 1) + fib(n - 2);
+    }
+
+The recursive algorithm is horribly inefficient but it makes for a nice example.
+
+::: code pyro
+    >>> for i in $range(6) {
+    ...     echo fib(i);
+    ... }
+    0
+    1
+    1
+    2
+    3
+    5
+
+
+### Reading from standard input
+
+Read a single line from standard input:
+
+::: code pyro
+    $print("enter your name: ");
+    var name = $stdin:read_line();
+    echo "hello " + name;
+
+Read in a loop from standard input:
+
+::: code pyro
+    loop {
+        $print(">>> ");
+        var input = $stdin:read_line();
+
+        if input == null || input == "exit" {
+            break;
+        }
+
+        echo "input was: " + input;
+    }
+
+

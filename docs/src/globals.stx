@@ -1,0 +1,275 @@
+---
+title: Globals
+---
+
+Global variables and functions are available in all modules --- you don't need to import anything to use them.
+All globals live in the `$pecial` namespace so they won't interfere with your own code.
+
+::: insert toc
+
+
+### Global Variables
+
+
+[[ `$args` ]]
+
+    A tuple of strings containing the program's command line arguments.
+
+
+
+[[ `$stderr` ]]
+
+    A `$file` object pointing to the standard error stream.
+
+
+
+[[ `$stdin` ]]
+
+    A `$file` object pointing to the standard input stream.
+
+
+
+[[ `$stdout` ]]
+
+    A `$file` object pointing to the standard output stream.
+
+
+
+### Global Functions
+
+
+[[ `$bool(arg)` ]]
+
+    Converts `arg` to a `$bool`.
+
+
+
+[[ `$buf()` ]]
+
+    Creates a new `$buf` object.
+
+
+
+[[ `$char(arg)` ]]
+
+    Converts `arg` to a `$char`. Panics if the argument is not convertible.
+
+
+
+[[ `$clock()` ]]
+
+    Returns the number of seconds since the program was launched as an `$f64`.
+    This function is a wrapper around the C standard library's `clock()` function.
+
+
+
+[[ `$eprint(arg)` <br> `$eprint(format_string, arg1, arg2, ...)` ]]
+
+    Prints to the error stream.
+    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+
+    This function can panic if an error occurs while formatting the output string.
+
+
+
+[[ `$eprintln()` <br> `$eprintln(arg)` <br> `$eprintln(format_string, arg1, arg2, ...)` ]]
+
+    Like `$eprint()` but adds a terminating newline.
+
+
+
+[[ `$err()` <br> `$err(arg1, arg2, ...)` ]]
+
+    Creates a new `$err` object.
+    The arguments provide the error's values.
+
+
+
+[[ `$exit(code)` ]]
+
+    Instructs the program to exit with the specified exit code, where `code` is an integer.
+
+
+
+[[ `$f64(arg)` ]]
+
+    Converts `arg` to an `$f64`. Panics if the argument is not convertible.
+
+
+
+[[ `$file(path, mode)` ]]
+
+    Opens a file using the C function `fopen()`.
+    `path` and `mode` should both be strings.
+    Panics on failure.
+
+
+
+[[ `$fmt(format_string, arg1, arg2, ...)` ]]
+
+    Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/tour/formatting//) documentation for details. This function can panic if an error occurs while formatting the output string.
+
+
+
+[[ `$i64(arg)` ]]
+
+    Converts `arg` to an `$i64`. Panics if the argument is not convertible.
+
+
+
+[[ `$is_bool(arg)` ]]
+
+    Returns `true` if the argument is a `$bool`, otherwise `false`.
+
+
+
+[[ `$is_buf(arg)` ]]
+
+    Returns `true` if the argument is a `$buf`, otherwise `false`.
+
+
+
+[[ `$is_char(arg)` ]]
+
+    Returns `true` if the argument is a `$char`, otherwise `false`.
+
+
+
+[[ `$is_err(arg)` ]]
+
+    Returns `true` if the argument is an `$err`, otherwise `false`.
+
+
+
+[[ `$is_f64(arg)` ]]
+
+    Returns `true` if the argument is an `$f64`, otherwise `false`.
+
+
+
+[[ `$is_file(arg)` ]]
+
+    Returns `true` if the argument is a `$file`, otherwise `false`.
+
+
+
+[[ `$is_i64(arg)` ]]
+
+    Returns `true` if the argument is an `$i64`, otherwise `false`.
+
+
+
+[[ `$is_inf(arg)` ]]
+
+    Returns `true` if the argument is floating-point infinity (positive or negative).
+
+
+
+[[ `$is_map(arg)` ]]
+
+    Returns `true` if the argument is a `$map`, otherwise `false`.
+
+
+
+[[ `$is_mod(arg)` ]]
+
+    Returns `true` if the argument is a module, otherwise `false`.
+
+
+
+[[ `$is_nan(arg)` ]]
+
+    Returns `true` if the argument is the floating-point value `NaN`.
+
+
+
+[[ `$is_range(arg)` ]]
+
+    Returns `true` if the argument is a `$range`, otherwise `false`.
+
+
+
+[[ `$is_str(arg)` ]]
+
+    Returns `true` if the argument is a `$str`, otherwise `false`.
+
+
+
+[[ `$is_tup(arg)` ]]
+
+    Returns `true` if the argument is a `$tup`, otherwise `false`.
+
+
+
+[[ `$is_vec(arg)` ]]
+
+    Returns `true` if the argument is a `$vec`, otherwise `false`.
+
+
+
+[[ `$map()` ]]
+
+    Creates a new `$map` object.
+
+
+
+[[ `$panic(message)` ]]
+
+    Panics with the specified error message.
+    `message` should be a string.
+
+
+
+[[ `$print(arg)` <br> `$print(format_string, arg1, arg2, ...)` ]]
+
+    Prints to the output stream.
+    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+
+    This function can panic if an error occurs while formatting the output string.
+
+
+
+[[ `$println()` <br> `$println(arg)` <br> `$println(format_string, arg1, arg2, ...)` ]]
+
+    Like `$print()` but adds a terminating newline.
+
+
+
+[[ `$range(stop)` <br> `$range(start, stop)` <br> `$range(start, stop, step)` ]]
+
+    Returns an integer iterator over the half-open interval `[start, stop)`.
+    `start` defaults to `0`, `step` defaults to `1` if not specified.
+
+
+
+[[ `$str(arg)` ]]
+
+    Stringifies the argument, i.e. returns its default string representation.
+    If the argument has a `:str()` method, the output of this method will be returned.
+    This function can panic if an error occurs while formatting the output string.
+
+
+
+[[ `$tup()` <br> `$tup(arg1, arg2, ...)` ]]
+
+    Creates a new `$tup` object.
+    The arguments provide the tuple's values.
+
+
+
+[[ `$vec()` <br> `$vec(iterable)` <br> `$vec(size, fill_value)` ]]
+
+    Creates a new `$vec` object.
+    If called with zero arguments, creates an empty vector.
+    If called with a single iterable argument, fills the new vector by iterating over the argument.
+    If called with two arguments, creates a vector with the specified initial size and fill value.
+
+
+
+
+
+
+
+

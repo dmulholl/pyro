@@ -1,0 +1,64 @@
+---
+title: Operators
+meta_title: Pyro Operators
+---
+
+Operator precedence in the table below goes from high at the top to low at the bottom. Operators at the same level have the same precedence.
+
+
+::: table
+
+    Level            |   Operators                      |   Associativity
+    ---------------------------------------------------------------------
+
+    Call             |   `()` `.` `:` `::`              |   Left
+    Power            |   `^`                            |   Right
+    Unary            |   `!` `-` `try` `not`            |   Right
+    Bitwise          |   `and` `or` `xor` `>>` `<<`     |   Left
+    Multiplication   |   `*` `/` `//` `%`               |   Left
+    Addition         |   `+` `-`                        |   Left
+    Comparison       |   `>` `>=` `<` `<=`              |   Left
+    Equality         |   `==` `!=`                      |   Left
+    Logical          |   `&&` `\|\|` `??` `!!`          |   Left
+    Conditional      |   `?\|`                          |   None
+    Assignment       |   `=` `+=` `-=`                  |   Right
+
+
+Note that conditional expressions using the ternary operator `?|` can't be nested. (Checkmate, Satan.)
+
+
+
+### Logical Operators
+
+The logical operators `||` and `&&` are short-circuiting and evaluate the truthiness of their operands.
+
+The value of the logical-OR expression `a || b` is the value of the first operand if that operand is truthy, otherwise the value of the second operand.
+
+This means you can use the `||` operator to swap in a default value in place of a falsey expression:
+
+::: code pyro
+    var foo = maybe_falsey() || "default";
+
+The value of the logical-AND expresson `a && b` is the value of the first operand if that operand is falsey, otherwise the value of the second operand.
+
+This means you can use the `&&` operator to conditionally chain a sequence of expressions:
+
+::: code pyro
+    func1() && func2() && func3();
+
+`func2()` will only be called if `func1()` returns a truthy value; `func3()` will only be called if `func2()` returns a truthy value. (I can't think of a good reason to use this but I still want to.)
+
+
+
+### The Conditional Operator
+
+The conditional or ternary operator takes three operands. It looks like this:
+
+::: code pyro
+    var foo = condition ? expr1 | expr2;
+
+The value of the expression is `expr1` if `condition` evaluates as truthy, otherwise `expr2`.
+
+
+
+

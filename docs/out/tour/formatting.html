@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>String Formatting</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-tour-formatting node-tour node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a><ul>
+<li><a href="../tour/classes.html">Classes</a></li>
+<li><a href="../tour/modules.html">Modules</a></li>
+<li><a href="../tour/operators.html">Operators</a></li>
+<li><a href="../tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a><ul>
+<li><a href="../stdlib/math.html">math</a></li>
+<li><a href="../stdlib/prng.html">prng</a></li>
+<li><a href="../stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>String Formatting</h1>
+                
+                <hr>
+            </header>
+            <p>
+Use the <code>$fmt()</code> function to interpolate values into a string:
+</p>
+<dl>
+<div>
+<dt>
+<code>$fmt(format_string, arg1, arg2, ...)</code>
+</dt>
+<dd>
+<p>
+Returns the new string created by interpolating the argument values into the format string.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+A format string is a string containing <code>{}</code> placeholders:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="s">&quot;123 and 456&quot;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">==</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="s">&quot;foo and bar&quot;</span><span class="p">;</span>
+</pre>
+<p>
+An empty placeholder <code>{}</code> is equivalent to calling <code>$str(arg)</code> on the value and interpolating the resulting string.
+</p>
+<p>
+A placeholder can contain a format specifier &mdash; if the value has a <code>:$fmt(specifier)</code> method defined, this method will be called and the resulting string will be used.
+</p>
+<p>
+(The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(specifier)</code> method.)
+</p>
+<p>
+For integers and floats the format specifier is handled directly by the C runtime so you can use <code>printf</code>&ndash;style formatting directives:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{%.2f}&quot;</span><span class="p">,</span> <span class="mf">1.23456</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;1.23&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{%04i}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;0099&quot;</span><span class="p">;</span>
+</pre>
+        </article>
+        
+    </body>
+</html>

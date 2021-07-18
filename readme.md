@@ -1,16 +1,14 @@
 # Pyro
 
+[1]: http://www.dmulholl.com/docs/pyro/dev/
+
 Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
-(This is an experimental project I'm working on for my own edutainment - it's at an early stage and isn't suitable yet for any kind of real world use.)
 
-Only POSIX builds are currently supported (Mac, Linux, BSD, etc.). To build the interpreter run:
+    def fib(n) {
+        if n < 2 {
+            return n;
+        }
+        return fib(n - 1) + fib(n - 2);
+    }
 
-    $ make release
-
-To run a script, supply its filename to the interpreter:
-
-    $ pyro script.pyro
-
-The `test` command can be used to run the test suite:
-
-    $ pyro test tests/*.pyro
+See the [documentation][1] for details.

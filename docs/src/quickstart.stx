@@ -1,0 +1,61 @@
+---
+title: Quickstart Tutorial
+meta_title: Pyro Quickstart Tutorial
+---
+
+You'll need a C compiler to build Pyro from source ---
+note that only POSIX builds are currently supported (Mac, Linux, BSD, etc.).
+
+First, download the repository from Github:
+
+::: code
+    $ git clone https://github.com/dmulholl/pyro
+
+`cd` into the `pyro` directory and run `make`:
+
+::: code
+    $ cd pyro
+    $ make
+
+The binary will be created as `out/pyro`.
+You can run the binary directly from the `out` directory or place it somewhere on your system's `$PATH`.
+
+Try running the binary with the `--help` flag to view the command line help:
+
+::: code
+    $ pyro --help
+
+    Usage: pyro [file]
+
+      The Pyro programming language.
+
+    Arguments:
+      [file]             Script to run. Will open the REPL
+                         if omitted.
+
+    Flags:
+      -h, --help         Print this help text and exit.
+      -v, --version      Print the version number and exit.
+
+    Commands:
+      test               Run unit tests.
+      time               Run timing functions.
+
+    Command Help:
+      help <command>     Print the command's help text.
+
+
+Let's make a simple test script.
+Create a file called `hello.pyro` and add the following line:
+
+::: code pyro
+    echo "hello world";
+
+Run the script by supplying its filename to the binary:
+
+::: code
+    $ pyro hello.pyro
+    hello world
+
+That's it, you can officially add Pyro to the list of languages on your CV.
+

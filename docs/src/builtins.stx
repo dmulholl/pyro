@@ -1,0 +1,485 @@
+---
+title: Builtin Types
+---
+
+::: insert toc
+
+
+### Strings
+
+A string, `$str`, is an immutable array of bytes.
+
+[[ `$str(arg)` ]]
+
+    Stringifies the argument, i.e. returns its default string representation.
+    If the argument has a `:str()` method, the output of this method will be returned.
+    This function can panic if an error occurs while formatting the output string.
+
+Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding --- a string can contain any sequence of byte values including null bytes or invalid UTF-8.
+
+String literals come in two flavours --- regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
+
+Regular string literals use double quotes:
+
+::: code pyro
+    var foo = "a string";
+
+    var bar = "a string
+    with multiple
+    lines";
+
+Regular string literals process all the usual backslashed escapes:
+
+::: table
+    `\\\\` | backslash
+    `\\0` | null byte
+    `\\"` | double quote
+    `\\'` | single quote
+    `\\b` | backspace
+    `\\n` | newline
+    `\\r` | carriage return
+    `\\t` | tab
+    `\\x##` | 8-bit hex-encoded byte value
+    `\\u####` | 16-bit hex-encoded unicode code point (output as UTF-8)
+    `\\U########` | 32-bit hex-encoded unicode code point (output as UTF-8)
+
+Raw string literals use backticks:
+
+::: code pyro
+    var foo = `a raw string`;
+
+    var bar = `a raw string
+    with multiple
+    lines`;
+
+Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
+
+Strings can be concatenated using the `+` operator:
+
+::: code pyro
+    var foo = "abc" + "def";
+    assert foo == "abcdef";
+
+Strings have the following methods:
+
+[[ `:byte(index)` ]]
+
+    Returns the byte value at `index` as an `$i64` in the range `[0, 255]`.
+    Will panic if `index` isn't an integer or is out of range.
+
+[[ `:byte_count()` ]]
+
+    Returns the number of bytes in the string as an `$i64`.
+
+[[ `:bytes()` ]]
+
+    Returns an iterator over the string's bytes as `$i64` values.
+
+[[ `:char(index)` ]]
+
+    Returns the `$char` at `index`, where `index` is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
+    Will panic if `index` isn't an integer or is out of range.
+
+    (This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+    Note that it will panic if it encounters invalid UTF-8 along the way.)
+
+[[ `:char_count()` ]]
+
+    Returns the number of UTF-8 encoded Unicode code points in the string as an `$i64`.
+
+    (This is a potentially expensive method as it needs to traverse the string.
+    Note that it will panic if it encounters invalid UTF-8.)
+
+[[ `:chars()` ]]
+
+    Returns an iterator over the string's `$char` values, i.e. UTF-8 encoded Unicode code points.
+
+[[ `:is_ascii()` ]]
+
+    Returns `true` if the string is empty or contains only byte values in the range `[0, 127]`.
+    (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:is_utf8()` ]]
+
+    Returns `true` if the string is empty or contains only valid UTF-8.
+    (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:to_ascii_lower()` ]]
+
+    Returns a new string with all ASCII uppercase characters converted to lowercase.
+
+[[ `:to_ascii_upper()` ]]
+
+    Returns a new string with all ASCII lowercase characters converted to uppercase.
+
+
+### Characters
+
+A character, `$char`, is an unsigned 32-bit integer representing a Unicode code point.
+
+
+[[ `$char(arg)` ]]
+
+    Converts `arg` to a `$char`. Panics if the argument is not convertible.
+
+Character literals use single quotes:
+
+::: code pyro
+    var c1 = 'a';
+    var c2 = '€';
+    var c3 = '🔥';
+
+A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point.
+
+::: code pyro
+    var c1 = '\x61';    # c1 == 'a'
+    var c2 = '\u20AC';  # c2 == '€'
+
+Character literals support all the same backslashed escape sequences as strings.
+
+You can convert a character to a string using the `$str()` function or to an integer using the `$i64()` function:
+
+::: code pyro
+    assert $str('a') == "a";
+    assert $i64('a') == 97;
+
+You can covert an integer to a character using the `$char()` function:
+
+::: code pyro
+    assert $char(97) == 'a';
+
+This function will panic if the integer is out of range for the `$char` type.
+
+
+
+
+### Vectors
+
+A vector, `$vec`, is a dynamic array of values.
+
+[[ `$vec()` <br> `$vec(iterable)` <br> `$vec(size, fill_value)` ]]
+
+    Creates a new `$vec` object.
+    If called with zero arguments, creates an empty vector.
+    If called with a single iterable argument, fills the new vector by iterating over the argument.
+    If called with two arguments, creates a vector with the specified initial size and fill value.
+
+Alternatively, you can create a vector using literal syntax:
+
+::: code pyro
+    var vec = ["foo", "bar", "baz"];
+
+You can index into a vector to get or set entries:
+
+::: code pyro
+    var value = vec[index];
+    var value = vec:get(index);
+
+    vec[index] = value;
+    vec:set(index, value);
+
+Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+
+Vectors are iterable:
+
+::: code pyro
+    for item in [123, 456, 789] {
+        echo item;
+    }
+
+Vectors have the following methods:
+
+[[ `:append(value)` ]]
+
+    Appends a value to the vector.
+
+[[ `:count()` ]]
+
+    Returns the number of entries in the vector as an `$i64`.
+
+[[ `:get(index)` ]]
+
+    Returns the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+
+[[ `:set(index, value)` ]]
+
+    Sets the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+
+
+
+
+### Hash Maps
+
+A hash map, `$map`, is an unordered collection of key-value pairs.
+
+[[ `$map()` ]]
+
+    Creates a new `$map` object.
+
+Alternatively, you can create a map using literal syntax:
+
+::: code pyro
+    var map = {
+        "foo" = 123,
+        "bar" = 456,
+    };
+
+You can index into a map to get or set entries:
+
+::: code pyro
+    var value = map[key];
+    var value = map:get(key);
+
+    map[key] = value;
+    map:set(key, value);
+
+Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+
+Maps have the following methods:
+
+[[ `:contains(key)` ]]
+
+    Returns `true` if the map contains `key`, otherwise `false`.
+
+[[ `:count()` ]]
+
+    Returns the number of entries in the map as an `$i64`.
+
+[[ `:del(key)` ]]
+
+    Deletes the entry associated with `key` if it exists.
+
+[[ `:entries()` ]]
+
+    Returns an iterator over `(key, value)` tuples.
+
+[[ `:get(key)` ]]
+
+    Returns the value associated with `key` or `$err` if `key` was not found.
+
+[[ `:keys()` ]]
+
+    Returns an iterator over the map's keys.
+
+[[ `:set(key, value)` ]]
+
+    Adds a new entry to the map or updates an existing entry.
+
+[[ `:values()` ]]
+
+    Returns an iterator over the map's values.
+
+
+
+
+
+### Tuples
+
+A tuple, `$tup`, is an immutable array of values.
+
+[[ `$tup()` <br> `$tup(arg1, arg2, ...)` ]]
+
+    Creates a new `$tup` object.
+    The arguments provide the tuple's values.
+
+You can index into a tuple to get (but not set) entries:
+
+::: code pyro
+    var value = tup[index];
+    var value = tup:get(index);
+
+Indexing is equivalent to using the `:get()` method as shown.
+
+Tuples are iterable:
+
+::: code pyro
+    for item in $tup(123, 456, 789) {
+        echo item;
+    }
+
+
+
+Tuples have the following methods:
+
+[[ `:count()` ]]
+
+    Returns the number of entries in the tuple as an `$i64`.
+
+[[ `:get(index)` ]]
+
+    Returns the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+
+
+
+### Errors
+
+The error type, `$err`, can be returned by functions to indicate failure.
+
+[[ `$err()` <br> `$err(arg1, arg2, ...)` ]]
+
+    Creates a new `$err` object.
+    The arguments provide the error's values.
+
+Errors are a specialized variant of tuples and support all the same methods and operations.
+
+You can use the `$is_err(arg)` function to check if a value is an `$err`.
+Alternatively, you can use the error-coalescing operator `!!` to supply a default value for an operation that might fail:
+
+::: code pyro
+    var foo = might_fail() !! "default";
+
+
+
+
+
+### Ranges
+
+A range object, `$range`, is an iterator over a range of integers.
+
+[[ `$range(stop)` <br> `$range(start, stop)` <br> `$range(start, stop, step)` ]]
+
+    Returns an integer iterator over the half-open interval `[start, stop)`.
+    `start` defaults to `0`, `step` defaults to `1` if not specified.
+
+Ranges are useful with `for` loops:
+
+::: code pyro
+    >>> for i in $range(5) {
+    ...     echo i;
+    ... }
+    0
+    1
+    2
+    3
+    4
+
+Note that the interval doesn't include the `stop` boundary itself.
+
+
+
+### Byte Buffers
+
+A byte buffer, `$buf`, is a dynamic array of bytes.
+
+[[ `$buf()` ]]
+
+    Creates a new `$buf` object.
+
+You can index into a buffer to get or set byte values:
+
+::: code pyro
+    var value = buf[index];
+    var value = buf:get(index);
+
+    buf[index] = value;
+    buf:set(index, value);
+
+Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+
+Buffers have the following methods:
+
+[[ `:count()` ]]
+
+    Returns the number of bytes in the buffer as an `$i64`.
+
+[[ `:get(index)` ]]
+
+    Returns the byte value at `index` as an `$i64` in the range `[0, 255]`.
+    Will panic if `index` isn't an integer or is out of range.
+
+[[ `:set(index, byte)` ]]
+
+    Sets the byte value at `index` to `byte` where `byte` is an `$i64` in the range `[0, 255]`.
+    Will panic if `index` isn't an integer or is out of range.
+    Will panic if `byte` isn't an integer or is out of range.
+
+[[ `:to_str()` ]]
+
+    Converts the content of the buffer into a string, leaving a valid but empty buffer object behind.
+    Returns the new string.
+
+    Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts.
+
+[[ `:write(arg)` <br> `:write(format_string, arg1, arg2, ...)` ]]
+
+    Writes a string to the buffer.
+    Calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+
+    This method can panic if an error occurs while formatting the output string.
+
+[[ `:write_byte(byte)` ]]
+
+    Appends `byte` to the buffer where `byte` is an `$i64` in the range `[0, 255]`.
+    Will panic if `byte` is not an integer or is out of range.
+
+
+
+### Files
+
+A file object, `$file`, is a wrapper around a readable or writable byte stream.
+
+[[ `$file(path, mode)` ]]
+
+    Opens a file using the C function `fopen()`.
+    `path` and `mode` should both be strings.
+    Panics on failure.
+
+Mode options:
+
+::: table
+
+    `"r"`   | Opens a file for reading. The file must exist.
+    `"w"`   | Creates an empty file for writing. If the file already exists, its content will be erased.
+    `"a"`   | Opens a file for appending. The file will be created if it does not exist.
+    `"r+"`  | Opens a file for both reading and writing. The file must exist.
+    `"w+"`  | Creates an empty file for both reading and writing. If the file already exists, its content will be erased.
+    `"a+"`  | Opens a file for both reading and appending. The file will be created if it does not exist.
+
+Files have the following methods:
+
+[[ `:close()` ]]
+
+    Closes the file stream.
+    You can safely call `close()` on a file multiple times.
+    If the file hasn't been explicitly closed it will be automatically closed by the garbage collector before the file object is destroyed.
+
+[[ `:flush()` ]]
+
+    Flushes the file stream.
+
+[[ `:read()` ]]
+
+    Reads the content of the file into a byte buffer, `$buf`.
+    Returns the new buffer.
+    Panics if an I/O error occurs or if sufficient memory cannot be allocated for the buffer.
+
+[[ `:read_bytes(n)` ]]
+
+    Attempts to read `n` bytes from the file into a byte buffer, `$buf`, where `n` is an `$i64`.
+    May read less than `n` bytes if the end of the file is reached first.
+
+    Returns the new byte buffer or `null` if the end of the file had already been reached before the method was called.
+
+    Panics if an I/O read error occurs, if the argument is invalid, or if sufficient memory cannot be allocated for the buffer.
+
+[[ `:read_line()` ]]
+
+    Reads the next line of input from the file and returns it as a string.
+    Strips the terminating `\\n` or `\\r\\n` if present.
+
+    Returns the string or `null` if the end of the file had already been reached before the method was called.
+
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+
+[[ `:write(arg)` <br> `:write(format_string, arg1, arg2, ...)` ]]
+
+    Writes a string or buffer to the file.
+
+    If `arg` is a `$buf`, its content will be written to the file directly.
+    Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+
+    Returns the number of bytes written.
+
+    Panics if an I/O write error occurs or if an error occurs while formatting the output string.

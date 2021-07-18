@@ -1,0 +1,30 @@
+---
+title: Roadmap
+---
+
+All the core language functionality described here in the documentation has been implemented.
+
+The standard library is very sparse and needs a lot of work before Pyro could be considered a practical programming language.
+The native types (strings, vectors, etc.) are also lacking most of the convenience methods you'd expect from a scripting language.
+
+I'm planning to flesh out the native types first, then get to work on adding libraries.
+A regex library, a built-in SQLite implementation, and a networking library are currently at the top of the list.
+
+
+
+### Packaging
+
+Packaging is on the medium-length finger.
+
+I'm planning to add a `build` command to Pyro which will bundle up a script and all of its dependencies into a zip archive which it will append to a copy of the Pyro binary to create an easily-distributable single-file executable.
+
+'Virtual environments' and friends are a hell which Pyro will attempt to avoid at all costs if it ever becomes a real programming language.
+
+
+
+### Concurrency
+
+Adding support for concurrency is on the long finger.
+Pyro is currently single-threaded and likely to remain that way for the foreseeable future.
+Getting concurrency right is a tough challenge and not something I'm going to rush.
+

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Classes</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        
+    </head>
+    <body class="node-tour-classes node-tour node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental programming language.</p>
+            
+            
+                <p class="version">Version 0.2.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a><ul>
+<li><a href="../tour/classes.html">Classes</a></li>
+<li><a href="../tour/modules.html">Modules</a></li>
+<li><a href="../tour/operators.html">Operators</a></li>
+<li><a href="../tour/formatting.html">Formatting</a></li>
+</ul>
+</li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a><ul>
+<li><a href="../stdlib/math.html">math</a></li>
+<li><a href="../stdlib/prng.html">prng</a></li>
+<li><a href="../stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Classes</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#class-definitions">Class Definitions</a>
+</li>
+<li>
+<a href="#fields-and-methods">Fields and Methods</a>
+</li>
+<li>
+<a href="#field-initializers">Field Initializers</a>
+</li>
+<li>
+<a href="#inheritance">Inheritance</a>
+</li>
+</ul>
+<h3 id="class-definitions">
+Class Definitions
+</h3>
+<p>
+Class definitions look like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">occupation</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s">&quot; is a &quot;</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">occupation</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+Create an instance of a class by calling its name:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">dave</span> <span class="p">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
+</pre>
+<p>
+Arguments are passed on to the optional <code>$init()</code> method.
+</p>
+<h3 id="fields-and-methods">
+Fields and Methods
+</h3>
+<p>
+Get or set an instance's fields using the field access operator <code>.</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">dave</span><span class="p">.</span><span class="nx">occupation</span> <span class="p">=</span> <span class="s">&quot;pyro programmer&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Call a method on an instance using the method access operator <code>:</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
+</pre>
+<p>
+Methods are bound to their instances and you can pass them around just like any other function:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">method</span> <span class="p">=</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">;</span>
+<span class="nx">method</span><span class="p">();</span> <span class="c1"># &quot;Dave is a pyro programmer.&quot;</span>
+</pre>
+<h3 id="field-initializers">
+Field Initializers
+</h3>
+<p>
+Field initializers are evaluated once when the class statement itself is executed &mdash;
+each instance gets a copy of these values.
+</p>
+<p>
+Don't do this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">hobbies</span> <span class="p">=</span> <span class="nx">$vec</span><span class="p">();</span>
+<span class="p">}</span>
+</pre>
+<p>
+All instances of <code>Person</code> will share a single <code>hobbies</code> vector!
+</p>
+<p>
+Use field initializers for immutable values like strings, booleans, or numbers.
+Initialize mutable objects from the <code>$init()</code> method instead:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">hobbies</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">hobbies</span> <span class="p">=</span> <span class="nx">$vec</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+This way, each <code>Person</code> instance gets its own individual <code>hobbies</code> vector.
+</p>
+<h3 id="inheritance">
+Inheritance
+</h3>
+<p>
+A class can inherit from a superclass.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Shape</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">color</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">color</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">color</span> <span class="p">=</span> <span class="nx">color</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s">&quot;color: &quot;</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">color</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">Circle</span> <span class="p">&lt;</span> <span class="nx">Shape</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">radius</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">color</span><span class="p">,</span> <span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">color</span> <span class="p">=</span> <span class="nx">color</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">radius</span> <span class="p">=</span> <span class="nx">radius</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kc">super</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
+        <span class="k">echo</span> <span class="s">&quot;radius: &quot;</span> <span class="o">+</span> <span class="nx">$str</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">radius</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+Subclass methods override superclass methods as you'd expect.
+A subclass can use the <code>super</code> keyword to access an overridden superclass method.
+</p>
+        </article>
+        
+    </body>
+</html>
