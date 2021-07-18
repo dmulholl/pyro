@@ -58,7 +58,27 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#operator-precedence">Operator Precedence</a>
+</li>
+<li>
+<a href="#logical-operators">Logical Operators</a>
+</li>
+<li>
+<a href="#the-conditional-operator">The Conditional Operator</a>
+</li>
+<li>
+<a href="#the-null-coalescing-operator">The Null-coalescing Operator</a>
+</li>
+<li>
+<a href="#the-error-coalescing-operator">The Error-coalescing Operator</a>
+</li>
+</ul>
+<h3 id="operator-precedence">
+Operator Precedence
+</h3>
+<p>
 Operator precedence in the table below goes from high at the top to low at the bottom. Operators at the same level have the same precedence.
 </p>
 <table>
@@ -240,6 +260,30 @@ The conditional or ternary operator takes three operands. It looks like this:
 </pre>
 <p>
 The value of the expression is <code>expr1</code> if <code>condition</code> evaluates as truthy, otherwise <code>expr2</code>.
+</p>
+<h3 id="the-null-coalescing-operator">
+The Null-coalescing Operator
+</h3>
+<p>
+The null-coalescing operator <code>??</code> lets you swap in a default value in place of a <code>null</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The value of the expression <code>a ?? b</code> is the value of the first operand if that operand is not <code>null</code>, otherwise the value of the second operand.
+</p>
+<h3 id="the-error-coalescing-operator">
+The Error-coalescing Operator
+</h3>
+<p>
+The error-coalescing operator <code>!!</code> lets you swap in a default value in place of an error:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">maybe_error</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The value of the expression <code>a !! b</code> is the value of the first operand if that operand is not an <code>$err</code>, otherwise the value of the second operand.
 </p>
         </article>
         

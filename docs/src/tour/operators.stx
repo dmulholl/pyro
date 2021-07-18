@@ -3,6 +3,11 @@ title: Operators
 meta_title: Pyro Operators
 ---
 
+::: insert toc
+
+
+### Operator Precedence
+
 Operator precedence in the table below goes from high at the top to low at the bottom. Operators at the same level have the same precedence.
 
 
@@ -61,4 +66,22 @@ The value of the expression is `expr1` if `condition` evaluates as truthy, other
 
 
 
+### The Null-coalescing Operator
 
+The null-coalescing operator `??` lets you swap in a default value in place of a `null`:
+
+::: code pyro
+    var foo = maybe_null() ?? "default";
+
+The value of the expression `a ?? b` is the value of the first operand if that operand is not `null`, otherwise the value of the second operand.
+
+
+
+### The Error-coalescing Operator
+
+The error-coalescing operator `!!` lets you swap in a default value in place of an error:
+
+::: code pyro
+    var foo = maybe_error() !! "default";
+
+The value of the expression `a !! b` is the value of the first operand if that operand is not an `$err`, otherwise the value of the second operand.
