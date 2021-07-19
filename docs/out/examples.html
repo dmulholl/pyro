@@ -65,12 +65,18 @@
 <li>
 <a href="#reading-from-standard-input">Reading from standard input</a>
 </li>
+<li>
+<a href="#reading-a-file">Reading a file</a>
+</li>
+<li>
+<a href="#guessing-game">Guessing game</a>
+</li>
 </ul>
 <h3 id="fibonacci-numbers">
 Fibonacci numbers
 </h3>
 <p>
-This function returns the n-th Fibonacci number:
+Calculate the n-th Fibonacci number:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
@@ -80,20 +86,6 @@ This function returns the n-th Fibonacci number:
     <span class="k">return</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
 <span class="p">}</span>
 </pre>
-<p>
-The recursive algorithm is horribly inefficient but it makes for a nice example.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
-<span class="o">...</span>     <span class="k">echo</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
-<span class="o">...</span> <span class="p">}</span>
-<span class="mi">0</span>
-<span class="mi">1</span>
-<span class="mi">1</span>
-<span class="mi">2</span>
-<span class="mi">3</span>
-<span class="mi">5</span>
-</pre>
 <h3 id="reading-from-standard-input">
 Reading from standard input
 </h3>
@@ -101,9 +93,7 @@ Reading from standard input
 Read a single line from standard input:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">$print</span><span class="p">(</span><span class="s">&quot;enter your name: &quot;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">name</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_line</span><span class="p">();</span>
-<span class="k">echo</span> <span class="s">&quot;hello &quot;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">line</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_line</span><span class="p">();</span>
 </pre>
 <p>
 Read in a loop from standard input:
@@ -118,6 +108,41 @@ Read in a loop from standard input:
     <span class="p">}</span>
 
     <span class="k">echo</span> <span class="s">&quot;input was: &quot;</span> <span class="o">+</span> <span class="nx">input</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<h3 id="reading-a-file">
+Reading a file
+</h3>
+<p>
+Read a file into a byte buffer:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;example.txt&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">buffer</span> <span class="p">=</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read</span><span class="p">();</span>
+<span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
+</pre>
+<h3 id="guessing-game">
+Guessing game
+</h3>
+<p>
+The classic guess-a-random-number game:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">target</span> <span class="p">=</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">prng</span><span class="p">::</span><span class="nx">rand_int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="k">loop</span> <span class="p">{</span>
+    <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;Enter a number between 1 and 10: &quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">guess</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_line</span><span class="p">();</span>
+    <span class="k">if</span> <span class="nx">guess</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">guess</span> <span class="o">==</span> <span class="s">&quot;exit&quot;</span> <span class="p">{</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nx">guess</span> <span class="o">==</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s">&quot;Correct!&quot;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s">&quot;Wrong! Try again...&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre>
         </article>

@@ -8,7 +8,7 @@ meta_title: Pyro Examples
 
 ### Fibonacci numbers
 
-This function returns the n-th Fibonacci number:
+Calculate the n-th Fibonacci number:
 
 ::: code pyro
     def fib(n) {
@@ -18,18 +18,6 @@ This function returns the n-th Fibonacci number:
         return fib(n - 1) + fib(n - 2);
     }
 
-The recursive algorithm is horribly inefficient but it makes for a nice example.
-
-::: code pyro
-    >>> for i in $range(6) {
-    ...     echo fib(i);
-    ... }
-    0
-    1
-    1
-    2
-    3
-    5
 
 
 ### Reading from standard input
@@ -37,9 +25,7 @@ The recursive algorithm is horribly inefficient but it makes for a nice example.
 Read a single line from standard input:
 
 ::: code pyro
-    $print("enter your name: ");
-    var name = $stdin:read_line();
-    echo "hello " + name;
+    var line = $stdin:read_line();
 
 Read in a loop from standard input:
 
@@ -55,4 +41,38 @@ Read in a loop from standard input:
         echo "input was: " + input;
     }
 
+
+
+### Reading a file
+
+Read a file into a byte buffer:
+
+::: code pyro
+    var file = $file("example.txt", "r");
+    var buffer = file:read();
+    file:close();
+
+
+
+### Guessing game
+
+The classic guess-a-random-number game:
+
+::: code pyro
+    var target = $std::prng::rand_int(10) + 1;
+
+    loop {
+        $print("Enter a number between 1 and 10: ");
+        var guess = $stdin:read_line();
+        if guess == null || guess == "exit" {
+            break;
+        }
+
+        if guess == $str(target) {
+            echo "Correct!";
+            break;
+        } else {
+            echo "Wrong! Try again...";
+        }
+    }
 

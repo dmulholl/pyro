@@ -3,8 +3,7 @@ title: Quickstart Tutorial
 meta_title: Pyro Quickstart Tutorial
 ---
 
-You'll need a C compiler to build Pyro from source ---
-note that only POSIX builds are currently supported (Mac, Linux, BSD, etc.).
+You'll need a C compiler and a POSIX compatible OS (Mac, Linux, BSD, etc. ) to build Pyro from source.
 
 First, download the repository from Github:
 
@@ -17,8 +16,8 @@ First, download the repository from Github:
     $ cd pyro
     $ make
 
-The binary will be created as `out/pyro`.
-You can run the binary directly from the `out` directory or place it somewhere on your system's `$PATH`.
+The Pyro binary will be created in a new `out` directory as `out/pyro`.
+You can run the binary directly from this directory or place it somewhere on your system's `$PATH`.
 
 Try running the binary with the `--help` flag to view the command line help:
 
