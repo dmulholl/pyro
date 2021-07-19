@@ -46,18 +46,41 @@ assert $is_err(foo:get("alpha"));
 assert foo:contains("beta") == true;
 assert foo:contains("undefined") == false;
 
-var bar = {
-    "abc" = 123,
-    "def" = 456,
-};
 
-assert $is_map(bar);
-assert bar:count() == 2;
-assert bar:get("abc") == 123;
-assert bar:get("def") == 456;
+def $test_literal() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+    };
 
-assert bar["abc"] == 123;
-assert bar["def"] == 456;
+    assert $is_map(map);
+    assert map:count() == 2;
+    assert map:get("abc") == 123;
+    assert map:get("def") == 456;
+}
 
-bar["abc"] = 789;
-assert bar["abc"] == 789;
+
+def $test_indexing() {
+    var map = $map();
+    map["abc"] = 123;
+    map["def"] = 456;
+
+    assert map["abc"] == 123;
+    assert map["def"] == 456;
+
+    map["abc"] = 789;
+    assert map["abc"] == 789;
+}
+
+
+def $test_stress() {
+    var map = $map();
+
+    for i in $range(1000) {
+        map[i] = i;
+    }
+
+    assert map[123] == 123;
+    assert map[456] == 456;
+    assert map[789] == 789;
+}

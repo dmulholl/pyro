@@ -12,41 +12,75 @@ foo:set(1, "foobar");
 assert foo:count() == 2;
 assert foo:get(1) == "foobar";
 
-var bar = $vec(10, null);
-assert $is_vec(bar);
-assert bar:count() == 10;
-assert bar:get(5) == null;
 
-var baz = ["foo", 123, true];
-assert $is_vec(baz);
-assert baz:count() == 3;
+def $test_literal() {
+    var vec = ["foo", 123, true];
+    assert $is_vec(vec);
+    assert vec:count() == 3;
+    assert vec:get(0) == "foo";
+    assert vec:get(1) == 123;
+    assert vec:get(2) == true;
+}
 
-assert baz:get(0) == "foo";
-assert baz:get(1) == 123;
-assert baz:get(2) == true;
 
-assert baz[0] == "foo";
-assert baz[1] == 123;
-assert baz[2] == true;
+def $test_indexing() {
+    var vec = $vec();
+    vec:append("foo");
+    vec:append(123);
+    vec:append(true);
 
-baz[0] = "bar";
-assert baz[0] == "bar";
+    assert vec[0] == "foo";
+    assert vec[1] == 123;
+    assert vec[2] == true;
 
-assert $str($vec()) == "[]";
+    vec[0] = "bar";
+    assert vec[0] == "bar";
+}
 
-var vec1 = ["foo", 123, 'a', true];
-assert $str(vec1) == `["foo", 123, 'a', true]`;
 
-var range = $range(10);
-var vec2 = $vec(range);
-assert vec2:count() == 10;
-assert vec2[0] == 0;
-assert vec2[1] == 1;
-assert vec2[2] == 2;
+def $test_stringification() {
+    assert $str($vec()) == "[]";
+    var vec = ["foo", 123, 'a', true];
+    assert $str(vec) == `["foo", 123, 'a', true]`;
+}
 
-var vec3 = [true, false, null];
-var vec4 = $vec(vec3);
-assert vec4:count() == 3;
-assert vec4[0] == true;
-assert vec4[1] == false;
-assert vec4[2] == null;
+
+def $test_init_with_size() {
+    var vec = $vec(10, null);
+    assert $is_vec(vec);
+    assert vec:count() == 10;
+    assert vec:get(5) == null;
+}
+
+
+def $test_init_with_iter() {
+    var range = $range(10);
+    var vec = $vec(range);
+    assert vec:count() == 10;
+    assert vec[0] == 0;
+    assert vec[1] == 1;
+    assert vec[2] == 2;
+}
+
+
+def $test_init_with_vec() {
+    var vec1 = [true, false, null];
+    var vec2 = $vec(vec1);
+    assert vec2:count() == 3;
+    assert vec2[0] == true;
+    assert vec2[1] == false;
+    assert vec2[2] == null;
+}
+
+
+def $test_stress() {
+    var vec = $vec();
+
+    for i in $range(1000) {
+        vec:append(i);
+    }
+
+    assert vec[123] == 123;
+    assert vec[456] == 456;
+    assert vec[789] == 789;
+}
