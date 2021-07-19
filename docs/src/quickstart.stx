@@ -19,10 +19,10 @@ First, download the repository from Github:
 The Pyro binary will be created in a new `out` directory as `out/pyro`.
 You can run the binary directly from this directory or place it somewhere on your system's `$PATH`.
 
-Try running the binary with the `--help` flag to view the command line help:
+`cd` into the `out` directory and try running the binary with the `--help` flag to view the command line help:
 
 ::: code
-    $ pyro --help
+    $ ./pyro --help
 
     Usage: pyro [file]
 
@@ -53,8 +53,9 @@ Create a file called `hello.pyro` and add the following line:
 Run the script by supplying its filename to the binary:
 
 ::: code
-    $ pyro hello.pyro
+    $ ./pyro hello.pyro
     hello world
 
 That's it, you can officially add Pyro to the list of languages on your CV.
+Take the [tour](@root/tour//) if you'd like to learn more.
 
