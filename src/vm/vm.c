@@ -152,7 +152,12 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
 
             case OBJ_CLASS: {
                 ObjClass* class = AS_CLASS(callee);
-                vm->stack_top[-arg_count - 1] = OBJ_VAL(ObjInstance_new(vm, class));
+                ObjInstance* instance = ObjInstance_new(vm, class);
+                if (!instance) {
+                    pyro_panic(vm, "Out of memory.");
+                    return;
+                }
+                vm->stack_top[-arg_count - 1] = OBJ_VAL(instance);
 
                 Value initializer;
                 if (ObjMap_get(class->methods, OBJ_VAL(vm->str_init), &initializer)) {
@@ -164,9 +169,10 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 return;
             }
 
-            case OBJ_CLOSURE:
+            case OBJ_CLOSURE: {
                 call_closure(vm, AS_CLOSURE(callee), arg_count);
                 return;
+            }
 
             case OBJ_NATIVE_FN: {
                 call_native_fn(vm, AS_NATIVE_FN(callee), arg_count);

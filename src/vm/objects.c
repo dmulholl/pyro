@@ -247,12 +247,17 @@ ObjClass* ObjClass_new(PyroVM* vm) {
 
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
     size_t num_fields = class->field_initializers->count;
+
     ObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, ObjInstance, OBJ_INSTANCE, num_fields, Value);
     if (!instance) {
         return NULL;
     }
+
     instance->obj.class = class;
-    memcpy(instance->fields, class->field_initializers->values, sizeof(Value) * num_fields);
+    if (num_fields > 0) {
+        memcpy(instance->fields, class->field_initializers->values, sizeof(Value) * num_fields);
+    }
+
     return instance;
 }
 
