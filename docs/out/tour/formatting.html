@@ -87,10 +87,10 @@ A format string is a string containing <code>{}</code> placeholders:
 An empty placeholder <code>{}</code> is equivalent to calling <code>$str(arg)</code> on the value and interpolating the resulting string.
 </p>
 <p>
-A placeholder can contain a format specifier &mdash; if the value has a <code>:$fmt(specifier)</code> method defined, this method will be called and the resulting string will be used.
+A placeholder can contain a format specifier &mdash; if the value has a <code>:$fmt(spec)</code> method defined, this method will be called and the resulting string will be used.
 </p>
 <p>
-(The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(specifier)</code> method.)
+(The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(spec)</code> method.)
 </p>
 <p>
 For integers and floats the format specifier is handled directly by the C runtime so you can use <code>printf</code>&ndash;style formatting directives:
@@ -98,6 +98,42 @@ For integers and floats the format specifier is handled directly by the C runtim
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{%.2f}&quot;</span><span class="p">,</span> <span class="mf">1.23456</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;1.23&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{%04i}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;0099&quot;</span><span class="p">;</span>
+</pre>
+<h3 id="example">
+Example
+</h3>
+<p>
+Here's a sample class with custom <code>:$str()</code> and <code>:$fmt(spec)</code> methods:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
+    <span class="kd">def</span> <span class="nx">$str</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;foo&gt;&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">$fmt</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="nx">spec</span> <span class="o">+</span> <span class="s">&quot;&gt;&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+Calling <code>$str(arg)</code> on an instance returns the output of its <code>:$str()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">Foo</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">foo</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;foo&gt;&quot;</span><span class="p">;</span>
+</pre>
+<p>
+An empty placeholder in a format string is equvialent to calling <code>$str(arg)</code> on the value:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="nx">foo</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;foo&gt;&quot;</span><span class="p">;</span>
+</pre>
+<p>
+If the placeholder contains a format specifier, it gets passed to the value's <code>:$fmt(spec)</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{xyz}&quot;</span><span class="p">,</span> <span class="nx">foo</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;xyz&gt;&quot;</span><span class="p">;</span>
 </pre>
         </article>
         

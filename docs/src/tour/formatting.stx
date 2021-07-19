@@ -21,12 +21,45 @@ A format string is a string containing `{}` placeholders:
 
 An empty placeholder `{}` is equivalent to calling `$str(arg)` on the value and interpolating the resulting string.
 
-A placeholder can contain a format specifier --- if the value has a `:$fmt(specifier)` method defined, this method will be called and the resulting string will be used.
+A placeholder can contain a format specifier --- if the value has a `:$fmt(spec)` method defined, this method will be called and the resulting string will be used.
 
-(The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(specifier)` method.)
+(The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(spec)` method.)
 
 For integers and floats the format specifier is handled directly by the C runtime so you can use `printf`--style formatting directives:
 
 ::: code pyro
     assert $fmt("{%.2f}", 1.23456) == "1.23";
     assert $fmt("{%04i}", 99) == "0099";
+
+
+
+### Example
+
+Here's a sample class with custom `:$str()` and `:$fmt(spec)` methods:
+
+::: code pyro
+    class Foo {
+        def $str() {
+            return "<foo>";
+        }
+
+        def $fmt(spec) {
+            return "<" + spec + ">";
+        }
+    }
+
+Calling `$str(arg)` on an instance returns the output of its `:$str()` method:
+
+::: code pyro
+    var foo = Foo();
+    assert $str(foo) == "<foo>";
+
+An empty placeholder in a format string is equvialent to calling `$str(arg)` on the value:
+
+::: code pyro
+    assert $fmt("{}", foo) == "<foo>";
+
+If the placeholder contains a format specifier, it gets passed to the value's `:$fmt(spec)` method:
+
+::: code pyro
+    assert $fmt("{xyz}", foo) == "<xyz>";
