@@ -148,10 +148,18 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 // Calls a method from a native function. Returns the value returned by the method. Before calling
 // this function the receiver and the method's arguments should be pushed onto the stack. These
 // values (and the return value of the method) will be popped off the stack before this function
-// returns. The called method can set the panic, exit, or memory error flags so the caller should
-// check [vm->halt_flag] immediately on return before using the result. If the halt flag is set the
+// returns. The called method can set the panic or exit flags so the caller should check the
+// [vm->halt_flag] immediately on return before using the result. If the halt flag is set the
 // caller should clean up any allocated resources and unwind the call stack.
 Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
+
+// Calls a function [fn] from a native function. Returns the value returned by [fn]. Before calling
+// this function [fn] itself and its arguments should be pushed onto the stack. These values (and
+// the return value of the function) will be popped off the stack before this function returns. The
+// called function can set the panic or exit flags so the caller should check the [vm->halt_flag]
+// immediately on return before using the result. If the halt flag is set the caller should clean up
+// any allocated resources and unwind the call stack.
+Value pyro_call_fn(PyroVM* vm, Value fn, uint8_t arg_count);
 
 // Called to signal that an error has occurred.
 void pyro_panic(PyroVM* vm, const char* format, ...);

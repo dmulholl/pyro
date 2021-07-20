@@ -206,9 +206,19 @@ Vectors have the following methods:
 
     Returns the number of entries in the vector as an `$i64`.
 
+[[ `:filter(func)` ]]
+
+    Returns a new vector created by mapping the function `func` to each element of the vector in turn.
+    `func` should be a callable that takes a single argument and returns `true` or `false`; if it returns `true` the corresponding element of the vector will be added to the new vector.
+
 [[ `:get(index)` ]]
 
     Returns the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+
+[[ `:map(func)` ]]
+
+    Returns a new vector created by mapping the function `func` to each element of the vector in turn.
+    `func` should be a callable that takes a single argument; its return values will form the elements of the new vector.
 
 [[ `:reverse()` ]]
 

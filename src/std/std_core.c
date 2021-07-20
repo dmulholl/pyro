@@ -598,6 +598,62 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    ObjVec* new_vec = ObjVec_new_with_cap(vec->count, vm);
+    if (!vec) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(new_vec));
+
+    for (size_t i = 0; i < vec->count; i++) {
+        pyro_push(vm, args[0]); // push the map function
+        pyro_push(vm, vec->values[i]); // push the argument for the map function
+        Value result = pyro_call_fn(vm, args[0], 1);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        new_vec->values[i] = result;
+        new_vec->count++;
+    }
+
+    pyro_pop(vm);
+    return OBJ_VAL(new_vec);
+}
+
+
+static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    ObjVec* new_vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(new_vec));
+
+    for (size_t i = 0; i < vec->count; i++) {
+        pyro_push(vm, args[0]); // push the filter function
+        pyro_push(vm, vec->values[i]); // push the argument for the filter function
+        Value result = pyro_call_fn(vm, args[0], 1);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        if (pyro_is_truthy(result)) {
+            if (!ObjVec_append(new_vec, vec->values[i], vm)) {
+                pyro_panic(vm, "Out of memory.");
+                return NULL_VAL();
+            }
+        }
+    }
+
+    pyro_pop(vm);
+    return OBJ_VAL(new_vec);
+}
+
+
 static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     ObjVecIter* iterator = ObjVecIter_new(vec, vm);
@@ -1744,6 +1800,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
     pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
     pyro_define_method(vm, vm->vec_class, "index_of", vec_index_of, 1);
+    pyro_define_method(vm, vm->vec_class, "map", vec_map, 1);
+    pyro_define_method(vm, vm->vec_class, "filter", vec_filter, 1);
     pyro_define_method(vm, vm->vec_class, "copy", vec_copy, 0);
     pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
     pyro_define_method(vm, vm->vec_iter_class, "$next", vec_iter_next, 0);

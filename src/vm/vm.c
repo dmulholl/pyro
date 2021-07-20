@@ -104,7 +104,7 @@ static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
     if (arg_count != closure->fn->arity) {
         pyro_panic(
             vm,
-            "Expected %d argument(s) for %s but found %d.",
+            "Expected %d argument(s) for '%s' but found %d.",
             closure->fn->arity,
             closure->fn->name->bytes,
             arg_count
@@ -184,7 +184,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 break;
         }
     }
-    pyro_panic(vm, "Can only call functions and classes.");
+    pyro_panic(vm, "Value is not callable.");
 }
 
 
@@ -1754,6 +1754,18 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count) {
         return pyro_pop(vm);
     } else {
         call_closure(vm, AS_CLOSURE(method), arg_count);
+        run(vm);
+        return pyro_pop(vm);
+    }
+}
+
+
+Value pyro_call_fn(PyroVM* vm, Value func, uint8_t arg_count) {
+    if (IS_NATIVE_FN(func)) {
+        call_native_fn(vm, AS_NATIVE_FN(func), arg_count);
+        return pyro_pop(vm);
+    } else {
+        call_value(vm, func, arg_count);
         run(vm);
         return pyro_pop(vm);
     }

@@ -502,11 +502,33 @@ Returns the number of entries in the vector as an <code>$i64</code>.
 </div>
 <div>
 <dt>
+<code>:filter(func)</code>
+</dt>
+<dd>
+<p>
+Returns a new vector created by mapping the function <code>func</code> to each element of the vector in turn.
+<code>func</code> should be a callable that takes a single argument and returns <code>true</code> or <code>false</code>; if it returns <code>true</code> the corresponding element of the vector will be added to the new vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:get(index)</code>
 </dt>
 <dd>
 <p>
 Returns the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:map(func)</code>
+</dt>
+<dd>
+<p>
+Returns a new vector created by mapping the function <code>func</code> to each element of the vector in turn.
+<code>func</code> should be a callable that takes a single argument; its return values will form the elements of the new vector.
 </p>
 </dd>
 </div>
