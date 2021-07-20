@@ -116,3 +116,12 @@ def $test_contains() {
     assert !vec:contains(0);
     assert !vec:contains("foo");
 }
+
+
+def $test_index_of() {
+    var vec = [123, 456, 789];
+    assert vec:index_of(123) == 0;
+    assert vec:index_of(456) == 1;
+    assert vec:index_of(789) == 2;
+    assert $is_err(vec:index_of("foo"));
+}

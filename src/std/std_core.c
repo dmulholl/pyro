@@ -585,6 +585,19 @@ static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    for (size_t i = 0; i < vec->count; i++) {
+        if (pyro_check_equal(vec->values[i], args[0])) {
+            return I64_VAL((int64_t)i);
+        }
+    }
+
+    return OBJ_VAL(vm->empty_error);
+}
+
+
 static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     ObjVecIter* iterator = ObjVecIter_new(vec, vm);
@@ -1730,6 +1743,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "$set_index", vec_set, 2);
     pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
     pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
+    pyro_define_method(vm, vm->vec_class, "index_of", vec_index_of, 1);
     pyro_define_method(vm, vm->vec_class, "copy", vec_copy, 0);
     pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
     pyro_define_method(vm, vm->vec_iter_class, "$next", vec_iter_next, 0);
