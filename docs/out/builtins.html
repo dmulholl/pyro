@@ -34,6 +34,7 @@
 <li><a href="tour/modules.html">Modules</a></li>
 <li><a href="tour/operators.html">Operators</a></li>
 <li><a href="tour/formatting.html">Formatting</a></li>
+<li><a href="tour/iterators.html">Iterators</a></li>
 </ul>
 </li>
 <li><a href="builtins.html">Builtin Types</a></li>
@@ -471,6 +472,26 @@ Appends a value to the vector.
 </div>
 <div>
 <dt>
+<code>:contains(value)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the vector contains an entry equal to <code>value</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:copy()</code>
+</dt>
+<dd>
+<p>
+Returns a copy of the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:count()</code>
 </dt>
 <dd>
@@ -486,6 +507,16 @@ Returns the number of entries in the vector as an <code>$i64</code>.
 <dd>
 <p>
 Returns the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:reverse()</code>
+</dt>
+<dd>
+<p>
+Reverses the vector in-place. Returns the vector to enable chaining.
 </p>
 </dd>
 </div>
@@ -551,6 +582,16 @@ Maps have the following methods:
 <dd>
 <p>
 Returns <code>true</code> if the map contains <code>key</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:copy()</code>
+</dt>
+<dd>
+<p>
+Returns a copy of the map.
 </p>
 </dd>
 </div>

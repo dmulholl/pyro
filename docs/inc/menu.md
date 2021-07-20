@@ -5,6 +5,7 @@
     * [Modules](@root/tour/modules//)
     * [Operators](@root/tour/operators//)
     * [Formatting](@root/tour/formatting//)
+    * [Iterators](@root/tour/iterators//)
 * [Builtin Types](@root/builtins//)
 * [Globals](@root/globals//)
 * [Standard Library](@root/stdlib//)

@@ -194,6 +194,14 @@ Vectors have the following methods:
 
     Appends a value to the vector.
 
+[[ `:contains(value)` ]]
+
+    Returns `true` if the vector contains an entry equal to `value`, otherwise `false`.
+
+[[ `:copy()` ]]
+
+    Returns a copy of the vector.
+
 [[ `:count()` ]]
 
     Returns the number of entries in the vector as an `$i64`.
@@ -201,6 +209,10 @@ Vectors have the following methods:
 [[ `:get(index)` ]]
 
     Returns the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+
+[[ `:reverse()` ]]
+
+    Reverses the vector in-place. Returns the vector to enable chaining.
 
 [[ `:set(index, value)` ]]
 
@@ -241,6 +253,10 @@ Maps have the following methods:
 [[ `:contains(key)` ]]
 
     Returns `true` if the map contains `key`, otherwise `false`.
+
+[[ `:copy()` ]]
+
+    Returns a copy of the map.
 
 [[ `:count()` ]]
 

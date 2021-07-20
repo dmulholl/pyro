@@ -1,0 +1,59 @@
+---
+title: Iterators
+meta_title: Pyro Iterators
+---
+
+Pyro's `for ... in ...` loop uses a simple iterator protocol:
+
+::: code pyro
+    for item in [123, 456, 789] {
+        echo item;
+    }
+
+An object is *iterable* if it has an `:$iter()` method.
+This method should return an *iterator* --- an object with a `:$next()` method which returns the next item from the sequence or an `$err` if the sequence has been exhausted.
+
+
+
+### Example
+
+We can illustrate the iterator protocol by creating a custom `Range` object to iterate over a range of integers:
+
+::: code pyro
+    class Range {
+        var next = 0;
+        var stop;
+
+        def $init(stop) {
+            self.stop = stop;
+        }
+
+        def $iter() {
+            return self;
+        }
+
+        def $next() {
+            if next < stop {
+                next += 1;
+                return next - 1;
+            }
+            return $err();
+        }
+    }
+
+Note that the `:$iter()` method simply returns `self` --- a `Range` instance is its own iterator.
+
+Trying out this new type in the REPL should give us output like this:
+
+::: code pyro
+    >>> for i in Range(5) {
+    ...     echo i;
+    ... }
+    0
+    1
+    2
+    3
+    4
+
+Note that Pyro already has a builtin `$range` type which you can find [here](@root/builtins//#ranges).
+
