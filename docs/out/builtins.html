@@ -507,7 +507,8 @@ Returns the number of entries in the vector as an <code>$i64</code>.
 <dd>
 <p>
 Returns a new vector created by mapping the function <code>func</code> to each element of the vector in turn.
-<code>func</code> should be a callable that takes a single argument and returns <code>true</code> or <code>false</code>; if it returns <code>true</code> the corresponding element of the vector will be added to the new vector.
+<code>func</code> should be a callable that takes a single argument (the vector element) and returns <code>true</code> or <code>false</code>;
+if it returns <code>true</code> the corresponding element of the vector will be added to the new vector.
 </p>
 </dd>
 </div>
@@ -528,7 +529,8 @@ Returns the value at <code>index</code> where <code>index</code> is an <code>$i6
 <dd>
 <p>
 Returns a new vector created by mapping the function <code>func</code> to each element of the vector in turn.
-<code>func</code> should be a callable that takes a single argument; its return values will form the elements of the new vector.
+<code>func</code> should be a callable that takes a single argument (the vector element);
+its return values will form the elements of the new vector.
 </p>
 </dd>
 </div>

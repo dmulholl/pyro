@@ -209,7 +209,8 @@ Vectors have the following methods:
 [[ `:filter(func)` ]]
 
     Returns a new vector created by mapping the function `func` to each element of the vector in turn.
-    `func` should be a callable that takes a single argument and returns `true` or `false`; if it returns `true` the corresponding element of the vector will be added to the new vector.
+    `func` should be a callable that takes a single argument (the vector element) and returns `true` or `false`;
+    if it returns `true` the corresponding element of the vector will be added to the new vector.
 
 [[ `:get(index)` ]]
 
@@ -218,7 +219,8 @@ Vectors have the following methods:
 [[ `:map(func)` ]]
 
     Returns a new vector created by mapping the function `func` to each element of the vector in turn.
-    `func` should be a callable that takes a single argument; its return values will form the elements of the new vector.
+    `func` should be a callable that takes a single argument (the vector element);
+    its return values will form the elements of the new vector.
 
 [[ `:reverse()` ]]
 
