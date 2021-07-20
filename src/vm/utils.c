@@ -222,21 +222,6 @@ uint64_t pyro_sdbm_64(const char* string, size_t length) {
 }
 
 
-bool pyro_file_exists(const char* path) {
-    return access(path, F_OK) == 0;
-}
-
-
-bool pyro_dir_exists(const char* path) {
-    DIR* dir = opendir(path);
-    if (dir) {
-        closedir(dir);
-        return true;
-    }
-    return false;
-}
-
-
 // Converts an ASCII hex digit to its corresponding integer value.
 static inline uint8_t hex_to_int(char c) {
    return (c > '9') ? (c &~ 0x20) - 'A' + 10 : (c - '0');

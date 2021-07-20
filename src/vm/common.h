@@ -1,7 +1,7 @@
 #ifndef pyro_common_h
 #define pyro_common_h
 
-// C standard library.
+// C standard library. (No OS-dependent headers.)
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -15,10 +15,6 @@
 #include <inttypes.h>
 #include <ctype.h>
 #include <errno.h>
-
-// POSIX only.
-#include <dirent.h>
-#include <unistd.h>
 
 // Local includes.
 #include "../pyro.h"

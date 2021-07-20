@@ -55,10 +55,4 @@ uint64_t pyro_sdbm_64(const char* string, size_t length);
 // will be less than or equal to [src_len].
 size_t pyro_unescape_string(const char* src, size_t src_len, char* dst);
 
-// Returns [true] if a file exists at [path].
-bool pyro_file_exists(const char* path);
-
-// Returns [true] if a directory exists at [path].
-bool pyro_dir_exists(const char* path);
-
 #endif

@@ -1,3 +1,4 @@
+// C standard library headers.
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -12,8 +13,10 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include <libgen.h>
+// POSIX headers.
+#include <libgen.h> // for dirname()
 
+// Local headers.
 #include "../pyro.h"
 #include "../lib/args/args.h"
 
@@ -354,7 +357,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         pyro_free_vm(vm);
     }
 
-    double time = (clock() - start_time) / CLOCKS_PER_SEC;
+    double time = (double)(clock() - start_time) / CLOCKS_PER_SEC;
 
     printf("  \x1B[7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS");
     printf("  Files: %d/%d", files_passed, files_passed + files_failed);
@@ -406,7 +409,7 @@ static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
         printf("\n");
     }
 
-    double time = (clock() - start_time) / CLOCKS_PER_SEC;
+    double time = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Total Runtime: %f secs\n", time);
 }
 
