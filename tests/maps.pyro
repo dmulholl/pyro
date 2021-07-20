@@ -84,3 +84,17 @@ def $test_stress() {
     assert map[456] == 456;
     assert map[789] == 789;
 }
+
+
+def $test_copy() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+    };
+
+    var copy = map:copy();
+
+    assert copy:count() == 2;
+    assert copy["abc"] == 123;
+    assert copy["def"] == 456;
+}

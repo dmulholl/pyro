@@ -84,3 +84,35 @@ def $test_stress() {
     assert vec[456] == 456;
     assert vec[789] == 789;
 }
+
+
+def $test_reverse() {
+    var vec = [123, 456, 789];
+
+    vec = vec:reverse();
+
+    assert vec[0] == 789;
+    assert vec[1] == 456;
+    assert vec[2] == 123;
+}
+
+
+def $test_copy() {
+    var vec = [123, 456, 789];
+
+    var copy = vec:copy();
+
+    assert copy:count() == 3;
+    assert copy[0] == 123;
+    assert copy[1] == 456;
+    assert copy[2] == 789;
+}
+
+
+def $test_contains() {
+    var vec = [123, 456, 789];
+    assert vec:contains(123);
+    assert vec:contains(789);
+    assert !vec:contains(0);
+    assert !vec:contains("foo");
+}

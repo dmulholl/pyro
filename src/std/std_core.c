@@ -338,6 +338,17 @@ static Value map_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value map_copy(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map = AS_MAP(args[-1]);
+    ObjMap* copy = ObjMap_copy(map, vm);
+    if (!copy) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    return OBJ_VAL(copy);
+}
+
+
 static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjMapIter* iterator = ObjMapIter_new(map, MAP_ITER_KEYS, vm);
@@ -525,6 +536,52 @@ static Value vec_set(PyroVM* vm, size_t arg_count, Value* args) {
     }
     pyro_panic(vm, "Invalid index type, expected an integer.");
     return NULL_VAL();
+}
+
+
+static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    if (vec->count < 2) {
+        return OBJ_VAL(vec);
+    }
+
+    Value* low = &vec->values[0];
+    Value* high = &vec->values[vec->count - 1];
+
+    while (low < high) {
+        Value temp = *low;
+        *low = *high;
+        *high = temp;
+        low++;
+        high--;
+    }
+
+    return OBJ_VAL(vec);
+}
+
+
+static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    ObjVec* copy = ObjVec_copy(vec, vm);
+    if (!copy) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    return OBJ_VAL(vec);
+}
+
+
+static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    for (size_t i = 0; i < vec->count; i++) {
+        if (pyro_check_equal(vec->values[i], args[0])) {
+            return BOOL_VAL(true);
+        }
+    }
+
+    return BOOL_VAL(false);
 }
 
 
@@ -1656,6 +1713,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->map_class, "$set_index", map_set, 2);
     pyro_define_method(vm, vm->map_class, "del", map_del, 1);
     pyro_define_method(vm, vm->map_class, "contains", map_contains, 1);
+    pyro_define_method(vm, vm->map_class, "copy", map_copy, 0);
     pyro_define_method(vm, vm->map_class, "keys", map_keys, 0);
     pyro_define_method(vm, vm->map_class, "values", map_values, 0);
     pyro_define_method(vm, vm->map_class, "entries", map_entries, 0);
@@ -1670,6 +1728,9 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "set", vec_set, 2);
     pyro_define_method(vm, vm->vec_class, "$get_index", vec_get, 1);
     pyro_define_method(vm, vm->vec_class, "$set_index", vec_set, 2);
+    pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
+    pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
+    pyro_define_method(vm, vm->vec_class, "copy", vec_copy, 0);
     pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
     pyro_define_method(vm, vm->vec_iter_class, "$next", vec_iter_next, 0);
 

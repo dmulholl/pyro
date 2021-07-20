@@ -376,6 +376,32 @@ ObjMap* ObjMap_new_weakref(PyroVM* vm) {
 }
 
 
+ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
+    ObjMap* map = ObjMap_new(vm);
+    if (!map) {
+        return NULL;
+    }
+
+    pyro_push(vm, OBJ_VAL(map));
+    MapEntry* array = ALLOCATE_ARRAY(vm, MapEntry, src->capacity);
+    pyro_pop(vm);
+
+    if (!array) {
+        return NULL;
+    }
+
+    memcpy(array, src->entries, sizeof(MapEntry) * src->capacity);
+
+    map->count = src->count;
+    map->capacity = src->capacity;
+    map->tombstone_count = src->tombstone_count;
+    map->entries = array;
+    map->max_load_threshold = src->max_load_threshold;
+
+    return map;
+}
+
+
 int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
     if (map->capacity == 0) {
         size_t new_capacity = GROW_CAPACITY(map->capacity);
@@ -1018,6 +1044,16 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
         vec->values[i] = fill_value;
     }
 
+    return vec;
+}
+
+
+ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm) {
+    ObjVec* vec = ObjVec_new_with_cap(src->count, vm);
+    if (!vec) {
+        return NULL;
+    }
+    memcpy(vec->values, src->values, sizeof(Value) * src->count);
     return vec;
 }
 

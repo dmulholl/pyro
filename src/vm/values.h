@@ -170,6 +170,10 @@ bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm);
 // entry was found.
 bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm);
 
+// Creates a new map object by copying [src]. Returns NULL if sufficient memory cannot be allocated
+// for the copy.
+ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm);
+
 typedef struct {
     Obj obj;
     ObjMap* map;
@@ -199,7 +203,11 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
 ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm);
 
-// Copies all entries from [src] to [dst].
+// Returns a copy of the [src] vector. Returns NULL if memory cannot be allocated for the copy.
+ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm);
+
+// Appends all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false] if
+// the operation failed because enough memory could not be allocated for the extra entries.
 bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
 
 typedef struct {
