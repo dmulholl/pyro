@@ -401,7 +401,7 @@ Buffers have the following methods:
 
     Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the cost of creating multiple temporary strings along the way.
 
-    Note that calling `$str()` on a buffer does something different --- it creates a string with a *copy* of the buffer's content. In this case, the buffer itself is unchanged.
+    Note that calling `$str()` on a buffer does something different --- it creates a string with a *copy* of the buffer's content, leaving the buffer itself unchanged.
 
 [[ `:write(arg)` <br> `:write(format_string, arg1, arg2, ...)` ]]
 
