@@ -315,6 +315,16 @@ Returns an iterator over the string's <code>$char</code> values, i.e. UTF-8 enco
 </div>
 <div>
 <dt>
+<code>:ends_with(suffix)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string ends with <code>suffix</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:is_ascii()</code>
 </dt>
 <dd>
@@ -332,6 +342,16 @@ Returns <code>true</code> if the string is empty or contains only byte values in
 <p>
 Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 (This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:starts_with(prefix)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string starts with <code>prefix</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>

@@ -77,3 +77,23 @@ assert !"a\x80b":is_utf8();
 
 assert "foo BAR 123":to_ascii_upper() == "FOO BAR 123";
 assert "foo BAR 123":to_ascii_lower() == "foo bar 123";
+
+
+def $test_starts_with() {
+    var s1 = "foobar";
+    assert s1:starts_with("f");
+    assert s1:starts_with("foo");
+    assert s1:starts_with("foobar");
+    assert !s1:starts_with("bar");
+    assert !s1:starts_with("foobarbaz");
+}
+
+
+def $test_ends_with() {
+    var s1 = "foobar";
+    assert s1:ends_with("r");
+    assert s1:ends_with("bar");
+    assert s1:ends_with("foobar");
+    assert !s1:ends_with("foo");
+    assert !s1:ends_with("foobarbaz");
+}

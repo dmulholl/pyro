@@ -1019,6 +1019,50 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_starts_with(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :starts_with().");
+        return NULL_VAL();
+    }
+
+    ObjStr* target = AS_STR(args[0]);
+
+    if (str->length < target->length) {
+        return BOOL_VAL(false);
+    }
+
+    if (memcmp(str->bytes, target->bytes, target->length) == 0) {
+        return BOOL_VAL(true);
+    }
+
+    return BOOL_VAL(false);
+}
+
+
+static Value str_ends_with(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :ends_with().");
+        return NULL_VAL();
+    }
+
+    ObjStr* target = AS_STR(args[0]);
+
+    if (str->length < target->length) {
+        return BOOL_VAL(false);
+    }
+
+    if (memcmp(&str->bytes[str->length - target->length], target->bytes, target->length) == 0) {
+        return BOOL_VAL(true);
+    }
+
+    return BOOL_VAL(false);
+}
+
+
 // ------ //
 // Ranges //
 // ------ //
@@ -1828,6 +1872,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_iter_class, "$next", str_iter_next, 0);
     pyro_define_method(vm, vm->str_class, "to_ascii_upper", str_to_ascii_upper, 0);
     pyro_define_method(vm, vm->str_class, "to_ascii_lower", str_to_ascii_lower, 0);
+    pyro_define_method(vm, vm->str_class, "starts_with", str_starts_with, 1);
+    pyro_define_method(vm, vm->str_class, "ends_with", str_ends_with, 1);
 
     pyro_define_global_fn(vm, "$range", fn_range, -1);
     pyro_define_global_fn(vm, "$is_range", fn_is_range, 1);

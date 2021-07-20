@@ -95,6 +95,10 @@ Strings have the following methods:
 
     Returns an iterator over the string's `$char` values, i.e. UTF-8 encoded Unicode code points.
 
+[[ `:ends_with(suffix)` ]]
+
+    Returns `true` if the string ends with `suffix`, otherwise `false`.
+
 [[ `:is_ascii()` ]]
 
     Returns `true` if the string is empty or contains only byte values in the range `[0, 127]`.
@@ -104,6 +108,10 @@ Strings have the following methods:
 
     Returns `true` if the string is empty or contains only valid UTF-8.
     (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:starts_with(prefix)` ]]
+
+    Returns `true` if the string starts with `prefix`, otherwise `false`.
 
 [[ `:to_ascii_lower()` ]]
 
