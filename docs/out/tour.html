@@ -383,7 +383,7 @@ The <code>echo</code> statement prints to the standard output stream. It's usefu
 </pre>
 <p>
 You can <code>echo</code> any value &mdash; <code>echo</code> stringifies its argument before printing it.
-(It's equivalent to calling <code>$str(arg)</code> on the argument first and printing the result.)
+(It's equivalent to calling <code>$str()</code> on the argument first and printing the result.)
 </p>
 <p>
 Pyro also has a family of <code>$print()</code> functions with support for format strings:
@@ -394,7 +394,11 @@ Pyro also has a family of <code>$print()</code> functions with support for forma
 <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>      <span class="c1"># &quot;123 and 456&quot;</span>
 </pre>
 <p>
-See the <a href="tour/formatting.html">string formatting</a> documentation for details.
+Calling the <code>$print()</code> function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
+Calling it with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
+</p>
+<p>
+See the <a href="tour/formatting.html">string formatting</a> documentation for a detailed look at the <code>$fmt()</code> function and format strings.
 </p>
 <h3 id="loops">
 Loops

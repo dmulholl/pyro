@@ -207,7 +207,7 @@ The `echo` statement prints to the standard output stream. It's useful for simpl
     echo "hello pyro";
 
 You can `echo` any value --- `echo` stringifies its argument before printing it.
-(It's equivalent to calling `$str(arg)` on the argument first and printing the result.)
+(It's equivalent to calling `$str()` on the argument first and printing the result.)
 
 Pyro also has a family of `$print()` functions with support for format strings:
 
@@ -216,9 +216,10 @@ Pyro also has a family of `$print()` functions with support for format strings:
     $print("{} and {}", "foo", "bar");  # "foo and bar"
     $print("{} and {}", 123, 456);      # "123 and 456"
 
-See the [string formatting](@root/tour/formatting//) documentation for details.
+Calling the `$print()` function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+Calling it with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
-
+See the [string formatting](@root/tour/formatting//) documentation for a detailed look at the `$fmt()` function and format strings.
 
 
 
