@@ -587,6 +587,18 @@ Sets the value at <code>index</code> where <code>index</code> is an <code>$i64</
 </div>
 <div>
 <dt>
+<code>:shuffle()</code>
+</dt>
+<dd>
+<p>
+Shuffles the vector in-place.
+Uses Fisher-Yates/Durstenfeld shuffling and random numbers from the <code>$std::prng</code> module.
+Returns the vector to enable chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:sort()</code> <br> <code>:sort(func)</code>
 </dt>
 <dd>
@@ -596,7 +608,7 @@ Returns the vector to allow chaining.
 </p>
 <p>
 If a callable argument <code>func</code> is supplied it will be used to compare pairs of values.
-It should accept two arguments <code>a</code> and <code>b</code> and return <code>-1</code> if <code>a &lt; b</code>, <code>0</code> if <code>a == b</code>, and <code>1</code> if <code>a &gt; b</code>.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>-1</code> if <code>a &lt; b</code>, <code>0</code> if <code>a == b</code>, or <code>1</code> if <code>a &gt; b</code>.
 </p>
 <p>
 By default, values which are not comparable are treated as equal.

@@ -583,6 +583,23 @@ static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    // Fisher-Yates/Durstenfeld algorithm: iterate over the array and at each index choose
+    // randomly from the remaining unshuffled entries.
+    for (size_t i = 0; i < vec->count; i++) {
+        // Choose [j] from the half-open interval [i, vec->count).
+        size_t j = i + pyro_mt64_gen_int(vm->mt64, vec->count - i);
+        Value temp = vec->values[i];
+        vec->values[i] = vec->values[j];
+        vec->values[j] = temp;
+    }
+
+    return OBJ_VAL(vec);
+}
+
+
 static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     ObjVec* copy = ObjVec_copy(vec, vm);
@@ -1865,6 +1882,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "$set_index", vec_set, 2);
     pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
     pyro_define_method(vm, vm->vec_class, "sort", vec_sort, -1);
+    pyro_define_method(vm, vm->vec_class, "shuffle", vec_shuffle, 0);
     pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
     pyro_define_method(vm, vm->vec_class, "index_of", vec_index_of, 1);
     pyro_define_method(vm, vm->vec_class, "map", vec_map, 1);

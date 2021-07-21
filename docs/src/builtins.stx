@@ -243,13 +243,19 @@ Vectors have the following methods:
 
     Sets the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
 
+[[ `:shuffle()` ]]
+
+    Shuffles the vector in-place.
+    Uses Fisher-Yates/Durstenfeld shuffling and random numbers from the `$std::prng` module.
+    Returns the vector to enable chaining.
+
 [[ `:sort()` <br> `:sort(func)` ]]
 
     Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).
     Returns the vector to allow chaining.
 
     If a callable argument `func` is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `-1` if `a < b`, `0` if `a == b`, and `1` if `a > b`.
+    It should accept two arguments `a` and `b` and return `-1` if `a < b`, `0` if `a == b`, or `1` if `a > b`.
 
     By default, values which are not comparable are treated as equal.
 
