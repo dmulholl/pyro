@@ -166,3 +166,28 @@ def $test_strip_ascii_ws() {
     assert "foobar":strip_ascii_ws() == "foobar";
     assert "":strip_ascii_ws() == "";
 }
+
+
+def $test_match() {
+    var str = "foobar";
+
+    assert str:match("foobar", 0);
+    assert str:match("foo", 0);
+    assert str:match("oob", 1);
+    assert str:match("bar", 3);
+
+    assert !str:match("fooX", 0);
+    assert !str:match("Xfoo", 0);
+
+    assert !"":match("xxx", 0);
+}
+
+
+def $test_replace() {
+    var str = "foo and foo and foo";
+    assert str:replace("foo", "bar") == "bar and bar and bar";
+    assert str:replace("foo", "foobar") == "foobar and foobar and foobar";
+    assert str:replace("foo", "") == " and  and ";
+    assert str:replace("", "bar") == "foo and foo and foo";
+    assert str:replace("xxx", "bar") == "foo and foo and foo";
+}
