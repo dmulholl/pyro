@@ -1154,6 +1154,92 @@ ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm) {
 }
 
 
+// Merges the sorted slices array[low..mid] and array[mid+1..high]. Indices are inclusive.
+static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t high, Value fn, PyroVM* vm) {
+    if (vm->halt_flag) {
+        return;
+    }
+
+    size_t i = low;
+    size_t j = mid + 1;
+
+    // Copy the slice from [array] to [aux_array].
+    memcpy(&aux_array[low], &array[low], sizeof(Value) * (high - low + 1));
+
+    for (size_t k = low; k <= high; k++) {
+        if (i > mid) {
+            array[k] = aux_array[j];
+            j++;
+            continue;
+        }
+
+        if (j > high) {
+            array[k] = aux_array[i];
+            i++;
+            continue;
+        }
+
+        int result;
+
+        if (IS_NULL(fn)) {
+            result = pyro_compare(aux_array[i], aux_array[j]);
+        } else {
+            pyro_push(vm, fn);
+            pyro_push(vm, aux_array[i]);
+            pyro_push(vm, aux_array[j]);
+            Value return_value = pyro_call_fn(vm, fn, 2);
+            if (vm->halt_flag) {
+                return;
+            } else if (!IS_I64(return_value)) {
+                pyro_panic(vm, "Comparison function must return an integer.");
+                return;
+            } else {
+                result = return_value.as.i64;
+            }
+        }
+
+        if (result == 1) {
+            array[k] = aux_array[j];
+            j++;
+        } else {
+            array[k] = aux_array[i];
+            i++;
+        }
+    }
+}
+
+
+// Sorts the slice of [array] identified by the inclusive indices [low] and [high]. [aux_array] is
+// used as scratch space and should have the same length as [array].
+static void pyro_mergesort(Value* array, Value* aux_array, size_t low, size_t high, Value fn, PyroVM* vm) {
+    if (high <= low) {
+        return;
+    }
+
+    size_t mid = low + (high - low) / 2;
+
+    pyro_mergesort(array, aux_array, low, mid, fn, vm);
+    pyro_mergesort(array, aux_array, mid + 1, high, fn, vm);
+    merge(array, aux_array, low, mid, high, fn, vm);
+}
+
+
+bool ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm) {
+    if (vec->count < 2) {
+        return true;
+    }
+
+    Value* aux_array = ALLOCATE_ARRAY(vm, Value, vec->count);
+    if (!aux_array) {
+        return false;
+    }
+
+    pyro_mergesort(vec->values, aux_array, 0, vec->count - 1, fn, vm);
+    FREE_ARRAY(vm, Value, aux_array, vec->count);
+    return true;
+}
+
+
 // -------- //
 // ObjRange //
 // -------- //

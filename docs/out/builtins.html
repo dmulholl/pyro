@@ -585,6 +585,24 @@ Sets the value at <code>index</code> where <code>index</code> is an <code>$i64</
 </p>
 </dd>
 </div>
+<div>
+<dt>
+<code>:sort()</code> <br> <code>:sort(func)</code>
+</dt>
+<dd>
+<p>
+Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).
+Returns the vector to allow chaining.
+</p>
+<p>
+If a callable argument <code>func</code> is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>-1</code> if <code>a &lt; b</code>, <code>0</code> if <code>a == b</code>, and <code>1</code> if <code>a &gt; b</code>.
+</p>
+<p>
+By default, values which are not comparable are treated as equal.
+</p>
+</dd>
+</div>
 </dl>
 <h3 id="hash-maps">
 Hash Maps

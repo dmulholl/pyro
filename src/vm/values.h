@@ -203,6 +203,11 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
 ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm);
 
+// Sorts the vector in-place using the mergesort algorithm. If [fn] is not [null] it will be used
+// to compare pairs of values. This function calls into code which may panic or set the exit flag.
+// Returns [false] if memory could not be allocated for the auxiliary array.
+bool ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm);
+
 // Returns a copy of the [src] vector. Returns NULL if memory cannot be allocated for the copy.
 ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm);
 
@@ -535,6 +540,13 @@ bool pyro_check_equal(Value a, Value b);
 
 // Returns [true] if the value is truthy.
 bool pyro_is_truthy(Value value);
+
+// Compares two values.
+// - Returns -1 if a < b.
+// - Returns 0 if a == b.
+// - Returns 1 if a > b.
+// - Returns 2 if the values are not comparable.
+int pyro_compare(Value a, Value b);
 
 // This function constructs and returns the default string representation of a value. A lot can go
 // wrong here:

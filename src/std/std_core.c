@@ -561,6 +561,28 @@ static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    Value compare_func;
+    if (arg_count == 0) {
+        compare_func = NULL_VAL();
+    } else if (arg_count == 1) {
+        compare_func = args[0];
+    } else {
+        pyro_panic(vm, "Expected 0 or 1 arguments to :sort(), found %d.", arg_count);
+        return NULL_VAL();
+    }
+
+    if (!ObjVec_mergesort(vec, compare_func, vm)) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(vec);
+}
+
+
 static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     ObjVec* copy = ObjVec_copy(vec, vm);
@@ -1842,6 +1864,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "$get_index", vec_get, 1);
     pyro_define_method(vm, vm->vec_class, "$set_index", vec_set, 2);
     pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
+    pyro_define_method(vm, vm->vec_class, "sort", vec_sort, -1);
     pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
     pyro_define_method(vm, vm->vec_class, "index_of", vec_index_of, 1);
     pyro_define_method(vm, vm->vec_class, "map", vec_map, 1);
