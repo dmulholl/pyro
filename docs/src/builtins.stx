@@ -97,7 +97,7 @@ Strings have the following methods:
 
 [[ `:ends_with(suffix)` ]]
 
-    Returns `true` if the string ends with `suffix`, otherwise `false`.
+    Returns `true` if the string ends with the string `suffix`, otherwise `false`.
 
 [[ `:is_ascii()` ]]
 
@@ -111,7 +111,31 @@ Strings have the following methods:
 
 [[ `:starts_with(prefix)` ]]
 
-    Returns `true` if the string starts with `prefix`, otherwise `false`.
+    Returns `true` if the string starts with the string `prefix`, otherwise `false`.
+
+[[ `:strip_ascii_ws()` ]]
+
+    Returns a new string with leading and trailing ASCII whitespace characters stripped.
+
+[[ `:strip_bytes(string)` ]]
+
+    Returns a new string with any leading or trailing bytes that occur in `string` stripped.
+
+[[ `:strip_prefix(prefix)` ]]
+
+    Returns a new string with the leading string `prefix` stripped if present.
+
+[[ `:strip_prefix_bytes(prefix)` ]]
+
+    Returns a new string with any leading bytes that occur in the string `prefix` stripped.
+
+[[ `:strip_suffix(suffix)` ]]
+
+    Returns a new string with the trailing string `suffix` stripped if present.
+
+[[ `:strip_suffix_bytes(suffix)` ]]
+
+    Returns a new string with any trailing bytes that occur in the string `suffix` stripped.
 
 [[ `:to_ascii_lower()` ]]
 

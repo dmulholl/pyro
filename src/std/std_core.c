@@ -1102,6 +1102,210 @@ static Value str_ends_with(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_strip_prefix(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :strip_prefix().");
+        return NULL_VAL();
+    }
+
+    ObjStr* target = AS_STR(args[0]);
+
+    if (str->length < target->length) {
+        return OBJ_VAL(str);
+    }
+
+    if (memcmp(str->bytes, target->bytes, target->length) == 0) {
+        ObjStr* new_str = ObjStr_copy_raw(&str->bytes[target->length], str->length - target->length, vm);
+        if (!new_str) {
+            pyro_panic(vm, "Out of memory.");
+            return NULL_VAL();
+        }
+        return OBJ_VAL(new_str);
+    }
+
+    return OBJ_VAL(str);
+}
+
+
+static Value str_strip_suffix(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :strip_suffix().");
+        return NULL_VAL();
+    }
+
+    ObjStr* target = AS_STR(args[0]);
+
+    if (str->length < target->length) {
+        return OBJ_VAL(str);
+    }
+
+    if (memcmp(&str->bytes[str->length - target->length], target->bytes, target->length) == 0) {
+        ObjStr* new_str = ObjStr_copy_raw(str->bytes, str->length - target->length, vm);
+        if (!new_str) {
+            pyro_panic(vm, "Out of memory.");
+            return NULL_VAL();
+        }
+        return OBJ_VAL(new_str);
+    }
+
+    return OBJ_VAL(str);
+}
+
+
+static Value str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :strip_prefix_bytes().");
+        return NULL_VAL();
+    }
+
+    ObjStr* prefix = AS_STR(args[0]);
+
+    if (prefix->length == 0 || str->length == 0) {
+        return OBJ_VAL(str);
+    }
+
+    char* start = str->bytes;
+    char* end = str->bytes + str->length;
+
+    while (start < end) {
+        char c = *start;
+        if (memchr(prefix->bytes, c, prefix->length) == NULL) {
+            break;
+        }
+        start++;
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(start, end - start, vm);
+    if (!new_str) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
+static Value str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :strip_suffix_bytes().");
+        return NULL_VAL();
+    }
+
+    ObjStr* suffix = AS_STR(args[0]);
+
+    if (suffix->length == 0 || str->length == 0) {
+        return OBJ_VAL(str);
+    }
+
+    char* start = str->bytes;
+    char* end = str->bytes + str->length;
+
+    while (start < end) {
+        char c = *(end - 1);
+        if (memchr(suffix->bytes, c, suffix->length) == NULL) {
+            break;
+        }
+        end--;
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(start, end - start, vm);
+    if (!new_str) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
+static Value str_strip_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :strip_bytes().");
+        return NULL_VAL();
+    }
+
+    ObjStr* target = AS_STR(args[0]);
+
+    if (target->length == 0 || str->length == 0) {
+        return OBJ_VAL(str);
+    }
+
+    char* start = str->bytes;
+    char* end = str->bytes + str->length;
+
+    while (start < end) {
+        char c = *start;
+        if (memchr(target->bytes, c, target->length) == NULL) {
+            break;
+        }
+        start++;
+    }
+
+    while (start < end) {
+        char c = *(end - 1);
+        if (memchr(target->bytes, c, target->length) == NULL) {
+            break;
+        }
+        end--;
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(start, end - start, vm);
+    if (!new_str) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
+static Value str_strip_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return OBJ_VAL(str);
+    }
+
+    const char* whitespace = " \t\r\n\v\f";
+
+    char* start = str->bytes;
+    char* end = str->bytes + str->length;
+
+    while (start < end) {
+        char c = *start;
+        if (memchr(whitespace, c, 6) == NULL) {
+            break;
+        }
+        start++;
+    }
+
+    while (start < end) {
+        char c = *(end - 1);
+        if (memchr(whitespace, c, 6) == NULL) {
+            break;
+        }
+        end--;
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(start, end - start, vm);
+    if (!new_str) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
 // ------ //
 // Ranges //
 // ------ //
@@ -1915,6 +2119,12 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "to_ascii_lower", str_to_ascii_lower, 0);
     pyro_define_method(vm, vm->str_class, "starts_with", str_starts_with, 1);
     pyro_define_method(vm, vm->str_class, "ends_with", str_ends_with, 1);
+    pyro_define_method(vm, vm->str_class, "strip_prefix", str_strip_prefix, 1);
+    pyro_define_method(vm, vm->str_class, "strip_suffix", str_strip_suffix, 1);
+    pyro_define_method(vm, vm->str_class, "strip_prefix_bytes", str_strip_prefix_bytes, 1);
+    pyro_define_method(vm, vm->str_class, "strip_suffix_bytes", str_strip_suffix_bytes, 1);
+    pyro_define_method(vm, vm->str_class, "strip_bytes", str_strip_bytes, 1);
+    pyro_define_method(vm, vm->str_class, "strip_ascii_ws", str_strip_ascii_ws, 0);
 
     pyro_define_global_fn(vm, "$range", fn_range, -1);
     pyro_define_global_fn(vm, "$is_range", fn_is_range, 1);

@@ -80,20 +80,89 @@ assert "foo BAR 123":to_ascii_lower() == "foo bar 123";
 
 
 def $test_starts_with() {
-    var s1 = "foobar";
-    assert s1:starts_with("f");
-    assert s1:starts_with("foo");
-    assert s1:starts_with("foobar");
-    assert !s1:starts_with("bar");
-    assert !s1:starts_with("foobarbaz");
+    var str = "foobar";
+    assert str:starts_with("f");
+    assert str:starts_with("foo");
+    assert str:starts_with("foobar");
+    assert !str:starts_with("bar");
+    assert !str:starts_with("foobarbaz");
 }
 
 
 def $test_ends_with() {
-    var s1 = "foobar";
-    assert s1:ends_with("r");
-    assert s1:ends_with("bar");
-    assert s1:ends_with("foobar");
-    assert !s1:ends_with("foo");
-    assert !s1:ends_with("foobarbaz");
+    var str = "foobar";
+    assert str:ends_with("r");
+    assert str:ends_with("bar");
+    assert str:ends_with("foobar");
+    assert !str:ends_with("foo");
+    assert !str:ends_with("foobarbaz");
+}
+
+
+def $test_strip_prefix() {
+    var str = "foobar";
+    assert str:strip_prefix("foo") == "bar";
+    assert str:strip_prefix("foobar") == "";
+    assert str:strip_prefix("bar") == "foobar";
+    assert str:strip_prefix("xxx") == "foobar";
+    assert str:strip_prefix("") == "foobar";
+
+    assert "":strip_prefix("xxx") == "";
+}
+
+
+def $test_strip_suffix() {
+    var str = "foobar";
+    assert str:strip_suffix("foo") == "foobar";
+    assert str:strip_suffix("foobar") == "";
+    assert str:strip_suffix("bar") == "foo";
+    assert str:strip_suffix("xxx") == "foobar";
+    assert str:strip_suffix("") == "foobar";
+
+    assert "":strip_suffix("xxx") == "";
+}
+
+
+def $test_strip_prefix_bytes() {
+    var str = "foobar";
+    assert str:strip_prefix_bytes("f") == "oobar";
+    assert str:strip_prefix_bytes("fo") == "bar";
+    assert str:strip_prefix_bytes("of") == "bar";
+    assert str:strip_prefix_bytes("fobar") == "";
+    assert str:strip_prefix_bytes("o") == "foobar";
+    assert str:strip_prefix_bytes("x") == "foobar";
+
+    assert "":strip_prefix_bytes("abc") == "";
+}
+
+
+def $test_strip_suffix_bytes() {
+    var str = "foobar";
+    assert str:strip_suffix_bytes("r") == "fooba";
+    assert str:strip_suffix_bytes("ar") == "foob";
+    assert str:strip_suffix_bytes("ra") == "foob";
+    assert str:strip_suffix_bytes("fobar") == "";
+    assert str:strip_suffix_bytes("a") == "foobar";
+    assert str:strip_suffix_bytes("x") == "foobar";
+
+    assert "":strip_suffix_bytes("abc") == "";
+}
+
+
+def $test_strip_bytes() {
+    var str = "foobar";
+    assert str:strip_bytes("") == "foobar";
+    assert str:strip_bytes("fr") == "ooba";
+    assert str:strip_bytes("fobar") == "";
+    assert str:strip_bytes("x") == "foobar";
+    assert str:strip_bytes("oa") == "foobar";
+
+    assert "":strip_bytes("abc") == "";
+}
+
+
+def $test_strip_ascii_ws() {
+    assert "   \tfoobar\r\n   ":strip_ascii_ws() == "foobar";
+    assert "foobar":strip_ascii_ws() == "foobar";
+    assert "":strip_ascii_ws() == "";
 }

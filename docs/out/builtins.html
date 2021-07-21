@@ -14,7 +14,7 @@
         <header class="masthead">
             <h1><a href="index.html">Pyro</a></h1>
             
-                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
                 <p class="version">Version 0.2.0</p>
@@ -319,7 +319,7 @@ Returns an iterator over the string's <code>$char</code> values, i.e. UTF-8 enco
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string ends with <code>suffix</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the string ends with the string <code>suffix</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
@@ -351,7 +351,67 @@ Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string starts with <code>prefix</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the string starts with the string <code>prefix</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_ascii_ws()</code>
+</dt>
+<dd>
+<p>
+Returns a new string with leading and trailing ASCII whitespace characters stripped.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_bytes(string)</code>
+</dt>
+<dd>
+<p>
+Returns a new string with any leading or trailing bytes that occur in <code>string</code> stripped.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_prefix(prefix)</code>
+</dt>
+<dd>
+<p>
+Returns a new string with the leading string <code>prefix</code> stripped if present.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_prefix_bytes(prefix)</code>
+</dt>
+<dd>
+<p>
+Returns a new string with any leading bytes that occur in the string <code>prefix</code> stripped.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_suffix(suffix)</code>
+</dt>
+<dd>
+<p>
+Returns a new string with the trailing string <code>suffix</code> stripped if present.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_suffix_bytes(suffix)</code>
+</dt>
+<dd>
+<p>
+Returns a new string with any trailing bytes that occur in the string <code>suffix</code> stripped.
 </p>
 </dd>
 </div>

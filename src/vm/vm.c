@@ -131,7 +131,7 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
         pyro_push(vm, result);
         return;
     }
-    pyro_panic(vm, "Expected %d argument(s) for %s but found %d.", fn->arity, fn->name->bytes, arg_count);
+    pyro_panic(vm, "Expected %d argument(s) for '%s' but found %d.", fn->arity, fn->name->bytes, arg_count);
 }
 
 
