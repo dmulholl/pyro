@@ -24,7 +24,14 @@ The generator is automatically initialized at startup using a random seed but yo
 
 [[ `rand_int(n)` ]]
 
-    Returns a uniformly-distributed random `$i64` from the half-open interval `[0, n)`, i.e. the interval from zero up to but not including `n`.
+    Returns a uniformly-distributed random `$i64` from the half-open interval `[0, n)`, i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
+
+
+[[ `rand_int_in_range(lower, upper)` ]]
+
+    Returns a uniformly-distributed random `$i64` from the half-open interval `[lower, upper)`, i.e. the interval from `lower` up to but not including `upper`.
+
+    The arguments can be positive or negative or mixed as long as `lower` is less than or equal to `upper`.
 
 
 [[ `seed(arg)` ]]
@@ -32,3 +39,6 @@ The generator is automatically initialized at startup using a random seed but yo
     Seeds the generator using the argument's 64-bit hash.
 
 
+[[ `shuffle(vec)` ]]
+
+    Shuffles the vector `vec` in-place. Uses Fisher-Yates/Durstenfeld shuffling.

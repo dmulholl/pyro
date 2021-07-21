@@ -88,7 +88,20 @@ Returns a uniformly-distributed random <code>$f64</code> from the half-open inte
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[0, n)</code>, i.e. the interval from zero up to but not including <code>n</code>.
+Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[0, n)</code>, i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>rand_int_in_range(lower, upper)</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[lower, upper)</code>, i.e. the interval from <code>lower</code> up to but not including <code>upper</code>.
+</p>
+<p>
+The arguments can be positive or negative or mixed as long as <code>lower</code> is less than or equal to <code>upper</code>.
 </p>
 </dd>
 </div>
@@ -99,6 +112,16 @@ Returns a uniformly-distributed random <code>$i64</code> from the half-open inte
 <dd>
 <p>
 Seeds the generator using the argument's 64-bit hash.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>shuffle(vec)</code>
+</dt>
+<dd>
+<p>
+Shuffles the vector <code>vec</code> in-place. Uses Fisher-Yates/Durstenfeld shuffling.
 </p>
 </dd>
 </div>

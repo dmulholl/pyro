@@ -192,6 +192,22 @@ int64_t pyro_mt64_gen_i64(MT64* mt) {
 }
 
 
+// Generates a uniformly-distributed random integer on the half-open interval [0, n).
+uint64_t pyro_mt64_gen_int(MT64* mt, uint64_t n) {
+    if (n == 0 || n == 1) {
+        return 0;
+    }
+
+    // Discarding values at or above [cutoff] avoids skew.
+    uint64_t cutoff = (UINT64_MAX / n) * n;
+
+    uint64_t rand_int;
+    while ((rand_int = pyro_mt64_gen_u64(mt)) >= cutoff);
+
+    return rand_int % n;
+}
+
+
 // Generates a random double on the closed interval [0, 1] with 53 bits of precision.
 // (The divisor is 2^53 - 1.)
 double pyro_mt64_gen_f64a(MT64* mt) {

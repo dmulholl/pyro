@@ -30,6 +30,9 @@ uint64_t pyro_mt64_gen_u64(MT64* mt);
 // Generates a random integer on the closed interval [0, 2^63 - 1].
 int64_t pyro_mt64_gen_i64(MT64* mt);
 
+// Generates a uniformly-distributed random integer on the half-open interval [0, n).
+uint64_t pyro_mt64_gen_int(MT64* mt, uint64_t n);
+
 // Generates a random double on the closed interval [0.0, 1.0] with 53 bits of precision.
 double pyro_mt64_gen_f64a(MT64* mt);
 
