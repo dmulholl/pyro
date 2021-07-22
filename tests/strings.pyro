@@ -224,3 +224,47 @@ def $test_contains() {
     assert !str:contains("foobarfoobar");
     assert !"":contains("xxx");
 }
+
+
+def $test_split() {
+    var vec1 = "abc--de--f":split("--");
+    assert vec1:count() == 3;
+    assert vec1[0] == "abc";
+    assert vec1[1] == "de";
+    assert vec1[2] == "f";
+
+    var vec2 = "--abc--de--f--":split("--");
+    assert vec2:count() == 5;
+    assert vec2[0] == "";
+    assert vec2[1] == "abc";
+    assert vec2[2] == "de";
+    assert vec2[3] == "f";
+    assert vec2[4] == "";
+
+    var vec3 = "--":split("--");
+    assert vec3:count() == 2;
+    assert vec3[0] == "";
+    assert vec3[1] == "";
+
+    var vec4 = "abc":split("--");
+    assert vec4:count() == 1;
+    assert vec4[0] == "abc";
+
+    var vec5 = "x":split("--");
+    assert vec5:count() == 1;
+    assert vec5[0] == "x";
+
+    var vec6 = "":split("--");
+    assert vec6:count() == 1;
+    assert vec6[0] == "";
+
+    var vec7 = "abc":split("");
+    assert vec7:count() == 1;
+    assert vec7[0] == "abc";
+
+    var vec8 = "abc,,def":split(",");
+    assert vec8:count() == 3;
+    assert vec8[0] == "abc";
+    assert vec8[1] == "";
+    assert vec8[2] == "def";
+}

@@ -1485,7 +1485,70 @@ static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
 
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :split().");
+        return NULL_VAL();
+    }
+    ObjStr* sep = AS_STR(args[0]);
+
+    ObjVec* vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(vec));
+
+    if (str->length < sep->length || sep->length == 0) {
+        if (!ObjVec_append(vec, OBJ_VAL(str), vm)) {
+            pyro_panic(vm, "Out of memory.");
+            return NULL_VAL();
+        }
+        pyro_pop(vm);
+        return OBJ_VAL(vec);
+    }
+
+    size_t start = 0;
+    size_t current = 0;
+    size_t last_possible_match_index = str->length - sep->length;
+
+    while (current <= last_possible_match_index) {
+        if (memcmp(&str->bytes[current], sep->bytes, sep->length) == 0) {
+            ObjStr* new_string = ObjStr_copy_raw(&str->bytes[start], current - start, vm);
+            if (!new_string) {
+                pyro_panic(vm, "Out of memory.");
+                return NULL_VAL();
+            }
+            pyro_push(vm, OBJ_VAL(new_string));
+            if (!ObjVec_append(vec, OBJ_VAL(new_string), vm)) {
+                pyro_panic(vm, "Out of memory.");
+                return NULL_VAL();
+            }
+            pyro_pop(vm);
+            current += sep->length;
+            start = current;
+        } else {
+            current++;
+        }
+    }
+
+    ObjStr* new_string = ObjStr_copy_raw(&str->bytes[start], str->length - start, vm);
+    if (!new_string) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(new_string));
+    if (!ObjVec_append(vec, OBJ_VAL(new_string), vm)) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_pop(vm);
+
+    pyro_pop(vm); // pop the vector
+    return OBJ_VAL(vec);
+}
 
 
 // ------ //
@@ -2312,6 +2375,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "substr", str_substr, 2);
     pyro_define_method(vm, vm->str_class, "index_of", str_index_of, 2);
     pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
+    pyro_define_method(vm, vm->str_class, "split", str_split, 1);
 
     pyro_define_global_fn(vm, "$range", fn_range, -1);
     pyro_define_global_fn(vm, "$is_range", fn_is_range, 1);

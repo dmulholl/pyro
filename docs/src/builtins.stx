@@ -127,6 +127,11 @@ Strings have the following methods:
 
     Returns a new string with all instances of the string `old` replaced by the string `new`.
 
+[[ `:split(sep)` ]]
+
+    Splits the string on instances of the delimiter string `sep`.
+    Returns a vector of strings.
+
 [[ `:starts_with(prefix)` ]]
 
     Returns `true` if the string starts with the string `prefix`, otherwise `false`.
