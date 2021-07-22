@@ -95,9 +95,19 @@ Strings have the following methods:
 
     Returns an iterator over the string's `$char` values, i.e. UTF-8 encoded Unicode code points.
 
+[[ `:contains(target)` ]]
+
+    Returns `true` if the string contains the string `target`.
+
 [[ `:ends_with(suffix)` ]]
 
     Returns `true` if the string ends with the string `suffix`, otherwise `false`.
+
+[[ `:index_of(target, index)` ]]
+
+    Returns the byte index of the next matching instance of the string `target`.
+    Starts searching at `index`.
+    Returns `$err()` if `target` is not found.
 
 [[ `:is_ascii()` ]]
 
@@ -108,6 +118,14 @@ Strings have the following methods:
 
     Returns `true` if the string is empty or contains only valid UTF-8.
     (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:match(target, index)` ]]
+
+    Returns `true` if the string `target` matches at byte index `index`.
+
+[[ `:replace(old, new)` ]]
+
+    Returns a new string with all instances of the string `old` replaced by the string `new`.
 
 [[ `:starts_with(prefix)` ]]
 
@@ -136,6 +154,10 @@ Strings have the following methods:
 [[ `:strip_suffix_bytes(suffix)` ]]
 
     Returns a new string with any trailing bytes that occur in the string `suffix` stripped.
+
+[[ `:substr(index, length)` ]]
+
+    Returns a new string consisting of the substring starting at byte index `index` and containing `length` bytes.
 
 [[ `:to_ascii_lower()` ]]
 

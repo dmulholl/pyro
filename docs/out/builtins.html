@@ -315,11 +315,33 @@ Returns an iterator over the string's <code>$char</code> values, i.e. UTF-8 enco
 </div>
 <div>
 <dt>
+<code>:contains(target)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string contains the string <code>target</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:ends_with(suffix)</code>
 </dt>
 <dd>
 <p>
 Returns <code>true</code> if the string ends with the string <code>suffix</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:index_of(target, index)</code>
+</dt>
+<dd>
+<p>
+Returns the byte index of the next matching instance of the string <code>target</code>.
+Starts searching at <code>index</code>.
+Returns <code>$err()</code> if <code>target</code> is not found.
 </p>
 </dd>
 </div>
@@ -342,6 +364,26 @@ Returns <code>true</code> if the string is empty or contains only byte values in
 <p>
 Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 (This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:match(target, index)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string <code>target</code> matches at byte index <code>index</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:replace(old, new)</code>
+</dt>
+<dd>
+<p>
+Returns a new string with all instances of the string <code>old</code> replaced by the string <code>new</code>.
 </p>
 </dd>
 </div>
@@ -412,6 +454,16 @@ Returns a new string with the trailing string <code>suffix</code> stripped if pr
 <dd>
 <p>
 Returns a new string with any trailing bytes that occur in the string <code>suffix</code> stripped.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:substr(index, length)</code>
+</dt>
+<dd>
+<p>
+Returns a new string consisting of the substring starting at byte index <code>index</code> and containing <code>length</code> bytes.
 </p>
 </dd>
 </div>
