@@ -1396,6 +1396,97 @@ static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_substr(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_I64(args[0]) && args[0].as.i64 > 0) {
+        pyro_panic(vm, "Invalid argument to :substr().");
+        return NULL_VAL();
+    }
+    size_t index = (size_t)args[0].as.i64;
+
+    if (!IS_I64(args[1]) && args[1].as.i64 > 0) {
+        pyro_panic(vm, "Invalid argument to :substr().");
+        return NULL_VAL();
+    }
+    size_t length = (size_t)args[1].as.i64;
+
+    if (index + length > str->length) {
+        pyro_panic(vm, "Index out of range.");
+        return NULL_VAL();
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(&str->bytes[index], length, vm);
+    if (!new_str) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
+static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :index_of().");
+        return NULL_VAL();
+    }
+    ObjStr* target = AS_STR(args[0]);
+
+    if (!IS_I64(args[1]) || args[1].as.i64 < 0) {
+        pyro_panic(vm, "Invalid argument to :index_of().");
+        return NULL_VAL();
+    }
+    size_t index = (size_t)args[1].as.i64;
+
+    if (index + target->length > str->length) {
+        return OBJ_VAL(vm->empty_error);
+    }
+
+    size_t last_possible_match_index = str->length - target->length;
+
+    while (index <= last_possible_match_index) {
+        if (memcmp(&str->bytes[index], target->bytes, target->length) == 0) {
+            return I64_VAL((int64_t)index);
+        }
+        index++;
+    }
+
+    return OBJ_VAL(vm->empty_error);
+}
+
+
+static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :contains().");
+        return NULL_VAL();
+    }
+    ObjStr* target = AS_STR(args[0]);
+
+    if (str->length < target->length) {
+        return BOOL_VAL(false);
+    }
+
+    size_t index = 0;
+    size_t last_possible_match_index = str->length - target->length;
+
+    while (index <= last_possible_match_index) {
+        if (memcmp(&str->bytes[index], target->bytes, target->length) == 0) {
+            return BOOL_VAL(true);
+        }
+        index++;
+    }
+
+    return BOOL_VAL(false);
+}
+
+
+
+
 
 // ------ //
 // Ranges //
@@ -2218,6 +2309,9 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "strip_ascii_ws", str_strip_ascii_ws, 0);
     pyro_define_method(vm, vm->str_class, "match", str_match, 2);
     pyro_define_method(vm, vm->str_class, "replace", str_replace, 2);
+    pyro_define_method(vm, vm->str_class, "substr", str_substr, 2);
+    pyro_define_method(vm, vm->str_class, "index_of", str_index_of, 2);
+    pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
 
     pyro_define_global_fn(vm, "$range", fn_range, -1);
     pyro_define_global_fn(vm, "$is_range", fn_is_range, 1);

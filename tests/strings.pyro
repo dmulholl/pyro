@@ -191,3 +191,36 @@ def $test_replace() {
     assert str:replace("", "bar") == "foo and foo and foo";
     assert str:replace("xxx", "bar") == "foo and foo and foo";
 }
+
+
+def $test_substr() {
+    var str = "foobar";
+    assert str:substr(0, 0) == "";
+    assert str:substr(0, 3) == "foo";
+    assert str:substr(3, 3) == "bar";
+    assert str:substr(0, str:byte_count()) == "foobar";
+}
+
+
+def $test_index_of() {
+    var str = "foobar";
+    assert str:index_of("foo", 0) == 0;
+    assert str:index_of("bar", 0) == 3;
+    assert str:index_of("bar", 1) == 3;
+    assert str:index_of("bar", 3) == 3;
+    assert str:index_of("foobar", 0) == 0;
+
+    assert $is_err(str:index_of("xxx", 0));
+    assert $is_err(str:index_of("foo", 1));
+}
+
+
+def $test_contains() {
+    var str = "foobar";
+    assert str:contains("foobar");
+    assert str:contains("foo");
+    assert str:contains("bar");
+    assert !str:contains("xxx");
+    assert !str:contains("foobarfoobar");
+    assert !"":contains("xxx");
+}
