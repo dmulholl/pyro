@@ -19,8 +19,7 @@ class PyroLexer(RegexLexer):
             (r'\n', Text),
             (r'\s+', Text),
             (r'#(.*?)\n', Comment.Single),
-            # (r'(>>>|[.]{3})', Comment.Preproc),
-            (r'(>>>|[.]{3})', Operator),
+            (r'(>>>|[.]{3})', Comment.Preproc),
 
             (r'(import|from|as)\b', Keyword.Namespace),
             (r'(var|def|class)\b', Keyword.Declaration),
@@ -35,7 +34,6 @@ class PyroLexer(RegexLexer):
             (r'(true|false|null|self|super)\b', Keyword.Constant),
 
             # Float literal.
-            # (r'\d+(\.\d+[eE][+\-]?\d+|\.\d*|[eE][+\-]?\d+)', Number.Float),
             (r'\d[\d_]*(\.[\d_]+[eE][+\-]?[\d_]+|\.[\d_]*|[eE][+\-]?[\d_]+)', Number.Float),
 
             # Binary integer.
