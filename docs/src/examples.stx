@@ -63,6 +63,7 @@ The classic guess-a-random-number game:
 
     loop {
         $print("Enter a number between 1 and 10: ");
+
         var guess = $stdin:read_line();
         if guess == null || guess == "exit" {
             break;
