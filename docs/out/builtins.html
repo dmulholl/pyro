@@ -651,7 +651,7 @@ Returns the number of entries in the vector as an <code>$i64</code>.
 <p>
 Returns a new vector created by mapping the function <code>func</code> to each element of the vector in turn.
 <code>func</code> should be a callable that takes a single argument (the vector element) and returns <code>true</code> or <code>false</code>;
-if it returns <code>true</code> the corresponding element of the vector will be added to the new vector.
+if it returns <code>true</code> the corresponding element will be added to the new vector.
 </p>
 </dd>
 </div>
@@ -1125,7 +1125,8 @@ A file object, <code>$file</code>, is a wrapper around a readable or writable by
 </dt>
 <dd>
 <p>
-Opens a file using the C function <code>fopen()</code>.
+Creates a new <code>$file</code> object.
+Opens the underlying file stream using the C function <code>fopen()</code>.
 <code>path</code> and <code>mode</code> should both be strings.
 Panics on failure.
 </p>

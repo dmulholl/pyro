@@ -269,7 +269,7 @@ Vectors have the following methods:
 
     Returns a new vector created by mapping the function `func` to each element of the vector in turn.
     `func` should be a callable that takes a single argument (the vector element) and returns `true` or `false`;
-    if it returns `true` the corresponding element of the vector will be added to the new vector.
+    if it returns `true` the corresponding element will be added to the new vector.
 
 [[ `:get(index)` ]]
 
@@ -531,7 +531,8 @@ A file object, `$file`, is a wrapper around a readable or writable byte stream.
 
 [[ `$file(path, mode)` ]]
 
-    Opens a file using the C function `fopen()`.
+    Creates a new `$file` object.
+    Opens the underlying file stream using the C function `fopen()`.
     `path` and `mode` should both be strings.
     Panics on failure.
 

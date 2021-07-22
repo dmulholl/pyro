@@ -223,7 +223,8 @@ Converts <code>arg</code> to an <code>$f64</code>. Panics if the argument is not
 </dt>
 <dd>
 <p>
-Opens a file using the C function <code>fopen()</code>.
+Creates a new <code>$file</code> object.
+Opens the underlying file stream using the C function <code>fopen()</code>.
 <code>path</code> and <code>mode</code> should both be strings.
 Panics on failure.
 </p>

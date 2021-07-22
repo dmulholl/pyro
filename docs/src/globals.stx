@@ -101,7 +101,8 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$file(path, mode)` ]]
 
-    Opens a file using the C function `fopen()`.
+    Creates a new `$file` object.
+    Opens the underlying file stream using the C function `fopen()`.
     `path` and `mode` should both be strings.
     Panics on failure.
 
