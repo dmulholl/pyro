@@ -140,6 +140,87 @@ static Value fn_log(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_atan2(PyroVM* vm, size_t arg_count, Value* args) {
+    double y;
+    double x;
+
+    if (IS_F64(args[0])) {
+        y = args[0].as.f64;
+    } else if (IS_I64(args[0])) {
+        y = (double)args[0].as.i64;
+    } else {
+        pyro_panic(vm, "Invalid argument to $std::math::atan2(), y must be a number.");
+        return NULL_VAL();
+    }
+
+    if (IS_F64(args[1])) {
+        x = args[1].as.f64;
+    } else if (IS_I64(args[1])) {
+        x = (double)args[1].as.i64;
+    } else {
+        pyro_panic(vm, "Invalid argument to $std::math::atan2(), x must be a number.");
+        return NULL_VAL();
+    }
+
+    return F64_VAL(atan2(y, x));
+}
+
+
+static Value fn_exp(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_I64(args[0])) {
+        return F64_VAL(exp((double)args[0].as.i64));
+    } else if (IS_F64(args[0])) {
+        return F64_VAL(exp(args[0].as.f64));
+    }
+    pyro_panic(vm, "Invalid argument to $std::math::exp(), must be a number.");
+    return NULL_VAL();
+}
+
+
+static Value fn_sqrt(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_I64(args[0])) {
+        return F64_VAL(sqrt((double)args[0].as.i64));
+    } else if (IS_F64(args[0])) {
+        return F64_VAL(sqrt(args[0].as.f64));
+    }
+    pyro_panic(vm, "Invalid argument to $std::math::sqrt(), must be a number.");
+    return NULL_VAL();
+}
+
+
+static Value fn_cbrt(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_I64(args[0])) {
+        return F64_VAL(cbrt((double)args[0].as.i64));
+    } else if (IS_F64(args[0])) {
+        return F64_VAL(cbrt(args[0].as.f64));
+    }
+    pyro_panic(vm, "Invalid argument to $std::math::cbrt(), must be a number.");
+    return NULL_VAL();
+}
+
+
+static Value fn_ceil(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_I64(args[0])) {
+        return F64_VAL(ceil((double)args[0].as.i64));
+    } else if (IS_F64(args[0])) {
+        return F64_VAL(ceil(args[0].as.f64));
+    }
+    pyro_panic(vm, "Invalid argument to $std::math::ceil(), must be a number.");
+    return NULL_VAL();
+}
+
+
+static Value fn_floor(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_I64(args[0])) {
+        return F64_VAL(floor((double)args[0].as.i64));
+    } else if (IS_F64(args[0])) {
+        return F64_VAL(floor(args[0].as.f64));
+    }
+    pyro_panic(vm, "Invalid argument to $std::math::floor(), must be a number.");
+    return NULL_VAL();
+}
+
+
 void pyro_load_std_math(PyroVM* vm) {
     ObjModule* mod_math = pyro_define_module_2(vm, "$std", "math");
 
@@ -159,4 +240,11 @@ void pyro_load_std_math(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_math, "log", fn_log, 2);
     pyro_define_member_fn(vm, mod_math, "log10", fn_log10, 1);
     pyro_define_member_fn(vm, mod_math, "log2", fn_log2, 1);
+    pyro_define_member_fn(vm, mod_math, "atan2", fn_atan2, 2);
+    pyro_define_member_fn(vm, mod_math, "exp", fn_exp, 1);
+
+    pyro_define_member_fn(vm, mod_math, "sqrt", fn_sqrt, 1);
+    pyro_define_member_fn(vm, mod_math, "cbrt", fn_cbrt, 1);
+    pyro_define_member_fn(vm, mod_math, "ceil", fn_ceil, 1);
+    pyro_define_member_fn(vm, mod_math, "floor", fn_floor, 1);
 }

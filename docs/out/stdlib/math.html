@@ -17,7 +17,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.2.0</p>
+                <p class="version">Version 0.3.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -153,6 +153,39 @@ Returns the arc tangent of <code>x</code> in radians as an <code>$f64</code>. Th
 </div>
 <div>
 <dt>
+<code>atan2(y, x)</code>
+</dt>
+<dd>
+<p>
+Returns the arc tangent of <code>y/x</code> in radians as an <code>$f64</code> using the signs of the arguments to determine the correct quadrant.
+Each argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>cbrt(x)</code>
+</dt>
+<dd>
+<p>
+Returns the cubic root of <code>x</code> as an <code>$f64</code>.
+The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>ceil(x)</code>
+</dt>
+<dd>
+<p>
+Returns as an <code>$f64</code> the lowest integer value greater than or equal to <code>x</code>.
+The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>cos(x)</code>
 </dt>
 <dd>
@@ -163,11 +196,34 @@ Returns the cosine of <code>x</code> as an <code>$f64</code>, where <code>x</cod
 </div>
 <div>
 <dt>
+<code>exp(x)</code>
+</dt>
+<dd>
+<p>
+Returns <code>e</code> to the power of <code>x</code> as an <code>$f64</code>.
+The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>floor(x)</code>
+</dt>
+<dd>
+<p>
+Returns as an <code>$f64</code> the highest integer value less than or equal to <code>x</code>.
+The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>ln(x)</code>
 </dt>
 <dd>
 <p>
-Returns the natural logarithm (i.e. the base-e logarithm) of <code>x</code> as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the natural logarithm (i.e. the base-e logarithm) of <code>x</code> as an <code>$f64</code>.
+The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
 </p>
 </dd>
 </div>
@@ -177,7 +233,8 @@ Returns the natural logarithm (i.e. the base-e logarithm) of <code>x</code> as a
 </dt>
 <dd>
 <p>
-Returns the base <code>b</code> logarithm of <code>x</code> as an <code>$f64</code>. Each argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the base <code>b</code> logarithm of <code>x</code> as an <code>$f64</code>.
+Each argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
 </p>
 </dd>
 </div>
@@ -208,6 +265,17 @@ Returns the base-10 logarithm of <code>x</code> as an <code>$f64</code>. The arg
 <dd>
 <p>
 Returns the sine of <code>x</code> as an <code>$f64</code>, where <code>x</code> is in radians. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>sqrt(x)</code>
+</dt>
+<dd>
+<p>
+Returns the square root of <code>x</code> as an <code>$f64</code>.
+The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
 </p>
 </dd>
 </div>

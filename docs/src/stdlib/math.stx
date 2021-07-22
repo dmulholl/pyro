@@ -54,19 +54,51 @@ This module provides a Pyro interface to the C standard library's mathematical f
     Returns the arc tangent of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
 
 
+[[ `atan2(y, x)` ]]
+
+    Returns the arc tangent of `y/x` in radians as an `$f64` using the signs of the arguments to determine the correct quadrant.
+    Each argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `cbrt(x)` ]]
+
+    Returns the cubic root of `x` as an `$f64`.
+    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `ceil(x)` ]]
+
+    Returns as an `$f64` the lowest integer value greater than or equal to `x`.
+    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
 [[ `cos(x)` ]]
 
     Returns the cosine of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
 
 
+[[ `exp(x)` ]]
+
+    Returns `e` to the power of `x` as an `$f64`.
+    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `floor(x)` ]]
+
+    Returns as an `$f64` the highest integer value less than or equal to `x`.
+    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
 [[ `ln(x)` ]]
 
-    Returns the natural logarithm (i.e. the base-e logarithm) of `x` as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the natural logarithm (i.e. the base-e logarithm) of `x` as an `$f64`.
+    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
 
 
 [[ `log(b, x)` ]]
 
-    Returns the base `b` logarithm of `x` as an `$f64`. Each argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the base `b` logarithm of `x` as an `$f64`.
+    Each argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
 
 
 [[ `log2(x)` ]]
@@ -82,6 +114,12 @@ This module provides a Pyro interface to the C standard library's mathematical f
 [[ `sin(x)` ]]
 
     Returns the sine of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+
+
+[[ `sqrt(x)` ]]
+
+    Returns the square root of `x` as an `$f64`.
+    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
 
 
 [[ `tan(x)` ]]
