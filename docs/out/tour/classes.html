@@ -72,6 +72,9 @@
 <li>
 <a href="#inheritance">Inheritance</a>
 </li>
+<li>
+<a href="#indexing">Indexing</a>
+</li>
 </ul>
 <h3 id="class-definitions">
 Class Definitions
@@ -181,7 +184,7 @@ A class can inherit from a superclass.
     <span class="kd">var</span> <span class="nx">radius</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">color</span><span class="p">,</span> <span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">color</span> <span class="p">=</span> <span class="nx">color</span><span class="p">;</span>
+        <span class="kc">super</span><span class="p">:</span><span class="nx">$init</span><span class="p">(</span><span class="nx">color</span><span class="p">);</span>
         <span class="kc">self</span><span class="p">.</span><span class="nx">radius</span> <span class="p">=</span> <span class="nx">radius</span><span class="p">;</span>
     <span class="p">}</span>
 
@@ -194,6 +197,30 @@ A class can inherit from a superclass.
 <p>
 Subclass methods override superclass methods as you'd expect.
 A subclass can use the <code>super</code> keyword to access an overridden superclass method.
+</p>
+<h3 id="indexing">
+Indexing
+</h3>
+<p>
+You can add indexing support to a class by implementing <code>$get_index(key)</code> and/or <code>$set_index(key, value)</code> methods.
+</p>
+<p>
+Accessing an index:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+</pre>
+<p>
+is equivalent to calling the object's <code>$get_index(key)</code> method.
+</p>
+<p>
+Assigning to an index:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+</pre>
+<p>
+is equivalent to calling the object's <code>$set_index(key, value)</code> method.
 </p>
         </article>
         

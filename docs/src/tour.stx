@@ -44,7 +44,7 @@ Variables have lexical scope and declarations inside blocks will shadow outer de
     var foo = 123;
 
     {
-        var foo == 456;
+        var foo = 456;
         assert foo == 456;
     }
 

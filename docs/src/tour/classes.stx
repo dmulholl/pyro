@@ -108,7 +108,7 @@ A class can inherit from a superclass.
         var radius;
 
         def $init(color, radius) {
-            self.color = color;
+            super:$init(color);
             self.radius = radius;
         }
 
@@ -120,3 +120,23 @@ A class can inherit from a superclass.
 
 Subclass methods override superclass methods as you'd expect.
 A subclass can use the `super` keyword to access an overridden superclass method.
+
+
+
+### Indexing
+
+You can add indexing support to a class by implementing `$get_index(key)` and/or `$set_index(key, value)` methods.
+
+Accessing an index:
+
+::: code pyro
+    var foo = object[key];
+
+is equivalent to calling the object's `$get_index(key)` method.
+
+Assigning to an index:
+
+::: code pyro
+    object[key] = value;
+
+is equivalent to calling the object's `$set_index(key, value)` method.

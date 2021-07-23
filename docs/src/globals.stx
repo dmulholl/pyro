@@ -249,7 +249,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 [[ `$str(arg)` ]]
 
     Stringifies the argument, i.e. returns its default string representation.
-    If the argument has a `:str()` method, the output of this method will be returned.
+    If the argument has a `$str()` method, the output of this method will be returned.
     This function can panic if an error occurs while formatting the output string.
 
 

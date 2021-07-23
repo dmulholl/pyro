@@ -13,8 +13,7 @@ A string, `$str`, is an immutable array of bytes.
 [[ `$str(arg)` ]]
 
     Stringifies the argument, i.e. returns its default string representation.
-    If the argument has a `:str()` method, the output of this method will be returned.
-    This function can panic if an error occurs while formatting the output string.
+    If the argument has a `$str()` method, the output of this method will be returned.
 
 Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding --- a string can contain any sequence of byte values including null bytes or invalid UTF-8.
 
