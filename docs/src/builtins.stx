@@ -103,10 +103,10 @@ Strings have the following methods:
 
     Returns `true` if the string ends with the string `suffix`, otherwise `false`.
 
-[[ `:index_of(target, index)` ]]
+[[ `:index_of(target, start_index)` ]]
 
     Returns the byte index of the next matching instance of the string `target`.
-    Starts searching at `index`.
+    Starts searching at `start_index`.
     Returns `$err()` if `target` is not found.
 
 [[ `:is_ascii()` ]]
