@@ -20,3 +20,10 @@ var baz = Baz();
 assert $is_instance(baz, Baz);
 assert $is_instance(baz, Bar);
 assert $is_instance(baz, Foo);
+
+
+class Bam {}
+
+assert !$is_instance(foo, Bam);
+assert !$is_instance(bar, Bam);
+assert !$is_instance(baz, Bam);
