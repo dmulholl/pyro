@@ -409,7 +409,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     else if (arg_count == 1) {
-        Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
+        Value iter_method = pyro_get_method(args[0], vm->str_iter);
         if (IS_NULL(iter_method)) {
             pyro_panic(vm, "Argument to $vec() is not iterable.");
             return NULL_VAL();
@@ -422,7 +422,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         }
         pyro_push(vm, iterator); // keep safe from the GC
 
-        Value next_method = pyro_get_method(vm, iterator, vm->str_next);
+        Value next_method = pyro_get_method(iterator, vm->str_next);
         if (IS_NULL(next_method)) {
             pyro_panic(vm, "Invalid iterator -- no :$next() method.");
             return NULL_VAL();
@@ -2237,6 +2237,57 @@ static Value fn_is_bool(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_has_method(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[1])) {
+        pyro_panic(vm, "Invalid argument to $has_method(), method name must be a string.");
+        return NULL_VAL();
+    }
+    return BOOL_VAL(pyro_has_method(args[0], AS_STR(args[1])));
+}
+
+
+static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[1])) {
+        pyro_panic(vm, "Invalid argument to $has_field(), field name must be a string.");
+        return NULL_VAL();
+    }
+    Value field_name = args[1];
+
+    if (IS_INSTANCE(args[0])) {
+        ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->field_indexes;
+        Value field_index;
+        if (ObjMap_get(field_index_map, field_name, &field_index)) {
+            return BOOL_VAL(true);
+        }
+    }
+
+    return BOOL_VAL(false);
+}
+
+
+static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_CLASS(args[1])) {
+        pyro_panic(vm, "Invalid argument to $is_instance(), class must be a class object.");
+        return NULL_VAL();
+    }
+    ObjClass* target_class = AS_CLASS(args[1]);
+
+    if (!IS_INSTANCE(args[0])) {
+        return BOOL_VAL(false);
+    }
+    ObjClass* instance_class = AS_INSTANCE(args[0])->obj.class;
+
+    while (instance_class != NULL) {
+        if (instance_class == target_class) {
+            return BOOL_VAL(true);
+        }
+        instance_class = instance_class->superclass;
+    }
+
+    return BOOL_VAL(false);
+}
+
+
 // ------------ //
 // Registration //
 // ------------ //
@@ -2286,6 +2337,9 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
     pyro_define_global_fn(vm, "$is_inf", fn_is_inf, 1);
+    pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
+    pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
+    pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);
 
     pyro_define_global_fn(vm, "$f64", fn_f64, 1);
     pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);

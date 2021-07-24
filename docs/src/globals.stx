@@ -110,7 +110,20 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$fmt(format_string, arg1, arg2, ...)` ]]
 
-    Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/tour/formatting//) documentation for details. This function can panic if an error occurs while formatting the output string.
+    Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/tour/formatting//) documentation for details.
+    This function can panic if an error occurs while formatting the output string.
+
+
+
+[[ `$has_field(object, field_name)` ]]
+
+    Returns `true` if the object has a field called `field_name`, where `field_name` is a string.
+
+
+
+[[ `$has_method(object, method_name)` ]]
+
+    Returns `true` if the object has a method called `method_name`, where `method_name` is a string.
 
 
 
@@ -165,6 +178,13 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 [[ `$is_inf(arg)` ]]
 
     Returns `true` if the argument is floating-point infinity (positive or negative).
+
+
+
+[[ `$is_instance(object, class)` ]]
+
+    Returns `true` if the object is an instance of the specified class or of a subclass of the specified class.
+    `class` should be a class object.
 
 
 

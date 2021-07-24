@@ -302,13 +302,14 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arit
 // -------- //
 
 
-// The [name] field may be NULL.
+// The [name] and [superclass] fields may be NULL.
 struct ObjClass {
     Obj obj;
     ObjStr* name;
     ObjMap* methods;
     ObjVec* field_initializers;
     ObjMap* field_indexes;
+    ObjClass* superclass;
 };
 
 ObjClass* ObjClass_new(PyroVM* vm);
@@ -519,10 +520,10 @@ ObjFile* ObjFile_new(PyroVM* vm);
 ObjClass* pyro_get_class(Value value);
 
 // Returns the named method if it is defined for the value, otherwise NULL_VAL().
-Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name);
+Value pyro_get_method(Value value, ObjStr* method_name);
 
 // Returns [true] if the named method is defined for the value.
-bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name);
+bool pyro_has_method(Value value, ObjStr* method_name);
 
 // This function dumps an object to the VM's output stream for debugging. It doesn't allocate
 // memory or call into Pyro code.

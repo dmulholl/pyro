@@ -82,6 +82,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             pyro_mark_object(vm, (Obj*)class->methods);
             pyro_mark_object(vm, (Obj*)class->field_initializers);
             pyro_mark_object(vm, (Obj*)class->field_indexes);
+            pyro_mark_object(vm, (Obj*)class->superclass);
             break;
         }
 

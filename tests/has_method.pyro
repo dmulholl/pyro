@@ -1,0 +1,14 @@
+var vec = $vec();
+assert $has_method(vec, "contains");
+assert !$has_method(vec, "xyz");
+
+class Foo {
+    def foo_bar() {
+    }
+}
+
+var foo = Foo();
+assert $has_method(foo, "foo_bar");
+assert !$has_method(foo, "xyz");
+
+assert !$has_method(123, "xyz");

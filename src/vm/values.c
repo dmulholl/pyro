@@ -36,7 +36,7 @@ ObjClass* pyro_get_class(Value value) {
 }
 
 
-Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+Value pyro_get_method(Value receiver, ObjStr* method_name) {
     if (IS_OBJ(receiver) && AS_OBJ(receiver)->class) {
         Value method;
         if (ObjMap_get(AS_OBJ(receiver)->class->methods, OBJ_VAL(method_name), &method)) {
@@ -47,8 +47,8 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
 }
 
 
-bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
-    return !IS_NULL(pyro_get_method(vm, receiver, method_name));
+bool pyro_has_method(Value receiver, ObjStr* method_name) {
+    return !IS_NULL(pyro_get_method(receiver, method_name));
 }
 
 
@@ -461,7 +461,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
         return string;
     }
 
-    Value fmt_method = pyro_get_method(vm, value, vm->str_fmt);
+    Value fmt_method = pyro_get_method(value, vm->str_fmt);
     if (!IS_NULL(fmt_method)) {
         pyro_push(vm, value);
         pyro_push(vm, OBJ_VAL(ObjStr_copy_raw(format, strlen(format), vm)));

@@ -225,6 +225,7 @@ ObjClass* ObjClass_new(PyroVM* vm) {
     class->methods = NULL;
     class->field_initializers = NULL;
     class->field_indexes = NULL;
+    class->superclass = NULL;
 
     pyro_push(vm, OBJ_VAL(class));
     class->methods = ObjMap_new(vm);

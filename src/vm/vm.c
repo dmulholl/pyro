@@ -746,7 +746,7 @@ static void run(PyroVM* vm) {
 
             case OP_INHERIT: {
                 if (!IS_CLASS(pyro_peek(vm, 1))) {
-                    pyro_panic(vm, "Invalid superclass value (not a class) .");
+                    pyro_panic(vm, "Invalid superclass value (not a class).");
                     break;
                 }
 
@@ -765,6 +765,7 @@ static void run(PyroVM* vm) {
                 ObjMap_copy_entries(superclass->field_indexes, subclass->field_indexes, vm);
                 ObjVec_copy_entries(superclass->field_initializers, subclass->field_initializers, vm);
 
+                subclass->superclass = superclass;
                 pyro_pop(vm); // the subclass
                 break;
             }

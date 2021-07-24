@@ -1,0 +1,10 @@
+assert !$has_field(123, "xyz");
+assert !$has_field($vec(), "xyz");
+
+class Foo {
+    var foo;
+}
+
+var obj = Foo();
+assert $has_field(obj, "foo");
+assert !$has_field(obj, "bar");

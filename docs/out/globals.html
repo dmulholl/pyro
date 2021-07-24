@@ -236,7 +236,28 @@ Panics on failure.
 </dt>
 <dd>
 <p>
-Returns the new string created by interpolating the argument values into the format string &mdash; see the <a href="tour/formatting.html">string formatting</a> documentation for details. This function can panic if an error occurs while formatting the output string.
+Returns the new string created by interpolating the argument values into the format string &mdash; see the <a href="tour/formatting.html">string formatting</a> documentation for details.
+This function can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$has_field(object, field_name)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the object has a field called <code>field_name</code>, where <code>field_name</code> is a string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$has_method(object, method_name)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the object has a method called <code>method_name</code>, where <code>method_name</code> is a string.
 </p>
 </dd>
 </div>
@@ -327,6 +348,17 @@ Returns <code>true</code> if the argument is an <code>$i64</code>, otherwise <co
 <dd>
 <p>
 Returns <code>true</code> if the argument is floating-point infinity (positive or negative).
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_instance(object, class)</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the object is an instance of the specified class or of a subclass of the specified class.
+<code>class</code> should be a class object.
 </p>
 </dd>
 </div>
