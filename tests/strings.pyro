@@ -275,17 +275,21 @@ def $test_split_on_ascii_ws() {
     assert vec1:count() == 1;
     assert vec1[0] == "";
 
-    var vec2 = "foo":split_on_ascii_ws();
+    var vec2 = "    ":split_on_ascii_ws();
     assert vec2:count() == 1;
-    assert vec2[0] == "foo";
+    assert vec2[0] == "";
 
-    var vec3 = "  foo  ":split_on_ascii_ws();
+    var vec3 = "foo":split_on_ascii_ws();
     assert vec3:count() == 1;
     assert vec3[0] == "foo";
 
-    var vec4 = "   foo \t\n bar baz   ":split_on_ascii_ws();
-    assert vec4:count() == 3;
+    var vec4 = "  foo  ":split_on_ascii_ws();
+    assert vec4:count() == 1;
     assert vec4[0] == "foo";
-    assert vec4[1] == "bar";
-    assert vec4[2] == "baz";
+
+    var vec5 = "   foo \t\n bar baz   ":split_on_ascii_ws();
+    assert vec5:count() == 3;
+    assert vec5[0] == "foo";
+    assert vec5[1] == "bar";
+    assert vec5[2] == "baz";
 }

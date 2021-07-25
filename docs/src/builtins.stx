@@ -131,7 +131,7 @@ Strings have the following methods:
     Splits the string on instances of the delimiter string `sep`.
     Returns a vector of strings.
 
-[[ `:split_on_ascii_ws(sep)` ]]
+[[ `:split_on_ascii_ws()` ]]
 
     This method splits the string on contiguous sequences of ASCII whitespace characters.
     Leading and trailing whitespace is ignored.
