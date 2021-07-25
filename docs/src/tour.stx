@@ -448,12 +448,37 @@ Modules are complex enough to deserve a page of their own which you can find [he
 
 
 
-### Main Function
+### The Main Function
 
 When you run a script file Pyro first executes the script then looks for a function called `$main()`.
 If it finds a `$main()` function it runs it automatically.
 
 Note that the `$main()` function won't be run if you import the same file as a module.
+
+
+
+### Unpacking
+
+You can unpack the values of a tuple or vector in a `var` declaration using the following syntax:
+
+::: code pyro
+    var (foo, bar, baz) = $tup(123, 456, 789);
+
+    assert foo == 123;
+    assert bar == 456;
+    assert baz == 789;
+
+You can similarly unpack the loop variable of a `for` loop:
+
+::: code pyro
+    var map = {
+        "foo": 123,
+        "bar": 456,
+    };
+
+    for (key, value) in map:entries() {
+        $println("{}: {}", key, value);
+    }
 
 
 

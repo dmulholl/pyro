@@ -112,7 +112,10 @@ Pyro begs, borrows, and steals from every language I've ever used, but it drags 
 <a href="#modules">Modules</a>
 </li>
 <li>
-<a href="#main-function">Main Function</a>
+<a href="#the-main-function">The Main Function</a>
+</li>
+<li>
+<a href="#unpacking">Unpacking</a>
 </li>
 <li>
 <a href="#source-code">Source Code</a>
@@ -653,8 +656,8 @@ Modules can contain submodules. Assume we have a directory called <code>math</co
 <p>
 Modules are complex enough to deserve a page of their own which you can find <a href="tour/modules.html">here</a>.
 </p>
-<h3 id="main-function">
-Main Function
+<h3 id="the-main-function">
+The Main Function
 </h3>
 <p>
 When you run a script file Pyro first executes the script then looks for a function called <code>$main()</code>.
@@ -663,6 +666,32 @@ If it finds a <code>$main()</code> function it runs it automatically.
 <p>
 Note that the <code>$main()</code> function won't be run if you import the same file as a module.
 </p>
+<h3 id="unpacking">
+Unpacking
+</h3>
+<p>
+You can unpack the values of a tuple or vector in a <code>var</code> declaration using the following syntax:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
+</pre>
+<p>
+You can similarly unpack the loop variable of a <code>for</code> loop:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="s">&quot;foo&quot;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s">&quot;bar&quot;</span><span class="p">:</span> <span class="mi">456</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="k">in</span> <span class="nx">map</span><span class="p">:</span><span class="nx">entries</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;{}: {}&quot;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
 <h3 id="source-code">
 Source Code
 </h3>
