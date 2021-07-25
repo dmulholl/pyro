@@ -73,6 +73,8 @@ typedef enum {
     OP_BITWISE_OR,
     OP_LSHIFT,
     OP_RSHIFT,
+    OP_UNPACK,
+    OP_DEFINE_GLOBALS,
 } OpCode;
 
 #endif

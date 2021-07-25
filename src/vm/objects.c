@@ -870,6 +870,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_IMPORT:
         case OP_SET_LOCAL:
         case OP_SET_UPVALUE:
+        case OP_UNPACK:
             return 1;
 
         case OP_BREAK:
@@ -906,6 +907,12 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
             ObjFn* closure_fn = AS_FN(fn->constants[const_index]);
             return 2 + closure_fn->upvalue_count * 2;
+        }
+
+        // 1 byte for the count, plus two for each constant index.
+        case OP_DEFINE_GLOBALS: {
+            uint8_t count = fn->code[ip + 1];
+            return 1 + count * 2;
         }
 
         default:

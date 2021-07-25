@@ -469,6 +469,19 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_DEFINE_GLOBALS: {
+                uint8_t count = READ_BYTE();
+                ObjMap* globals = frame->closure->fn->module->globals;
+
+                for (uint8_t i = 0; i < count; i++) {
+                    Value name = READ_CONSTANT();
+                    ObjMap_set(globals, name, pyro_peek(vm, count - 1 - i), vm);
+                }
+
+                vm->stack_top -= count;
+                break;
+            }
+
             // Duplicate the top item on the stack.
             case OP_DUP: {
                 pyro_push(vm, pyro_peek(vm, 0));
@@ -1273,6 +1286,35 @@ static void run(PyroVM* vm) {
                 assert(vm->frame_count == stashed_frame_count);
 
                 vm->try_depth--;
+                break;
+            }
+
+            case OP_UNPACK: {
+                Value value = pyro_pop(vm);
+                uint8_t count = READ_BYTE();
+
+                if (IS_TUP(value)) {
+                    ObjTup* tup = AS_TUP(value);
+                    if (tup->count < count) {
+                        pyro_panic(vm, "Tuple has insufficient values for unpacking.");
+                    } else {
+                        for (size_t i = 0; i < count; i++) {
+                            pyro_push(vm, tup->values[i]);
+                        }
+                    }
+                } else if (IS_VEC(value)) {
+                    ObjVec* vec = AS_VEC(value);
+                    if (vec->count < count) {
+                        pyro_panic(vm, "Vector has insufficient values for unpacking.");
+                    } else {
+                        for (size_t i = 0; i < count; i++) {
+                            pyro_push(vm, vec->values[i]);
+                        }
+                    }
+                } else {
+                    pyro_panic(vm, "Value is not unpackable.");
+                }
+
                 break;
             }
 

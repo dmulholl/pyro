@@ -960,6 +960,16 @@ static void mark_initialized(Parser* parser) {
 }
 
 
+static void mark_initialized_multi(Parser* parser, size_t count) {
+    if (parser->compiler->scope_depth == 0) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        parser->compiler->locals[parser->compiler->local_count - 1 - i].is_initialized = true;
+    }
+}
+
+
 static void define_variable(Parser* parser, uint16_t index) {
     if (parser->compiler->scope_depth > 0) {
         mark_initialized(parser);
@@ -967,6 +977,18 @@ static void define_variable(Parser* parser, uint16_t index) {
     }
     emit_byte(parser, OP_DEFINE_GLOBAL);
     emit_u16(parser, index);
+}
+
+
+static void define_variables(Parser* parser, uint16_t* indexes, size_t count) {
+    if (parser->compiler->scope_depth > 0) {
+        mark_initialized_multi(parser, count);
+        return;
+    }
+    emit_bytes(parser, OP_DEFINE_GLOBALS, count);
+    for (size_t i = 0; i < count; i++) {
+        emit_u16(parser, indexes[i]);
+    }
 }
 
 
@@ -979,7 +1001,7 @@ static void declare_variable(Parser* parser, Token name) {
 
     for (int i = parser->compiler->local_count - 1; i >= 0; i--) {
         Local* local = &parser->compiler->locals[i];
-        if (local->depth != -1 && local->depth < parser->compiler->scope_depth) {
+        if (local->depth < parser->compiler->scope_depth) {
             break;
         }
         if (lexemes_are_equal(&name, &local->name)) {
@@ -1793,15 +1815,41 @@ static void parse_expression_stmt(Parser* parser) {
 }
 
 
+static void parse_unpacking_declaration(Parser* parser) {
+    uint16_t indexes[16];
+    size_t count = 0;
+
+    do {
+        uint16_t index = consume_variable_name(parser, "Expected variable name.");
+        indexes[count++] = index;
+        if (count > 16) {
+            err_at_prev(parser, "Too many variable names in list (max: 16).");
+        }
+    } while (match(parser, TOKEN_COMMA));
+
+    consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after variable names.");
+    consume(parser, TOKEN_EQUAL, "Expected '=' after variable list.");
+
+    parse_expression(parser, true, true);
+    emit_bytes(parser, OP_UNPACK, count);
+
+    define_variables(parser, indexes, count);
+}
+
+
 static void parse_var_declaration(Parser* parser) {
     do {
-        uint8_t index = consume_variable_name(parser, "Expected variable name.");
-        if (match(parser, TOKEN_EQUAL)) {
-            parse_expression(parser, true, true);
+        if (match(parser, TOKEN_LEFT_PAREN)) {
+            parse_unpacking_declaration(parser);
         } else {
-            emit_byte(parser, OP_LOAD_NULL);
+            uint16_t index = consume_variable_name(parser, "Expected variable name.");
+            if (match(parser, TOKEN_EQUAL)) {
+                parse_expression(parser, true, true);
+            } else {
+                emit_byte(parser, OP_LOAD_NULL);
+            }
+            define_variable(parser, index);
         }
-        define_variable(parser, index);
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "Expected ';' after variable declaration.");
 }

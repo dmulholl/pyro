@@ -1,0 +1,32 @@
+var (foo, bar, baz) = $tup(123, 456, 789);
+assert foo == 123;
+assert bar == 456;
+assert baz == 789;
+
+
+{
+    var (foo, bar, baz) = $tup(1, 2, 3);
+    assert foo == 1;
+    assert bar == 2;
+    assert baz == 3;
+}
+
+
+def $test_vector() {
+    var (v1, v2) = [123, 456];
+    assert v1 == 123;
+    assert v2 == 456;
+}
+
+
+def $test_single() {
+    var (foo) = $tup(123);
+    assert foo == 123;
+}
+
+
+def $test_partial() {
+    var (foo, bar) = $tup(123, 456, 789);
+    assert foo == 123;
+    assert bar == 456;
+}

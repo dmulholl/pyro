@@ -102,6 +102,22 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
 
             return ip;
         }
+        case OP_DEFINE_GLOBALS: {
+            uint8_t count = fn->code[ip + 1];
+            ip += 2;
+
+            pyro_out(vm, "%-24s %4d\n", "OP_DEFINE_GLOBALS", count);
+
+            for (uint8_t i = 0; i < count; i++) {
+                uint16_t index = (fn->code[ip] << 8) | fn->code[ip + 1];
+                pyro_out(vm, "%04d    |    %4d    ", ip, index);
+                pyro_dump_value(vm, fn->constants[index]);
+                pyro_out(vm, "\n");
+                ip += 2;
+            }
+
+            return ip;
+        }
         case OP_DEFINE_GLOBAL:
             return constant_instruction(vm, "OP_DEFINE_GLOBAL", fn, ip);
         case OP_DUP:
@@ -218,6 +234,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_TRUNC_DIV", ip);
         case OP_TRY:
             return atomic_instruction(vm, "OP_TRY", ip);
+        case OP_UNPACK:
+            return u8_instruction(vm, "OP_UNPACK", fn, ip);
         default:
             pyro_out(vm, "INVALID OPCODE [%d]\n", instruction);
             return ip + 1;
