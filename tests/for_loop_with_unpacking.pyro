@@ -1,0 +1,22 @@
+var vec = [
+    $tup(1, 2),
+    $tup(2, 4),
+    $tup(3, 6),
+    $tup(4, 8),
+];
+
+for (x, y) in vec {
+    assert y == x * 2;
+}
+
+
+var map = {
+    "1" = 1,
+    "2" = 2,
+    "3" = 3,
+    "4" = 4,
+};
+
+for (key, value) in map:entries() {
+    assert key == $str(value);
+}

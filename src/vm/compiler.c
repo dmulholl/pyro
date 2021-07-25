@@ -1957,9 +1957,25 @@ static void parse_for_in_stmt(Parser* parser) {
     // Push a new scope to wrap a dummy local variable pointing to the iterator object.
     begin_scope(parser);
 
-    consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
-    Token loop_var_name = parser->previous;
-    consume(parser, TOKEN_IN, "Expected keyword 'in' after loop variable.");
+    Token loop_var_name;
+    Token unpacking_names[8];
+    size_t unpacking_count = 0;
+
+    if (match(parser, TOKEN_LEFT_PAREN)) {
+        do {
+            consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
+            unpacking_names[unpacking_count++] = parser->previous;
+            if (unpacking_count > 8) {
+                err_at_prev(parser, "Too many variable names in list (max: 8).");
+            }
+        } while (match(parser, TOKEN_COMMA));
+        consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after variable names.");
+    } else {
+        consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
+        loop_var_name = parser->previous;
+    }
+
+    consume(parser, TOKEN_IN, "Expected keyword 'in'.");
 
     // This is the object we'll be iterating over.
     parse_expression(parser, true, true);
@@ -1981,8 +1997,16 @@ static void parse_for_in_stmt(Parser* parser) {
     size_t exit_jump_index = emit_jump(parser, OP_JUMP_IF_ERR);
 
     begin_scope(parser);
-    add_local(parser, loop_var_name);
-    mark_initialized(parser);
+    if (unpacking_count > 0) {
+        emit_bytes(parser, OP_UNPACK, unpacking_count);
+        for (size_t i = 0; i < unpacking_count; i++) {
+            add_local(parser, unpacking_names[i]);
+            mark_initialized(parser);
+        }
+    } else {
+        add_local(parser, loop_var_name);
+        mark_initialized(parser);
+    }
     parse_block(parser);
     end_scope(parser);
 
