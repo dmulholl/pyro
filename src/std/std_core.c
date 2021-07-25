@@ -1551,6 +1551,80 @@ static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    ObjVec* vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(vec));
+
+    const char* whitespace = " \t\r\n\v\f";
+
+    char* start = str->bytes;
+    char* end = str->bytes + str->length;
+
+    while (start < end) {
+        char c = *start;
+        if (memchr(whitespace, c, 6) == NULL) {
+            break;
+        }
+        start++;
+    }
+
+    while (start < end) {
+        char c = *(end - 1);
+        if (memchr(whitespace, c, 6) == NULL) {
+            break;
+        }
+        end--;
+    }
+
+    char* current = start;
+
+    while (current < end) {
+        if (memchr(whitespace, *current, 6) != NULL) {
+            ObjStr* new_string = ObjStr_copy_raw(start, current - start, vm);
+            if (!new_string) {
+                pyro_panic(vm, "Out of memory.");
+                return NULL_VAL();
+            }
+            pyro_push(vm, OBJ_VAL(new_string));
+            if (!ObjVec_append(vec, OBJ_VAL(new_string), vm)) {
+                pyro_panic(vm, "Out of memory.");
+                return NULL_VAL();
+            }
+            pyro_pop(vm);
+            while (memchr(whitespace, *current, 6) != NULL) {
+                current++;
+            }
+            start = current;
+        } else {
+            current++;
+        }
+    }
+
+    ObjStr* new_string = ObjStr_copy_raw(start, current - start, vm);
+    if (!new_string) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(new_string));
+    if (!ObjVec_append(vec, OBJ_VAL(new_string), vm)) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_pop(vm);
+
+    pyro_pop(vm); // pop the vector
+    return OBJ_VAL(vec);
+}
+
+
+
+
 // ------ //
 // Ranges //
 // ------ //
@@ -2430,6 +2504,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "index_of", str_index_of, 2);
     pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
     pyro_define_method(vm, vm->str_class, "split", str_split, 1);
+    pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
 
     pyro_define_global_fn(vm, "$range", fn_range, -1);
     pyro_define_global_fn(vm, "$is_range", fn_is_range, 1);

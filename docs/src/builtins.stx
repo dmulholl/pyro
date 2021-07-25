@@ -131,6 +131,12 @@ Strings have the following methods:
     Splits the string on instances of the delimiter string `sep`.
     Returns a vector of strings.
 
+[[ `:split_on_ascii_ws(sep)` ]]
+
+    This method splits the string on contiguous sequences of ASCII whitespace characters.
+    Leading and trailing whitespace is ignored.
+    Returns a vector of strings.
+
 [[ `:starts_with(prefix)` ]]
 
     Returns `true` if the string starts with the string `prefix`, otherwise `false`.
