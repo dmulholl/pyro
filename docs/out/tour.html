@@ -112,6 +112,9 @@ Pyro begs, borrows, and steals from every language I've ever used, but it drags 
 <a href="#modules">Modules</a>
 </li>
 <li>
+<a href="#main-function">Main Function</a>
+</li>
+<li>
 <a href="#source-code">Source Code</a>
 </li>
 </ul>
@@ -649,6 +652,16 @@ Modules can contain submodules. Assume we have a directory called <code>math</co
 </pre>
 <p>
 Modules are complex enough to deserve a page of their own which you can find <a href="tour/modules.html">here</a>.
+</p>
+<h3 id="main-function">
+Main Function
+</h3>
+<p>
+When you run a script file Pyro first executes the script then looks for a function called <code>$main()</code>.
+If it finds a <code>$main()</code> function it runs it automatically.
+</p>
+<p>
+Note that the <code>$main()</code> function won't be run if you import the same file as a module.
 </p>
 <h3 id="source-code">
 Source Code

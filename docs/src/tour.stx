@@ -136,7 +136,6 @@ The values `false` and `null` are falsey, as is any `$err` value, the integer va
 
 
 
-
 ### Nulls
 
 Uninitialized variables have the default value `null`.
@@ -149,7 +148,6 @@ You can use the null-coalescing operator `??` to supply a default value in place
 
 ::: code pyro
     var foo = maybe_null() ?? "default";
-
 
 
 
@@ -271,8 +269,6 @@ All the looping constructs support `break` and `continue`.
 
 
 
-
-
 ### Conditions
 
 Conditional statements in Pyro look like this:
@@ -298,8 +294,6 @@ Pyro also has support for conditional expressions using the ternary operator `?|
 
 ::: code pyro
     var status = money > 100 ? "rich" | "poor";
-
-
 
 
 
@@ -341,9 +335,6 @@ You can also declare and use functions anonymously:
 
     add(1, 2);  # 3
     add(3, 4);  # 7
-
-
-
 
 
 
@@ -408,7 +399,6 @@ Alternatively, you can provide a default value for a function call that might fa
 
 
 
-
 ### Panics
 
 A panic in Pyro is similar to an exception in other languages --- it indicates that the program has attempted to do something impossible like divide by zero or read from a file that doesn't exist.
@@ -436,7 +426,6 @@ Note that you can use the error-coalescing operator `!!` to provide a default va
 
 
 
-
 ### Modules
 
 A module is a Pyro file loaded as a library. Modules are loaded using the `import` keyword.
@@ -458,9 +447,17 @@ Modules can contain submodules. Assume we have a directory called `math` contain
 Modules are complex enough to deserve a page of their own which you can find [here](@root/tour/modules//).
 
 
+
+### Main Function
+
+When you run a script file Pyro first executes the script then looks for a function called `$main()`.
+If it finds a `$main()` function it runs it automatically.
+
+Note that the `$main()` function won't be run if you import the same file as a module.
+
+
+
 ### Source Code
 
 Source code outside of string literals is assumed to be UTF-8 encoded.
 String literals can contain arbitrary byte sequences including null bytes and invalid UTF-8.
-
-
