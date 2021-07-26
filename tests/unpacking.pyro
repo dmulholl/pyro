@@ -1,9 +1,11 @@
+# Test unpacking into globals.
 var (foo, bar, baz) = $tup(123, 456, 789);
 assert foo == 123;
 assert bar == 456;
 assert baz == 789;
 
 
+# Test unpacking into locals.
 {
     var (foo, bar, baz) = $tup(1, 2, 3);
     assert foo == 1;
@@ -27,6 +29,13 @@ def $test_single() {
 
 def $test_partial() {
     var (foo, bar) = $tup(123, 456, 789);
+    assert foo == 123;
+    assert bar == 456;
+}
+
+
+def $test_error() {
+    var (foo, bar) = $err(123, 456);
     assert foo == 123;
     assert bar == 456;
 }

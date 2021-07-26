@@ -1293,10 +1293,10 @@ static void run(PyroVM* vm) {
                 Value value = pyro_pop(vm);
                 uint8_t count = READ_BYTE();
 
-                if (IS_TUP(value)) {
+                if (IS_TUP(value) || IS_ERR(value)) {
                     ObjTup* tup = AS_TUP(value);
                     if (tup->count < count) {
-                        pyro_panic(vm, "Tuple has insufficient values for unpacking.");
+                        pyro_panic(vm, "Tuple has %d value(s), requires %d for unpacking.", tup->count, count);
                     } else {
                         for (size_t i = 0; i < count; i++) {
                             pyro_push(vm, tup->values[i]);
@@ -1305,7 +1305,7 @@ static void run(PyroVM* vm) {
                 } else if (IS_VEC(value)) {
                     ObjVec* vec = AS_VEC(value);
                     if (vec->count < count) {
-                        pyro_panic(vm, "Vector has insufficient values for unpacking.");
+                        pyro_panic(vm, "Vector has %d value(s), requires %d for unpacking.", vec->count, count);
                     } else {
                         for (size_t i = 0; i < count; i++) {
                             pyro_push(vm, vec->values[i]);
