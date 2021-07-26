@@ -5,6 +5,7 @@
 #include "../vm/utils.h"
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
+#include "../vm/os.h"
 
 
 // --------------------- //
@@ -2362,6 +2363,53 @@ static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to $shell(), must be a string.");
+        return NULL_VAL();
+    }
+
+    CmdResult result;
+    if (!pyro_run_shell_cmd(vm, AS_STR(args[0])->bytes, &result)) {
+        // We've already panicked.
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(result.output);
+}
+
+
+static Value fn_shell2(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to $shell2(), must be a string.");
+        return NULL_VAL();
+    }
+
+    CmdResult result;
+    if (!pyro_run_shell_cmd(vm, AS_STR(args[0])->bytes, &result)) {
+        // We've already panicked.
+        return NULL_VAL();
+    }
+
+    Value output_string = OBJ_VAL(result.output);
+    Value exit_code = I64_VAL(result.exit_code);
+
+    pyro_push(vm, output_string);
+    ObjTup* tup = ObjTup_new(2, vm);
+    pyro_pop(vm);
+
+    if (!tup) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    tup->values[0] = output_string;
+    tup->values[1] = exit_code;
+
+    return OBJ_VAL(tup);
+}
+
+
 // ------------ //
 // Registration //
 // ------------ //
@@ -2414,6 +2462,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
     pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
     pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);
+    pyro_define_global_fn(vm, "$shell", fn_shell, 1);
+    pyro_define_global_fn(vm, "$shell2", fn_shell2, 1);
 
     pyro_define_global_fn(vm, "$f64", fn_f64, 1);
     pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);

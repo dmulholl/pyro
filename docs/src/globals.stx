@@ -266,6 +266,20 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$shell(cmd)` ]]
+
+    Runs a shell command and returns its output as a string.
+    `cmd` should be a string.
+
+
+
+[[ `$shell2(cmd)` ]]
+
+    Runs a shell command and returns a two-item tuple containing its output as a string and its exit code as an integer.
+    `cmd` should be a string.
+
+
+
 [[ `$str(arg)` ]]
 
     Stringifies the argument, i.e. returns its default string representation.
@@ -287,11 +301,4 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
     If called with zero arguments, creates an empty vector.
     If called with a single iterable argument, fills the new vector by iterating over the argument.
     If called with two arguments, creates a vector with the specified initial size and fill value.
-
-
-
-
-
-
-
 
