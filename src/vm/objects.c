@@ -97,35 +97,29 @@ ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm) {
     }
 
     for (size_t i = 0; i < tup->count; i++) {
-        if (IS_STR(tup->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
-            pyro_pop(vm);
-            return NULL;
-        } else if (IS_CHAR(tup->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
+        Value item = tup->values[i];
+        ObjStr* item_string;
+
+        if (IS_STR(item)) {
+            item_string = ObjStr_debug_str(AS_STR(item), vm);
+        } else if (IS_CHAR(item)) {
+            item_string = pyro_char_to_debug_str(vm, item);
+        } else {
+            item_string = pyro_stringify_value(vm, item);
+        }
+
+        if (vm->halt_flag || !item_string) {
             pyro_pop(vm);
             return NULL;
         }
 
-        ObjStr* string = pyro_stringify_value(vm, tup->values[i]);
-        if (vm->halt_flag || !string) {
-            pyro_pop(vm);
-            return NULL;
-        }
-
-        pyro_push(vm, OBJ_VAL(string));
-        if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+        pyro_push(vm, OBJ_VAL(item_string));
+        if (!ObjBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
             pyro_pop(vm);
             pyro_pop(vm);
             return NULL;
         }
         pyro_pop(vm);
-
-        if (IS_STR(tup->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
-            pyro_pop(vm);
-            return NULL;
-        } else if (IS_CHAR(tup->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
-            pyro_pop(vm);
-            return NULL;
-        }
 
         if (i + 1 < tup->count) {
             if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
@@ -140,9 +134,9 @@ ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm) {
         return NULL;
     }
 
-    ObjStr* string =  ObjBuf_to_str(buf, vm);
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
     pyro_pop(vm);
-    return string;
+    return output_string;
 }
 
 
@@ -691,6 +685,65 @@ ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
 }
 
 
+ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return NULL;
+    }
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '"', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < str->length; i++) {
+        bool result;
+
+        switch (str->bytes[i]) {
+            case '"':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\"", vm);
+                break;
+            case '\\':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
+                break;
+            case '\0':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
+                break;
+            case '\b':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\b", vm);
+                break;
+            case '\n':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\n", vm);
+                break;
+            case '\r':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\r", vm);
+                break;
+            case '\t':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
+                break;
+            default:
+                result = ObjBuf_append_byte(buf, str->bytes[i], vm);
+                break;
+        }
+
+        if (!result) {
+            pyro_pop(vm);
+            return NULL;
+        }
+    }
+
+    if (!ObjBuf_append_byte(buf, '"', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm);
+    return output_string;
+}
+
+
 ObjStrIter* ObjStrIter_new(ObjStr* string, StrIterType iter_type, PyroVM* vm) {
     ObjStrIter* iter = ALLOCATE_OBJECT(vm, ObjStrIter, OBJ_STR_ITER);
     if (!iter) {
@@ -1101,35 +1154,29 @@ ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm) {
     }
 
     for (size_t i = 0; i < vec->count; i++) {
-        if (IS_STR(vec->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
-            pyro_pop(vm);
-            return NULL;
-        } else if (IS_CHAR(vec->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
+        Value item = vec->values[i];
+        ObjStr* item_string;
+
+        if (IS_STR(item)) {
+            item_string = ObjStr_debug_str(AS_STR(item), vm);
+        } else if (IS_CHAR(item)) {
+            item_string = pyro_char_to_debug_str(vm, item);
+        } else {
+            item_string = pyro_stringify_value(vm, item);
+        }
+
+        if (vm->halt_flag || !item_string) {
             pyro_pop(vm);
             return NULL;
         }
 
-        ObjStr* string = pyro_stringify_value(vm, vec->values[i]);
-        if (vm->halt_flag || !string) {
-            pyro_pop(vm);
-            return NULL;
-        }
-
-        pyro_push(vm, OBJ_VAL(string));
-        if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+        pyro_push(vm, OBJ_VAL(item_string));
+        if (!ObjBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
             pyro_pop(vm);
             pyro_pop(vm);
             return NULL;
         }
         pyro_pop(vm);
-
-        if (IS_STR(vec->values[i]) && !ObjBuf_append_byte(buf, '"', vm)) {
-            pyro_pop(vm);
-            return NULL;
-        } else if (IS_CHAR(vec->values[i]) && !ObjBuf_append_byte(buf, '\'', vm)) {
-            pyro_pop(vm);
-            return NULL;
-        }
 
         if (i + 1 < vec->count) {
             if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
@@ -1144,9 +1191,9 @@ ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm) {
         return NULL;
     }
 
-    ObjStr* string = ObjBuf_to_str(buf, vm);
+    ObjStr* output_string = ObjBuf_to_str(buf, vm);
     pyro_pop(vm);
-    return string;
+    return output_string;
 }
 
 

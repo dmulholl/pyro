@@ -552,3 +552,67 @@ int pyro_compare(Value a, Value b) {
         return 2;
     }
 }
+
+
+ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value value) {
+    uint8_t utf8_buffer[4];
+    size_t count = pyro_write_utf8_codepoint(value.as.u32, utf8_buffer);
+
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return NULL;
+    }
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '\'', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    bool result;
+
+    if (count == 1) {
+        switch (utf8_buffer[0]) {
+            case '\'':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\'", vm);
+                break;
+            case '\\':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
+                break;
+            case '\0':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
+                break;
+            case '\b':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\b", vm);
+                break;
+            case '\n':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\n", vm);
+                break;
+            case '\r':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\r", vm);
+                break;
+            case '\t':
+                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
+                break;
+            default:
+                result = ObjBuf_append_byte(buf, utf8_buffer[0], vm);
+                break;
+        }
+    } else {
+        result = ObjBuf_append_bytes(buf, count, utf8_buffer, vm);
+    }
+
+    if (!result) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    if (!ObjBuf_append_byte(buf, '\'', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm);
+    return output_string;
+}

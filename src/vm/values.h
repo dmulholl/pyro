@@ -120,6 +120,10 @@ ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
 ObjStr* ObjStr_empty(PyroVM* vm);
 
+// Returns a quoted, backslash-escaped string representation of the string's content. Returns NULL
+// if memory could not be allocated for the new string.
+ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm);
+
 typedef struct {
     Obj obj;
     ObjStr* string;
@@ -525,13 +529,10 @@ Value pyro_get_method(Value value, ObjStr* method_name);
 // Returns [true] if the named method is defined for the value.
 bool pyro_has_method(Value value, ObjStr* method_name);
 
-// This function dumps an object to the VM's output stream for debugging. It doesn't allocate
-// memory or call into Pyro code.
-void pyro_dump_object(PyroVM* vm, Obj* object);
-
-// This function dumps a value to the VM's output stream for debugging. It doesn't allocate memory
-// or call into Pyro code.
+// These functions dump a value or object to the VM's output stream for debugging. They don't
+// allocate memory or call into Pyro code.
 void pyro_dump_value(PyroVM* vm, Value value);
+void pyro_dump_object(PyroVM* vm, Obj* object);
 
 // Returns the value's 64-bit hash.
 uint64_t pyro_hash(Value value);
@@ -549,7 +550,7 @@ bool pyro_is_truthy(Value value);
 // - Returns 2 if the values are not comparable.
 int pyro_compare(Value a, Value b);
 
-// This function constructs and returns the default string representation of a value. A lot can go
+// These functions construct and return the default string representation of a value. A lot can go
 // wrong here:
 //
 // 1 - This function attempts to allocate memory and can trigger the GC.
@@ -560,10 +561,8 @@ int pyro_compare(Value a, Value b);
 // The caller should check the halt flag immediately on return. If the flag is set the caller should
 // clean up any allocated resources and unwind the call stack.
 //
-// This function returns NULL if sufficient memory could not be allocated for the string.
+// These functions return NULL if sufficient memory could not be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
-
-// As for [pyro_stringify_value].
 ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object);
 
 // This function constructs and returns the formatted string representation of a value using the
@@ -588,6 +587,10 @@ char* pyro_stringify_obj_type(ObjType type);
 // - Returns 0 if a == b.
 // - Returns 1 if a > b.
 int pyro_compare_strings(ObjStr* a, ObjStr* b);
+
+// Creates a quoted, backslash-escaped string representing the character's value. Returns NULL if
+// memory could not be allocated for the new string.
+ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value c);
 
 // Returns [true] if the value is an object of the specified type.
 static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
