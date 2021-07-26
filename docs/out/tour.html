@@ -670,7 +670,7 @@ Note that the <code>$main()</code> function won't be run if you import the same 
 Unpacking
 </h3>
 <p>
-You can unpack the values of a tuple or vector in a <code>var</code> declaration using the following syntax:
+You can unpack the values of a tuple, error, or vector in a <code>var</code> declaration using the following syntax:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
@@ -689,7 +689,8 @@ You can similarly unpack the loop variable of a <code>for</code> loop:
 <span class="p">};</span>
 
 <span class="k">for</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="k">in</span> <span class="nx">map</span><span class="p">:</span><span class="nx">entries</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;{}: {}&quot;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+    <span class="k">echo</span> <span class="nx">key</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="nx">value</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <h3 id="source-code">
