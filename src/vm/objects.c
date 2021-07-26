@@ -537,6 +537,95 @@ Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm) {
 }
 
 
+ObjStr* ObjMap_stringify(ObjMap* map, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '{', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    bool is_first_entry = true;
+
+    for (size_t i = 0; i < map->capacity; i++) {
+        MapEntry* entry = &map->entries[i];
+
+        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (!is_first_entry) {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
+                pyro_pop(vm);
+                return NULL;
+            }
+        }
+        is_first_entry = false;
+
+        ObjStr* key_string;
+
+        if (IS_STR(entry->key)) {
+            key_string = ObjStr_debug_str(AS_STR(entry->key), vm);
+        } else if (IS_CHAR(entry->key)) {
+            key_string = pyro_char_to_debug_str(vm, entry->key);
+        } else {
+            key_string = pyro_stringify_value(vm, entry->key);
+        }
+
+        if (vm->halt_flag || !key_string) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(key_string));
+        if (!ObjBuf_append_bytes(buf, key_string->length, (uint8_t*)key_string->bytes, vm)) {
+            pyro_pop(vm);
+            pyro_pop(vm);
+            return NULL;
+        }
+        pyro_pop(vm);
+
+        if (!ObjBuf_append_bytes(buf, 3, (uint8_t*)" = ", vm)) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        ObjStr* value_string;
+
+        if (IS_STR(entry->value)) {
+            value_string = ObjStr_debug_str(AS_STR(entry->value), vm);
+        } else if (IS_CHAR(entry->value)) {
+            value_string = pyro_char_to_debug_str(vm, entry->value);
+        } else {
+            value_string = pyro_stringify_value(vm, entry->value);
+        }
+
+        if (vm->halt_flag || !value_string) {
+            pyro_pop(vm);
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(value_string));
+        if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+            pyro_pop(vm);
+            pyro_pop(vm);
+            return NULL;
+        }
+        pyro_pop(vm);
+    }
+
+    if (!ObjBuf_append_byte(buf, '}', vm)) {
+        pyro_pop(vm);
+        return NULL;
+    }
+
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm);
+    return output_string;
+}
+
+
 // ------ //
 // ObjStr //
 // ------ //

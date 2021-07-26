@@ -127,7 +127,6 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_STR: return (ObjStr*)object;
         case OBJ_MODULE: return STR_OBJ("<module>");
         case OBJ_UPVALUE: return STR_OBJ("<upvalue>");
-        case OBJ_MAP: return STR_OBJ("<map>");
         case OBJ_FILE: return STR_OBJ("<file>");
         case OBJ_FN: return STR_OBJ("<fn>");
         case OBJ_BOUND_METHOD: return STR_OBJ("<method>");
@@ -145,6 +144,11 @@ ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
             return ObjVec_stringify(vec, vm);
+        }
+
+        case OBJ_MAP: {
+            ObjMap* map = (ObjMap*)object;
+            return ObjMap_stringify(map, vm);
         }
 
         case OBJ_BUF: {

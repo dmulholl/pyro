@@ -178,6 +178,11 @@ bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm);
 // for the copy.
 ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm);
 
+// This function can call into Pyro code and can trigger an exit or a panic. The caller should check
+// the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
+// new string.
+ObjStr* ObjMap_stringify(ObjMap* map, PyroVM* vm);
+
 typedef struct {
     Obj obj;
     ObjMap* map;
@@ -205,6 +210,10 @@ ObjVec* ObjVec_new(PyroVM* vm);
 ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm);
 ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm);
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
+
+// This function can call into Pyro code and can trigger an exit or a panic. The caller should check
+// the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
+// new string.
 ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm);
 
 // Sorts the vector in-place using the mergesort algorithm. If [fn] is not [null] it will be used
@@ -393,6 +402,10 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm);
 ObjTup* ObjTup_new_err(size_t count, PyroVM* vm);
 uint64_t ObjTup_hash(ObjTup* tup);
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b);
+
+// This function can call into Pyro code and can trigger an exit or a panic. The caller should check
+// the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
+// new string.
 ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm);
 
 typedef struct {
