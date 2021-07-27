@@ -34,16 +34,6 @@ You can find Pyro's source code on [Github][1].
 
 
 
-### Contributing
-
-I'm not currently accepting pull requests as I haven't decided on the final licensing scheme yet.
-Currently it's MIT, but I'd like to place as much of the code as possible in the public domain and I haven't figured out if I need a CLA or 'Contributor Licence Agreement' for that first.
-Once I do, I'll be happy to accept contributions.
-
-Bug reports and feature suggestions are always welcome.
-
-
-
 ### License
 
 MIT.

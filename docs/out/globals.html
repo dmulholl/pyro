@@ -17,7 +17,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.3.0</p>
+                <p class="version">Version 0.3.2</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -158,6 +158,19 @@ Converts <code>arg</code> to a <code>$char</code>. Panics if the argument is not
 <p>
 Returns the number of seconds since the program was launched as an <code>$f64</code>.
 This function is a wrapper around the C standard library's <code>clock()</code> function.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$debug(arg)</code>
+</dt>
+<dd>
+<p>
+Returns a string representing <code>arg</code> suitable for use in debugging.
+If <code>arg</code> has a <code>$debug()</code> method, the output of this method will be returned.
+Otherwise, if <code>arg</code> has a <code>$str()</code> method, the output of this method will be returned.
+Otherwise, the default string for <code>arg</code> will be returned.
 </p>
 </dd>
 </div>
