@@ -1,8 +1,9 @@
-# Pygments lexer for Pyro.
+# Pygments lexer for the Pyro programming language.
+# v0.3.0
 
 import re
 
-from pygments.lexer import RegexLexer, bygroups, words
+from pygments.lexer import RegexLexer, words
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, Number, Punctuation
 
 __all__ = ['PyroLexer']
@@ -21,7 +22,7 @@ class PyroLexer(RegexLexer):
             (r'#(.*?)\n', Comment.Single),
             (r'(>>>|[.]{3})', Comment.Preproc),
 
-            (r'(import|from|as)\b', Keyword.Namespace),
+            (r'(import|as)\b', Keyword.Namespace),
             (r'(var|def|class)\b', Keyword.Declaration),
 
             (words((

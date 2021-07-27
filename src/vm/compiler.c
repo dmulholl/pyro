@@ -54,7 +54,7 @@ typedef enum {
     TOKEN_CLASS, TOKEN_CONTINUE,
     TOKEN_DEF,
     TOKEN_ECHO, TOKEN_ELSE,
-    TOKEN_FALSE, TOKEN_FOR, TOKEN_FROM,
+    TOKEN_FALSE, TOKEN_FOR,
     TOKEN_IF, TOKEN_IMPORT, TOKEN_IN,
     TOKEN_LOOP,
     TOKEN_NOT, TOKEN_NULL,
@@ -278,7 +278,6 @@ static TokenType get_identifier_type(Lexer* lexer) {
         case 'f':
             if (check_keyword(lexer, "false")) return TOKEN_FALSE;
             if (check_keyword(lexer, "for")) return TOKEN_FOR;
-            if (check_keyword(lexer, "from")) return TOKEN_FROM;
             break;
 
         case 'i':
