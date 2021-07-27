@@ -600,7 +600,7 @@ ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value value) {
                 break;
             default:
                 if (utf8_buffer[0] < 32 || utf8_buffer[0] == 127) {
-                    result = ObjBuf_append_escaped_byte(buf, utf8_buffer[0], vm);
+                    result = ObjBuf_append_hex_escaped_byte(buf, utf8_buffer[0], vm);
                 } else {
                     result = ObjBuf_append_byte(buf, utf8_buffer[0], vm);
                 }

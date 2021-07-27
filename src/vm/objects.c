@@ -814,7 +814,7 @@ ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm) {
                 break;
             default:
                 if (c < 32 || c == 127) {
-                    result = ObjBuf_append_escaped_byte(buf, c, vm);
+                    result = ObjBuf_append_hex_escaped_byte(buf, c, vm);
                 } else {
                     result = ObjBuf_append_byte(buf, c, vm);
                 }
@@ -1455,7 +1455,7 @@ bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
 }
 
 
-bool ObjBuf_append_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
+bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
     if (!ObjBuf_append_bytes(buf, 4, (uint8_t*)"\\x##", vm)) {
         return false;
     }

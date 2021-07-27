@@ -449,7 +449,9 @@ ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm);
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm);
-bool ObjBuf_append_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
+
+// Appends a byte value to the buffer as a hex-escaped string: \x##.
+bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 
 
 // ------- //
