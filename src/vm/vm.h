@@ -106,6 +106,7 @@ struct PyroVM {
     ObjStr* str_next;
     ObjStr* str_get_index;
     ObjStr* str_set_index;
+    ObjStr* str_debug;
 
     // The grey stack used by the garbage collector.
     size_t grey_count;

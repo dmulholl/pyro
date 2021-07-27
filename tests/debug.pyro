@@ -1,0 +1,11 @@
+class Foo {
+    def $debug() {
+        return "[foo]";
+    }
+}
+
+var foo = Foo();
+assert $debug(foo) == "[foo]";
+
+assert $debug("foo\r\n\tbar") == `"foo\r\n\tbar"`;
+assert $debug('a') == `'a'`;

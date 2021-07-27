@@ -108,7 +108,7 @@ uint64_t pyro_hash(Value value) {
 }
 
 
-ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
+static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
     Value method;
     if (object->class && ObjMap_get(object->class->methods, OBJ_VAL(vm->str_str), &method)) {
         pyro_push(vm, OBJ_VAL(object));
@@ -297,7 +297,7 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
 }
 
 
-void pyro_dump_object(PyroVM* vm, Obj* object) {
+static void pyro_dump_object(PyroVM* vm, Obj* object) {
     switch (object->type) {
         case OBJ_STR: {
             ObjStr* string = (ObjStr*)object;

@@ -1399,6 +1399,7 @@ PyroVM* pyro_new_vm() {
     vm->range_class = NULL;
     vm->file_class = NULL;
     vm->mt64 = NULL;
+    vm->str_debug = NULL;
 
     // Initialize the PRNG.
     vm->mt64 = pyro_new_mt64();
@@ -1484,6 +1485,9 @@ PyroVM* pyro_new_vm() {
 
     vm->str_set_index = STR_OBJ("$set_index");
     if (!vm->str_set_index) { pyro_free_vm(vm); return NULL; }
+
+    vm->str_debug = STR_OBJ("$debug");
+    if (!vm->str_debug) { pyro_free_vm(vm); return NULL; }
 
     // All other object fields.
     vm->globals = ObjMap_new(vm);

@@ -542,10 +542,9 @@ Value pyro_get_method(Value value, ObjStr* method_name);
 // Returns [true] if the named method is defined for the value.
 bool pyro_has_method(Value value, ObjStr* method_name);
 
-// These functions dump a value or object to the VM's output stream for debugging. They don't
-// allocate memory or call into Pyro code.
+// Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
+// Pyro code.
 void pyro_dump_value(PyroVM* vm, Value value);
-void pyro_dump_object(PyroVM* vm, Obj* object);
 
 // Returns the value's 64-bit hash.
 uint64_t pyro_hash(Value value);
@@ -563,8 +562,7 @@ bool pyro_is_truthy(Value value);
 // - Returns 2 if the values are not comparable.
 int pyro_compare(Value a, Value b);
 
-// These functions construct and return the default string representation of a value. A lot can go
-// wrong here:
+// Constructs and returns the default string representation of a value. A lot can go wrong here:
 //
 // 1 - This function attempts to allocate memory and can trigger the GC.
 // 2 - This function assumes that any object passed into it has been fully initialized.
@@ -576,10 +574,9 @@ int pyro_compare(Value a, Value b);
 //
 // These functions return NULL if sufficient memory could not be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
-ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object);
 
-// This function constructs and returns the formatted string representation of a value using the
-// format string [format]. A lot can go wrong here:
+// Constructs and returns the formatted string representation of a value using the format string
+// [format]. A lot can go wrong here:
 //
 // 1 - This function attempts to allocate memory and can trigger the GC.
 // 2 - This function assumes that any object passed into it has been fully initialized.

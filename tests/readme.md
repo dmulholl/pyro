@@ -1,9 +1,10 @@
 # Test Suite
 
-You can run the test suite from the root directory using the `test` command:
+To build a new debug binary and run the test suite run:
+
+    $ make check
+
+from the root directory. Alternatively, you can run the test suite using the `test` command directly:
 
     $ ./out/pyro test ./tests/*.pyro
 
-To build a new binary and immediately run the test suite with it run:
-
-    $ make check

@@ -37,6 +37,7 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->str_next);
     pyro_mark_object(vm, (Obj*)vm->str_get_index);
     pyro_mark_object(vm, (Obj*)vm->str_set_index);
+    pyro_mark_object(vm, (Obj*)vm->str_debug);
 
     // Other object fields.
     pyro_mark_object(vm, (Obj*)vm->globals);

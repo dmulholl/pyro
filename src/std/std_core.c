@@ -2410,6 +2410,44 @@ static Value fn_shell2(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
+    Value method = pyro_get_method(args[0], vm->str_debug);
+    if (!IS_NULL(method)) {
+        pyro_push(vm, args[0]);
+        Value debug_string = pyro_call_method(vm, method, 0);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        if (IS_STR(debug_string)) {
+            return debug_string;
+        }
+        pyro_panic(vm, "Invalid type returned by $debug() method.");
+        return NULL_VAL();
+    }
+
+    ObjStr* debug_string;
+
+    if (IS_STR(args[0])) {
+        debug_string = ObjStr_debug_str(AS_STR(args[0]), vm);
+    } else if (IS_CHAR(args[0])) {
+        debug_string = pyro_char_to_debug_str(vm, args[0]);
+    } else {
+        debug_string = pyro_stringify_value(vm, args[0]);
+    }
+
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+
+    if (!debug_string) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(debug_string);
+}
+
+
 // ------------ //
 // Registration //
 // ------------ //
@@ -2464,6 +2502,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);
     pyro_define_global_fn(vm, "$shell", fn_shell, 1);
     pyro_define_global_fn(vm, "$shell2", fn_shell2, 1);
+    pyro_define_global_fn(vm, "$debug", fn_debug, 1);
 
     pyro_define_global_fn(vm, "$f64", fn_f64, 1);
     pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);
