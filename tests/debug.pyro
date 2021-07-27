@@ -8,4 +8,9 @@ var foo = Foo();
 assert $debug(foo) == "[foo]";
 
 assert $debug("foo\r\n\tbar") == `"foo\r\n\tbar"`;
+assert $debug("\x0A") == `"\n"`;
+assert $debug("\x01") == `"\x01"`;
+
 assert $debug('a') == `'a'`;
+assert $debug('\x0A') == `'\n'`;
+assert $debug('\x01') == `'\x01'`;

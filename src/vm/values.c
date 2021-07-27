@@ -599,7 +599,11 @@ ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value value) {
                 result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
                 break;
             default:
-                result = ObjBuf_append_byte(buf, utf8_buffer[0], vm);
+                if (utf8_buffer[0] < 32 || utf8_buffer[0] == 127) {
+                    result = ObjBuf_append_escaped_byte(buf, utf8_buffer[0], vm);
+                } else {
+                    result = ObjBuf_append_byte(buf, utf8_buffer[0], vm);
+                }
                 break;
         }
     } else {

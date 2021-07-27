@@ -788,8 +788,9 @@ ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm) {
 
     for (size_t i = 0; i < str->length; i++) {
         bool result;
+        char c = str->bytes[i];
 
-        switch (str->bytes[i]) {
+        switch (c) {
             case '"':
                 result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\"", vm);
                 break;
@@ -812,7 +813,11 @@ ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm) {
                 result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
                 break;
             default:
-                result = ObjBuf_append_byte(buf, str->bytes[i], vm);
+                if (c < 32 || c == 127) {
+                    result = ObjBuf_append_escaped_byte(buf, c, vm);
+                } else {
+                    result = ObjBuf_append_byte(buf, c, vm);
+                }
                 break;
         }
 
@@ -1447,6 +1452,21 @@ ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
 
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
     return ObjBuf_append_bytes(buf, 1, &byte, vm);
+}
+
+
+bool ObjBuf_append_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
+    if (!ObjBuf_append_bytes(buf, 4, (uint8_t*)"\\x##", vm)) {
+        return false;
+    }
+
+    char str[3];
+    sprintf(str, "%02X", byte);
+
+    buf->bytes[buf->count - 2] = str[0];
+    buf->bytes[buf->count - 1] = str[1];
+
+    return true;
 }
 
 
