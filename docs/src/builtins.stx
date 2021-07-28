@@ -177,6 +177,14 @@ Strings have the following methods:
 
     Returns a new string with all ASCII lowercase characters converted to uppercase.
 
+[[ `:to_hex()` ]]
+
+    Returns a new string containing the hex-escaped byte values from the orginal string ---
+    e.g. `\`foo\`` becomes `\`\x66\x6F\x6F\``.
+    Useful for inspecting and debugging Unicode.
+
+
+
 
 ### Characters
 
@@ -409,8 +417,6 @@ Tuples are iterable:
     for item in $tup(123, 456, 789) {
         echo item;
     }
-
-
 
 Tuples have the following methods:
 

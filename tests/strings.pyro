@@ -293,3 +293,8 @@ def $test_split_on_ascii_ws() {
     assert vec5[1] == "bar";
     assert vec5[2] == "baz";
 }
+
+
+def $test_to_hex() {
+    assert `foo`:to_hex() == `\x66\x6F\x6F`;
+}

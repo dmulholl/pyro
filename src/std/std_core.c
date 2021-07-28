@@ -1624,6 +1624,35 @@ static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return OBJ_VAL(str);
+    }
+
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(buf));
+
+    for (size_t i = 0; i < str->length; i++) {
+        if (!ObjBuf_append_hex_escaped_byte(buf, str->bytes[i], vm)) {
+            pyro_panic(vm, "Out of memory.");
+            return NULL_VAL();
+        }
+    }
+
+    ObjStr* output_string = ObjBuf_to_str(buf, vm);
+    if (!output_string) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    pyro_pop(vm);
+    return OBJ_VAL(output_string);
+}
 
 
 // ------ //
@@ -2594,6 +2623,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
     pyro_define_method(vm, vm->str_class, "split", str_split, 1);
     pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
+    pyro_define_method(vm, vm->str_class, "to_hex", str_to_hex, 0);
 
     pyro_define_global_fn(vm, "$range", fn_range, -1);
     pyro_define_global_fn(vm, "$is_range", fn_is_range, 1);
