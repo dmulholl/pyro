@@ -28,7 +28,7 @@ trace::
 	@mkdir -p out
 	$(CC) $(CFLAGS) $(SGC) $(TRACE) -o out/pyro $(FILES)
 
-log::
+lgc::
 	@mkdir -p out
 	$(CC) $(CFLAGS) $(SGC) $(TRACE) $(LGC) -o out/pyro $(FILES)
 
