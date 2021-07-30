@@ -58,7 +58,7 @@ Names beginning with a `$` symbol are `$pecial` --- this namespace is reserved b
 
 ### Numbers
 
-Pyro has two numeric types: `$i64` for 64-bit signed integers, and `$f64` for 64-bit [IEEE 754 floats][1].
+Pyro has two numeric types: `$i64` for 64-bit signed two's-complement integers, and `$f64` for 64-bit [IEEE 754 floats][1].
 Both behave as you'd expect and support the usual range of numeric operations.
 
 ::: table
