@@ -472,8 +472,8 @@ You can similarly unpack the loop variable of a `for` loop:
 
 ::: code pyro
     var map = {
-        "foo": 123,
-        "bar": 456,
+        "foo" = 123,
+        "bar" = 456,
     };
 
     for (key, value) in map:entries() {
