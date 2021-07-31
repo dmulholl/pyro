@@ -632,6 +632,12 @@ Note that you can use the error-coalescing operator <code>!!</code> to provide a
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 1</span>
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0</span>
 </pre>
+<p>
+You can raise a panic from your own code by calling the <code>$panic()</code> function with an error message:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;stop that!&quot;</span><span class="p">);</span>
+</pre>
 <h3 id="modules">
 Modules
 </h3>

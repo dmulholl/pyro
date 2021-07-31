@@ -424,6 +424,11 @@ Note that you can use the error-coalescing operator `!!` to provide a default va
     var foo = try (1 / 1) !! 0;  # 1
     var bar = try (1 / 0) !! 0;  # 0
 
+You can raise a panic from your own code by calling the `$panic()` function with an error message:
+
+::: code pyro
+    $panic("stop that!");
+
 
 
 ### Modules
