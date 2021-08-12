@@ -4,5 +4,5 @@
 
 theme = "graphite"
 title = "Pyro"
-tagline = "A scripting language for people who enjoy the simpler things in life."
+tagline = "An experimental programming language."
 version = "Version 0.3.2"
