@@ -97,6 +97,7 @@ static const char* TIME_HELPTEXT =
     ;
 
 
+// REPL helper: true if the code snippet contains an open quote.
 static bool has_open_quote(const char* code, size_t code_count) {
     bool in_quotes = false;
     size_t index = 0;
@@ -145,6 +146,7 @@ static bool has_open_quote(const char* code, size_t code_count) {
 }
 
 
+// REPL helper: returns the number of opening brackets minus the number of closing brackets.
 static int count_brackets(const char* code, size_t code_count) {
     int bracket_count = 0;
     size_t index = 0;
@@ -361,7 +363,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
 
     printf("  \x1B[7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS");
     printf("  Files: %d/%d", files_passed, files_passed + files_failed);
-    printf(" · Tests: %d/%d", funcs_passed, funcs_passed + funcs_failed);
+    printf(" · Functions: %d/%d", funcs_passed, funcs_passed + funcs_failed);
     printf(" · Time: %f secs\n", time);
 
     exit(files_failed > 0 ? 1 : 0);

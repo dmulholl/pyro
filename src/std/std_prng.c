@@ -6,7 +6,7 @@
 
 
 static Value fn_test_mt64(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(pyro_test_mt64());
+    return BOOL_VAL(pyro_mt64_test());
 }
 
 
@@ -16,7 +16,7 @@ static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_seed(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_init_mt64(vm->mt64, pyro_hash(args[0]));
+    pyro_mt64_init(vm->mt64, pyro_hash(args[0]));
     return NULL_VAL();
 }
 

@@ -16,13 +16,13 @@
 typedef struct MT64 MT64;
 
 // Allocates a new generator.
-MT64* pyro_new_mt64(void);
+MT64* pyro_mt64_new(void);
 
 // Frees a generator.
-void pyro_free_mt64(MT64* mt);
+void pyro_mt64_free(MT64* mt);
 
 // Initializes a generator with a seed value.
-void pyro_init_mt64(MT64* mt, uint64_t seed);
+void pyro_mt64_init(MT64* mt, uint64_t seed);
 
 // Generates a random integer on the closed interval [0, 2^64 - 1].
 uint64_t pyro_mt64_gen_u64(MT64* mt);
@@ -43,6 +43,6 @@ double pyro_mt64_gen_f64b(MT64* mt);
 double pyro_mt64_gen_f64c(MT64* mt);
 
 // Generator test: verifies the 1st and 1000th output values for a known seed.
-bool pyro_test_mt64(void);
+bool pyro_mt64_test(void);
 
 #endif

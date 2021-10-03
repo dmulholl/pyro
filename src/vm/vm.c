@@ -1402,7 +1402,7 @@ PyroVM* pyro_new_vm() {
     vm->str_debug = NULL;
 
     // Initialize the PRNG.
-    vm->mt64 = pyro_new_mt64();
+    vm->mt64 = pyro_mt64_new();
     if (!vm->mt64) {
         pyro_free_vm(vm);
         return NULL;
@@ -1523,7 +1523,7 @@ void pyro_free_vm(PyroVM* vm) {
     free(vm->grey_stack);
     vm->bytes_allocated -= vm->grey_capacity;
 
-    free(vm->mt64);
+    pyro_mt64_free(vm->mt64);
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);

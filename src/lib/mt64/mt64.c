@@ -40,7 +40,7 @@ struct MT64 {
 
 
 // Allocates a new generator.
-MT64* pyro_new_mt64(void) {
+MT64* pyro_mt64_new(void) {
     MT64* mt = malloc(sizeof(MT64));
     if (!mt) {
         return NULL;
@@ -51,13 +51,13 @@ MT64* pyro_new_mt64(void) {
 
 
 // Frees a generator.
-void pyro_free_mt64(MT64* mt) {
+void pyro_mt64_free(MT64* mt) {
     free(mt);
 }
 
 
 // Initializes the generator's state vector with a seed value.
-void pyro_init_mt64(MT64* mt, uint64_t seed) {
+void pyro_mt64_init(MT64* mt, uint64_t seed) {
     mt->vec[0] = seed;
     for (mt->i = 1; mt->i < N; mt->i++) {
         mt->vec[mt->i] = F * (mt->vec[mt->i-1] ^ (mt->vec[mt->i-1] >> 62)) + mt->i;
@@ -67,8 +67,8 @@ void pyro_init_mt64(MT64* mt, uint64_t seed) {
 
 // Intializes the generator's state vector using an array of seed values. The algorithm will use
 // up to the first [N] values from the array.
-void pyro_init_mt64_with_array(MT64* mt, uint64_t array[], size_t array_length) {
-    pyro_init_mt64(mt, UINT64_C(19650218));
+void pyro_mt64_init_with_array(MT64* mt, uint64_t array[], size_t array_length) {
+    pyro_mt64_init(mt, UINT64_C(19650218));
 
     size_t i = 0;
     size_t j = 0;
@@ -156,7 +156,7 @@ uint64_t pyro_mt64_gen_u64(MT64* mt) {
         // If the generator hasn't already been initialized, initialize it with a default seed.
         if (mt->i == N + 1) {
             uint64_t seed = gen_auto_seed(mt);
-            pyro_init_mt64(mt, seed);
+            pyro_mt64_init(mt, seed);
         }
 
         for (j = 0; j < N - M; j++) {
@@ -230,22 +230,22 @@ double pyro_mt64_gen_f64c(MT64* mt) {
 
 
 // Basic sanity check -- this verifies the 1st and 1000th output values for a known seed.
-bool pyro_test_mt64(void) {
-    MT64* mt = pyro_new_mt64();
-    pyro_init_mt64(mt, 5489);
+bool pyro_mt64_test(void) {
+    MT64* mt = pyro_mt64_new();
+    pyro_mt64_init(mt, 5489);
 
     for (size_t i = 0; i < 1000; i++) {
         uint64_t num = pyro_mt64_gen_u64(mt);
         if (i == 0 && num != UINT64_C(14514284786278117030)) {
-            pyro_free_mt64(mt);
+            pyro_mt64_free(mt);
             return false;
         }
         if (i == 999 && num != UINT64_C(10193180073869439881)) {
-            pyro_free_mt64(mt);
+            pyro_mt64_free(mt);
             return false;
         }
     }
 
-    pyro_free_mt64(mt);
+    pyro_mt64_free(mt);
     return true;
 }
