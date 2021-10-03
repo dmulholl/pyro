@@ -83,7 +83,7 @@ bool pyro_check_equal(Value a, Value b) {
 }
 
 
-uint64_t pyro_hash(Value value) {
+uint64_t pyro_hash_value(Value value) {
     switch (value.type) {
         case VAL_NULL:
             return 123;
@@ -531,7 +531,7 @@ int pyro_compare_strings(ObjStr* a, ObjStr* b) {
 }
 
 
-int pyro_compare(Value a, Value b) {
+int pyro_compare_values(Value a, Value b) {
     if (a.type == b.type) {
         switch (a.type) {
             case VAL_I64:

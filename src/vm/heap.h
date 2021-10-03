@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "values.h"
+#include "objects.h"
 
 // Increase the capacity of an array.
 #define GROW_CAPACITY(capacity) \

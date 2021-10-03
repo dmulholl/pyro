@@ -5,7 +5,7 @@
 
 
 static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
-    return I64_VAL((int64_t)pyro_hash(args[0]));
+    return I64_VAL((int64_t)pyro_hash_value(args[0]));
 }
 
 

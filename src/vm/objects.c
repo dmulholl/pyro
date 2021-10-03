@@ -1,4 +1,5 @@
 #include "values.h"
+#include "objects.h"
 #include "heap.h"
 #include "vm.h"
 #include "utils.h"
@@ -68,7 +69,7 @@ ObjTup* ObjTup_new_err(size_t count, PyroVM* vm) {
 uint64_t ObjTup_hash(ObjTup* tup) {
     uint64_t hash = 0;
     for (size_t i = 0; i < tup->count; i++) {
-        hash ^= pyro_hash(tup->values[i]);
+        hash ^= pyro_hash_value(tup->values[i]);
     }
     return hash;
 }
@@ -265,7 +266,7 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 static MapEntry* find_entry(MapEntry* entries, size_t capacity, Value key) {
     // Capacity is always a power of 2 so we can use bitwise-AND as a fast
     // modulo operator, i.e. this is equivalent to: index = key_hash % capacity.
-    size_t index = (size_t)pyro_hash(key) & (capacity - 1);
+    size_t index = (size_t)pyro_hash_value(key) & (capacity - 1);
     MapEntry* tombstone = NULL;
 
     for (;;) {
@@ -1331,7 +1332,7 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
         int result;
 
         if (IS_NULL(fn)) {
-            result = pyro_compare(aux_array[i], aux_array[j]);
+            result = pyro_compare_values(aux_array[i], aux_array[j]);
         } else {
             pyro_push(vm, fn);
             pyro_push(vm, aux_array[i]);
