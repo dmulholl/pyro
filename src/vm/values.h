@@ -4,11 +4,11 @@
 #include "common.h"
 
 typedef enum {
-    VAL_BOOL,
-    VAL_NULL,
-    VAL_I64,
-    VAL_F64,
-    VAL_CHAR,       // A 32-bit unsigned integer representing a Unicode codd point.
+    VAL_BOOL,       // A Pyro boolean, true or false.
+    VAL_NULL,       // A Pyro null.
+    VAL_I64,        // A 64-bit signed integer.
+    VAL_F64,        // A 64-bit float.
+    VAL_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
     VAL_OBJ,        // A pointer to a heap-allocated object.
     VAL_EMPTY,      // Used internally by the map implementation.
     VAL_TOMBSTONE,  // Used internally by the map implementation.

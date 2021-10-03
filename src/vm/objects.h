@@ -253,9 +253,9 @@ typedef struct {
 
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class);
 
-/* ------- */
+/* -------- */
 /* Upvalues */
-/* ------- */
+/* -------- */
 
 // The [next] pointer is used by the VM to maintain a linked list of open upvalues pointing to
 // variables still on the stack.
