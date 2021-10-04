@@ -6,15 +6,17 @@
 #include "opcodes.h"
 
 
+// Allocates memory for a fixed-size object.
 #define ALLOCATE_OBJECT(vm, type, type_enum) \
     (type*)allocate_object(vm, sizeof(type), type_enum)
 
 
+// Allocates memory for a flexibly-sized object, e.g. a tuple.
 #define ALLOCATE_FLEX_OBJECT(vm, type, type_enum, value_count, value_type) \
     (type*)allocate_object(vm, sizeof(type) + value_count * sizeof(value_type), type_enum)
 
 
-// This function creates a new heap-allocated object and adds it to the VM's linked list.
+// Allocates memory for a new object. Automatically adds the new object to the VM's linked list.
 static Obj* allocate_object(PyroVM* vm, size_t size, ObjType type) {
     Obj* object = pyro_realloc(vm, NULL, 0, size);
     if (object == NULL) {
@@ -29,16 +31,20 @@ static Obj* allocate_object(PyroVM* vm, size_t size, ObjType type) {
     vm->objects = object;
 
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(vm, ">> %p allocate %zu bytes for %s\n", (void*)object, size, pyro_stringify_obj_type(type));
+        pyro_out(vm, ">> %p allocate %zu bytes for %s\n",
+            (void*)object,
+            size,
+            pyro_stringify_obj_type(type)
+        );
     #endif
 
     return object;
 }
 
 
-// ------ //
-// ObjTup //
-// ------ //
+/* ------ */
+/* Tuples */
+/* ------ */
 
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
@@ -154,9 +160,9 @@ ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm) {
 }
 
 
-// ---------- //
-// ObjClosure //
-// ---------- //
+/* -------- */
+/* Closures */
+/* -------- */
 
 
 ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn) {
@@ -188,9 +194,9 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn) {
 }
 
 
-// ---------- //
-// ObjUpvalue //
-// ---------- //
+/* -------- */
+/* Upvalues */
+/* -------- */
 
 
 ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
@@ -205,9 +211,9 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
 }
 
 
-// -------- //
-// ObjClass //
-// -------- //
+/* ------- */
+/* Classes */
+/* ------- */
 
 
 ObjClass* ObjClass_new(PyroVM* vm) {
@@ -236,9 +242,9 @@ ObjClass* ObjClass_new(PyroVM* vm) {
 }
 
 
-// ----------- //
-// ObjInstance //
-// ----------- //
+/* --------- */
+/* Instances */
+/* --------- */
 
 
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
@@ -258,9 +264,9 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 }
 
 
-// ------ //
-// ObjMap //
-// ------ //
+/* ---- */
+/* Maps */
+/* ---- */
 
 
 static MapEntry* find_entry(MapEntry* entries, size_t capacity, Value key) {
@@ -627,9 +633,9 @@ ObjStr* ObjMap_stringify(ObjMap* map, PyroVM* vm) {
 }
 
 
-// ------ //
-// ObjStr //
-// ------ //
+/* ------- */
+/* Strings */
+/* ------- */
 
 
 // Creates a new string object taking ownership of a null-terminated, heap-allocated byte array,
@@ -852,9 +858,9 @@ ObjStrIter* ObjStrIter_new(ObjStr* string, StrIterType iter_type, PyroVM* vm) {
 }
 
 
-// ----- //
-// ObjFn //
-// ----- //
+/* -------------- */
+/* Pyro Functions */
+/* -------------- */
 
 
 ObjFn* ObjFn_new(PyroVM* vm) {
@@ -1071,9 +1077,9 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
 }
 
 
-// ----------- //
-// ObjNativeFn //
-// ----------- //
+/* ---------------- */
+/* Native Functions */
+/* ---------------- */
 
 
 ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arity) {
@@ -1088,9 +1094,9 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arit
 }
 
 
-// -------------- //
-// ObjBoundMethod //
-// -------------- //
+/* ------------- */
+/* Bound Methods */
+/* ------------- */
 
 
 ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method) {
@@ -1104,9 +1110,9 @@ ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method) {
 }
 
 
-// --------- //
-// ObjModule //
-// --------- //
+/* ------- */
+/* Modules */
+/* ------- */
 
 
 ObjModule* ObjModule_new(PyroVM* vm) {
@@ -1131,9 +1137,9 @@ ObjModule* ObjModule_new(PyroVM* vm) {
 }
 
 
-// ------ //
-// ObjVec //
-// ------ //
+/* ------- */
+/* Vectors */
+/* ------- */
 
 
 ObjVec* ObjVec_new(PyroVM* vm) {
@@ -1390,9 +1396,9 @@ bool ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm) {
 }
 
 
-// -------- //
-// ObjRange //
-// -------- //
+/* ------ */
+/* Ranges */
+/* ------ */
 
 
 ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm) {
@@ -1408,9 +1414,9 @@ ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm) {
 }
 
 
-// ------ //
-// ObjBuf //
-// ------ //
+/* ------- */
+/* Buffers */
+/* ------- */
 
 
 ObjBuf* ObjBuf_new(PyroVM* vm) {
@@ -1521,9 +1527,9 @@ ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm) {
 }
 
 
-// ------- //
-// ObjFile //
-// ------- //
+/* ----- */
+/* Files */
+/* ----- */
 
 
 ObjFile* ObjFile_new(PyroVM* vm) {
