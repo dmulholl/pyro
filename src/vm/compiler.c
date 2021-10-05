@@ -160,12 +160,12 @@ static bool is_binary(char c) {
 }
 
 
-static bool is_at_end(Lexer* lexer) {
+static inline bool is_at_end(Lexer* lexer) {
     return lexer->current == lexer->end;
 }
 
 
-static char next_char(Lexer* lexer) {
+static inline char next_char(Lexer* lexer) {
     lexer->current++;
     return lexer->current[-1];
 }
@@ -212,7 +212,7 @@ static Token make_error_token(Lexer* lexer) {
 }
 
 
-static void skip_whitespace(Lexer* lexer) {
+static void skip_whitespace_and_comments(Lexer* lexer) {
     while (!is_at_end(lexer)) {
         char c = peek(lexer);
         switch (c) {
@@ -449,8 +449,8 @@ static Token read_char(Lexer* lexer) {
 }
 
 
-Token next_token(Lexer* lexer) {
-    skip_whitespace(lexer);
+static Token next_token(Lexer* lexer) {
+    skip_whitespace_and_comments(lexer);
     lexer->start = lexer->current;
 
     if (is_at_end(lexer)) {
@@ -557,7 +557,7 @@ Token next_token(Lexer* lexer) {
 }
 
 
-void init_lexer(Lexer* lexer, PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+static void init_lexer(Lexer* lexer, PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     lexer->start = src_code;
     lexer->current = src_code;
     lexer->end = src_code + src_len;
