@@ -19,7 +19,7 @@ FILES = src/vm/*.c src/std/*.c src/cli/*.c src/lib/mt64/*.c src/lib/args/*.c
 # Standard release build.
 release::
 	@mkdir -p out
-	$(CC) $(CFLAGS) -D NDEBUG -o out/pyro $(FILES)
+	$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/pyro $(FILES)
 
 # Standard debug build. Assertions are checked and the GC is run before every allocation.
 debug debug1::
