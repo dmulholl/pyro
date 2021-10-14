@@ -4,11 +4,13 @@
 
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -Wno-unused-parameter -Wno-unused-function
 
-SGC = -D PYRO_DEBUG_STRESS_GC
+STRESS_GC = -D PYRO_DEBUG_STRESS_GC
 
-LGC = -D PYRO_DEBUG_LOG_GC
+LOG_GC = -D PYRO_DEBUG_LOG_GC
 
-TRACE = -D PYRO_DEBUG_TRACE_EXECUTION -D PYRO_DEBUG_DUMP_BYTECODE
+DUMP = -D PYRO_DEBUG_DUMP_BYTECODE
+
+TRACE = -D PYRO_DEBUG_TRACE_EXECUTION
 
 FILES = src/vm/*.c src/std/*.c src/cli/*.c src/lib/mt64/*.c src/lib/args/*.c
 
@@ -16,30 +18,30 @@ FILES = src/vm/*.c src/std/*.c src/cli/*.c src/lib/mt64/*.c src/lib/args/*.c
 # Phony Targets #
 # ------------- #
 
-# Standard release build.
+# Release build.
 release::
-	@mkdir -p out
-	$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/pyro $(FILES)
+	@mkdir -p out/release
+	$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES)
 
-# Standard debug build. Assertions are checked and the GC is run before every allocation.
+# Debug build. Assertions are checked and the GC is run before every allocation.
 debug debug1::
-	@mkdir -p out
-	$(CC) $(CFLAGS) $(SGC) -o out/pyro $(FILES)
+	@mkdir -p out/debug
+	$(CC) $(CFLAGS) $(STRESS_GC) -o out/debug/pyro $(FILES)
 
 # As debug1, plus dumps bytecode and traces execution opcode-by-opcode.
 debug2::
-	@mkdir -p out
-	$(CC) $(CFLAGS) $(SGC) $(TRACE) -o out/pyro $(FILES)
+	@mkdir -p out/debug
+	$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP) $(TRACE) -o out/debug/pyro $(FILES)
 
 # As debug2, plus GC logging. Very verbose.
 debug3::
-	@mkdir -p out
-	$(CC) $(CFLAGS) $(SGC) $(TRACE) $(LGC) -o out/pyro $(FILES)
+	@mkdir -p out/debug
+	$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP) $(TRACE) $(LOG_GC) -o out/debug/pyro $(FILES)
 
 # Runs the standard debug build, then runs the test suite.
 check::
 	@make debug
-	./out/pyro test ./tests/*.pyro
+	./out/debug/pyro test ./tests/*.pyro
 
 clean::
-	rm -f ./out/*
+	rm -rf ./out/*
