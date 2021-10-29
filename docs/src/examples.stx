@@ -77,3 +77,23 @@ The classic guess-a-random-number game:
         }
     }
 
+
+
+### FizzBuzz
+
+The classic interview question:
+
+::: code pyro
+    def fizzbuzz(n) {
+        loop var i = 1; i <= n; i += 1 {
+            if i % 15 == 0 {
+                echo "fizzbuzz";
+            } else if i % 3 == 0 {
+                echo "fizz";
+            } else if i % 5 == 0 {
+                echo "buzz";
+            } else {
+                echo i;
+            }
+        }
+    }

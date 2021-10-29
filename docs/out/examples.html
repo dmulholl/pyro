@@ -73,6 +73,9 @@
 <li>
 <a href="#guessing-game">Guessing game</a>
 </li>
+<li>
+<a href="#fizzbuzz">FizzBuzz</a>
+</li>
 </ul>
 <h3 id="fibonacci-numbers">
 Fibonacci numbers
@@ -145,6 +148,27 @@ The classic guess-a-random-number game:
         <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="k">echo</span> <span class="s">&quot;Wrong! Try again...&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<h3 id="fizzbuzz">
+FizzBuzz
+</h3>
+<p>
+The classic interview question:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">fizzbuzz</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">loop</span> <span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="s">&quot;fizzbuzz&quot;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="s">&quot;fizz&quot;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="s">&quot;buzz&quot;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre>
