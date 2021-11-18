@@ -1650,6 +1650,11 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 
 
 void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
+    Value path_value = STR_VAL(path);
+    pyro_push(vm, path_value);
+    pyro_define_member(vm, vm->main_module, "$filepath", path_value);
+    pyro_pop(vm);
+
     FileData fd;
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
         return;
@@ -1661,6 +1666,11 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
 
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
+    Value path_value = STR_VAL(path);
+    pyro_push(vm, path_value);
+    pyro_define_member(vm, module, "$filepath", path_value);
+    pyro_pop(vm);
+
     FileData fd;
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
         return;
