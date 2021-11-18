@@ -434,6 +434,11 @@ static void declare_variable(Parser* parser, Token name) {
         return;
     }
 
+    if (name.length == 1 && name.start[0] == '_') {
+        add_local(parser, name);
+        return;
+    }
+
     for (int i = parser->compiler->local_count - 1; i >= 0; i--) {
         Local* local = &parser->compiler->locals[i];
         if (local->depth < parser->compiler->scope_depth) {
