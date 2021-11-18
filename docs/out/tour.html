@@ -18,7 +18,7 @@
                 <p class="tagline">An experimental scripting language.</p>
             
             
-                <p class="version">Version 0.3.3</p>
+                <p class="version">Version 0.3.4</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -699,6 +699,15 @@ You can similarly unpack the loop variable of a <code>for</code> loop:
     <span class="k">echo</span> <span class="nx">key</span><span class="p">;</span>
     <span class="k">echo</span> <span class="nx">value</span><span class="p">;</span>
 <span class="p">}</span>
+</pre>
+<p>
+You can discard unwanted values by assigning them to the unnamed variable <code>_</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
 </pre>
 <h3 id="source-code">
 Source Code

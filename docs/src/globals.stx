@@ -18,6 +18,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$filepath` ]]
+
+    A string containing the filepath of the script or module file.
+
+
+
 [[ `$stderr` ]]
 
     A `$file` object pointing to the standard error stream.

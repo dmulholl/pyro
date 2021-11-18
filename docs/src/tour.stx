@@ -486,6 +486,13 @@ You can similarly unpack the loop variable of a `for` loop:
         echo value;
     }
 
+You can discard unwanted values by assigning them to the unnamed variable `_`, e.g.
+
+::: code pyro
+    var (foo, _, baz) = $tup(123, 456, 789);
+
+    assert foo == 123;
+    assert baz == 789;
 
 
 ### Source Code
