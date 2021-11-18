@@ -5,6 +5,11 @@ assert bar == 456;
 assert baz == 789;
 
 
+# Test unpacking into globals with discarding.
+var (_, bam, _) = $tup(123, 456, 789);
+assert bam == 456;
+
+
 # Test unpacking into locals.
 {
     var (foo, bar, baz) = $tup(1, 2, 3);
@@ -14,27 +19,34 @@ assert baz == 789;
 }
 
 
-def $test_vector() {
+# Test unpacking into locals with discarding.
+{
+    var (_, bam, _) = $tup(1, 2, 3);
+    assert bam == 2;
+}
+
+
+def $test_unpacking_vector() {
     var (v1, v2) = [123, 456];
     assert v1 == 123;
     assert v2 == 456;
 }
 
 
-def $test_single() {
+def $test_unpacking_single_tuple() {
     var (foo) = $tup(123);
     assert foo == 123;
 }
 
 
-def $test_partial() {
+def $test_unpacking_partial_tuple() {
     var (foo, bar) = $tup(123, 456, 789);
     assert foo == 123;
     assert bar == 456;
 }
 
 
-def $test_error() {
+def $test_unpacking_error() {
     var (foo, bar) = $err(123, 456);
     assert foo == 123;
     assert bar == 456;
