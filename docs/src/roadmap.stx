@@ -39,3 +39,27 @@ Adding support for concurrency is on the long finger.
 Pyro is currently single-threaded and likely to remain that way for the foreseeable future.
 Getting concurrency right is a tough challenge and not one I'm in a rush to tackle.
 
+
+
+### String Interpolation
+
+String interpolation for double-quoted strings is planned but not yet implemented. The syntax will be:
+
+::: code pyro
+    echo "string with ${expr|fmt_spec} interpolations";
+
+For example:
+
+::: code pyro
+    var foo = "123";
+    var bar = 456;
+    echo "${foo} and ${bar}"; # "123 and 456"
+
+Or:
+
+::: code pyro
+    var foo = 123;
+    var bar = 456.789
+    echo "${foo|%04i} and ${bar|%.2f}"; # "0123 and 456.79"
+
+Interpolation syntax will be backwards-compatible with the existing `$fmt()` syntax.

@@ -117,6 +117,34 @@ Adding support for concurrency is on the long finger.
 Pyro is currently single-threaded and likely to remain that way for the foreseeable future.
 Getting concurrency right is a tough challenge and not one I'm in a rush to tackle.
 </p>
+<h3 id="string-interpolation">
+String Interpolation
+</h3>
+<p>
+String interpolation for double-quoted strings is planned but not yet implemented. The syntax will be:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="s">&quot;string with ${expr|fmt_spec} interpolations&quot;</span><span class="p">;</span>
+</pre>
+<p>
+For example:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;123&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s">&quot;${foo} and ${bar}&quot;</span><span class="p">;</span> <span class="c1"># &quot;123 and 456&quot;</span>
+</pre>
+<p>
+Or:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="mf">456.789</span>
+<span class="k">echo</span> <span class="s">&quot;${foo|%04i} and ${bar|%.2f}&quot;</span><span class="p">;</span> <span class="c1"># &quot;0123 and 456.79&quot;</span>
+</pre>
+<p>
+Interpolation syntax will be backwards-compatible with the existing <code>$fmt()</code> syntax.
+</p>
         </article>
         
     </body>
