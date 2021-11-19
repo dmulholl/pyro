@@ -779,7 +779,7 @@ static uint32_t parse_char_literal(Parser* parser) {
         return 0;
     }
 
-    return cp.codepoint;
+    return cp.value;
 }
 
 

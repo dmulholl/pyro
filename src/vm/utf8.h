@@ -6,7 +6,7 @@
 // Output struct for [pyro_read_utf8_codepoint]. [length] is the number of bytes in the utf-8
 // encoding.
 typedef struct {
-    uint32_t codepoint;
+    uint32_t value;
     uint8_t length;
 } Utf8CodePoint;
 

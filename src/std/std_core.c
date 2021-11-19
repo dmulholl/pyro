@@ -917,7 +917,7 @@ static Value str_char(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return CHAR_VAL(cp.codepoint);
+    return CHAR_VAL(cp.value);
 }
 
 
@@ -990,7 +990,7 @@ static Value str_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
         Utf8CodePoint cp;
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
             iter->next_index += cp.length;
-            return CHAR_VAL(cp.codepoint);
+            return CHAR_VAL(cp.value);
         }
         pyro_panic(vm, "String contains invalid utf-8 at byte index %zu.", iter->next_index);
     }
@@ -1322,7 +1322,7 @@ static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
         if (!pyro_read_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
             break;
         }
-        if (!pyro_is_unicode_whitespace(cp.codepoint)) {
+        if (!pyro_is_unicode_whitespace(cp.value)) {
             break;
         }
         start += cp.length;
@@ -1332,7 +1332,7 @@ static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
         if (!pyro_read_trailing_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
             break;
         }
-        if (!pyro_is_unicode_whitespace(cp.codepoint)) {
+        if (!pyro_is_unicode_whitespace(cp.value)) {
             break;
         }
         end -= cp.length;

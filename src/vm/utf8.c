@@ -10,7 +10,7 @@ bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out)
 
     // Zero continuation bytes (0 to 127).
     if ((byte1 & 0x80) == 0) {
-        *out = (Utf8CodePoint) { .length = 1, .codepoint = byte1 };
+        *out = (Utf8CodePoint) { .length = 1, .value = byte1 };
         return true;
     }
 
@@ -23,7 +23,7 @@ bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out)
 
         uint32_t value = ((byte1 & 0x1F) << 6) | c1;
         if (value >= 128) {
-            *out = (Utf8CodePoint) { .length = 2, .codepoint = value };
+            *out = (Utf8CodePoint) { .length = 2, .value = value };
             return true;
         }
     }
@@ -39,7 +39,7 @@ bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out)
 
         uint32_t value = ((byte1 & 0x0F) << 12) | (c1 << 6) | c2;
         if (value >= 2048 && (value < 55296 || value > 57343)) {
-            *out = (Utf8CodePoint) { .length = 3, .codepoint = value };
+            *out = (Utf8CodePoint) { .length = 3, .value = value };
             return true;
         }
     }
@@ -57,7 +57,7 @@ bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out)
 
         uint32_t value = ((byte1 & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
         if (value >= 65536 && value <= 1114111) {
-            *out = (Utf8CodePoint) { .length = 4, .codepoint = value };
+            *out = (Utf8CodePoint) { .length = 4, .value = value };
             return true;
         }
     }
@@ -71,7 +71,7 @@ bool pyro_read_trailing_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePo
     if (src_len > 0) {
         uint8_t byte1 = src[src_len - 1];
         if ((byte1 & 0x80) == 0) {
-            *out = (Utf8CodePoint) { .length = 1, .codepoint = byte1 };
+            *out = (Utf8CodePoint) { .length = 1, .value = byte1 };
             return true;
         }
     }
@@ -87,7 +87,7 @@ bool pyro_read_trailing_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePo
 
             uint32_t value = ((byte1 & 0x1F) << 6) | c1;
             if (value >= 128) {
-                *out = (Utf8CodePoint) { .length = 2, .codepoint = value };
+                *out = (Utf8CodePoint) { .length = 2, .value = value };
                 return true;
             }
         }
@@ -106,7 +106,7 @@ bool pyro_read_trailing_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePo
 
             uint32_t value = ((byte1 & 0x0F) << 12) | (c1 << 6) | c2;
             if (value >= 2048 && (value < 55296 || value > 57343)) {
-                *out = (Utf8CodePoint) { .length = 3, .codepoint = value };
+                *out = (Utf8CodePoint) { .length = 3, .value = value };
                 return true;
             }
         }
@@ -127,7 +127,7 @@ bool pyro_read_trailing_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePo
 
             uint32_t value = ((byte1 & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
             if (value >= 65536 && value <= 1114111) {
-                *out = (Utf8CodePoint) { .length = 4, .codepoint = value };
+                *out = (Utf8CodePoint) { .length = 4, .value = value };
                 return true;
             }
         }
