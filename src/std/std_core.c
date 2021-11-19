@@ -1995,9 +1995,9 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-// ----- //
-// Files //
-// ----- //
+/* ------- */
+/*  Files  */
+/* ------- */
 
 
 static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
@@ -2635,6 +2635,70 @@ static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid filename argument, must be a string.");
+        return NULL_VAL();
+    }
+
+    FILE* stream = fopen(AS_STR(args[0])->bytes, "r");
+    if (!stream) {
+        pyro_panic(vm, "Failed to open file '%s'.", AS_STR(args[0])->bytes);
+        return NULL_VAL();
+    }
+
+    size_t count = 0;
+    size_t capacity = 0;
+    uint8_t* array = NULL;
+
+    while (true) {
+        if (count + 1 > capacity) {
+            size_t new_capacity = GROW_CAPACITY(capacity);
+            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
+            if (!new_array) {
+                pyro_panic(vm, "Insufficient memory available to read file.");
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                fclose(stream);
+                return NULL_VAL();
+            }
+            capacity = new_capacity;
+            array = new_array;
+        }
+
+        int c = fgetc(stream);
+
+        if (c == EOF) {
+            if (ferror(stream)) {
+                pyro_panic(vm, "I/O read error.");
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                fclose(stream);
+                return NULL_VAL();
+            }
+            break;
+        }
+
+        array[count++] = c;
+    }
+
+    array[count] = '\0';
+    if (capacity > count + 1) {
+        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
+        capacity = count + 1;
+    }
+
+    ObjStr* string = ObjStr_take((char*)array, count, vm);
+    if (!string) {
+        pyro_panic(vm, "Insufficient memory available to read file.");
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        fclose(stream);
+        return NULL_VAL();
+    }
+
+    fclose(stream);
+    return OBJ_VAL(string);
+}
+
+
 // ------------ //
 // Registration //
 // ------------ //
@@ -2690,6 +2754,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$shell", fn_shell, 1);
     pyro_define_global_fn(vm, "$shell2", fn_shell2, 1);
     pyro_define_global_fn(vm, "$debug", fn_debug, 1);
+    pyro_define_global_fn(vm, "$read_file", fn_read_file, 1);
 
     pyro_define_global_fn(vm, "$f64", fn_f64, 1);
     pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);

@@ -281,6 +281,14 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$read_file(path)` ]]
+
+    Reads the content of a file and returns it as a string.
+
+    Panics if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+
+
+
 [[ `$shell(cmd)` ]]
 
     Runs a shell command and returns its output as a string.

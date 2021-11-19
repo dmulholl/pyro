@@ -515,6 +515,19 @@ Returns an integer iterator over the half-open interval <code>[start, stop)</cod
 </div>
 <div>
 <dt>
+<code>$read_file(path)</code>
+</dt>
+<dd>
+<p>
+Reads the content of a file and returns it as a string.
+</p>
+<p>
+Panics if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$shell(cmd)</code>
 </dt>
 <dd>
