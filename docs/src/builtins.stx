@@ -141,29 +141,39 @@ Strings have the following methods:
 
     Returns `true` if the string starts with the string `prefix`, otherwise `false`.
 
+[[ `:strip()` <br> `:strip(string)` ]]
+
+    When called with no arguments, this method returns the new string formed by stripping leading and trailing ASCII whitespace characters from the string.
+    (In this case it functions as an alias for `:strip_ascii_ws()`.)
+
+    When called with a single string argument, `string`, this method returns the new string formed by stripping any leading or trailing bytes that occur in `string`.
+    (In this case it functions as an alias for `:strip_bytes()`.)
+
 [[ `:strip_ascii_ws()` ]]
 
-    Returns a new string with leading and trailing ASCII whitespace characters stripped.
+    Returns the new string formed by stripping leading and trailing ASCII whitespace characters.
 
 [[ `:strip_bytes(string)` ]]
 
-    Returns a new string with any leading or trailing bytes that occur in `string` stripped.
+    Returns the new string formed by stripping any leading or trailing bytes that occur in `string`.
 
 [[ `:strip_prefix(prefix)` ]]
 
     Returns a new string with the leading string `prefix` stripped if present.
+    (Only a single instance of `prefix` will be stripped.)
 
-[[ `:strip_prefix_bytes(prefix)` ]]
+[[ `:strip_prefix_bytes(string)` ]]
 
-    Returns a new string with any leading bytes that occur in the string `prefix` stripped.
+    Returns a new string with any leading bytes that occur in `string` stripped.
 
 [[ `:strip_suffix(suffix)` ]]
 
     Returns a new string with the trailing string `suffix` stripped if present.
+    (Only a single instance of `suffix` will be stripped.)
 
-[[ `:strip_suffix_bytes(suffix)` ]]
+[[ `:strip_suffix_bytes(string)` ]]
 
-    Returns a new string with any trailing bytes that occur in the string `suffix` stripped.
+    Returns a new string with any trailing bytes that occur in `string` stripped.
 
 [[ `:substr(index, length)` ]]
 
@@ -572,7 +582,7 @@ Files have the following methods:
 
 [[ `:read()` ]]
 
-    Reads the content of the file into a byte buffer, `$buf`.
+    Reads the content of the file into a new byte buffer, `$buf`.
 
     Returns the new buffer.
     Returns an empty buffer if the file was empty or if the end of the file had already been reached before the method was called.
@@ -587,7 +597,7 @@ Files have the following methods:
 
 [[ `:read_bytes(n)` ]]
 
-    Attempts to read `n` bytes from the file into a byte buffer, `$buf`, where `n` is an `$i64`.
+    Attempts to read `n` bytes from the file into a new byte buffer, `$buf`, where `n` is an `$i64`.
     May read less than `n` bytes if the end of the file is reached first.
 
     Returns the new byte buffer or `null` if the end of the file had already been reached before the method was called.

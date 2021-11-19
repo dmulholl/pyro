@@ -298,3 +298,11 @@ def $test_split_on_ascii_ws() {
 def $test_to_hex() {
     assert `foo`:to_hex() == `\x66\x6F\x6F`;
 }
+
+
+def $test_strip() {
+    assert "":strip() == "";
+    assert "foo":strip() == "foo";
+    assert "  \tfoo  \t\r\n":strip() == "foo";
+    assert "abccbafooabccab":strip("abc") == "foo";
+}

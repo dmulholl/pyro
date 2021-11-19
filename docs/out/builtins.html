@@ -422,11 +422,26 @@ Returns <code>true</code> if the string starts with the string <code>prefix</cod
 </div>
 <div>
 <dt>
+<code>:strip()</code> <br> <code>:strip(string)</code>
+</dt>
+<dd>
+<p>
+When called with no arguments, this method returns the new string formed by stripping leading and trailing ASCII whitespace characters from the string.
+(In this case it functions as an alias for <code>:strip_ascii_ws()</code>.)
+</p>
+<p>
+When called with a single string argument, <code>string</code>, this method returns the new string formed by stripping any leading or trailing bytes that occur in <code>string</code>.
+(In this case it functions as an alias for <code>:strip_bytes()</code>.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:strip_ascii_ws()</code>
 </dt>
 <dd>
 <p>
-Returns a new string with leading and trailing ASCII whitespace characters stripped.
+Returns the new string formed by stripping leading and trailing ASCII whitespace characters.
 </p>
 </dd>
 </div>
@@ -436,7 +451,7 @@ Returns a new string with leading and trailing ASCII whitespace characters strip
 </dt>
 <dd>
 <p>
-Returns a new string with any leading or trailing bytes that occur in <code>string</code> stripped.
+Returns the new string formed by stripping any leading or trailing bytes that occur in <code>string</code>.
 </p>
 </dd>
 </div>
@@ -447,16 +462,17 @@ Returns a new string with any leading or trailing bytes that occur in <code>stri
 <dd>
 <p>
 Returns a new string with the leading string <code>prefix</code> stripped if present.
+(Only a single instance of <code>prefix</code> will be stripped.)
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_prefix_bytes(prefix)</code>
+<code>:strip_prefix_bytes(string)</code>
 </dt>
 <dd>
 <p>
-Returns a new string with any leading bytes that occur in the string <code>prefix</code> stripped.
+Returns a new string with any leading bytes that occur in <code>string</code> stripped.
 </p>
 </dd>
 </div>
@@ -467,16 +483,17 @@ Returns a new string with any leading bytes that occur in the string <code>prefi
 <dd>
 <p>
 Returns a new string with the trailing string <code>suffix</code> stripped if present.
+(Only a single instance of <code>suffix</code> will be stripped.)
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_suffix_bytes(suffix)</code>
+<code>:strip_suffix_bytes(string)</code>
 </dt>
 <dd>
 <p>
-Returns a new string with any trailing bytes that occur in the string <code>suffix</code> stripped.
+Returns a new string with any trailing bytes that occur in <code>string</code> stripped.
 </p>
 </dd>
 </div>
@@ -1244,7 +1261,7 @@ Flushes the file stream.
 </dt>
 <dd>
 <p>
-Reads the content of the file into a byte buffer, <code>$buf</code>.
+Reads the content of the file into a new byte buffer, <code>$buf</code>.
 </p>
 <p>
 Returns the new buffer.
@@ -1273,7 +1290,7 @@ Panics if an I/O read error occurs.
 </dt>
 <dd>
 <p>
-Attempts to read <code>n</code> bytes from the file into a byte buffer, <code>$buf</code>, where <code>n</code> is an <code>$i64</code>.
+Attempts to read <code>n</code> bytes from the file into a new byte buffer, <code>$buf</code>, where <code>n</code> is an <code>$i64</code>.
 May read less than <code>n</code> bytes if the end of the file is reached first.
 </p>
 <p>

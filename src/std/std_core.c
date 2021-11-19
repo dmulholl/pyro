@@ -1231,7 +1231,7 @@ static Value str_strip_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, "Invalid argument to :strip_bytes().");
+        pyro_panic(vm, "Invalid argument to :strip_bytes(), expected a string.");
         return NULL_VAL();
     }
 
@@ -1304,6 +1304,22 @@ static Value str_strip_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     return OBJ_VAL(new_str);
+}
+
+
+static Value str_strip(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        return str_strip_ascii_ws(vm, arg_count, args);
+    } else if (arg_count == 1) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, "Invalid argument to :strip(), expected a string.");
+            return NULL_VAL();
+        }
+        return str_strip_bytes(vm, arg_count, args);
+    } else {
+        pyro_panic(vm, "Expected 0 or 1 arguments for :strip(), found %d.", arg_count);
+        return NULL_VAL();
+    }
 }
 
 
@@ -2716,6 +2732,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "strip_prefix_bytes", str_strip_prefix_bytes, 1);
     pyro_define_method(vm, vm->str_class, "strip_suffix_bytes", str_strip_suffix_bytes, 1);
     pyro_define_method(vm, vm->str_class, "strip_bytes", str_strip_bytes, 1);
+    pyro_define_method(vm, vm->str_class, "strip", str_strip, -1);
     pyro_define_method(vm, vm->str_class, "strip_ascii_ws", str_strip_ascii_ws, 0);
     pyro_define_method(vm, vm->str_class, "match", str_match, 2);
     pyro_define_method(vm, vm->str_class, "replace", str_replace, 2);
