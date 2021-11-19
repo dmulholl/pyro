@@ -45,11 +45,32 @@ Read in a loop from standard input:
 
 ### Reading a file
 
-Read a file into a byte buffer:
+Read the content of a file into a string:
 
 ::: code pyro
-    var file = $file("example.txt", "r");
-    var buffer = file:read();
+    var string = $read_file("input.txt");
+
+This is a convenience function --- a `$file` object provides more fine-grained control:
+
+::: code pyro
+    var file = $file("input.txt", "r");
+    var string = file:read_string();
+    file:close();
+
+
+
+### Writing a file
+
+Write a string to a file:
+
+::: code pyro
+    $write_file("output.txt", "Content for file...");
+
+This is a convenience function --- a `$file` object provides more fine-grained control:
+
+::: code pyro
+    var file = $file("output.txt", "w");
+    file:write("Content for file...");
     file:close();
 
 

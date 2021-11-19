@@ -345,14 +345,14 @@ Class definitions look like this:
 ::: code pyro
     class Person {
         var name;
-        var occupation = "programmer";
+        var role = "programmer";
 
         def $init(name) {
             self.name = name;
         }
 
         def info() {
-            echo self.name + " is a " + self.occupation + ".";
+            $println("{} is a {}.", self.name, self.role);
         }
     }
 
@@ -372,7 +372,7 @@ Call a method on an instance using the method access operator, `:`:
 Get or set an instance's fields using the field access operator, `.`:
 
 ::: code pyro
-    >>> dave.occupation = "pointy headed manager";
+    >>> dave.role = "pointy headed manager";
     >>> dave:info();
     Dave is a pointy headed manager.
 

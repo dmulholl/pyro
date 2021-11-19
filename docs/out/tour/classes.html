@@ -86,14 +86,14 @@ Class definitions look like this:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">occupation</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">echo</span> <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s">&quot; is a &quot;</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">occupation</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="p">;</span>
+        <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;{} is a {}.&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">role</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre>
@@ -113,7 +113,7 @@ Fields and Methods
 Get or set an instance's fields using the field access operator <code>.</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">dave</span><span class="p">.</span><span class="nx">occupation</span> <span class="p">=</span> <span class="s">&quot;pyro programmer&quot;</span><span class="p">;</span>
+<span class="nx">dave</span><span class="p">.</span><span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;pyro programmer&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Call a method on an instance using the method access operator <code>:</code>:

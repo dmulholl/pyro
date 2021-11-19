@@ -71,6 +71,9 @@
 <a href="#reading-a-file">Reading a file</a>
 </li>
 <li>
+<a href="#writing-a-file">Writing a file</a>
+</li>
+<li>
 <a href="#guessing-game">Guessing game</a>
 </li>
 <li>
@@ -119,11 +122,34 @@ Read in a loop from standard input:
 Reading a file
 </h3>
 <p>
-Read a file into a byte buffer:
+Read the content of a file into a string:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;example.txt&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">buffer</span> <span class="p">=</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="p">=</span> <span class="nx">$read_file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">);</span>
+</pre>
+<p>
+This is a convenience function &mdash; a <code>$file</code> object provides more fine-grained control:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="p">=</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
+<span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
+</pre>
+<h3 id="writing-a-file">
+Writing a file
+</h3>
+<p>
+Write a string to a file:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">$write_file</span><span class="p">(</span><span class="s">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s">&quot;Content for file...&quot;</span><span class="p">);</span>
+</pre>
+<p>
+This is a convenience function &mdash; a <code>$file</code> object provides more fine-grained control:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">);</span>
+<span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;Content for file...&quot;</span><span class="p">);</span>
 <span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
 </pre>
 <h3 id="guessing-game">

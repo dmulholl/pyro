@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+// Language version.
+#define PYRO_VERSION "0.3.6"
+
+// All state is stored on a PyroVM instance.
 typedef struct PyroVM PyroVM;
 
 // Initializes a new VM. Returns NULL if the attempt to allocate memory for the VM fails.

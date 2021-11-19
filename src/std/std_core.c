@@ -2637,7 +2637,7 @@ static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, "Invalid filename argument, must be a string.");
+        pyro_panic(vm, "Invalid path argument, must be a string.");
         return NULL_VAL();
     }
 
@@ -2699,6 +2699,47 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid path argument, must be a string.");
+        return NULL_VAL();
+    }
+
+    if (!IS_STR(args[1]) && !IS_BUF(args[1])) {
+        pyro_panic(vm, "Invalid content argument, must be a string or buffer.");
+        return NULL_VAL();
+    }
+
+    FILE* stream = fopen(AS_STR(args[0])->bytes, "w");
+    if (!stream) {
+        pyro_panic(vm, "Failed to open file '%s'.", AS_STR(args[0])->bytes);
+        return NULL_VAL();
+    }
+
+    if (IS_BUF(args[1])) {
+        ObjBuf* buf = AS_BUF(args[1]);
+        size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, stream);
+        if (n < buf->count) {
+            pyro_panic(vm, "I/O write error.");
+            fclose(stream);
+            return NULL_VAL();
+        }
+        fclose(stream);
+        return I64_VAL((int64_t)n);
+    }
+
+    ObjStr* string = AS_STR(args[1]);
+    size_t n = fwrite(string->bytes, sizeof(char), string->length, stream);
+    if (n < string->length) {
+        pyro_panic(vm, "I/O write error.");
+        fclose(stream);
+        return NULL_VAL();
+    }
+    fclose(stream);
+    return I64_VAL((int64_t)n);
+}
+
+
 // ------------ //
 // Registration //
 // ------------ //
@@ -2755,6 +2796,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$shell2", fn_shell2, 1);
     pyro_define_global_fn(vm, "$debug", fn_debug, 1);
     pyro_define_global_fn(vm, "$read_file", fn_read_file, 1);
+    pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);
 
     pyro_define_global_fn(vm, "$f64", fn_f64, 1);
     pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);

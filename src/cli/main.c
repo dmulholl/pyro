@@ -21,9 +21,6 @@
 #include "../lib/args/args.h"
 
 
-static const char* VERSION = "0.3.5";
-
-
 static const char* HELPTEXT =
     "Usage: pyro [file]\n"
     "\n"
@@ -202,7 +199,7 @@ static void run_repl(void) {
 
     pyro_add_import_root(vm, ".");
 
-    printf("Pyro %s -- Type 'exit' to quit.\n", VERSION);
+    printf("Pyro %s -- Type 'exit' to quit.\n", PYRO_VERSION);
 
     char* code = NULL;
     size_t code_count = 0;
@@ -419,7 +416,7 @@ static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
 int main(int argc, char* argv[]) {
     ArgParser* parser = ap_new();
     ap_helptext(parser, HELPTEXT);
-    ap_version(parser, VERSION);
+    ap_version(parser, PYRO_VERSION);
 
     ArgParser* test_cmd = ap_cmd(parser, "test");
     ap_helptext(test_cmd, TEST_HELPTEXT);

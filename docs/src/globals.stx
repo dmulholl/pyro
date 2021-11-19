@@ -283,9 +283,9 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$read_file(path)` ]]
 
-    Reads the content of a file and returns it as a string.
+    Reads the content of the file at `path`, where `path` is a string, and returns it as a string.
 
-    Panics if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+    Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
 
 
 
@@ -325,3 +325,13 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
     If called with a single iterable argument, fills the new vector by iterating over the argument.
     If called with two arguments, creates a vector with the specified initial size and fill value.
 
+
+
+[[ `$write_file(path, content)` ]]
+
+    Writes `content` to a new file, where `content` is a string or byte buffer.
+    Returns the number of bytes written.
+
+    `path` should be a string specifying the filepath. If a file already exists at `path`, that file will be overwritten.
+
+    Panics if the arguments are invalid, if the file cannot be opened for writing, or if an I/O write error occurs.
