@@ -1,7 +1,7 @@
 #include "utf8.h"
 
 
-bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out) {
+bool pyro_read_utf8_codepoint(const uint8_t src[], size_t src_len, Utf8CodePoint* out) {
     if (src_len == 0) {
         return false;
     }
@@ -66,7 +66,7 @@ bool pyro_read_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out)
 }
 
 
-bool pyro_read_trailing_utf8_codepoint(uint8_t src[], size_t src_len, Utf8CodePoint* out) {
+bool pyro_read_trailing_utf8_codepoint(const uint8_t src[], size_t src_len, Utf8CodePoint* out) {
     // Zero continuation bytes (0 to 127).
     if (src_len > 0) {
         uint8_t byte1 = src[src_len - 1];
@@ -176,5 +176,54 @@ bool pyro_is_unicode_whitespace(uint32_t codepoint) {
     if (codepoint == 12288) {
         return true;
     }
+    return false;
+}
+
+
+bool pyro_is_valid_utf8(const char* string, size_t length) {
+    if (length == 0) {
+        return true;
+    }
+
+    size_t byte_index = 0;
+    Utf8CodePoint cp;
+
+    while (byte_index < length) {
+        uint8_t* src_buf = (uint8_t*)&string[byte_index];
+        size_t src_len = length - byte_index;
+
+        if (pyro_read_utf8_codepoint(src_buf, src_len, &cp)) {
+            byte_index += cp.length;
+        } else {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+bool pyro_contains_utf8_codepoint(const char* string, size_t length, uint32_t codepoint) {
+    if (length == 0) {
+        return false;
+    }
+
+    size_t byte_index = 0;
+    Utf8CodePoint cp;
+
+    while (byte_index < length) {
+        uint8_t* src_buf = (uint8_t*)&string[byte_index];
+        size_t src_len = length - byte_index;
+
+        if (pyro_read_utf8_codepoint(src_buf, src_len, &cp)) {
+            if (cp.value == codepoint) {
+                return true;
+            }
+            byte_index += cp.length;
+        } else {
+            return false;
+        }
+    }
+
     return false;
 }

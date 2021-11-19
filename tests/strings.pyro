@@ -314,3 +314,10 @@ def $test_strip_utf8_ws() {
     assert " \u0020\u0085\u00A0\u1680 foo \u0020\u0085\u00A0\u1680 ":strip_utf8_ws() == "foo";
     assert "\n\t foo \t\n":strip_utf8_ws() == "foo";
 }
+
+
+def $test_strip_chars() {
+    assert "":strip_chars("a§b€c👍") == "";
+    assert "foobar":strip_chars("a§b€c👍") == "foobar";
+    assert "b§a€c👍foobar§b€c👍a":strip_chars("a§b€c👍") == "foobar";
+}

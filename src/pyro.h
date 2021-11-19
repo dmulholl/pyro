@@ -6,7 +6,7 @@
 #include <stddef.h>
 
 // Language version.
-#define PYRO_VERSION "0.3.6"
+#define PYRO_VERSION "0.3.7"
 
 // All state is stored on a PyroVM instance.
 typedef struct PyroVM PyroVM;

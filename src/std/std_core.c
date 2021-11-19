@@ -1348,6 +1348,60 @@ static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_strip_chars(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "Invalid argument to :strip_chars(), expected a string.");
+        return NULL_VAL();
+    }
+
+    ObjStr* target = AS_STR(args[0]);
+
+    if (!pyro_is_valid_utf8(target->bytes, target->length)) {
+        pyro_panic(vm, "Argument to :strip_chars() is not valid UTF-8.");
+        return NULL_VAL();
+    }
+
+    if (target->length == 0 || str->length == 0) {
+        return OBJ_VAL(str);
+    }
+
+    char* start = str->bytes;
+    char* end = str->bytes + str->length;
+
+    Utf8CodePoint cp;
+
+    while (start < end) {
+        if (!pyro_read_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
+            break;
+        }
+        if (!pyro_contains_utf8_codepoint(target->bytes, target->length, cp.value)) {
+            break;
+        }
+        start += cp.length;
+    }
+
+    while (start < end) {
+        if (!pyro_read_trailing_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
+            break;
+        }
+        if (!pyro_contains_utf8_codepoint(target->bytes, target->length, cp.value)) {
+            break;
+        }
+        end -= cp.length;
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(start, end - start, vm);
+    if (!new_str) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
 static Value str_strip(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         return str_strip_ascii_ws(vm, arg_count, args);
@@ -2880,6 +2934,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "strip_prefix_bytes", str_strip_prefix_bytes, 1);
     pyro_define_method(vm, vm->str_class, "strip_suffix_bytes", str_strip_suffix_bytes, 1);
     pyro_define_method(vm, vm->str_class, "strip_bytes", str_strip_bytes, 1);
+    pyro_define_method(vm, vm->str_class, "strip_chars", str_strip_chars, 1);
     pyro_define_method(vm, vm->str_class, "strip", str_strip, -1);
     pyro_define_method(vm, vm->str_class, "strip_ascii_ws", str_strip_ascii_ws, 0);
     pyro_define_method(vm, vm->str_class, "strip_utf8_ws", str_strip_utf8_ws, 0);
