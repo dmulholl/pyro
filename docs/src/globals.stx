@@ -329,7 +329,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$write_file(path, content)` ]]
 
-    Writes `content` to a new file, where `content` is a string or byte buffer.
+    Writes `content` to a new file, where `content` is a string or a byte buffer.
     Returns the number of bytes written.
 
     `path` should be a string specifying the filepath. If a file already exists at `path`, that file will be overwritten.
