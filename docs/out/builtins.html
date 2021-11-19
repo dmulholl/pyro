@@ -18,7 +18,7 @@
                 <p class="tagline">An experimental scripting language.</p>
             
             
-                <p class="version">Version 0.3.5</p>
+                <p class="version">Version 0.3.7</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -447,21 +447,21 @@ Returns the new string formed by stripping leading and trailing ASCII whitespace
 </div>
 <div>
 <dt>
-<code>:strip_utf8_ws()</code>
-</dt>
-<dd>
-<p>
-Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:strip_bytes(string)</code>
 </dt>
 <dd>
 <p>
 Returns the new string formed by stripping any leading or trailing bytes that occur in <code>string</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_chars(string)</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in <code>string</code>.
 </p>
 </dd>
 </div>
@@ -504,6 +504,16 @@ Returns a new string with the trailing string <code>suffix</code> stripped if pr
 <dd>
 <p>
 Returns a new string with any trailing bytes that occur in <code>string</code> stripped.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_utf8_ws()</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
 </p>
 </dd>
 </div>

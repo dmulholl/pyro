@@ -153,13 +153,13 @@ Strings have the following methods:
 
     Returns the new string formed by stripping leading and trailing ASCII whitespace characters.
 
-[[ `:strip_utf8_ws()` ]]
-
-    Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
-
 [[ `:strip_bytes(string)` ]]
 
     Returns the new string formed by stripping any leading or trailing bytes that occur in `string`.
+
+[[ `:strip_chars(string)` ]]
+
+    Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in `string`.
 
 [[ `:strip_prefix(prefix)` ]]
 
@@ -178,6 +178,10 @@ Strings have the following methods:
 [[ `:strip_suffix_bytes(string)` ]]
 
     Returns a new string with any trailing bytes that occur in `string` stripped.
+
+[[ `:strip_utf8_ws()` ]]
+
+    Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
 
 [[ `:substr(index, length)` ]]
 
