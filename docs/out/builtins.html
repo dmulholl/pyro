@@ -18,7 +18,7 @@
                 <p class="tagline">An experimental scripting language.</p>
             
             
-                <p class="version">Version 0.3.4</p>
+                <p class="version">Version 0.3.5</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -1105,7 +1105,7 @@ Returns the new string.
 Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the cost of creating multiple temporary strings along the way.
 </p>
 <p>
-Note that calling <code>$str()</code> on a buffer does something different &mdash; it creates a string with a <i>copy</i> of the buffer's content, leaving the buffer itself unchanged.
+Note that calling <code>$str(buf)</code> on a buffer does something different &mdash; it creates a string with a <i>copy</i> of the buffer's content, leaving the buffer itself unchanged.
 </p>
 </dd>
 </div>
@@ -1245,7 +1245,12 @@ Flushes the file stream.
 <dd>
 <p>
 Reads the content of the file into a byte buffer, <code>$buf</code>.
+</p>
+<p>
 Returns the new buffer.
+Returns an empty buffer if the file was empty or if the end of the file had already been reached before the method was called.
+</p>
+<p>
 Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the buffer.
 </p>
 </dd>
@@ -1290,6 +1295,23 @@ Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
 </p>
 <p>
 Returns the string or <code>null</code> if the end of the file had already been reached before the method was called.
+</p>
+<p>
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_string()</code>
+</dt>
+<dd>
+<p>
+Reads the content of the file into a string, <code>$str</code>.
+</p>
+<p>
+Returns the new string.
+Returns an empty string if the file was empty or if the end of the file had already been reached before the method was called.
 </p>
 <p>
 Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.

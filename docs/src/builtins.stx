@@ -519,7 +519,7 @@ Buffers have the following methods:
 
     Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the cost of creating multiple temporary strings along the way.
 
-    Note that calling `$str()` on a buffer does something different --- it creates a string with a *copy* of the buffer's content, leaving the buffer itself unchanged.
+    Note that calling `$str(buf)` on a buffer does something different --- it creates a string with a *copy* of the buffer's content, leaving the buffer itself unchanged.
 
 [[ `:write(arg)` <br> `:write(format_string, arg1, arg2, ...)` ]]
 
@@ -573,7 +573,10 @@ Files have the following methods:
 [[ `:read()` ]]
 
     Reads the content of the file into a byte buffer, `$buf`.
+
     Returns the new buffer.
+    Returns an empty buffer if the file was empty or if the end of the file had already been reached before the method was called.
+
     Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the buffer.
 
 [[ `:read_byte()` ]]
@@ -597,6 +600,15 @@ Files have the following methods:
     Strips the terminating `\\n` or `\\r\\n` if present.
 
     Returns the string or `null` if the end of the file had already been reached before the method was called.
+
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+
+[[ `:read_string()` ]]
+
+    Reads the content of the file into a string, `$str`.
+
+    Returns the new string.
+    Returns an empty string if the file was empty or if the end of the file had already been reached before the method was called.
 
     Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
 
