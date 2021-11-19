@@ -2048,6 +2048,57 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    size_t count = 0;
+    size_t capacity = 0;
+    uint8_t* array = NULL;
+
+    while (true) {
+        if (count + 1 > capacity) {
+            size_t new_capacity = GROW_CAPACITY(capacity);
+            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
+            if (!new_array) {
+                pyro_panic(vm, "Insufficient memory available to read file.");
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                return NULL_VAL();
+            }
+            capacity = new_capacity;
+            array = new_array;
+        }
+
+        int c = fgetc(file->stream);
+
+        if (c == EOF) {
+            if (ferror(file->stream)) {
+                pyro_panic(vm, "I/O read error.");
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                return NULL_VAL();
+            }
+            break;
+        }
+
+        array[count++] = c;
+    }
+
+    array[count] = '\0';
+    if (capacity > count + 1) {
+        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
+        capacity = count + 1;
+    }
+
+    ObjStr* string = ObjStr_take((char*)array, count, vm);
+    if (!string) {
+        pyro_panic(vm, "Insufficient memory available to read file.");
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(string);
+}
+
+
 // Attempts to read [n] bytes from the file into a byte buffer. May read less than [n] bytes if the
 // end of the file is reached first. Returns the byte buffer or [NULL] if the end of the file had
 // already been reached before the method was called. Panics if an I/O read error occurs, if the
@@ -2701,6 +2752,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->file_class, "close", file_close, 0);
     pyro_define_method(vm, vm->file_class, "flush", file_flush, 0);
     pyro_define_method(vm, vm->file_class, "read", file_read, 0);
+    pyro_define_method(vm, vm->file_class, "read_string", file_read_string, 0);
     pyro_define_method(vm, vm->file_class, "read_line", file_read_line, 0);
     pyro_define_method(vm, vm->file_class, "read_bytes", file_read_bytes, 1);
     pyro_define_method(vm, vm->file_class, "read_byte", file_read_byte, 0);
