@@ -642,7 +642,7 @@ Files have the following methods:
 
     Panics if an I/O write error occurs or if an error occurs while formatting the output string.
 
-[[ `:write_byte(arg)` ]]
+[[ `:write_byte(byte)` ]]
 
-    Writes a byte value to the file, where `arg` is an integer in the range `[0, 255]`.
+    Writes a byte value to the file, where `byte` is an integer in the range `[0, 255]`.
     Panics if an I/O write error occurs or if the argument is an invalid type or is out of range.
