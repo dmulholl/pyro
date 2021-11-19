@@ -306,3 +306,10 @@ def $test_strip() {
     assert "  \tfoo  \t\r\n":strip() == "foo";
     assert "abccbafooabccab":strip("abc") == "foo";
 }
+
+
+def $test_strip_utf8_ws() {
+    assert "":strip_utf8_ws() == "";
+    assert "foo":strip_utf8_ws() == "foo";
+    assert " \u0020\u0085\u00A0\u1680 foo \u0020\u0085\u00A0\u1680 ":strip_utf8_ws() == "foo";
+}

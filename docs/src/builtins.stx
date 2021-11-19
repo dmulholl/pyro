@@ -146,12 +146,16 @@ Strings have the following methods:
     When called with no arguments, this method returns the new string formed by stripping leading and trailing ASCII whitespace characters from the string.
     (In this case it functions as an alias for `:strip_ascii_ws()`.)
 
-    When called with a single string argument, `string`, this method returns the new string formed by stripping any leading or trailing bytes that occur in `string`.
+    When called with a single string argument, this method returns the new string formed by stripping any leading or trailing bytes that occur in `string`.
     (In this case it functions as an alias for `:strip_bytes()`.)
 
 [[ `:strip_ascii_ws()` ]]
 
     Returns the new string formed by stripping leading and trailing ASCII whitespace characters.
+
+[[ `:strip_utf8_ws()` ]]
+
+    Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
 
 [[ `:strip_bytes(string)` ]]
 

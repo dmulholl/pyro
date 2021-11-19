@@ -1307,6 +1307,47 @@ static Value str_strip_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return OBJ_VAL(str);
+    }
+
+    char* start = str->bytes;
+    char* end = str->bytes + str->length;
+
+    Utf8CodePoint cp;
+
+    while (start < end) {
+        if (!pyro_read_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
+            break;
+        }
+        if (!pyro_is_unicode_whitespace(cp.codepoint)) {
+            break;
+        }
+        start += cp.length;
+    }
+
+    while (start < end) {
+        if (!pyro_read_trailing_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
+            break;
+        }
+        if (!pyro_is_unicode_whitespace(cp.codepoint)) {
+            break;
+        }
+        end -= cp.length;
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(start, end - start, vm);
+    if (!new_str) {
+        pyro_panic(vm, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
 static Value str_strip(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         return str_strip_ascii_ws(vm, arg_count, args);
@@ -2734,6 +2775,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "strip_bytes", str_strip_bytes, 1);
     pyro_define_method(vm, vm->str_class, "strip", str_strip, -1);
     pyro_define_method(vm, vm->str_class, "strip_ascii_ws", str_strip_ascii_ws, 0);
+    pyro_define_method(vm, vm->str_class, "strip_utf8_ws", str_strip_utf8_ws, 0);
     pyro_define_method(vm, vm->str_class, "match", str_match, 2);
     pyro_define_method(vm, vm->str_class, "replace", str_replace, 2);
     pyro_define_method(vm, vm->str_class, "substr", str_substr, 2);

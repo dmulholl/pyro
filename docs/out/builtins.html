@@ -430,7 +430,7 @@ When called with no arguments, this method returns the new string formed by stri
 (In this case it functions as an alias for <code>:strip_ascii_ws()</code>.)
 </p>
 <p>
-When called with a single string argument, <code>string</code>, this method returns the new string formed by stripping any leading or trailing bytes that occur in <code>string</code>.
+When called with a single string argument, this method returns the new string formed by stripping any leading or trailing bytes that occur in <code>string</code>.
 (In this case it functions as an alias for <code>:strip_bytes()</code>.)
 </p>
 </dd>
@@ -442,6 +442,16 @@ When called with a single string argument, <code>string</code>, this method retu
 <dd>
 <p>
 Returns the new string formed by stripping leading and trailing ASCII whitespace characters.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_utf8_ws()</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
 </p>
 </dd>
 </div>
