@@ -1246,7 +1246,19 @@ Flushes the file stream.
 <p>
 Reads the content of the file into a byte buffer, <code>$buf</code>.
 Returns the new buffer.
-Panics if an I/O error occurs or if sufficient memory cannot be allocated for the buffer.
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the buffer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_byte()</code>
+</dt>
+<dd>
+<p>
+Reads the next byte value from the file.
+Returns the byte value as an integer in the range <code>[0, 255]</code>, or <code>null</code> if the end of the file had already been reached before the method was called.
+Panics if an I/O read error occurs.
 </p>
 </dd>
 </div>
@@ -1302,6 +1314,17 @@ Returns the number of bytes written.
 </p>
 <p>
 Panics if an I/O write error occurs or if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write_byte(arg)</code>
+</dt>
+<dd>
+<p>
+Writes a byte value to the file, where <code>arg</code> is an integer in the range <code>[0, 255]</code>.
+Panics if an I/O write error occurs or if the argument is out of range.
 </p>
 </dd>
 </div>
