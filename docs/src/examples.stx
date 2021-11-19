@@ -43,7 +43,7 @@ Read in a loop from standard input:
 
 
 
-### Reading a file
+### Reading from a file
 
 Read the content of a file into a string:
 
@@ -59,7 +59,7 @@ This is a convenience function --- a `$file` object provides more fine-grained c
 
 
 
-### Writing a file
+### Writing to a file
 
 Write a string to a file:
 
