@@ -574,7 +574,13 @@ Files have the following methods:
 
     Reads the content of the file into a byte buffer, `$buf`.
     Returns the new buffer.
-    Panics if an I/O error occurs or if sufficient memory cannot be allocated for the buffer.
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the buffer.
+
+[[ `:read_byte()` ]]
+
+    Reads the next byte value from the file.
+    Returns the byte value as an integer in the range `[0, 255]`, or `null` if the end of the file had already been reached before the method was called.
+    Panics if an I/O read error occurs.
 
 [[ `:read_bytes(n)` ]]
 
@@ -605,3 +611,8 @@ Files have the following methods:
     Returns the number of bytes written.
 
     Panics if an I/O write error occurs or if an error occurs while formatting the output string.
+
+[[ `:write_byte(arg)` ]]
+
+    Writes a byte value to the file, where `arg` is an integer in the range `[0, 255]`.
+    Panics if an I/O write error occurs or if the argument is out of range.

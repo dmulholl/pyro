@@ -2093,6 +2093,31 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+
+static Value file_read_byte(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    if (feof(file->stream)) {
+        return NULL_VAL();
+    }
+
+    uint8_t byte;
+    size_t n = fread(&byte, sizeof(uint8_t), 1, file->stream);
+
+    if (n < 1) {
+        if (ferror(file->stream)) {
+            pyro_panic(vm, "I/O read error.");
+            return NULL_VAL();
+        }
+        if (n == 0) {
+            return NULL_VAL();
+        }
+    }
+
+    return I64_VAL(byte);
+}
+
+
 static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
 
@@ -2216,6 +2241,31 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
     return I64_VAL((int64_t)n);
+}
+
+
+static Value file_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, "Invalid argument type for :write_byte().");
+        return NULL_VAL();
+    }
+
+    int64_t value = args[0].as.i64;
+    if (value < 0 || value > 255) {
+        pyro_panic(vm, "Argument to :write_byte() is out of range.");
+        return NULL_VAL();
+    }
+
+    uint8_t byte = (uint8_t)value;
+    size_t n = fwrite(&byte, sizeof(uint8_t), 1, file->stream);
+    if (n < 1) {
+        pyro_panic(vm, "I/O write error.");
+        return NULL_VAL();
+    }
+
+    return NULL_VAL();
 }
 
 
@@ -2653,6 +2703,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_method(vm, vm->file_class, "read", file_read, 0);
     pyro_define_method(vm, vm->file_class, "read_line", file_read_line, 0);
     pyro_define_method(vm, vm->file_class, "read_bytes", file_read_bytes, 1);
+    pyro_define_method(vm, vm->file_class, "read_byte", file_read_byte, 0);
     pyro_define_method(vm, vm->file_class, "write", file_write, -1);
+    pyro_define_method(vm, vm->file_class, "write_byte", file_write_byte, 1);
 }
-
