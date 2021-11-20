@@ -1651,9 +1651,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 
 void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
     Value path_value = STR_VAL(path);
-    pyro_push(vm, path_value);
     pyro_define_member(vm, vm->main_module, "$filepath", path_value);
-    pyro_pop(vm);
 
     FileData fd;
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
@@ -1667,9 +1665,7 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     Value path_value = STR_VAL(path);
-    pyro_push(vm, path_value);
     pyro_define_member(vm, module, "$filepath", path_value);
-    pyro_pop(vm);
 
     FileData fd;
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
@@ -1900,26 +1896,26 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 }
 
 
+// Adds a new member to [module], i.e. creates a module-level global variable pointing to the value.
+// [member] is shielded from garbage-collection for the duration of this function.
 // TODO: handle memory allocation failure.
 void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value member) {
+    pyro_push(vm, member);
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
-    pyro_push(vm, member);
     ObjMap_set(module->globals, name_value, member, vm);
-    pyro_pop(vm);
-    pyro_pop(vm);
+    pyro_pop(vm); // name_value
+    pyro_pop(vm); // member
 }
 
 
-// TODO: handle memory allocation failure.
+// Convenience function for adding a new member to [module] where the value is a native function.
 void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity) {
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
     Value func_value = OBJ_VAL(ObjNativeFn_new(vm, fn_ptr, AS_STR(name_value), arity));
-    pyro_push(vm, func_value);
     pyro_define_member(vm, module, name, func_value);
-    pyro_pop(vm);
-    pyro_pop(vm);
+    pyro_pop(vm); // name_value
 }
 
 
@@ -1935,17 +1931,20 @@ void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn 
 }
 
 
+// Creates a new global variable. [value] is shielded from garbage-collection for the duration of
+// this function.
 // TODO: handle memory allocation failure.
 void pyro_define_global(PyroVM* vm, const char* name, Value value) {
+    pyro_push(vm, value);
     Value name_value = STR_VAL(name);
     pyro_push(vm, name_value);
-    pyro_push(vm, value);
     ObjMap_set(vm->globals, name_value, value, vm);
-    pyro_pop(vm);
-    pyro_pop(vm);
+    pyro_pop(vm); // name_value
+    pyro_pop(vm); // value
 }
 
 
+// Creates a new global variable pointing to a native function.
 // TODO: handle memory allocation failure.
 void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity) {
     Value name_value = STR_VAL(name);
