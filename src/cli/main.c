@@ -199,7 +199,7 @@ static void run_repl(void) {
 
     pyro_add_import_root(vm, ".");
 
-    printf("Pyro %s -- Type 'exit' to quit.\n", PYRO_VERSION);
+    printf("Pyro %s -- Type 'exit' to quit.\n", PYRO_VERSION_STRING);
 
     char* code = NULL;
     size_t code_count = 0;
@@ -416,7 +416,7 @@ static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
 int main(int argc, char* argv[]) {
     ArgParser* parser = ap_new();
     ap_helptext(parser, HELPTEXT);
-    ap_version(parser, PYRO_VERSION);
+    ap_version(parser, PYRO_VERSION_STRING);
 
     ArgParser* test_cmd = ap_cmd(parser, "test");
     ap_helptext(test_cmd, TEST_HELPTEXT);
