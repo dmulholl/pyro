@@ -6,5 +6,5 @@ To build a new debug binary and run the test suite run:
 
 from the root directory. Alternatively, you can run the test suite using the `test` command directly:
 
-    $ ./out/pyro test ./tests/*.pyro
+    $ pyro test tests/*.pyro
 
