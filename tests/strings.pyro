@@ -321,3 +321,17 @@ def $test_strip_chars() {
     assert "foobar":strip_chars("a§b€c👍") == "foobar";
     assert "b§a€c👍foobar§b€c👍a":strip_chars("a§b€c👍") == "foobar";
 }
+
+
+def $test_strip_prefix_chars() {
+    assert "":strip_prefix_chars("a§b€c👍") == "";
+    assert "foobar":strip_prefix_chars("a§b€c👍") == "foobar";
+    assert "b§a€c👍foobar§b€c👍a":strip_prefix_chars("a§b€c👍") == "foobar§b€c👍a";
+}
+
+
+def $test_strip_suffix_chars() {
+    assert "":strip_suffix_chars("a§b€c👍") == "";
+    assert "foobar":strip_suffix_chars("a§b€c👍") == "foobar";
+    assert "b§a€c👍foobar§b€c👍a":strip_suffix_chars("a§b€c👍") == "b§a€c👍foobar";
+}
