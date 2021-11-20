@@ -1,6 +1,6 @@
 ---
 title: Quickstart Tutorial
-meta_title: Pyro Quickstart Tutorial
+meta_title: Pyro &mdash; Quickstart Tutorial
 ---
 
 You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.

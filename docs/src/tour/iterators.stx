@@ -1,6 +1,6 @@
 ---
 title: Iterators
-meta_title: Pyro Iterators
+meta_title: Pyro &mdash; Iterators
 ---
 
 Pyro's `for ... in ...` loop uses a simple iterator protocol:

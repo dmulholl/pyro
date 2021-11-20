@@ -1,6 +1,6 @@
 ---
 title: Globals
-meta_title: Pyro Global Functions and Variables
+meta_title: Pyro &mdash; Global Functions and Variables
 ---
 
 Global variables and functions are available in all modules --- you don't need to import anything to use them.
