@@ -168,7 +168,11 @@ Strings have the following methods:
 
 [[ `:strip_prefix_bytes(string)` ]]
 
-    Returns a new string with any leading bytes that occur in `string` stripped.
+    Returns the new string formed by stripping any leading bytes that occur in `string`.
+
+[[ `:strip_prefix_chars(string)` ]]
+
+    Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in `string`.
 
 [[ `:strip_suffix(suffix)` ]]
 
@@ -177,7 +181,11 @@ Strings have the following methods:
 
 [[ `:strip_suffix_bytes(string)` ]]
 
-    Returns a new string with any trailing bytes that occur in `string` stripped.
+    Returns the new string formed by stripping any trailing bytes that occur in `string`.
+
+[[ `:strip_suffix_chars(string)` ]]
+
+    Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in `string`.
 
 [[ `:strip_utf8_ws()` ]]
 

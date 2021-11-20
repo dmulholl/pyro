@@ -18,7 +18,7 @@
                 <p class="tagline">An experimental scripting language.</p>
             
             
-                <p class="version">Version 0.3.7</p>
+                <p class="version">Version 0.3.8</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -482,7 +482,17 @@ Returns a new string with the leading string <code>prefix</code> stripped if pre
 </dt>
 <dd>
 <p>
-Returns a new string with any leading bytes that occur in <code>string</code> stripped.
+Returns the new string formed by stripping any leading bytes that occur in <code>string</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_prefix_chars(string)</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in <code>string</code>.
 </p>
 </dd>
 </div>
@@ -503,7 +513,17 @@ Returns a new string with the trailing string <code>suffix</code> stripped if pr
 </dt>
 <dd>
 <p>
-Returns a new string with any trailing bytes that occur in <code>string</code> stripped.
+Returns the new string formed by stripping any trailing bytes that occur in <code>string</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_suffix_chars(string)</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in <code>string</code>.
 </p>
 </dd>
 </div>
