@@ -276,12 +276,14 @@ static void run_file(ArgParser* parser) {
     free(path_copy);
 
     pyro_exec_file_as_main(vm, path);
-    if (pyro_get_halt_flag(vm)) {
+    if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+        pyro_free_vm(vm);
         exit(pyro_get_status_code(vm));
     }
 
     pyro_run_main_func(vm);
-    if (pyro_get_halt_flag(vm)) {
+    if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+        pyro_free_vm(vm);
         exit(pyro_get_status_code(vm));
     }
 
@@ -395,12 +397,14 @@ static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
         free(path_copy);
 
         pyro_exec_file_as_main(vm, path);
-        if (pyro_get_halt_flag(vm)) {
+        if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+            pyro_free_vm(vm);
             exit(pyro_get_status_code(vm));
         }
 
         pyro_run_time_funcs(vm, iterations);
-        if (pyro_get_halt_flag(vm)) {
+        if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+            pyro_free_vm(vm);
             exit(pyro_get_status_code(vm));
         }
 

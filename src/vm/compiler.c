@@ -6,6 +6,7 @@
 #include "utf8.h"
 #include "utils.h"
 #include "lexer.h"
+#include "errors.h"
 
 
 typedef struct {
@@ -95,7 +96,13 @@ static void err_at_token(Parser* parser, Token* token, const char* message) {
     if (parser->had_error) {
         return;
     }
+
     parser->had_error = true;
+    parser->vm->status_code = ERR_SYNTAX_ERROR;
+
+    if (parser->vm->try_depth > 0) {
+        return;
+    }
 
     pyro_err(parser->vm, "%s:%zu\n  Syntax Error", parser->src_id, token->line);
 

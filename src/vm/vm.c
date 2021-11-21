@@ -1689,7 +1689,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
         fprintf(vm->err_file, "\n");
     }
 
-    // Print a stack trace if possible.
+    // Print a stack trace if the panic occurred inside a Pyro function.
     if (vm->frame_count > 1 && vm->err_file) {
         fprintf(vm->err_file, "\n");
         pyro_print_stack_trace(vm, vm->err_file);
@@ -2076,11 +2076,6 @@ bool pyro_get_hard_panic_flag(PyroVM* vm) {
 }
 
 
-bool pyro_get_halt_flag(PyroVM* vm) {
-    return vm->halt_flag;
-}
-
-
 void pyro_set_err_file(PyroVM* vm, FILE* file) {
     vm->err_file = file;
 }
@@ -2091,16 +2086,16 @@ void pyro_set_out_file(PyroVM* vm, FILE* file) {
 }
 
 
-bool pyro_set_args(PyroVM* vm, size_t argc, char** argv) {
-    ObjTup* tup = ObjTup_new(argc, vm);
+bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
+    ObjTup* tup = ObjTup_new(arg_count, vm);
     if (!tup) {
         return false;
     }
 
     pyro_push(vm, OBJ_VAL(tup));
 
-    for (size_t i = 0; i < argc; i++) {
-        ObjStr* string = STR_OBJ(argv[i]);
+    for (size_t i = 0; i < arg_count; i++) {
+        ObjStr* string = STR_OBJ(args[i]);
         if (!string) {
             pyro_pop(vm);
             return false;
