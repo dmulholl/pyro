@@ -1321,12 +1321,12 @@ static void run(PyroVM* vm) {
 
                 if (vm->panic_flag) {
                     int64_t error_code = vm->status_code;
-                    bool failed_to_allocate_memory = false;
 
                     // Reset the VM.
                     vm->panic_flag = false;
                     vm->halt_flag = false;
                     vm->status_code = 0;
+                    vm->memory_allocation_failed = false;
                     vm->stack_top = stashed_stack_top - 1;
                     close_upvalues(vm, stashed_stack_top);
                     vm->frame_count = stashed_frame_count;
@@ -1342,15 +1342,11 @@ static void run(PyroVM* vm) {
                             err->values[0] = I64_VAL(error_code);
                             err->values[1] = OBJ_VAL(err_msg);
                             pyro_push(vm, OBJ_VAL(err));
-                        } else {
-                            failed_to_allocate_memory = true;
                         }
-                    } else {
-                        failed_to_allocate_memory = true;
                     }
 
-                    // Hard panic if we failed to allocate memory for the error tuple.
-                    if (failed_to_allocate_memory) {
+                    // Hard panic if we failed to allocate memory for the error string or tuple.
+                    if (vm->memory_allocation_failed) {
                         vm->hard_panic = true;
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
@@ -1481,6 +1477,7 @@ PyroVM* pyro_new_vm() {
     vm->mt64 = NULL;
     vm->str_debug = NULL;
     vm->max_bytes = SIZE_MAX;
+    vm->memory_allocation_failed = false;
 
     // Initialize the PRNG.
     vm->mt64 = pyro_mt64_new();
@@ -1491,37 +1488,21 @@ PyroVM* pyro_new_vm() {
 
     // We need to initialize these classes before we create any objects.
     vm->map_class = ObjClass_new(vm);
-    if (!vm->map_class) { pyro_free_vm(vm); return NULL; }
-
     vm->str_class = ObjClass_new(vm);
-    if (!vm->str_class) { pyro_free_vm(vm); return NULL; }
-
     vm->tup_class = ObjClass_new(vm);
-    if (!vm->tup_class) { pyro_free_vm(vm); return NULL; }
-
     vm->vec_class = ObjClass_new(vm);
-    if (!vm->vec_class) { pyro_free_vm(vm); return NULL; }
-
     vm->buf_class = ObjClass_new(vm);
-    if (!vm->buf_class) { pyro_free_vm(vm); return NULL; }
-
     vm->tup_iter_class = ObjClass_new(vm);
-    if (!vm->tup_iter_class) { pyro_free_vm(vm); return NULL; }
-
     vm->vec_iter_class = ObjClass_new(vm);
-    if (!vm->vec_iter_class) { pyro_free_vm(vm); return NULL; }
-
     vm->map_iter_class = ObjClass_new(vm);
-    if (!vm->map_iter_class) { pyro_free_vm(vm); return NULL; }
-
     vm->str_iter_class = ObjClass_new(vm);
-    if (!vm->str_iter_class) { pyro_free_vm(vm); return NULL; }
-
     vm->range_class = ObjClass_new(vm);
-    if (!vm->range_class) { pyro_free_vm(vm); return NULL; }
-
     vm->file_class = ObjClass_new(vm);
-    if (!vm->file_class) { pyro_free_vm(vm); return NULL; }
+
+    if (vm->memory_allocation_failed) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
 
     // We need to initialize the interned strings pool before we create any strings.
     vm->strings = ObjMap_new_weakref(vm);
@@ -1532,62 +1513,45 @@ PyroVM* pyro_new_vm() {
 
     // Canned objects, mostly static strings.
     vm->empty_error = ObjTup_new_err(0, vm);
-    if (!vm->empty_error) { pyro_free_vm(vm); return NULL; }
-
     vm->empty_string = ObjStr_empty(vm);
-    if (!vm->empty_string) { pyro_free_vm(vm); return NULL; }
-
     vm->str_init = STR_OBJ("$init");
-    if (!vm->str_init) { pyro_free_vm(vm); return NULL; }
-
     vm->str_str = STR_OBJ("$str");
-    if (!vm->str_str) { pyro_free_vm(vm); return NULL; }
-
     vm->str_true = STR_OBJ("true");
-    if (!vm->str_true) { pyro_free_vm(vm); return NULL; }
-
     vm->str_false = STR_OBJ("false");
-    if (!vm->str_false) { pyro_free_vm(vm); return NULL; }
-
     vm->str_null = STR_OBJ("null");
-    if (!vm->str_null) { pyro_free_vm(vm); return NULL; }
-
     vm->str_fmt = STR_OBJ("$fmt");
-    if (!vm->str_fmt) { pyro_free_vm(vm); return NULL; }
-
     vm->str_iter = STR_OBJ("$iter");
-    if (!vm->str_iter) { pyro_free_vm(vm); return NULL; }
-
     vm->str_next = STR_OBJ("$next");
-    if (!vm->str_next) { pyro_free_vm(vm); return NULL; }
-
     vm->str_get_index = STR_OBJ("$get_index");
-    if (!vm->str_get_index) { pyro_free_vm(vm); return NULL; }
-
     vm->str_set_index = STR_OBJ("$set_index");
-    if (!vm->str_set_index) { pyro_free_vm(vm); return NULL; }
-
     vm->str_debug = STR_OBJ("$debug");
-    if (!vm->str_debug) { pyro_free_vm(vm); return NULL; }
+
+    if (vm->memory_allocation_failed) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
 
     // All other object fields.
     vm->globals = ObjMap_new(vm);
-    if (!vm->globals) { pyro_free_vm(vm); return NULL; }
-
     vm->modules = ObjMap_new(vm);
-    if (!vm->modules) { pyro_free_vm(vm); return NULL; }
-
     vm->main_module = ObjModule_new(vm);
-    if (!vm->main_module) { pyro_free_vm(vm); return NULL; }
-
     vm->import_roots = ObjVec_new(vm);
-    if (!vm->import_roots) { pyro_free_vm(vm); return NULL; }
+
+    if (vm->memory_allocation_failed) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
 
     // Load the standard library.
     pyro_load_std_core(vm);
     pyro_load_std_pyro(vm);
     pyro_load_std_math(vm);
     pyro_load_std_prng(vm);
+
+    if (vm->memory_allocation_failed) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
 
     return vm;
 }

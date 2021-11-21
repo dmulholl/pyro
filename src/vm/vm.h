@@ -124,6 +124,9 @@ struct PyroVM {
 
     // The next garbage collection will trigger when [bytes_allocated] breaches this threshold.
     size_t next_gc_threshold;
+
+    // This flag starts off false. It gets toggled to true if an attempt to allocate memory fails.
+    bool memory_allocation_failed;
 };
 
 
