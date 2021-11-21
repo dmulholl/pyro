@@ -411,7 +411,7 @@ You can trap a panic using a `try` expression:
     var foo = try might_panic();
 
 A `try` expression returns the value of its operand if it evaluates without panicking or an `$err` if it panics.
-(The `$err` contains two items --- an integer error code and a string error message.)
+(The `$err` will contain two items --- an integer error code and a string error message.)
 
 `try` is a unary operator with the same precedence as `!` or `-` so you should wrap lower-precedence expressions in brackets:
 
@@ -429,6 +429,10 @@ You can raise a panic from your own code by calling the `$panic()` function with
 
 ::: code pyro
     $panic(123, "oh no!");
+
+If the panic is unhandled, the error message will be printed and the program will exit with the specified error code.
+
+If the panic is trapped by a `try` expression, the error code and error message will be returned as an `$err`.
 
 
 

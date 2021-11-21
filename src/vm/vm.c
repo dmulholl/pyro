@@ -1766,7 +1766,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     FREE_ARRAY(vm, char, fd.data, fd.size);
     if (!fn) {
         if (vm->status_code == ERR_SYNTAX_ERROR) {
-            pyro_panic(vm, ERR_SYNTAX_ERROR, "Failed to compile module '%s'.", path);
+            pyro_panic(vm, ERR_SYNTAX_ERROR, "Unable to compile module '%s'.", path);
         } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
             pyro_panic(
                 vm, ERR_OUT_OF_MEMORY,
