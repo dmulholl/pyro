@@ -31,7 +31,8 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm);
 // the input array is not altered or freed.
 ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm);
 
-// Creates a new string object by concatenating two source strings.
+// Creates a new string object by concatenating two source strings. Returns NULL if memory cannot
+// be allocated for the new string.
 ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
 
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.

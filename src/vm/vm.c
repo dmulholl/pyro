@@ -357,6 +357,10 @@ static void run(PyroVM* vm) {
                                 ObjStr* s2 = AS_STR(b);
                                 ObjStr* s1 = AS_STR(a);
                                 ObjStr* result = ObjStr_concat(s1, s2, vm);
+                                if (!result) {
+                                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                                    break;
+                                }
                                 vm->stack_top -= 2;
                                 pyro_push(vm, OBJ_VAL(result));
                             } else {
@@ -1476,6 +1480,7 @@ PyroVM* pyro_new_vm() {
     vm->file_class = NULL;
     vm->mt64 = NULL;
     vm->str_debug = NULL;
+    vm->max_bytes = SIZE_MAX;
 
     // Initialize the PRNG.
     vm->mt64 = pyro_mt64_new();

@@ -119,6 +119,9 @@ struct PyroVM {
     // The VM's current memory allocation measured in bytes.
     size_t bytes_allocated;
 
+    // The VM's maximum allowed memory allocation measured in bytes.
+    size_t max_bytes;
+
     // The next garbage collection will trigger when [bytes_allocated] breaches this threshold.
     size_t next_gc_threshold;
 };

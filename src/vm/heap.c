@@ -243,25 +243,34 @@ static void sweep(PyroVM* vm) {
 
 
 void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) {
-    vm->bytes_allocated -= old_size;
-    vm->bytes_allocated += new_size;
-
-    if (new_size > old_size) {
-        #ifdef PYRO_DEBUG_STRESS_GC
-            pyro_collect_garbage(vm);
-        #endif
-
-        if (vm->bytes_allocated > vm->next_gc_threshold) {
-            pyro_collect_garbage(vm);
-        }
-    }
-
     if (new_size == 0) {
         free(pointer);
+        vm->bytes_allocated -= old_size;
         return NULL;
     }
 
-    return realloc(pointer, new_size);
+    /* if (new_size > old_size) { */
+        #ifdef PYRO_DEBUG_STRESS_GC
+            pyro_collect_garbage(vm);
+        #else
+            if (vm->bytes_allocated > vm->next_gc_threshold) {
+                pyro_collect_garbage(vm);
+            }
+        #endif
+    /* } */
+
+    size_t new_total_allocation = vm->bytes_allocated - old_size + new_size;
+    if (new_total_allocation > vm->max_bytes) {
+        return NULL;
+    }
+
+    void* result = realloc(pointer, new_size);
+    if (result) {
+        vm->bytes_allocated = new_total_allocation;
+        return result;
+    }
+
+    return NULL;
 }
 
 
