@@ -18,7 +18,7 @@
                 <p class="tagline">An experimental scripting language.</p>
             
             
-                <p class="version">Version 0.3.8</p>
+                <p class="version">Version 0.4.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -468,12 +468,13 @@ Creates a new <code>$map</code> object.
 </div>
 <div>
 <dt>
-<code>$panic(message)</code>
+<code>$panic(error_code, error_message)</code>
 </dt>
 <dd>
 <p>
 Panics with the specified error message.
-<code>message</code> should be a string.
+<code>error_code</code> should be an integer,
+<code>error_message</code> should be a string.
 </p>
 </dd>
 </div>

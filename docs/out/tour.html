@@ -18,7 +18,7 @@
                 <p class="tagline">An experimental scripting language.</p>
             
             
-                <p class="version">Version 0.3.8</p>
+                <p class="version">Version 0.4.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -610,13 +610,14 @@ A panic in Pyro is similar to an exception in other languages &mdash; it indicat
 An unhandled panic will result in the program exiting with an error message and a non-zero status code.
 </p>
 <p>
-You can catch a panic using a <code>try</code> expression:
+You can trap a panic using a <code>try</code> expression:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
 </pre>
 <p>
 A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>$err</code> if it panics.
+(The <code>$err</code> contains two items &mdash; an integer error code and a string error message.)
 </p>
 <p>
 <code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets:
@@ -633,10 +634,10 @@ Note that you can use the error-coalescing operator <code>!!</code> to provide a
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0</span>
 </pre>
 <p>
-You can raise a panic from your own code by calling the <code>$panic()</code> function with an error message:
+You can raise a panic from your own code by calling the <code>$panic()</code> function with an error code and an error message:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;stop that!&quot;</span><span class="p">);</span>
+<span class="nx">$panic</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
 </pre>
 <h3 id="modules">
 Modules

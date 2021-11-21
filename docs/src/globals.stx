@@ -251,10 +251,11 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$panic(message)` ]]
+[[ `$panic(error_code, error_message)` ]]
 
     Panics with the specified error message.
-    `message` should be a string.
+    `error_code` should be an integer,
+    `error_message` should be a string.
 
 
 
