@@ -3,6 +3,7 @@
 #include "vm.h"
 #include "utils.h"
 #include "utf8.h"
+#include "errors.h"
 
 
 bool pyro_is_truthy(Value value) {
@@ -119,7 +120,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         if (IS_STR(stringified)) {
             return AS_STR(stringified);
         }
-        pyro_panic(vm, "Invalid type returned by $str() method.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by $str() method.");
         return NULL;
     }
 
@@ -436,7 +437,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
     if (IS_I64(value)) {
         char* array = pyro_str_fmt(vm, format, value.as.i64);
         if (array == NULL) {
-            pyro_panic(vm, "Error applying format specifier {%s}.", format);
+            pyro_panic(vm, ERR_VALUE_ERROR, "Error applying format specifier {%s}.", format);
             return NULL;
         }
 
@@ -452,7 +453,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
     if (IS_F64(value)) {
         char* array = pyro_str_fmt(vm, format, value.as.f64);
         if (array == NULL) {
-            pyro_panic(vm, "Error applying format specifier {%s}.", format);
+            pyro_panic(vm, ERR_VALUE_ERROR, "Error applying format specifier {%s}.", format);
             return NULL;
         }
 
@@ -479,11 +480,11 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
             return AS_STR(result);
         }
 
-        pyro_panic(vm, "Invalid type returned by $fmt() method.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by $fmt() method.");
         return NULL;
     }
 
-    pyro_panic(vm, "No handler for format specifier {%s}.", format);
+    pyro_panic(vm, ERR_VALUE_ERROR, "No handler for format specifier {%s}.", format);
     return NULL;
 }
 

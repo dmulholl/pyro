@@ -2,6 +2,7 @@
 
 #include "../vm/values.h"
 #include "../vm/vm.h"
+#include "../vm/errors.h"
 #include "../lib/mt64/mt64.h"
 
 
@@ -23,7 +24,7 @@ static Value fn_seed(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
-        pyro_panic(vm, "Invalid argument to $std::prng::rand_int().");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::prng::rand_int().");
         return NULL_VAL();
     }
     return I64_VAL(pyro_mt64_gen_int(vm->mt64, (uint64_t)args[0].as.i64));
@@ -32,7 +33,7 @@ static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0]) || !IS_I64(args[1])) {
-        pyro_panic(vm, "Invalid argument to $std::prng::rand_int_in_range().");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::prng::rand_int_in_range().");
         return NULL_VAL();
     }
 
@@ -49,7 +50,7 @@ static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 // This uses the Fisher-Yates/Durstenfeld algorithm for randomly shuffling an array.
 static Value fn_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_VEC(args[0])) {
-        pyro_panic(vm, "Argument to $std::prng::shuffle() must be a vector.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $std::prng::shuffle() must be a vector.");
         return NULL_VAL();
     }
     ObjVec* vec = AS_VEC(args[0]);

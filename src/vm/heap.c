@@ -1,6 +1,7 @@
 #include "heap.h"
 #include "vm.h"
 #include "compiler.h"
+#include "errors.h"
 
 
 // Mark every root object as reachable. (A root object is an object the VM can access directly
@@ -415,7 +416,7 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
 
         if (!new_array) {
             vm->hard_panic = true;
-            pyro_panic(vm, "Out of memory.");
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return;
         }
 

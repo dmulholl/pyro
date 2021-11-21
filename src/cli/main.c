@@ -247,7 +247,7 @@ static void run_repl(void) {
 
         pyro_exec_code_as_main(vm, code, code_count, "repl");
         if (pyro_get_exit_flag(vm) || pyro_get_hard_panic_flag(vm)) {
-            exit(pyro_get_exit_code(vm));
+            exit(pyro_get_status_code(vm));
         }
 
         free(code);
@@ -277,12 +277,12 @@ static void run_file(ArgParser* parser) {
 
     pyro_exec_file_as_main(vm, path);
     if (pyro_get_halt_flag(vm)) {
-        exit(pyro_get_exit_code(vm));
+        exit(pyro_get_status_code(vm));
     }
 
     pyro_run_main_func(vm);
     if (pyro_get_halt_flag(vm)) {
-        exit(pyro_get_exit_code(vm));
+        exit(pyro_get_status_code(vm));
     }
 
     pyro_free_vm(vm);
@@ -322,7 +322,7 @@ static void cmd_test_callback(char* cmd_name, ArgParser* cmd_parser) {
         pyro_exec_file_as_main(vm, path);
 
         if (pyro_get_exit_flag(vm)) {
-            printf("-- \x1B[31mEXIT\x1B[39m (%d)\n\n", pyro_get_exit_code(vm));
+            printf("-- \x1B[31mEXIT\x1B[39m (%lld)\n\n", pyro_get_status_code(vm));
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
@@ -396,12 +396,12 @@ static void cmd_time_callback(char* cmd_name, ArgParser* cmd_parser) {
 
         pyro_exec_file_as_main(vm, path);
         if (pyro_get_halt_flag(vm)) {
-            exit(pyro_get_exit_code(vm));
+            exit(pyro_get_status_code(vm));
         }
 
         pyro_run_time_funcs(vm, iterations);
         if (pyro_get_halt_flag(vm)) {
-            exit(pyro_get_exit_code(vm));
+            exit(pyro_get_status_code(vm));
         }
 
         pyro_free_vm(vm);

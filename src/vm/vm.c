@@ -6,6 +6,7 @@
 #include "values.h"
 #include "utils.h"
 #include "os.h"
+#include "errors.h"
 
 #include "../std/std_core.h"
 #include "../std/std_math.h"
@@ -16,7 +17,7 @@
 static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
     ObjModule* module = ObjModule_new(vm);
     if (!module) {
-        pyro_panic(vm, "Out of memory.");
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();
     }
 
@@ -39,7 +40,7 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         pyro_pop(vm);
 
         if (!path) {
-            pyro_panic(vm, "Out of memory.");
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
         }
 
@@ -103,9 +104,10 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
     if (arg_count != closure->fn->arity) {
         pyro_panic(
-            vm,
-            "Expected %d argument(s) for '%s' but found %d.",
+            vm, ERR_ARGS_ERROR,
+            "Expected %d argument%s for %s(), found %d.",
             closure->fn->arity,
+            closure->fn->arity == 1 ? "" : "s",
             closure->fn->name->bytes,
             arg_count
         );
@@ -113,7 +115,7 @@ static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
     }
 
     if (vm->frame_count == PYRO_MAX_CALL_FRAMES) {
-        pyro_panic(vm, "Max call depth exceeded.");
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Max call depth exceeded.");
         return;
     }
 
@@ -131,7 +133,14 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
         pyro_push(vm, result);
         return;
     }
-    pyro_panic(vm, "Expected %d argument(s) for '%s' but found %d.", fn->arity, fn->name->bytes, arg_count);
+    pyro_panic(
+        vm, ERR_ARGS_ERROR,
+        "Expected %d argument%s for %s(), found %d.",
+        fn->arity,
+        fn->arity == 1 ? "" : "s",
+        fn->name->bytes,
+        arg_count
+    );
 }
 
 
@@ -155,7 +164,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 ObjClass* class = AS_CLASS(callee);
                 ObjInstance* instance = ObjInstance_new(vm, class);
                 if (!instance) {
-                    pyro_panic(vm, "Out of memory.");
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     return;
                 }
                 vm->stack_top[-arg_count - 1] = OBJ_VAL(instance);
@@ -164,7 +173,10 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 if (ObjMap_get(class->methods, OBJ_VAL(vm->str_init), &initializer)) {
                     call_closure(vm, AS_CLOSURE(initializer), arg_count);
                 } else if (arg_count != 0) {
-                    pyro_panic(vm, "Expected 0 arguments for initializer but found %d.", arg_count);
+                    pyro_panic(
+                        vm, ERR_ARGS_ERROR,
+                        "Expected 0 arguments for initializer, found %d.", arg_count
+                    );
                 }
 
                 return;
@@ -184,7 +196,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 break;
         }
     }
-    pyro_panic(vm, "Value is not callable.");
+    pyro_panic(vm, ERR_TYPE_ERROR, "Value is not callable.");
 }
 
 
@@ -257,7 +269,7 @@ static void define_field(PyroVM* vm, ObjStr* name) {
 static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
     Value method;
     if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method)) {
-        pyro_panic(vm, "Invalid method name '%s'.", method_name->bytes);
+        pyro_panic(vm, ERR_NAME_ERROR, "Invalid method name '%s'.", method_name->bytes);
         return;
     }
 
@@ -270,7 +282,7 @@ static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
 static void invoke_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
     Value method;
     if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method)) {
-        pyro_panic(vm, "Invalid method name '%s'.", method_name->bytes);
+        pyro_panic(vm, ERR_NAME_ERROR, "Invalid method name '%s'.", method_name->bytes);
         return;
     }
 
@@ -289,7 +301,7 @@ static void invoke_method(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
     if (class) {
         invoke_from_class(vm, class, method_name, arg_count);
     } else {
-        pyro_panic(vm, "Invalid method call '%s'.", method_name->bytes);
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid method call '%s'.", method_name->bytes);
     }
 }
 
@@ -348,7 +360,7 @@ static void run(PyroVM* vm) {
                                 vm->stack_top -= 2;
                                 pyro_push(vm, OBJ_VAL(result));
                             } else {
-                                pyro_panic(vm, "Operands to '+' must both be numbers or strings.");
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '+' must both be numbers or strings.");
                             }
                     }
                 } else if (IS_I64(a) && IS_F64(b)) {
@@ -356,7 +368,7 @@ static void run(PyroVM* vm) {
                 } else if (IS_F64(a) && IS_I64(b)) {
                     pyro_push(vm, F64_VAL(a.as.f64 + (double)b.as.i64));
                 } else {
-                    pyro_panic(vm, "Operands to '+' must both be numbers or strings.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '+' must both be numbers or strings.");
                 }
 
                 break;
@@ -365,7 +377,7 @@ static void run(PyroVM* vm) {
             case OP_ASSERT: {
                 Value test_expr = pyro_pop(vm);
                 if (!pyro_is_truthy(test_expr)) {
-                    pyro_panic(vm, "Assert failed.");
+                    pyro_panic(vm, ERR_ASSERTION_FAILED, "Assertion failed.");
                 }
                 break;
             }
@@ -376,7 +388,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 & b.as.i64));
                 } else {
-                    pyro_panic(vm, "Operands to 'and' must both be integers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to 'and' must both be integers.");
                 }
                 break;
             }
@@ -387,7 +399,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 | b.as.i64));
                 } else {
-                    pyro_panic(vm, "Operands to 'or' must both be integers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to 'or' must both be integers.");
                 }
                 break;
             }
@@ -397,7 +409,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(operand)) {
                     pyro_push(vm, I64_VAL(~operand.as.i64));
                 } else {
-                    pyro_panic(vm, "Bitwise 'not' requires an integer operand.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Bitwise 'not' requires an integer operand.");
                 }
                 break;
             }
@@ -408,7 +420,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 ^ b.as.i64));
                 } else {
-                    pyro_panic(vm, "Operands to 'xor' must both be integers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to 'xor' must both be integers.");
                 }
                 break;
             }
@@ -427,7 +439,7 @@ static void run(PyroVM* vm) {
                     class->name = READ_STRING();
                     pyro_push(vm, OBJ_VAL(class));
                 } else {
-                    pyro_panic(vm, "Out of memory.");
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                 }
                 break;
             }
@@ -442,7 +454,7 @@ static void run(PyroVM* vm) {
                 ObjFn* fn = AS_FN(READ_CONSTANT());
                 ObjClosure* closure = ObjClosure_new(vm, fn);
                 if (!closure) {
-                    pyro_panic(vm, "Out of memory.");
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
                 }
 
@@ -506,7 +518,7 @@ static void run(PyroVM* vm) {
                     }
 
                     if (!string) {
-                        pyro_panic(vm, "Unable to allocate string for value.");
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
 
@@ -533,19 +545,31 @@ static void run(PyroVM* vm) {
                 Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL((double)a.as.i64 / (double)b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(a.as.f64 / b.as.f64));
                 } else if (IS_I64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL((double)a.as.i64 / b.as.f64));
                 } else if (IS_F64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(a.as.f64 / (double)b.as.i64));
                 } else {
-                    pyro_panic(vm, "Operands to '/' must both be numbers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '/' must both be numbers.");
                 }
 
                 break;
@@ -560,7 +584,7 @@ static void run(PyroVM* vm) {
                 Value field_name = READ_CONSTANT();
 
                 if (!IS_INSTANCE(pyro_peek(vm, 0))) {
-                    pyro_panic(vm, "Invalid field access '%s'.", AS_STR(field_name)->bytes);
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid field access '%s'.", AS_STR(field_name)->bytes);
                     break;
                 }
 
@@ -573,7 +597,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "Invalid field name '%s'.", AS_STR(field_name)->bytes);
+                pyro_panic(vm, ERR_NAME_ERROR, "Invalid field name '%s'.", AS_STR(field_name)->bytes);
                 break;
             }
 
@@ -584,7 +608,7 @@ static void run(PyroVM* vm) {
                 Value value;
                 if (!ObjMap_get(globals, name, &value)) {
                     if (!ObjMap_get(vm->globals, name, &value)) {
-                        pyro_panic(vm, "Undefined variable '%s'.", AS_STR(name)->bytes);
+                        pyro_panic(vm, ERR_NAME_ERROR, "Undefined variable '%s'.", AS_STR(name)->bytes);
                         break;
                     }
                 }
@@ -609,7 +633,7 @@ static void run(PyroVM* vm) {
                 Value member_name = READ_CONSTANT();
 
                 if (!IS_MOD(pyro_peek(vm, 0))) {
-                    pyro_panic(vm,
+                    pyro_panic(vm, ERR_TYPE_ERROR,
                         "Invalid member access '%s', receiver is not a module.",
                         AS_STR(member_name)->bytes
                     );
@@ -624,7 +648,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "Invalid member name '%s'.", AS_STR(member_name)->bytes);
+                pyro_panic(vm, ERR_NAME_ERROR, "Invalid member name '%s'.", AS_STR(member_name)->bytes);
                 break;
             }
 
@@ -636,7 +660,7 @@ static void run(PyroVM* vm) {
                 if (class) {
                     bind_method(vm, class, method_name);
                 } else {
-                    pyro_panic(vm, "Invalid method access '%s'.", method_name->bytes);
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid method access '%s'.", method_name->bytes);
                 }
 
                 break;
@@ -675,14 +699,14 @@ static void run(PyroVM* vm) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
                                 pyro_push(vm, BOOL_VAL(result > 0));
                             } else {
-                                pyro_panic(vm, "Operands to '>' must both be numbers or strings.");
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both be numbers or strings.");
                             }
                             break;
                         default:
-                            pyro_panic(vm, "Operands to '>' must both be numbers.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both be numbers.");
                     }
                 } else {
-                    pyro_panic(vm, "Operands to '>' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both be the same type.");
                 }
 
                 break;
@@ -708,14 +732,17 @@ static void run(PyroVM* vm) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
                                 pyro_push(vm, BOOL_VAL(result >= 0));
                             } else {
-                                pyro_panic(vm, "Operands to '>=' must both be numbers or strings.");
+                                pyro_panic(
+                                    vm, ERR_TYPE_ERROR,
+                                    "Operands to '>=' must both be numbers or strings."
+                                );
                             }
                             break;
                         default:
-                            pyro_panic(vm, "Operands to '>=' must both be numbers.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>=' must both be numbers.");
                     }
                 } else {
-                    pyro_panic(vm, "Operands to '>=' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>=' must both be the same type.");
                 }
 
                 break;
@@ -741,7 +768,10 @@ static void run(PyroVM* vm) {
                         break;
                     }
                     if (IS_NULL(module)) {
-                        pyro_panic(vm, "Unable to locate module '%s'.", AS_STR(name)->bytes);
+                        pyro_panic(
+                            vm, ERR_MODULE_NOT_FOUND,
+                            "Unable to locate module '%s'.", AS_STR(name)->bytes
+                        );
                         break;
                     }
 
@@ -759,7 +789,7 @@ static void run(PyroVM* vm) {
 
             case OP_INHERIT: {
                 if (!IS_CLASS(pyro_peek(vm, 1))) {
-                    pyro_panic(vm, "Invalid superclass value (not a class).");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid superclass value (not a class).");
                     break;
                 }
 
@@ -767,7 +797,7 @@ static void run(PyroVM* vm) {
                 ObjClass* subclass = AS_CLASS(pyro_peek(vm, 0));
 
                 if (superclass == subclass) {
-                    pyro_panic(vm, "A class cannot inherit from itself.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "A class cannot inherit from itself.");
                     break;
                 }
 
@@ -879,14 +909,14 @@ static void run(PyroVM* vm) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
                                 pyro_push(vm, BOOL_VAL(result < 0));
                             } else {
-                                pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be numbers or strings.");
                             }
                             break;
                         default:
-                            pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be numbers or strings.");
                     }
                 } else {
-                    pyro_panic(vm, "Operands to '<' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be the same type.");
                 }
 
                 break;
@@ -912,14 +942,14 @@ static void run(PyroVM* vm) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
                                 pyro_push(vm, BOOL_VAL(result <= 0));
                             } else {
-                                pyro_panic(vm, "Operands to '<' must both be numbers or strings.");
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be numbers or strings.");
                             }
                             break;
                         default:
-                            pyro_panic(vm, "Operands to '<=' must both be numbers or strings.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<=' must both be numbers or strings.");
                     }
                 } else {
-                    pyro_panic(vm, "Operands to '<=' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<=' must both be the same type.");
                 }
 
                 break;
@@ -956,10 +986,10 @@ static void run(PyroVM* vm) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, I64_VAL(a.as.i64 << b.as.i64));
                     } else {
-                        pyro_panic(vm, "Right operand to '<<' cannot be negative.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Right operand to '<<' cannot be negative.");
                     }
                 } else {
-                    pyro_panic(vm, "Operands to '<<' must both be integers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<<' must both be integers.");
                 }
                 break;
             }
@@ -969,7 +999,7 @@ static void run(PyroVM* vm) {
 
                 ObjMap* map = ObjMap_new(vm);
                 if (!map) {
-                    pyro_panic(vm, "Failed to allocate memory for map literal.");
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
                 }
 
@@ -982,7 +1012,7 @@ static void run(PyroVM* vm) {
                 // The entries are stored on the stack as [..][key][value][..] pairs.
                 for (Value* slot = vm->stack_top - entry_count * 2 - 1; slot < vm->stack_top - 1; slot += 2) {
                     if (!ObjMap_set(map, slot[0], slot[1], vm)) {
-                        pyro_panic(vm, "Failed to allocate memory for map literal.");
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         break;
                     }
                 }
@@ -997,7 +1027,7 @@ static void run(PyroVM* vm) {
 
                 ObjVec* vec = ObjVec_new_with_cap(item_count, vm);
                 if (!vec) {
-                    pyro_panic(vm, "Failed to allocate memory for vector literal.");
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
                 }
 
@@ -1024,19 +1054,31 @@ static void run(PyroVM* vm) {
                 Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) { pyro_panic(vm, "Modulo by zero."); break; }
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        break;
+                    }
                     pyro_push(vm, I64_VAL(a.as.i64 % b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Modulo by zero."); break; }
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(fmod(a.as.f64, b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Modulo by zero."); break; }
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(fmod((double)a.as.i64, b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) { pyro_panic(vm, "Modulo by zero."); break; }
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(fmod(a.as.f64, (double)b.as.i64)));
                 } else {
-                    pyro_panic(vm, "Operands to '%%' must both be numbers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '%%' must both be numbers.");
                 }
 
                 break;
@@ -1055,7 +1097,7 @@ static void run(PyroVM* vm) {
                 } else if (IS_F64(a) && IS_I64(b)) {
                     pyro_push(vm, F64_VAL(a.as.f64 * (double)b.as.i64));
                 } else {
-                    pyro_panic(vm, "Operands to '*' must both be numbers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '*' must both be numbers.");
                 }
 
                 break;
@@ -1071,7 +1113,7 @@ static void run(PyroVM* vm) {
                         pyro_push(vm, F64_VAL(-operand.as.f64));
                         break;
                     default:
-                        pyro_panic(vm, "Operand to '-' must be a number.");
+                        pyro_panic(vm, ERR_TYPE_ERROR, "Operand to '-' must be a number.");
                 }
                 break;
             }
@@ -1114,7 +1156,7 @@ static void run(PyroVM* vm) {
                 } else if (IS_F64(a) && IS_I64(b)) {
                     pyro_push(vm, F64_VAL(pow(a.as.f64, (double)b.as.i64)));
                 } else {
-                    pyro_panic(vm, "Operands to '^' must both be numbers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '^' must both be numbers.");
                 }
 
                 break;
@@ -1143,17 +1185,20 @@ static void run(PyroVM* vm) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, I64_VAL(a.as.i64 >> b.as.i64));
                     } else {
-                        pyro_panic(vm, "Right operand to '>>' cannot be negative.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Right operand to '>>' cannot be negative.");
                     }
                 } else {
-                    pyro_panic(vm, "Operands to '>>' must both be integers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>>' must both be integers.");
                 }
                 break;
             }
 
             case OP_SET_FIELD: {
                 if (!IS_INSTANCE(pyro_peek(vm, 1))) {
-                    pyro_panic(vm, "Invalid field access '.', receiver does not have fields.");
+                    pyro_panic(
+                        vm, ERR_TYPE_ERROR,
+                        "Invalid field access '.', receiver does not have fields."
+                    );
                     break;
                 }
 
@@ -1169,7 +1214,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "Invalid field name '%s'.", AS_STR(field_name)->bytes);
+                pyro_panic(vm, ERR_NAME_ERROR, "Invalid field name '%s'.", AS_STR(field_name)->bytes);
                 break;
             }
 
@@ -1178,7 +1223,7 @@ static void run(PyroVM* vm) {
                 ObjMap* globals = frame->closure->fn->module->globals;
                 if (!ObjMap_update_entry(globals, name, pyro_peek(vm, 0), vm)) {
                     if (!ObjMap_update_entry(vm->globals, name, pyro_peek(vm, 0), vm)) {
-                        pyro_panic(vm, "Undefined variable '%s'.", AS_STR(name)->bytes);
+                        pyro_panic(vm, ERR_NAME_ERROR, "Undefined variable '%s'.", AS_STR(name)->bytes);
                     }
                 }
                 break;
@@ -1215,7 +1260,7 @@ static void run(PyroVM* vm) {
                 } else if (IS_F64(a) && IS_I64(b)) {
                     pyro_push(vm, F64_VAL(a.as.f64 - (double)b.as.i64));
                 } else {
-                    pyro_panic(vm, "Operands to '-' must both be numbers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '-' must both be numbers.");
                 }
 
                 break;
@@ -1226,66 +1271,90 @@ static void run(PyroVM* vm) {
                 Value a = pyro_pop(vm);
 
                 if (IS_I64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, I64_VAL(a.as.i64 / b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(trunc(a.as.f64 / b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(trunc((double)a.as.i64 / b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) { pyro_panic(vm, "Division by zero."); break; }
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        break;
+                    }
                     pyro_push(vm, F64_VAL(trunc(a.as.f64 / (double)b.as.i64)));
                 } else {
-                    pyro_panic(vm, "Operands to '//' must both be numbers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '//' must both be numbers.");
                 }
 
                 break;
             }
 
             case OP_TRY: {
-                vm->try_depth++;
                 Value* stashed_stack_top = vm->stack_top;
                 size_t stashed_frame_count = vm->frame_count;
 
+                vm->try_depth++;
                 Value callee = pyro_peek(vm, 0);
                 call_value(vm, callee, 0);
                 run(vm);
+                vm->try_depth--;
 
                 if (vm->exit_flag || vm->hard_panic) {
                     return;
                 }
 
                 if (vm->panic_flag) {
+                    int64_t error_code = vm->status_code;
+                    bool failed_to_allocate_memory = false;
+
+                    // Reset the VM.
                     vm->panic_flag = false;
                     vm->halt_flag = false;
-                    vm->exit_code = 0;
+                    vm->status_code = 0;
                     vm->stack_top = stashed_stack_top - 1;
                     close_upvalues(vm, stashed_stack_top);
                     vm->frame_count = stashed_frame_count;
                     frame = &vm->frames[vm->frame_count - 1];
 
+                    // Create an error tuple as the return value of the try expression.
                     ObjStr* err_msg = ObjStr_copy_raw(vm->panic_buffer, strlen(vm->panic_buffer), vm);
                     if (err_msg) {
                         pyro_push(vm, OBJ_VAL(err_msg));
-                        ObjTup* err = ObjTup_new_err(1, vm);
+                        ObjTup* err = ObjTup_new_err(2, vm);
                         pyro_pop(vm);
                         if (err) {
-                            err->values[0] = OBJ_VAL(err_msg);
+                            err->values[0] = I64_VAL(error_code);
+                            err->values[1] = OBJ_VAL(err_msg);
                             pyro_push(vm, OBJ_VAL(err));
                         } else {
-                            pyro_push(vm, OBJ_VAL(vm->empty_error));
+                            failed_to_allocate_memory = true;
                         }
                     } else {
-                        pyro_push(vm, OBJ_VAL(vm->empty_error));
+                        failed_to_allocate_memory = true;
+                    }
+
+                    // Hard panic if we failed to allocate memory for the error tuple.
+                    if (failed_to_allocate_memory) {
+                        vm->hard_panic = true;
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
                     }
                 }
 
                 assert(vm->stack_top == stashed_stack_top);
                 assert(vm->frame_count == stashed_frame_count);
-
-                vm->try_depth--;
                 break;
             }
 
@@ -1296,7 +1365,10 @@ static void run(PyroVM* vm) {
                 if (IS_TUP(value) || IS_ERR(value)) {
                     ObjTup* tup = AS_TUP(value);
                     if (tup->count < count) {
-                        pyro_panic(vm, "Tuple has %d value(s), requires %d for unpacking.", tup->count, count);
+                        pyro_panic(
+                            vm, ERR_VALUE_ERROR,
+                            "Tuple has %d value(s), requires %d for unpacking.", tup->count, count
+                        );
                     } else {
                         for (size_t i = 0; i < count; i++) {
                             pyro_push(vm, tup->values[i]);
@@ -1305,21 +1377,25 @@ static void run(PyroVM* vm) {
                 } else if (IS_VEC(value)) {
                     ObjVec* vec = AS_VEC(value);
                     if (vec->count < count) {
-                        pyro_panic(vm, "Vector has %d value(s), requires %d for unpacking.", vec->count, count);
+                        pyro_panic(
+                            vm, ERR_VALUE_ERROR,
+                            "Vector has %d value(s), requires %d for unpacking.", vec->count, count
+                        );
                     } else {
                         for (size_t i = 0; i < count; i++) {
                             pyro_push(vm, vec->values[i]);
                         }
                     }
                 } else {
-                    pyro_panic(vm, "Value is not unpackable.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Value is not unpackable.");
                 }
 
                 break;
             }
 
             default:
-                pyro_panic(vm, "Invalid opcode.");
+                vm->hard_panic = true;
+                pyro_panic(vm, ERR_ERROR, "Invalid opcode.");
                 break;
         }
     }
@@ -1364,7 +1440,7 @@ PyroVM* pyro_new_vm() {
     vm->panic_flag = false;
     vm->hard_panic = false;
     vm->halt_flag = false;
-    vm->exit_code = 0;
+    vm->status_code = 0;
     vm->out_file = stdout;
     vm->err_file = stderr;
     vm->parser = NULL;
@@ -1571,11 +1647,18 @@ void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
 }
 
 
-void pyro_panic(PyroVM* vm, const char* format, ...) {
+void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
     vm->panic_flag = true;
     vm->halt_flag = true;
-    vm->exit_code = 1;
+    vm->status_code = error_code;
 
+    if (format == NULL) {
+        return;
+    }
+
+    // If we're inside a try expression and the panic is catchable, we don't print anything to the
+    // error stream. We simply store the error message in the panic buffer so it can be returned
+    // by the try expression.
     if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
         va_start(args, format);
@@ -1584,11 +1667,8 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
         return;
     }
 
-    if (vm->err_file == NULL) {
-        return;
-    }
-
-    if (vm->frame_count > 0) {
+    // Print the source filename and line number if available.
+    if (vm->frame_count > 0 && vm->err_file) {
         CallFrame* frame = &vm->frames[vm->frame_count - 1];
         ObjFn* fn = frame->closure->fn;
         size_t line_number = 1;
@@ -1599,14 +1679,18 @@ void pyro_panic(PyroVM* vm, const char* format, ...) {
         fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line_number);
     }
 
-    fprintf(vm->err_file, "Error: ");
-    va_list args;
-    va_start(args, format);
-    vfprintf(vm->err_file, format, args);
-    va_end(args);
-    fprintf(vm->err_file, "\n");
+    // Print the error message.
+    if (vm->err_file) {
+        fprintf(vm->err_file, "Error [%lld]: ", error_code);
+        va_list args;
+        va_start(args, format);
+        vfprintf(vm->err_file, format, args);
+        va_end(args);
+        fprintf(vm->err_file, "\n");
+    }
 
-    if (vm->frame_count > 1) {
+    // Print a stack trace if possible.
+    if (vm->frame_count > 1 && vm->err_file) {
         fprintf(vm->err_file, "\n");
         pyro_print_stack_trace(vm, vm->err_file);
     }
@@ -1618,14 +1702,20 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     vm->exit_flag = false;
     vm->panic_flag = false;
     vm->hard_panic = false;
-    vm->exit_code = 0;
+    vm->status_code = 0;
 
     ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id, vm->main_module);
     if (!fn) {
-        // The compiler will already have printed an error message.
-        vm->panic_flag = true;
-        vm->halt_flag = true;
-        vm->exit_code = 1;
+        if (vm->status_code == ERR_SYNTAX_ERROR) {
+            pyro_panic(vm, ERR_SYNTAX_ERROR, NULL);
+        } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
+            pyro_panic(
+                vm, ERR_OUT_OF_MEMORY,
+                "Out of memory, unable to compile '%s'.", src_id
+            );
+        } else {
+            assert(false);
+        }
         return;
     }
 
@@ -1633,7 +1723,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     ObjClosure* closure = ObjClosure_new(vm, fn);
     pyro_pop(vm);
     if (!closure) {
-        pyro_panic(vm, "Out of memory.");
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
     }
 
@@ -1675,7 +1765,16 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path, module);
     FREE_ARRAY(vm, char, fd.data, fd.size);
     if (!fn) {
-        pyro_panic(vm, "Failed to compile file '%s'.", path);
+        if (vm->status_code == ERR_SYNTAX_ERROR) {
+            pyro_panic(vm, ERR_SYNTAX_ERROR, "Failed to compile module '%s'.", path);
+        } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
+            pyro_panic(
+                vm, ERR_OUT_OF_MEMORY,
+                "Out of memory, unable to compile module '%s'.", path
+            );
+        } else {
+            assert(false);
+        }
         return;
     }
 
@@ -1683,7 +1782,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     ObjClosure* closure = ObjClosure_new(vm, fn);
     pyro_pop(vm);
     if (!closure) {
-        pyro_panic(vm, "Out of memory.");
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
     }
 
@@ -1703,7 +1802,7 @@ void pyro_run_main_func(PyroVM* vm) {
             run(vm);
             pyro_pop(vm);
         } else {
-            pyro_panic(vm, "Invalid definition for $main().");
+            pyro_panic(vm, ERR_SYNTAX_ERROR, "$main() must be a function.");
         }
     }
 }
@@ -1728,7 +1827,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 vm->exit_flag = false;
                 vm->panic_flag = false;
                 vm->hard_panic = false;
-                vm->exit_code = 0;
+                vm->status_code = 0;
 
                 pyro_push(vm, entry.value);
                 call_value(vm, entry.value, 0);
@@ -1741,7 +1840,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 assert(vm->stack_top == vm->stack);
 
                 if (vm->exit_flag) {
-                    pyro_out(vm, "-- EXIT (%d) %s\n", vm->exit_code, name->bytes);
+                    pyro_out(vm, "-- EXIT (%d) %s\n", vm->status_code, name->bytes);
                     tests_failed += 1;
                     break;
                 }
@@ -1952,13 +2051,13 @@ void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int ar
     Value func_value = OBJ_VAL(ObjNativeFn_new(vm, fn_ptr, AS_STR(name_value), arity));
     pyro_push(vm, func_value);
     ObjMap_set(vm->globals, name_value, func_value, vm);
-    pyro_pop(vm);
-    pyro_pop(vm);
+    pyro_pop(vm); // func_value
+    pyro_pop(vm); // name_value
 }
 
 
-int pyro_get_exit_code(PyroVM* vm) {
-    return vm->exit_code;
+int64_t pyro_get_status_code(PyroVM* vm) {
+    return vm->status_code;
 }
 
 

@@ -4,6 +4,7 @@
 #include "vm.h"
 #include "utils.h"
 #include "opcodes.h"
+#include "errors.h"
 
 
 // Allocates memory for a fixed-size object.
@@ -1347,7 +1348,7 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
             if (vm->halt_flag) {
                 return;
             } else if (!IS_I64(return_value)) {
-                pyro_panic(vm, "Comparison function must return an integer.");
+                pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return an integer.");
                 return;
             } else {
                 result = return_value.as.i64;

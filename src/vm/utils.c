@@ -2,12 +2,13 @@
 #include "heap.h"
 #include "vm.h"
 #include "utf8.h"
+#include "errors.h"
 
 
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
     FILE* file = fopen(path, "rb");
     if (file == NULL) {
-        pyro_panic(vm, "Unable to open file '%s'.", path);
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to open file '%s'.", path);
         return false;
     }
 
@@ -26,13 +27,13 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
 
     char* file_data = ALLOCATE_ARRAY(vm, char, file_size);
     if (file_data == NULL) {
-        pyro_panic(vm, "Insufficient memory to read file '%s'.", path);
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Insufficient memory to read file '%s'.", path);
         return false;
     }
 
     size_t bytes_read = fread(file_data, sizeof(char), file_size, file);
     if (bytes_read < file_size) {
-        pyro_panic(vm, "Unable to read file '%s'.", path);
+        pyro_panic(vm, ERR_IO_ERROR, "Unable to read file '%s'.", path);
         FREE_ARRAY(vm, char, file_data, file_size);
         return false;
     }

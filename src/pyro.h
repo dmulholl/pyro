@@ -7,9 +7,9 @@
 
 // Language version.
 #define PYRO_VERSION_MAJOR 0
-#define PYRO_VERSION_MINOR 3
-#define PYRO_VERSION_PATCH 8
-#define PYRO_VERSION_STRING "0.3.8"
+#define PYRO_VERSION_MINOR 4
+#define PYRO_VERSION_PATCH 0
+#define PYRO_VERSION_STRING "0.4.0"
 
 // All runtime state is stored on a PyroVM instance.
 typedef struct PyroVM PyroVM;
@@ -47,8 +47,8 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed);
 // Runs $time_ functions if any are defined in the main module.
 void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
 
-// Returns the VM's exit code.
-int pyro_get_exit_code(PyroVM* vm);
+// Returns the VM's status code.
+int64_t pyro_get_status_code(PyroVM* vm);
 
 // Returns the status of the VM's exit flag.
 bool pyro_get_exit_flag(PyroVM* vm);

@@ -4,6 +4,7 @@
 #include "common.h"
 #include "values.h"
 #include "objects.h"
+#include "errors.h"
 #include "../lib/mt64/mt64.h"
 
 
@@ -34,17 +35,18 @@ struct PyroVM {
     // Exit signal, set by the $exit() function.
     bool exit_flag;
 
-    // Signals that an error has occurred.
+    // Signals that a panic has occurred.
     bool panic_flag;
 
-    // Signals that the error is unrecoverable.
+    // Signals that the panic is unrecoverable, i.e. cannot be caught by a try expression.
     bool hard_panic;
 
     // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;
 
-    // Exit code, defaults to zero, can be set by $exit() or by the VM itself.
-    int exit_code;
+    // Status code, defaults to zero. If the $exit() function is called, this will be set to the
+    // specified exit code. In case of a panic, this will be set to the error code.
+    int64_t status_code;
 
     // Counts the number of nested 'try' expressions.
     size_t try_depth;
@@ -164,7 +166,7 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 Value pyro_call_fn(PyroVM* vm, Value fn, uint8_t arg_count);
 
 // Called to signal that an error has occurred.
-void pyro_panic(PyroVM* vm, const char* format, ...);
+void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...);
 
 // Writes a printf-style formatted string to the VM's output stream, unless that stream is NULL.
 void pyro_out(PyroVM* vm, const char* format, ...);
@@ -184,7 +186,7 @@ static inline Value pyro_peek(PyroVM* vm, int distance) {
 // Pushes a value onto the stack.
 static inline void pyro_push(PyroVM* vm, Value value) {
     if (vm->stack_top == vm->stack_max) {
-        pyro_panic(vm, "Stack overflow.");
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Stack overflow.");
         return;
     }
     *vm->stack_top = value;
