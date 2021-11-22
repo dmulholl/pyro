@@ -498,7 +498,9 @@ static void run(PyroVM* vm) {
             case OP_DEFINE_GLOBAL: {
                 Value name = READ_CONSTANT();
                 ObjMap* globals = frame->closure->fn->module->globals;
-                ObjMap_set(globals, name, pyro_peek(vm, 0), vm);
+                if (ObjMap_set(globals, name, pyro_peek(vm, 0), vm) == 0) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                }
                 pyro_pop(vm);
                 break;
             }
@@ -509,7 +511,10 @@ static void run(PyroVM* vm) {
 
                 for (uint8_t i = 0; i < count; i++) {
                     Value name = READ_CONSTANT();
-                    ObjMap_set(globals, name, pyro_peek(vm, count - 1 - i), vm);
+                    if (ObjMap_set(globals, name, pyro_peek(vm, count - 1 - i), vm) == 0) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        break;
+                    }
                 }
 
                 vm->stack_top -= count;
@@ -538,12 +543,10 @@ static void run(PyroVM* vm) {
                     if (vm->halt_flag) {
                         return;
                     }
-
                     if (!string) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
-
                     pyro_out(vm, "%s", string->bytes);
                     if (i > 1) {
                         fprintf(vm->out_file, " ");
@@ -798,7 +801,10 @@ static void run(PyroVM* vm) {
                     }
 
                     pyro_push(vm, module);
-                    ObjMap_set(supermod_map, name, module, vm);
+                    if (ObjMap_set(supermod_map, name, module, vm) == 0) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        break;
+                    }
                     pyro_pop(vm);
 
                     supermod_map = AS_MOD(module)->submodules;
@@ -826,9 +832,18 @@ static void run(PyroVM* vm) {
                 // "Copy-down inheritance". We copy all the superclass's methods into the subclass's
                 // method table. This means that there's no extra runtime work involved in looking
                 // up an inherited method.
-                ObjMap_copy_entries(superclass->methods, subclass->methods, vm);
-                ObjMap_copy_entries(superclass->field_indexes, subclass->field_indexes, vm);
-                ObjVec_copy_entries(superclass->field_initializers, subclass->field_initializers, vm);
+                if (!ObjMap_copy_entries(superclass->methods, subclass->methods, vm)) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    break;
+                }
+                if (!ObjMap_copy_entries(superclass->field_indexes, subclass->field_indexes, vm)) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    break;
+                }
+                if (!ObjVec_copy_entries(superclass->field_initializers, subclass->field_initializers, vm)) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    break;
+                }
 
                 subclass->superclass = superclass;
                 pyro_pop(vm); // the subclass
@@ -1033,7 +1048,7 @@ static void run(PyroVM* vm) {
 
                 // The entries are stored on the stack as [..][key][value][..] pairs.
                 for (Value* slot = vm->stack_top - entry_count * 2 - 1; slot < vm->stack_top - 1; slot += 2) {
-                    if (!ObjMap_set(map, slot[0], slot[1], vm)) {
+                    if (ObjMap_set(map, slot[0], slot[1], vm) == 0) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         break;
                     }
