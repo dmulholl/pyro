@@ -1650,7 +1650,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
 
     // Print the error message.
     if (vm->err_file) {
-        fprintf(vm->err_file, "Error [%lld]: ", error_code);
+        fprintf(vm->err_file, "[%lld] Error: ", error_code);
         va_list args;
         va_start(args, format);
         vfprintf(vm->err_file, format, args);
