@@ -38,7 +38,6 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         pyro_push(vm, OBJ_VAL(module));
         char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
         pyro_pop(vm);
-
         if (!path) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
@@ -217,6 +216,10 @@ static ObjUpvalue* capture_upvalue(PyroVM* vm, Value* local) {
 
     // No match so create a new upvalue object.
     ObjUpvalue* new_upvalue = ObjUpvalue_new(vm, local);
+    if (!new_upvalue) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
 
     // Insert the new upvalue into the linked list at the right location.
     new_upvalue->next = curr_upvalue;
@@ -248,7 +251,9 @@ static void define_method(PyroVM* vm, ObjStr* name) {
     /* ObjClosure* method_closure = AS_CLOSURE(method_value); */
     // if name == vm->str_init add as property on class object...
     ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
-    ObjMap_set(class->methods, OBJ_VAL(name), method_value, vm);
+    if (ObjMap_set(class->methods, OBJ_VAL(name), method_value, vm) == 0) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+    }
     pyro_pop(vm);
 }
 
@@ -257,10 +262,18 @@ static void define_method(PyroVM* vm, ObjStr* name) {
 static void define_field(PyroVM* vm, ObjStr* name) {
     Value init_value = pyro_peek(vm, 0);
     ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
-
     size_t field_index = class->field_initializers->count;
-    ObjVec_append(class->field_initializers, init_value, vm);
-    ObjMap_set(class->field_indexes, OBJ_VAL(name), I64_VAL(field_index), vm);
+
+    if (!ObjVec_append(class->field_initializers, init_value, vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
+    }
+
+    if (ObjMap_set(class->field_indexes, OBJ_VAL(name), I64_VAL(field_index), vm) == 0) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
+    }
+
     pyro_pop(vm);
 }
 
@@ -274,6 +287,11 @@ static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
     }
 
     ObjBoundMethod* bound = ObjBoundMethod_new(vm, pyro_peek(vm, 0), AS_OBJ(method));
+    if (!bound) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
+    }
+
     pyro_pop(vm);
     pyro_push(vm, OBJ_VAL(bound));
 }
@@ -1674,6 +1692,10 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     vm->status_code = 0;
 
     ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id, vm->main_module);
+    if (vm->panic_flag) {
+        // This can only be a hard panic raised by the garbage collector.
+        return;
+    }
     if (!fn) {
         if (vm->status_code == ERR_SYNTAX_ERROR) {
             pyro_panic(vm, ERR_SYNTAX_ERROR, NULL);
@@ -1733,6 +1755,10 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
 
     ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path, module);
     FREE_ARRAY(vm, char, fd.data, fd.size);
+    if (vm->panic_flag) {
+        // This can only be a hard panic raised by the garbage collector.
+        return;
+    }
     if (!fn) {
         if (vm->status_code == ERR_SYNTAX_ERROR) {
             pyro_panic(vm, ERR_SYNTAX_ERROR, "Unable to compile module '%s'.", path);

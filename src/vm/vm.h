@@ -45,7 +45,7 @@ struct PyroVM {
     bool halt_flag;
 
     // Status code, defaults to zero. If the $exit() function is called, this will be set to the
-    // specified exit code. In case of a panic, this will be set to the error code.
+    // specified exit code. If a panic is raised, this will be set to the error code.
     int64_t status_code;
 
     // Counts the number of nested 'try' expressions.

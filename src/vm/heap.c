@@ -425,6 +425,7 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
 
         if (!new_array) {
             vm->hard_panic = true;
+            vm->memory_allocation_failed = true;
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory, grey stack allocation failed.");
             return;
         }

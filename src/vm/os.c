@@ -85,4 +85,3 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, CmdResult* out) {
 
     return true;
 }
-
