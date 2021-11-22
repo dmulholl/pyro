@@ -70,6 +70,9 @@ static Value fn_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_prng(PyroVM* vm) {
     ObjModule* mod_prng = pyro_define_module_2(vm, "$std", "prng");
+    if (!mod_prng) {
+        return;
+    }
 
     pyro_define_member_fn(vm, mod_prng, "test_mt64", fn_test_mt64, 0);
     pyro_define_member_fn(vm, mod_prng, "rand_int", fn_rand_int, 1);

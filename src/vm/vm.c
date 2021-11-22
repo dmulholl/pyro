@@ -1577,8 +1577,17 @@ PyroVM* pyro_new_vm() {
         return NULL;
     }
 
-    // Load the standard library.
+    // Load the core standard library -- global functions and builtin types.
     pyro_load_std_core(vm);
+    pyro_load_std_core_map(vm);
+    pyro_load_std_core_vec(vm);
+    pyro_load_std_core_tup(vm);
+    pyro_load_std_core_str(vm);
+    pyro_load_std_core_buf(vm);
+    pyro_load_std_core_file(vm);
+    pyro_load_std_core_range(vm);
+
+    // Load individual standard library modules.
     pyro_load_std_pyro(vm);
     pyro_load_std_math(vm);
     pyro_load_std_prng(vm);

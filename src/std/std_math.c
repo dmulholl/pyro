@@ -224,6 +224,9 @@ static Value fn_floor(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_math(PyroVM* vm) {
     ObjModule* mod_math = pyro_define_module_2(vm, "$std", "math");
+    if (!mod_math) {
+        return;
+    }
 
     pyro_define_member(vm, mod_math, "pi", F64_VAL(PYRO_PI));
     pyro_define_member(vm, mod_math, "e", F64_VAL(PYRO_E));
@@ -243,7 +246,6 @@ void pyro_load_std_math(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_math, "log2", fn_log2, 1);
     pyro_define_member_fn(vm, mod_math, "atan2", fn_atan2, 2);
     pyro_define_member_fn(vm, mod_math, "exp", fn_exp, 1);
-
     pyro_define_member_fn(vm, mod_math, "sqrt", fn_sqrt, 1);
     pyro_define_member_fn(vm, mod_math, "cbrt", fn_cbrt, 1);
     pyro_define_member_fn(vm, mod_math, "ceil", fn_ceil, 1);

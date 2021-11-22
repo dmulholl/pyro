@@ -22,6 +22,9 @@ static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_pyro(PyroVM* vm) {
     ObjModule* mod_pyro = pyro_define_module_2(vm, "$std", "pyro");
+    if (!mod_pyro) {
+        return;
+    }
 
     ObjTup* version = ObjTup_new(3, vm);
     if (version) {
