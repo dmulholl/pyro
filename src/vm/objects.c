@@ -17,7 +17,8 @@
     (type*)allocate_object(vm, sizeof(type) + value_count * sizeof(value_type), type_enum)
 
 
-// Allocates memory for a new object. Automatically adds the new object to the VM's linked list.
+// Allocates memory for a new object. Automatically adds the new object to the VM's linked list of
+// all heap-allocated objects. Returns NULL if memory cannot be allocated.
 static Obj* allocate_object(PyroVM* vm, size_t size, ObjType type) {
     Obj* object = pyro_realloc(vm, NULL, 0, size);
     if (object == NULL) {
@@ -97,6 +98,9 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b) {
 
 ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm) {
     ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return NULL;
+    }
     pyro_push(vm, OBJ_VAL(buf));
 
     if (!ObjBuf_append_byte(buf, '(', vm)) {
@@ -265,9 +269,9 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 }
 
 
-/* ---- */
-/* Maps */
-/* ---- */
+/* ------ */
+/*  Maps  */
+/* ------ */
 
 
 static MapEntry* find_entry(MapEntry* entries, size_t capacity, Value key) {
@@ -380,28 +384,27 @@ ObjMap* ObjMap_new_weakref(PyroVM* vm) {
 
 
 ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
-    ObjMap* map = ObjMap_new(vm);
-    if (!map) {
+    ObjMap* dst = ObjMap_new(vm);
+    if (!dst) {
         return NULL;
     }
 
-    pyro_push(vm, OBJ_VAL(map));
+    pyro_push(vm, OBJ_VAL(dst));
     MapEntry* array = ALLOCATE_ARRAY(vm, MapEntry, src->capacity);
     pyro_pop(vm);
-
     if (!array) {
         return NULL;
     }
 
     memcpy(array, src->entries, sizeof(MapEntry) * src->capacity);
 
-    map->count = src->count;
-    map->capacity = src->capacity;
-    map->tombstone_count = src->tombstone_count;
-    map->entries = array;
-    map->max_load_threshold = src->max_load_threshold;
+    dst->count = src->count;
+    dst->capacity = src->capacity;
+    dst->tombstone_count = src->tombstone_count;
+    dst->entries = array;
+    dst->max_load_threshold = src->max_load_threshold;
 
-    return map;
+    return dst;
 }
 
 
@@ -495,7 +498,7 @@ bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm) {
         if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!ObjMap_set(dst, entry->key, entry->value, vm)) {
+        if (ObjMap_set(dst, entry->key, entry->value, vm) == 0) {
             return false;
         }
     }
@@ -547,6 +550,9 @@ Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm) {
 
 ObjStr* ObjMap_stringify(ObjMap* map, PyroVM* vm) {
     ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return NULL;
+    }
     pyro_push(vm, OBJ_VAL(buf));
 
     if (!ObjBuf_append_byte(buf, '{', vm)) {
@@ -1064,8 +1070,8 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         }
 
         default:
-            printf("Compiler Error: unhandled opcode.\n");
             assert(false);
+            fprintf(stderr, "Unhandled opcode in ObjFn_opcode_argcount().");
             exit(1);
     }
 }
@@ -1241,6 +1247,9 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 
 ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm) {
     ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return NULL;
+    }
     pyro_push(vm, OBJ_VAL(buf));
 
     if (!ObjBuf_append_byte(buf, '[', vm)) {
