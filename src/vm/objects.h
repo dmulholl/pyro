@@ -239,7 +239,7 @@ typedef struct {
     int arity;
 } ObjNativeFn;
 
-ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arity);
+ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int arity);
 
 /* ------- */
 /* Classes */

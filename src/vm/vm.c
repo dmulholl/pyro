@@ -2064,64 +2064,78 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 }
 
 
-// Adds a new member to [module], i.e. creates a module-level global variable pointing to the value.
-// [member] is shielded from garbage-collection for the duration of this function.
-// TODO: handle memory allocation failure.
-void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value member) {
-    pyro_push(vm, member);
-    Value name_value = STR_VAL(name);
-    pyro_push(vm, name_value);
-    ObjMap_set(module->globals, name_value, member, vm);
-    pyro_pop(vm); // name_value
-    pyro_pop(vm); // member
-}
-
-
-// Convenience function for adding a new member to [module] where the value is a native function.
-void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity) {
-    Value name_value = STR_VAL(name);
-    pyro_push(vm, name_value);
-    Value func_value = OBJ_VAL(ObjNativeFn_new(vm, fn_ptr, AS_STR(name_value), arity));
-    pyro_define_member(vm, module, name, func_value);
-    pyro_pop(vm); // name_value
-}
-
-
-// TODO: handle memory allocation failure.
-void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity) {
-    Value name_value = STR_VAL(name);
-    pyro_push(vm, name_value);
-    Value func_value = OBJ_VAL(ObjNativeFn_new(vm, fn_ptr, AS_STR(name_value), arity));
-    pyro_push(vm, func_value);
-    ObjMap_set(class->methods, name_value, func_value, vm);
-    pyro_pop(vm);
-    pyro_pop(vm);
-}
-
-
-// Creates a new global variable. [value] is shielded from garbage-collection for the duration of
-// this function.
-// TODO: handle memory allocation failure.
-void pyro_define_global(PyroVM* vm, const char* name, Value value) {
+void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
     pyro_push(vm, value);
-    Value name_value = STR_VAL(name);
+
+    ObjStr* name_object = STR_OBJ(name);
+    if (!name_object) {
+        pyro_pop(vm); // value
+        return;
+    }
+    Value name_value = OBJ_VAL(name_object);
     pyro_push(vm, name_value);
-    ObjMap_set(vm->globals, name_value, value, vm);
+
+    ObjMap_set(module->globals, name_value, value, vm);
     pyro_pop(vm); // name_value
     pyro_pop(vm); // value
 }
 
 
-// Creates a new global variable pointing to a native function.
-// TODO: handle memory allocation failure.
-void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity) {
-    Value name_value = STR_VAL(name);
+void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity) {
+    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!func_object) {
+        return;
+    }
+    pyro_define_member(vm, module, name, OBJ_VAL(func_object));
+}
+
+
+void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity) {
+    ObjStr* name_object = STR_OBJ(name);
+    if (!name_object) {
+        return;
+    }
+    Value name_value = OBJ_VAL(name_object);
     pyro_push(vm, name_value);
-    Value func_value = OBJ_VAL(ObjNativeFn_new(vm, fn_ptr, AS_STR(name_value), arity));
+
+    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!func_object) {
+        pyro_pop(vm); // name_value
+        return;
+    }
+    Value func_value = OBJ_VAL(func_object);
     pyro_push(vm, func_value);
-    ObjMap_set(vm->globals, name_value, func_value, vm);
+
+    ObjMap_set(class->methods, name_value, func_value, vm);
     pyro_pop(vm); // func_value
     pyro_pop(vm); // name_value
+}
+
+
+void pyro_define_global(PyroVM* vm, const char* name, Value value) {
+    pyro_push(vm, value);
+
+    ObjStr* name_object = STR_OBJ(name);
+    if (!name_object) {
+        pyro_pop(vm); // value
+        return;
+    }
+    Value name_value = OBJ_VAL(name_object);
+    pyro_push(vm, name_value);
+
+    ObjMap_set(vm->globals, name_value, value, vm);
+
+    pyro_pop(vm); // name_value
+    pyro_pop(vm); // value
+}
+
+
+void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity) {
+    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!func_object) {
+        return;
+    }
+    pyro_define_global(vm, name, OBJ_VAL(func_object));
 }
 
 

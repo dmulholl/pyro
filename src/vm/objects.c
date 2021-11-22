@@ -1082,15 +1082,24 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
 /* ---------------- */
 
 
-ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, ObjStr* name, int arity) {
-    ObjNativeFn* native = ALLOCATE_OBJECT(vm, ObjNativeFn, OBJ_NATIVE_FN);
-    if (!native) {
+ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int arity) {
+    ObjStr* name_object = STR_OBJ(name);
+    if (!name_object) {
         return NULL;
     }
-    native->fn_ptr = fn_ptr;
-    native->name = name;
-    native->arity = arity;
-    return native;
+
+    pyro_push(vm, OBJ_VAL(name_object));
+    ObjNativeFn* func = ALLOCATE_OBJECT(vm, ObjNativeFn, OBJ_NATIVE_FN);
+    if (!func) {
+        pyro_pop(vm);
+        return NULL;
+    }
+    pyro_pop(vm);
+
+    func->fn_ptr = fn_ptr;
+    func->arity = arity;
+    func->name = name_object;
+    return func;
 }
 
 

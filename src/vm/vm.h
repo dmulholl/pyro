@@ -130,16 +130,18 @@ struct PyroVM {
 };
 
 
-// Adds a new variable to the VM's globals map.
+// Creates a new VM-level global variable. [value] is shielded from garbage-collection for the
+// duration of this function.
 void pyro_define_global(PyroVM* vm, const char* name, Value value);
 
-// Adds a new native function to the VM's globals map.
+// Creates a new VM-level global variable pointing to a native function.
 void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity);
 
-// Adds a new variable to the module's globals map.
-void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value member);
+// Adds a new member to [module], i.e. creates a module-level global variable called [name] with
+// initial value [value]. [value] is shielded from garbage-collection while inside this function.
+void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value);
 
-// Adds a new native function to the module's globals map.
+// Convenience function for adding a new member to [module] where the value is a native function.
 void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity);
 
 // Adds a new method to the class.
