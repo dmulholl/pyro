@@ -19,8 +19,8 @@ FILES = src/vm/*.c src/std/*.c src/cli/*.c src/lib/mt64/*.c src/lib/args/*.c
 # ------------- #
 
 all:
-	@make release
 	@make debug
+	@make release
 
 # Optimized release build.
 release::
