@@ -1935,74 +1935,132 @@ Value pyro_call_fn(PyroVM* vm, Value func, uint8_t arg_count) {
 }
 
 
-// TODO: handle memory allocation failure.
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
-    Value name_value = STR_VAL(name);
+    ObjStr* name_object = STR_OBJ(name);
+    if (!name_object) {
+        return NULL;
+    }
+    Value name_value = OBJ_VAL(name_object);
     pyro_push(vm, name_value);
 
     ObjModule* module = ObjModule_new(vm);
+    if (!module) {
+        pyro_pop(vm); // name_value
+        return NULL;
+    }
     Value module_value = OBJ_VAL(module);
     pyro_push(vm, module_value);
 
-    ObjMap_set(vm->modules, name_value, module_value, vm);
-
-    pyro_pop(vm); // module_value
-    pyro_pop(vm); // name_value
-    return module;
-}
-
-
-// TODO: handle memory allocation failure.
-ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name) {
-    Value name_value = STR_VAL(name);
-    pyro_push(vm, name_value);
-
-    ObjModule* module = ObjModule_new(vm);
-    Value module_value = OBJ_VAL(module);
-    pyro_push(vm, module_value);
-
-    Value parent_module;
-    if (!ObjMap_get(vm->modules, STR_VAL(parent), &parent_module)) {
-        printf("Error: invalid parent module name.\n");
-        exit(1);
+    if (ObjMap_set(vm->modules, name_value, module_value, vm) == 0) {
+        pyro_pop(vm); // module_value
+        pyro_pop(vm); // name_value
+        return NULL;
     }
 
-    ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm);
-    ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm);
-
     pyro_pop(vm); // module_value
     pyro_pop(vm); // name_value
     return module;
 }
 
 
-// TODO: handle memory allocation failure.
-ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name) {
-    Value name_value = STR_VAL(name);
+ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name) {
+    ObjStr* parent_object = STR_OBJ(parent);
+    if (!parent_object) {
+        return NULL;
+    }
+
+    Value parent_module;
+    if (!ObjMap_get(vm->modules, OBJ_VAL(parent_object), &parent_module)) {
+        assert(false);
+        return NULL;
+    }
+
+    ObjStr* name_object = STR_OBJ(name);
+    if (!name_object) {
+        return NULL;
+    }
+    Value name_value = OBJ_VAL(name_object);
     pyro_push(vm, name_value);
 
-    ObjModule* module = ObjModule_new(vm);
-    Value module_value = OBJ_VAL(module);
+    ObjModule* module_object = ObjModule_new(vm);
+    if (!module_object) {
+        pyro_pop(vm); // name_value
+        return NULL;
+    }
+    Value module_value = OBJ_VAL(module_object);
     pyro_push(vm, module_value);
+
+    if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
+        pyro_pop(vm); // module_value
+        pyro_pop(vm); // name_value
+        return NULL;
+    }
+
+    if (ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm) == 0) {
+        pyro_pop(vm); // module_value
+        pyro_pop(vm); // name_value
+        return NULL;
+    }
+
+    pyro_pop(vm); // module_value
+    pyro_pop(vm); // name_value
+    return module_object;
+}
+
+
+ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name) {
+    ObjStr* grandparent_object = STR_OBJ(parent);
+    if (!grandparent_object) {
+        return NULL;
+    }
 
     Value grandparent_module;
-    if (!ObjMap_get(vm->modules, STR_VAL(grandparent), &grandparent_module)) {
-        printf("Error: invalid grandparent module name.\n");
-        exit(1);
+    if (!ObjMap_get(vm->modules, OBJ_VAL(grandparent_object), &grandparent_module)) {
+        assert(false);
+        return NULL;
+    }
+
+    ObjStr* parent_object = STR_OBJ(parent);
+    if (!parent_object) {
+        return NULL;
     }
 
     Value parent_module;
-    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, STR_VAL(parent), &parent_module)) {
-        printf("Error: invalid parent module name.\n");
-        exit(1);
+    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, OBJ_VAL(parent_object), &parent_module)) {
+        assert(false);
+        return NULL;
     }
 
-    ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm);
-    ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm);
+    ObjStr* name_object = STR_OBJ(name);
+    if (!name_object) {
+        return NULL;
+    }
+    Value name_value = OBJ_VAL(name_object);
+    pyro_push(vm, name_value);
+
+    ObjModule* module_object = ObjModule_new(vm);
+    if (!module_object) {
+        pyro_pop(vm); // name_value
+        return NULL;
+    }
+    Value module_value = OBJ_VAL(module_object);
+    pyro_push(vm, module_value);
+
+    if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
+        pyro_pop(vm); // module_value
+        pyro_pop(vm); // name_value
+        return NULL;
+    }
+
+    if (ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm) == 0) {
+        pyro_pop(vm); // module_value
+        pyro_pop(vm); // name_value
+        return NULL;
+    }
 
     pyro_pop(vm); // module_value
     pyro_pop(vm); // name_value
-    return module;
+    return module_object;
 }
 
 

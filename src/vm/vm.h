@@ -145,14 +145,15 @@ void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, Nati
 // Adds a new method to the class.
 void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity);
 
-// Defines a new top-level module.
+// Creates a new top-level module. Returns the module or [NULL] if memory allocation fails.
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name);
 
 // Defines a new 2nd level module where [parent] is a top-level module.
+// Returns the module or [NULL] if memory allocation fails.
 ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name);
 
 // Defines a new 3rd level module where [grandparent] is a top-level module and [parent] is a
-// submodule of [grandparent].
+// submodule of [grandparent]. Returns the module or [NULL] if memory allocation fails.
 ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name);
 
 // Calls a method from a native function. Returns the value returned by the method. Before calling
