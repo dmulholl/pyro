@@ -16,9 +16,9 @@
 //  * Returns [NULL]. Compilation failed due to an out-of-memory error. [vm->status_code] is set
 //    to ERR_OUT_OF_MEMORY. No error message has been printed.
 //
-// The compiler itself never raises a panic, it simply returns [NULL] in case of failure. A hard
-// panic can be raised in the background by the garbage collector if it fires during compilation
-// and sufficient memory cannot be allocated for the grey stack.
+// The compiler itself never raises a panic, it simply returns [NULL] in case of failure.
+// (If the garbage collector fires during compilation it can raise a hard panic in the background
+// if sufficient memory cannot be allocated for the grey stack.)
 ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id, ObjModule* mod);
 
 // This function is used by the garbage collector.

@@ -450,8 +450,12 @@ void pyro_mark_value(PyroVM* vm, Value value) {
 
 
 void pyro_collect_garbage(PyroVM* vm) {
-    assert(!vm->panic_flag);
+    if (!vm->allow_gc) {
+        return;
+    }
+
     if (vm->panic_flag) {
+        assert(false);
         return;
     }
 

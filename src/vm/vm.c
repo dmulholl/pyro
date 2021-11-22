@@ -1512,6 +1512,7 @@ PyroVM* pyro_new_vm() {
     vm->str_debug = NULL;
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
+    vm->allow_gc = false;
 
     // Initialize the PRNG.
     vm->mt64 = pyro_mt64_new();
@@ -1587,6 +1588,7 @@ PyroVM* pyro_new_vm() {
         return NULL;
     }
 
+    vm->allow_gc = true;
     return vm;
 }
 

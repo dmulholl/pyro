@@ -127,6 +127,9 @@ struct PyroVM {
 
     // This flag starts off false. It gets toggled to true if an attempt to allocate memory fails.
     bool memory_allocation_failed;
+
+    // If true, the garbage collector is allowed to run.
+    bool allow_gc;
 };
 
 
