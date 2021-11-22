@@ -20,16 +20,31 @@ import lib1;
 assert $is_mod(lib1);
 assert lib1::pi == 3.14;
 assert lib1::add(1, 2) == 3;
+assert lib1::mod_name == "lib1";
+assert lib1::get_mod_name() == "lib1";
+
+var func1 = lib1::get_mod_name;
+assert func1() == "lib1";
 
 import lib2;
 assert $is_mod(lib2);
 assert lib2::pi == 3.14;
 assert lib2::add(1, 2) == 3;
+assert lib2::mod_name == "lib2";
+assert lib2::get_mod_name() == "lib2";
+
+var func2 = lib2::get_mod_name;
+assert func2() == "lib2";
 
 import lib2::lib3;
 assert $is_mod(lib3);
 assert lib3::e == 2.72;
 assert lib3::mul(2, 3) == 6;
+assert lib3::mod_name == "lib3";
+assert lib3::get_mod_name() == "lib3";
+
+var func3 = lib3::get_mod_name;
+assert func3() == "lib3";
 
 import lib4;
 assert $is_mod(lib4);
@@ -38,4 +53,8 @@ import lib4::lib5;
 assert $is_mod(lib5);
 assert lib5::e == 2.72;
 assert lib5::mul(2, 3) == 6;
+assert lib5::mod_name == "lib5";
+assert lib5::get_mod_name() == "lib5";
 
+var func5 = lib5::get_mod_name;
+assert func5() == "lib5";
