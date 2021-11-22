@@ -67,7 +67,8 @@ struct Parser {
     Lexer lexer;
     Token previous;
     Token current;
-    bool had_error;
+    bool had_syntax_error;
+    bool had_memory_error;
     PyroVM* vm;
     FnCompiler* compiler;
     ClassCompiler* class_compiler;
@@ -76,9 +77,9 @@ struct Parser {
 };
 
 
-// -------------------- //
-// Forward Declarations //
-// -------------------- //
+/* -------------------- */
+/* Forward Declarations */
+/* -------------------- */
 
 
 static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in_parens);
@@ -87,18 +88,17 @@ static void parse_function_definition(Parser* parser, FnType type, Token name);
 static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens);
 
 
-// ----------------- //
-// Parsing Utilities //
-// ----------------- //
+/* ----------------- */
+/* Parsing Utilities */
+/* ----------------- */
 
 
+// Signals a syntax error at [token].
 static void err_at_token(Parser* parser, Token* token, const char* message) {
-    if (parser->had_error) {
+    if (parser->had_syntax_error) {
         return;
     }
-
-    parser->had_error = true;
-    parser->vm->status_code = ERR_SYNTAX_ERROR;
+    parser->had_syntax_error = true;
 
     if (parser->vm->try_depth > 0) {
         return;
@@ -118,11 +118,13 @@ static void err_at_token(Parser* parser, Token* token, const char* message) {
 }
 
 
+// Signals a syntax error at the current token.
 static void err_at_curr(Parser* parser, const char* message) {
     err_at_token(parser, &parser->current, message);
 }
 
 
+// Signals a syntax error at the previous token.
 static void err_at_prev(Parser* parser, const char* message) {
     err_at_token(parser, &parser->previous, message);
 }
@@ -148,7 +150,9 @@ static bool lexemes_are_equal(Token* a, Token* b) {
 
 
 static void emit_byte(Parser* parser, uint8_t byte) {
-    ObjFn_write(parser->compiler->fn, byte, parser->previous.line, parser->vm);
+    if (!ObjFn_write(parser->compiler->fn, byte, parser->previous.line, parser->vm)) {
+        parser->had_memory_error = true;
+    }
 }
 
 
@@ -182,9 +186,13 @@ static void emit_return(Parser* parser) {
 }
 
 
+// Adds the value to the current function's constant table and returns its index.
 static uint16_t make_constant(Parser* parser, Value value) {
-    size_t index = ObjFn_add_constant(parser->compiler->fn, value, parser->vm);
-    if (index > UINT16_MAX) {
+    int64_t index = ObjFn_add_constant(parser->compiler->fn, value, parser->vm);
+    if (index < 0) {
+        parser->had_memory_error = true;
+        return 0;
+    } else if (index > UINT16_MAX) {
         err_at_prev(parser, "Too many constants in function.");
         return 0;
     }
@@ -193,12 +201,19 @@ static uint16_t make_constant(Parser* parser, Value value) {
 
 
 // Takes an identifier token and adds its lexeme to the constant table as a string.
+// Returns its index in the constant table.
 static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name) {
     ObjStr* string = ObjStr_copy_raw(name->start, name->length, parser->vm);
+    if (!string) {
+        parser->had_memory_error = true;
+        return 0;
+    }
     return make_constant(parser, OBJ_VAL(string));
 }
 
 
+// Stores the specified value in the current function's constant table and emits bytecode to load
+// it onto the top of the stack.
 static void emit_constant(Parser* parser, Value value) {
     uint16_t index = make_constant(parser, value);
     emit_byte(parser, OP_LOAD_CONSTANT);
@@ -211,7 +226,7 @@ static void advance(Parser* parser) {
     parser->previous = parser->current;
     parser->current = pyro_next_token(&parser->lexer);
     if (parser->current.type == TOKEN_ERROR) {
-        parser->had_error = true;
+        parser->had_syntax_error = true;
     }
 }
 
@@ -266,9 +281,14 @@ static bool match_assignment_token(Parser* parser) {
 }
 
 
-static void init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, Token name) {
+// Returns [true] if initialization succeeded, [false] if initialization failed because memory
+// could not be allocated.
+static bool init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, Token name) {
+    // Set this compiler's enclosing compiler to the parser's current compiler.
+    // Set the parser's current compiler to this compiler i.e. the last compiler in the chain.
     compiler->enclosing = parser->compiler;
     parser->compiler = compiler;
+
     compiler->type = type;
     compiler->local_count = 0;
     compiler->scope_depth = 0;
@@ -277,9 +297,26 @@ static void init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, 
     // Assign to NULL first as the function initializer can trigger the GC.
     compiler->fn = NULL;
     compiler->fn = ObjFn_new(parser->vm);
+    if (!compiler->fn) {
+        parser->had_memory_error = true;
+        parser->compiler = compiler->enclosing;
+        return false;
+    }
     compiler->fn->module = parser->module;
+
     compiler->fn->name = ObjStr_copy_raw(name.start, name.length, parser->vm);
+    if (!compiler->fn->name) {
+        parser->had_memory_error = true;
+        parser->compiler = compiler->enclosing;
+        return false;
+    }
+
     compiler->fn->source = ObjStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
+    if (!compiler->fn->source) {
+        parser->had_memory_error = true;
+        parser->compiler = compiler->enclosing;
+        return false;
+    }
 
     // Reserve slot zero for the receiver when calling methods.
     Local* local = &compiler->locals[compiler->local_count++];
@@ -293,16 +330,17 @@ static void init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, 
         local->name.start = "";
         local->name.length = 0;
     }
+
+    return true;
 }
 
 
 static ObjFn* end_fn_compiler(Parser* parser) {
     emit_return(parser);
-
     ObjFn* fn = parser->compiler->fn;
 
     #ifdef PYRO_DEBUG_DUMP_BYTECODE
-        if (!parser->had_error) {
+        if (!parser->had_syntax_error) {
             pyro_disassemble_function(parser->vm, fn);
         }
     #endif
@@ -519,18 +557,24 @@ static size_t emit_jump(Parser* parser, OpCode instruction) {
 
 // We call patch_jump() right before emitting the instruction we want the jump to land on.
 static void patch_jump(Parser* parser, size_t index) {
+    if (parser->had_memory_error) {
+        return;
+    }
+
     size_t jump = parser->compiler->fn->code_count - index - 2;
     if (jump > UINT16_MAX) {
         err_at_prev(parser, "Too much code to jump over.");
+        return;
     }
+
     parser->compiler->fn->code[index] = (jump >> 8) & 0xff;
     parser->compiler->fn->code[index + 1] = jump & 0xff;
 }
 
 
-// ------------------ //
-// Expression Parsers //
-// ------------------ //
+/* ------------------ */
+/* Expression Parsers */
+/* ------------------ */
 
 
 static uint8_t parse_argument_list(Parser* parser) {
@@ -1021,9 +1065,11 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
 
 static void parse_try_expr(Parser* parser) {
     FnCompiler compiler;
-    init_fn_compiler(parser, &compiler, TYPE_TRY_EXPR, syntoken("try"));
-    begin_scope(parser);
+    if (!init_fn_compiler(parser, &compiler, TYPE_TRY_EXPR, syntoken("try"))) {
+        return;
+    }
 
+    begin_scope(parser);
     parse_unary_expr(parser, false, false);
     emit_byte(parser, OP_RETURN);
 
@@ -1228,9 +1274,9 @@ static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in
 }
 
 
-// ----------------- //
-// Statement Parsers //
-// ----------------- //
+/* ----------------- */
+/* Statement Parsers */
+/* ----------------- */
 
 
 static void parse_echo_stmt(Parser* parser) {
@@ -1646,7 +1692,9 @@ static void parse_while_stmt(Parser* parser) {
 // It emits the bytecode to create a ObjClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
     FnCompiler compiler;
-    init_fn_compiler(parser, &compiler, type, name);
+    if (!init_fn_compiler(parser, &compiler, type, name)) {
+        return;
+    }
     begin_scope(parser);
 
     // Compile the parameter list.
@@ -1869,9 +1917,9 @@ static void parse_statement(Parser* parser) {
 }
 
 
-/* ==================================== */
-/* ~~~~~~~~ Compiler Interface ~~~~~~~~ */
-/* ==================================== */
+/* -------------------- */
+/*  Compiler Interface  */
+/* -------------------- */
 
 
 ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id, ObjModule* module) {
@@ -1879,29 +1927,40 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
     parser.module = module;
     parser.compiler = NULL;
     parser.class_compiler = NULL;
-    parser.had_error = false;
+    parser.had_syntax_error = false;
+    parser.had_memory_error = false;
     parser.src_id = src_id;
     parser.vm = vm;
     vm->parser = &parser;
 
-    // Strip any trailing whitespace. This ensures we report the correct line number for syntax
-    // errors at the end of the input, e.g. a missing trailing semicolon.
+    // Strip any trailing whitespace before initializing the lexer. This is to ensure we report the
+    // correct line number for syntax errors at the end of the input, e.g. a missing trailing
+    // semicolon.
     while (src_len > 0 && isspace(src_code[src_len - 1])) {
         src_len--;
     }
-
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
     FnCompiler compiler;
-    init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("<module>"));
+    if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("<module>"))) {
+        vm->parser = NULL;
+        vm->status_code = ERR_OUT_OF_MEMORY;
+        return NULL;
+    }
 
     // Prime the token pump.
     advance(&parser);
 
     while (!match(&parser, TOKEN_EOF)) {
         parse_statement(&parser);
-        if (parser.had_error) {
+        if (parser.had_syntax_error) {
             vm->parser = NULL;
+            vm->status_code = ERR_SYNTAX_ERROR;
+            return NULL;
+        }
+        if (parser.had_memory_error) {
+            vm->parser = NULL;
+            vm->status_code = ERR_OUT_OF_MEMORY;
             return NULL;
         }
     }

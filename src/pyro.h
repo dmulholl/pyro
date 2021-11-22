@@ -50,10 +50,10 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
 // Returns the VM's status code.
 int64_t pyro_get_status_code(PyroVM* vm);
 
-// Returns the status of the VM's exit flag.
+// Returns the VM's exit flag.
 bool pyro_get_exit_flag(PyroVM* vm);
 
-// Returns the status of the VM's panic flag.
+// Returns the VM's panic flag.
 bool pyro_get_panic_flag(PyroVM* vm);
 
 // Returns the status of the VM's hard panic flag.

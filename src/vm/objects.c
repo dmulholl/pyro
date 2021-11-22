@@ -929,8 +929,6 @@ bool ObjFn_write(ObjFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
 }
 
 
-// This method returns the source code line number corresponding to the bytecode instruction at
-// index [ip].
 size_t ObjFn_get_line_number(ObjFn* fn, size_t ip) {
     size_t offset = 0;
     size_t sum = 0;
@@ -947,11 +945,7 @@ size_t ObjFn_get_line_number(ObjFn* fn, size_t ip) {
 }
 
 
-// This method adds a value to the function's constant table and returns its index. If an identical
-// value is already present in the table it avoids adding a duplicate and returns the index of
-// the existing entry instead. Returns SIZE_MAX if the operation failed because sufficient memory
-// could not be allocated for the constant table.
-size_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
+int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
     for (size_t i = 0; i < fn->constants_count; i++) {
         if (pyro_check_equal(value, fn->constants[i])) {
             return i;
@@ -965,7 +959,7 @@ size_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
         pyro_pop(vm);
 
         if (!new_array) {
-            return SIZE_MAX;
+            return -1;
         }
 
         fn->constants_capacity = new_capacity;
@@ -977,7 +971,6 @@ size_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
 }
 
 
-// Returns the length in bytes of the arguments for the opcode at the specified index.
 size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
     switch (fn->code[ip]) {
         case OP_ASSERT:

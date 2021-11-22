@@ -296,7 +296,6 @@ static Token read_raw_string(Lexer* lexer) {
                 start_line
             );
         }
-        lexer->vm->status_code = ERR_SYNTAX_ERROR;
         return make_error_token(lexer);
     }
 
@@ -329,7 +328,6 @@ static Token read_string(Lexer* lexer) {
                 start_line
             );
         }
-        lexer->vm->status_code = ERR_SYNTAX_ERROR;
         return make_error_token(lexer);
     }
 
@@ -360,7 +358,6 @@ static Token read_char_literal(Lexer* lexer) {
                 start_line
             );
         }
-        lexer->vm->status_code = ERR_SYNTAX_ERROR;
         return make_error_token(lexer);
     }
 
@@ -475,7 +472,6 @@ Token pyro_next_token(Lexer* lexer) {
         }
     }
 
-    lexer->vm->status_code = ERR_SYNTAX_ERROR;
     return make_error_token(lexer);
 }
 

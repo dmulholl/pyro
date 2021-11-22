@@ -18,7 +18,11 @@ FILES = src/vm/*.c src/std/*.c src/cli/*.c src/lib/mt64/*.c src/lib/args/*.c
 # Phony Targets #
 # ------------- #
 
-# Release build.
+all:
+	@make release
+	@make debug
+
+# Optimized release build.
 release::
 	@mkdir -p out/release
 	$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES)

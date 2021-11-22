@@ -18,21 +18,4 @@ typedef enum {
     ERR_VALUE_ERROR,
 } ErrorCode;
 
-typedef enum {
-    SC_OK,
-    SC_ERROR,
-    SC_OUT_OF_MEMORY,
-    SC_OS_ERROR,
-    SC_IO_ERROR,
-    SC_ARGS_ERROR,
-    SC_ASSERTION_FAILED,
-    SC_NAME_ERROR,
-    SC_TYPE_ERROR,
-    SC_DIV_BY_ZERO,
-    SC_MODULE_NOT_FOUND,
-    SC_SYNTAX_ERROR,
-    SC_OUT_OF_RANGE,
-    SC_VALUE_ERROR,
-} PyroStatusCode;
-
 #endif
