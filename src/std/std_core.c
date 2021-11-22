@@ -650,11 +650,13 @@ Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 void pyro_load_std_core(PyroVM* vm) {
-    // Create the base standard library module.
+    // Create the base standard library module, $std.
     ObjModule* mod_std = pyro_define_module_1(vm, "$std");
 
-    // Register [$std] as a global variable so it doesn't need to be explicitly imported.
-    pyro_define_global(vm, "$std", OBJ_VAL(mod_std));
+    // Register $std as a global variable so it doesn't need to be explicitly imported.
+    if (mod_std) {
+        pyro_define_global(vm, "$std", OBJ_VAL(mod_std));
+    }
 
     ObjTup* args = ObjTup_new(0, vm);
     if (args) {
