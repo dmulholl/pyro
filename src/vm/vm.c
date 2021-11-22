@@ -1427,6 +1427,7 @@ static void run(PyroVM* vm) {
             }
 
             default:
+                assert(false);
                 vm->hard_panic = true;
                 pyro_panic(vm, ERR_ERROR, "Invalid opcode.");
                 break;
@@ -1447,9 +1448,9 @@ static void reset_stack(PyroVM* vm) {
 }
 
 
-// ---------------- //
-// Public Interface //
-// ---------------- //
+/* ---------------- */
+/* Public Interface */
+/* ---------------- */
 
 
 PyroVM* pyro_new_vm() {
