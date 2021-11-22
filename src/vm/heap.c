@@ -249,7 +249,6 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) 
         return NULL;
     }
 
-    /* if (new_size > old_size) { */
     #ifdef PYRO_DEBUG_STRESS_GC
         pyro_collect_garbage(vm);
     #else
@@ -257,7 +256,6 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) 
             pyro_collect_garbage(vm);
         }
     #endif
-    /* } */
 
     size_t new_total_allocation = vm->bytes_allocated - old_size + new_size;
     if (new_total_allocation > vm->max_bytes) {
@@ -427,7 +425,7 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
 
         if (!new_array) {
             vm->hard_panic = true;
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory, grey stack allocation failed.");
             return;
         }
 
@@ -452,10 +450,13 @@ void pyro_mark_value(PyroVM* vm, Value value) {
 
 void pyro_collect_garbage(PyroVM* vm) {
     assert(!vm->panic_flag);
+    if (vm->panic_flag) {
+        return;
+    }
 
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_out(vm, "-- gc begin\n");
-        size_t before = vm->bytes_allocated;
+        size_t initial_bytes_allocated = vm->bytes_allocated;
     #endif
 
     mark_roots(vm);
@@ -469,14 +470,13 @@ void pyro_collect_garbage(PyroVM* vm) {
     }
 
     sweep(vm);
-
     vm->next_gc_threshold = vm->bytes_allocated * PYRO_GC_HEAP_GROW_FACTOR;
 
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_out(vm, "-- gc end\n");
         pyro_out(vm, "-- gc collected %zu bytes (from %zu to %zu) next gc at %zu\n",
-            before - vm->bytes_allocated,
-            before,
+            initial_bytes_allocated - vm->bytes_allocated,
+            initial_bytes_allocated,
             vm->bytes_allocated,
             vm->next_gc_threshold
         );
