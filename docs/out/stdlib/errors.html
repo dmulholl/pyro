@@ -162,16 +162,6 @@ Signals that an attempt to allocate memory has failed.
 </div>
 <div>
 <dt>
-<code>out_of_range</code>
-</dt>
-<dd>
-<p>
-Signals that an index argument is out of range.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>syntax_error</code>
 </dt>
 <dd>
@@ -196,7 +186,7 @@ Raised when an argument has an invalid type.
 </dt>
 <dd>
 <p>
-Raised when an argument is the correct type but its value is invalid &mdash; e.g. a negative integer where a positive integer was expected.
+Raised when an argument is the correct type but its value is invalid &mdash; e.g. when an index is out-of-range or when a negative integer is passed where a positive integer was expected.
 </p>
 </dd>
 </div>
