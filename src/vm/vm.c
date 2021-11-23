@@ -1775,6 +1775,30 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
 }
 
 
+void pyro_test_compile_file(PyroVM* vm, const char* path) {
+    FileData fd;
+    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
+        return;
+    }
+
+    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path);
+    FREE_ARRAY(vm, char, fd.data, fd.size);
+    if (!fn) {
+        if (vm->status_code == ERR_SYNTAX_ERROR) {
+            pyro_panic(vm, ERR_SYNTAX_ERROR, NULL);
+        } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
+            pyro_panic(
+                vm, ERR_OUT_OF_MEMORY,
+                "Out of memory, unable to compile file '%s'.", path
+            );
+        } else {
+            assert(false);
+        }
+    }
+    return;
+}
+
+
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     Value path_value = STR_VAL(path);
     pyro_define_member(vm, module, "$filepath", path_value);
@@ -1915,7 +1939,7 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
                 }
 
                 double runtime = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-                pyro_out(vm, "-- %s --> %f secs\n", name->bytes, runtime / num_iterations);
+                pyro_out(vm, "-- %s() :: %f secs\n", name->bytes, runtime / num_iterations);
             }
         }
     }
@@ -2212,4 +2236,9 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
         return result;
     }
     return false;
+}
+
+
+void pyro_set_max_memory(PyroVM* vm, size_t bytes) {
+    vm->max_bytes = bytes;
 }

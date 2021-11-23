@@ -26,6 +26,9 @@ void pyro_set_err_file(PyroVM* vm, FILE* file);
 // Sets the file to use for standard output. Defaults to [stdout].
 void pyro_set_out_file(PyroVM* vm, FILE* file);
 
+// Sets the maximum memory allocation for the VM in bytes.
+void pyro_set_max_memory(PyroVM* vm, size_t bytes);
+
 // Executes a chunk of code in the context of the VM's main module. Outside of string literals the
 // code should be utf-8 encoded. String literals can contain arbitrary binary data including nulls
 // and invalid utf-8. [src_code] is treated as a byte array not a C string so no terminating null
@@ -46,6 +49,9 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed);
 
 // Runs $time_ functions if any are defined in the main module.
 void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
+
+// Attempts to compile but not execute the file.
+void pyro_test_compile_file(PyroVM* vm, const char* path);
 
 // Returns the VM's status code.
 int64_t pyro_get_status_code(PyroVM* vm);
