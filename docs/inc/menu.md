@@ -9,6 +9,7 @@
 * [Builtin Types](@root/builtins//)
 * [Globals](@root/globals//)
 * [Standard Library](@root/stdlib//)
+    * [errors](@root/stdlib/errors//)
     * [math](@root/stdlib/math//)
     * [prng](@root/stdlib/prng//)
     * [pyro](@root/stdlib/pyro//)

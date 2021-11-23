@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Standard Library &mdash; $std::pyro</title>
+        <title>Pyro Standard Library &mdash; $std::errors</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-stdlib-pyro node-stdlib node">
+    <body class="node-stdlib-errors node-stdlib node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -57,12 +57,13 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1><code>$std::pyro</code></h1>
+                <h1><code>$std::errors</code></h1>
                 
                 <hr>
             </header>
             <p>
-A utility module for interacting with the Pyro VM.
+Error codes are simply integer values.
+This module contains aliases for the standard error codes used by Pyro.
 </p>
 <h3 id="variables">
 Variables
@@ -70,56 +71,132 @@ Variables
 <dl>
 <div>
 <dt>
-<code>import_roots</code>
+<code>args_error</code>
 </dt>
 <dd>
 <p>
-A vector of strings containing the root directory paths that Pyro checks when attempting to import a module. Directory paths can end with an optional trailing slash. A single dot <code>.</code> indicates the current working directory, a single slash <code>/</code> indicates the system root directory.
+Signals that a function has been called with too few or too many arguments.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>version</code>
+<code>assertion_failed</code>
 </dt>
 <dd>
 <p>
-A three-item tuple containing the language version as <code>(MAJOR, MINIOR, PATCH)</code> integers.
-</p>
-</dd>
-</div>
-</dl>
-<h3 id="functions">
-Functions
-</h3>
-<dl>
-<div>
-<dt>
-<code>gc()</code>
-</dt>
-<dd>
-<p>
-Runs the garbage collector.
+Signals that an <code>assert</code> statement has evaluated as falsey.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>hash(arg)</code>
+<code>div_by_zero</code>
 </dt>
 <dd>
 <p>
-Returns the argument's 64-bit hash value as an <code>$i64</code>.
+Signals an attempt to divide by zero.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>memory()</code>
+<code>error</code>
 </dt>
 <dd>
 <p>
-Returns the VM's current memory allocation in bytes as an <code>$i64</code>.
+A non-specific error.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>module_not_found</code>
+</dt>
+<dd>
+<p>
+Signals that an attempt to import a module has failed because the module could not be found.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>name_error</code>
+</dt>
+<dd>
+<p>
+Raised when an invalid variable, method, or field name is encountered.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>ok</code>
+</dt>
+<dd>
+<p>
+An alias for the integer value zero.
+All actual errors have non-zero values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>os_error</code>
+</dt>
+<dd>
+<p>
+Signals that a system call has returned an error &mdash; e.g. that attempting to open or read from a file has failed.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>out_of_memory</code>
+</dt>
+<dd>
+<p>
+Signals that an attempt to allocate memory has failed.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>out_of_range</code>
+</dt>
+<dd>
+<p>
+Signals that an index argument is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>syntax_error</code>
+</dt>
+<dd>
+<p>
+Signals a syntax error.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>type_error</code>
+</dt>
+<dd>
+<p>
+Raised when an argument has an invalid type.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>value_error</code>
+</dt>
+<dd>
+<p>
+Raised when an argument is the correct type but its value is invalid &mdash; e.g. a negative integer where a positive integer was expected.
 </p>
 </dd>
 </div>

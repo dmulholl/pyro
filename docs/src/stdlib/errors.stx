@@ -1,0 +1,76 @@
+---
+title: <code>$std::errors</code>
+meta_title: Pyro Standard Library &mdash; $std::errors
+---
+
+Error codes are simply integer values.
+This module contains aliases for the standard error codes used by Pyro.
+
+
+### Variables
+
+
+[[ `args_error` ]]
+
+    Signals that a function has been called with too few or too many arguments.
+
+
+[[ `assertion_failed` ]]
+
+    Signals that an `assert` statement has evaluated as falsey.
+
+
+[[ `div_by_zero` ]]
+
+    Signals an attempt to divide by zero.
+
+
+[[ `error` ]]
+
+    A non-specific error.
+
+
+[[ `module_not_found` ]]
+
+    Signals that an attempt to import a module has failed because the module could not be found.
+
+
+[[ `name_error` ]]
+
+    Raised when an invalid variable, method, or field name is encountered.
+
+
+[[ `ok` ]]
+
+    An alias for the integer value zero.
+    All actual errors have non-zero values.
+
+
+[[ `os_error` ]]
+
+    Signals that a system call has returned an error --- e.g. that attempting to open or read from a file has failed.
+
+
+[[ `out_of_memory` ]]
+
+    Signals that an attempt to allocate memory has failed.
+
+
+[[ `out_of_range` ]]
+
+    Signals that an index argument is out of range.
+
+
+[[ `syntax_error` ]]
+
+    Signals a syntax error.
+
+
+[[ `type_error` ]]
+
+    Raised when an argument has an invalid type.
+
+
+[[ `value_error` ]]
+
+    Raised when an argument is the correct type but its value is invalid --- e.g. a negative integer where a positive integer was expected.
