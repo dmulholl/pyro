@@ -370,7 +370,7 @@ static Value file_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 
     int64_t value = args[0].as.i64;
     if (value < 0 || value > 255) {
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Argument to :write_byte() is out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Argument to :write_byte() is out of range.");
         return NULL_VAL();
     }
 

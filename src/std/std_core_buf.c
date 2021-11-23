@@ -40,7 +40,7 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 
     int64_t value = args[0].as.i64;
     if (value < 0 || value > 255) {
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Out-of-range argument (%d) to :write_byte().", value);
+        pyro_panic(vm, ERR_VALUE_ERROR, "Out-of-range argument (%d) to :write_byte().", value);
         return NULL_VAL();
     }
 
@@ -62,7 +62,7 @@ static Value buf_write_be_u16(PyroVM* vm, size_t arg_count, Value* args) {
 
     int64_t value = args[0].as.i64;
     if (value < 0 || value > UINT16_MAX) {
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Out-of-range argument (%d) to :write_be_u16().", value);
+        pyro_panic(vm, ERR_VALUE_ERROR, "Out-of-range argument (%d) to :write_be_u16().", value);
         return NULL_VAL();
     }
 
@@ -92,7 +92,7 @@ static Value buf_write_le_u16(PyroVM* vm, size_t arg_count, Value* args) {
 
     int64_t value = args[0].as.i64;
     if (value < 0 || value > UINT16_MAX) {
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Out-of-range argument (%d) to :write_be_u16().", value);
+        pyro_panic(vm, ERR_VALUE_ERROR, "Out-of-range argument (%d) to :write_be_u16().", value);
         return NULL_VAL();
     }
 
@@ -130,7 +130,7 @@ static Value buf_get(PyroVM* vm, size_t arg_count, Value* args) {
         if (index >= 0 && (size_t)index < buf->count) {
             return I64_VAL(buf->bytes[index]);
         }
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
@@ -149,13 +149,13 @@ static Value buf_set(PyroVM* vm, size_t arg_count, Value* args) {
                     buf->bytes[index] = value;
                     return args[1];
                 }
-                pyro_panic(vm, ERR_OUT_OF_RANGE, "Byte value out of range.");
+                pyro_panic(vm, ERR_VALUE_ERROR, "Byte value out of range.");
                 return NULL_VAL();
             }
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid byte value type, expected an integer.");
             return NULL_VAL();
         }
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");

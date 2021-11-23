@@ -126,7 +126,7 @@ static Value vec_get(PyroVM* vm, size_t arg_count, Value* args) {
         if (index >= 0 && (size_t)index < vec->count) {
             return vec->values[index];
         }
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
@@ -142,7 +142,7 @@ static Value vec_set(PyroVM* vm, size_t arg_count, Value* args) {
             vec->values[index] = args[1];
             return args[1];
         }
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");

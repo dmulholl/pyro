@@ -14,7 +14,7 @@ typedef enum {
     ERR_DIV_BY_ZERO,
     ERR_MODULE_NOT_FOUND,
     ERR_SYNTAX_ERROR,
-    ERR_OUT_OF_RANGE,
+    /* ERR_OUT_OF_RANGE, */
 } ErrorCode;
 
 #endif

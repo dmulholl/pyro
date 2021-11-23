@@ -38,10 +38,10 @@ static Value str_byte(PyroVM* vm, size_t arg_count, Value* args) {
         if (index >= 0 && (size_t)index < str->length) {
             return I64_VAL((uint8_t)str->bytes[index]);
         }
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
-    pyro_panic(vm, ERR_OUT_OF_RANGE, "Invalid index type.");
+    pyro_panic(vm, ERR_VALUE_ERROR, "Invalid index type.");
     return NULL_VAL();
 }
 
@@ -91,7 +91,7 @@ static Value str_char(PyroVM* vm, size_t arg_count, Value* args) {
 
     int64_t target_index = args[0].as.i64;
     if (target_index < 0 || str->length == 0) {
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
 
@@ -101,7 +101,7 @@ static Value str_char(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (char_count < (size_t)target_index + 1) {
         if (byte_index == str->length) {
-            pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+            pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
             return NULL_VAL();
         }
 
@@ -812,7 +812,7 @@ static Value str_substr(PyroVM* vm, size_t arg_count, Value* args) {
     size_t length = (size_t)args[1].as.i64;
 
     if (index + length > str->length) {
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
 

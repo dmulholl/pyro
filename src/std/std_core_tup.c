@@ -38,7 +38,7 @@ static Value tup_get(PyroVM* vm, size_t arg_count, Value* args) {
         if (index >= 0 && (size_t)index < tup->count) {
             return tup->values[index];
         }
-        pyro_panic(vm, ERR_OUT_OF_RANGE, "Index out of range.");
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
         return NULL_VAL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index, must be an integer.");

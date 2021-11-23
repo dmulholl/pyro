@@ -353,7 +353,7 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
             if (args[0].as.f64 >= -9223372036854775808.0 && args[0].as.f64 < 9223372036854775808.0) {
                 return I64_VAL((int64_t)args[0].as.f64);
             }
-            pyro_panic(vm, ERR_OUT_OF_RANGE, "Floating-point value is out-of-range for $i64().");
+            pyro_panic(vm, ERR_VALUE_ERROR, "Floating-point value is out-of-range for $i64().");
             return NULL_VAL();
         }
         case VAL_CHAR:
