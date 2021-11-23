@@ -11,10 +11,8 @@ typedef enum {
     ERR_TYPE_ERROR,
     ERR_NAME_ERROR,
     ERR_VALUE_ERROR,
-    ERR_DIV_BY_ZERO,
     ERR_MODULE_NOT_FOUND,
     ERR_SYNTAX_ERROR,
-    /* ERR_OUT_OF_RANGE, */
 } ErrorCode;
 
 #endif

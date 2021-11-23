@@ -20,7 +20,6 @@ void pyro_load_std_errors(PyroVM* vm) {
     pyro_define_member(vm, mod_errors, "name_error", I64_VAL(ERR_NAME_ERROR));
     pyro_define_member(vm, mod_errors, "value_error", I64_VAL(ERR_VALUE_ERROR));
     pyro_define_member(vm, mod_errors, "type_error", I64_VAL(ERR_TYPE_ERROR));
-    pyro_define_member(vm, mod_errors, "div_by_zero", I64_VAL(ERR_DIV_BY_ZERO));
     pyro_define_member(vm, mod_errors, "module_not_found", I64_VAL(ERR_MODULE_NOT_FOUND));
     pyro_define_member(vm, mod_errors, "syntax_error", I64_VAL(ERR_SYNTAX_ERROR));
 }

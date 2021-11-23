@@ -572,25 +572,25 @@ static void run(PyroVM* vm) {
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL((double)a.as.i64 / (double)b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(a.as.f64 / b.as.f64));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL((double)a.as.i64 / b.as.f64));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(a.as.f64 / (double)b.as.i64));
@@ -1093,25 +1093,25 @@ static void run(PyroVM* vm) {
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
                         break;
                     }
                     pyro_push(vm, I64_VAL(a.as.i64 % b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(fmod(a.as.f64, b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(fmod((double)a.as.i64, b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Modulo by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(fmod(a.as.f64, (double)b.as.i64)));
@@ -1310,25 +1310,25 @@ static void run(PyroVM* vm) {
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, I64_VAL(a.as.i64 / b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(trunc(a.as.f64 / b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(trunc((double)a.as.i64 / b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_DIV_BY_ZERO, "Division by zero.");
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
                         break;
                     }
                     pyro_push(vm, F64_VAL(trunc(a.as.f64 / (double)b.as.i64)));
