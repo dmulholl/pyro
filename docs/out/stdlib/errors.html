@@ -91,26 +91,6 @@ Signals that an <code>assert</code> statement has evaluated as falsey.
 </div>
 <div>
 <dt>
-<code>div_by_zero</code>
-</dt>
-<dd>
-<p>
-Signals an attempt to divide by zero.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>error</code>
-</dt>
-<dd>
-<p>
-A non-specific error.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>module_not_found</code>
 </dt>
 <dd>
@@ -125,18 +105,7 @@ Signals that an attempt to import a module has failed because the module could n
 </dt>
 <dd>
 <p>
-Raised when an invalid variable, method, or field name is encountered.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>ok</code>
-</dt>
-<dd>
-<p>
-An alias for the integer value zero.
-All actual errors have non-zero values.
+Raised when an invalid identifier (a variable, method, field, class, function, or module name) is encountered.
 </p>
 </dd>
 </div>
@@ -176,7 +145,7 @@ Signals a syntax error.
 </dt>
 <dd>
 <p>
-Raised when an argument has an invalid type.
+Raised when an argument or operand has an invalid type.
 </p>
 </dd>
 </div>
@@ -186,7 +155,7 @@ Raised when an argument has an invalid type.
 </dt>
 <dd>
 <p>
-Raised when an argument is the correct type but its value is invalid &mdash; e.g. when an index is out-of-range or when a negative integer is passed where a positive integer was expected.
+Raised when an argument or operand is the correct type but its value is invalid &mdash; e.g. when an index is out-of-range or when a negative integer is passed where a positive integer was expected.
 </p>
 </dd>
 </div>

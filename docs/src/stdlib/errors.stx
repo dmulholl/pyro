@@ -20,16 +20,6 @@ This module contains aliases for the standard error codes used by Pyro itself.
     Signals that an `assert` statement has evaluated as falsey.
 
 
-[[ `div_by_zero` ]]
-
-    Signals an attempt to divide by zero.
-
-
-[[ `error` ]]
-
-    A non-specific error.
-
-
 [[ `module_not_found` ]]
 
     Signals that an attempt to import a module has failed because the module could not be found.
@@ -37,13 +27,7 @@ This module contains aliases for the standard error codes used by Pyro itself.
 
 [[ `name_error` ]]
 
-    Raised when an invalid variable, method, or field name is encountered.
-
-
-[[ `ok` ]]
-
-    An alias for the integer value zero.
-    All actual errors have non-zero values.
+    Raised when an invalid identifier (a variable, method, field, class, function, or module name) is encountered.
 
 
 [[ `os_error` ]]
@@ -63,9 +47,9 @@ This module contains aliases for the standard error codes used by Pyro itself.
 
 [[ `type_error` ]]
 
-    Raised when an argument has an invalid type.
+    Raised when an argument or operand has an invalid type.
 
 
 [[ `value_error` ]]
 
-    Raised when an argument is the correct type but its value is invalid --- e.g. when an index is out-of-range or when a negative integer is passed where a positive integer was expected.
+    Raised when an argument or operand is the correct type but its value is invalid --- e.g. when an index is out-of-range or when a negative integer is passed where a positive integer was expected.
