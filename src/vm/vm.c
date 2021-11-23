@@ -1514,7 +1514,10 @@ PyroVM* pyro_new_vm() {
     vm->str_debug = NULL;
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
-    vm->allow_gc = false;
+    vm->gc_disallows = 0;
+
+    // Disable garbage collection until the VM has been fully initialized.
+    vm->gc_disallows++;
 
     // Initialize the PRNG.
     vm->mt64 = pyro_mt64_new();
@@ -1600,7 +1603,7 @@ PyroVM* pyro_new_vm() {
         return NULL;
     }
 
-    vm->allow_gc = true;
+    vm->gc_disallows--;
     return vm;
 }
 

@@ -450,7 +450,9 @@ void pyro_mark_value(PyroVM* vm, Value value) {
 
 
 void pyro_collect_garbage(PyroVM* vm) {
-    if (!vm->allow_gc) {
+    assert(vm->gc_disallows >= 0);
+
+    if (vm->gc_disallows > 0) {
         return;
     }
 
