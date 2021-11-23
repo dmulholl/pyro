@@ -72,7 +72,6 @@ struct Parser {
     PyroVM* vm;
     FnCompiler* compiler;
     ClassCompiler* class_compiler;
-    ObjModule* module;
     const char* src_id;
 };
 
@@ -302,7 +301,6 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, 
         parser->compiler = compiler->enclosing;
         return false;
     }
-    compiler->fn->module = parser->module;
 
     compiler->fn->name = ObjStr_copy_raw(name.start, name.length, parser->vm);
     if (!compiler->fn->name) {
@@ -1922,9 +1920,8 @@ static void parse_statement(Parser* parser) {
 /* -------------------- */
 
 
-ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id, ObjModule* module) {
+ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     Parser parser;
-    parser.module = module;
     parser.compiler = NULL;
     parser.class_compiler = NULL;
     parser.had_syntax_error = false;

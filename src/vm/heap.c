@@ -105,7 +105,6 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             ObjFn* fn = (ObjFn*)object;
             pyro_mark_object(vm, (Obj*)fn->name);
             pyro_mark_object(vm, (Obj*)fn->source);
-            pyro_mark_object(vm, (Obj*)fn->module);
             for (size_t i = 0; i < fn->constants_count; i++) {
                 pyro_mark_value(vm, fn->constants[i]);
             }

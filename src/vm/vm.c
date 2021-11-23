@@ -1721,7 +1721,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     vm->hard_panic = false;
     vm->status_code = 0;
 
-    ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id, vm->main_module);
+    ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id);
     if (vm->panic_flag) {
         // This can only be a hard panic raised by the garbage collector.
         return;
@@ -1783,7 +1783,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
         return;
     }
 
-    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path, module);
+    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path);
     FREE_ARRAY(vm, char, fd.data, fd.size);
     if (vm->panic_flag) {
         // This can only be a hard panic raised by the garbage collector.

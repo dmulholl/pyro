@@ -182,7 +182,6 @@ typedef struct {
     size_t upvalue_count;
     ObjStr* name;
     ObjStr* source;
-    ObjModule* module;
 
     // The number of arguments required by the function.
     uint8_t arity;

@@ -881,7 +881,6 @@ ObjFn* ObjFn_new(PyroVM* vm) {
     fn->upvalue_count = 0;
     fn->name = NULL;
     fn->source = NULL;
-    fn->module = NULL;
 
     fn->code = NULL;
     fn->code_count = 0;
