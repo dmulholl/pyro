@@ -3,8 +3,8 @@ title: <code>$std::errors</code>
 meta_title: Pyro Standard Library &mdash; $std::errors
 ---
 
-Error codes are simply integer values.
-This module contains aliases for the standard error codes used by Pyro.
+You can use any `$i64` value as an error code.
+This module contains aliases for the standard error codes used by Pyro itself.
 
 
 ### Variables
