@@ -91,6 +91,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             pyro_mark_object(vm, (Obj*)closure->fn);
+            pyro_mark_object(vm, (Obj*)closure->module);
             for (size_t i = 0; i < closure->upvalue_count; i++) {
                 pyro_mark_object(vm, (Obj*)closure->upvalues[i]);
             }

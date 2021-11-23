@@ -170,13 +170,14 @@ ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm) {
 /* -------- */
 
 
-ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn) {
+ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn, ObjModule* module) {
     ObjClosure* closure = ALLOCATE_OBJECT(vm, ObjClosure, OBJ_CLOSURE);
     if (closure == NULL) {
         return NULL;
     }
 
     closure->fn = fn;
+    closure->module = module;
     closure->upvalues = NULL;
     closure->upvalue_count = 0;
 

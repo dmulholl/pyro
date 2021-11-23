@@ -475,7 +475,8 @@ static void run(PyroVM* vm) {
 
             case OP_CLOSURE: {
                 ObjFn* fn = AS_FN(READ_CONSTANT());
-                ObjClosure* closure = ObjClosure_new(vm, fn);
+                ObjModule* module = frame->closure->module;
+                ObjClosure* closure = ObjClosure_new(vm, fn, module);
                 if (!closure) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
@@ -498,7 +499,7 @@ static void run(PyroVM* vm) {
 
             case OP_DEFINE_GLOBAL: {
                 Value name = READ_CONSTANT();
-                ObjMap* globals = frame->closure->fn->module->globals;
+                ObjMap* globals = frame->closure->module->globals;
                 if (ObjMap_set(globals, name, pyro_peek(vm, 0), vm) == 0) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                 }
@@ -508,7 +509,7 @@ static void run(PyroVM* vm) {
 
             case OP_DEFINE_GLOBALS: {
                 uint8_t count = READ_BYTE();
-                ObjMap* globals = frame->closure->fn->module->globals;
+                ObjMap* globals = frame->closure->module->globals;
 
                 for (uint8_t i = 0; i < count; i++) {
                     Value name = READ_CONSTANT();
@@ -629,7 +630,7 @@ static void run(PyroVM* vm) {
 
             case OP_GET_GLOBAL: {
                 Value name = READ_CONSTANT();
-                ObjMap* globals = frame->closure->fn->module->globals;
+                ObjMap* globals = frame->closure->module->globals;
 
                 Value value;
                 if (!ObjMap_get(globals, name, &value)) {
@@ -1258,7 +1259,7 @@ static void run(PyroVM* vm) {
 
             case OP_SET_GLOBAL: {
                 Value name = READ_CONSTANT();
-                ObjMap* globals = frame->closure->fn->module->globals;
+                ObjMap* globals = frame->closure->module->globals;
                 if (!ObjMap_update_entry(globals, name, pyro_peek(vm, 0), vm)) {
                     if (!ObjMap_update_entry(vm->globals, name, pyro_peek(vm, 0), vm)) {
                         pyro_panic(vm, ERR_NAME_ERROR, "Undefined variable '%s'.", AS_STR(name)->bytes);
@@ -1740,7 +1741,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     }
 
     pyro_push(vm, OBJ_VAL(fn));
-    ObjClosure* closure = ObjClosure_new(vm, fn);
+    ObjClosure* closure = ObjClosure_new(vm, fn, vm->main_module);
     pyro_pop(vm);
     if (!closure) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
@@ -1803,7 +1804,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     }
 
     pyro_push(vm, OBJ_VAL(fn));
-    ObjClosure* closure = ObjClosure_new(vm, fn);
+    ObjClosure* closure = ObjClosure_new(vm, fn, module);
     pyro_pop(vm);
     if (!closure) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");

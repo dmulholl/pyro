@@ -289,11 +289,12 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* slot);
 typedef struct {
     Obj obj;
     ObjFn* fn;
+    ObjModule* module;
     ObjUpvalue** upvalues;
     size_t upvalue_count;
 } ObjClosure;
 
-ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* func);
+ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* func, ObjModule* module);
 
 /* ------------- */
 /* Bound Methods */
