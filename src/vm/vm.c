@@ -12,6 +12,7 @@
 #include "../std/std_math.h"
 #include "../std/std_pyro.h"
 #include "../std/std_prng.h"
+#include "../std/std_errors.h"
 
 
 static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
@@ -1588,9 +1589,10 @@ PyroVM* pyro_new_vm() {
     pyro_load_std_core_range(vm);
 
     // Load individual standard library modules.
-    pyro_load_std_pyro(vm);
     pyro_load_std_math(vm);
     pyro_load_std_prng(vm);
+    pyro_load_std_pyro(vm);
+    pyro_load_std_errors(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

@@ -54,7 +54,7 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, CmdResult* out) {
 
         if (bytes_read < max_bytes) {
             if (ferror(file)) {
-                pyro_panic(vm, ERR_IO_ERROR, "I/O read error.");
+                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
                 pclose(file);
                 return false;

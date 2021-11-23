@@ -89,7 +89,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
 
         if (c == EOF) {
             if (ferror(file->stream)) {
-                pyro_panic(vm, ERR_IO_ERROR, "I/O read error.");
+                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
                 return NULL_VAL();
             }
@@ -138,7 +138,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
 
         if (c == EOF) {
             if (ferror(file->stream)) {
-                pyro_panic(vm, ERR_IO_ERROR, "I/O read error.");
+                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
                 return NULL_VAL();
             }
@@ -198,7 +198,7 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (n < num_bytes_to_read) {
         if (ferror(file->stream)) {
-            pyro_panic(vm, ERR_IO_ERROR, "I/O read error.");
+            pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
             return NULL_VAL();
         }
         if (n == 0) {
@@ -222,7 +222,7 @@ static Value file_read_byte(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (n < 1) {
         if (ferror(file->stream)) {
-            pyro_panic(vm, ERR_IO_ERROR, "I/O read error.");
+            pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
             return NULL_VAL();
         }
         if (n == 0) {
@@ -259,7 +259,7 @@ static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
         if (c == EOF) {
             if (ferror(file->stream)) {
                 FREE_ARRAY(vm, uint8_t, array, capacity);
-                pyro_panic(vm, ERR_IO_ERROR, "I/O read error.");
+                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
                 return NULL_VAL();
             }
             break;
@@ -317,7 +317,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
             ObjBuf* buf = AS_BUF(args[0]);
             size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, file->stream);
             if (n < buf->count) {
-                pyro_panic(vm, ERR_IO_ERROR, "I/O write error.");
+                pyro_panic(vm, ERR_OS_ERROR, "I/O write error.");
                 return NULL_VAL();
             }
             return I64_VAL((int64_t)n);
@@ -332,7 +332,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
             }
             size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
             if (n < string->length) {
-                pyro_panic(vm, ERR_IO_ERROR, "I/O write error.");
+                pyro_panic(vm, ERR_OS_ERROR, "I/O write error.");
                 return NULL_VAL();
             }
             return I64_VAL((int64_t)n);
@@ -353,7 +353,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
     size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
 
     if (n < string->length) {
-        pyro_panic(vm, ERR_IO_ERROR, "I/O write error.");
+        pyro_panic(vm, ERR_OS_ERROR, "I/O write error.");
         return NULL_VAL();
     }
     return I64_VAL((int64_t)n);
@@ -377,7 +377,7 @@ static Value file_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
     uint8_t byte = (uint8_t)value;
     size_t n = fwrite(&byte, sizeof(uint8_t), 1, file->stream);
     if (n < 1) {
-        pyro_panic(vm, ERR_IO_ERROR, "I/O write error.");
+        pyro_panic(vm, ERR_OS_ERROR, "I/O write error.");
         return NULL_VAL();
     }
 
