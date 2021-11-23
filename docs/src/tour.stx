@@ -384,7 +384,7 @@ Classes are complex enough to deserve a page of their own which you can find [he
 
 ### Errors
 
-Pyro has an error type, `$err`, which a function can return to indicate failure.
+Pyro has a dedicated error type, `$err`, which a function can return to indicate failure.
 An `$err` is a specialized kind of tuple under the hood so it supports all the same methods and operators as a `$tup`.
 
 ::: code pyro
