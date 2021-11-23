@@ -1,6 +1,5 @@
 #include "heap.h"
 #include "vm.h"
-#include "compiler.h"
 #include "errors.h"
 
 
@@ -56,9 +55,6 @@ static void mark_roots(PyroVM* vm) {
     for (ObjUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
         pyro_mark_object(vm, (Obj*)upvalue);
     }
-
-    // If we're in the middle of compiling, mark any objects directly accessible by the compiler.
-    pyro_mark_compiler_roots(vm);
 }
 
 

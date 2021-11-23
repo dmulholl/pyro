@@ -87,9 +87,6 @@ struct PyroVM {
     // Interned string pool.
     ObjMap* strings;
 
-    // This reference will be NULL except when actively compiling source code.
-    Parser* parser;
-
     // Linked list of open upvalues pointing to variables still on the stack.
     ObjUpvalue* open_upvalues;
 

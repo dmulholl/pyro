@@ -1479,7 +1479,6 @@ PyroVM* pyro_new_vm() {
     vm->status_code = 0;
     vm->out_file = stdout;
     vm->err_file = stderr;
-    vm->parser = NULL;
     vm->try_depth = 0;
     vm->objects = NULL;
     vm->map_class = NULL;
@@ -1725,10 +1724,6 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     vm->status_code = 0;
 
     ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id);
-    if (vm->panic_flag) {
-        // This can only be a hard panic raised by the garbage collector.
-        return;
-    }
     if (!fn) {
         if (vm->status_code == ERR_SYNTAX_ERROR) {
             pyro_panic(vm, ERR_SYNTAX_ERROR, NULL);
@@ -1788,10 +1783,6 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
 
     ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path);
     FREE_ARRAY(vm, char, fd.data, fd.size);
-    if (vm->panic_flag) {
-        // This can only be a hard panic raised by the garbage collector.
-        return;
-    }
     if (!fn) {
         if (vm->status_code == ERR_SYNTAX_ERROR) {
             pyro_panic(vm, ERR_SYNTAX_ERROR, "Unable to compile module '%s'.", path);

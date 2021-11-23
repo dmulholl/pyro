@@ -1920,7 +1920,7 @@ static void parse_statement(Parser* parser) {
 /* -------------------- */
 
 
-ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     Parser parser;
     parser.compiler = NULL;
     parser.class_compiler = NULL;
@@ -1928,7 +1928,6 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
     parser.had_memory_error = false;
     parser.src_id = src_id;
     parser.vm = vm;
-    vm->parser = &parser;
 
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we report the
     // correct line number for syntax errors at the end of the input, e.g. a missing trailing
@@ -1940,7 +1939,6 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
 
     FnCompiler compiler;
     if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("<module>"))) {
-        vm->parser = NULL;
         vm->status_code = ERR_OUT_OF_MEMORY;
         return NULL;
     }
@@ -1951,32 +1949,28 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
     while (!match(&parser, TOKEN_EOF)) {
         parse_statement(&parser);
         if (parser.had_syntax_error) {
-            vm->parser = NULL;
             vm->status_code = ERR_SYNTAX_ERROR;
             return NULL;
         }
         if (parser.had_memory_error) {
-            vm->parser = NULL;
             vm->status_code = ERR_OUT_OF_MEMORY;
             return NULL;
         }
     }
 
     ObjFn* fn = end_fn_compiler(&parser);
-    vm->parser = NULL;
     return fn;
 }
 
 
-// This function is called by the garbage collector. If we're in the middle of compiling when
-// a collection triggers, we mark as reachable every object that can be directly accessed by
-// the compiler machinery.
-void pyro_mark_compiler_roots(PyroVM* vm) {
-    if (vm->parser != NULL) {
-        FnCompiler* compiler = vm->parser->compiler;
-        while (compiler != NULL) {
-            pyro_mark_object(vm, (Obj*)compiler->fn);
-            compiler = compiler->enclosing;
-        }
-    }
+// We disable the garbage collector during compilation to simplify the compiler's interface by
+// guaranteeing that it can never panic. If the garbage collector were to fire during compilation
+// it could theoretically raise a hard panic in the background if it failed to allocate sufficient
+// memory for the grey stack. With the GC disabled, the compiler never panics, it simply returns
+// NULL in case of a syntax error or memory allocation failure.
+ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+    vm->gc_disallows++;
+    ObjFn* fn = compile(vm, src_code, src_len, src_id);
+    vm->gc_disallows--;
+    return fn;
 }
