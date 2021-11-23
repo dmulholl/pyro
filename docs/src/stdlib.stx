@@ -21,7 +21,7 @@ Alternatively, you can explicitly import the submodule you want to use, e.g.
 
 ### Standard Library Modules
 
+* [errors](@root/stdlib/errors//)
 * [math](@root/stdlib/math//)
 * [prng](@root/stdlib/prng//)
 * [pyro](@root/stdlib/pyro//)
-
