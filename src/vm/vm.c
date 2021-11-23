@@ -1515,7 +1515,10 @@ PyroVM* pyro_new_vm() {
     vm->memory_allocation_failed = false;
     vm->gc_disallows = 0;
 
-    // Disable garbage collection until the VM has been fully initialized.
+    // Disable garbage collection until the VM has been fully initialized. This is to avoid the
+    // possibility of the GC triggering and panicking if it fails to allocate memory for the
+    // grey stack. With the GC disabled, we can guarantee that initialization will never panic;
+    // the initializer will simply return NULL if sufficient memory cannot be allocated.
     vm->gc_disallows++;
 
     // Initialize the PRNG.
