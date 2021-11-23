@@ -323,9 +323,9 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             if (closure->fn->name == NULL) {
-                pyro_out(vm, "<closure>");
+                pyro_out(vm, "<fc>");
             } else {
-                pyro_out(vm, "<closure %s>", closure->fn->name->bytes);
+                pyro_out(vm, "<fc %s>", closure->fn->name->bytes);
             }
             break;
         }

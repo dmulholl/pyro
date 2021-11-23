@@ -1,6 +1,8 @@
+# Not a module.
 var foobar;
 assert !$is_mod(foobar);
 
+# Importing standard library modules.
 import $std;
 assert $is_mod($std);
 assert $is_f64($std::math::pi);
@@ -16,6 +18,17 @@ assert $is_mod(alias);
 assert $is_f64(alias::pi);
 assert alias::abs(-1) == 1;
 
+# Importing .pyro modules. Each module has a mod_name variable and a get_mod_name() function so we
+# can check scoping is working properly.
+var mod_name = "imports";
+
+def get_mod_name() {
+    return mod_name;
+}
+
+assert get_mod_name() == "imports";
+
+# ./lib1.pyro
 import lib1;
 assert $is_mod(lib1);
 assert lib1::pi == 3.14;
@@ -26,6 +39,7 @@ assert lib1::get_mod_name() == "lib1";
 var func1 = lib1::get_mod_name;
 assert func1() == "lib1";
 
+# ./lib2/self.pyro
 import lib2;
 assert $is_mod(lib2);
 assert lib2::pi == 3.14;
@@ -36,6 +50,7 @@ assert lib2::get_mod_name() == "lib2";
 var func2 = lib2::get_mod_name;
 assert func2() == "lib2";
 
+# ./lib2/lib3.pyro
 import lib2::lib3;
 assert $is_mod(lib3);
 assert lib3::e == 2.72;
@@ -46,9 +61,11 @@ assert lib3::get_mod_name() == "lib3";
 var func3 = lib3::get_mod_name;
 assert func3() == "lib3";
 
+# ./lib4/
 import lib4;
 assert $is_mod(lib4);
 
+# ./lib4/lib5.pyro
 import lib4::lib5;
 assert $is_mod(lib5);
 assert lib5::e == 2.72;
