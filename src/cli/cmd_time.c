@@ -6,9 +6,9 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         return;
     }
 
-    int iterations = ap_int_value(cmd_parser, "iterations");
+    int iterations = ap_int_value(cmd_parser, "num-runs");
     if (iterations < 1) {
-        fprintf(stderr, "Error: invalid number of iterations.\n");
+        fprintf(stderr, "Error: invalid argument for --num-runs.\n");
         exit(1);
     }
 
