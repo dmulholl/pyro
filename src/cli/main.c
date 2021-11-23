@@ -45,7 +45,7 @@ static const char* TEST_HELPTEXT =
     "          assert 1 + 2 == 3;\n"
     "      }\n"
     "\n"
-    "  Note that test functions should be defined with zero arguments.\n"
+    "  Note that test functions take no arguments.\n"
     "\n"
     "Arguments:\n"
     "  [files]              Files to test.\n"
