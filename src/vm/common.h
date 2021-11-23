@@ -20,7 +20,6 @@
 #include "../pyro.h"
 
 // Forward declarations.
-typedef struct Parser Parser;
 typedef struct Obj Obj;
 typedef struct ObjStr ObjStr;
 typedef struct ObjMap ObjMap;

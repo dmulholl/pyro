@@ -63,7 +63,7 @@ typedef struct ClassCompiler {
 } ClassCompiler;
 
 
-struct Parser {
+typedef struct {
     Lexer lexer;
     Token previous;
     Token current;
@@ -73,7 +73,7 @@ struct Parser {
     FnCompiler* compiler;
     ClassCompiler* class_compiler;
     const char* src_id;
-};
+} Parser;
 
 
 /* -------------------- */
