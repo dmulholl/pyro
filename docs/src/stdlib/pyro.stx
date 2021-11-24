@@ -24,11 +24,6 @@ A utility module for interacting with the Pyro VM.
     Runs the garbage collector.
 
 
-[[ `hash(arg)` ]]
-
-    Returns the argument's 64-bit hash value as an `$i64`.
-
-
 [[ `memory()` ]]
 
     Returns the VM's current memory allocation in bytes as an `$i64`.

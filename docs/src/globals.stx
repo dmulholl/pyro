@@ -148,6 +148,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$hash(arg)` ]]
+
+    Returns the argument's 64-bit hash value as an `$i64`.
+
+
+
 [[ `$i64(arg)` ]]
 
     Converts `arg` to an `$i64`. Panics if the argument is not convertible.
