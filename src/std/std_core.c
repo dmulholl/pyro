@@ -622,6 +622,11 @@ static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
+    return I64_VAL((int64_t)pyro_hash_value(args[0]));
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -700,4 +705,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$println", fn_println, -1);
     pyro_define_global_fn(vm, "$eprint", fn_eprint, -1);
     pyro_define_global_fn(vm, "$eprintln", fn_eprintln, -1);
+    pyro_define_global_fn(vm, "$hash", fn_hash, 1);
 }
