@@ -152,6 +152,8 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Returns the argument's 64-bit hash value as an `$i64`.
 
+    (Note that hash values can be negative. Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.)
+
 
 
 [[ `$i64(arg)` ]]

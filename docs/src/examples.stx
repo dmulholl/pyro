@@ -95,6 +95,16 @@ This is a convenience function --- a `$file` object provides more fine-grained c
 
 
 
+### Run a shell command
+
+The `$shell()` function takes a string arugment specifying the command to run.
+It returns a two-item tuple containing the exit code as an integer and the output as a string:
+
+::: code pyro
+    var (code, output) = $shell("pwd");
+
+
+
 ### Guessing game
 
 The classic guess-a-random-number game:

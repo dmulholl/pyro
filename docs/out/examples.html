@@ -78,6 +78,9 @@
 <a href="#writing-to-a-file">Writing to a file</a>
 </li>
 <li>
+<a href="#run-a-shell-command">Run a shell command</a>
+</li>
+<li>
 <a href="#guessing-game">Guessing game</a>
 </li>
 <li>
@@ -177,6 +180,16 @@ This is a convenience function &mdash; a <code>$file</code> object provides more
 <span class="kd">var</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">);</span>
 <span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;Content for file...&quot;</span><span class="p">);</span>
 <span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
+</pre>
+<h3 id="run-a-shell-command">
+Run a shell command
+</h3>
+<p>
+The <code>$shell()</code> function takes a string arugment specifying the command to run.
+It returns a two-item tuple containing the exit code as an integer and the output as a string:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">output</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
 </pre>
 <h3 id="guessing-game">
 Guessing game
