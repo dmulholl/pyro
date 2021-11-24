@@ -94,11 +94,15 @@ You can <code>echo</code> any value to the standard output stream:
 <span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Pyro also has a family of <code>$print()</code> functions which support format strings:
+Pyro also has a family of <code>$print()</code> functions:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;hello world&quot;</span><span class="p">);</span>
-
+</pre>
+<p>
+You can use format strings with these functions to interpolate variables:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">target</span> <span class="p">=</span> <span class="s">&quot;world&quot;</span><span class="p">;</span>
 <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;hello {}&quot;</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
 </pre>
