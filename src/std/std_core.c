@@ -451,23 +451,7 @@ static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $shell(), must be a string.");
-        return NULL_VAL();
-    }
-
-    CmdResult result;
-    if (!pyro_run_shell_cmd(vm, AS_STR(args[0])->bytes, &result)) {
-        // We've already panicked.
-        return NULL_VAL();
-    }
-
-    return OBJ_VAL(result.output);
-}
-
-
-static Value fn_shell2(PyroVM* vm, size_t arg_count, Value* args) {
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $shell2(), must be a string.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $shell(), expected a string.");
         return NULL_VAL();
     }
 
@@ -483,14 +467,13 @@ static Value fn_shell2(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_push(vm, output_string);
     ObjTup* tup = ObjTup_new(2, vm);
     pyro_pop(vm);
-
     if (!tup) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();
     }
 
-    tup->values[0] = output_string;
-    tup->values[1] = exit_code;
+    tup->values[0] = exit_code;
+    tup->values[1] = output_string;
 
     return OBJ_VAL(tup);
 }
@@ -699,7 +682,6 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
     pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);
     pyro_define_global_fn(vm, "$shell", fn_shell, 1);
-    pyro_define_global_fn(vm, "$shell2", fn_shell2, 1);
     pyro_define_global_fn(vm, "$debug", fn_debug, 1);
     pyro_define_global_fn(vm, "$read_file", fn_read_file, 1);
     pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);

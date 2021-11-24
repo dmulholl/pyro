@@ -292,14 +292,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$shell(cmd)` ]]
 
-    Runs a shell command and returns its output as a string.
-    `cmd` should be a string.
-
-
-
-[[ `$shell2(cmd)` ]]
-
-    Runs a shell command and returns a two-item tuple containing its output as a string and its exit code as an integer.
+    Runs a shell command and returns a two-item tuple containing its exit code as an integer and its output as a string.
     `cmd` should be a string.
 
 
