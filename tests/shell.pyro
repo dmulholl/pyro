@@ -1,2 +1,1 @@
-assert $shell("FOO=bar bash -c 'echo $FOO'") == "bar\n";
-assert $shell2("FOO=bar bash -c 'echo $FOO'") == $tup("bar\n", 0);
+assert $shell("FOO=bar bash -c 'echo $FOO'") == $tup(0, "bar\n");

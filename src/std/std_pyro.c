@@ -34,8 +34,6 @@ void pyro_load_std_pyro(PyroVM* vm) {
         pyro_define_member(vm, mod_pyro, "version", OBJ_VAL(version));
     }
 
-    pyro_define_member(vm, mod_pyro, "import_roots", OBJ_VAL(vm->import_roots));
-
     pyro_define_member_fn(vm, mod_pyro, "hash", fn_hash, 1);
     pyro_define_member_fn(vm, mod_pyro, "memory", fn_memory, 0);
     pyro_define_member_fn(vm, mod_pyro, "gc", fn_memory, 0);

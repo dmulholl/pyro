@@ -641,6 +641,8 @@ void pyro_load_std_core(PyroVM* vm) {
         pyro_define_global(vm, "$std", OBJ_VAL(mod_std));
     }
 
+    pyro_define_global(vm, "$roots", OBJ_VAL(vm->import_roots));
+
     ObjTup* args = ObjTup_new(0, vm);
     if (args) {
         pyro_push(vm, OBJ_VAL(args));
