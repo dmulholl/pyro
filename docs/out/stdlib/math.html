@@ -80,6 +80,28 @@ Euler's constant as an <code>$f64</code>.
 </div>
 <div>
 <dt>
+<code>i64_max</code>
+</dt>
+<dd>
+<p>
+The maximum allowable value of an <code>$i64</code>,
+i.e. <code>(2^63) - 1</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>i64_min</code>
+</dt>
+<dd>
+<p>
+The minimum allowable value of an <code>$i64</code>,
+i.e. <code>-(2^63)</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>inf</code>
 </dt>
 <dd>
@@ -115,11 +137,16 @@ Functions
 <dl>
 <div>
 <dt>
-<code>abs(x)</code>
+<code>abs(x)</code> <br> <code>abs(x, i64_min)</code>
 </dt>
 <dd>
 <p>
 Returns the absolute value of <code>x</code>, where <code>x</code> is an <code>$i64</code> or an <code>$f64</code>. The output type is the same as the input type.
+</p>
+<p>
+Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an <code>$i64</code>.
+If you provide a <code>i64_min</code> argument, its value will be returned as a fallback in this case.
+Otherwise, the return value will be whatever is returned by the underlying C implementation &mdash; typically a negative value.
 </p>
 </dd>
 </div>

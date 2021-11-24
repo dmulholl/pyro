@@ -15,6 +15,18 @@ This module provides a Pyro interface to the C standard library's mathematical f
     Euler's constant as an `$f64`.
 
 
+[[ `i64_max` ]]
+
+    The maximum allowable value of an `$i64`,
+    i.e. `(2^63) - 1`.
+
+
+[[ `i64_min` ]]
+
+    The minimum allowable value of an `$i64`,
+    i.e. `-(2^63)`.
+
+
 [[ `inf` ]]
 
     Floating-point positive infinity as an `$f64`.
@@ -34,9 +46,14 @@ This module provides a Pyro interface to the C standard library's mathematical f
 ### Functions
 
 
-[[ `abs(x)` ]]
+[[ `abs(x)` <br> `abs(x, i64_min)` ]]
 
     Returns the absolute value of `x`, where `x` is an `$i64` or an `$f64`. The output type is the same as the input type.
+
+    Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an `$i64`.
+    If you provide a `i64_min` argument, its value will be returned as a fallback in this case.
+    Otherwise, the return value will be whatever is returned by the underlying C implementation --- typically a negative value.
+
 
 
 [[ `acos(x)` ]]
