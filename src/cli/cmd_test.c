@@ -34,14 +34,14 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
         pyro_exec_file_as_main(vm, path);
 
         if (pyro_get_exit_flag(vm)) {
-            printf("-- \x1B[31mEXIT\x1B[39m (%lld)\n\n", pyro_get_status_code(vm));
+            printf(" · \x1B[1;31mEXIT\x1B[0m (%lld)\n\n", pyro_get_status_code(vm));
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
         }
 
         if (pyro_get_panic_flag(vm)) {
-            printf("-- \x1B[31mFAIL\x1B[39m\n\n");
+            printf(" · \x1B[1;31mFAIL\x1B[0m\n\n");
             files_failed += 1;
             pyro_free_vm(vm);
             continue;
@@ -55,13 +55,13 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
         funcs_failed += failed;
 
         if (passed + failed == 0) {
-            printf("-- PASS\n\n");
+            printf(" · PASS\n\n");
             files_passed += 1;
         } else if (failed > 0) {
-            printf("-- \x1B[31mFAIL\x1B[39m (%d/%d)\n\n", passed, passed + failed);
+            printf(" · \x1B[1;31mFAIL\x1B[0m (%d/%d)\n\n", passed, passed + failed);
             files_failed += 1;
         } else {
-            printf("-- PASS (%d/%d)\n\n", passed, passed + failed);
+            printf(" · PASS (%d/%d)\n\n", passed, passed + failed);
             files_passed += 1;
         }
 
@@ -70,7 +70,8 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
 
     double time = (double)(clock() - start_time) / CLOCKS_PER_SEC;
 
-    printf("  \x1B[7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS");
+    /* printf("  \x1B[7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS"); */
+    printf("  \x1B[1;7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS");
     printf("  Files: %d/%d", files_passed, files_passed + files_failed);
     printf(" · Funcs: %d/%d", funcs_passed, funcs_passed + funcs_failed);
     printf(" · Time: %f secs\n", time);

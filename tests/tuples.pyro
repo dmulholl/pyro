@@ -1,4 +1,4 @@
-assert !$is_tup("foobar");
+assert !$is_tup(123);
 
 var foo = $tup();
 assert $is_tup(foo);

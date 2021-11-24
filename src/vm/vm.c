@@ -1882,7 +1882,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
             ObjStr* name = AS_STR(entry.key);
             if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                 if (AS_CLOSURE(entry.value)->fn->arity > 0) {
-                    pyro_out(vm, "-- Invalid test function (%s), too many args.\n", name->bytes);
+                    pyro_out(vm, " · Invalid test function (%s), too many args.\n", name->bytes);
                     tests_failed += 1;
                     continue;
                 }
@@ -1904,19 +1904,19 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 assert(vm->stack_top == vm->stack);
 
                 if (vm->exit_flag) {
-                    pyro_out(vm, "-- EXIT (%d) %s\n", vm->status_code, name->bytes);
+                    pyro_out(vm, " · \x1B[1;31mEXIT\x1B[0m (%d) %s\n", vm->status_code, name->bytes);
                     tests_failed += 1;
                     break;
                 }
 
                 if (vm->hard_panic) {
-                    pyro_out(vm, "-- HARD PANIC %s\n", name->bytes);
+                    pyro_out(vm, " · \x1B[1;31mHARD PANIC\x1B[0m %s\n", name->bytes);
                     tests_failed += 1;
                     break;
                 }
 
                 if (vm->panic_flag) {
-                    pyro_out(vm, "-- FAIL %s\n", name->bytes);
+                    pyro_out(vm, " · \x1B[1;31mFAIL\x1B[0m %s\n", name->bytes);
                     tests_failed += 1;
                     continue;
                 }
