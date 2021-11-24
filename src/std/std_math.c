@@ -6,12 +6,31 @@
 
 
 static Value fn_abs(PyroVM* vm, size_t arg_count, Value* args) {
-    if (IS_I64(args[0])) {
-        return I64_VAL(imaxabs(args[0].as.i64));
-    } else if (IS_F64(args[0])) {
-        return F64_VAL(fabs(args[0].as.f64));
+    if (arg_count == 1) {
+        if (IS_I64(args[0])) {
+            return I64_VAL(imaxabs(args[0].as.i64));
+        } else if (IS_F64(args[0])) {
+            return F64_VAL(fabs(args[0].as.f64));
+        }
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::abs(), must be a number.");
+        return NULL_VAL();
     }
-    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::abs(), must be a number.");
+
+    if (arg_count == 2) {
+        if (IS_I64(args[0])) {
+            if (args[0].as.i64 == INT64_MIN) {
+                return args[1];
+            } else {
+                return I64_VAL(imaxabs(args[0].as.i64));
+            }
+        } else if (IS_F64(args[0])) {
+            return F64_VAL(fabs(args[0].as.f64));
+        }
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::abs(), must be a number.");
+        return NULL_VAL();
+    }
+
+    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for $std::math::abs(), found 0.");
     return NULL_VAL();
 }
 
@@ -232,8 +251,10 @@ void pyro_load_std_math(PyroVM* vm) {
     pyro_define_member(vm, mod_math, "e", F64_VAL(PYRO_E));
     pyro_define_member(vm, mod_math, "nan", F64_VAL(NAN));
     pyro_define_member(vm, mod_math, "inf", F64_VAL(INFINITY));
+    pyro_define_member(vm, mod_math, "i64_max", I64_VAL(INT64_MAX));
+    pyro_define_member(vm, mod_math, "i64_min", I64_VAL(INT64_MIN));
 
-    pyro_define_member_fn(vm, mod_math, "abs", fn_abs, 1);
+    pyro_define_member_fn(vm, mod_math, "abs", fn_abs, -1);
     pyro_define_member_fn(vm, mod_math, "acos", fn_acos, 1);
     pyro_define_member_fn(vm, mod_math, "asin", fn_asin, 1);
     pyro_define_member_fn(vm, mod_math, "atan", fn_atan, 1);

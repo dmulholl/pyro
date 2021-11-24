@@ -1,0 +1,13 @@
+assert $std::math::abs(1) == 1;
+assert $std::math::abs(-1) == 1;
+
+assert $std::math::abs(1.0) == 1.0;
+assert $std::math::abs(-1.0) == 1.0;
+
+assert $std::math::abs(1, 0) == 1;
+assert $std::math::abs(1.0, 0.0) == 1.0;
+assert $std::math::abs(-1, 0) == 1;
+assert $std::math::abs(-1.0, 0.0) == 1.0;
+
+assert $std::math::abs($std::math::i64_min, 0) == 0;
+assert $std::math::abs($std::math::i64_min, "foo") == "foo";
