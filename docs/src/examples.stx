@@ -6,6 +6,23 @@ meta_title: Pyro &mdash; Examples
 ::: insert toc
 
 
+### Hello World
+
+You can `echo` any value to the standard output stream:
+
+::: code pyro
+    echo "hello world";
+
+Pyro also has a family of `$print()` functions which support format strings:
+
+::: code pyro
+    $println("hello world");
+
+    var target = "world";
+    $println("hello {}", target);
+
+
+
 ### Fibonacci numbers
 
 Calculate the n-th Fibonacci number:
@@ -106,7 +123,7 @@ The classic interview question:
 
 ::: code pyro
     def fizzbuzz(n) {
-        loop var i = 1; i <= n; i += 1 {
+        for i in $range(1, n + 1) {
             if i % 15 == 0 {
                 echo "fizzbuzz";
             } else if i % 3 == 0 {

@@ -99,6 +99,16 @@ A string containing the filepath of the script or module file.
 </div>
 <div>
 <dt>
+<code>$roots</code>
+</dt>
+<dd>
+<p>
+A vector of strings containing the root directory paths that Pyro checks when attempting to import a module. Directory paths can end with an optional trailing slash. A single dot <code>.</code> indicates the current working directory, a single slash <code>/</code> indicates the system root directory.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$stderr</code>
 </dt>
 <dd>
@@ -534,18 +544,7 @@ Panics if the argument is invalid, if the file cannot be opened, if an I/O read 
 </dt>
 <dd>
 <p>
-Runs a shell command and returns its output as a string.
-<code>cmd</code> should be a string.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$shell2(cmd)</code>
-</dt>
-<dd>
-<p>
-Runs a shell command and returns a two-item tuple containing its output as a string and its exit code as an integer.
+Runs a shell command and returns a two-item tuple containing its exit code as an integer and its output as a string.
 <code>cmd</code> should be a string.
 </p>
 </dd>
