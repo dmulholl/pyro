@@ -1840,15 +1840,25 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
 
 
 void pyro_run_main_func(PyroVM* vm) {
-    Value main;
-    if (ObjMap_get(vm->main_module->globals, STR_VAL("$main"), &main)) {
-        if (IS_CLOSURE(main)) {
-            pyro_push(vm, main);
-            call_value(vm, main, 0);
-            run(vm);
-            pyro_pop(vm);
+    ObjStr* main_string = STR_OBJ("$main");
+    if (!main_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
+    }
+
+    Value main_value;
+    if (ObjMap_get(vm->main_module->globals, OBJ_VAL(main_string), &main_value)) {
+        if (IS_CLOSURE(main_value)) {
+            if (AS_CLOSURE(main_value)->fn->arity == 0) {
+                pyro_push(vm, main_value);
+                call_value(vm, main_value, 0);
+                run(vm);
+                pyro_pop(vm);
+            } else {
+                pyro_panic(vm, ERR_ARGS_ERROR, "Invalid $main(), must take 0 arguments.");
+            }
         } else {
-            pyro_panic(vm, ERR_SYNTAX_ERROR, "$main() must be a function.");
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid $main, must be a function.");
         }
     }
 }
