@@ -117,7 +117,6 @@ struct Obj {
 
 // Macros for creating string objects by copying C strings.
 #define STR_OBJ(c_string)           ObjStr_copy_raw(c_string, strlen(c_string), vm)
-#define STR_VAL(c_string)           OBJ_VAL(STR_OBJ(c_string))
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
 ObjClass* pyro_get_class(Value value);

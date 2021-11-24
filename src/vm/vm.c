@@ -1762,8 +1762,12 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 
 
 void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
-    Value path_value = STR_VAL(path);
-    pyro_define_member(vm, vm->main_module, "$filepath", path_value);
+    ObjStr* path_string = STR_OBJ(path);
+    if (!path_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
+    }
+    pyro_define_member(vm, vm->main_module, "$filepath", OBJ_VAL(path_string));
 
     FileData fd;
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
@@ -1800,8 +1804,12 @@ void pyro_test_compile_file(PyroVM* vm, const char* path) {
 
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
-    Value path_value = STR_VAL(path);
-    pyro_define_member(vm, module, "$filepath", path_value);
+    ObjStr* path_string = STR_OBJ(path);
+    if (!path_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
+    }
+    pyro_define_member(vm, module, "$filepath", OBJ_VAL(path_string));
 
     FileData fd;
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
