@@ -323,9 +323,9 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             if (closure->fn->name == NULL) {
-                pyro_out(vm, "<fc>");
+                pyro_out(vm, "<fn>");
             } else {
-                pyro_out(vm, "<fc %s>", closure->fn->name->bytes);
+                pyro_out(vm, "<fn %s>", closure->fn->name->bytes);
             }
             break;
         }
@@ -333,9 +333,9 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
         case OBJ_FN: {
             ObjFn* fn = (ObjFn*)object;
             if (fn->name == NULL) {
-                pyro_out(vm, "<fn>");
+                pyro_out(vm, "<fn_obj>");
             } else {
-                pyro_out(vm, "<fn %s>", fn->name->bytes);
+                pyro_out(vm, "<fn_obj %s>", fn->name->bytes);
             }
             break;
         }
@@ -358,7 +358,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
 
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
-            pyro_out(vm, "<fn nat %s>", native->name->bytes);
+            pyro_out(vm, "<fn_nat %s>", native->name->bytes);
             break;
         }
 

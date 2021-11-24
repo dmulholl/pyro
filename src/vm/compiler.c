@@ -1938,7 +1938,7 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
     FnCompiler compiler;
-    if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("<module>"))) {
+    if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("module"))) {
         vm->status_code = ERR_OUT_OF_MEMORY;
         return NULL;
     }
