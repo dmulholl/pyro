@@ -6,7 +6,7 @@ meta_title: Pyro &mdash; Examples
 ::: insert toc
 
 
-### Hello World
+### Hello world
 
 You can `echo` any value to the standard output stream:
 

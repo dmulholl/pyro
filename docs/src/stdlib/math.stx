@@ -55,7 +55,6 @@ This module provides a Pyro interface to the C standard library's mathematical f
     Otherwise, the return value will be whatever is returned by the underlying C implementation --- typically a negative value.
 
 
-
 [[ `acos(x)` ]]
 
     Returns the arc cosine of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
@@ -142,4 +141,3 @@ This module provides a Pyro interface to the C standard library's mathematical f
 [[ `tan(x)` ]]
 
     Returns the tangent of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-

@@ -1,13 +1,15 @@
-assert $std::math::abs(1) == 1;
-assert $std::math::abs(-1) == 1;
+import $std::math;
 
-assert $std::math::abs(1.0) == 1.0;
-assert $std::math::abs(-1.0) == 1.0;
+assert math::abs(1) == 1;
+assert math::abs(-1) == 1;
 
-assert $std::math::abs(1, 0) == 1;
-assert $std::math::abs(1.0, 0.0) == 1.0;
-assert $std::math::abs(-1, 0) == 1;
-assert $std::math::abs(-1.0, 0.0) == 1.0;
+assert math::abs(1.0) == 1.0;
+assert math::abs(-1.0) == 1.0;
 
-assert $std::math::abs($std::math::i64_min, 0) == 0;
-assert $std::math::abs($std::math::i64_min, "foo") == "foo";
+assert math::abs(1, 0) == 1;
+assert math::abs(1.0, 0.0) == 1.0;
+assert math::abs(-1, 0) == 1;
+assert math::abs(-1.0, 0.0) == 1.0;
+
+assert math::abs(math::i64_min, 0) == 0;
+assert math::abs(math::i64_min, "foo") == "foo";
