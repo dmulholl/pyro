@@ -72,8 +72,8 @@ Submodules can similarly be aliased:
 
 ### Import Roots
 
-The standard library's `$std::pyro::import_roots` vector contains the list of root directories that Pyro checks when attempting to import a module.
+The global `$roots` vector contains the list of root directories that Pyro checks when attempting to import a module.
 
 Currently, if Pyro is executing a script it checks the parent directory containing that script. If the REPL is executing it checks the current working directory.
 
-You can add or remove entries from the `import_roots` vector to customize Pyro's default behaviour.
+You can add or remove entries from the `$roots` vector to customize Pyro's default behaviour.
