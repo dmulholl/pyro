@@ -120,9 +120,9 @@ void pyro_run_repl(ArgParser* parser) {
 
     for (;;) {
         if (code) {
-            printf("... ");
+            printf("\x1B[90m···\x1B[0m ");
         } else {
-            printf(">>> ");
+            printf("\x1B[90m>>>\x1B[0m ");
         }
 
         char* line = NULL;
