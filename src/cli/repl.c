@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "../lib/linenoise/linenoise.h"
 
 
 // Returns true if [code] contains an open quote.
@@ -152,38 +153,26 @@ void pyro_run_repl(ArgParser* parser) {
     size_t code_count = 0;
 
     for (;;) {
+        char* line;
         if (code) {
-            printf("\x1B[90m···\x1B[0m ");
+            line = linenoise("... ");
         } else {
-            printf("\x1B[90m>>>\x1B[0m ");
+            line = linenoise(">>> ");
         }
 
-        char* line = NULL;
-        size_t line_capacity = 0;
-        ssize_t line_count = getline(&line, &line_capacity, stdin);
-
-        if (line_count == -1) {
-            if (feof(stdin)) {
-                printf("EOF\n");
-                exit(0);
-            } else {
-                fprintf(stderr, "Error: Failed to read input from STDIN.\n");
-                exit(1);
-            }
+        if (!line || strcmp(line, "exit") == 0) {
+            break;
         }
+        linenoiseHistoryAdd(line);
 
-        if (strcmp(line, "exit\n") == 0) {
-            exit(0);
-        }
-
-        code = realloc(code, code_count + line_count);
+        code = realloc(code, code_count + strlen(line) + 1);
         if (!code) {
             fprintf(stderr, "Error: Failed to allocate memory for input.\n");
             exit(1);
         }
-
-        memcpy(&code[code_count], line, line_count);
-        code_count += line_count;
+        memcpy(&code[code_count], line, strlen(line));
+        code_count += strlen(line) + 1;
+        code[code_count - 1] = '\n';
         free(line);
 
         // If the code contains unclosed quotes or more opening brackets than closing brackets,

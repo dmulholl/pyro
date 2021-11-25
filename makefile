@@ -12,7 +12,7 @@ DUMP_CODE = -D PYRO_DEBUG_DUMP_BYTECODE
 
 TRACE_EXEC = -D PYRO_DEBUG_TRACE_EXECUTION
 
-FILES = src/vm/*.c src/std/*.c src/cli/*.c src/lib/mt64/*.c src/lib/args/*.c
+FILES = src/vm/*.c src/std/*.c src/cli/*.c src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
 
 # ------------- #
 # Phony Targets #
