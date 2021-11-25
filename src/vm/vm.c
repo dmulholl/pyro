@@ -1932,6 +1932,8 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
 
 
 void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
+    size_t max_name_length = 0;
+
     for (size_t i = 0; i < vm->main_module->globals->capacity; i++) {
         MapEntry entry = vm->main_module->globals->entries[i];
         if (IS_STR(entry.key) && IS_CLOSURE(entry.value)) {
@@ -1939,9 +1941,20 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
             if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                 if (AS_CLOSURE(entry.value)->fn->arity > 0) {
                     pyro_out(vm, " · Invalid time function (%s), too many args.\n", name->bytes);
-                    continue;
+                    return;
                 }
+                if (name->length > max_name_length) {
+                    max_name_length = name->length;
+                }
+            }
+        }
+    }
 
+    for (size_t i = 0; i < vm->main_module->globals->capacity; i++) {
+        MapEntry entry = vm->main_module->globals->entries[i];
+        if (IS_STR(entry.key) && IS_CLOSURE(entry.value)) {
+            ObjStr* name = AS_STR(entry.key);
+            if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                 double start_time = clock();
 
                 for (size_t j = 0; j < num_iterations; j++) {
@@ -1957,7 +1970,12 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
                 }
 
                 double runtime = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-                pyro_out(vm, " · %s() ··· %f secs\n", name->bytes, runtime / num_iterations);
+
+                pyro_out(vm, " · %s() ···", name->bytes);
+                for (size_t j = 0; j < max_name_length - name->length; j++) {
+                    pyro_out(vm, "·");
+                }
+                pyro_out(vm, " %f secs\n", runtime / num_iterations);
             }
         }
     }
