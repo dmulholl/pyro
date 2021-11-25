@@ -61,7 +61,22 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#submodules">Submodules</a>
+</li>
+<li>
+<a href="#parents-children-siblings">Parents, Children, Siblings</a>
+</li>
+<li>
+<a href="#aliasing">Aliasing</a>
+</li>
+<li>
+<a href="#import-roots">Import Roots</a>
+</li>
+</ul>
+<hr>
+<p>
 A module is a Pyro file loaded as a library. Modules are loaded using the <code>import</code> keyword.
 </p>
 <p>
@@ -115,6 +130,37 @@ root/
 <p>
 Submodules can contain submodules of their own &mdash; there's no hard limit to how deep the nesting can go.
 </p>
+<h3 id="parents-children-siblings">
+Parents, Children, Siblings
+</h3>
+<p>
+Imagine we have the following module structure:
+</p>
+<pre>
+root/
+|-- math/
+    |-- calc.pyro
+    |-- self.pyro
+    |-- trig.pyro
+</pre>
+<p>
+A parent module can import its child &ndash; e.g. in <code>root/math/self.pyro</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
+</pre>
+<p>
+A child module can import its parent &ndash; e.g. in <code>root/math/calc.pyro</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">;</span>
+</pre>
+<p>
+A child module can import its sibling &ndash; e.g. in <code>root/math/calc.pyro</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
+</pre>
 <h3 id="aliasing">
 Aliasing
 </h3>

@@ -3,6 +3,10 @@ title: Modules
 meta_title: Pyro &mdash; Modules
 ---
 
+::: insert toc
+::: hr
+
+
 A module is a Pyro file loaded as a library. Modules are loaded using the `import` keyword.
 
 Assume we have a file called `math.pyro` containing math functions:
@@ -49,6 +53,34 @@ Finally, the top-level `math` module can be empty and simply function as a conta
         |-- trig.pyro
 
 Submodules can contain submodules of their own --- there's no hard limit to how deep the nesting can go.
+
+
+
+### Parents, Children, Siblings
+
+Imagine we have the following module structure:
+
+::: code
+    root/
+    |-- math/
+        |-- calc.pyro
+        |-- self.pyro
+        |-- trig.pyro
+
+A parent module can import its child -- e.g. in `root/math/self.pyro`:
+
+::: code pyro
+    import math::trig;
+
+A child module can import its parent -- e.g. in `root/math/calc.pyro`:
+
+::: code pyro
+    import math;
+
+A child module can import its sibling -- e.g. in `root/math/calc.pyro`:
+
+::: code pyro
+    import math::trig;
 
 
 
