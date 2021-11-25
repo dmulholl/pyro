@@ -1,0 +1,11 @@
+var pi = 3.14;
+
+var mod_name = "lib3::child1";
+
+def get_mod_name() {
+    return mod_name;
+}
+
+def add(a, b) {
+    return a + b;
+}

@@ -50,28 +50,28 @@ assert lib2::get_mod_name() == "lib2";
 var func2 = lib2::get_mod_name;
 assert func2() == "lib2";
 
-# ./lib2/lib3.pyro
-import lib2::lib3;
+# ./lib2/child1.pyro
+import lib2::child1;
+assert $is_mod(child1);
+assert child1::pi == 3.14;
+assert child1::add(1, 2) == 3;
+assert child1::mod_name == "lib2::child1";
+assert child1::get_mod_name() == "lib2::child1";
+
+var func3 = child1::get_mod_name;
+assert func3() == "lib2::child1";
+
+# ./lib3/
+import lib3;
 assert $is_mod(lib3);
-assert lib3::e == 2.72;
-assert lib3::mul(2, 3) == 6;
-assert lib3::mod_name == "lib3";
-assert lib3::get_mod_name() == "lib3";
 
-var func3 = lib3::get_mod_name;
-assert func3() == "lib3";
+# ./lib3/child1.pyro
+import lib3::child1;
+assert $is_mod(child1);
+assert child1::pi == 3.14;
+assert child1::add(1, 2) == 3;
+assert child1::mod_name == "lib3::child1";
+assert child1::get_mod_name() == "lib3::child1";
 
-# ./lib4/
-import lib4;
-assert $is_mod(lib4);
-
-# ./lib4/lib5.pyro
-import lib4::lib5;
-assert $is_mod(lib5);
-assert lib5::e == 2.72;
-assert lib5::mul(2, 3) == 6;
-assert lib5::mod_name == "lib5";
-assert lib5::get_mod_name() == "lib5";
-
-var func5 = lib5::get_mod_name;
-assert func5() == "lib5";
+var func4 = child1::get_mod_name;
+assert func4() == "lib3::child1";
