@@ -9,3 +9,15 @@ def get_mod_name() {
 def add(a, b) {
     return a + b;
 }
+
+def test_importing_parent() {
+    import lib2;
+    assert lib2::mod_name == "lib2";
+    assert lib2::get_mod_name() == "lib2";
+}
+
+def test_importing_sibling() {
+    import lib2::child2;
+    assert child2::mod_name == "lib2::child2";
+    assert child2::get_mod_name() == "lib2::child2";
+}

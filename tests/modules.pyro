@@ -75,3 +75,12 @@ assert child1::get_mod_name() == "lib3::child1";
 
 var func4 = child1::get_mod_name;
 assert func4() == "lib3::child1";
+
+# Test parent importing child.
+import lib2;
+lib2::test_importing_child();
+
+# Test child importing parent and sibling.
+import lib2::child1;
+child1::test_importing_parent();
+child1::test_importing_sibling();
