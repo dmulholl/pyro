@@ -97,6 +97,39 @@ static int count_brackets(const char* code, size_t code_count) {
 }
 
 
+// Returns true if [code] is missing a terminating brace or semicolon.
+static bool needs_terminator(const char* code, size_t code_count) {
+    // If [code] is empty, it doesn't need a terminator.
+    if (code_count == 0) {
+        return false;
+    }
+
+    // If [code] consists entirely of whitespace, it doesn't need a terminator.
+    bool is_ws = true;
+    for (size_t i = 0; i < code_count; i++) {
+        if (!isspace(code[i])) {
+            is_ws = false;
+            break;
+        }
+    }
+    if (is_ws) {
+        return false;
+    }
+
+    // Index of the last non-whitespace character.
+    size_t last_char_index = code_count - 1;
+    while (isspace(code[last_char_index])) {
+        last_char_index--;
+    }
+
+    if (code[last_char_index] == '}' || code[last_char_index] == ';') {
+        return false;
+    }
+
+    return true;
+}
+
+
 void pyro_run_repl(ArgParser* parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
@@ -157,6 +190,18 @@ void pyro_run_repl(ArgParser* parser) {
         // read and append another line of input.
         if (has_open_quote(code, code_count) || count_brackets(code, code_count) > 0) {
             continue;
+        }
+
+        // Valid code should end with either a closing brace '}' or a semicolon ';'. If this code
+        // ends with neither, add a terminating semicolon.
+        if (needs_terminator(code, code_count)) {
+            code = realloc(code, code_count + 1);
+            if (!code) {
+                fprintf(stderr, "Error: Failed to allocate memory for input.\n");
+                exit(1);
+            }
+            code[code_count] = ';';
+            code_count++;
         }
 
         pyro_exec_code_as_main(vm, code, code_count, "repl");
