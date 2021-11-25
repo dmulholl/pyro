@@ -1938,7 +1938,7 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
             ObjStr* name = AS_STR(entry.key);
             if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                 if (AS_CLOSURE(entry.value)->fn->arity > 0) {
-                    pyro_out(vm, "-- Invalid time function (%s), too many args.\n", name->bytes);
+                    pyro_out(vm, " · Invalid time function (%s), too many args.\n", name->bytes);
                     continue;
                 }
 
@@ -1957,7 +1957,7 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
                 }
 
                 double runtime = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-                pyro_out(vm, "-- %s() :: %f secs\n", name->bytes, runtime / num_iterations);
+                pyro_out(vm, " · %s() ··· %f secs\n", name->bytes, runtime / num_iterations);
             }
         }
     }
