@@ -5,6 +5,7 @@ meta_title: Pyro &mdash; Acknowledgements
 
 [1]: http://craftinginterpreters.com
 [2]: http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/emt.html
+[3]: https://github.com/antirez/linenoise
 
 
 I was inspired to build Pyro by reading Bob Nystrom's wonderful book [Crafting Interpreters][1], so many of the cleverest ideas in the implementation build on his work.
@@ -14,3 +15,6 @@ As Pyro develops it will incorporate code from external libraries and projects r
 (*) Many of the implementation's core mechanics were adapted from or inspired by *Lox*, the sample language from Bob Nystrom's [Crafting Interpreters][1] book. This code was released under an MIT license.
 
 (*) The `$std::prng` module's Mersenne Twister was adapted from the [original implementation][2] by the algorithm's inventors, Takuji Nishimura and Makoto Matsumoto. This code was released under a 3-clause BSD license.
+
+(*) The REPL uses the [Linenoise][3] library by Salvatore Sanfilippo to provide support for line-editing.
+    This code was released under a 2-clause BSD license.
