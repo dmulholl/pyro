@@ -1,0 +1,13 @@
+import lib4;
+import lib4::child1;
+import lib4::child2;
+
+assert lib4::get_mod_name() == "lib4";
+assert child1::get_mod_name() == "lib4::child1";
+assert child2::get_mod_name() == "lib4::child2";
+
+assert child1::get_sib_name() == "lib4::child2";
+assert child2::get_sib_name() == "lib4::child1";
+
+assert child1::get_parent_name() == "lib4";
+assert child2::get_parent_name() == "lib4";

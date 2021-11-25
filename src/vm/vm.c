@@ -15,13 +15,7 @@
 #include "../std/std_errors.h"
 
 
-static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
-    ObjModule* module = ObjModule_new(vm);
-    if (!module) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
-    }
-
+static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
 
@@ -36,12 +30,10 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         }
         path_length += 4 + 5; // add space for a [.pyro] or [/self.pyro] suffix
 
-        pyro_push(vm, OBJ_VAL(module));
         char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
-        pyro_pop(vm);
         if (!path) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL_VAL();
+            return;
         }
 
         // We start with path = BASE/
@@ -65,11 +57,9 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         path[path_count] = '\0';
 
         if (pyro_file_exists(path)) {
-            pyro_push(vm, OBJ_VAL(module));
             pyro_exec_file_as_module(vm, path, module);
-            pyro_pop(vm);
             FREE_ARRAY(vm, char, path, path_length + 1);
-            return OBJ_VAL(module);
+            return;
         }
 
         // 2. Try file: BASE/foo/bar/baz/self.pyro
@@ -78,26 +68,29 @@ static Value pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args) {
         path[path_count] = '\0';
 
         if (pyro_file_exists(path)) {
-            pyro_push(vm, OBJ_VAL(module));
             pyro_exec_file_as_module(vm, path, module);
-            pyro_pop(vm);
             FREE_ARRAY(vm, char, path, path_length + 1);
-            return OBJ_VAL(module);
+            return;
         }
 
-        // 3. Try dir: BASE_DIR/foo/bar/baz
+        // 3. Try dir: BASE/foo/bar/baz
         path_count -= 10;
         path[path_count] = '\0';
 
         if (pyro_dir_exists(path)) {
             FREE_ARRAY(vm, char, path, path_length + 1);
-            return OBJ_VAL(module);
+            return;
         }
 
         FREE_ARRAY(vm, char, path, path_length + 1);
     }
 
-    return NULL_VAL();
+    pyro_panic(
+        vm, ERR_MODULE_NOT_FOUND,
+        "Unable to locate module '%s'.", AS_STR(args[arg_count - 1])->bytes
+    );
+
+    return;
 }
 
 
@@ -780,40 +773,41 @@ static void run(PyroVM* vm) {
                 Value* args = vm->stack_top - arg_count;
 
                 ObjMap* supermod_map = vm->modules;
-                Value module;
+                Value module_value;
 
                 for (uint8_t i = 0; i < arg_count; i++) {
                     Value name = args[i];
 
-                    if (ObjMap_get(supermod_map, name, &module)) {
-                        supermod_map = AS_MOD(module)->submodules;
+                    if (ObjMap_get(supermod_map, name, &module_value)) {
+                        supermod_map = AS_MOD(module_value)->submodules;
                         continue;
                     }
 
-                    module = pyro_import_module(vm, i + 1, args);
-                    if (vm->halt_flag) {
-                        break;
-                    }
-                    if (IS_NULL(module)) {
-                        pyro_panic(
-                            vm, ERR_MODULE_NOT_FOUND,
-                            "Unable to locate module '%s'.", AS_STR(name)->bytes
-                        );
-                        break;
-                    }
-
-                    pyro_push(vm, module);
-                    if (ObjMap_set(supermod_map, name, module, vm) == 0) {
+                    ObjModule* module_object = ObjModule_new(vm);
+                    if (!module_object) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                        break;
+                        return;
                     }
-                    pyro_pop(vm);
+                    module_value = OBJ_VAL(module_object);
+                    pyro_push(vm, module_value);
 
-                    supermod_map = AS_MOD(module)->submodules;
+                    if (ObjMap_set(supermod_map, name, module_value, vm) == 0) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+
+                    pyro_import_module(vm, i + 1, args, module_object);
+                    if (vm->halt_flag) {
+                        ObjMap_remove(supermod_map, name);
+                        return;
+                    }
+
+                    pyro_pop(vm); // module_value
+                    supermod_map = module_object->submodules;
                 }
 
                 vm->stack_top -= arg_count;
-                pyro_push(vm, module);
+                pyro_push(vm, module_value);
                 break;
             }
 
