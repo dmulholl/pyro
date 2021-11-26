@@ -100,29 +100,58 @@ static const char* CHECK_HELPTEXT =
 
 
 int main(int argc, char* argv[]) {
+    // Initialize the root argument parser.
     ArgParser* parser = ap_new();
+    if (!parser) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(1);
+    }
+
     ap_helptext(parser, HELPTEXT);
     ap_version(parser, PYRO_VERSION_STRING);
     ap_str_opt(parser, "max-memory m", NULL);
     ap_str_opt(parser, "import-root i", NULL);
+    ap_first_pos_arg_ends_options(parser, true);
 
+    // Register the parser for the 'test' comand.
     ArgParser* test_cmd_parser = ap_cmd(parser, "test");
+    if (!test_cmd_parser) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(1);
+    }
+
     ap_helptext(test_cmd_parser, TEST_HELPTEXT);
     ap_callback(test_cmd_parser, pyro_cmd_test);
     ap_flag(test_cmd_parser, "verbose v");
     ap_str_opt(test_cmd_parser, "max-memory m", NULL);
     ap_str_opt(test_cmd_parser, "import-root i", NULL);
 
+    // Register the parser for the 'time' comand.
     ArgParser* time_cmd_parser = ap_cmd(parser, "time");
+    if (!time_cmd_parser) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(1);
+    }
+
     ap_helptext(time_cmd_parser, TIME_HELPTEXT);
     ap_callback(time_cmd_parser, pyro_cmd_time);
     ap_int_opt(time_cmd_parser, "num-runs n", 100);
 
+    // Register the parser for the 'check' comand.
     ArgParser* check_cmd_parser = ap_cmd(parser, "check");
+    if (!check_cmd_parser) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(1);
+    }
+
     ap_helptext(check_cmd_parser, CHECK_HELPTEXT);
     ap_callback(check_cmd_parser, pyro_cmd_check);
 
-    ap_parse(parser, argc, argv);
+    // Parse the command line arguments.
+    if (!ap_parse(parser, argc, argv)) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(1);
+    }
 
     if (!ap_has_cmd(parser)) {
         if (ap_count_args(parser) > 0) {
