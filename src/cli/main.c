@@ -48,11 +48,16 @@ static const char* TEST_HELPTEXT =
     "  Note that test functions take no arguments.\n"
     "\n"
     "Arguments:\n"
-    "  [files]              Files to test.\n"
+    "  [files]                    Files to test.\n"
+    "\n"
+    "Options:\n"
+    "  -i, --import-root <dir>    Add a directory to the list of import roots.\n"
+    "  -m, --max-memory <int>     Maximum allowed memory allocation in bytes.\n"
+    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
-    "  -h, --help           Print this help text and exit.\n"
-    "  -v, --verbose        Show error output.\n"
+    "  -h, --help                 Print this help text and exit.\n"
+    "  -v, --verbose              Show error output.\n"
     ;
 
 
@@ -101,19 +106,21 @@ int main(int argc, char* argv[]) {
     ap_str_opt(parser, "max-memory m", NULL);
     ap_str_opt(parser, "import-root i", NULL);
 
-    ArgParser* test_cmd = ap_cmd(parser, "test");
-    ap_helptext(test_cmd, TEST_HELPTEXT);
-    ap_callback(test_cmd, pyro_cmd_test);
-    ap_flag(test_cmd, "verbose v");
+    ArgParser* test_cmd_parser = ap_cmd(parser, "test");
+    ap_helptext(test_cmd_parser, TEST_HELPTEXT);
+    ap_callback(test_cmd_parser, pyro_cmd_test);
+    ap_flag(test_cmd_parser, "verbose v");
+    ap_str_opt(test_cmd_parser, "max-memory m", NULL);
+    ap_str_opt(test_cmd_parser, "import-root i", NULL);
 
-    ArgParser* time_cmd = ap_cmd(parser, "time");
-    ap_helptext(time_cmd, TIME_HELPTEXT);
-    ap_callback(time_cmd, pyro_cmd_time);
-    ap_int_opt(time_cmd, "num-runs n", 100);
+    ArgParser* time_cmd_parser = ap_cmd(parser, "time");
+    ap_helptext(time_cmd_parser, TIME_HELPTEXT);
+    ap_callback(time_cmd_parser, pyro_cmd_time);
+    ap_int_opt(time_cmd_parser, "num-runs n", 100);
 
-    ArgParser* check_cmd = ap_cmd(parser, "check");
-    ap_helptext(check_cmd, CHECK_HELPTEXT);
-    ap_callback(check_cmd, pyro_cmd_check);
+    ArgParser* check_cmd_parser = ap_cmd(parser, "check");
+    ap_helptext(check_cmd_parser, CHECK_HELPTEXT);
+    ap_callback(check_cmd_parser, pyro_cmd_check);
 
     ap_parse(parser, argc, argv);
 

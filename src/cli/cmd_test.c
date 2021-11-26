@@ -23,14 +23,23 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
             exit(1);
         }
 
-        char* path_copy = strdup(path);
-        pyro_add_import_root(vm, dirname(path_copy));
-        free(path_copy);
-
+        // Swallow error output unless the --verbose flag has been set.
         if (!ap_found(cmd_parser, "verbose")) {
             pyro_set_err_file(vm, NULL);
         }
 
+        // Add the directory containing the script file to the list of import roots.
+        char* path_copy = strdup(path);
+        pyro_add_import_root(vm, dirname(path_copy));
+        free(path_copy);
+
+        // Set the VM"s max memory allocation.
+        pyro_cli_set_max_memory(vm, cmd_parser);
+
+        // Add any import roots supplied on the command line.
+        pyro_cli_add_import_roots(vm, cmd_parser);
+
+        // Compile and execute the script.
         pyro_exec_file_as_main(vm, path);
 
         if (pyro_get_exit_flag(vm)) {
