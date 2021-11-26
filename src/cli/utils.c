@@ -7,13 +7,11 @@ void pyro_cli_add_import_roots(PyroVM* vm, ArgParser* parser) {
     }
 
     int arg_count = ap_count(parser, "import-root");
-    char** args = ap_str_values(parser, "import-root");
 
     for (int i = 0; i < arg_count; i++) {
-        pyro_add_import_root(vm, args[i]);
+        char* root = ap_str_value_at_index(parser, "import-root", i);
+        pyro_add_import_root(vm, root);
     }
-
-    free(args);
 }
 
 
