@@ -35,9 +35,9 @@ Note that conditional expressions using the ternary operator `?|` can't be neste
 
 ### Logical Operators
 
-The logical operators are `||` (logical-OR), `&&` (logical-AND), and `!` (logical-NOT).
+The logical operators are `||` (OR), `&&` (AND), and `!` (NOT). They evaluate the truthiness of their operands.
 
-The logical operators `||` and `&&` are short-circuiting and evaluate the truthiness of their operands.
+The logical operators `||` and `&&` are short-circuiting.
 
 The value of the logical-OR expression `a || b` is the value of the first operand if that operand is truthy, otherwise the value of the second operand.
 
