@@ -24,7 +24,7 @@ static const char* HELPTEXT =
     "  time                       Run timing functions.\n"
     "\n"
     "Command Help:\n"
-    "  help <command>             Print the specified command's help text.\n"
+    "  help <command>             Print the specified command's help text."
     ;
 
 
@@ -57,7 +57,7 @@ static const char* TEST_HELPTEXT =
     "\n"
     "Flags:\n"
     "  -h, --help                 Print this help text and exit.\n"
-    "  -v, --verbose              Show error output.\n"
+    "  -v, --verbose              Show error output."
     ;
 
 
@@ -81,7 +81,7 @@ static const char* TIME_HELPTEXT =
     "  -n, --num-runs <int>       Number of times to run each function.\n"
     "\n"
     "Flags:\n"
-    "  -h, --help                 Print this help text and exit.\n"
+    "  -h, --help                 Print this help text and exit."
     ;
 
 
@@ -95,7 +95,7 @@ static const char* CHECK_HELPTEXT =
     "  [files]              Files to compile.\n"
     "\n"
     "Flags:\n"
-    "  -h, --help           Print this help text and exit.\n"
+    "  -h, --help           Print this help text and exit."
     ;
 
 
