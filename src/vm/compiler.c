@@ -1344,12 +1344,12 @@ static void parse_unpacking_declaration(Parser* parser) {
 
     do {
         uint16_t index = consume_variable_name(parser, "Expected variable name.");
-        if (match(parser, TOKEN_COLON)) {
-            parse_type(parser);
-        }
         indexes[count++] = index;
         if (count > 16) {
             err_at_prev(parser, "Too many variable names in list (max: 16).");
+        }
+        if (match(parser, TOKEN_COLON)) {
+            parse_type(parser);
         }
     } while (match(parser, TOKEN_COMMA));
 
