@@ -28,6 +28,9 @@ typedef enum {
     TOKEN_SLASH, TOKEN_SLASH_SLASH,
     TOKEN_HOOK, TOKEN_HOOK_HOOK,
 
+    // Two-character tokens.
+    TOKEN_RIGHT_ARROW,
+
     // Literals.
     TOKEN_IDENTIFIER,
     TOKEN_STRING,

@@ -85,6 +85,7 @@ static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in
 static void parse_statement(Parser* parser);
 static void parse_function_definition(Parser* parser, FnType type, Token name);
 static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens);
+static void parse_type(Parser* parser);
 
 
 /* ----------------- */
@@ -1272,6 +1273,37 @@ static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in
 }
 
 
+/* ------------------- */
+/*  Type Declarations  */
+/* ------------------- */
+
+
+static void parse_single_type(Parser* parser) {
+    // Parse a sequence of identifiers: foo::bar::baz.
+    do {
+        consume(parser, TOKEN_IDENTIFIER, "Expected identifier in type declaration.");
+    } while (match(parser, TOKEN_COLON_COLON));
+
+    // Parse an optional set of container types: [type, ...].
+    if (match(parser, TOKEN_LEFT_BRACKET)) {
+        do {
+            parse_type(parser);
+        } while (match(parser, TOKEN_COMMA));
+        consume(parser, TOKEN_RIGHT_BRACKET, "Expected ']' in type declaration.");
+    }
+
+    // Parse an optional nullable marker: '?'.
+    match(parser, TOKEN_HOOK);
+}
+
+
+static void parse_type(Parser* parser) {
+    do {
+        parse_single_type(parser);
+    } while (match(parser, TOKEN_BAR));
+}
+
+
 /* ----------------- */
 /* Statement Parsers */
 /* ----------------- */
@@ -1312,6 +1344,9 @@ static void parse_unpacking_declaration(Parser* parser) {
 
     do {
         uint16_t index = consume_variable_name(parser, "Expected variable name.");
+        if (match(parser, TOKEN_COLON)) {
+            parse_type(parser);
+        }
         indexes[count++] = index;
         if (count > 16) {
             err_at_prev(parser, "Too many variable names in list (max: 16).");
@@ -1334,6 +1369,9 @@ static void parse_var_declaration(Parser* parser) {
             parse_unpacking_declaration(parser);
         } else {
             uint16_t index = consume_variable_name(parser, "Expected variable name.");
+            if (match(parser, TOKEN_COLON)) {
+                parse_type(parser);
+            }
             if (match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
             } else {
@@ -1687,7 +1725,7 @@ static void parse_while_stmt(Parser* parser) {
 
 
 // This helper parses a function definition, i.e. the bit that looks like (...){...}.
-// It emits the bytecode to create a ObjClosure and leave it on top of the stack.
+// It emits the bytecode to create an ObjClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
     FnCompiler compiler;
     if (!init_fn_compiler(parser, &compiler, type, name)) {
@@ -1704,11 +1742,15 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
             }
             compiler.fn->arity++;
             uint16_t index = consume_variable_name(parser, "Expected parameter name.");
+            if (match(parser, TOKEN_COLON)) {
+                parse_type(parser);
+            }
             define_variable(parser, index);
         } while (match(parser, TOKEN_COMMA));
     }
     consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after function parameters.");
 
+    // Check the arity for known method names.
     if (type == TYPE_METHOD) {
         if (strcmp(compiler.fn->name->bytes, "$fmt") == 0 && compiler.fn->arity != 1) {
             err_at_prev(parser, "Invalid method definition, $fmt() takes 1 argument.");
@@ -1718,6 +1760,10 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
             err_at_prev(parser, "Invalid method definition, $str() takes no arguments.");
             return;
         }
+    }
+
+    if (match(parser, TOKEN_RIGHT_ARROW)) {
+        parse_type(parser);
     }
 
     // Compile the body.
