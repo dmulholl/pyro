@@ -1,0 +1,27 @@
+---
+title: Benchmarking
+meta_title: Pyro &mdash; Benchmarking
+---
+
+Pyro has builtin support for benchmarking functions using the `time` command:
+
+    $ pyro time --help
+
+    Usage: pyro time [files]
+
+      This command runs benchmarking functions. Each input
+      file is executed in a new VM instance.
+
+    Arguments:
+      [files]                 Files to benchmark.
+
+    Options:
+      -n, --num-runs <int>    Number of times to run each
+                              function.
+
+    Flags:
+      -h, --help              Print this help text and exit.
+
+For each input file specified, Pyro first executes the file, then runs any benchmarking functions it contains, i.e. functions whose names begin with `$time_`.
+
+By default Pyro runs each benchmarking function 100 times, then prints the mean execution time. The number of iterations can be customized using the `-n/--num-runs` option.

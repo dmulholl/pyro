@@ -8,7 +8,7 @@ meta_title: Pyro &mdash; Builtin Types
 
 ### Strings
 
-A string, `$str`, is an immutable array of bytes.
+A string, `str`, is an immutable array of bytes.
 
 [[ `$str(arg)` ]]
 
@@ -64,20 +64,20 @@ Strings have the following methods:
 
 [[ `:byte(index)` ]]
 
-    Returns the byte value at `index` as an `$i64` in the range `[0, 255]`.
+    Returns the byte value at `index` as an `i64` in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
 
 [[ `:byte_count()` ]]
 
-    Returns the number of bytes in the string as an `$i64`.
+    Returns the number of bytes in the string as an `i64`.
 
 [[ `:bytes()` ]]
 
-    Returns an iterator over the string's bytes as `$i64` values.
+    Returns an iterator over the string's bytes as `i64` values.
 
 [[ `:char(index)` ]]
 
-    Returns the `$char` at `index`, where `index` is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
+    Returns the `char` at `index`, where `index` is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
     Will panic if `index` isn't an integer or is out of range.
 
     (This is a potentially expensive method as it needs to seek forward from the beginning of the string.
@@ -85,14 +85,14 @@ Strings have the following methods:
 
 [[ `:char_count()` ]]
 
-    Returns the number of UTF-8 encoded Unicode code points in the string as an `$i64`.
+    Returns the number of UTF-8 encoded Unicode code points in the string as an `i64`.
 
     (This is a potentially expensive method as it needs to traverse the string.
     Note that it will panic if it encounters invalid UTF-8.)
 
 [[ `:chars()` ]]
 
-    Returns an iterator over the string's `$char` values, i.e. UTF-8 encoded Unicode code points.
+    Returns an iterator over the string's `char` values, i.e. UTF-8 encoded Unicode code points.
 
 [[ `:contains(target)` ]]
 
@@ -214,12 +214,12 @@ Strings have the following methods:
 
 ### Characters
 
-A character, `$char`, is an unsigned 32-bit integer representing a Unicode code point.
+A character, `char`, is an unsigned 32-bit integer representing a Unicode code point.
 
 
 [[ `$char(arg)` ]]
 
-    Converts `arg` to a `$char`. Panics if the argument is not convertible.
+    Converts `arg` to a `char`. Panics if the argument is not convertible.
 
 Character literals use single quotes:
 
@@ -247,18 +247,18 @@ You can covert an integer to a character using the `$char()` function:
 ::: code pyro
     assert $char(97) == 'a';
 
-This function will panic if the integer is out of range for the `$char` type.
+This function will panic if the integer is out of range for the `char` type.
 
 
 
 
 ### Vectors
 
-A vector, `$vec`, is a dynamic array of values.
+A vector, `vec`, is a dynamic array of values.
 
 [[ `$vec()` <br> `$vec(iterable)` <br> `$vec(size, fill_value)` ]]
 
-    Creates a new `$vec` object.
+    Creates a new `vec` object.
     If called with zero arguments, creates an empty vector.
     If called with a single iterable argument, fills the new vector by iterating over the argument.
     If called with two arguments, creates a vector with the specified initial size and fill value.
@@ -302,7 +302,7 @@ Vectors have the following methods:
 
 [[ `:count()` ]]
 
-    Returns the number of entries in the vector as an `$i64`.
+    Returns the number of entries in the vector as an `i64`.
 
 [[ `:filter(func)` ]]
 
@@ -312,12 +312,12 @@ Vectors have the following methods:
 
 [[ `:get(index)` ]]
 
-    Returns the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+    Returns the value at `index` where `index` is an `i64`. Will panic if `index` is out of range or not an integer.
 
 [[ `:index_of(value)` ]]
 
     Returns the index of the first occurrence of `value` in the vector.
-    Returns an `$err` if the vector does not contain `value`.
+    Returns an `err` if the vector does not contain `value`.
 
 [[ `:map(func)` ]]
 
@@ -331,7 +331,7 @@ Vectors have the following methods:
 
 [[ `:set(index, value)` ]]
 
-    Sets the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+    Sets the value at `index` where `index` is an `i64`. Will panic if `index` is out of range or not an integer.
 
 [[ `:shuffle()` ]]
 
@@ -353,11 +353,11 @@ Vectors have the following methods:
 
 ### Hash Maps
 
-A hash map, `$map`, is an unordered collection of key-value pairs.
+A hash map, `map`, is an unordered collection of key-value pairs.
 
 [[ `$map()` ]]
 
-    Creates a new `$map` object.
+    Creates a new `map` object.
 
 Alternatively, you can create a map using literal syntax:
 
@@ -390,7 +390,7 @@ Maps have the following methods:
 
 [[ `:count()` ]]
 
-    Returns the number of entries in the map as an `$i64`.
+    Returns the number of entries in the map as an `i64`.
 
 [[ `:del(key)` ]]
 
@@ -402,7 +402,7 @@ Maps have the following methods:
 
 [[ `:get(key)` ]]
 
-    Returns the value associated with `key` or `$err` if `key` was not found.
+    Returns the value associated with `key` or `err` if `key` was not found.
 
 [[ `:keys()` ]]
 
@@ -422,11 +422,11 @@ Maps have the following methods:
 
 ### Tuples
 
-A tuple, `$tup`, is an immutable array of values.
+A tuple, `tup`, is an immutable array of values.
 
 [[ `$tup()` <br> `$tup(arg1, arg2, ...)` ]]
 
-    Creates a new `$tup` object.
+    Creates a new `tup` object.
     The arguments provide the tuple's values.
 
 You can index into a tuple to get (but not set) entries:
@@ -448,26 +448,26 @@ Tuples have the following methods:
 
 [[ `:count()` ]]
 
-    Returns the number of entries in the tuple as an `$i64`.
+    Returns the number of entries in the tuple as an `i64`.
 
 [[ `:get(index)` ]]
 
-    Returns the value at `index` where `index` is an `$i64`. Will panic if `index` is out of range or not an integer.
+    Returns the value at `index` where `index` is an `i64`. Will panic if `index` is out of range or not an integer.
 
 
 
 ### Errors
 
-The error type, `$err`, can be returned by functions to indicate failure.
+The error type, `err`, can be returned by functions to indicate failure.
 
 [[ `$err()` <br> `$err(arg1, arg2, ...)` ]]
 
-    Creates a new `$err` object.
+    Creates a new `err` object.
     The arguments provide the error's values.
 
 Errors are a specialized variant of tuples and support all the same methods and operations.
 
-You can use the `$is_err(arg)` function to check if a value is an `$err`.
+You can use the `$is_err(arg)` function to check if a value is an `err`.
 Alternatively, you can use the error-coalescing operator `!!` to supply a default value for an operation that might fail:
 
 ::: code pyro
@@ -479,7 +479,7 @@ Alternatively, you can use the error-coalescing operator `!!` to supply a defaul
 
 ### Ranges
 
-A range object, `$range`, is an iterator over a range of integers.
+A range object, `range`, is an iterator over a range of integers.
 
 [[ `$range(stop)` <br> `$range(start, stop)` <br> `$range(start, stop, step)` ]]
 
@@ -504,11 +504,11 @@ Note that the interval doesn't include the `stop` boundary itself.
 
 ### Byte Buffers
 
-A byte buffer, `$buf`, is a dynamic array of bytes.
+A byte buffer, `buf`, is a dynamic array of bytes.
 
 [[ `$buf()` ]]
 
-    Creates a new `$buf` object.
+    Creates a new `buf` object.
 
 You can index into a buffer to get or set byte values:
 
@@ -525,16 +525,16 @@ Buffers have the following methods:
 
 [[ `:count()` ]]
 
-    Returns the number of bytes in the buffer as an `$i64`.
+    Returns the number of bytes in the buffer as an `i64`.
 
 [[ `:get(index)` ]]
 
-    Returns the byte value at `index` as an `$i64` in the range `[0, 255]`.
+    Returns the byte value at `index` as an `i64` in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
 
 [[ `:set(index, byte)` ]]
 
-    Sets the byte value at `index` to `byte` where `byte` is an `$i64` in the range `[0, 255]`.
+    Sets the byte value at `index` to `byte` where `byte` is an `i64` in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
     Will panic if `byte` isn't an integer or is out of range.
 
@@ -557,18 +557,18 @@ Buffers have the following methods:
 
 [[ `:write_byte(byte)` ]]
 
-    Appends `byte` to the buffer where `byte` is an `$i64` in the range `[0, 255]`.
+    Appends `byte` to the buffer where `byte` is an `i64` in the range `[0, 255]`.
     Will panic if `byte` is not an integer or is out of range.
 
 
 
 ### Files
 
-A file object, `$file`, is a wrapper around a readable or writable byte stream.
+A file object, `file`, is a wrapper around a readable or writable byte stream.
 
 [[ `$file(path, mode)` ]]
 
-    Creates a new `$file` object.
+    Creates a new `file` object.
     Opens the underlying file stream using the C function `fopen()`.
     `path` and `mode` should both be strings.
     Panics on failure.
@@ -598,7 +598,7 @@ Files have the following methods:
 
 [[ `:read()` ]]
 
-    Reads the content of the file into a new byte buffer, `$buf`.
+    Reads the content of the file into a new byte buffer, `buf`.
 
     Returns the new buffer.
     Returns an empty buffer if the file was empty or if the end of the file had already been reached before the method was called.
@@ -613,7 +613,7 @@ Files have the following methods:
 
 [[ `:read_bytes(n)` ]]
 
-    Attempts to read `n` bytes from the file into a new byte buffer, `$buf`, where `n` is an `$i64`.
+    Attempts to read `n` bytes from the file into a new byte buffer, `buf`, where `n` is an `i64`.
     May read less than `n` bytes if the end of the file is reached first.
 
     Returns the new byte buffer or `null` if the end of the file had already been reached before the method was called.
@@ -631,7 +631,7 @@ Files have the following methods:
 
 [[ `:read_string()` ]]
 
-    Reads the content of the file into a string, `$str`.
+    Reads the content of the file into a string, `str`.
 
     Returns the new string.
     Returns an empty string if the file was empty or if the end of the file had already been reached before the method was called.
@@ -642,7 +642,7 @@ Files have the following methods:
 
     Writes a string or buffer to the file.
 
-    If `arg` is a `$buf`, its content will be written to the file directly.
+    If `arg` is a `buf`, its content will be written to the file directly.
     Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
     Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
 

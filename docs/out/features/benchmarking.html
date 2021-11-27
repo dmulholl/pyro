@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Standard Library &mdash; $std::prng</title>
+        <title>Pyro &mdash; Benchmarking</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-stdlib-prng node-stdlib node">
+    <body class="node-features-benchmarking node-features node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -51,77 +51,37 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1><code>$std::prng</code></h1>
+                <h1>Benchmarking</h1>
                 
                 <hr>
             </header>
             <p>
-This module uses a 64-bit <a href="https://en.wikipedia.org/wiki/Mersenne_Twister">Mersenne Twister</a> to generate pseudo-random numbers.
+Pyro has builtin support for benchmarking functions using the <code>time</code> command:
+</p>
+<pre>
+$ pyro time --help
+
+Usage: pyro time [files]
+
+  This command runs benchmarking functions. Each input
+  file is executed in a new VM instance.
+
+Arguments:
+  [files]                 Files to benchmark.
+
+Options:
+  -n, --num-runs &lt;int&gt;    Number of times to run each
+                          function.
+
+Flags:
+  -h, --help              Print this help text and exit.
+</pre>
+<p>
+For each input file specified, Pyro first executes the file, then runs any benchmarking functions it contains, i.e. functions whose names begin with <code>$time_</code>.
 </p>
 <p>
-The output of the generator is completely deterministic and depends only on the initial seed value, i.e. the sequence of numbers generated will always be identical for a given seed.
+By default Pyro runs each benchmarking function 100 times, then prints the mean execution time. The number of iterations can be customized using the <code>-n/--num-runs</code> option.
 </p>
-<p>
-The generator is automatically initialized at startup using a random seed but you can reinitialize the generator at any time by calling <code>seed(arg)</code>. This reseeds the generator using the argument's 64-bit hash value.
-</p>
-<h3 id="functions">
-Functions
-</h3>
-<dl>
-<div>
-<dt>
-<code>rand_float()</code>
-</dt>
-<dd>
-<p>
-Returns a uniformly-distributed random <code>$f64</code> from the half-open interval <code>[0, 1)</code>, i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>rand_int(n)</code>
-</dt>
-<dd>
-<p>
-Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[0, n)</code>, i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>rand_int_in_range(lower, upper)</code>
-</dt>
-<dd>
-<p>
-Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[lower, upper)</code>, i.e. the interval from <code>lower</code> up to but not including <code>upper</code>.
-</p>
-<p>
-The arguments can be positive or negative or mixed as long as <code>lower</code> is less than or equal to <code>upper</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>seed(arg)</code>
-</dt>
-<dd>
-<p>
-Seeds the generator using the argument's 64-bit hash.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>shuffle(vec)</code>
-</dt>
-<dd>
-<p>
-Shuffles the vector <code>vec</code> in-place. Uses Fisher-Yates/Durstenfeld shuffling.
-</p>
-</dd>
-</div>
-</dl>
         </article>
         
     </body>

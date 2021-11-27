@@ -30,14 +30,8 @@
                 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="quickstart.html">Quickstart</a></li>
-<li><a href="tour.html">Language Tour</a><ul>
-<li><a href="tour/classes.html">Classes</a></li>
-<li><a href="tour/modules.html">Modules</a></li>
-<li><a href="tour/operators.html">Operators</a></li>
-<li><a href="tour/formatting.html">Formatting</a></li>
-<li><a href="tour/iterators.html">Iterators</a></li>
-</ul>
-</li>
+<li><a href="tour.html">Language Tour</a></li>
+<li><a href="features.html">Features</a></li>
 <li><a href="builtins.html">Builtin Types</a></li>
 <li><a href="globals.html">Globals</a></li>
 <li><a href="stdlib.html">Standard Library</a><ul>
@@ -94,7 +88,7 @@
 Strings
 </h3>
 <p>
-A string, <code>$str</code>, is an immutable array of bytes.
+A string, <code>str</code>, is an immutable array of bytes.
 </p>
 <dl>
 <div>
@@ -250,7 +244,7 @@ Strings have the following methods:
 </dt>
 <dd>
 <p>
-Returns the byte value at <code>index</code> as an <code>$i64</code> in the range <code>[0, 255]</code>.
+Returns the byte value at <code>index</code> as an <code>i64</code> in the range <code>[0, 255]</code>.
 Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 </dd>
@@ -261,7 +255,7 @@ Will panic if <code>index</code> isn't an integer or is out of range.
 </dt>
 <dd>
 <p>
-Returns the number of bytes in the string as an <code>$i64</code>.
+Returns the number of bytes in the string as an <code>i64</code>.
 </p>
 </dd>
 </div>
@@ -271,7 +265,7 @@ Returns the number of bytes in the string as an <code>$i64</code>.
 </dt>
 <dd>
 <p>
-Returns an iterator over the string's bytes as <code>$i64</code> values.
+Returns an iterator over the string's bytes as <code>i64</code> values.
 </p>
 </dd>
 </div>
@@ -281,7 +275,7 @@ Returns an iterator over the string's bytes as <code>$i64</code> values.
 </dt>
 <dd>
 <p>
-Returns the <code>$char</code> at <code>index</code>, where <code>index</code> is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
+Returns the <code>char</code> at <code>index</code>, where <code>index</code> is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
 Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 <p>
@@ -296,7 +290,7 @@ Note that it will panic if it encounters invalid UTF-8 along the way.)
 </dt>
 <dd>
 <p>
-Returns the number of UTF-8 encoded Unicode code points in the string as an <code>$i64</code>.
+Returns the number of UTF-8 encoded Unicode code points in the string as an <code>i64</code>.
 </p>
 <p>
 (This is a potentially expensive method as it needs to traverse the string.
@@ -310,7 +304,7 @@ Note that it will panic if it encounters invalid UTF-8.)
 </dt>
 <dd>
 <p>
-Returns an iterator over the string's <code>$char</code> values, i.e. UTF-8 encoded Unicode code points.
+Returns an iterator over the string's <code>char</code> values, i.e. UTF-8 encoded Unicode code points.
 </p>
 </dd>
 </div>
@@ -585,7 +579,7 @@ Useful for inspecting and debugging Unicode.
 Characters
 </h3>
 <p>
-A character, <code>$char</code>, is an unsigned 32-bit integer representing a Unicode code point.
+A character, <code>char</code>, is an unsigned 32-bit integer representing a Unicode code point.
 </p>
 <dl>
 <div>
@@ -594,7 +588,7 @@ A character, <code>$char</code>, is an unsigned 32-bit integer representing a Un
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to a <code>$char</code>. Panics if the argument is not convertible.
+Converts <code>arg</code> to a <code>char</code>. Panics if the argument is not convertible.
 </p>
 </dd>
 </div>
@@ -631,13 +625,13 @@ You can covert an integer to a character using the <code>$char()</code> function
 <span class="k">assert</span> <span class="nx">$char</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 </pre>
 <p>
-This function will panic if the integer is out of range for the <code>$char</code> type.
+This function will panic if the integer is out of range for the <code>char</code> type.
 </p>
 <h3 id="vectors">
 Vectors
 </h3>
 <p>
-A vector, <code>$vec</code>, is a dynamic array of values.
+A vector, <code>vec</code>, is a dynamic array of values.
 </p>
 <dl>
 <div>
@@ -646,7 +640,7 @@ A vector, <code>$vec</code>, is a dynamic array of values.
 </dt>
 <dd>
 <p>
-Creates a new <code>$vec</code> object.
+Creates a new <code>vec</code> object.
 If called with zero arguments, creates an empty vector.
 If called with a single iterable argument, fills the new vector by iterating over the argument.
 If called with two arguments, creates a vector with the specified initial size and fill value.
@@ -721,7 +715,7 @@ Returns a copy of the vector.
 </dt>
 <dd>
 <p>
-Returns the number of entries in the vector as an <code>$i64</code>.
+Returns the number of entries in the vector as an <code>i64</code>.
 </p>
 </dd>
 </div>
@@ -743,7 +737,7 @@ if it returns <code>true</code> the corresponding element will be added to the n
 </dt>
 <dd>
 <p>
-Returns the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+Returns the value at <code>index</code> where <code>index</code> is an <code>i64</code>. Will panic if <code>index</code> is out of range or not an integer.
 </p>
 </dd>
 </div>
@@ -754,7 +748,7 @@ Returns the value at <code>index</code> where <code>index</code> is an <code>$i6
 <dd>
 <p>
 Returns the index of the first occurrence of <code>value</code> in the vector.
-Returns an <code>$err</code> if the vector does not contain <code>value</code>.
+Returns an <code>err</code> if the vector does not contain <code>value</code>.
 </p>
 </dd>
 </div>
@@ -786,7 +780,7 @@ Reverses the vector in-place. Returns the vector to enable chaining.
 </dt>
 <dd>
 <p>
-Sets the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+Sets the value at <code>index</code> where <code>index</code> is an <code>i64</code>. Will panic if <code>index</code> is out of range or not an integer.
 </p>
 </dd>
 </div>
@@ -825,7 +819,7 @@ By default, values which are not comparable are treated as equal.
 Hash Maps
 </h3>
 <p>
-A hash map, <code>$map</code>, is an unordered collection of key-value pairs.
+A hash map, <code>map</code>, is an unordered collection of key-value pairs.
 </p>
 <dl>
 <div>
@@ -834,7 +828,7 @@ A hash map, <code>$map</code>, is an unordered collection of key-value pairs.
 </dt>
 <dd>
 <p>
-Creates a new <code>$map</code> object.
+Creates a new <code>map</code> object.
 </p>
 </dd>
 </div>
@@ -891,7 +885,7 @@ Returns a copy of the map.
 </dt>
 <dd>
 <p>
-Returns the number of entries in the map as an <code>$i64</code>.
+Returns the number of entries in the map as an <code>i64</code>.
 </p>
 </dd>
 </div>
@@ -921,7 +915,7 @@ Returns an iterator over <code>(key, value)</code> tuples.
 </dt>
 <dd>
 <p>
-Returns the value associated with <code>key</code> or <code>$err</code> if <code>key</code> was not found.
+Returns the value associated with <code>key</code> or <code>err</code> if <code>key</code> was not found.
 </p>
 </dd>
 </div>
@@ -960,7 +954,7 @@ Returns an iterator over the map's values.
 Tuples
 </h3>
 <p>
-A tuple, <code>$tup</code>, is an immutable array of values.
+A tuple, <code>tup</code>, is an immutable array of values.
 </p>
 <dl>
 <div>
@@ -969,7 +963,7 @@ A tuple, <code>$tup</code>, is an immutable array of values.
 </dt>
 <dd>
 <p>
-Creates a new <code>$tup</code> object.
+Creates a new <code>tup</code> object.
 The arguments provide the tuple's values.
 </p>
 </dd>
@@ -1003,7 +997,7 @@ Tuples have the following methods:
 </dt>
 <dd>
 <p>
-Returns the number of entries in the tuple as an <code>$i64</code>.
+Returns the number of entries in the tuple as an <code>i64</code>.
 </p>
 </dd>
 </div>
@@ -1013,7 +1007,7 @@ Returns the number of entries in the tuple as an <code>$i64</code>.
 </dt>
 <dd>
 <p>
-Returns the value at <code>index</code> where <code>index</code> is an <code>$i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+Returns the value at <code>index</code> where <code>index</code> is an <code>i64</code>. Will panic if <code>index</code> is out of range or not an integer.
 </p>
 </dd>
 </div>
@@ -1022,7 +1016,7 @@ Returns the value at <code>index</code> where <code>index</code> is an <code>$i6
 Errors
 </h3>
 <p>
-The error type, <code>$err</code>, can be returned by functions to indicate failure.
+The error type, <code>err</code>, can be returned by functions to indicate failure.
 </p>
 <dl>
 <div>
@@ -1031,7 +1025,7 @@ The error type, <code>$err</code>, can be returned by functions to indicate fail
 </dt>
 <dd>
 <p>
-Creates a new <code>$err</code> object.
+Creates a new <code>err</code> object.
 The arguments provide the error's values.
 </p>
 </dd>
@@ -1041,7 +1035,7 @@ The arguments provide the error's values.
 Errors are a specialized variant of tuples and support all the same methods and operations.
 </p>
 <p>
-You can use the <code>$is_err(arg)</code> function to check if a value is an <code>$err</code>.
+You can use the <code>$is_err(arg)</code> function to check if a value is an <code>err</code>.
 Alternatively, you can use the error-coalescing operator <code>!!</code> to supply a default value for an operation that might fail:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
@@ -1051,7 +1045,7 @@ Alternatively, you can use the error-coalescing operator <code>!!</code> to supp
 Ranges
 </h3>
 <p>
-A range object, <code>$range</code>, is an iterator over a range of integers.
+A range object, <code>range</code>, is an iterator over a range of integers.
 </p>
 <dl>
 <div>
@@ -1086,7 +1080,7 @@ Note that the interval doesn't include the <code>stop</code> boundary itself.
 Byte Buffers
 </h3>
 <p>
-A byte buffer, <code>$buf</code>, is a dynamic array of bytes.
+A byte buffer, <code>buf</code>, is a dynamic array of bytes.
 </p>
 <dl>
 <div>
@@ -1095,7 +1089,7 @@ A byte buffer, <code>$buf</code>, is a dynamic array of bytes.
 </dt>
 <dd>
 <p>
-Creates a new <code>$buf</code> object.
+Creates a new <code>buf</code> object.
 </p>
 </dd>
 </div>
@@ -1123,7 +1117,7 @@ Buffers have the following methods:
 </dt>
 <dd>
 <p>
-Returns the number of bytes in the buffer as an <code>$i64</code>.
+Returns the number of bytes in the buffer as an <code>i64</code>.
 </p>
 </dd>
 </div>
@@ -1133,7 +1127,7 @@ Returns the number of bytes in the buffer as an <code>$i64</code>.
 </dt>
 <dd>
 <p>
-Returns the byte value at <code>index</code> as an <code>$i64</code> in the range <code>[0, 255]</code>.
+Returns the byte value at <code>index</code> as an <code>i64</code> in the range <code>[0, 255]</code>.
 Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 </dd>
@@ -1144,7 +1138,7 @@ Will panic if <code>index</code> isn't an integer or is out of range.
 </dt>
 <dd>
 <p>
-Sets the byte value at <code>index</code> to <code>byte</code> where <code>byte</code> is an <code>$i64</code> in the range <code>[0, 255]</code>.
+Sets the byte value at <code>index</code> to <code>byte</code> where <code>byte</code> is an <code>i64</code> in the range <code>[0, 255]</code>.
 Will panic if <code>index</code> isn't an integer or is out of range.
 Will panic if <code>byte</code> isn't an integer or is out of range.
 </p>
@@ -1188,7 +1182,7 @@ This method can panic if an error occurs while formatting the output string.
 </dt>
 <dd>
 <p>
-Appends <code>byte</code> to the buffer where <code>byte</code> is an <code>$i64</code> in the range <code>[0, 255]</code>.
+Appends <code>byte</code> to the buffer where <code>byte</code> is an <code>i64</code> in the range <code>[0, 255]</code>.
 Will panic if <code>byte</code> is not an integer or is out of range.
 </p>
 </dd>
@@ -1198,7 +1192,7 @@ Will panic if <code>byte</code> is not an integer or is out of range.
 Files
 </h3>
 <p>
-A file object, <code>$file</code>, is a wrapper around a readable or writable byte stream.
+A file object, <code>file</code>, is a wrapper around a readable or writable byte stream.
 </p>
 <dl>
 <div>
@@ -1207,7 +1201,7 @@ A file object, <code>$file</code>, is a wrapper around a readable or writable by
 </dt>
 <dd>
 <p>
-Creates a new <code>$file</code> object.
+Creates a new <code>file</code> object.
 Opens the underlying file stream using the C function <code>fopen()</code>.
 <code>path</code> and <code>mode</code> should both be strings.
 Panics on failure.
@@ -1302,7 +1296,7 @@ Flushes the file stream.
 </dt>
 <dd>
 <p>
-Reads the content of the file into a new byte buffer, <code>$buf</code>.
+Reads the content of the file into a new byte buffer, <code>buf</code>.
 </p>
 <p>
 Returns the new buffer.
@@ -1331,7 +1325,7 @@ Panics if an I/O read error occurs.
 </dt>
 <dd>
 <p>
-Attempts to read <code>n</code> bytes from the file into a new byte buffer, <code>$buf</code>, where <code>n</code> is an <code>$i64</code>.
+Attempts to read <code>n</code> bytes from the file into a new byte buffer, <code>buf</code>, where <code>n</code> is an <code>i64</code>.
 May read less than <code>n</code> bytes if the end of the file is reached first.
 </p>
 <p>
@@ -1365,7 +1359,7 @@ Panics if an I/O read error occurs or if sufficient memory cannot be allocated f
 </dt>
 <dd>
 <p>
-Reads the content of the file into a string, <code>$str</code>.
+Reads the content of the file into a string, <code>str</code>.
 </p>
 <p>
 Returns the new string.
@@ -1385,7 +1379,7 @@ Panics if an I/O read error occurs or if sufficient memory cannot be allocated f
 Writes a string or buffer to the file.
 </p>
 <p>
-If <code>arg</code> is a <code>$buf</code>, its content will be written to the file directly.
+If <code>arg</code> is a <code>buf</code>, its content will be written to the file directly.
 Otherwise, calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
 Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
 </p>

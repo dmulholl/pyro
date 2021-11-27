@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Type Annotations</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-features-types node-features node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">An experimental scripting language.</p>
+            
+            
+                <p class="version">Version 0.4.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a><ul>
+<li><a href="../stdlib/errors.html">errors</a></li>
+<li><a href="../stdlib/math.html">math</a></li>
+<li><a href="../stdlib/prng.html">prng</a></li>
+<li><a href="../stdlib/pyro.html">pyro</a></li>
+</ul>
+</li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Type Annotations</h1>
+                
+                <hr>
+            </header>
+            <p>
+Pyro supports optional type annotations for variable, function, and method declarations, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">f64</span> <span class="p">=</span> <span class="mf">1.0</span><span class="p">;</span>
+
+<span class="kd">def</span> <span class="nx">is_empty</span><span class="p">(</span><span class="nx">content</span><span class="p">:</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">content</span><span class="p">.</span><span class="nx">byte_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Pyro doesn't (currently) do anything with these type annotations, apart from verifying their syntax.
+The language is dynamically typed and is intended to remain so, but you can use type annotations to document your code's intended interface.<sup class="footnote" id="fnref:1"><a href="#fn:1">1</a></sup>
+</p>
+<h3 id="builtin-types">
+Builtin Types
+</h3>
+<p>
+Annotations for builtin types are as follows:
+</p>
+<ul>
+<li>
+<code>any</code>
+</li>
+<li>
+<code>bool</code>
+</li>
+<li>
+<code>buf</code>
+</li>
+<li>
+<code>char</code>
+</li>
+<li>
+<code>err</code>
+</li>
+<li>
+<code>err[type1, type2, ...]</code>
+</li>
+<li>
+<code>f64</code>
+</li>
+<li>
+<code>file</code>
+</li>
+<li>
+<code>i64</code>
+</li>
+<li>
+<code>map</code>
+</li>
+<li>
+<code>map[key_type, value_type]</code>
+</li>
+<li>
+<code>null</code>
+</li>
+<li>
+<code>range</code>
+</li>
+<li>
+<code>str</code>
+</li>
+<li>
+<code>tup</code>
+</li>
+<li>
+<code>tup[type1, type2, ...]</code>
+</li>
+<li>
+<code>vec</code>
+</li>
+<li>
+<code>vec[type]</code>
+</li>
+</ul>
+<p>
+Type annotations beginning with a lowercase letter are reserved for language builtins.
+</p>
+<h3 id="syntax">
+Syntax
+</h3>
+<p>
+Specify a variable's type by following its name with a colon and a type declaration:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">type</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">type</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+</pre>
+<p>
+The same syntax works for function and method parameters:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">func</span><span class="p">(</span><span class="nx">arg1</span><span class="p">:</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">:</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Functions and methods can declare their return type by following their parameter list with an arrow, <code>-&gt;</code>, and a type declaration:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">func</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">type</span> <span class="p">{</span>
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Container types can optionally specify their content types in square brackets, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">str</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">tup</span><span class="p">[</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">bool</span><span class="p">,</span> <span class="nx">str</span><span class="p">];</span>
+</pre>
+<p>
+Where a type can be one of a discrete set of options, separate the options with a <code>|</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">f64</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">f64</span><span class="p">];</span>
+</pre>
+<p>
+Type declarations can be nested as required, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">f64</span><span class="p">]];</span>
+</pre>
+<p>
+You can indicate that a type is nullable &mdash; i.e. can be either the specified type or <code>null</code> &mdash; by appending a <code>?</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span><span class="o">?</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">str</span><span class="o">?</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">]</span><span class="o">?</span><span class="p">;</span>
+</pre>
+<p>
+A type name should specify either one of the builtin types or a user-defined type, possibly imported from a module, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">UserType</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">UserType</span><span class="p">;</span>
+</pre>
+<h3 id="notes">
+Notes
+</h3>
+<dl class="footnotes">
+<div id="fn:1">
+<dt>
+<a href="#fnref:1">
+1
+</a>
+</dt>
+<dd>
+<p>
+Future versions of Pyro may offer optional type checking or automatic documentation generation using declared variable types.
+Currently, the compiler simply verifies that type declarations are syntactically correct, then discards them.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

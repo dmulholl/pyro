@@ -1,0 +1,33 @@
+---
+title: Unit Tests
+meta_title: Pyro &mdash; Unit Tests
+---
+
+Pyro has builtin support for unit tests using the `test` command:
+
+    $ pyro test --help
+
+    Usage: pyro test [files]
+
+      This command runs unit tests. Each input file is
+      executed in a new VM instance.
+
+    Arguments:
+      [files]              Files to test.
+
+    Flags:
+      -h, --help           Print this help text and exit.
+      -v, --verbose        Show error output.
+
+For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose names begin with `$test_`. A test function passes if it executes without panicking.
+
+You can use an `assert` statement to make a test function panic if the test fails, e.g.
+
+::: code pyro
+      def $test_addition() {
+          assert 1 + 2 == 3;
+      }
+
+An `assert` statement passes if its operand expression evaluates as truthy or fails if it evaluates as falsey.
+
+Note that test functions take no arguments.

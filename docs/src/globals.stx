@@ -131,7 +131,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$fmt(format_string, arg1, arg2, ...)` ]]
 
-    Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/tour/formatting//) documentation for details.
+    Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/features/formatting//) documentation for details.
     This function can panic if an error occurs while formatting the output string.
 
 

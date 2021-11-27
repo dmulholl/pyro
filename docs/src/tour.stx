@@ -58,7 +58,7 @@ Names beginning with a `$` symbol are `$pecial` --- this namespace is reserved b
 
 ### Numbers
 
-Pyro has two numeric types: `$i64` for 64-bit signed two's-complement integers, and `$f64` for 64-bit [IEEE 754 floats][1].
+Pyro has two numeric types: `i64` for 64-bit signed two's-complement integers, and `f64` for 64-bit [IEEE 754 floats][1].
 Both behave as you'd expect and support the usual range of numeric operations.
 
 ::: table
@@ -95,7 +95,7 @@ Float literals require a decimal point and can also use underscores to improve r
 
 ### Strings
 
-A string, `$str`, is an immutable array of bytes.
+A string, `str`, is an immutable array of bytes.
 
 ::: code pyro
     var string = "hello pyro";
@@ -108,7 +108,7 @@ You can find a full description of the string type [here](@root/builtins//#strin
 
 ### Characters
 
-A character, `$char`, is an unsigned 32-bit integer representing a Unicode code point.
+A character, `char`, is an unsigned 32-bit integer representing a Unicode code point.
 
 Character literals use single quotes:
 
@@ -132,7 +132,7 @@ You can convert any value to a boolean using the `$bool(arg)` function.
 
 Values which convert to `true` are **truthy**, values which convert to `false` are **falsey**.
 
-The values `false` and `null` are falsey, as is any `$err` value, the integer value `0`, and the floating-point value `0.0`. All other values are truthy.
+The values `false` and `null` are falsey, as is any `err` value, the integer value `0`, and the floating-point value `0.0`. All other values are truthy.
 
 
 
@@ -158,17 +158,17 @@ Pyro has a strict concept of equality --- two objects are equal if they have the
 ::: code pyro
     assert 1 == 1;        # True.
     assert 1.0 == 1.0;    # True.
-    assert 1 == 1.0;      # False. $i64 != $f64.
+    assert 1 == 1.0;      # False. i64 != f64.
 
 Note that characters don't compare equal to their integer value without conversion:
 
 ::: code pyro
     assert 'a' == 'a';          # True.
-    assert 'a' == 61;           # False. $char != $i64.
+    assert 'a' == 61;           # False. char != i64.
     assert $i64('a') == 61;     # True.
     assert 'a' == $char(61);    # True.
 
-Note that a `$map` can have three distinct keys with the values `61`, `61.0`, and `'a'`, even though the values are numerically equivalent. (Pyro's strict concept of equality is partly designed to enable fast map lookups without needing to consider all possible conversions.)
+Note that a `map` can have three distinct keys with the values `61`, `61.0`, and `'a'`, even though the values are numerically equivalent. (Pyro's strict concept of equality is partly designed to enable fast map lookups without needing to consider all possible conversions.)
 
 Strings are equal if they have the same content:
 
@@ -217,7 +217,7 @@ Pyro also has a family of `$print()` functions with support for format strings:
 Calling the `$print()` function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
 Calling it with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
-See the [string formatting](@root/tour/formatting//) documentation for a detailed look at the `$fmt()` function and format strings.
+See the [string formatting](@root/features/formatting//) documentation for a detailed look at the `$fmt()` function and format strings.
 
 
 
@@ -378,20 +378,20 @@ Get or set an instance's fields using the field access operator, `.`:
 
 Boo Dave.
 
-Classes are complex enough to deserve a page of their own which you can find [here](@root/tour/classes//).
+Classes are complex enough to deserve a page of their own which you can find [here](@root/features/classes//).
 
 
 
 ### Errors
 
-Pyro has a dedicated error type, `$err`, which a function can return to indicate failure.
-An `$err` is a specialized kind of tuple under the hood so it supports all the same methods and operators as a `$tup`.
+Pyro has a dedicated error type, `err`, which a function can return to indicate failure.
+An `err` is a specialized kind of tuple under the hood so it supports all the same methods and operators as a `tup`.
 
 ::: code pyro
     var foo = $err();
     var bar = $err("oops!", 123);
 
-You can check if a value is an `$err` using the `$is_err(arg)` function.
+You can check if a value is an `err` using the `$is_err(arg)` function.
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`:
 
 ::: code pyro
@@ -410,14 +410,14 @@ You can trap a panic using a `try` expression:
 ::: code pyro
     var foo = try might_panic();
 
-A `try` expression returns the value of its operand if it evaluates without panicking or an `$err` if it panics.
-(The `$err` will contain two items --- an integer error code and a string error message.)
+A `try` expression returns the value of its operand if it evaluates without panicking or an `err` tuple if it panics.
+(The `err` tuple will contain two items --- an integer error code and a string error message.)
 
 `try` is a unary operator with the same precedence as `!` or `-` so you should wrap lower-precedence expressions in brackets:
 
 ::: code pyro
     var foo = try (1 / 1);  # 1
-    var bar = try (1 / 0);  # $err
+    var bar = try (1 / 0);  # err
 
 Note that you can use the error-coalescing operator `!!` to provide a default value for a panicking expression:
 
@@ -432,7 +432,7 @@ You can raise a panic from your own code by calling the `$panic()` function with
 
 If the panic is unhandled, the error message will be printed and the program will exit with the specified error code.
 
-If the panic is trapped by a `try` expression, the error code and error message will be returned as an `$err`.
+If the panic is trapped by a `try` expression, the error code and error message will be returned as an `err`.
 
 
 
@@ -454,7 +454,7 @@ Modules can contain submodules. Assume we have a directory called `math` contain
 
     var foo = trig::cos(1);
 
-Modules are complex enough to deserve a page of their own which you can find [here](@root/tour/modules//).
+Modules are complex enough to deserve a page of their own which you can find [here](@root/features/modules//).
 
 
 
