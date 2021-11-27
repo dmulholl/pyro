@@ -100,7 +100,12 @@ A type name should specify either one of the builtin types or a user-defined typ
 
 ::: code pyro
     var foo: UserType;
-    var bar: mod::UserType;
+
+Here, `foo` is an instance of the class `UserType`. Type names can include a module path, e.g.
+
+    var bar: mod1::mod2::UserType;
+
+Here, `bar` is an instance of the class `UserType` defined in the module `mod1::mod2`.
 
 
 

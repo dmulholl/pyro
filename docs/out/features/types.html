@@ -195,8 +195,16 @@ A type name should specify either one of the builtin types or a user-defined typ
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">UserType</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">UserType</span><span class="p">;</span>
 </pre>
+<p>
+Here, <code>foo</code> is an instance of the class <code>UserType</code>. Type names can include a module path, e.g.
+</p>
+<pre>
+var bar: mod1::mod2::UserType;
+</pre>
+<p>
+Here, <code>bar</code> is an instance of the class <code>UserType</code> defined in the module <code>mod1::mod2</code>.
+</p>
 <h3 id="notes">
 Notes
 </h3>
