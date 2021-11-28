@@ -16,11 +16,21 @@
 #include <ctype.h>
 #include <errno.h>
 
-// True if a file or directory exists at [path].
+// Returns true if a file or directory exists at [path].
+// If [path] is a symlink, returns true if the target of the link exists.
 bool pyro_exists(const char* path);
 
-// True if a directory exists at [path].
+// Returns true if a directory exists at [path].
+// If [path] is a symlink, returns true if the target of the link is an existing directory.
 bool pyro_is_dir(const char* path);
+
+// Returns true if a regular file exists at [path].
+// If [path] is a symlink, returns true if the target of the link is an existing file.
+bool pyro_is_file(const char* path);
+
+// Returns true if a symlink exists at [path].
+// (This checks if the symlink itself exists, not its target.)
+bool pyro_is_symlink(const char* path);
 
 // Wrapper for dirname().
 char* pyro_dirname(char* path);

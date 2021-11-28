@@ -12,6 +12,7 @@
 #include "../std/std_pyro.h"
 #include "../std/std_prng.h"
 #include "../std/std_errors.h"
+#include "../std/std_path.h"
 
 
 static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
@@ -55,7 +56,7 @@ static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjMo
         path_count += 4;
         path[path_count] = '\0';
 
-        if (pyro_exists(path)) {
+        if (pyro_is_file(path)) {
             pyro_exec_file_as_module(vm, path, module);
             FREE_ARRAY(vm, char, path, path_length + 1);
             return;
@@ -66,7 +67,7 @@ static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjMo
         path_count += 5;
         path[path_count] = '\0';
 
-        if (pyro_exists(path)) {
+        if (pyro_is_file(path)) {
             pyro_exec_file_as_module(vm, path, module);
             FREE_ARRAY(vm, char, path, path_length + 1);
             return;
@@ -1592,6 +1593,7 @@ PyroVM* pyro_new_vm() {
     pyro_load_std_prng(vm);
     pyro_load_std_pyro(vm);
     pyro_load_std_errors(vm);
+    pyro_load_std_path(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
