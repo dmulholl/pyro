@@ -62,8 +62,8 @@ Pyro supports optional type annotations for variable, function, and method decla
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">f64</span> <span class="p">=</span> <span class="mf">1.0</span><span class="p">;</span>
 
-<span class="kd">def</span> <span class="nx">is_empty</span><span class="p">(</span><span class="nx">content</span><span class="p">:</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">content</span><span class="p">.</span><span class="nx">byte_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">def</span> <span class="nx">is_long</span><span class="p">(</span><span class="nx">text</span><span class="p">:</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">text</span><span class="p">.</span><span class="nx">byte_count</span><span class="p">()</span> <span class="p">&gt;</span> <span class="mi">100</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <p>
@@ -100,6 +100,12 @@ Annotations for builtin types are as follows:
 </li>
 <li>
 <code>file</code>
+</li>
+<li>
+<code>func</code>
+</li>
+<li>
+<code>func(type1, type2, ...) -&gt; type</code>
 </li>
 <li>
 <code>i64</code>
@@ -149,7 +155,7 @@ Specify a variable's type by following its name with a colon and a type declarat
 The same syntax works for function and method parameters:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">func</span><span class="p">(</span><span class="nx">arg1</span><span class="p">:</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">:</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">def</span> <span class="nx">func_name</span><span class="p">(</span><span class="nx">arg1</span><span class="p">:</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">:</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
     <span class="cp">...</span>
 <span class="p">}</span>
 </pre>
@@ -157,7 +163,7 @@ The same syntax works for function and method parameters:
 Functions and methods can declare their return type by following their parameter list with an arrow, <code>-&gt;</code>, and a type declaration:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">func</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">type</span> <span class="p">{</span>
+<span class="kd">def</span> <span class="nx">func_name</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">type</span> <span class="p">{</span>
     <span class="cp">...</span>
 <span class="p">}</span>
 </pre>
@@ -182,14 +188,84 @@ Type declarations can be nested as required, e.g.
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">f64</span><span class="p">]];</span>
 </pre>
+<h3 id="nullable-types">
+Nullable Types
+</h3>
 <p>
-You can indicate that a type is nullable &mdash; i.e. can be either the specified type or <code>null</code> &mdash; by appending a <code>?</code>, e.g.
+You can indicate that a type is nullable &mdash; i.e. can be either the specified type or <code>null</code> &mdash; by appending a <code>?</code> to the type name, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span><span class="o">?</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">str</span><span class="o">?</span><span class="p">];</span>
-<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">]</span><span class="o">?</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">map</span><span class="o">?</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">];</span>
 </pre>
+<ul>
+<li>
+<code>foo</code> is either an <code>i64</code> or <code>null</code>.
+</li>
+<li>
+<code>bar</code> is a <code>vec</code> whose entries are either <code>str</code> or <code>null</code>.
+</li>
+<li>
+<code>baz</code> is either a <code>map</code> with <code>str</code> keys and <code>i64</code> values or <code>null</code>.
+</li>
+</ul>
+<h3 id="callable-values">
+Callable Values
+</h3>
+<p>
+You can indicate that a value is callable &mdash; i.e. that the value is a function, method, or class object &mdash; using the <code>func</code> type, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span><span class="p">;</span>
+</pre>
+<p>
+You can optionally specify the callable's return type, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+</pre>
+<p>
+You can optionally specify the callable's parameter types, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">func</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">func</span><span class="p">(</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bam</span><span class="p">:</span> <span class="nx">func</span><span class="p">(</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+</pre>
+<ul>
+<li>
+<code>foo</code> is a callable that takes no parameters.
+</li>
+<li>
+<code>bar</code> is a callable that takes no parameters and returns a <code>bool</code>.
+</li>
+<li>
+<code>baz</code> is a callable that takes <code>i64</code> and <code>str</code> parameters.
+</li>
+<li>
+<code>bam</code> is a callable that takes <code>i64</code> and <code>str</code> parameters and returns a <code>bool</code>.
+</li>
+</ul>
+<p>
+The <code>func</code> type is nullable, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span><span class="o">?</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">func</span><span class="o">?</span><span class="p">(</span><span class="nx">i64</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+</pre>
+<ul>
+<li>
+<code>foo</code> is either a callable or <code>null</code>.
+</li>
+<li>
+<code>bar</code> is either a callable that takes takes an <code>i64</code> parameter and returns a <code>bool</code> or <code>null</code>.
+</li>
+</ul>
+<h3 id="type-names">
+Type Names
+</h3>
 <p>
 A type name should specify either one of the builtin types or a user-defined type, possibly imported from a module, e.g.
 </p>

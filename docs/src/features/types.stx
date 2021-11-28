@@ -9,8 +9,8 @@ Pyro supports optional type annotations for variable, function, and method decla
     var foo: i64 = 123;
     var bar: f64 = 1.0;
 
-    def is_empty(content: str) -> bool {
-        return content.byte_count() == 0;
+    def is_long(text: str) -> bool {
+        return text.byte_count() > 100;
     }
 
 Pyro doesn't (currently) do anything with these type annotations, apart from verifying their syntax.
@@ -34,6 +34,8 @@ Annotations for builtin types are as follows:
 * `err[type1, type2, ...]`
 * `f64`
 * `file`
+* `func`
+* `func(type1, type2, ...) -> type`
 * `i64`
 * `map`
 * `map[key_type, value_type]`
@@ -60,14 +62,14 @@ Specify a variable's type by following its name with a colon and a type declarat
 The same syntax works for function and method parameters:
 
 ::: code pyro
-    def func(arg1: type, arg2: type) {
+    def func_name(arg1: type, arg2: type) {
         ...
     }
 
 Functions and methods can declare their return type by following their parameter list with an arrow, `->`, and a type declaration:
 
 ::: code pyro
-    def func() -> type {
+    def func_name() -> type {
         ...
     }
 
@@ -89,12 +91,60 @@ Type declarations can be nested as required, e.g.
 ::: code pyro
     var foo: vec[map[str, i64|f64]];
 
-You can indicate that a type is nullable --- i.e. can be either the specified type or `null` --- by appending a `?`, e.g.
+
+
+### Nullable Types
+
+You can indicate that a type is nullable --- i.e. can be either the specified type or `null` --- by appending a `?` to the type name, e.g.
 
 ::: code pyro
     var foo: i64?;
     var bar: vec[str?];
-    var baz: map[str, i64]?;
+    var baz: map?[str, i64];
+
+* `foo` is either an `i64` or `null`.
+* `bar` is a `vec` whose entries are either `str` or `null`.
+* `baz` is either a `map` with `str` keys and `i64` values or `null`.
+
+
+
+### Callable Values
+
+You can indicate that a value is callable --- i.e. that the value is a function, method, or class object --- using the `func` type, e.g.
+
+::: code pyro
+    var foo: func;
+
+You can optionally specify the callable's return type, e.g.
+
+::: code pyro
+    var foo: func -> bool;
+
+You can optionally specify the callable's parameter types, e.g.
+
+::: code pyro
+    var foo: func();
+    var bar: func() -> bool;
+    var baz: func(i64, str);
+    var bam: func(i64, str) -> bool;
+
+* `foo` is a callable that takes no parameters.
+* `bar` is a callable that takes no parameters and returns a `bool`.
+* `baz` is a callable that takes `i64` and `str` parameters.
+* `bam` is a callable that takes `i64` and `str` parameters and returns a `bool`.
+
+The `func` type is nullable, e.g.
+
+::: code pyro
+    var foo: func?;
+    var bar: func?(i64) -> bool;
+
+* `foo` is either a callable or `null`.
+* `bar` is either a callable that takes takes an `i64` parameter and returns a `bool` or `null`.
+
+
+
+### Type Names
 
 A type name should specify either one of the builtin types or a user-defined type, possibly imported from a module, e.g.
 
