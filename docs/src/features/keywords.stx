@@ -1,0 +1,48 @@
+---
+title: Keywords
+meta_title: Pyro &mdash; Keywords
+---
+
+The following keywords are reserved by the language and cannot be used as identifiers:
+
+* `and`
+* `as`
+* `assert`
+* `break`
+* `class`
+* `continue`
+* `def`
+* `echo`
+* `else`
+* `false`
+* `for`
+* `if`
+* `import`
+* `in`
+* `loop`
+* `not`
+* `null`
+* `or`
+* `return`
+* `self`
+* `super`
+* `true`
+* `try`
+* `var`
+* `while`
+* `xor`
+
+The following keywords are reserved for future use:
+
+* `async`
+* `await`
+* `case`
+* `default`
+* `let`
+* `match`
+* `pri`
+* `pub`
+* `run`
+* `static`
+* `switch`
+* `with`

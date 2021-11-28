@@ -1,9 +1,9 @@
 ---
-title: Language Features
+title: Pyro Features
 meta_title: Pyro &mdash; Language Features
 ---
 
-Take a deeper dive into Pyro's features with the in-depth explanations below:
+### Language Features
 
 * [Classes](@root/features/classes//)
 * [Modules](@root/features/modules//)
@@ -11,5 +11,12 @@ Take a deeper dive into Pyro's features with the in-depth explanations below:
 * [Iterators](@root/features/iterators//)
 * [String Formatting](@root/features/formatting//)
 * [Type Annotations](@root/features/types//)
+
+### Testing & Benchmarking
+
 * [Unit Tests](@root/features/testing//)
 * [Benchmarking](@root/features/benchmarking//)
+
+### Language Reference
+
+* [Keywords](@root/features/keywords//)
