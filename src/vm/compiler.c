@@ -1284,7 +1284,10 @@ static void parse_single_type(Parser* parser) {
         consume(parser, TOKEN_IDENTIFIER, "Expected identifier in type declaration.");
     } while (match(parser, TOKEN_COLON_COLON));
 
-    // Parse an optional set of container types: [type, ...].
+    // Parse an optional nullable marker: '?'.
+    match(parser, TOKEN_HOOK);
+
+    // Check for a container type declaration: [type, ...].
     if (match(parser, TOKEN_LEFT_BRACKET)) {
         do {
             parse_type(parser);
@@ -1292,8 +1295,20 @@ static void parse_single_type(Parser* parser) {
         consume(parser, TOKEN_RIGHT_BRACKET, "Expected ']' in type declaration.");
     }
 
-    // Parse an optional nullable marker: '?'.
-    match(parser, TOKEN_HOOK);
+    // Check for a callable type declaration: (type, ...).
+    if (match(parser, TOKEN_LEFT_PAREN)) {
+        if (!match(parser, TOKEN_RIGHT_PAREN)) {
+            do {
+                parse_type(parser);
+            } while (match(parser, TOKEN_COMMA));
+            consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' in type declaration.");
+        }
+    }
+
+    // Check for a return type declaration: -> type.
+    if (match(parser, TOKEN_RIGHT_ARROW)) {
+        parse_type(parser);
+    }
 }
 
 

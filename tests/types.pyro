@@ -1,0 +1,56 @@
+# Atomic types.
+var foo: i64;
+var bar: i64 = 123;
+var baz: i64?;
+var bam: i64? = null;
+
+# Containers 1: vectors.
+var foo: vec;
+var bar: vec[i64];
+var baz: vec[i64] = [123, 456];
+var bam: vec?[i64] = null;
+var bop: vec?[i64?] = null;
+
+# Containers 2: maps.
+var foo: map;
+var bar: map[i64, str];
+var baz: map[i64, str] = {123 = "abc", 456 = "def"};
+var bam: map?[i64, str];
+var bop: map?[i64, str?] = null;
+
+# Containers 3: tuples.
+var foo: tup;
+var bar: tup[i64];
+var baz: tup[i64, str];
+var bam: tup[i64, str, bool];
+var bop: tup[i64, str, bool] = $tup(123, "abc", true);
+var bim: tup?[i64?, str?, bool?] = null;
+
+# Unions.
+var foo: i64|str;
+var bar: i64|str|bool;
+var baz: vec[i64|f64];
+var bam: vec[i64|f64] | tup[i64|f64, i64|f64];
+
+# Parameters and return values.
+def func1(foo: i64, bar: str) {}
+def func2(foo: i64, bar: str) -> bool {}
+def func3() -> bool {}
+
+# Callables 1: no parameters.
+var foo: func;
+var bar: func -> bool;
+
+# Callables 2: with parameters.
+var foo: func();
+var bar: func() -> bool;
+var baz: func(i64);
+var bam: func(i64, str);
+var bop: func(i64, str) -> bool;
+var bip: func?();
+var bim: func?(i64?, str?) -> bool?;
+
+# Mixtures.
+var foo: vec[map[i64, str?]];
+var bar: tup[vec[i64], map[i64, str], bool?];
+def func_name(foo: map[i64, str|bool], bar: vec[i64?]) -> func(i64, str) -> bool {}
