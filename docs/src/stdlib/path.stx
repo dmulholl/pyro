@@ -17,18 +17,17 @@ This module contains filepath utilities.
 
 [[ `is_dir(path: str) -> bool` ]]
 
-    Returns `true` if a directory exists at `path`.
+    Returns `true` if `path` exists and is a directory.
     If `path` is a symlink, returns `true` if the target of the link exists and is a directory.
 
 
 [[ `is_file(path: str) -> bool` ]]
 
-    Returns `true` if a regular file exists at `path`.
+    Returns `true` if `path` exists and is a regular file.
     If `path` is a symlink, returns `true` if the target of the link exists and is a regular file.
 
 
 [[ `is_symlink(path: str) -> bool` ]]
 
-    Returns true if a symlink exists at `path`.
+    Returns `true` if `path` exists and is a symlink.
     (This checks if the symlink itself exists, not its target.)
-
