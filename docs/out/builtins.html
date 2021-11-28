@@ -320,6 +320,17 @@ Returns <code>true</code> if the string contains the string <code>target</code>.
 </div>
 <div>
 <dt>
+<code>:count()</code>
+</dt>
+<dd>
+<p>
+Returns the number of bytes in the string as an <code>i64</code>.
+This method is an alias for <code>:byte_count()</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:ends_with(suffix)</code>
 </dt>
 <dd>
@@ -348,6 +359,16 @@ Returns <code>$err()</code> if <code>target</code> is not found.
 <p>
 Returns <code>true</code> if the string is empty or contains only byte values in the range <code>[0, 127]</code>.
 (This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty()</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty, i.e. if its length is zero.
 </p>
 </dd>
 </div>

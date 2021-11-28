@@ -98,6 +98,11 @@ Strings have the following methods:
 
     Returns `true` if the string contains the string `target`.
 
+[[ `:count()` ]]
+
+    Returns the number of bytes in the string as an `i64`.
+    This method is an alias for `:byte_count()`.
+
 [[ `:ends_with(suffix)` ]]
 
     Returns `true` if the string ends with the string `suffix`, otherwise `false`.
@@ -112,6 +117,10 @@ Strings have the following methods:
 
     Returns `true` if the string is empty or contains only byte values in the range `[0, 127]`.
     (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:is_empty()` ]]
+
+    Returns `true` if the string is empty, i.e. if its length is zero.
 
 [[ `:is_utf8()` ]]
 
