@@ -16,12 +16,10 @@
 #include <ctype.h>
 #include <errno.h>
 
-// POSIX headers.
-#include <libgen.h> // for dirname()
-
 // Local headers.
 #include "../pyro.h"
 #include "../lib/args/args.h"
+#include "../lib/os/os.h"
 
 void pyro_run_file(ArgParser* parser);
 void pyro_run_repl(ArgParser* parser);

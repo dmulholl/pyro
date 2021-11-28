@@ -5,7 +5,6 @@
 #include "../vm/utils.h"
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
-#include "../vm/os.h"
 #include "../vm/errors.h"
 
 
@@ -455,7 +454,7 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
 
-    CmdResult result;
+    ShellResult result;
     if (!pyro_run_shell_cmd(vm, AS_STR(args[0])->bytes, &result)) {
         // We've already panicked.
         return NULL_VAL();

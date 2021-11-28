@@ -18,6 +18,7 @@
 
 // Local includes.
 #include "../pyro.h"
+#include "../lib/os/os.h"
 
 // Forward declarations.
 typedef struct Obj Obj;

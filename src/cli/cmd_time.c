@@ -25,7 +25,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         }
 
         char* path_copy = strdup(path);
-        pyro_add_import_root(vm, dirname(path_copy));
+        pyro_add_import_root(vm, pyro_dirname(path_copy));
         free(path_copy);
 
         pyro_exec_file_as_main(vm, path);

@@ -30,7 +30,7 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
 
         // Add the directory containing the script file to the list of import roots.
         char* path_copy = strdup(path);
-        pyro_add_import_root(vm, dirname(path_copy));
+        pyro_add_import_root(vm, pyro_dirname(path_copy));
         free(path_copy);
 
         // Set the VM"s max memory allocation.

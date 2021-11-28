@@ -17,7 +17,7 @@ void pyro_run_file(ArgParser* parser) {
     // Add the directory containing the script file to the list of import roots.
     char* path = ap_arg(parser, 0);
     char* path_copy = strdup(path);
-    pyro_add_import_root(vm, dirname(path_copy));
+    pyro_add_import_root(vm, pyro_dirname(path_copy));
     free(path_copy);
 
     // Add the command line args to the global $args variable.

@@ -55,4 +55,13 @@ uint64_t pyro_sdbm_64(const char* string, size_t length);
 // will be less than or equal to [src_len].
 size_t pyro_unescape_string(const char* src, size_t src_len, char* dst);
 
+typedef struct {
+    ObjStr* output;
+    int exit_code;
+} ShellResult;
+
+// Runs a shell command. Returns true if the attempt to run the command was successful. Panics and
+// returns false if there was a memory-allocation or I/O read error.
+bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellResult* out);
+
 #endif

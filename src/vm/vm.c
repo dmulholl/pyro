@@ -5,7 +5,6 @@
 #include "heap.h"
 #include "values.h"
 #include "utils.h"
-#include "os.h"
 #include "errors.h"
 
 #include "../std/std_core.h"
@@ -56,7 +55,7 @@ static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjMo
         path_count += 4;
         path[path_count] = '\0';
 
-        if (pyro_file_exists(path)) {
+        if (pyro_exists(path)) {
             pyro_exec_file_as_module(vm, path, module);
             FREE_ARRAY(vm, char, path, path_length + 1);
             return;
@@ -67,7 +66,7 @@ static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjMo
         path_count += 5;
         path[path_count] = '\0';
 
-        if (pyro_file_exists(path)) {
+        if (pyro_exists(path)) {
             pyro_exec_file_as_module(vm, path, module);
             FREE_ARRAY(vm, char, path, path_length + 1);
             return;
@@ -77,7 +76,7 @@ static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjMo
         path_count -= 10;
         path[path_count] = '\0';
 
-        if (pyro_dir_exists(path)) {
+        if (pyro_is_dir(path)) {
             FREE_ARRAY(vm, char, path, path_length + 1);
             return;
         }
