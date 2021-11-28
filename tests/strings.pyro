@@ -3,9 +3,13 @@ assert foo == "foo";
 assert "foo" == foo;
 assert "foo" == "foo";
 assert foo:byte_count() == 3;
+assert foo:count() == 3;
 assert foo:byte(0) == 102;
 assert foo:byte(1) == 111;
 assert foo:byte(2) == 111;
+
+assert "":is_empty() == true;
+assert "foo":is_empty() == false;
 
 assert "\n":byte_count() == 1;
 assert "\n":byte(0) == 10;

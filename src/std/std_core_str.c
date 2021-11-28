@@ -24,6 +24,12 @@ static Value fn_is_str(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    return BOOL_VAL(str->length == 0);
+}
+
+
 static Value str_byte_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     return I64_VAL(str->length);
@@ -1065,6 +1071,8 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "byte", str_byte, 1);
     pyro_define_method(vm, vm->str_class, "bytes", str_bytes, 0);
     pyro_define_method(vm, vm->str_class, "byte_count", str_byte_count, 0);
+    pyro_define_method(vm, vm->str_class, "count", str_byte_count, 0);
+    pyro_define_method(vm, vm->str_class, "is_empty", str_is_empty, 0);
     pyro_define_method(vm, vm->str_class, "char", str_char, 1);
     pyro_define_method(vm, vm->str_class, "chars", str_chars, 0);
     pyro_define_method(vm, vm->str_class, "char_count", str_char_count, 0);
