@@ -65,7 +65,7 @@ Pyro's <code>for ... in ...</code> loop uses a simple iterator protocol:
 </pre>
 <p>
 An object is <i>iterable</i> if it has an <code>:$iter()</code> method.
-This method should return an <i>iterator</i> &mdash; an object with a <code>:$next()</code> method which returns the next item from the sequence or an <code>$err</code> if the sequence has been exhausted.
+This method should return an <i>iterator</i> &mdash; an object with a <code>:$next()</code> method which returns the next item from the sequence or an <code>err</code> if the sequence has been exhausted.
 </p>
 <h3 id="example">
 Example
@@ -112,7 +112,7 @@ Trying out this new type in the REPL should give us output like this:
 <span class="mi">4</span>
 </pre>
 <p>
-Note that Pyro already has a builtin <code>$range</code> type which you can find <a href="../builtins.html#ranges">here</a>.
+Note that Pyro already has a builtin <code>range</code> type which you can find <a href="../builtins.html#ranges">here</a>.
 </p>
         </article>
         

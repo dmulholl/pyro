@@ -71,7 +71,7 @@ Strings have the following methods:
 
     Returns the number of bytes in the string.
 
-[[ `:bytes() -> iter[i64]` ]]
+[[ `:bytes() -> iterator[i64]` ]]
 
     Returns an iterator over the string's bytes as `i64` values.
 
@@ -90,7 +90,7 @@ Strings have the following methods:
     (This is a potentially expensive method as it needs to traverse the string.
     Note that it will panic if it encounters invalid UTF-8.)
 
-[[ `:chars() -> iter[char]` ]]
+[[ `:chars() -> iterator[char]` ]]
 
     Returns an iterator over the string's `char` values, i.e. UTF-8 encoded Unicode code points.
 
@@ -364,7 +364,7 @@ Vectors have the following methods:
 
 A hash map, `map`, is an unordered collection of key-value pairs.
 
-[[ `$map()` ]]
+[[ `$map() -> map` ]]
 
     Creates a new `map` object.
 
@@ -389,43 +389,41 @@ Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
 Maps have the following methods:
 
-[[ `:contains(key)` ]]
+[[ `:contains(key: any) -> bool` ]]
 
     Returns `true` if the map contains `key`, otherwise `false`.
 
-[[ `:copy()` ]]
+[[ `:copy() -> map` ]]
 
     Returns a copy of the map.
 
-[[ `:count()` ]]
+[[ `:count() -> i64` ]]
 
-    Returns the number of entries in the map as an `i64`.
+    Returns the number of entries in the map.
 
-[[ `:del(key)` ]]
+[[ `:del(key: any)` ]]
 
     Deletes the entry associated with `key` if it exists.
 
-[[ `:entries()` ]]
+[[ `:entries() -> iterator` ]]
 
     Returns an iterator over `(key, value)` tuples.
 
-[[ `:get(key)` ]]
+[[ `:get(key: any) -> any` ]]
 
     Returns the value associated with `key` or `err` if `key` was not found.
 
-[[ `:keys()` ]]
+[[ `:keys() -> iterator` ]]
 
     Returns an iterator over the map's keys.
 
-[[ `:set(key, value)` ]]
+[[ `:set(key: any, value: any)` ]]
 
     Adds a new entry to the map or updates an existing entry.
 
-[[ `:values()` ]]
+[[ `:values() -> iterator` ]]
 
     Returns an iterator over the map's values.
-
-
 
 
 
@@ -433,7 +431,7 @@ Maps have the following methods:
 
 A tuple, `tup`, is an immutable array of values.
 
-[[ `$tup()` <br> `$tup(arg1, arg2, ...)` ]]
+[[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
 
     Creates a new `tup` object.
     The arguments provide the tuple's values.
@@ -455,13 +453,13 @@ Tuples are iterable:
 
 Tuples have the following methods:
 
-[[ `:count()` ]]
+[[ `:count() -> i64` ]]
 
-    Returns the number of entries in the tuple as an `i64`.
+    Returns the number of entries in the tuple.
 
-[[ `:get(index)` ]]
+[[ `:get(index: i64) -> any` ]]
 
-    Returns the value at `index` where `index` is an `i64`. Will panic if `index` is out of range or not an integer.
+    Returns the value at `index`. Will panic if `index` is out of range or not an integer.
 
 
 
@@ -469,7 +467,7 @@ Tuples have the following methods:
 
 The error type, `err`, can be returned by functions to indicate failure.
 
-[[ `$err()` <br> `$err(arg1, arg2, ...)` ]]
+[[ `$err() -> err` <br> `$err(arg1: any, arg2: any, ...) -> i64` ]]
 
     Creates a new `err` object.
     The arguments provide the error's values.
@@ -488,17 +486,20 @@ Alternatively, you can use the error-coalescing operator `!!` to supply a defaul
 
 A range object, `range`, is an iterator over a range of integers.
 
-[[ `$range(stop)` <br> `$range(start, stop)` <br> `$range(start, stop, step)` ]]
+[[ `$range(stop: i64) -> range` <br> `$range(start: i64, stop: i64) -> range` <br> `$range(start: i64, stop: i64, step: i64) -> range` ]]
 
     Returns an integer iterator over the half-open interval `[start, stop)`.
     `start` defaults to `0`, `step` defaults to `1` if not specified.
 
-Ranges are useful with `for` loops:
+Ranges are useful with `for` loops, e.g.
 
 ::: code pyro
-    >>> for i in $range(5) {
-    ...     echo i;
-    ... }
+    for i in $range(5) {
+        echo i;
+    }
+
+This would print:
+
     0
     1
     2
@@ -513,7 +514,7 @@ Note that the interval doesn't include the `stop` boundary itself.
 
 A byte buffer, `buf`, is a dynamic array of bytes.
 
-[[ `$buf()` ]]
+[[ `$buf() -> buf` ]]
 
     Creates a new `buf` object.
 
@@ -530,22 +531,22 @@ Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
 Buffers have the following methods:
 
-[[ `:count()` ]]
+[[ `:count() -> i64` ]]
 
-    Returns the number of bytes in the buffer as an `i64`.
+    Returns the number of bytes in the buffer.
 
-[[ `:get(index)` ]]
+[[ `:get(index: i64) -> i64` ]]
 
-    Returns the byte value at `index` as an `i64` in the range `[0, 255]`.
+    Returns the byte value at `index` as an integer in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
 
-[[ `:set(index, byte)` ]]
+[[ `:set(index: i64, byte: i64)` ]]
 
-    Sets the byte value at `index` to `byte` where `byte` is an `i64` in the range `[0, 255]`.
+    Sets the byte value at `index` to `byte` where `byte` is an integer in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
     Will panic if `byte` isn't an integer or is out of range.
 
-[[ `:to_str()` ]]
+[[ `:to_str() -> str` ]]
 
     Converts the content of the buffer into a string, leaving a valid but empty buffer object behind.
     Returns the new string.
@@ -554,7 +555,7 @@ Buffers have the following methods:
 
     Note that calling `$str(buf)` on a buffer does something different --- it creates a string with a *copy* of the buffer's content, leaving the buffer itself unchanged.
 
-[[ `:write(arg)` <br> `:write(format_string, arg1, arg2, ...)` ]]
+[[ `:write(arg: any)` <br> `:write(format_string: str, arg1: any, arg2: any, ...)` ]]
 
     Writes a string to the buffer.
     Calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
@@ -562,9 +563,9 @@ Buffers have the following methods:
 
     This method can panic if an error occurs while formatting the output string.
 
-[[ `:write_byte(byte)` ]]
+[[ `:write_byte(byte: i64)` ]]
 
-    Appends `byte` to the buffer where `byte` is an `i64` in the range `[0, 255]`.
+    Appends `byte` to the buffer where `byte` is an integer in the range `[0, 255]`.
     Will panic if `byte` is not an integer or is out of range.
 
 
@@ -573,11 +574,10 @@ Buffers have the following methods:
 
 A file object, `file`, is a wrapper around a readable or writable byte stream.
 
-[[ `$file(path, mode)` ]]
+[[ `$file(path: str, mode: str) -> file` ]]
 
     Creates a new `file` object.
     Opens the underlying file stream using the C function `fopen()`.
-    `path` and `mode` should both be strings.
     Panics on failure.
 
 Mode options:
@@ -603,7 +603,7 @@ Files have the following methods:
 
     Flushes the file stream.
 
-[[ `:read()` ]]
+[[ `:read() -> buf` ]]
 
     Reads the content of the file into a new byte buffer, `buf`.
 
@@ -612,22 +612,22 @@ Files have the following methods:
 
     Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the buffer.
 
-[[ `:read_byte()` ]]
+[[ `:read_byte() -> i64?` ]]
 
     Reads the next byte value from the file.
     Returns the byte value as an integer in the range `[0, 255]`, or `null` if the end of the file had already been reached before the method was called.
     Panics if an I/O read error occurs.
 
-[[ `:read_bytes(n)` ]]
+[[ `:read_bytes(n: i64) -> buf?` ]]
 
-    Attempts to read `n` bytes from the file into a new byte buffer, `buf`, where `n` is an `i64`.
+    Attempts to read `n` bytes from the file into a new byte buffer.
     May read less than `n` bytes if the end of the file is reached first.
 
     Returns the new byte buffer or `null` if the end of the file had already been reached before the method was called.
 
     Panics if an I/O read error occurs, if the argument is invalid, or if sufficient memory cannot be allocated for the buffer.
 
-[[ `:read_line()` ]]
+[[ `:read_line() -> str?` ]]
 
     Reads the next line of input from the file and returns it as a string.
     Strips the terminating `\\n` or `\\r\\n` if present.
@@ -636,7 +636,7 @@ Files have the following methods:
 
     Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
 
-[[ `:read_string()` ]]
+[[ `:read_string() -> str` ]]
 
     Reads the content of the file into a string, `str`.
 
@@ -645,7 +645,7 @@ Files have the following methods:
 
     Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
 
-[[ `:write(arg)` <br> `:write(format_string, arg1, arg2, ...)` ]]
+[[ `:write(arg: any) -> i64` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
 
     Writes a string or buffer to the file.
 
@@ -657,7 +657,7 @@ Files have the following methods:
 
     Panics if an I/O write error occurs or if an error occurs while formatting the output string.
 
-[[ `:write_byte(byte)` ]]
+[[ `:write_byte(byte: i64)` ]]
 
     Writes a byte value to the file, where `byte` is an integer in the range `[0, 255]`.
     Panics if an I/O write error occurs or if the argument is an invalid type or is out of range.

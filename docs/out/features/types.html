@@ -55,7 +55,28 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#builtin-types">Builtin Types</a>
+</li>
+<li>
+<a href="#syntax">Syntax</a>
+</li>
+<li>
+<a href="#nullable-types">Nullable Types</a>
+</li>
+<li>
+<a href="#callable-values">Callable Values</a>
+</li>
+<li>
+<a href="#type-names">Type Names</a>
+</li>
+<li>
+<a href="#notes">Notes</a>
+</li>
+</ul>
+<hr>
+<p>
 Pyro supports optional type annotations for variable, function, and method declarations, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
@@ -102,19 +123,7 @@ Annotations for builtin types are as follows:
 <code>file</code>
 </li>
 <li>
-<code>func</code>
-</li>
-<li>
-<code>func(type1, type2, ...) -&gt; type</code>
-</li>
-<li>
 <code>i64</code>
-</li>
-<li>
-<code>iter</code>
-</li>
-<li>
-<code>iter[type]</code>
 </li>
 <li>
 <code>map</code>
@@ -144,6 +153,27 @@ Annotations for builtin types are as follows:
 <code>vec[type]</code>
 </li>
 </ul>
+<p>
+The annotations below describe interfaces rather than specific types:
+</p>
+<ul>
+<li>
+<code>func</code>
+</li>
+<li>
+<code>func(type1, type2, ...) -&gt; type</code>
+</li>
+<li>
+<code>iterator</code>
+</li>
+<li>
+<code>iterator[type]</code>
+</li>
+</ul>
+<p>
+A <code>func</code> value is callable;
+an <code>iterator</code> value has a <code>:next()</code> method that returns the next item from a sequence.
+</p>
 <p>
 Type annotations beginning with a lowercase letter are reserved for language builtins.
 </p>

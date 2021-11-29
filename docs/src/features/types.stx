@@ -3,6 +3,9 @@ title: Type Annotations
 meta_title: Pyro &mdash; Type Annotations
 ---
 
+::: insert toc
+::: hr
+
 Pyro supports optional type annotations for variable, function, and method declarations, e.g.
 
 ::: code pyro
@@ -34,11 +37,7 @@ Annotations for builtin types are as follows:
 * `err[type1, type2, ...]`
 * `f64`
 * `file`
-* `func`
-* `func(type1, type2, ...) -> type`
 * `i64`
-* `iter`
-* `iter[type]`
 * `map`
 * `map[key_type, value_type]`
 * `null`
@@ -48,6 +47,16 @@ Annotations for builtin types are as follows:
 * `tup[type1, type2, ...]`
 * `vec`
 * `vec[type]`
+
+The annotations below describe interfaces rather than specific types:
+
+* `func`
+* `func(type1, type2, ...) -> type`
+* `iterator`
+* `iterator[type]`
+
+A `func` value is callable;
+an `iterator` value has a `:next()` method that returns the next item from a sequence.
 
 Type annotations beginning with a lowercase letter are reserved for language builtins.
 

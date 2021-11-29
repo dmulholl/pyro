@@ -261,7 +261,7 @@ Returns the number of bytes in the string.
 </div>
 <div>
 <dt>
-<code>:bytes() -&gt; iter[i64]</code>
+<code>:bytes() -&gt; iterator[i64]</code>
 </dt>
 <dd>
 <p>
@@ -300,7 +300,7 @@ Note that it will panic if it encounters invalid UTF-8.)
 </div>
 <div>
 <dt>
-<code>:chars() -&gt; iter[char]</code>
+<code>:chars() -&gt; iterator[char]</code>
 </dt>
 <dd>
 <p>
@@ -845,7 +845,7 @@ A hash map, <code>map</code>, is an unordered collection of key-value pairs.
 <dl>
 <div>
 <dt>
-<code>$map()</code>
+<code>$map() -&gt; map</code>
 </dt>
 <dd>
 <p>
@@ -882,7 +882,7 @@ Maps have the following methods:
 <dl>
 <div>
 <dt>
-<code>:contains(key)</code>
+<code>:contains(key: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -892,7 +892,7 @@ Returns <code>true</code> if the map contains <code>key</code>, otherwise <code>
 </div>
 <div>
 <dt>
-<code>:copy()</code>
+<code>:copy() -&gt; map</code>
 </dt>
 <dd>
 <p>
@@ -902,17 +902,17 @@ Returns a copy of the map.
 </div>
 <div>
 <dt>
-<code>:count()</code>
+<code>:count() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the number of entries in the map as an <code>i64</code>.
+Returns the number of entries in the map.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:del(key)</code>
+<code>:del(key: any)</code>
 </dt>
 <dd>
 <p>
@@ -922,7 +922,7 @@ Deletes the entry associated with <code>key</code> if it exists.
 </div>
 <div>
 <dt>
-<code>:entries()</code>
+<code>:entries() -&gt; iterator</code>
 </dt>
 <dd>
 <p>
@@ -932,7 +932,7 @@ Returns an iterator over <code>(key, value)</code> tuples.
 </div>
 <div>
 <dt>
-<code>:get(key)</code>
+<code>:get(key: any) -&gt; any</code>
 </dt>
 <dd>
 <p>
@@ -942,7 +942,7 @@ Returns the value associated with <code>key</code> or <code>err</code> if <code>
 </div>
 <div>
 <dt>
-<code>:keys()</code>
+<code>:keys() -&gt; iterator</code>
 </dt>
 <dd>
 <p>
@@ -952,7 +952,7 @@ Returns an iterator over the map's keys.
 </div>
 <div>
 <dt>
-<code>:set(key, value)</code>
+<code>:set(key: any, value: any)</code>
 </dt>
 <dd>
 <p>
@@ -962,7 +962,7 @@ Adds a new entry to the map or updates an existing entry.
 </div>
 <div>
 <dt>
-<code>:values()</code>
+<code>:values() -&gt; iterator</code>
 </dt>
 <dd>
 <p>
@@ -980,7 +980,7 @@ A tuple, <code>tup</code>, is an immutable array of values.
 <dl>
 <div>
 <dt>
-<code>$tup()</code> <br> <code>$tup(arg1, arg2, ...)</code>
+<code>$tup() -&gt; tup</code> <br> <code>$tup(arg1: any, arg2: any, ...) -&gt; tup</code>
 </dt>
 <dd>
 <p>
@@ -1014,21 +1014,21 @@ Tuples have the following methods:
 <dl>
 <div>
 <dt>
-<code>:count()</code>
+<code>:count() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the number of entries in the tuple as an <code>i64</code>.
+Returns the number of entries in the tuple.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:get(index)</code>
+<code>:get(index: i64) -&gt; any</code>
 </dt>
 <dd>
 <p>
-Returns the value at <code>index</code> where <code>index</code> is an <code>i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+Returns the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
 </p>
 </dd>
 </div>
@@ -1042,7 +1042,7 @@ The error type, <code>err</code>, can be returned by functions to indicate failu
 <dl>
 <div>
 <dt>
-<code>$err()</code> <br> <code>$err(arg1, arg2, ...)</code>
+<code>$err() -&gt; err</code> <br> <code>$err(arg1: any, arg2: any, ...) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -1071,7 +1071,7 @@ A range object, <code>range</code>, is an iterator over a range of integers.
 <dl>
 <div>
 <dt>
-<code>$range(stop)</code> <br> <code>$range(start, stop)</code> <br> <code>$range(start, stop, step)</code>
+<code>$range(stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64, step: i64) -&gt; range</code>
 </dt>
 <dd>
 <p>
@@ -1082,17 +1082,22 @@ Returns an integer iterator over the half-open interval <code>[start, stop)</cod
 </div>
 </dl>
 <p>
-Ranges are useful with <code>for</code> loops:
+Ranges are useful with <code>for</code> loops, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
-<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
-<span class="cp">...</span> <span class="p">}</span>
-<span class="mi">0</span>
-<span class="mi">1</span>
-<span class="mi">2</span>
-<span class="mi">3</span>
-<span class="mi">4</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+This would print:
+</p>
+<pre>
+0
+1
+2
+3
+4
 </pre>
 <p>
 Note that the interval doesn't include the <code>stop</code> boundary itself.
@@ -1106,7 +1111,7 @@ A byte buffer, <code>buf</code>, is a dynamic array of bytes.
 <dl>
 <div>
 <dt>
-<code>$buf()</code>
+<code>$buf() -&gt; buf</code>
 </dt>
 <dd>
 <p>
@@ -1134,32 +1139,32 @@ Buffers have the following methods:
 <dl>
 <div>
 <dt>
-<code>:count()</code>
+<code>:count() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the number of bytes in the buffer as an <code>i64</code>.
+Returns the number of bytes in the buffer.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:get(index)</code>
+<code>:get(index: i64) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the byte value at <code>index</code> as an <code>i64</code> in the range <code>[0, 255]</code>.
+Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
 Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:set(index, byte)</code>
+<code>:set(index: i64, byte: i64)</code>
 </dt>
 <dd>
 <p>
-Sets the byte value at <code>index</code> to <code>byte</code> where <code>byte</code> is an <code>i64</code> in the range <code>[0, 255]</code>.
+Sets the byte value at <code>index</code> to <code>byte</code> where <code>byte</code> is an integer in the range <code>[0, 255]</code>.
 Will panic if <code>index</code> isn't an integer or is out of range.
 Will panic if <code>byte</code> isn't an integer or is out of range.
 </p>
@@ -1167,7 +1172,7 @@ Will panic if <code>byte</code> isn't an integer or is out of range.
 </div>
 <div>
 <dt>
-<code>:to_str()</code>
+<code>:to_str() -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -1184,7 +1189,7 @@ Note that calling <code>$str(buf)</code> on a buffer does something different &m
 </div>
 <div>
 <dt>
-<code>:write(arg)</code> <br> <code>:write(format_string, arg1, arg2, ...)</code>
+<code>:write(arg: any)</code> <br> <code>:write(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
@@ -1199,11 +1204,11 @@ This method can panic if an error occurs while formatting the output string.
 </div>
 <div>
 <dt>
-<code>:write_byte(byte)</code>
+<code>:write_byte(byte: i64)</code>
 </dt>
 <dd>
 <p>
-Appends <code>byte</code> to the buffer where <code>byte</code> is an <code>i64</code> in the range <code>[0, 255]</code>.
+Appends <code>byte</code> to the buffer where <code>byte</code> is an integer in the range <code>[0, 255]</code>.
 Will panic if <code>byte</code> is not an integer or is out of range.
 </p>
 </dd>
@@ -1218,13 +1223,12 @@ A file object, <code>file</code>, is a wrapper around a readable or writable byt
 <dl>
 <div>
 <dt>
-<code>$file(path, mode)</code>
+<code>$file(path: str, mode: str) -&gt; file</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>file</code> object.
 Opens the underlying file stream using the C function <code>fopen()</code>.
-<code>path</code> and <code>mode</code> should both be strings.
 Panics on failure.
 </p>
 </dd>
@@ -1313,7 +1317,7 @@ Flushes the file stream.
 </div>
 <div>
 <dt>
-<code>:read()</code>
+<code>:read() -&gt; buf</code>
 </dt>
 <dd>
 <p>
@@ -1330,7 +1334,7 @@ Panics if an I/O read error occurs or if sufficient memory cannot be allocated f
 </div>
 <div>
 <dt>
-<code>:read_byte()</code>
+<code>:read_byte() -&gt; i64?</code>
 </dt>
 <dd>
 <p>
@@ -1342,11 +1346,11 @@ Panics if an I/O read error occurs.
 </div>
 <div>
 <dt>
-<code>:read_bytes(n)</code>
+<code>:read_bytes(n: i64) -&gt; buf?</code>
 </dt>
 <dd>
 <p>
-Attempts to read <code>n</code> bytes from the file into a new byte buffer, <code>buf</code>, where <code>n</code> is an <code>i64</code>.
+Attempts to read <code>n</code> bytes from the file into a new byte buffer.
 May read less than <code>n</code> bytes if the end of the file is reached first.
 </p>
 <p>
@@ -1359,7 +1363,7 @@ Panics if an I/O read error occurs, if the argument is invalid, or if sufficient
 </div>
 <div>
 <dt>
-<code>:read_line()</code>
+<code>:read_line() -&gt; str?</code>
 </dt>
 <dd>
 <p>
@@ -1376,7 +1380,7 @@ Panics if an I/O read error occurs or if sufficient memory cannot be allocated f
 </div>
 <div>
 <dt>
-<code>:read_string()</code>
+<code>:read_string() -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -1393,7 +1397,7 @@ Panics if an I/O read error occurs or if sufficient memory cannot be allocated f
 </div>
 <div>
 <dt>
-<code>:write(arg)</code> <br> <code>:write(format_string, arg1, arg2, ...)</code>
+<code>:write(arg: any) -&gt; i64</code> <br> <code>:write(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -1414,7 +1418,7 @@ Panics if an I/O write error occurs or if an error occurs while formatting the o
 </div>
 <div>
 <dt>
-<code>:write_byte(byte)</code>
+<code>:write_byte(byte: i64)</code>
 </dt>
 <dd>
 <p>
