@@ -83,10 +83,7 @@ This way, each `Person` instance gets its own individual `hobbies` vector.
 
 
 
-
-
 ### Inheritance
-
 
 A class can inherit from a superclass.
 
@@ -139,3 +136,51 @@ Assigning to an index:
     object[key] = value;
 
 is equivalent to calling the object's `$set_index(key, value)` method.
+
+
+
+### Special Methods
+
+You can implement the `$special` methods listed below to add support for various language features to your types:
+
+
+[[ `:$debug() -> str` ]]
+
+    Should return a string representation of the instance suitable for debugging.
+
+
+[[ `:$fmt(format_specifier: str) -> str` ]]
+
+    Should return a string representation of the instance formatted according to the `format_specifier` string.
+
+
+[[ `:$get_index(key: any) -> any` ]]
+
+    Implementing this method adds support for index-style read access to instances.
+
+
+[[ `:$init()` ]]
+
+    Constructor method for initializing new instances.
+
+
+[[ `:$iter() -> iterator` ]]
+
+    Implementing this method makes the type iterable.
+    The method should return an iterator, i.e. an object with a `:$next()` method.
+
+
+[[ `:$next() -> any` ]]
+
+    Implementing this method makes the type an iterator.
+    The method should return either the next item from a sequence or an `err` if the sequence has been exhausted.
+
+
+[[ `:$set_index(key: any, value: any)` ]]
+
+    Implementing this method adds support for index-style write access to instances.
+
+
+[[ `:$str() -> str` ]]
+
+    Should return the instance's default string representation.

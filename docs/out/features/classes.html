@@ -34,13 +34,7 @@
 <li><a href="../features.html">Features</a></li>
 <li><a href="../builtins.html">Builtin Types</a></li>
 <li><a href="../globals.html">Globals</a></li>
-<li><a href="../stdlib.html">Standard Library</a><ul>
-<li><a href="../stdlib/errors.html">errors</a></li>
-<li><a href="../stdlib/math.html">math</a></li>
-<li><a href="../stdlib/prng.html">prng</a></li>
-<li><a href="../stdlib/pyro.html">pyro</a></li>
-</ul>
-</li>
+<li><a href="../stdlib.html">Standard Library</a></li>
 <li><a href="../acknowledgements.html">Acknowledgements</a></li>
 <li><a href="../examples.html">Examples</a></li>
 <li><a href="../roadmap.html">Roadmap</a></li>
@@ -70,6 +64,9 @@
 </li>
 <li>
 <a href="#indexing">Indexing</a>
+</li>
+<li>
+<a href="#special-methods">Special Methods</a>
 </li>
 </ul>
 <h3 id="class-definitions">
@@ -218,6 +215,96 @@ Assigning to an index:
 <p>
 is equivalent to calling the object's <code>$set_index(key, value)</code> method.
 </p>
+<h3 id="special-methods">
+Special Methods
+</h3>
+<p>
+You can implement the <code>$special</code> methods listed below to add support for various language features to your types:
+</p>
+<dl>
+<div>
+<dt>
+<code>:$debug() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Should return a string representation of the instance suitable for debugging.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$fmt(format_specifier: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Should return a string representation of the instance formatted according to the <code>format_specifier</code> string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$get_index(key: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method adds support for index-style read access to instances.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$init()</code>
+</dt>
+<dd>
+<p>
+Constructor method for initializing new instances.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$iter() -&gt; iterator</code>
+</dt>
+<dd>
+<p>
+Implementing this method makes the type iterable.
+The method should return an iterator, i.e. an object with a <code>:$next()</code> method.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$next() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method makes the type an iterator.
+The method should return either the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$set_index(key: any, value: any)</code>
+</dt>
+<dd>
+<p>
+Implementing this method adds support for index-style write access to instances.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$str() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Should return the instance's default string representation.
+</p>
+</dd>
+</div>
+</dl>
         </article>
         
     </body>

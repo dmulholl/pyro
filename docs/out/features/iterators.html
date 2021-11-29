@@ -34,13 +34,7 @@
 <li><a href="../features.html">Features</a></li>
 <li><a href="../builtins.html">Builtin Types</a></li>
 <li><a href="../globals.html">Globals</a></li>
-<li><a href="../stdlib.html">Standard Library</a><ul>
-<li><a href="../stdlib/errors.html">errors</a></li>
-<li><a href="../stdlib/math.html">math</a></li>
-<li><a href="../stdlib/prng.html">prng</a></li>
-<li><a href="../stdlib/pyro.html">pyro</a></li>
-</ul>
-</li>
+<li><a href="../stdlib.html">Standard Library</a></li>
 <li><a href="../acknowledgements.html">Acknowledgements</a></li>
 <li><a href="../examples.html">Examples</a></li>
 <li><a href="../roadmap.html">Roadmap</a></li>
@@ -99,20 +93,25 @@ We can illustrate the iterator protocol by creating a custom <code>Range</code> 
 Note that the <code>:$iter()</code> method simply returns <code>self</code> &mdash; a <code>Range</code> instance is its own iterator.
 </p>
 <p>
-Trying out this new type in the REPL should give us output like this:
+We can try out our new type like this:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">Range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
-<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
-<span class="cp">...</span> <span class="p">}</span>
-<span class="mi">0</span>
-<span class="mi">1</span>
-<span class="mi">2</span>
-<span class="mi">3</span>
-<span class="mi">4</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">Range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+<span class="p">}</span>
 </pre>
 <p>
-Note that Pyro already has a builtin <code>range</code> type which you can find <a href="../builtins.html#ranges">here</a>.
+This should give us the following output:
+</p>
+<pre>
+0
+1
+2
+3
+4
+</pre>
+<p>
+Note that Pyro already has a builtin <code>range</code> type &mdash; you can find a description of it <a href="../builtins.html#ranges">here</a>.
 </p>
         </article>
         

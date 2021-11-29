@@ -34,13 +34,7 @@
 <li><a href="features.html">Features</a></li>
 <li><a href="builtins.html">Builtin Types</a></li>
 <li><a href="globals.html">Globals</a></li>
-<li><a href="stdlib.html">Standard Library</a><ul>
-<li><a href="stdlib/errors.html">errors</a></li>
-<li><a href="stdlib/math.html">math</a></li>
-<li><a href="stdlib/prng.html">prng</a></li>
-<li><a href="stdlib/pyro.html">pyro</a></li>
-</ul>
-</li>
+<li><a href="stdlib.html">Standard Library</a></li>
 <li><a href="acknowledgements.html">Acknowledgements</a></li>
 <li><a href="examples.html">Examples</a></li>
 <li><a href="roadmap.html">Roadmap</a></li>
@@ -73,7 +67,7 @@ Global Variables
 <dl>
 <div>
 <dt>
-<code>$args</code>
+<code>$args: tup</code>
 </dt>
 <dd>
 <p>
@@ -83,7 +77,7 @@ A tuple of strings containing the program's command line arguments.
 </div>
 <div>
 <dt>
-<code>$filepath</code>
+<code>$filepath: str</code>
 </dt>
 <dd>
 <p>
@@ -93,7 +87,7 @@ A string containing the filepath of the script or module file.
 </div>
 <div>
 <dt>
-<code>$roots</code>
+<code>$roots: vec[str]</code>
 </dt>
 <dd>
 <p>
@@ -103,31 +97,31 @@ A vector of strings containing the root directory paths that Pyro checks when at
 </div>
 <div>
 <dt>
-<code>$stderr</code>
+<code>$stderr: file</code>
 </dt>
 <dd>
 <p>
-A <code>$file</code> object pointing to the standard error stream.
+A <code>file</code> object wrapping the standard error stream.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$stdin</code>
+<code>$stdin: file</code>
 </dt>
 <dd>
 <p>
-A <code>$file</code> object pointing to the standard input stream.
+A <code>file</code> object wrapping the standard input stream.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$stdout</code>
+<code>$stdout: file</code>
 </dt>
 <dd>
 <p>
-A <code>$file</code> object pointing to the standard output stream.
+A <code>file</code> object wrapping the standard output stream.
 </p>
 </dd>
 </div>
@@ -138,7 +132,7 @@ Global Functions
 <dl>
 <div>
 <dt>
-<code>$bool(arg)</code>
+<code>$bool(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -148,7 +142,7 @@ Converts <code>arg</code> to a <code>$bool</code>.
 </div>
 <div>
 <dt>
-<code>$buf()</code>
+<code>$buf() -&gt; buf</code>
 </dt>
 <dd>
 <p>
@@ -158,41 +152,41 @@ Creates a new <code>$buf</code> object.
 </div>
 <div>
 <dt>
-<code>$char(arg)</code>
+<code>$char(arg: i64) -&gt; char</code>
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to a <code>$char</code>. Panics if the argument is not convertible.
+Converts <code>arg</code> to a <code>char</code>. Panics if the argument is out-of-range.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$clock()</code>
+<code>$clock() -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the number of seconds since the program was launched as an <code>$f64</code>.
+Returns the number of seconds since the program was launched.
 This function is a wrapper around the C standard library's <code>clock()</code> function.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$debug(arg)</code>
+<code>$debug(arg: any) -&gt; str</code>
 </dt>
 <dd>
 <p>
 Returns a string representing <code>arg</code> suitable for use in debugging.
-If <code>arg</code> has a <code>$debug()</code> method, the output of this method will be returned.
-Otherwise, if <code>arg</code> has a <code>$str()</code> method, the output of this method will be returned.
+If <code>arg</code> has a <code>:$debug()</code> method, the output of this method will be returned.
+Otherwise, if <code>arg</code> has a <code>:$str()</code> method, the output of this method will be returned.
 Otherwise, the default string for <code>arg</code> will be returned.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$eprint(arg)</code> <br> <code>$eprint(format_string, arg1, arg2, ...)</code>
+<code>$eprint(arg: any)</code> <br> <code>$eprint(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
@@ -207,7 +201,7 @@ This function can panic if an error occurs while formatting the output string.
 </div>
 <div>
 <dt>
-<code>$eprintln()</code> <br> <code>$eprintln(arg)</code> <br> <code>$eprintln(format_string, arg1, arg2, ...)</code>
+<code>$eprintln()</code> <br> <code>$eprintln(arg: any)</code> <br> <code>$eprintln(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
@@ -217,51 +211,50 @@ Like <code>$eprint()</code> but adds a terminating newline.
 </div>
 <div>
 <dt>
-<code>$err()</code> <br> <code>$err(arg1, arg2, ...)</code>
+<code>$err() -&gt; err</code> <br> <code>$err(arg1: any, arg2: any, ...) -&gt; err</code>
 </dt>
 <dd>
 <p>
-Creates a new <code>$err</code> object.
+Creates a new <code>err</code> object.
 The arguments provide the error's values.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$exit(code)</code>
+<code>$exit(code: i64)</code>
 </dt>
 <dd>
 <p>
-Instructs the program to exit with the specified exit code, where <code>code</code> is an integer.
+Instructs the program to exit with the specified exit code.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$f64(arg)</code>
+<code>$f64(arg: i64|char) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to an <code>$f64</code>. Panics if the argument is not convertible.
+Converts <code>arg</code> to a float.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$file(path, mode)</code>
+<code>$file(path: str, mode: str) -&gt; file</code>
 </dt>
 <dd>
 <p>
-Creates a new <code>$file</code> object.
+Creates a new <code>file</code> object.
 Opens the underlying file stream using the C function <code>fopen()</code>.
-<code>path</code> and <code>mode</code> should both be strings.
 Panics on failure.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$fmt(format_string, arg1, arg2, ...)</code>
+<code>$fmt(format_string: str, arg1: any, arg2: any, ...) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -272,31 +265,31 @@ This function can panic if an error occurs while formatting the output string.
 </div>
 <div>
 <dt>
-<code>$has_field(object, field_name)</code>
+<code>$has_field(object: any, field_name: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the object has a field called <code>field_name</code>, where <code>field_name</code> is a string.
+Returns <code>true</code> if the object has a field called <code>field_name</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$has_method(object, method_name)</code>
+<code>$has_method(object: any, method_name: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the object has a method called <code>method_name</code>, where <code>method_name</code> is a string.
+Returns <code>true</code> if the object has a method called <code>method_name</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$hash(arg)</code>
+<code>$hash(arg: any) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the argument's 64-bit hash value as an <code>$i64</code>.
+Returns the argument's 64-bit hash value.
 </p>
 <p>
 (Note that hash values can be negative. Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.)
@@ -305,87 +298,88 @@ Returns the argument's 64-bit hash value as an <code>$i64</code>.
 </div>
 <div>
 <dt>
-<code>$i64(arg)</code>
+<code>$i64(arg: f64|char)</code>
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to an <code>$i64</code>. Panics if the argument is not convertible.
+Converts <code>arg</code> to an <code>i64</code>.
+Panics if the argument is out-of-range for an <code>i64</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_bool(arg)</code>
+<code>$is_bool(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$bool</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>bool</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_buf(arg)</code>
+<code>$is_buf(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$buf</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>buf</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_char(arg)</code>
+<code>$is_char(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$char</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>char</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_err(arg)</code>
+<code>$is_err(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is an <code>$err</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is an <code>err</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_f64(arg)</code>
+<code>$is_f64(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is an <code>$f64</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is an <code>f64</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_file(arg)</code>
+<code>$is_file(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$file</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>file</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_i64(arg)</code>
+<code>$is_i64(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is an <code>$i64</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is an <code>i64</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_inf(arg)</code>
+<code>$is_inf(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -395,28 +389,27 @@ Returns <code>true</code> if the argument is floating-point infinity (positive o
 </div>
 <div>
 <dt>
-<code>$is_instance(object, class)</code>
+<code>$is_instance(object, class_object) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the object is an instance of the specified class or of a subclass of the specified class.
-<code>class</code> should be a class object.
+Returns <code>true</code> if <code>object</code> is an instance of the specified class or of a subclass of the specified class.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_map(arg)</code>
+<code>$is_map(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$map</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>map</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_mod(arg)</code>
+<code>$is_mod(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -426,7 +419,7 @@ Returns <code>true</code> if the argument is a module, otherwise <code>false</co
 </div>
 <div>
 <dt>
-<code>$is_nan(arg)</code>
+<code>$is_nan(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -436,47 +429,47 @@ Returns <code>true</code> if the argument is the floating-point value <code>NaN<
 </div>
 <div>
 <dt>
-<code>$is_range(arg)</code>
+<code>$is_range(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$range</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>range</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_str(arg)</code>
+<code>$is_str(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$str</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>str</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_tup(arg)</code>
+<code>$is_tup(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$tup</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>tup</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$is_vec(arg)</code>
+<code>$is_vec(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>$vec</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>vec</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$map()</code>
+<code>$map() -&gt; map</code>
 </dt>
 <dd>
 <p>
@@ -486,19 +479,17 @@ Creates a new <code>$map</code> object.
 </div>
 <div>
 <dt>
-<code>$panic(error_code, error_message)</code>
+<code>$panic(error_code: i64, error_message: str)</code>
 </dt>
 <dd>
 <p>
-Panics with the specified error message.
-<code>error_code</code> should be an integer,
-<code>error_message</code> should be a string.
+Panics with the specified error code and error message.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$print(arg)</code> <br> <code>$print(format_string, arg1, arg2, ...)</code>
+<code>$print(arg: any)</code> <br> <code>$print(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
@@ -513,7 +504,7 @@ This function can panic if an error occurs while formatting the output string.
 </div>
 <div>
 <dt>
-<code>$println()</code> <br> <code>$println(arg)</code> <br> <code>$println(format_string, arg1, arg2, ...)</code>
+<code>$println()</code> <br> <code>$println(arg: any)</code> <br> <code>$println(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
@@ -523,7 +514,7 @@ Like <code>$print()</code> but adds a terminating newline.
 </div>
 <div>
 <dt>
-<code>$range(stop)</code> <br> <code>$range(start, stop)</code> <br> <code>$range(start, stop, step)</code>
+<code>$range(stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64, step: i64) -&gt; range</code>
 </dt>
 <dd>
 <p>
@@ -534,11 +525,11 @@ Returns an integer iterator over the half-open interval <code>[start, stop)</cod
 </div>
 <div>
 <dt>
-<code>$read_file(path)</code>
+<code>$read_file(path: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Reads the content of the file at <code>path</code>, where <code>path</code> is a string, and returns it as a string.
+Reads the content of the file at <code>path</code> and returns it as a string.
 </p>
 <p>
 Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
@@ -547,45 +538,43 @@ Panics if the argument is invalid, if the file cannot be opened, if an I/O read 
 </div>
 <div>
 <dt>
-<code>$shell(cmd)</code>
+<code>$shell(cmd: str) -&gt; tup[i64, str]</code>
 </dt>
 <dd>
 <p>
-Runs a shell command and returns a two-item tuple containing its exit code as an integer and its output as a string.
-<code>cmd</code> should be a string.
+Runs a shell command and returns a two-item tuple containing its exit code and output.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$str(arg)</code>
+<code>$str(arg: any) -&gt; str</code>
 </dt>
 <dd>
 <p>
 Stringifies the argument, i.e. returns its default string representation.
-If the argument has a <code>$str()</code> method, the output of this method will be returned.
-This function can panic if an error occurs while formatting the output string.
+If the argument has a <code>:$str()</code> method, the output of this method will be returned.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$tup()</code> <br> <code>$tup(arg1, arg2, ...)</code>
+<code>$tup() -&gt; tup</code> <br> <code>$tup(arg1: any, arg2: any, ...) -&gt; tup</code>
 </dt>
 <dd>
 <p>
-Creates a new <code>$tup</code> object.
+Creates a new <code>tup</code> object.
 The arguments provide the tuple's values.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$vec()</code> <br> <code>$vec(iterable)</code> <br> <code>$vec(size, fill_value)</code>
+<code>$vec() -&gt; vec</code> <br> <code>$vec(arg: iterable) -&gt; vec</code> <br> <code>$vec(size: i64, fill_value: any) -&gt; vec</code>
 </dt>
 <dd>
 <p>
-Creates a new <code>$vec</code> object.
+Creates a new <code>vec</code> object.
 If called with zero arguments, creates an empty vector.
 If called with a single iterable argument, fills the new vector by iterating over the argument.
 If called with two arguments, creates a vector with the specified initial size and fill value.
@@ -594,7 +583,7 @@ If called with two arguments, creates a vector with the specified initial size a
 </div>
 <div>
 <dt>
-<code>$write_file(path, content)</code>
+<code>$write_file(path: str, content: str|buf) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -602,7 +591,7 @@ Writes <code>content</code> to a new file, where <code>content</code> is a strin
 Returns the number of bytes written.
 </p>
 <p>
-<code>path</code> should be a string specifying the filepath. If a file already exists at <code>path</code>, that file will be overwritten.
+If a file already exists at <code>path</code>, that file will be overwritten.
 </p>
 <p>
 Panics if the arguments are invalid, if the file cannot be opened for writing, or if an I/O write error occurs.

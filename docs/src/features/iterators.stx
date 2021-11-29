@@ -43,17 +43,19 @@ We can illustrate the iterator protocol by creating a custom `Range` object to i
 
 Note that the `:$iter()` method simply returns `self` --- a `Range` instance is its own iterator.
 
-Trying out this new type in the REPL should give us output like this:
+We can try out our new type like this:
 
 ::: code pyro
-    >>> for i in Range(5) {
-    ...     echo i;
-    ... }
+    for i in Range(5) {
+        echo i;
+    }
+
+This should give us the following output:
+
     0
     1
     2
     3
     4
 
-Note that Pyro already has a builtin `range` type which you can find [here](@root/builtins//#ranges).
-
+Note that Pyro already has a builtin `range` type --- you can find a description of it [here](@root/builtins//#ranges).

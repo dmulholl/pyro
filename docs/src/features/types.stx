@@ -52,11 +52,14 @@ The annotations below describe interfaces rather than specific types:
 
 * `func`
 * `func(type1, type2, ...) -> type`
+* `iterable`
+* `iterable[type]`
 * `iterator`
 * `iterator[type]`
 
 A `func` value is callable;
-an `iterator` value has a `:next()` method that returns the next item from a sequence.
+an `iterable` value has an `:$iter()` method that returns an iterator;
+an `iterator` value has a `:$next()` method that returns the next item from a sequence.
 
 Type annotations beginning with a lowercase letter are reserved for language builtins.
 

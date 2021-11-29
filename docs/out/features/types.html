@@ -34,13 +34,7 @@
 <li><a href="../features.html">Features</a></li>
 <li><a href="../builtins.html">Builtin Types</a></li>
 <li><a href="../globals.html">Globals</a></li>
-<li><a href="../stdlib.html">Standard Library</a><ul>
-<li><a href="../stdlib/errors.html">errors</a></li>
-<li><a href="../stdlib/math.html">math</a></li>
-<li><a href="../stdlib/prng.html">prng</a></li>
-<li><a href="../stdlib/pyro.html">pyro</a></li>
-</ul>
-</li>
+<li><a href="../stdlib.html">Standard Library</a></li>
 <li><a href="../acknowledgements.html">Acknowledgements</a></li>
 <li><a href="../examples.html">Examples</a></li>
 <li><a href="../roadmap.html">Roadmap</a></li>
@@ -164,6 +158,12 @@ The annotations below describe interfaces rather than specific types:
 <code>func(type1, type2, ...) -&gt; type</code>
 </li>
 <li>
+<code>iterable</code>
+</li>
+<li>
+<code>iterable[type]</code>
+</li>
+<li>
 <code>iterator</code>
 </li>
 <li>
@@ -172,7 +172,8 @@ The annotations below describe interfaces rather than specific types:
 </ul>
 <p>
 A <code>func</code> value is callable;
-an <code>iterator</code> value has a <code>:next()</code> method that returns the next item from a sequence.
+an <code>iterable</code> value has an <code>:$iter()</code> method that returns an iterator;
+an <code>iterator</code> value has a <code>:$next()</code> method that returns the next item from a sequence.
 </p>
 <p>
 Type annotations beginning with a lowercase letter are reserved for language builtins.
