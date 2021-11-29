@@ -10,7 +10,7 @@ A utility module for interacting with the Pyro VM.
 ### Variables
 
 
-[[ `version` ]]
+[[ `version: tup[i64, i64, i64]` ]]
 
     A three-item tuple containing the language version as `(MAJOR, MINIOR, PATCH)` integers.
 
@@ -24,7 +24,6 @@ A utility module for interacting with the Pyro VM.
     Runs the garbage collector.
 
 
-[[ `memory()` ]]
+[[ `memory() -> i64` ]]
 
-    Returns the VM's current memory allocation in bytes as an `$i64`.
-
+    Returns the VM's current memory allocation in bytes.

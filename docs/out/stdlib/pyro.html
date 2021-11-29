@@ -64,7 +64,7 @@ Variables
 <dl>
 <div>
 <dt>
-<code>version</code>
+<code>version: tup[i64, i64, i64]</code>
 </dt>
 <dd>
 <p>
@@ -89,11 +89,11 @@ Runs the garbage collector.
 </div>
 <div>
 <dt>
-<code>memory()</code>
+<code>memory() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the VM's current memory allocation in bytes as an <code>$i64</code>.
+Returns the VM's current memory allocation in bytes.
 </p>
 </dd>
 </div>

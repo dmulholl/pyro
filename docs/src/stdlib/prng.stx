@@ -17,28 +17,23 @@ The generator is automatically initialized at startup using a random seed but yo
 ### Functions
 
 
-[[ `rand_float()` ]]
+[[ `rand_float() -> f64` ]]
 
-    Returns a uniformly-distributed random `$f64` from the half-open interval `[0, 1)`, i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
-
-
-[[ `rand_int(n)` ]]
-
-    Returns a uniformly-distributed random `$i64` from the half-open interval `[0, n)`, i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
+    Returns a uniformly-distributed random float from the half-open interval `[0, 1)`, i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
 
 
-[[ `rand_int_in_range(lower, upper)` ]]
+[[ `rand_int(n: i64) -> i64` ]]
 
-    Returns a uniformly-distributed random `$i64` from the half-open interval `[lower, upper)`, i.e. the interval from `lower` up to but not including `upper`.
+    Returns a uniformly-distributed random integer from the half-open interval `[0, n)`, i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
+
+
+[[ `rand_int_in_range(lower: i64, upper: i64) -> i64` ]]
+
+    Returns a uniformly-distributed random integer from the half-open interval `[lower, upper)`, i.e. the interval from `lower` up to but not including `upper`.
 
     The arguments can be positive or negative or mixed as long as `lower` is less than or equal to `upper`.
 
 
-[[ `seed(arg)` ]]
+[[ `seed(arg: any)` ]]
 
     Seeds the generator using the argument's 64-bit hash.
-
-
-[[ `shuffle(vec)` ]]
-
-    Shuffles the vector `vec` in-place. Uses Fisher-Yates/Durstenfeld shuffling.

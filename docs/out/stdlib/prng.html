@@ -70,31 +70,31 @@ Functions
 <dl>
 <div>
 <dt>
-<code>rand_float()</code>
+<code>rand_float() -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random <code>$f64</code> from the half-open interval <code>[0, 1)</code>, i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
+Returns a uniformly-distributed random float from the half-open interval <code>[0, 1)</code>, i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>rand_int(n)</code>
+<code>rand_int(n: i64) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[0, n)</code>, i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
+Returns a uniformly-distributed random integer from the half-open interval <code>[0, n)</code>, i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>rand_int_in_range(lower, upper)</code>
+<code>rand_int_in_range(lower: i64, upper: i64) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random <code>$i64</code> from the half-open interval <code>[lower, upper)</code>, i.e. the interval from <code>lower</code> up to but not including <code>upper</code>.
+Returns a uniformly-distributed random integer from the half-open interval <code>[lower, upper)</code>, i.e. the interval from <code>lower</code> up to but not including <code>upper</code>.
 </p>
 <p>
 The arguments can be positive or negative or mixed as long as <code>lower</code> is less than or equal to <code>upper</code>.
@@ -103,21 +103,11 @@ The arguments can be positive or negative or mixed as long as <code>lower</code>
 </div>
 <div>
 <dt>
-<code>seed(arg)</code>
+<code>seed(arg: any)</code>
 </dt>
 <dd>
 <p>
 Seeds the generator using the argument's 64-bit hash.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>shuffle(vec)</code>
-</dt>
-<dd>
-<p>
-Shuffles the vector <code>vec</code> in-place. Uses Fisher-Yates/Durstenfeld shuffling.
 </p>
 </dd>
 </div>
