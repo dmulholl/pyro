@@ -64,63 +64,63 @@ Variables
 <dl>
 <div>
 <dt>
-<code>e</code>
+<code>e: f64</code>
 </dt>
 <dd>
 <p>
-Euler's constant as an <code>$f64</code>.
+Euler's constant.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>i64_max</code>
+<code>i64_max: i64</code>
 </dt>
 <dd>
 <p>
-The maximum allowable value of an <code>$i64</code>,
+The maximum allowable value of an <code>i64</code>,
 i.e. <code>(2^63) - 1</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>i64_min</code>
+<code>i64_min: i64</code>
 </dt>
 <dd>
 <p>
-The minimum allowable value of an <code>$i64</code>,
+The minimum allowable value of an <code>i64</code>,
 i.e. <code>-(2^63)</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>inf</code>
+<code>inf: f64</code>
 </dt>
 <dd>
 <p>
-Floating-point positive infinity as an <code>$f64</code>.
+Floating-point positive infinity.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>nan</code>
+<code>nan: f64</code>
 </dt>
 <dd>
 <p>
-Floating-point NaN (Not-A-Number) as an <code>$f64</code>.
+Floating-point NaN (Not-A-Number).
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>pi</code>
+<code>pi: f64</code>
 </dt>
 <dd>
 <p>
-Pi as an <code>$f64</code>.
+The constant π.
 </p>
 </dd>
 </div>
@@ -131,184 +131,176 @@ Functions
 <dl>
 <div>
 <dt>
-<code>abs(x)</code> <br> <code>abs(x, i64_min)</code>
+<code>abs(x: i64|f64) -&gt; i64|f64</code> <br> <code>abs(x: i64|f64, i64_min: any) -&gt; any</code>
 </dt>
 <dd>
 <p>
-Returns the absolute value of <code>x</code>, where <code>x</code> is an <code>$i64</code> or an <code>$f64</code>. The output type is the same as the input type.
+Returns the absolute value of <code>x</code>. The output type is the same as the input type.
 </p>
 <p>
-Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an <code>$i64</code>.
+Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an <code>i64</code>.
 If you provide a <code>i64_min</code> argument, its value will be returned as a fallback in this case.
-Otherwise, the return value will be whatever is returned by the underlying C implementation &mdash; typically a negative value.
+Otherwise, the return value will be whatever integer is returned by the underlying C implementation &mdash; typically a negative value.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>acos(x)</code>
+<code>acos(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the arc cosine of <code>x</code> in radians as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the arc cosine of <code>x</code> in radians.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>asin(x)</code>
+<code>asin(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the arc sine of <code>x</code> in radians as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the arc sine of <code>x</code> in radians.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>atan(x)</code>
+<code>atan(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the arc tangent of <code>x</code> in radians as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the arc tangent of <code>x</code> in radians.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>atan2(y, x)</code>
+<code>atan2(y: i64|f64, x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the arc tangent of <code>y/x</code> in radians as an <code>$f64</code> using the signs of the arguments to determine the correct quadrant.
-Each argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the arc tangent of <code>y/x</code> in radians as an <code>f64</code> using the signs of the arguments to determine the correct quadrant.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>cbrt(x)</code>
+<code>cbrt(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the cubic root of <code>x</code> as an <code>$f64</code>.
-The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the cubic root of <code>x</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>ceil(x)</code>
+<code>ceil(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns as an <code>$f64</code> the lowest integer value greater than or equal to <code>x</code>.
-The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the lowest integer value greater than or equal to <code>x</code> as a float.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>cos(x)</code>
+<code>cos(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the cosine of <code>x</code> as an <code>$f64</code>, where <code>x</code> is in radians. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the cosine of <code>x</code>, where <code>x</code> is in radians.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>exp(x)</code>
+<code>exp(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns <code>e</code> to the power of <code>x</code> as an <code>$f64</code>.
-The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns <code>e</code> to the power of <code>x</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>floor(x)</code>
+<code>floor(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns as an <code>$f64</code> the highest integer value less than or equal to <code>x</code>.
-The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the highest integer value less than or equal to <code>x</code> as a float.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>ln(x)</code>
+<code>ln(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the natural logarithm (i.e. the base-e logarithm) of <code>x</code> as an <code>$f64</code>.
-The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the natural logarithm (i.e. the base-e logarithm) of <code>x</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>log(b, x)</code>
+<code>log(b: i64|f64, x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the base <code>b</code> logarithm of <code>x</code> as an <code>$f64</code>.
-Each argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the base <code>b</code> logarithm of <code>x</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>log2(x)</code>
+<code>log2(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the base-2 logarithm of <code>x</code> as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the base-2 logarithm of <code>x</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>log10(x)</code>
+<code>log10(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the base-10 logarithm of <code>x</code> as an <code>$f64</code>. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the base-10 logarithm of <code>x</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>sin(x)</code>
+<code>sin(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the sine of <code>x</code> as an <code>$f64</code>, where <code>x</code> is in radians. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the sine of <code>x</code>, where <code>x</code> is in radians.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>sqrt(x)</code>
+<code>sqrt(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the square root of <code>x</code> as an <code>$f64</code>.
-The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the square root of <code>x</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>tan(x)</code>
+<code>tan(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the tangent of <code>x</code> as an <code>$f64</code>, where <code>x</code> is in radians. The argument can be an <code>$f64</code> or an <code>$i64</code> which will be automatically converted into an <code>$f64</code>.
+Returns the tangent of <code>x</code>, where <code>x</code> is in radians.
 </p>
 </dd>
 </div>

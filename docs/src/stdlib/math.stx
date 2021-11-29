@@ -10,134 +10,126 @@ This module provides a Pyro interface to the C standard library's mathematical f
 ### Variables
 
 
-[[ `e` ]]
+[[ `e: f64` ]]
 
-    Euler's constant as an `$f64`.
+    Euler's constant.
 
 
-[[ `i64_max` ]]
+[[ `i64_max: i64` ]]
 
-    The maximum allowable value of an `$i64`,
+    The maximum allowable value of an `i64`,
     i.e. `(2^63) - 1`.
 
 
-[[ `i64_min` ]]
+[[ `i64_min: i64` ]]
 
-    The minimum allowable value of an `$i64`,
+    The minimum allowable value of an `i64`,
     i.e. `-(2^63)`.
 
 
-[[ `inf` ]]
+[[ `inf: f64` ]]
 
-    Floating-point positive infinity as an `$f64`.
-
-
-[[ `nan` ]]
-
-    Floating-point NaN (Not-A-Number) as an `$f64`.
+    Floating-point positive infinity.
 
 
-[[ `pi` ]]
+[[ `nan: f64` ]]
 
-    Pi as an `$f64`.
+    Floating-point NaN (Not-A-Number).
+
+
+[[ `pi: f64` ]]
+
+    The constant π.
 
 
 
 ### Functions
 
 
-[[ `abs(x)` <br> `abs(x, i64_min)` ]]
+[[ `abs(x: i64|f64) -> i64|f64` <br> `abs(x: i64|f64, i64_min: any) -> any` ]]
 
-    Returns the absolute value of `x`, where `x` is an `$i64` or an `$f64`. The output type is the same as the input type.
+    Returns the absolute value of `x`. The output type is the same as the input type.
 
-    Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an `$i64`.
+    Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an `i64`.
     If you provide a `i64_min` argument, its value will be returned as a fallback in this case.
-    Otherwise, the return value will be whatever is returned by the underlying C implementation --- typically a negative value.
+    Otherwise, the return value will be whatever integer is returned by the underlying C implementation --- typically a negative value.
 
 
-[[ `acos(x)` ]]
+[[ `acos(x: i64|f64) -> f64` ]]
 
-    Returns the arc cosine of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-
-
-[[ `asin(x)` ]]
-
-    Returns the arc sine of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the arc cosine of `x` in radians.
 
 
-[[ `atan(x)` ]]
+[[ `asin(x: i64|f64) -> f64` ]]
 
-    Returns the arc tangent of `x` in radians as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-
-
-[[ `atan2(y, x)` ]]
-
-    Returns the arc tangent of `y/x` in radians as an `$f64` using the signs of the arguments to determine the correct quadrant.
-    Each argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the arc sine of `x` in radians.
 
 
-[[ `cbrt(x)` ]]
+[[ `atan(x: i64|f64) -> f64` ]]
 
-    Returns the cubic root of `x` as an `$f64`.
-    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-
-
-[[ `ceil(x)` ]]
-
-    Returns as an `$f64` the lowest integer value greater than or equal to `x`.
-    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the arc tangent of `x` in radians.
 
 
-[[ `cos(x)` ]]
+[[ `atan2(y: i64|f64, x: i64|f64) -> f64` ]]
 
-    Returns the cosine of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-
-
-[[ `exp(x)` ]]
-
-    Returns `e` to the power of `x` as an `$f64`.
-    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the arc tangent of `y/x` in radians as an `f64` using the signs of the arguments to determine the correct quadrant.
 
 
-[[ `floor(x)` ]]
+[[ `cbrt(x: i64|f64) -> f64` ]]
 
-    Returns as an `$f64` the highest integer value less than or equal to `x`.
-    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-
-
-[[ `ln(x)` ]]
-
-    Returns the natural logarithm (i.e. the base-e logarithm) of `x` as an `$f64`.
-    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the cubic root of `x`.
 
 
-[[ `log(b, x)` ]]
+[[ `ceil(x: i64|f64) -> f64` ]]
 
-    Returns the base `b` logarithm of `x` as an `$f64`.
-    Each argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-
-
-[[ `log2(x)` ]]
-
-    Returns the base-2 logarithm of `x` as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the lowest integer value greater than or equal to `x` as a float.
 
 
-[[ `log10(x)` ]]
+[[ `cos(x: i64|f64) -> f64` ]]
 
-    Returns the base-10 logarithm of `x` as an `$f64`. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
-
-
-[[ `sin(x)` ]]
-
-    Returns the sine of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the cosine of `x`, where `x` is in radians.
 
 
-[[ `sqrt(x)` ]]
+[[ `exp(x: i64|f64) -> f64` ]]
 
-    Returns the square root of `x` as an `$f64`.
-    The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns `e` to the power of `x`.
 
 
-[[ `tan(x)` ]]
+[[ `floor(x: i64|f64) -> f64` ]]
 
-    Returns the tangent of `x` as an `$f64`, where `x` is in radians. The argument can be an `$f64` or an `$i64` which will be automatically converted into an `$f64`.
+    Returns the highest integer value less than or equal to `x` as a float.
+
+
+[[ `ln(x: i64|f64) -> f64` ]]
+
+    Returns the natural logarithm (i.e. the base-e logarithm) of `x`.
+
+
+[[ `log(b: i64|f64, x: i64|f64) -> f64` ]]
+
+    Returns the base `b` logarithm of `x`.
+
+
+[[ `log2(x: i64|f64) -> f64` ]]
+
+    Returns the base-2 logarithm of `x`.
+
+
+[[ `log10(x: i64|f64) -> f64` ]]
+
+    Returns the base-10 logarithm of `x`.
+
+
+[[ `sin(x: i64|f64) -> f64` ]]
+
+    Returns the sine of `x`, where `x` is in radians.
+
+
+[[ `sqrt(x: i64|f64) -> f64` ]]
+
+    Returns the square root of `x`.
+
+
+[[ `tan(x: i64|f64) -> f64` ]]
+
+    Returns the tangent of `x`, where `x` is in radians.

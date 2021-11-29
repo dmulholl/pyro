@@ -3,53 +3,53 @@ title: <code>$std::errors</code>
 meta_title: Pyro Standard Library &mdash; $std::errors
 ---
 
-You can use any `i64` value as an error code.
+You can use any `i64: i64` value as an error code.
 This module contains aliases for the set of standard error codes used by Pyro itself.
 
 
 ### Variables
 
 
-[[ `args_error` ]]
+[[ `args_error: i64` ]]
 
     Signals that a function has been called with too few or too many arguments.
 
 
-[[ `assertion_failed` ]]
+[[ `assertion_failed: i64` ]]
 
     Signals that an `assert` statement has evaluated as falsey.
 
 
-[[ `module_not_found` ]]
+[[ `module_not_found: i64` ]]
 
     Signals that an attempt to import a module has failed because the module could not be found.
 
 
-[[ `name_error` ]]
+[[ `name_error: i64` ]]
 
     Raised when an invalid identifier (a variable, method, field, class, function, or module name) is encountered.
 
 
-[[ `os_error` ]]
+[[ `os_error: i64` ]]
 
     Signals that a system call has returned an error --- e.g. that attempting to open or read from a file has failed.
 
 
-[[ `out_of_memory` ]]
+[[ `out_of_memory: i64` ]]
 
     Signals that an attempt to allocate memory has failed.
 
 
-[[ `syntax_error` ]]
+[[ `syntax_error: i64` ]]
 
     Signals a syntax error.
 
 
-[[ `type_error` ]]
+[[ `type_error: i64` ]]
 
     Raised when an argument or operand has an invalid type.
 
 
-[[ `value_error` ]]
+[[ `value_error: i64` ]]
 
     Raised when an argument or operand is the correct type but its value is invalid --- e.g. when an index is out-of-range or when a negative integer is passed where a positive integer was expected.

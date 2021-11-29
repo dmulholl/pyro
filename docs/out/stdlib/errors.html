@@ -56,7 +56,7 @@
                 <hr>
             </header>
             <p>
-You can use any <code>i64</code> value as an error code.
+You can use any <code>i64: i64</code> value as an error code.
 This module contains aliases for the set of standard error codes used by Pyro itself.
 </p>
 <h3 id="variables">
@@ -65,7 +65,7 @@ Variables
 <dl>
 <div>
 <dt>
-<code>args_error</code>
+<code>args_error: i64</code>
 </dt>
 <dd>
 <p>
@@ -75,7 +75,7 @@ Signals that a function has been called with too few or too many arguments.
 </div>
 <div>
 <dt>
-<code>assertion_failed</code>
+<code>assertion_failed: i64</code>
 </dt>
 <dd>
 <p>
@@ -85,7 +85,7 @@ Signals that an <code>assert</code> statement has evaluated as falsey.
 </div>
 <div>
 <dt>
-<code>module_not_found</code>
+<code>module_not_found: i64</code>
 </dt>
 <dd>
 <p>
@@ -95,7 +95,7 @@ Signals that an attempt to import a module has failed because the module could n
 </div>
 <div>
 <dt>
-<code>name_error</code>
+<code>name_error: i64</code>
 </dt>
 <dd>
 <p>
@@ -105,7 +105,7 @@ Raised when an invalid identifier (a variable, method, field, class, function, o
 </div>
 <div>
 <dt>
-<code>os_error</code>
+<code>os_error: i64</code>
 </dt>
 <dd>
 <p>
@@ -115,7 +115,7 @@ Signals that a system call has returned an error &mdash; e.g. that attempting to
 </div>
 <div>
 <dt>
-<code>out_of_memory</code>
+<code>out_of_memory: i64</code>
 </dt>
 <dd>
 <p>
@@ -125,7 +125,7 @@ Signals that an attempt to allocate memory has failed.
 </div>
 <div>
 <dt>
-<code>syntax_error</code>
+<code>syntax_error: i64</code>
 </dt>
 <dd>
 <p>
@@ -135,7 +135,7 @@ Signals a syntax error.
 </div>
 <div>
 <dt>
-<code>type_error</code>
+<code>type_error: i64</code>
 </dt>
 <dd>
 <p>
@@ -145,7 +145,7 @@ Raised when an argument or operand has an invalid type.
 </div>
 <div>
 <dt>
-<code>value_error</code>
+<code>value_error: i64</code>
 </dt>
 <dd>
 <p>
