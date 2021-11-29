@@ -148,3 +148,37 @@ The classic interview question:
             }
         }
     }
+
+
+
+### Iterating over a string
+
+A string is a sequence of bytes. You can iterate over these individual byte values using the `:bytes()` method:
+
+::: code pyro
+    for byte in "hello":bytes() {
+        echo byte;
+    }
+
+This gives the following output:
+
+    104
+    101
+    108
+    108
+    111
+
+Alternatively, you can interpret the string as a sequence of UTF-8 encoded characters and iterate over these characters using the `:chars()` method:
+
+::: code pyro
+    for char in "hello":chars() {
+        echo char;
+    }
+
+This gives the following output:
+
+    h
+    e
+    l
+    l
+    o

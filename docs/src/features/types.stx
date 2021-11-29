@@ -37,6 +37,8 @@ Annotations for builtin types are as follows:
 * `func`
 * `func(type1, type2, ...) -> type`
 * `i64`
+* `iter`
+* `iter[type]`
 * `map`
 * `map[key_type, value_type]`
 * `null`

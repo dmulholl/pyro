@@ -80,6 +80,9 @@
 <li>
 <a href="#fizzbuzz">FizzBuzz</a>
 </li>
+<li>
+<a href="#iterating-over-a-string">Iterating over a string</a>
+</li>
 </ul>
 <h3 id="hello-world">
 Hello world
@@ -230,6 +233,45 @@ The classic interview question:
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
+</pre>
+<h3 id="iterating-over-a-string">
+Iterating over a string
+</h3>
+<p>
+A string is a sequence of bytes. You can iterate over these individual byte values using the <code>:bytes()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="nx">byte</span> <span class="k">in</span> <span class="s">&quot;hello&quot;</span><span class="p">:</span><span class="nx">bytes</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">byte</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+This gives the following output:
+</p>
+<pre>
+104
+101
+108
+108
+111
+</pre>
+<p>
+Alternatively, you can interpret the string as a sequence of UTF-8 encoded characters and iterate over these characters using the <code>:chars()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;hello&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">char</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+This gives the following output:
+</p>
+<pre>
+h
+e
+l
+l
+o
 </pre>
         </article>
         

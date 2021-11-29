@@ -93,12 +93,12 @@ A string, <code>str</code>, is an immutable array of bytes.
 <dl>
 <div>
 <dt>
-<code>$str(arg)</code>
+<code>$str(arg: any) -&gt; str</code>
 </dt>
 <dd>
 <p>
 Stringifies the argument, i.e. returns its default string representation.
-If the argument has a <code>$str()</code> method, the output of this method will be returned.
+If the argument has a <code>:$str()</code> method, the output of this method will be returned.
 </p>
 </dd>
 </div>
@@ -240,28 +240,28 @@ Strings have the following methods:
 <dl>
 <div>
 <dt>
-<code>:byte(index)</code>
+<code>:byte(index: i64) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the byte value at <code>index</code> as an <code>i64</code> in the range <code>[0, 255]</code>.
+Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
 Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:byte_count()</code>
+<code>:byte_count() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the number of bytes in the string as an <code>i64</code>.
+Returns the number of bytes in the string.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:bytes()</code>
+<code>:bytes() -&gt; iter[i64]</code>
 </dt>
 <dd>
 <p>
@@ -271,7 +271,7 @@ Returns an iterator over the string's bytes as <code>i64</code> values.
 </div>
 <div>
 <dt>
-<code>:char(index)</code>
+<code>:char(index: i64) -&gt; char</code>
 </dt>
 <dd>
 <p>
@@ -286,11 +286,11 @@ Note that it will panic if it encounters invalid UTF-8 along the way.)
 </div>
 <div>
 <dt>
-<code>:char_count()</code>
+<code>:char_count() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the number of UTF-8 encoded Unicode code points in the string as an <code>i64</code>.
+Returns the number of UTF-8 encoded Unicode code points in the string.
 </p>
 <p>
 (This is a potentially expensive method as it needs to traverse the string.
@@ -300,7 +300,7 @@ Note that it will panic if it encounters invalid UTF-8.)
 </div>
 <div>
 <dt>
-<code>:chars()</code>
+<code>:chars() -&gt; iter[char]</code>
 </dt>
 <dd>
 <p>
@@ -310,7 +310,7 @@ Returns an iterator over the string's <code>char</code> values, i.e. UTF-8 encod
 </div>
 <div>
 <dt>
-<code>:contains(target)</code>
+<code>:contains(target: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -320,18 +320,18 @@ Returns <code>true</code> if the string contains the string <code>target</code>.
 </div>
 <div>
 <dt>
-<code>:count()</code>
+<code>:count() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the number of bytes in the string as an <code>i64</code>.
+Returns the number of bytes in the string.
 This method is an alias for <code>:byte_count()</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:ends_with(suffix)</code>
+<code>:ends_with(suffix: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -341,19 +341,19 @@ Returns <code>true</code> if the string ends with the string <code>suffix</code>
 </div>
 <div>
 <dt>
-<code>:index_of(target, start_index)</code>
+<code>:index_of(target: str, start_index: i64) -&gt; i64|err</code>
 </dt>
 <dd>
 <p>
 Returns the byte index of the next matching instance of the string <code>target</code>.
 Starts searching at <code>start_index</code>.
-Returns <code>$err()</code> if <code>target</code> is not found.
+Returns an <code>err</code> if <code>target</code> is not found.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:is_ascii()</code>
+<code>:is_ascii() -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -364,7 +364,7 @@ Returns <code>true</code> if the string is empty or contains only byte values in
 </div>
 <div>
 <dt>
-<code>:is_empty()</code>
+<code>:is_empty() -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -374,7 +374,7 @@ Returns <code>true</code> if the string is empty, i.e. if its length is zero.
 </div>
 <div>
 <dt>
-<code>:is_utf8()</code>
+<code>:is_utf8() -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -385,7 +385,7 @@ Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 </div>
 <div>
 <dt>
-<code>:match(target, index)</code>
+<code>:match(target: str, index: i64) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -395,7 +395,7 @@ Returns <code>true</code> if the string <code>target</code> matches at byte inde
 </div>
 <div>
 <dt>
-<code>:replace(old, new)</code>
+<code>:replace(old: str, new: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -405,7 +405,7 @@ Returns a new string with all instances of the string <code>old</code> replaced 
 </div>
 <div>
 <dt>
-<code>:split(sep)</code>
+<code>:split(sep: str) -&gt; vec[str]</code>
 </dt>
 <dd>
 <p>
@@ -416,7 +416,7 @@ Returns a vector of strings.
 </div>
 <div>
 <dt>
-<code>:split_on_ascii_ws()</code>
+<code>:split_on_ascii_ws() -&gt; vec[str]</code>
 </dt>
 <dd>
 <p>
@@ -428,7 +428,7 @@ Returns a vector of strings.
 </div>
 <div>
 <dt>
-<code>:starts_with(prefix)</code>
+<code>:starts_with(prefix: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -438,7 +438,7 @@ Returns <code>true</code> if the string starts with the string <code>prefix</cod
 </div>
 <div>
 <dt>
-<code>:strip()</code> <br> <code>:strip(string)</code>
+<code>:strip() -&gt; str</code> <br> <code>:strip(bytes: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -446,14 +446,14 @@ When called with no arguments, this method returns the new string formed by stri
 (In this case it functions as an alias for <code>:strip_ascii_ws()</code>.)
 </p>
 <p>
-When called with a single string argument, this method returns the new string formed by stripping any leading or trailing bytes that occur in <code>string</code>.
+When called with a single string argument, this method returns the new string formed by stripping any leading or trailing bytes that occur in <code>bytes</code>.
 (In this case it functions as an alias for <code>:strip_bytes()</code>.)
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_ascii_ws()</code>
+<code>:strip_ascii_ws() -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -463,27 +463,27 @@ Returns the new string formed by stripping leading and trailing ASCII whitespace
 </div>
 <div>
 <dt>
-<code>:strip_bytes(string)</code>
+<code>:strip_bytes(bytes: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any leading or trailing bytes that occur in <code>string</code>.
+Returns the new string formed by stripping any leading or trailing bytes that occur in <code>bytes</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_chars(string)</code>
+<code>:strip_chars(chars: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in <code>string</code>.
+Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in <code>chars</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_prefix(prefix)</code>
+<code>:strip_prefix(prefix: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -494,27 +494,27 @@ Returns a new string with the leading string <code>prefix</code> stripped if pre
 </div>
 <div>
 <dt>
-<code>:strip_prefix_bytes(string)</code>
+<code>:strip_prefix_bytes(bytes: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any leading bytes that occur in <code>string</code>.
+Returns the new string formed by stripping any leading bytes that occur in <code>bytes</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_prefix_chars(string)</code>
+<code>:strip_prefix_chars(chars: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in <code>string</code>.
+Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in <code>chars</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_suffix(suffix)</code>
+<code>:strip_suffix(suffix: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -525,27 +525,27 @@ Returns a new string with the trailing string <code>suffix</code> stripped if pr
 </div>
 <div>
 <dt>
-<code>:strip_suffix_bytes(string)</code>
+<code>:strip_suffix_bytes(bytes: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any trailing bytes that occur in <code>string</code>.
+Returns the new string formed by stripping any trailing bytes that occur in <code>bytes</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_suffix_chars(string)</code>
+<code>:strip_suffix_chars(chars: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in <code>string</code>.
+Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in <code>chars</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:strip_utf8_ws()</code>
+<code>:strip_utf8_ws() -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -555,7 +555,7 @@ Returns the new string formed by stripping leading and trailing UTF-8 encoded wh
 </div>
 <div>
 <dt>
-<code>:substr(index, length)</code>
+<code>:substr(index: i64, length: i64) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -565,7 +565,7 @@ Returns a new string consisting of the substring starting at byte index <code>in
 </div>
 <div>
 <dt>
-<code>:to_ascii_lower()</code>
+<code>:to_ascii_lower() -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -575,7 +575,7 @@ Returns a new string with all ASCII uppercase characters converted to lowercase.
 </div>
 <div>
 <dt>
-<code>:to_ascii_upper()</code>
+<code>:to_ascii_upper() -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -585,7 +585,7 @@ Returns a new string with all ASCII lowercase characters converted to uppercase.
 </div>
 <div>
 <dt>
-<code>:to_hex()</code>
+<code>:to_hex() -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -605,7 +605,7 @@ A character, <code>char</code>, is an unsigned 32-bit integer representing a Uni
 <dl>
 <div>
 <dt>
-<code>$char(arg)</code>
+<code>$char(arg: i64) -&gt; char</code>
 </dt>
 <dd>
 <p>
@@ -657,7 +657,7 @@ A vector, <code>vec</code>, is a dynamic array of values.
 <dl>
 <div>
 <dt>
-<code>$vec()</code> <br> <code>$vec(iterable)</code> <br> <code>$vec(size, fill_value)</code>
+<code>$vec() -&gt; vec</code> <br> <code>$vec(iterable: any) -&gt; vec</code> <br> <code>$vec(size: i64, fill_value: any) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -702,7 +702,7 @@ Vectors have the following methods:
 <dl>
 <div>
 <dt>
-<code>:append(value)</code>
+<code>:append(value: any)</code>
 </dt>
 <dd>
 <p>
@@ -712,7 +712,7 @@ Appends a value to the vector.
 </div>
 <div>
 <dt>
-<code>:contains(value)</code>
+<code>:contains(value: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -722,7 +722,7 @@ Returns <code>true</code> if the vector contains an entry equal to <code>value</
 </div>
 <div>
 <dt>
-<code>:copy()</code>
+<code>:copy() -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -732,39 +732,39 @@ Returns a copy of the vector.
 </div>
 <div>
 <dt>
-<code>:count()</code>
+<code>:count() -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the number of entries in the vector as an <code>i64</code>.
+Returns the number of entries in the vector.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:filter(func)</code>
+<code>:filter(callback: func(any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
-Returns a new vector created by mapping the function <code>func</code> to each element of the vector in turn.
-<code>func</code> should be a callable that takes a single argument (the vector element) and returns <code>true</code> or <code>false</code>;
+Returns a new vector created by mapping the function <code>callback</code> to each element of the vector in turn.
+<code>callback</code> should be a callable that takes a single argument (the vector element) and returns <code>true</code> or <code>false</code>;
 if it returns <code>true</code> the corresponding element will be added to the new vector.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:get(index)</code>
+<code>:get(index: i64) -&gt; any</code>
 </dt>
 <dd>
 <p>
-Returns the value at <code>index</code> where <code>index</code> is an <code>i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+Returns the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:index_of(value)</code>
+<code>:index_of(value: any) -&gt; i64|err</code>
 </dt>
 <dd>
 <p>
@@ -775,19 +775,19 @@ Returns an <code>err</code> if the vector does not contain <code>value</code>.
 </div>
 <div>
 <dt>
-<code>:map(func)</code>
+<code>:map(callback: func(any) -&gt; any) -&gt; vec</code>
 </dt>
 <dd>
 <p>
-Returns a new vector created by mapping the function <code>func</code> to each element of the vector in turn.
-<code>func</code> should be a callable that takes a single argument (the vector element);
+Returns a new vector created by mapping the function <code>callback</code> to each element of the vector in turn.
+<code>callback</code> should be a callable that takes a single argument (the vector element);
 its return values will form the elements of the new vector.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:reverse()</code>
+<code>:reverse() -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -797,17 +797,17 @@ Reverses the vector in-place. Returns the vector to enable chaining.
 </div>
 <div>
 <dt>
-<code>:set(index, value)</code>
+<code>:set(index: i64, value: any)</code>
 </dt>
 <dd>
 <p>
-Sets the value at <code>index</code> where <code>index</code> is an <code>i64</code>. Will panic if <code>index</code> is out of range or not an integer.
+Sets the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:shuffle()</code>
+<code>:shuffle() -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -819,7 +819,7 @@ Returns the vector to enable chaining.
 </div>
 <div>
 <dt>
-<code>:sort()</code> <br> <code>:sort(func)</code>
+<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: func(any, any) -&gt; i64) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -827,7 +827,7 @@ Sorts the vector in-place using the default stable sorting algorithm (currently 
 Returns the vector to allow chaining.
 </p>
 <p>
-If a callable argument <code>func</code> is supplied it will be used to compare pairs of values.
+If a callable argument <code>callback</code> is supplied it will be used to compare pairs of values.
 It should accept two arguments <code>a</code> and <code>b</code> and return <code>-1</code> if <code>a &lt; b</code>, <code>0</code> if <code>a == b</code>, or <code>1</code> if <code>a &gt; b</code>.
 </p>
 <p>
