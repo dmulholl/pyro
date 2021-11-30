@@ -245,18 +245,28 @@ A character literal should contain either a single UTF-8 encoded code point or a
 
 Character literals support all the same backslashed escape sequences as strings.
 
-You can convert a character to a string using the `$str()` function or to an integer using the `$i64()` function:
+You can convert a character to a string using the `$str()` function  --- this returns a string containing the UTF-8 encoded representation of the codepoint:
 
 ::: code pyro
     assert $str('a') == "a";
-    assert $i64('a') == 97;
+    assert $str('🔥') == "🔥";
 
-You can covert an integer to a character using the `$char()` function:
+You can convert a character to an integer using the `$i64()` function or an integer to a character using the `$char()` function:
 
 ::: code pyro
+    assert $i64('a') == 97;
     assert $char(97) == 'a';
 
-This function will panic if the integer is out of range for the `char` type.
+If you add two characters together using the `+` operator, the result will be a string:
+
+::: code pyro
+    assert 'x' + 'y' == "xy";
+
+Similarly, you can prepend or append a character to a string using the `+` operator:
+
+::: code pyro
+    assert 'x' + "yz" == "xyz";
+    assert "xy" + 'z' == "xyz";
 
 
 

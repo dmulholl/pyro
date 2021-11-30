@@ -627,21 +627,32 @@ A character literal should contain either a single UTF-8 encoded code point or a
 Character literals support all the same backslashed escape sequences as strings.
 </p>
 <p>
-You can convert a character to a string using the <code>$str()</code> function or to an integer using the <code>$i64()</code> function:
+You can convert a character to a string using the <code>$str()</code> function  &mdash; this returns a string containing the UTF-8 encoded representation of the codepoint:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;a&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">97</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;🔥&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;🔥&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can covert an integer to a character using the <code>$char()</code> function:
+You can convert a character to an integer using the <code>$i64()</code> function or an integer to a character using the <code>$char()</code> function:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">97</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$char</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 </pre>
 <p>
-This function will panic if the integer is out of range for the <code>char</code> type.
+If you add two characters together using the <code>+</code> operator, the result will be a string:
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">+</span> <span class="sc">&#39;y&#39;</span> <span class="o">==</span> <span class="s">&quot;xy&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Similarly, you can prepend or append a character to a string using the <code>+</code> operator:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">+</span> <span class="s">&quot;yz&quot;</span> <span class="o">==</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;xy&quot;</span> <span class="o">+</span> <span class="sc">&#39;z&#39;</span> <span class="o">==</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
+</pre>
 <h3 id="vectors">
 Vectors
 </h3>
