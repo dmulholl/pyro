@@ -3,7 +3,7 @@
 // POSIX: popen(), pclose()
 #include <stdio.h>
 
-// POSIX: dirname()
+// POSIX: dirname(), basename()
 #include <libgen.h>
 
 // POSIX: stat(), lstat(), S_ISDIR(), S_ISREG, S_ISLNK()
@@ -58,6 +58,11 @@ bool pyro_is_symlink(const char* path) {
 
 char* pyro_dirname(char* path) {
     return dirname(path);
+}
+
+
+char* pyro_basename(char* path) {
+    return basename(path);
 }
 
 

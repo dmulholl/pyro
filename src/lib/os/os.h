@@ -32,8 +32,15 @@ bool pyro_is_file(const char* path);
 // (This checks if the symlink itself exists, not its target.)
 bool pyro_is_symlink(const char* path);
 
-// Wrapper for dirname().
+// Wrapper for POSIX dirname(). May modify the input string.
+// NB: It isn't safe to call free() on the return value from this function as it may point to
+// statically allocated memory.
 char* pyro_dirname(char* path);
+
+// Wrapper for POSIX basename(). May modify the input string.
+// NB: It isn't safe to call free() on the return value from this function as it may point to
+// statically allocated memory.
+char* pyro_basename(char* path);
 
 // Wrapper for popen().
 FILE* pyro_popen(const char* command, const char* mode);

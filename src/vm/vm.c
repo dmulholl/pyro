@@ -2389,6 +2389,9 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
 
 
 bool pyro_add_import_root(PyroVM* vm, const char* path) {
+    if (!path) {
+        return false;
+    }
     ObjStr* string = STR_OBJ(path);
     if (string) {
         pyro_push(vm, OBJ_VAL(string));

@@ -1,0 +1,17 @@
+import $std::path;
+
+assert path::exists($filepath);
+assert path::is_file($filepath);
+assert path::is_dir(path::dirname($filepath));
+
+assert path::dirname("/foo/bar/baz.txt") == "/foo/bar";
+assert path::dirname("foo/bar/baz.txt") == "foo/bar";
+assert path::dirname("baz.txt") == ".";
+assert path::dirname("/") == "/";
+assert path::dirname("") == ".";
+
+assert path::basename("/foo/bar/baz.txt") == "baz.txt";
+assert path::basename("foo/bar/baz.txt") == "baz.txt";
+assert path::basename("baz.txt") == "baz.txt";
+assert path::basename("/") == "/";
+assert path::basename("") == ".";
