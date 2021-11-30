@@ -35,6 +35,10 @@ ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm);
 // be allocated for the new string.
 ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
 
+// Creates a new string object by concatenating [n] copies of the source string.
+// Returns NULL if memory cannot be allocated for the new string.
+ObjStr* ObjStr_concat_n_copies(ObjStr* str, size_t n, PyroVM* vm);
+
 // Creates a new string object by concatenating two utf-8 encoded codepoints.
 // Returns NULL if memory cannot be allocated for the new string.
 ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm);

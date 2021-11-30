@@ -339,3 +339,11 @@ def $test_strip_suffix_chars() {
     assert "foobar":strip_suffix_chars("a§b€c👍") == "foobar";
     assert "b§a€c👍foobar§b€c👍a":strip_suffix_chars("a§b€c👍") == "b§a€c👍foobar";
 }
+
+
+def $test_multiplication() {
+    assert "" * 0 == "";
+    assert "" * 3 == "";
+    assert "foo" * 0 == "";
+    assert "foo" * 3 == "foofoofoo";
+}

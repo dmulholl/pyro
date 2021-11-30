@@ -766,6 +766,32 @@ ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
 }
 
 
+ObjStr* ObjStr_concat_n_copies(ObjStr* str, size_t n, PyroVM* vm) {
+    if (n == 0 || str->length == 0) {
+        return ObjStr_empty(vm);
+    }
+
+    size_t total_length = str->length * n;
+    char* dst = ALLOCATE_ARRAY(vm, char, total_length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        memcpy(dst + str->length * i, str->bytes, str->length);
+    }
+    dst[total_length] = '\0';
+
+    ObjStr* string = ObjStr_take(dst, total_length, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, total_length + 1);
+        return NULL;
+    }
+
+    return string;
+}
+
+
 ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
     if (src1->length == 0) return src2;
     if (src2->length == 0) return src1;

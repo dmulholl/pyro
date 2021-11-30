@@ -1187,16 +1187,75 @@ static void run(PyroVM* vm) {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
-                if (IS_I64(a) && IS_I64(b)) {
-                    pyro_push(vm, I64_VAL(a.as.i64 * b.as.i64));
-                } else if (IS_F64(a) && IS_F64(b)) {
-                    pyro_push(vm, F64_VAL(a.as.f64 * b.as.f64));
-                } else if (IS_I64(a) && IS_F64(b)) {
-                    pyro_push(vm, F64_VAL((double)a.as.i64 * b.as.f64));
-                } else if (IS_F64(a) && IS_I64(b)) {
-                    pyro_push(vm, F64_VAL(a.as.f64 * (double)b.as.i64));
-                } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '*' must both be numbers.");
+                switch (a.type) {
+                    case VAL_I64: {
+                        switch (b.type) {
+                            case VAL_I64:
+                                pyro_push(vm, I64_VAL(a.as.i64 * b.as.i64));
+                                break;
+                            case VAL_F64:
+                                pyro_push(vm, F64_VAL((double)a.as.i64 * b.as.f64));
+                                break;
+                            default:
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                                break;
+                        }
+                        break;
+                    }
+
+                    case VAL_F64: {
+                        switch (b.type) {
+                            case VAL_I64:
+                                pyro_push(vm, F64_VAL(a.as.f64 * (double)b.as.i64));
+                                break;
+                            case VAL_F64:
+                                pyro_push(vm, F64_VAL(a.as.f64 * b.as.f64));
+                                break;
+                            default:
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                                break;
+                        }
+                        break;
+                    }
+
+                    case VAL_OBJ: {
+                        if (IS_STR(a)) {
+                            if (IS_I64(b) && b.as.i64 >= 0) {
+                                vm->stack_top += 2;
+                                ObjStr* result = ObjStr_concat_n_copies(AS_STR(a), b.as.i64, vm);
+                                if (!result) {
+                                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                                    break;
+                                }
+                                vm->stack_top -= 2;
+                                pyro_push(vm, OBJ_VAL(result));
+                                break;
+                            } else {
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                                break;
+                            }
+                        } else {
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                            break;
+                        }
+                        break;
+                    }
+
+                    case VAL_CHAR: {
+                        if (IS_I64(b) && b.as.i64 >= 0) {
+                            // Not implemented.
+                            break;
+                        } else {
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                            break;
+                        }
+                        break;
+                    }
+
+                    default: {
+                        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                        break;
+                    }
                 }
 
                 break;
