@@ -35,9 +35,14 @@ ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm);
 // be allocated for the new string.
 ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
 
-// Creates a new string object by concatenating two characters. Returns NULL if memory cannot
-// be allocated for the new string.
-ObjStr* ObjStr_concat_chars(Value c1, Value c2, PyroVM* vm);
+// Creates a new string object by concatenating two utf-8 encoded codepoints.
+// Returns NULL if memory cannot be allocated for the new string.
+ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm);
+
+// Creates a new string by prepending/appending a utf-8 encoded codepoint to an existing string.
+// Returns NULL if memory cannot be allocated for the new string.
+ObjStr* ObjStr_prepend_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM* vm);
+ObjStr* ObjStr_append_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM* vm);
 
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
 ObjStr* ObjStr_empty(PyroVM* vm);

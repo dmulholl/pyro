@@ -387,30 +387,57 @@ static void run(PyroVM* vm) {
                     }
 
                     case VAL_OBJ: {
-                        if (IS_STR(a) && IS_STR(b)) {
-                            vm->stack_top += 2;
-                            ObjStr* s2 = AS_STR(b);
-                            ObjStr* s1 = AS_STR(a);
-                            ObjStr* result = ObjStr_concat(s1, s2, vm);
-                            if (!result) {
-                                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        if (IS_STR(a)) {
+                            if (IS_STR(b)) {
+                                vm->stack_top += 2;
+                                ObjStr* s2 = AS_STR(b);
+                                ObjStr* s1 = AS_STR(a);
+                                ObjStr* result = ObjStr_concat(s1, s2, vm);
+                                if (!result) {
+                                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                                    break;
+                                }
+                                vm->stack_top -= 2;
+                                pyro_push(vm, OBJ_VAL(result));
+                                break;
+                            } else if (IS_CHAR(b)) {
+                                vm->stack_top += 2;
+                                ObjStr* result = ObjStr_append_codepoint_as_utf8(AS_STR(a), b.as.u32, vm);
+                                if (!result) {
+                                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                                    break;
+                                }
+                                vm->stack_top -= 2;
+                                pyro_push(vm, OBJ_VAL(result));
+                                break;
+                            } else {
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
                                 break;
                             }
-                            vm->stack_top -= 2;
-                            pyro_push(vm, OBJ_VAL(result));
                         } else {
                             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
+                            break;
                         }
                         break;
                     }
 
                     case VAL_CHAR: {
                         if (IS_CHAR(b)) {
-                            ObjStr* result = ObjStr_concat_chars(a, b, vm);
+                            ObjStr* result = ObjStr_concat_codepoints_as_utf8(a.as.u32, b.as.u32, vm);
                             if (!result) {
                                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                                 break;
                             }
+                            pyro_push(vm, OBJ_VAL(result));
+                            break;
+                        } else if (IS_STR(b)) {
+                            vm->stack_top += 2;
+                            ObjStr* result = ObjStr_prepend_codepoint_as_utf8(AS_STR(b), a.as.u32, vm);
+                            if (!result) {
+                                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                                break;
+                            }
+                            vm->stack_top -= 2;
                             pyro_push(vm, OBJ_VAL(result));
                             break;
                         } else {

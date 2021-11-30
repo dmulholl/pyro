@@ -790,12 +790,60 @@ ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
 }
 
 
-ObjStr* ObjStr_concat_chars(Value c1, Value c2, PyroVM* vm) {
+ObjStr* ObjStr_prepend_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM* vm) {
+    uint8_t buf[4];
+    size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
+
+    size_t length = buf_count + str->length;
+    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
+    memcpy(dst, buf, buf_count);
+    memcpy(dst + buf_count, str->bytes, str->length);
+    dst[length] = '\0';
+
+    ObjStr* string = ObjStr_take(dst, length, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, length + 1);
+        return NULL;
+    }
+
+    return string;
+}
+
+
+ObjStr* ObjStr_append_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM* vm) {
+    uint8_t buf[4];
+    size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
+
+    size_t length = str->length + buf_count;
+    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
+    memcpy(dst, str->bytes, str->length);
+    memcpy(dst + str->length, buf, buf_count);
+    dst[length] = '\0';
+
+    ObjStr* string = ObjStr_take(dst, length, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, length + 1);
+        return NULL;
+    }
+
+    return string;
+}
+
+
+ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm) {
     uint8_t buf1[4];
-    size_t buf1_count = pyro_write_utf8_codepoint(c1.as.u32, buf1);
+    size_t buf1_count = pyro_write_utf8_codepoint(cp1, buf1);
 
     uint8_t buf2[4];
-    size_t buf2_count = pyro_write_utf8_codepoint(c2.as.u32, buf2);
+    size_t buf2_count = pyro_write_utf8_codepoint(cp2, buf2);
 
     size_t length = buf1_count + buf2_count;
     char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
