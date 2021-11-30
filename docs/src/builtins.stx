@@ -59,7 +59,7 @@ You can concatenate two strings using the `+` operator:
 ::: code pyro
     assert "abc" + "def" == "abcdef";
 
-You can multiply a string by an integer using the `*` operator:
+You can multiply a string by an integer `n` to produce a new string containing `n` copies of the original:
 
 ::: code pyro
     assert "foo" * 3 == "foofoofoo"
@@ -224,7 +224,6 @@ Strings have the following methods:
 
 
 
-
 ### Characters
 
 A character, `char`, is an unsigned 32-bit integer representing a Unicode code point.
@@ -261,7 +260,7 @@ You can convert a character to an integer using the `$i64()` function or an inte
     assert $i64('a') == 97;
     assert $char(97) == 'a';
 
-If you add two characters together using the `+` operator, the result will be a string:
+If you add two characters together using the `+` operator, the result will be a UTF-8 encoded string:
 
 ::: code pyro
     assert 'x' + 'y' == "xy";
@@ -271,6 +270,12 @@ Similarly, you can prepend or append a character to a string using the `+` opera
 ::: code pyro
     assert 'x' + "yz" == "xyz";
     assert "xy" + 'z' == "xyz";
+
+You can multiply a character by an integer `n` to produce a string with `n` UTF-8 encoded copies of the character:
+
+::: code pyro
+    assert 'x' * 3 == "xxx";
+    assert '🔥' * 3 == "🔥🔥🔥";
 
 
 
