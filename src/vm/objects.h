@@ -35,6 +35,10 @@ ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm);
 // be allocated for the new string.
 ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
 
+// Creates a new string object by concatenating two characters. Returns NULL if memory cannot
+// be allocated for the new string.
+ObjStr* ObjStr_concat_chars(Value c1, Value c2, PyroVM* vm);
+
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
 ObjStr* ObjStr_empty(PyroVM* vm);
 

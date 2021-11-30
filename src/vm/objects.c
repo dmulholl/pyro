@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "opcodes.h"
 #include "errors.h"
+#include "utf8.h"
 
 
 // Allocates memory for a fixed-size object.
@@ -777,6 +778,33 @@ ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
 
     memcpy(dst, src1->bytes, src1->length);
     memcpy(dst + src1->length, src2->bytes, src2->length);
+    dst[length] = '\0';
+
+    ObjStr* string = ObjStr_take(dst, length, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, length + 1);
+        return NULL;
+    }
+
+    return string;
+}
+
+
+ObjStr* ObjStr_concat_chars(Value c1, Value c2, PyroVM* vm) {
+    uint8_t buf1[4];
+    size_t buf1_count = pyro_write_utf8_codepoint(c1.as.u32, buf1);
+
+    uint8_t buf2[4];
+    size_t buf2_count = pyro_write_utf8_codepoint(c2.as.u32, buf2);
+
+    size_t length = buf1_count + buf2_count;
+    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
+    memcpy(dst, buf1, buf1_count);
+    memcpy(dst + buf1_count, buf2, buf2_count);
     dst[length] = '\0';
 
     ObjStr* string = ObjStr_take(dst, length, vm);

@@ -40,3 +40,7 @@ assert "a":char_count() == 1;
 assert "abc":char_count() == 3;
 assert "a§b€c👍d":char_count() == 7;
 
+def $test_adding_chars() {
+    assert 'a' + 'b' == "ab";
+    assert '€' + '🔥' == "€🔥";
+}
