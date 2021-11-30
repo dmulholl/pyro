@@ -39,6 +39,10 @@ ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
 // Returns NULL if memory cannot be allocated for the new string.
 ObjStr* ObjStr_concat_n_copies(ObjStr* str, size_t n, PyroVM* vm);
 
+// Creates a new string object by concatenating [n] copies of the codepoint encoded as utf-8.
+// Returns NULL if memory cannot be allocated for the new string.
+ObjStr* ObjStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroVM* vm);
+
 // Creates a new string object by concatenating two utf-8 encoded codepoints.
 // Returns NULL if memory cannot be allocated for the new string.
 ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm);

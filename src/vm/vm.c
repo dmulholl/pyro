@@ -1243,7 +1243,12 @@ static void run(PyroVM* vm) {
 
                     case VAL_CHAR: {
                         if (IS_I64(b) && b.as.i64 >= 0) {
-                            // Not implemented.
+                            ObjStr* result = ObjStr_concat_n_codepoints_as_utf8(a.as.u32, b.as.i64, vm);
+                            if (!result) {
+                                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                                break;
+                            }
+                            pyro_push(vm, OBJ_VAL(result));
                             break;
                         } else {
                             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");

@@ -40,17 +40,27 @@ assert "a":char_count() == 1;
 assert "abc":char_count() == 3;
 assert "a§b€c👍d":char_count() == 7;
 
+
 def $test_adding_chars() {
     assert 'a' + 'b' == "ab";
     assert '€' + '🔥' == "€🔥";
 }
+
 
 def $test_appending_char_to_string() {
     assert "foo" + 'x' == "foox";
     assert "foo" + '🔥' == "foo🔥";
 }
 
+
 def $test_prepending_char_to_string() {
     assert 'x' + "foo" == "xfoo";
     assert '🔥' + "foo" == "🔥foo";
+}
+
+
+def $test_multiplication_by_int() {
+    assert 'x' * 0 == "";
+    assert 'x' * 3 == "xxx";
+    assert '🔥' * 3 == "🔥🔥🔥";
 }

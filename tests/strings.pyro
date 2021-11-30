@@ -341,7 +341,7 @@ def $test_strip_suffix_chars() {
 }
 
 
-def $test_multiplication() {
+def $test_multiplication_by_int() {
     assert "" * 0 == "";
     assert "" * 3 == "";
     assert "foo" * 0 == "";

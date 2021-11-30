@@ -792,6 +792,35 @@ ObjStr* ObjStr_concat_n_copies(ObjStr* str, size_t n, PyroVM* vm) {
 }
 
 
+ObjStr* ObjStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroVM* vm) {
+    if (n == 0) {
+        return ObjStr_empty(vm);
+    }
+
+    uint8_t buf[4];
+    size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
+
+    size_t total_length = buf_count * n;
+    char* dst = ALLOCATE_ARRAY(vm, char, total_length + 1);
+    if (!dst) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        memcpy(dst + buf_count * i, buf, buf_count);
+    }
+    dst[total_length] = '\0';
+
+    ObjStr* string = ObjStr_take(dst, total_length, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, dst, total_length + 1);
+        return NULL;
+    }
+
+    return string;
+}
+
+
 ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
     if (src1->length == 0) return src2;
     if (src2->length == 0) return src1;
