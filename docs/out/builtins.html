@@ -222,11 +222,16 @@ Raw string literals use backticks:
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
 </p>
 <p>
-Strings can be concatenated using the <code>+</code> operator:
+You can concatenate two strings using the <code>+</code> operator:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;abc&quot;</span> <span class="o">+</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="s">&quot;abcdef&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="o">+</span> <span class="s">&quot;def&quot;</span> <span class="o">==</span> <span class="s">&quot;abcdef&quot;</span><span class="p">;</span>
+</pre>
+<p>
+You can multiply a string by an integer using the <code>*</code> operator:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;foofoofoo&quot;</span>
 </pre>
 <p>
 Strings have the following methods:

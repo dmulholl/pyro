@@ -54,11 +54,15 @@ Raw string literals use backticks:
 
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
 
-Strings can be concatenated using the `+` operator:
+You can concatenate two strings using the `+` operator:
 
 ::: code pyro
-    var foo = "abc" + "def";
-    assert foo == "abcdef";
+    assert "abc" + "def" == "abcdef";
+
+You can multiply a string by an integer using the `*` operator:
+
+::: code pyro
+    assert "foo" * 3 == "foofoofoo"
 
 Strings have the following methods:
 
