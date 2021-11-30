@@ -9,6 +9,18 @@ This module contains filepath utilities.
 ### Functions
 
 
+[[ `basename(path: str) -> str` ]]
+
+    Extracts the base part of a pathname.
+    Equivalent to POSIX `basename()`.
+
+
+[[ `dirname(path: str) -> str` ]]
+
+    Extracts the directory part of a pathname.
+    Equivalent to POSIX `dirname()`.
+
+
 [[ `exists(path: str) -> bool` ]]
 
     Returns `true` if `path` exists.
