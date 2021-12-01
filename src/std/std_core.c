@@ -646,6 +646,52 @@ static Value fn_sleep(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_is_callable(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_CLOSURE(args[0])) {
+        return BOOL_VAL(true);
+    } else if (IS_NATIVE_FN(args[0])) {
+        return BOOL_VAL(true);
+    } else if (IS_CLASS(args[0])) {
+        return BOOL_VAL(true);
+    } else if (IS_BOUND_METHOD(args[0])) {
+        return BOOL_VAL(true);
+    }
+    return BOOL_VAL(false);
+}
+
+
+static Value fn_is_class(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_CLASS(args[0])) {
+        return BOOL_VAL(true);
+    }
+    return BOOL_VAL(false);
+}
+
+
+static Value fn_is_pyro_func(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_CLOSURE(args[0])) {
+        return BOOL_VAL(true);
+    }
+    return BOOL_VAL(false);
+}
+
+
+static Value fn_is_native_func(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_NATIVE_FN(args[0])) {
+        return BOOL_VAL(true);
+    }
+    return BOOL_VAL(false);
+}
+
+
+static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_BOUND_METHOD(args[0])) {
+        return BOOL_VAL(true);
+    }
+    return BOOL_VAL(false);
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -726,4 +772,9 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$eprintln", fn_eprintln, -1);
     pyro_define_global_fn(vm, "$hash", fn_hash, 1);
     pyro_define_global_fn(vm, "$sleep", fn_sleep, 1);
+    pyro_define_global_fn(vm, "$is_callable", fn_is_callable, 1);
+    pyro_define_global_fn(vm, "$is_class", fn_is_class, 1);
+    pyro_define_global_fn(vm, "$is_pyro_func", fn_is_pyro_func, 1);
+    pyro_define_global_fn(vm, "$is_native_func", fn_is_native_func, 1);
+    pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
 }

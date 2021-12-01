@@ -26,27 +26,27 @@ assert bam == 456;
 }
 
 
-def $test_unpacking_vector() {
+def $test_unpacking_a_vector() {
     var (v1, v2) = [123, 456];
     assert v1 == 123;
     assert v2 == 456;
 }
 
 
-def $test_unpacking_single_tuple() {
+def $test_unpacking_a_single_tuple() {
     var (foo) = $tup(123);
     assert foo == 123;
 }
 
 
-def $test_unpacking_partial_tuple() {
+def $test_partially_unpacking_a_tuple() {
     var (foo, bar) = $tup(123, 456, 789);
     assert foo == 123;
     assert bar == 456;
 }
 
 
-def $test_unpacking_error() {
+def $test_unpacking_an_error() {
     var (foo, bar) = $err(123, 456);
     assert foo == 123;
     assert bar == 456;
