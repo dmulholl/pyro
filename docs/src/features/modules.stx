@@ -18,6 +18,8 @@ Assume we have a file called `math.pyro` containing math functions:
 
 Use the member access operator `::` to access a module's top-level variables, functions, and classes.
 
+The module's name becomes a variable in the importing scope.
+
 
 
 ### Submodules
@@ -104,21 +106,29 @@ Submodules can similarly be aliased:
 
 ### Importing Members
 
-You can import top-level members from a module, e.g.
+You can import a top-level member from a module by wrapping its name in braces, e.g.
 
 ::: code pyro
-    import $std::math::abs;
+    import $std::math::{abs};
 
     assert abs(-1) == 1;
 
 You can alias the imported member using an `import ... as ...` statement, e.g.
 
 ::: code pyro
-    import $std::math::abs as foo;
+    import $std::math::{abs} as foo;
 
     assert foo(-1) == 1;
 
-Note that you can only import members from the final module in the `import` list.
+You can import multiple members in a single `import` statement by separating their names with commas, e.g.
+
+::: code pyro
+    import $std::math::{cos, sin};
+
+You can alias the imported members using a comma-separated `as` list, e.g.
+
+::: code pyro
+    import $std::math::{cos, sin} as foo, bar;
 
 
 
