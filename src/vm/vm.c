@@ -15,6 +15,14 @@
 #include "../std/std_path.h"
 
 
+// Attempts to import the module specified by the argument list --- an array of [ObjStr*] values
+// specifying the import path. This function attempts to find a file or directory matching the
+// import path, compiles the file if it finds one, then executes it in the context of the supplied
+// [module] object.
+//
+// This function can panic or exit, setting the halt flag in either case. It will panic if a file
+// or directory matching the import path cannot be found, if the module code contains syntax errors,
+// if the VM runs out of memory, or if executing the code raises a panic for any reason.
 static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
@@ -855,12 +863,13 @@ static void run(PyroVM* vm) {
                         return;
                     }
                     module_value = OBJ_VAL(module_object);
-                    pyro_push(vm, module_value);
 
+                    pyro_push(vm, module_value);
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
+                    pyro_pop(vm); // module_value
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
@@ -868,7 +877,6 @@ static void run(PyroVM* vm) {
                         return;
                     }
 
-                    pyro_pop(vm); // module_value
                     supermod_modules_map = module_object->submodules;
                 }
 
@@ -899,12 +907,13 @@ static void run(PyroVM* vm) {
                         return;
                     }
                     module_value = OBJ_VAL(module_object);
-                    pyro_push(vm, module_value);
 
+                    pyro_push(vm, module_value);
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
+                    pyro_pop(vm); // module_value
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
@@ -912,7 +921,6 @@ static void run(PyroVM* vm) {
                         return;
                     }
 
-                    pyro_pop(vm); // module_value
                     supermod_modules_map = module_object->submodules;
                 }
 
