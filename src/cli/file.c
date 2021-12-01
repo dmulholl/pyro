@@ -4,8 +4,8 @@
 void pyro_run_file(ArgParser* parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
-        fprintf(stderr, "Error: Out of memory, unable to initialize Pyro VM.\n");
-        exit(1);
+        fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
+        exit(2);
     }
 
     // Set the VM"s max memory allocation.
@@ -17,6 +17,10 @@ void pyro_run_file(ArgParser* parser) {
     // Add the directory containing the script file to the list of import roots.
     char* path = ap_arg(parser, 0);
     char* path_copy = strdup(path);
+    if (!path_copy) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(2);
+    }
     pyro_add_import_root(vm, pyro_dirname(path_copy));
     free(path_copy);
 

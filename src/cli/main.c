@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     ArgParser* parser = ap_new();
     if (!parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(1);
+        exit(2);
     }
 
     ap_helptext(parser, HELPTEXT);
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
     ArgParser* test_cmd_parser = ap_cmd(parser, "test");
     if (!test_cmd_parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(1);
+        exit(2);
     }
 
     ap_helptext(test_cmd_parser, TEST_HELPTEXT);
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
     ArgParser* time_cmd_parser = ap_cmd(parser, "time");
     if (!time_cmd_parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(1);
+        exit(2);
     }
 
     ap_helptext(time_cmd_parser, TIME_HELPTEXT);
@@ -141,7 +141,7 @@ int main(int argc, char* argv[]) {
     ArgParser* check_cmd_parser = ap_cmd(parser, "check");
     if (!check_cmd_parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(1);
+        exit(2);
     }
 
     ap_helptext(check_cmd_parser, CHECK_HELPTEXT);
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
     // Parse the command line arguments.
     if (!ap_parse(parser, argc, argv)) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(1);
+        exit(2);
     }
 
     if (!ap_has_cmd(parser)) {

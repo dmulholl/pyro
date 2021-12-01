@@ -134,7 +134,7 @@ static bool needs_terminator(const char* code, size_t code_count) {
 void pyro_run_repl(ArgParser* parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
-        fprintf(stderr, "Error: Out of memory, unable to initialize Pyro VM.\n");
+        fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
         exit(1);
     }
 

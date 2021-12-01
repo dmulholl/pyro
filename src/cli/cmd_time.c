@@ -20,11 +20,15 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
         PyroVM* vm = pyro_new_vm();
         if (!vm) {
-            fprintf(stderr, "Error: Out of memory, unable to initialize Pyro VM.\n");
-            exit(1);
+            fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
+            exit(2);
         }
 
         char* path_copy = strdup(path);
+        if (!path_copy) {
+            fprintf(stderr, "Error: Out of memory.\n");
+            exit(2);
+        }
         pyro_add_import_root(vm, pyro_dirname(path_copy));
         free(path_copy);
 
