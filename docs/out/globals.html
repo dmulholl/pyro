@@ -548,6 +548,24 @@ Runs a shell command and returns a two-item tuple containing its exit code and o
 </div>
 <div>
 <dt>
+<code>$sleep(time_in_seconds: i64|f64)</code>
+</dt>
+<dd>
+<p>
+Suspends execution of the calling thread for the specified number of seconds.
+The duration can be specified in fractions of a second.
+</p>
+<p>
+(
+Sleeps for <i>at least</i> the specified duration unless an OS interrupt occurs signalling an error.
+In this case the function will raise a panic.
+The actual time slept may be longer than the requested duration due to system latency.
+)
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$str(arg: any) -&gt; str</code>
 </dt>
 <dd>

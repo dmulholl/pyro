@@ -307,6 +307,19 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$sleep(time_in_seconds: i64|f64)` ]]
+
+    Suspends execution of the calling thread for the specified number of seconds.
+    The duration can be specified in fractions of a second.
+
+    (
+    Sleeps for *at least* the specified duration unless an OS interrupt occurs signalling an error.
+    In this case the function will raise a panic.
+    The actual time slept may be longer than the requested duration due to system latency.
+    )
+
+
+
 [[ `$str(arg: any) -> str` ]]
 
     Stringifies the argument, i.e. returns its default string representation.
