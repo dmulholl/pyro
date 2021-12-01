@@ -231,7 +231,8 @@ A character, `char`, is an unsigned 32-bit integer representing a Unicode code p
 
 [[ `$char(arg: i64) -> char` ]]
 
-    Converts `arg` to a `char`. Panics if the argument is not convertible.
+    Converts `arg` to a `char`.
+    Panics if the argument is out of range.
 
 Character literals use single quotes:
 
@@ -243,8 +244,8 @@ Character literals use single quotes:
 A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point.
 
 ::: code pyro
-    var c1 = '\x61';    # c1 == 'a'
-    var c2 = '\u20AC';  # c2 == '€'
+    assert '\x61' == 'a';
+    assert '\u20AC' == '€';
 
 Character literals support all the same backslashed escape sequences as strings.
 

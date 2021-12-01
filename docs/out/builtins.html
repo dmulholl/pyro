@@ -15,7 +15,7 @@
         <header class="masthead">
             <h1><a href="index.html">Pyro</a></h1>
             
-                <p class="tagline">An experimental scripting language.</p>
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
                 <p class="version">Version 0.4.0</p>
@@ -608,7 +608,8 @@ A character, <code>char</code>, is an unsigned 32-bit integer representing a Uni
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to a <code>char</code>. Panics if the argument is not convertible.
+Converts <code>arg</code> to a <code>char</code>.
+Panics if the argument is out of range.
 </p>
 </dd>
 </div>
@@ -625,8 +626,8 @@ Character literals use single quotes:
 A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="sc">&#39;\x61&#39;</span><span class="p">;</span>    <span class="c1"># c1 == &#39;a&#39;</span>
-<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="sc">&#39;\u20AC&#39;</span><span class="p">;</span>  <span class="c1"># c2 == &#39;€&#39;</span>
+<span class="k">assert</span> <span class="sc">&#39;\x61&#39;</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="sc">&#39;\u20AC&#39;</span> <span class="o">==</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
 </pre>
 <p>
 Character literals support all the same backslashed escape sequences as strings.
