@@ -27,6 +27,11 @@ This module contains filepath utilities.
     If `path` is a symlink, returns `true` if the target of the link exists.
 
 
+[[ `join(arg1: str, arg2: str, ...) -> str` ]]
+
+    Joins path components, adding a separating `/` if required.
+
+
 [[ `is_dir(path: str) -> bool` ]]
 
     Returns `true` if `path` exists and is a directory.
