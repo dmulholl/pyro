@@ -838,14 +838,20 @@ static void run(PyroVM* vm) {
                 uint8_t arg_count = READ_BYTE();
                 Value* args = vm->stack_top - arg_count;
 
-                ObjMap* supermod_map = vm->modules;
+                ObjMap* supermod_modules_map = vm->modules;
+                ObjMap* supermod_globals_map = vm->globals;
                 Value module_value;
 
                 for (uint8_t i = 0; i < arg_count; i++) {
                     Value name = args[i];
 
-                    if (ObjMap_get(supermod_map, name, &module_value)) {
-                        supermod_map = AS_MOD(module_value)->submodules;
+                    if (i == arg_count - 1 && ObjMap_get(supermod_globals_map, name, &module_value)) {
+                        break;
+                    }
+
+                    if (ObjMap_get(supermod_modules_map, name, &module_value)) {
+                        supermod_modules_map = AS_MOD(module_value)->submodules;
+                        supermod_globals_map = AS_MOD(module_value)->globals;
                         continue;
                     }
 
@@ -857,19 +863,20 @@ static void run(PyroVM* vm) {
                     module_value = OBJ_VAL(module_object);
                     pyro_push(vm, module_value);
 
-                    if (ObjMap_set(supermod_map, name, module_value, vm) == 0) {
+                    if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
-                        ObjMap_remove(supermod_map, name);
+                        ObjMap_remove(supermod_modules_map, name);
                         return;
                     }
 
                     pyro_pop(vm); // module_value
-                    supermod_map = module_object->submodules;
+                    supermod_modules_map = module_object->submodules;
+                    supermod_globals_map = module_object->globals;
                 }
 
                 vm->stack_top -= arg_count;
@@ -1828,7 +1835,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
 
     // Print the error message.
     if (vm->err_file) {
-        fprintf(vm->err_file, "[%lld] Error: ", error_code);
+        fprintf(vm->err_file, "[Code %lld] Error: ", error_code);
         va_list args;
         va_start(args, format);
         vfprintf(vm->err_file, format, args);

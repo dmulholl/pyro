@@ -1,0 +1,5 @@
+import $std::math::abs;
+assert abs(-1) == 1;
+
+import $std::math::abs as foo;
+assert foo(-1) == 1;
