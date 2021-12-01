@@ -102,6 +102,26 @@ Submodules can similarly be aliased:
 
 
 
+### Importing Members
+
+You can import top-level members from a module, e.g.
+
+::: code pyro
+    import $std::math::abs;
+
+    assert abs(-1) == 1;
+
+You can alias the imported member using an `import ... as ...` statement, e.g.
+
+::: code pyro
+    import $std::math::abs as foo;
+
+    assert foo(-1) == 1;
+
+Note that you can only import members from the final module in the `import` list.
+
+
+
 ### Import Roots
 
 The global `$roots` vector contains the list of root directories that Pyro checks when attempting to import a module.
