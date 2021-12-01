@@ -1,0 +1,9 @@
+import $std::math;
+assert math::abs(-1) == 1;
+assert $is_f64(math::e);
+assert $is_f64(math::pi);
+
+import $std::math as foo;
+assert foo::abs(-1) == 1;
+assert $is_f64(foo::e);
+assert $is_f64(foo::pi);

@@ -1400,34 +1400,87 @@ static void parse_var_declaration(Parser* parser) {
 
 
 static void parse_import_stmt(Parser* parser) {
-    consume(parser, TOKEN_IDENTIFIER, "Expected module name after 'import'.");
-    uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
-    emit_op_u16(parser, OP_LOAD_CONSTANT, index);
-    Token import_name = parser->previous;
-    int count = 1;
+    consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
+    uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous);
+    emit_op_u16(parser, OP_LOAD_CONSTANT, module_index);
+
+    Token module_name = parser->previous;
+    Token member_names[16];
+    uint16_t member_indexes[16];
+    int module_count = 1;
+    int member_count = 0;
 
     while (match(parser, TOKEN_COLON_COLON)) {
-        consume(parser, TOKEN_IDENTIFIER, "Expected module name after '::'.");
-        index = make_string_constant_from_identifier(parser, &parser->previous);
-        emit_op_u16(parser, OP_LOAD_CONSTANT, index);
-        import_name = parser->previous;
-        count++;
+        if (match(parser, TOKEN_LEFT_BRACE)) {
+            do {
+                consume(parser, TOKEN_IDENTIFIER, "Expected member name.");
+                member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous);
+                emit_op_u16(parser, OP_LOAD_CONSTANT, member_indexes[member_count]);
+                member_names[member_count] = parser->previous;
+                member_count++;
+                if (member_count > 16) {
+                    err_at_prev(parser, "Too many member names in import statement.");
+                    break;
+                }
+            } while (match(parser, TOKEN_COMMA));
+            consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' in import statement.");
+            break;
+        }
+        consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
+        module_index = make_string_constant_from_identifier(parser, &parser->previous);
+        emit_op_u16(parser, OP_LOAD_CONSTANT, module_index);
+        module_name = parser->previous;
+        module_count++;
     }
 
-    if (count > 255) {
+    if (module_count > 255) {
         err_at_prev(parser, "Too many module names in import statement.");
     }
-    emit_bytes(parser, OP_IMPORT, count);
 
+    if (member_count > 0) {
+        emit_byte(parser, OP_IMPORT_MEMBERS);
+        emit_byte(parser, module_count);
+        emit_byte(parser, member_count);
+    } else {
+        emit_byte(parser, OP_IMPORT_MODULE);
+        emit_byte(parser, module_count);
+    }
+
+    int alias_count = 0;
     if (match(parser, TOKEN_AS)) {
-        consume(parser, TOKEN_IDENTIFIER, "Expected variable name after 'as'.");
-        index = make_string_constant_from_identifier(parser, &parser->previous);
-        import_name = parser->previous;
+        do {
+            consume(parser, TOKEN_IDENTIFIER, "Expected alias name in import statement.");
+            module_index = make_string_constant_from_identifier(parser, &parser->previous);
+            module_name = parser->previous;
+            member_names[alias_count] = parser->previous;
+            member_indexes[alias_count] = module_index;
+            alias_count++;
+            if (alias_count > 16) {
+                err_at_prev(parser, "Too many alias names in import statement.");
+                break;
+            }
+        } while (match(parser, TOKEN_COMMA));
+    }
+
+    if (member_count > 0) {
+        if (alias_count > 0 && alias_count != member_count) {
+            err_at_prev(parser, "Alias and member numbers do not match.");
+            return;
+        }
+        for (int i = 0; i < member_count; i++) {
+            declare_variable(parser, member_names[i]);
+        }
+        define_variables(parser, member_indexes, member_count);
+    } else {
+        if (alias_count > 1) {
+            err_at_prev(parser, "Too many alias names in import statement.");
+            return;
+        }
+        declare_variable(parser, module_name);
+        define_variable(parser, module_index);
     }
 
     consume(parser, TOKEN_SEMICOLON, "Expected ';' after import statement.");
-    declare_variable(parser, import_name);
-    define_variable(parser, index);
 }
 
 

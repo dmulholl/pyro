@@ -28,6 +28,15 @@ static size_t u8_instruction(PyroVM* vm, const char* name, ObjFn* fn, size_t ip)
 }
 
 
+// An instruction with two one-byte arguments each representing a uint8_t.
+static size_t u8_x2_instruction(PyroVM* vm, const char* name, ObjFn* fn, size_t ip) {
+    uint8_t arg1 = fn->code[ip + 1];
+    uint8_t arg2 = fn->code[ip + 2];
+    pyro_out(vm, "%-24s %4d %4d\n", name, arg1, arg2);
+    return ip + 3;
+}
+
+
 // An instruction with a two-byte argument representing a uint16_t in big-endian format.
 static size_t u16_instruction(PyroVM* vm, const char* name, ObjFn* fn, size_t ip) {
     uint16_t arg = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
@@ -152,8 +161,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_GREATER", ip);
         case OP_GREATER_EQUAL:
             return atomic_instruction(vm, "OP_GREATER_EQUAL", ip);
-        case OP_IMPORT:
-            return u8_instruction(vm, "OP_IMPORT", fn, ip);
+        case OP_IMPORT_MODULE:
+            return u8_instruction(vm, "OP_IMPORT_MODULE", fn, ip);
+        case OP_IMPORT_MEMBERS:
+            return u8_x2_instruction(vm, "OP_IMPORT_MEMBERS", fn, ip);
         case OP_INHERIT:
             return atomic_instruction(vm, "OP_INHERIT", ip);
         case OP_INVOKE_METHOD:

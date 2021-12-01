@@ -1,0 +1,15 @@
+{
+    import $std::math::{abs};
+    assert abs(-1) == 1;
+
+    import $std::math::{abs} as foo;
+    assert foo(-1) == 1;
+
+    import $std::math::{e, pi};
+    assert $is_f64(e);
+    assert $is_f64(pi);
+
+    import $std::math::{e, pi} as bar, baz;
+    assert $is_f64(bar);
+    assert $is_f64(baz);
+}

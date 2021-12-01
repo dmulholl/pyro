@@ -834,24 +834,18 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_IMPORT: {
+            case OP_IMPORT_MODULE: {
                 uint8_t arg_count = READ_BYTE();
                 Value* args = vm->stack_top - arg_count;
 
                 ObjMap* supermod_modules_map = vm->modules;
-                ObjMap* supermod_globals_map = vm->globals;
                 Value module_value;
 
                 for (uint8_t i = 0; i < arg_count; i++) {
                     Value name = args[i];
 
-                    if (i == arg_count - 1 && ObjMap_get(supermod_globals_map, name, &module_value)) {
-                        break;
-                    }
-
                     if (ObjMap_get(supermod_modules_map, name, &module_value)) {
                         supermod_modules_map = AS_MOD(module_value)->submodules;
-                        supermod_globals_map = AS_MOD(module_value)->globals;
                         continue;
                     }
 
@@ -876,11 +870,68 @@ static void run(PyroVM* vm) {
 
                     pyro_pop(vm); // module_value
                     supermod_modules_map = module_object->submodules;
-                    supermod_globals_map = module_object->globals;
                 }
 
                 vm->stack_top -= arg_count;
                 pyro_push(vm, module_value);
+                break;
+            }
+
+            case OP_IMPORT_MEMBERS: {
+                uint8_t module_count = READ_BYTE();
+                uint8_t member_count = READ_BYTE();
+                Value* args = vm->stack_top - module_count - member_count;
+
+                ObjMap* supermod_modules_map = vm->modules;
+                Value module_value;
+
+                for (uint8_t i = 0; i < module_count; i++) {
+                    Value name = args[i];
+
+                    if (ObjMap_get(supermod_modules_map, name, &module_value)) {
+                        supermod_modules_map = AS_MOD(module_value)->submodules;
+                        continue;
+                    }
+
+                    ObjModule* module_object = ObjModule_new(vm);
+                    if (!module_object) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+                    module_value = OBJ_VAL(module_object);
+                    pyro_push(vm, module_value);
+
+                    if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+
+                    pyro_import_module(vm, i + 1, args, module_object);
+                    if (vm->halt_flag) {
+                        ObjMap_remove(supermod_modules_map, name);
+                        return;
+                    }
+
+                    pyro_pop(vm); // module_value
+                    supermod_modules_map = module_object->submodules;
+                }
+
+                ObjMap* module_globals = AS_MOD(module_value)->globals;
+
+                for (uint8_t i = 0; i < member_count; i++) {
+                    Value name = args[module_count + i];
+                    Value member;
+                    if (!ObjMap_get(module_globals, name, &member)) {
+                        pyro_panic(
+                            vm, ERR_NAME_ERROR,
+                            "Member '%s' not found in module.", AS_STR(name)->bytes
+                        );
+                        return;
+                    }
+                    args[i] = member;
+                }
+
+                vm->stack_top -= module_count;
                 break;
             }
 
