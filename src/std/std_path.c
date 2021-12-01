@@ -173,6 +173,22 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::rm(), expected a string.");
+        return NULL_VAL();
+    }
+
+    ObjStr* path = AS_STR(args[0]);
+
+    if (pyro_rmrf(path->bytes) != 0) {
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to delete '%s'.", path->bytes);
+    }
+
+    return NULL_VAL();
+}
+
+
 void pyro_load_std_path(PyroVM* vm) {
     ObjModule* mod_path = pyro_define_module_2(vm, "$std", "path");
     if (!mod_path) {
@@ -186,4 +202,5 @@ void pyro_load_std_path(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_path, "dirname", fn_dirname, 1);
     pyro_define_member_fn(vm, mod_path, "basename", fn_basename, 1);
     pyro_define_member_fn(vm, mod_path, "join", fn_join, -1);
+    pyro_define_member_fn(vm, mod_path, "rm", fn_rm, 1);
 }

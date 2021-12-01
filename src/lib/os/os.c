@@ -9,6 +9,9 @@
 // POSIX: stat(), lstat(), S_ISDIR(), S_ISREG, S_ISLNK()
 #include <sys/stat.h>
 
+// POSIX: nftw()
+#include <ftw.h>
+
 
 // If [path] is a symlink, stat() returns info about the target of the link.
 bool pyro_exists(const char* path) {
@@ -73,4 +76,22 @@ FILE* pyro_popen(const char* command, const char* mode) {
 
 int pyro_pclose(FILE* stream) {
     return pclose(stream);
+}
+
+
+// Returns 0 if successful, -1 if an error occurs.
+static int rmrf_callback(const char* path, const struct stat* s, int type, struct FTW* ftw_buf) {
+    return remove(path);
+}
+
+
+// Returns 0 if successful, -1 if an error occurs.
+int pyro_rmrf(const char* path) {
+    if (pyro_is_symlink(path) || pyro_is_file(path)) {
+        return remove(path);
+    } else if (pyro_is_dir(path)) {
+        return nftw(path, rmrf_callback, 64, FTW_DEPTH | FTW_PHYS);
+    } else {
+        return -1;
+    }
 }
