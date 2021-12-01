@@ -292,7 +292,10 @@ Returns <code>true</code> if the object has a method called <code>method_name</c
 Returns the argument's 64-bit hash value.
 </p>
 <p>
-(Note that hash values can be negative. Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.)
+(
+Note that this function can return negative values.
+Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.
+)
 </p>
 </dd>
 </div>
@@ -313,7 +316,7 @@ Panics if the argument is out-of-range for an <code>i64</code>.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>bool</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>bool</code>.
 </p>
 </dd>
 </div>
@@ -323,7 +326,17 @@ Returns <code>true</code> if the argument is a <code>bool</code>, otherwise <cod
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>buf</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>buf</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_callable(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is callable, i.e. a function, method, or class.
 </p>
 </dd>
 </div>
@@ -333,7 +346,17 @@ Returns <code>true</code> if the argument is a <code>buf</code>, otherwise <code
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>char</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>char</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_class(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a class.
 </p>
 </dd>
 </div>
@@ -343,7 +366,7 @@ Returns <code>true</code> if the argument is a <code>char</code>, otherwise <cod
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is an <code>err</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is an <code>err</code>.
 </p>
 </dd>
 </div>
@@ -353,7 +376,7 @@ Returns <code>true</code> if the argument is an <code>err</code>, otherwise <cod
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is an <code>f64</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is an <code>f64</code>.
 </p>
 </dd>
 </div>
@@ -363,7 +386,7 @@ Returns <code>true</code> if the argument is an <code>f64</code>, otherwise <cod
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>file</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>file</code>.
 </p>
 </dd>
 </div>
@@ -373,7 +396,7 @@ Returns <code>true</code> if the argument is a <code>file</code>, otherwise <cod
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is an <code>i64</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is an <code>i64</code>.
 </p>
 </dd>
 </div>
@@ -403,7 +426,17 @@ Returns <code>true</code> if <code>object</code> is an instance of the specified
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>map</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>map</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_method(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a method.
 </p>
 </dd>
 </div>
@@ -413,7 +446,7 @@ Returns <code>true</code> if the argument is a <code>map</code>, otherwise <code
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a module, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a module.
 </p>
 </dd>
 </div>
@@ -433,7 +466,7 @@ Returns <code>true</code> if the argument is the floating-point value <code>NaN<
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>range</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>range</code>.
 </p>
 </dd>
 </div>
@@ -443,7 +476,7 @@ Returns <code>true</code> if the argument is a <code>range</code>, otherwise <co
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>str</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>str</code>.
 </p>
 </dd>
 </div>
@@ -453,7 +486,7 @@ Returns <code>true</code> if the argument is a <code>str</code>, otherwise <code
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>tup</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>tup</code>.
 </p>
 </dd>
 </div>
@@ -463,7 +496,7 @@ Returns <code>true</code> if the argument is a <code>tup</code>, otherwise <code
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the argument is a <code>vec</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the argument is a <code>vec</code>.
 </p>
 </dd>
 </div>

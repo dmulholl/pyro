@@ -16,7 +16,7 @@ First, download the repository from Github:
     $ cd pyro
     $ make
 
-The Pyro binary will be created in a new `out/release` directory as `out/release/pyro`.
+The `pyro` binary will be created in a new `out/release` directory as `out/release/pyro`.
 
 `cd` into the `out/release` directory and try running the binary with the `--help` flag to view the command line help:
 

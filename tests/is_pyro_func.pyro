@@ -1,0 +1,18 @@
+assert !$is_pyro_func(123);
+assert !$is_pyro_func(123.0);
+assert !$is_pyro_func(null);
+assert !$is_pyro_func(true);
+assert !$is_pyro_func(false);
+assert !$is_pyro_func("foo");
+assert !$is_pyro_func($clock);
+
+class Foo {
+    def foo_method() {}
+}
+assert !$is_pyro_func(Foo);
+
+var foo_instance = Foo();
+assert !$is_pyro_func(foo_instance:foo_method);
+
+def bar() {}
+assert $is_pyro_func(bar);

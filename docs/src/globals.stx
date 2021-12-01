@@ -151,7 +151,10 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Returns the argument's 64-bit hash value.
 
-    (Note that hash values can be negative. Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.)
+    (
+    Note that this function can return negative values.
+    Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.
+    )
 
 
 
@@ -164,43 +167,55 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$is_bool(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `bool`, otherwise `false`.
+    Returns `true` if the argument is a `bool`.
 
 
 
 [[ `$is_buf(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `buf`, otherwise `false`.
+    Returns `true` if the argument is a `buf`.
+
+
+
+[[ `$is_callable(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is callable, i.e. a function, method, or class.
 
 
 
 [[ `$is_char(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `char`, otherwise `false`.
+    Returns `true` if the argument is a `char`.
+
+
+
+[[ `$is_class(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a class.
 
 
 
 [[ `$is_err(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is an `err`, otherwise `false`.
+    Returns `true` if the argument is an `err`.
 
 
 
 [[ `$is_f64(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is an `f64`, otherwise `false`.
+    Returns `true` if the argument is an `f64`.
 
 
 
 [[ `$is_file(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `file`, otherwise `false`.
+    Returns `true` if the argument is a `file`.
 
 
 
 [[ `$is_i64(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is an `i64`, otherwise `false`.
+    Returns `true` if the argument is an `i64`.
 
 
 
@@ -218,13 +233,19 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$is_map(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `map`, otherwise `false`.
+    Returns `true` if the argument is a `map`.
+
+
+
+[[ `$is_method(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a method.
 
 
 
 [[ `$is_mod(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a module, otherwise `false`.
+    Returns `true` if the argument is a module.
 
 
 
@@ -236,25 +257,25 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$is_range(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `range`, otherwise `false`.
+    Returns `true` if the argument is a `range`.
 
 
 
 [[ `$is_str(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `str`, otherwise `false`.
+    Returns `true` if the argument is a `str`.
 
 
 
 [[ `$is_tup(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `tup`, otherwise `false`.
+    Returns `true` if the argument is a `tup`.
 
 
 
 [[ `$is_vec(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is a `vec`, otherwise `false`.
+    Returns `true` if the argument is a `vec`.
 
 
 

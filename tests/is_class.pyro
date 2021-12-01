@@ -1,0 +1,12 @@
+assert !$is_class(123);
+assert !$is_class(123.0);
+assert !$is_class(null);
+assert !$is_class(true);
+assert !$is_class(false);
+assert !$is_class("foo");
+assert !$is_class($clock);
+
+class Foo {}
+
+assert $is_class(Foo);
+assert !$is_class(Foo());

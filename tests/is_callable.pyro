@@ -1,0 +1,21 @@
+# Not callable.
+assert !$is_callable(123);
+assert !$is_callable(0.123);
+assert !$is_callable("foo");
+assert !$is_callable(null);
+assert !$is_callable(true);
+assert !$is_callable(false);
+
+# Global native function.
+assert $is_callable($clock);
+
+# Standard library native function.
+assert $is_callable($std::math::abs);
+
+# Pyro function.
+def foo() {}
+assert $is_callable(foo);
+
+# Class.
+class Foo {}
+assert $is_callable(Foo);
