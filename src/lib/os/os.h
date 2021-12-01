@@ -54,4 +54,8 @@ int pyro_pclose(FILE* stream);
 // then the directory itself.
 int pyro_rmrf(const char* path);
 
+// Suspends the calling thread for the requested duration.
+// Returns 0 if successful, -1 if an error occurs.
+int pyro_sleep(double time_in_seconds);
+
 #endif

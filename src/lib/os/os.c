@@ -95,3 +95,26 @@ int pyro_rmrf(const char* path) {
         return -1;
     }
 }
+
+
+// Returns 0 if successful, -1 if an error occurs.
+int pyro_sleep(double time_in_seconds) {
+    double whole_seconds = floor(time_in_seconds);
+    double fract_seconds = time_in_seconds - whole_seconds;
+
+    struct timespec req;
+    req.tv_sec = (time_t)whole_seconds;
+    req.tv_nsec = (long)(fract_seconds * 1e9);
+
+    while (true) {
+        struct timespec rem;
+        if (nanosleep(&req, &rem) == 0) {
+            return 0;
+        }
+        if (errno == EINTR) {
+            req = rem;
+            continue;
+        }
+        return -1;
+    }
+}

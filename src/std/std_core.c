@@ -626,6 +626,26 @@ static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_sleep(PyroVM* vm, size_t arg_count, Value* args) {
+    double time_in_seconds;
+
+    if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
+        time_in_seconds = (double)args[0].as.i64;
+    } else if (IS_F64(args[0]) && args[0].as.f64 >= 0) {
+        time_in_seconds = args[0].as.f64;
+    } else {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $sleep(), expected a positive number.");
+        return NULL_VAL();
+    }
+
+    if (pyro_sleep(time_in_seconds) != 0) {
+        pyro_panic(vm, ERR_OS_ERROR, "OS error triggered by call to $sleep().");
+    }
+
+    return NULL_VAL();
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -705,4 +725,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$eprint", fn_eprint, -1);
     pyro_define_global_fn(vm, "$eprintln", fn_eprintln, -1);
     pyro_define_global_fn(vm, "$hash", fn_hash, 1);
+    pyro_define_global_fn(vm, "$sleep", fn_sleep, 1);
 }
