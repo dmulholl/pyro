@@ -24,6 +24,8 @@ assert basename("") == ".";
 
 assert join("foo", "bar") == "foo/bar";
 assert join("foo", "bar", "baz") == "foo/bar/baz";
+assert join("foo/", "bar") == "foo/bar";
+assert join("foo", "/bar") == "foo/bar";
 assert join("foo/", "/bar") == "foo//bar";
 assert join("/foo/", "/bar") == "/foo//bar";
 assert join("/foo/", "/bar/") == "/foo//bar/";
