@@ -3,6 +3,7 @@ import $std::path;
 assert path::exists($filepath);
 assert path::is_file($filepath);
 assert path::is_dir(path::dirname($filepath));
+assert path::is_file(path::join(path::dirname($filepath), path::basename($filepath)));
 
 assert path::dirname("/foo/bar/baz.txt") == "/foo/bar";
 assert path::dirname("foo/bar/baz.txt") == "foo/bar";
@@ -15,3 +16,17 @@ assert path::basename("foo/bar/baz.txt") == "baz.txt";
 assert path::basename("baz.txt") == "baz.txt";
 assert path::basename("/") == "/";
 assert path::basename("") == ".";
+
+assert path::join("foo", "bar") == "foo/bar";
+assert path::join("foo", "bar", "baz") == "foo/bar/baz";
+assert path::join("foo/", "/bar") == "foo//bar";
+assert path::join("/foo/", "/bar") == "/foo//bar";
+assert path::join("/foo/", "/bar/") == "/foo//bar/";
+assert path::join("foo", "") == "foo";
+assert path::join("", "bar") == "bar";
+assert path::join("foo", "", "baz") == "foo/baz";
+assert path::join("", "bar", "") == "bar";
+assert path::join("foo", "", "") == "foo";
+assert path::join("", "bar", "") == "bar";
+assert path::join("", "", "baz") == "baz";
+assert path::join("", "", "") == "";
