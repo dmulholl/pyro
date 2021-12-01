@@ -132,6 +132,18 @@ Joins path components, adding a separating <code>/</code> if required.
 </p>
 </dd>
 </div>
+<div>
+<dt>
+<code>rm(path: str)</code>
+</dt>
+<dd>
+<p>
+Deletes the symlink, file, or directory at <code>path</code>.
+If <code>path</code> is a symlink, the link itself will be deleted, not its target.
+If <code>path</code> is a directory, the directory and all its content will be deleted.
+</p>
+</dd>
+</div>
 </dl>
         </article>
         

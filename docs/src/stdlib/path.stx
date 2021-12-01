@@ -48,3 +48,10 @@ This module contains filepath utilities.
 [[ `join(arg1: str, arg2: str, ...) -> str` ]]
 
     Joins path components, adding a separating `/` if required.
+
+
+[[ `rm(path: str)` ]]
+
+    Deletes the symlink, file, or directory at `path`.
+    If `path` is a symlink, the link itself will be deleted, not its target.
+    If `path` is a directory, the directory and all its content will be deleted.
