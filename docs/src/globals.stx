@@ -285,6 +285,33 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$num_compare(a: i64|f64|char, b: i64|f64|char) -> i64` ]]
+
+    Compares the arguments numerically.
+    Returns `-1` if `a < b`, `0` if `a == b`, or `1` if `a > b`.
+
+    Will panic if either argument is the `f64` value `NaN`.
+
+
+
+[[ `$num_eq(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
+
+    Returns `true` if the arguments are numerically equal.
+
+
+
+[[ `$num_gt(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
+
+    Returns `true` if `a` is numerically greater than `b`.
+
+
+
+[[ `$num_lt(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
+
+    Returns `true` if `a` is numerically less than `b`.
+
+
+
 [[ `$panic(error_code: i64, error_message: str)` ]]
 
     Panics with the specified error code and error message.
