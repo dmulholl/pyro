@@ -15,6 +15,11 @@ This module contains filepath utilities.
     Equivalent to POSIX `basename()`.
 
 
+[[ `cwd() -> str` ]]
+
+    Returns the directory path of the current working directory.
+
+
 [[ `dirname(path: str) -> str` ]]
 
     Extracts the directory part of a pathname.
