@@ -16,6 +16,8 @@
 #include <ctype.h>
 #include <errno.h>
 
+#include "../../vm/common.h"
+
 // Returns true if a file or directory exists at [path].
 // If [path] is a symlink, returns true if the target of the link exists.
 bool pyro_exists(const char* path);
@@ -61,5 +63,8 @@ int pyro_sleep(double time_in_seconds);
 // Wrapper for getcwd(). Returns NULL if an error occurs. The returned striing should be freed
 // with free().
 char* pyro_getcwd(void);
+
+// Reads directory entries into a vector. Skips '.' and '..'. Panics if an error occurs.
+ObjVec* pyro_listdir(PyroVM* vm, const char* path);
 
 #endif

@@ -18,12 +18,12 @@
 
 // Local includes.
 #include "../pyro.h"
-#include "../lib/os/os.h"
 
 // Forward declarations.
 typedef struct Obj Obj;
 typedef struct ObjStr ObjStr;
 typedef struct ObjMap ObjMap;
+typedef struct ObjVec ObjVec;
 typedef struct ObjClass ObjClass;
 
 // Selects the hash function for strings.

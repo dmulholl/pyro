@@ -14,6 +14,8 @@
 #include "../std/std_errors.h"
 #include "../std/std_path.h"
 
+#include "../lib/os/os.h"
+
 
 // Attempts to import the module specified by the argument list --- an array of [ObjStr*] values
 // specifying the import path. This function attempts to find a file or directory matching the

@@ -6,6 +6,8 @@
 #include "../vm/heap.h"
 #include "../vm/errors.h"
 
+#include "../lib/os/os.h"
+
 
 static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
@@ -197,12 +199,29 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     ObjStr* string = ObjStr_copy_raw(cwd, strlen(cwd), vm);
+    free(cwd);
+
     if (!string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();
     }
 
     return OBJ_VAL(string);
+}
+
+
+static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::listdir(), expected a string.");
+        return NULL_VAL();
+    }
+
+    ObjVec* vec = pyro_listdir(vm, AS_STR(args[0])->bytes);
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(vec);
 }
 
 
@@ -221,4 +240,5 @@ void pyro_load_std_path(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_path, "join", fn_join, -1);
     pyro_define_member_fn(vm, mod_path, "rm", fn_rm, 1);
     pyro_define_member_fn(vm, mod_path, "cwd", fn_cwd, 0);
+    pyro_define_member_fn(vm, mod_path, "listdir", fn_listdir, 1);
 }

@@ -141,12 +141,12 @@ Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm);
 /* Vectors */
 /* ------- */
 
-typedef struct {
+struct ObjVec {
     Obj obj;
     size_t count;
     size_t capacity;
     Value* values;
-} ObjVec;
+};
 
 ObjVec* ObjVec_new(PyroVM* vm);
 ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm);

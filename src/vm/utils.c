@@ -4,6 +4,8 @@
 #include "utf8.h"
 #include "errors.h"
 
+#include "../lib/os/os.h"
+
 
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
     FILE* file = fopen(path, "rb");

@@ -7,6 +7,8 @@
 #include "../vm/utf8.h"
 #include "../vm/errors.h"
 
+#include "../lib/os/os.h"
+
 
 static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count < 2) {

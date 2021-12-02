@@ -1,5 +1,10 @@
 #include "os.h"
 
+// Pyro imports.
+#include "../../vm/vm.h"
+#include "../../vm/values.h"
+#include "../../vm/objects.h"
+
 // POSIX: popen(), pclose()
 #include <stdio.h>
 
@@ -14,6 +19,9 @@
 
 // POSIX: getcwd()
 #include <unistd.h>
+
+// POSIX: opendir() closedir()
+#include <dirent.h>
 
 
 // If [path] is a symlink, stat() returns info about the target of the link.
@@ -125,4 +133,50 @@ int pyro_sleep(double time_in_seconds) {
 
 char* pyro_getcwd(void) {
     return getcwd(NULL, 0);
+}
+
+
+ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
+    ObjVec* vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    DIR* dirp = opendir(path);
+    if (!dirp) {
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to open directory '%s'.", path);
+        return NULL;
+    }
+
+    struct dirent* dp;
+    vm->gc_disallows++;
+
+    while ((dp = readdir(dirp)) != NULL) {
+        char* name = dp->d_name;
+        size_t length = strlen(name);
+
+        if (length == 1 && name[0] == '.') {
+            continue;
+        }
+
+        if (length == 2 && name[0] == '.' && name[1] == '.') {
+            continue;
+        }
+
+        ObjStr* string = ObjStr_copy_raw(name, length, vm);
+        if (!string) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            break;
+        }
+
+        if (!ObjVec_append(vec, OBJ_VAL(string), vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            break;
+        }
+    }
+
+    vm->gc_disallows--;
+    closedir(dirp);
+    return vec;
 }
