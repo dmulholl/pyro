@@ -6,6 +6,9 @@ assert is_file($filepath);
 assert is_dir(dirname($filepath));
 assert is_file(join(dirname($filepath), basename($filepath)));
 
+assert exists($std::path::cwd());
+assert is_dir($std::path::cwd());
+
 assert dirname("/foo/bar/baz.txt") == "/foo/bar";
 assert dirname("foo/bar/baz.txt") == "foo/bar";
 assert dirname("baz.txt") == ".";
