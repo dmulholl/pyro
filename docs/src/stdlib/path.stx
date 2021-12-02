@@ -55,6 +55,12 @@ This module contains filepath utilities.
     Joins path components, adding a separating `/` if required.
 
 
+[[ `listdir(path: str) -> vec[str]` ]]
+
+    Returns a vector containing the names of the entries in the directory specified by `path`.
+    Skips `"."` and `".."`.
+
+
 [[ `rm(path: str)` ]]
 
     Deletes the symlink, file, or directory at `path`.

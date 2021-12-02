@@ -69,6 +69,16 @@ Equivalent to POSIX <code>basename()</code>.
 </div>
 <div>
 <dt>
+<code>cwd() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the directory path of the current working directory.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>dirname(path: str) -&gt; str</code>
 </dt>
 <dd>
@@ -129,6 +139,17 @@ Returns <code>true</code> if <code>path</code> exists and is a symlink.
 <dd>
 <p>
 Joins path components, adding a separating <code>/</code> if required.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>listdir(path: str) -&gt; vec[str]</code>
+</dt>
+<dd>
+<p>
+Returns a vector containing the names of the entries in the directory specified by <code>path</code>.
+Skips <code>&quot;.&quot;</code> and <code>&quot;..&quot;</code>.
 </p>
 </dd>
 </div>
