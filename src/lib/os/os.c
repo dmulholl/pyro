@@ -12,6 +12,9 @@
 // POSIX: nftw()
 #include <ftw.h>
 
+// POSIX: getcwd()
+#include <unistd.h>
+
 
 // If [path] is a symlink, stat() returns info about the target of the link.
 bool pyro_exists(const char* path) {
@@ -117,4 +120,9 @@ int pyro_sleep(double time_in_seconds) {
         }
         return -1;
     }
+}
+
+
+char* pyro_getcwd(void) {
+    return getcwd(NULL, 0);
 }

@@ -58,4 +58,8 @@ int pyro_rmrf(const char* path);
 // Returns 0 if successful, -1 if an error occurs.
 int pyro_sleep(double time_in_seconds);
 
+// Wrapper for getcwd(). Returns NULL if an error occurs. The returned striing should be freed
+// with free().
+char* pyro_getcwd(void);
+
 #endif

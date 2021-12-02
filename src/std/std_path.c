@@ -189,6 +189,23 @@ static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
+    char* cwd = pyro_getcwd();
+    if (!cwd) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    ObjStr* string = ObjStr_copy_raw(cwd, strlen(cwd), vm);
+    if (!string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(string);
+}
+
+
 void pyro_load_std_path(PyroVM* vm) {
     ObjModule* mod_path = pyro_define_module_2(vm, "$std", "path");
     if (!mod_path) {
@@ -203,4 +220,5 @@ void pyro_load_std_path(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_path, "basename", fn_basename, 1);
     pyro_define_member_fn(vm, mod_path, "join", fn_join, -1);
     pyro_define_member_fn(vm, mod_path, "rm", fn_rm, 1);
+    pyro_define_member_fn(vm, mod_path, "cwd", fn_cwd, 0);
 }
