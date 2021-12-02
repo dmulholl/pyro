@@ -140,12 +140,19 @@ bool pyro_check_equal(Value a, Value b);
 // Returns [true] if the value is truthy.
 bool pyro_is_truthy(Value value);
 
-// Compares two values.
+// Compares two values of the same type.
 // - Returns -1 if a < b.
 // - Returns 0 if a == b.
 // - Returns 1 if a > b.
-// - Returns 2 if the values are not comparable.
+// - Returns 2 if the values can not be compared.
 int pyro_compare_values(Value a, Value b);
+
+// Can compare any combination of i64, f64, or char values.
+// Returns 0 if a == b.
+// Returns -1 if a < b.
+// Returns 1 if a > b.
+// Returns 2 or -2 if the values cannot be compared.
+int pyro_compare_values_numerically(Value a, Value b);
 
 // Constructs and returns the default string representation of a value. A lot can go wrong here:
 //
