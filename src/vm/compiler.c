@@ -1487,6 +1487,9 @@ static void parse_import_stmt(Parser* parser) {
 static void parse_block(Parser* parser) {
     while (!check(parser, TOKEN_RIGHT_BRACE) && !check(parser, TOKEN_EOF)) {
         parse_statement(parser);
+        if (parser->had_syntax_error || parser->had_memory_error) {
+            break;
+        }
     }
     consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after block.");
 }
