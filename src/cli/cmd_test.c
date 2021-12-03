@@ -83,7 +83,6 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
 
     double time = (double)(clock() - start_time) / CLOCKS_PER_SEC;
 
-    /* printf("  \x1B[7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS"); */
     printf("  \x1B[1;7m %s \x1B[0m", files_failed > 0 ? "FAIL" : "PASS");
     printf("  Files: %d/%d", files_passed, files_passed + files_failed);
     printf(" · Funcs: %d/%d", funcs_passed, funcs_passed + funcs_failed);
