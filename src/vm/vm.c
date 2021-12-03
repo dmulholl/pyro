@@ -795,14 +795,14 @@ static void run(PyroVM* vm) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
                                 pyro_push(vm, BOOL_VAL(result > 0));
                             } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both be numbers or strings.");
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '>' operand types.");
                             }
                             break;
                         default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both be numbers.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '>' operand types.");
                     }
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both have the same type.");
                 }
 
                 break;
@@ -830,15 +830,15 @@ static void run(PyroVM* vm) {
                             } else {
                                 pyro_panic(
                                     vm, ERR_TYPE_ERROR,
-                                    "Operands to '>=' must both be numbers or strings."
+                                    "Unable to compare '>=' operand types."
                                 );
                             }
                             break;
                         default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>=' must both be numbers.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '>=' operand types.");
                     }
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>=' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>=' must both have the same type.");
                 }
 
                 break;
@@ -1076,14 +1076,14 @@ static void run(PyroVM* vm) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
                                 pyro_push(vm, BOOL_VAL(result < 0));
                             } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be numbers or strings.");
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<' operand types.");
                             }
                             break;
                         default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be numbers or strings.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<' operand types.");
                     }
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both have the same type.");
                 }
 
                 break;
@@ -1109,14 +1109,14 @@ static void run(PyroVM* vm) {
                                 int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
                                 pyro_push(vm, BOOL_VAL(result <= 0));
                             } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both be numbers or strings.");
+                                pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<=' operand types.");
                             }
                             break;
                         default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<=' must both be numbers or strings.");
+                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<=' operand types.");
                     }
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<=' must both be the same type.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<=' must both have the same type.");
                 }
 
                 break;
