@@ -2162,13 +2162,23 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
                     }
                 }
 
-                double runtime = (double)(clock() - start_time) / CLOCKS_PER_SEC;
+                double total_runtime = (double)(clock() - start_time) / CLOCKS_PER_SEC;
+                double average_in_secs = total_runtime / num_iterations;
+                double average_in_millisecs = average_in_secs * 1000;
 
                 pyro_out(vm, " · %s() ···", name->bytes);
                 for (size_t j = 0; j < max_name_length - name->length; j++) {
                     pyro_out(vm, "·");
                 }
-                pyro_out(vm, " %f secs\n", runtime / num_iterations);
+
+                pyro_out(vm, " %.6f s", average_in_secs);
+
+                if (average_in_secs < 1.0) {
+                    pyro_out(vm, " ··· ");
+                    pyro_out(vm, "%.3f ms", average_in_millisecs);
+                }
+
+                pyro_out(vm, "\n");
             }
         }
     }
