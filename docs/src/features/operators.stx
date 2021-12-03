@@ -48,10 +48,14 @@ Note that conditional expressions using the ternary operator `?|` can't be neste
 
 ### Equality & Comparison Operators
 
-The equality (`--`, `!=`) and comparison (`>`, `>=`, `<`, `<=`) operators each take two operands and evaluate to a boolean.
+The equality (`==`, `!=`) and comparison (`>`, `>=`, `<`, `<=`) operators each take two operands and evaluate to a boolean.
 
-Pyro uses a strict concept of equality --- two objects are equal if and only if they have the same type and the same value.
+Pyro has a strict concept of equality --- two numbers are equal if and only if they have the same type and the same value.
 (This makes checking for equality fast at runtime as Pyro doesn't need to consider all possible conversions.)
+
+Strings are equal if they have the same content;
+tuples are equal if they have the same length and their elements are equal;
+other objects are equal only if they are the same object.
 
 The comparison operators require that both their operands have the same type. They will panic if this is not case.
 

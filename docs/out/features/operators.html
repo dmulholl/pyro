@@ -286,11 +286,16 @@ Power operator. Both operands are converted to floats and the result is a float.
 Equality &amp; Comparison Operators
 </h3>
 <p>
-The equality (<code>--</code>, <code>!=</code>) and comparison (<code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>) operators each take two operands and evaluate to a boolean.
+The equality (<code>==</code>, <code>!=</code>) and comparison (<code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>) operators each take two operands and evaluate to a boolean.
 </p>
 <p>
-Pyro uses a strict concept of equality &mdash; two objects are equal if and only if they have the same type and the same value.
+Pyro has a strict concept of equality &mdash; two numbers are equal if and only if they have the same type and the same value.
 (This makes checking for equality fast at runtime as Pyro doesn't need to consider all possible conversions.)
+</p>
+<p>
+Strings are equal if they have the same content;
+tuples are equal if they have the same length and their elements are equal;
+other objects are equal only if they are the same object.
 </p>
 <p>
 The comparison operators require that both their operands have the same type. They will panic if this is not case.
