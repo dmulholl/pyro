@@ -65,4 +65,3 @@ def outer() {
 
 assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
 assert outer() == 123;
-
