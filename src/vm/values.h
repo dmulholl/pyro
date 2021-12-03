@@ -148,8 +148,8 @@ bool pyro_is_truthy(Value value);
 int pyro_compare_values(Value a, Value b);
 
 // Can compare any combination of i64, f64, or char values.
-// Returns 0 if a == b.
 // Returns -1 if a < b.
+// Returns 0 if a == b.
 // Returns 1 if a > b.
 // Returns 2 or -2 if the values cannot be compared.
 int pyro_compare_values_numerically(Value a, Value b);
