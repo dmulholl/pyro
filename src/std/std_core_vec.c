@@ -325,6 +325,53 @@ static Value vec_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_remove_last(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    return ObjVec_remove_last(vec, vm);
+}
+
+
+static Value vec_remove_first(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    return ObjVec_remove_first(vec, vm);
+}
+
+
+static Value vec_remove_at_index(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+        return NULL_VAL();
+    }
+
+    if (args[0].as.i64 < 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        return NULL_VAL();
+    }
+
+    return ObjVec_remove_at_index(vec, args[0].as.i64, vm);
+}
+
+
+static Value vec_insert_at_index(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+        return NULL_VAL();
+    }
+
+    if (args[0].as.i64 < 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        return NULL_VAL();
+    }
+
+    ObjVec_insert_at_index(vec, args[0].as.i64, args[1], vm);
+    return NULL_VAL();
+}
+
+
 void pyro_load_std_core_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
@@ -345,6 +392,10 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "map", vec_map, 1);
     pyro_define_method(vm, vm->vec_class, "filter", vec_filter, 1);
     pyro_define_method(vm, vm->vec_class, "copy", vec_copy, 0);
+    pyro_define_method(vm, vm->vec_class, "remove_last", vec_remove_last, 0);
+    pyro_define_method(vm, vm->vec_class, "remove_first", vec_remove_first, 0);
+    pyro_define_method(vm, vm->vec_class, "remove_at", vec_remove_at_index, 1);
+    pyro_define_method(vm, vm->vec_class, "insert_at", vec_insert_at_index, 2);
     pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
     pyro_define_method(vm, vm->vec_iter_class, "$next", vec_iter_next, 0);
 }

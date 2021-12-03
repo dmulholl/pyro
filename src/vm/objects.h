@@ -158,7 +158,7 @@ bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
 // new string.
 ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm);
 
-// Sorts the vector in-place using the mergesort algorithm. If [fn] is not [null] it will be used
+// Sorts the vector in-place using the mergesort algorithm. If [fn] is not NULL it will be used
 // to compare pairs of values. This function calls into code which may panic or set the exit flag.
 // Returns [false] if memory could not be allocated for the auxiliary array.
 bool ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm);
@@ -169,6 +169,22 @@ ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm);
 // Appends all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false] if
 // the operation failed because enough memory could not be allocated for the extra entries.
 bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
+
+// Removes and returns the last item from the vector. Panics and returns NULL_VAL if the vector
+// is emtpy.
+Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm);
+
+// Removes and returns the first item from the vector. Panics and returns NULL_VAL if the vector
+// is emtpy.
+Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm);
+
+// Removes and returns the item at [index]. Panics and returns NULL_VAL if the index is out of
+// range.
+Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm);
+
+// Inserts [value] at [index], where [index] is less than or equal to the vector's item count.
+// Panics if [index] is out of range or if memory allocation fails.
+void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm);
 
 typedef struct {
     Obj obj;

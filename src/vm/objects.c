@@ -1540,6 +1540,94 @@ bool ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm) {
 }
 
 
+Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
+    if (vec->count == 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Cannot remove last item from empty vector.");
+        return NULL_VAL();
+    }
+    vec->count--;
+    return vec->values[vec->count];
+}
+
+
+Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
+    if (vec->count == 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Cannot remove first item from empty vector.");
+        return NULL_VAL();
+    }
+
+    if (vec->count == 1) {
+        vec->count--;
+        return vec->values[0];
+    }
+
+    Value output = vec->values[0];
+
+    vec->count--;
+    memmove(vec->values, &vec->values[1], sizeof(Value) * vec->count);
+
+    return output;
+}
+
+
+Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
+    if (index >= vec->count) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        return NULL_VAL();
+    }
+
+    if (vec->count == 1) {
+        vec->count--;
+        return vec->values[0];
+    }
+
+    if (index == vec->count - 1) {
+        vec->count--;
+        return vec->values[vec->count];
+    }
+
+    Value output = vec->values[index];
+
+    size_t bytes_to_move = sizeof(Value) * (vec->count - index - 1);
+    memmove(&vec->values[index], &vec->values[index + 1], bytes_to_move);
+    vec->count--;
+
+    return output;
+}
+
+
+void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) {
+    if (index > vec->count) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        return;
+    }
+
+    if (index == vec->count) {
+        if (!ObjVec_append(vec, value, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        }
+        return;
+    }
+
+    if (vec->count == vec->capacity) {
+        size_t new_capacity = GROW_CAPACITY(vec->capacity);
+        Value* new_array = REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
+        if (!new_array) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return;
+        }
+        vec->capacity = new_capacity;
+        vec->values = new_array;
+    }
+
+    size_t bytes_to_move = sizeof(Value) * (vec->count - index);
+    memmove(&vec->values[index + 1], &vec->values[index], bytes_to_move);
+
+    vec->values[index] = value;
+    vec->count++;
+}
+
+
 /* ------ */
 /* Ranges */
 /* ------ */

@@ -353,6 +353,11 @@ Vectors have the following methods:
     `callback` should be a callable that takes a single argument (the vector element);
     its return values will form the elements of the new vector.
 
+[[ `:remove_last() -> any` ]]
+
+    Removes and returns the last item from the vector.
+    Panics if the vector is empty.
+
 [[ `:reverse() -> vec` ]]
 
     Reverses the vector in-place. Returns the vector to enable chaining.
