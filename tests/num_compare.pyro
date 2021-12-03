@@ -64,3 +64,11 @@ assert !$num_lt(456.0, 123);
 
 assert $num_gt(456, 123.0);
 assert !$num_gt(123.0, 456);
+
+assert $num_ge(123, 123.0);
+assert $num_ge(456, 123.0);
+assert !$num_ge(123, 456.0);
+
+assert $num_le(123, 123.0);
+assert $num_le(123, 456.0);
+assert !$num_le(456.0, 123);

@@ -716,9 +716,21 @@ static Value fn_num_lt(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_num_le(PyroVM* vm, size_t arg_count, Value* args) {
+    int result = pyro_compare_values_numerically(args[0], args[1]);
+    return BOOL_VAL(result == -1 || result == 0);
+}
+
+
 static Value fn_num_gt(PyroVM* vm, size_t arg_count, Value* args) {
     int result = pyro_compare_values_numerically(args[0], args[1]);
     return BOOL_VAL(result == 1);
+}
+
+
+static Value fn_num_ge(PyroVM* vm, size_t arg_count, Value* args) {
+    int result = pyro_compare_values_numerically(args[0], args[1]);
+    return BOOL_VAL(result == 1 || result == 0);
 }
 
 
@@ -810,5 +822,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$num_compare", fn_num_compare, 2);
     pyro_define_global_fn(vm, "$num_eq", fn_num_eq, 2);
     pyro_define_global_fn(vm, "$num_lt", fn_num_lt, 2);
+    pyro_define_global_fn(vm, "$num_le", fn_num_le, 2);
     pyro_define_global_fn(vm, "$num_gt", fn_num_gt, 2);
+    pyro_define_global_fn(vm, "$num_ge", fn_num_ge, 2);
 }

@@ -300,9 +300,21 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$num_ge(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
+
+    Returns `true` if `a` is numerically greater than or equal to `b`.
+
+
+
 [[ `$num_gt(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
 
     Returns `true` if `a` is numerically greater than `b`.
+
+
+
+[[ `$num_le(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
+
+    Returns `true` if `a` is numerically less than or equal to `b`.
 
 
 
