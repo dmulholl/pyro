@@ -28,7 +28,7 @@ typedef struct ObjClass ObjClass;
 
 // Selects the hash function for strings.
 #ifndef PYRO_STRING_HASH
-    #define PYRO_STRING_HASH pyro_fnv1a_64
+    #define PYRO_STRING_HASH pyro_fnv1a_64_opt
 #endif
 
 // Sets the (count/capacity) threshold for map resizing.
