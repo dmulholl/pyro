@@ -560,6 +560,19 @@ int pyro_compare_values(Value a, Value b) {
 }
 
 
+// Comparing integers and floats is tricky. We can't just cast the i64 to a double (which is what
+// C does by default) without losing precision. Only integers in the range [-(2^53), 2^53] can be
+// represented exactly as 64-bit floats. Outside this range, multiple integer values convert to the
+// same floating-point value, e.g.
+//
+//   2^53      -->  9007199254740992.0
+//   2^53 + 1  -->  9007199254740992.0
+//
+// First we check if the float is outside the range [INT64_MIN, INT64_MAX].
+// - If so, its value is higher/lower than any possible integer.
+// - If not, then its integer part can be exactly represented as a 64-bit integer so we examine
+//   the integer and fractional parts separately.
+//
 // Returns 0 if a == b.
 // Returns -1 if a < b.
 // Returns 1 if a > b.
@@ -577,8 +590,6 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
         return 1;
     }
 
-    // [b] must be in the range [INT64_MIN, INT64_MAX], so its integer part can safely be
-    // represented as an int64_t.
     double b_whole_part = b >= 0.0 ? floor(b) : ceil(b);
     double b_fract_part = b - b_whole_part;
 
