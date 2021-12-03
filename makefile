@@ -1,6 +1,6 @@
-# --------- #
-# Variables #
-# --------- #
+# ----------- #
+#  Variables  #
+# ----------- #
 
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -Wno-unused-parameter -Wno-unused-function
 
@@ -18,9 +18,9 @@ LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c src/lib/os/*
 
 FILES = ${PYRO_FILES} ${LIB_FILES}
 
-# ------------- #
-# Phony Targets #
-# ------------- #
+# --------------- #
+#  Phony Targets  #
+# --------------- #
 
 all:
 	@make debug
