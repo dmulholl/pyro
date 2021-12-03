@@ -347,11 +347,27 @@ Vectors have the following methods:
     Returns the index of the first occurrence of `value` in the vector.
     Returns an `err` if the vector does not contain `value`.
 
+[[ `:insert_at(index: i64, value: any)` ]]
+
+    Inserts `value` at the specified index.
+    `index` must be less than or equal to the vector's item count.
+    Panics if `index` is out of range.
+
 [[ `:map(callback: func(any) -> any) -> vec` ]]
 
     Returns a new vector created by mapping the function `callback` to each element of the vector in turn.
     `callback` should be a callable that takes a single argument (the vector element);
     its return values will form the elements of the new vector.
+
+[[ `:remove_at(index: i64) -> any` ]]
+
+    Removes and returns the value at the specified index.
+    Panics if the index is out of range.
+
+[[ `:remove_first() -> any` ]]
+
+    Removes and returns the first item from the vector.
+    Panics if the vector is empty.
 
 [[ `:remove_last() -> any` ]]
 
