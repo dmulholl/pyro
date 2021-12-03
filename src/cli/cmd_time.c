@@ -32,7 +32,6 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         pyro_add_import_root(vm, pyro_dirname(path_copy));
         free(path_copy);
 
-        printf("testing.....\n");
         pyro_exec_file_as_main(vm, path);
         if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
             pyro_free_vm(vm);

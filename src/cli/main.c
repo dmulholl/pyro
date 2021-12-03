@@ -70,7 +70,7 @@ static const char* TIME_HELPTEXT =
     "  For each input file, Pyro first executes the file, then runs any timing\n"
     "  functions it contains, i.e. functions whose names begin with '$time_'.\n"
     "\n"
-    "  By default Pyro runs each timing function 100 times, then prints the\n"
+    "  By default Pyro runs each timing function 10 times, then prints the\n"
     "  mean execution time. The number of iterations can be customized using\n"
     "  the -n/--num-runs option.\n"
     "\n"
@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
 
     ap_helptext(time_cmd_parser, TIME_HELPTEXT);
     ap_callback(time_cmd_parser, pyro_cmd_time);
-    ap_int_opt(time_cmd_parser, "num-runs n", 100);
+    ap_int_opt(time_cmd_parser, "num-runs n", 10);
 
     // Register the parser for the 'check' comand.
     ArgParser* check_cmd_parser = ap_cmd(parser, "check");

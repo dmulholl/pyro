@@ -10,7 +10,6 @@ meta_title: Pyro &mdash; Operators
 
 Operator precedence in the table below goes from high at the top to low at the bottom. Operators at the same level have the same precedence.
 
-
 ::: table
 
     Level            |   Operators                      |   Associativity
@@ -30,6 +29,20 @@ Operator precedence in the table below goes from high at the top to low at the b
 
 
 Note that conditional expressions using the ternary operator `?|` can't be nested. (Checkmate, Satan.)
+
+
+
+### Mathematical Operators
+
+::: table
+
+    +       | Addition. Returns an integer if both operands are integers or a float if either or both are floats.
+    -       | Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
+    *       | Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
+    /       | Floating-point division. Both operands will be converted to floats and the result will be a float.
+    //      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
+    %       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
+    ^       | Power operator. Both operands are converted to floats and the result is a float.
 
 
 
