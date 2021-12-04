@@ -305,11 +305,13 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    ObjVecIter* iterator = ObjVecIter_new(vec, vm);
-    if (!iterator) {
+
+    ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
+    if (!iter) {
         return NULL_VAL();
     }
-    return OBJ_VAL(iterator);
+
+    return OBJ_VAL(iter);
 }
 
 

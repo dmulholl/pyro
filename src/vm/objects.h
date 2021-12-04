@@ -412,4 +412,30 @@ typedef struct {
 
 ObjFile* ObjFile_new(PyroVM* vm);
 
+/* --------- */
+/* Iterators */
+/* --------- */
+
+typedef enum {
+    ITER_STR_BYTES,
+    ITER_STR_CHARS,
+    ITER_VEC,
+    ITER_MAP_KEYS,
+    ITER_MAP_VALUES,
+    ITER_MAP_ENTRIES,
+    ITER_TUP,
+} IterType;
+
+typedef struct {
+    Obj obj;
+    Obj* source;
+    IterType iter_type;
+    size_t next_index;
+} ObjIter;
+
+// Creates a new iterator. Returns NULL if the attempt to allocate memory fails.
+ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
+
+Value ObjIter_next(ObjIter* iter, PyroVM* vm);
+
 #endif

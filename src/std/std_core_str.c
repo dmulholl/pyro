@@ -53,12 +53,12 @@ static Value str_byte(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value str_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
-    ObjStrIter* iterator = ObjStrIter_new(str, STR_ITER_BYTES, vm);
-    if (!iterator) {
+    ObjIter* iter = ObjIter_new((Obj*)str, ITER_STR_BYTES, vm);
+    if (!iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();
     }
-    return OBJ_VAL(iterator);
+    return OBJ_VAL(iter);
 }
 
 
@@ -77,12 +77,12 @@ static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value str_chars(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
-    ObjStrIter* iterator = ObjStrIter_new(str, STR_ITER_CHARS, vm);
-    if (!iterator) {
+    ObjIter* iter = ObjIter_new((Obj*)str, ITER_STR_CHARS, vm);
+    if (!iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();
     }
-    return OBJ_VAL(iterator);
+    return OBJ_VAL(iter);
 }
 
 

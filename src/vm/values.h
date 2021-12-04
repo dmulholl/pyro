@@ -32,6 +32,7 @@ typedef enum {
     OBJ_CLOSURE,
     OBJ_FN,
     OBJ_INSTANCE,
+    OBJ_ITER,
     OBJ_MAP,
     OBJ_MAP_ITER,
     OBJ_NATIVE_FN,
@@ -114,6 +115,7 @@ struct Obj {
 #define AS_RANGE(value)             ((ObjRange*)AS_OBJ(value))
 #define AS_BUF(value)               ((ObjBuf*)AS_OBJ(value))
 #define AS_FILE(value)              ((ObjFile*)AS_OBJ(value))
+#define AS_ITER(value)              ((ObjIter*)AS_OBJ(value))
 
 // Macros for creating string objects by copying C strings.
 #define STR_OBJ(c_string)           ObjStr_copy_raw(c_string, strlen(c_string), vm)

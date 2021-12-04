@@ -1706,6 +1706,7 @@ PyroVM* pyro_new_vm() {
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
     vm->gc_disallows = 0;
+    vm->iter_class = NULL;
 
     // Disable garbage collection until the VM has been fully initialized. This is to avoid the
     // possibility of the GC triggering and panicking if it fails to allocate memory for the
@@ -1732,6 +1733,7 @@ PyroVM* pyro_new_vm() {
     vm->str_iter_class = ObjClass_new(vm);
     vm->range_class = ObjClass_new(vm);
     vm->file_class = ObjClass_new(vm);
+    vm->iter_class = ObjClass_new(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -1785,6 +1787,7 @@ PyroVM* pyro_new_vm() {
     pyro_load_std_core_buf(vm);
     pyro_load_std_core_file(vm);
     pyro_load_std_core_range(vm);
+    pyro_load_std_core_iter(vm);
 
     // Load individual standard library modules.
     pyro_load_std_math(vm);

@@ -47,11 +47,11 @@ static Value tup_get(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = AS_TUP(args[-1]);
-    ObjTupIter* iterator = ObjTupIter_new(tup, vm);
-    if (!iterator) {
+    ObjIter* iter = ObjIter_new((Obj*)tup, ITER_TUP, vm);
+    if (!iter) {
         return NULL_VAL();
     }
-    return OBJ_VAL(iterator);
+    return OBJ_VAL(iter);
 }
 
 

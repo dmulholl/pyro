@@ -135,6 +135,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_MAP_ITER: return STR_OBJ("<iterator>");
         case OBJ_VEC_ITER: return STR_OBJ("<iterator>");
         case OBJ_TUP_ITER: return STR_OBJ("<iterator>");
+        case OBJ_ITER: return STR_OBJ("<iter>");
 
         case OBJ_ERR:
         case OBJ_TUP: {
@@ -390,6 +391,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
         case OBJ_TUP_ITER:
         case OBJ_VEC_ITER:
         case OBJ_STR_ITER:
+        case OBJ_ITER:
             pyro_out(vm, "<iter>");
             break;
 
@@ -512,6 +514,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_VEC: return "<vec>";
         case OBJ_VEC_ITER: return "<vec iter>";
         case OBJ_WEAKREF_MAP: return "<weakref map>";
+        case OBJ_ITER: return "<vec iter>";
     }
 }
 

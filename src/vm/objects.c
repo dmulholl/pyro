@@ -1773,3 +1773,124 @@ ObjFile* ObjFile_new(PyroVM* vm) {
     file->obj.class = vm->file_class;
     return file;
 }
+
+
+/* --------- */
+/* Iterators */
+/* --------- */
+
+
+ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
+    ObjIter* iter = ALLOCATE_OBJECT(vm, ObjIter, OBJ_ITER);
+    if (!iter) {
+        return NULL;
+    }
+    iter->obj.class = vm->iter_class;
+    iter->source = source;
+    iter->iter_type = iter_type;
+    iter->next_index = 0;
+    return iter;
+}
+
+
+Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
+    switch (iter->iter_type) {
+        case ITER_VEC: {
+            ObjVec* vec = (ObjVec*)iter->source;
+            if (iter->next_index < vec->count) {
+                iter->next_index++;
+                return vec->values[iter->next_index - 1];
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_TUP: {
+            ObjTup* tup = (ObjTup*)iter->source;
+            if (iter->next_index < tup->count) {
+                iter->next_index++;
+                return tup->values[iter->next_index - 1];
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_STR_BYTES: {
+            ObjStr* str = (ObjStr*)iter->source;
+            if (iter->next_index < str->length) {
+                int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
+                iter->next_index++;
+                return I64_VAL(byte_value);
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_STR_CHARS: {
+            ObjStr* str = (ObjStr*)iter->source;
+            if (iter->next_index < str->length) {
+                uint8_t* src = (uint8_t*)&str->bytes[iter->next_index];
+                size_t src_len = str->length - iter->next_index;
+                Utf8CodePoint cp;
+                if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
+                    iter->next_index += cp.length;
+                    return CHAR_VAL(cp.value);
+                }
+                pyro_panic(
+                    vm, ERR_VALUE_ERROR,
+                    "String contains invalid utf-8 at byte index %zu.", iter->next_index
+                );
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_MAP_KEYS: {
+            ObjMap* map = (ObjMap*)iter->source;
+            while (iter->next_index < map->capacity) {
+                MapEntry* entry = &map->entries[iter->next_index];
+                iter->next_index++;
+                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+                    continue;
+                }
+                return entry->key;
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_MAP_VALUES: {
+            ObjMap* map = (ObjMap*)iter->source;
+            while (iter->next_index < map->capacity) {
+                MapEntry* entry = &map->entries[iter->next_index];
+                iter->next_index++;
+                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+                    continue;
+                }
+                return entry->value;
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_MAP_ENTRIES: {
+            ObjMap* map = (ObjMap*)iter->source;
+            while (iter->next_index < map->capacity) {
+                MapEntry* entry = &map->entries[iter->next_index];
+                iter->next_index++;
+                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+                    continue;
+                }
+
+                ObjTup* tup = ObjTup_new(2, vm);
+                if (!tup) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    return OBJ_VAL(vm->empty_error);
+                }
+
+                tup->values[0] = entry->key;
+                tup->values[1] = entry->value;
+                return OBJ_VAL(tup);
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        default:
+            assert(false);
+            return OBJ_VAL(vm->empty_error);
+    }
+}

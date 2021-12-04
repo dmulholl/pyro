@@ -23,6 +23,7 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->str_iter_class);
     pyro_mark_object(vm, (Obj*)vm->range_class);
     pyro_mark_object(vm, (Obj*)vm->file_class);
+    pyro_mark_object(vm, (Obj*)vm->iter_class);
 
     // The VM's pool of canned objects.
     pyro_mark_object(vm, (Obj*)vm->empty_error);
@@ -114,6 +115,12 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             for (int i = 0; i < num_fields; i++) {
                 pyro_mark_value(vm, instance->fields[i]);
             }
+            break;
+        }
+
+        case OBJ_ITER: {
+            ObjIter* iter = (ObjIter*)object;
+            pyro_mark_object(vm, (Obj*)iter->source);
             break;
         }
 
@@ -328,6 +335,11 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             ObjInstance* instance = (ObjInstance*)object;
             int num_fields = instance->obj.class->field_initializers->count;
             pyro_realloc(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(Value), 0);
+            break;
+        }
+
+        case OBJ_ITER: {
+            FREE_OBJECT(vm, ObjIter, object);
             break;
         }
 
