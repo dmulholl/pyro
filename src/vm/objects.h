@@ -387,6 +387,8 @@ typedef struct {
 ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
 
 // Returns the next item from the sequence or an [err] if the sequence has been exhausted.
+// Note that this method may call into Pyro code and can panic or set the exit flag. Check
+// [vm->halt_flag] before relying on the return value.
 Value ObjIter_next(ObjIter* iter, PyroVM* vm);
 
 #endif
