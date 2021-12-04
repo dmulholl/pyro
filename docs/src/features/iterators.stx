@@ -11,7 +11,7 @@ Pyro's `for` loop uses a simple iterator protocol:
     }
 
 An object is *iterable* if it has an `:$iter()` method.
-This method should return an *iterator* --- an object with a `:$next()` method which returns the next item from the sequence or an `err` if the sequence has been exhausted.
+This method should return an *iterator* --- an object with a `:$next()` method which returns either the next item from the sequence or an `err` if the sequence has been exhausted.
 
 
 
@@ -33,15 +33,15 @@ We can illustrate the iterator protocol by creating a custom `Range` object to i
         }
 
         def $next() {
-            if next < stop {
-                next += 1;
-                return next - 1;
+            if self.next < self.stop {
+                self.next += 1;
+                return self.next - 1;
             }
             return $err();
         }
     }
 
-Note that the `:$iter()` method simply returns `self` --- a `Range` instance is its own iterator.
+Note that in this case the `:$iter()` method simply returns `self` --- a `Range` instance is its own iterator.
 
 We can try out our new type like this:
 
@@ -59,3 +59,39 @@ This gives us the following output:
     4
 
 Note that Pyro already has a builtin `$range()` function that returns an iterator over a range of integers.
+
+
+
+### Iterator Wrappers
+
+Pyro has a builtin function called `$iter()` that can wrap any iterator in a special `iter` type that automatically adds support for a set of chainable, lazily-evaluated utility methods.
+
+We can try it out on our custom `Range` type:
+
+::: code pyro
+    def is_even(n) {
+        return n % 2 == 0;
+    }
+
+    def square(n) {
+        return n * n;
+    }
+
+    for i in $iter(Range(10)):filter(is_even):map(square) {
+        echo i;
+    }
+
+This gives us the following output:
+
+    0
+    4
+    16
+    36
+    64
+
+All the iterators returned by Pyro's builtin types and functions come pre-wrapped in `iter` wrappers so we could get an identical result using the builtin `$range()` function without needing to call `$iter()`:
+
+::: code pyro
+    for i in $range(10):filter(is_even):map(square) {
+        echo i;
+    }

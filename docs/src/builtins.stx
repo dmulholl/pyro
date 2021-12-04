@@ -548,7 +548,7 @@ It adds an index to each element in the input, giving us the following output:
 
 Iterator wrappers have the following methods:
 
-[[ `:enum() -> tup[i64, any]` <br> `:enum(start_index: i64) -> tup[i64, any]` ]]
+[[ `:enum() -> iter[tup[i64, any]]` <br> `:enum(start_index: i64) -> iter[tup[i64, any]]` ]]
 
     Adds an enumeration wrapper to an iterator.
     Output values are two-item tuples containing an integer index and the original input value.
