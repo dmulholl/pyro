@@ -1,3 +1,6 @@
+var global_variable = 0;
+
+
 def fib(n) {
     if n < 2 {
         return n;
@@ -96,7 +99,7 @@ def benchmark() {
         map[i] = string;
     }
 
-    # Closure.
+    # Closures.
     for i in $range(1000) {
         var func = make_adder(i);
         vec:append(func);
@@ -108,6 +111,27 @@ def benchmark() {
     for i in $range(1000) {
         vec:append(fizzbuzz(i));
         map[i] = fizzbuzz(i);
+    }
+
+    # Vector getting and setting.
+    for i in $range(1000) {
+        vec[i] = vec[i];
+    }
+
+    # Map getting and setting.
+    for i in $range(1000) {
+        map[i] = map[i];
+    }
+
+    # Update global.
+    for i in $range(1000) {
+        global_variable += 1;
+    }
+
+    # Update local.
+    var local_variable = 0;
+    for i in $range(1000) {
+        local_variable += 1;
     }
 }
 

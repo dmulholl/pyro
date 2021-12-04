@@ -2,9 +2,11 @@
 
 import time
 
-num_runs = 10
+num_runs = 25
 
 # ------------------------------------------------------------------------------
+
+global_variable = 0
 
 def fib(n):
     if n < 2:
@@ -85,7 +87,7 @@ def benchmark():
         vec.append(string)
         map[i] = string
 
-    # Closure.
+    # Closures.
     for i in range(1000):
         func = make_adder(i)
         vec.append(func)
@@ -96,6 +98,24 @@ def benchmark():
     for i in range(1000):
         vec.append(fizzbuzz(i))
         map[i] = fizzbuzz(i)
+
+    # Vector getting and setting.
+    for i in range(1000):
+        vec[i] = vec[i]
+
+    # Map getting and setting.
+    for i in range(1000):
+        map[i] = map[i]
+
+    # Update global.
+    global global_variable
+    for i in range(1000):
+        global_variable += 1
+
+    # Update local.
+    local_variable = 0
+    for i in range(1000):
+        local_variable += 1
 
 # ------------------------------------------------------------------------------
 
