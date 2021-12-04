@@ -86,3 +86,11 @@ assert vec[1] == 4;
 assert vec[2] == 16;
 assert vec[3] == 36;
 assert vec[4] == 64;
+
+
+def $test_skip_first() {
+    var vec = $range(5):skip_first(3):to_vec();
+    assert vec:count() == 2;
+    assert vec[0] == 3;
+    assert vec[1] == 4;
+}

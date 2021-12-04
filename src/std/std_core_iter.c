@@ -208,6 +208,42 @@ static Value fn_range(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value iter_skip_first(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :skip_first(), expected an integer.");
+        return NULL_VAL();
+    }
+
+    int64_t num_to_skip = args[0].as.i64;
+    if (num_to_skip == 0) {
+        return OBJ_VAL(iter);
+    } else if (num_to_skip < 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument to :skip_first(), expected a positive integer.");
+        return NULL_VAL();
+    }
+
+    int64_t num_skipped = 0;
+
+    while (num_skipped < num_to_skip) {
+        Value result = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        } else if (IS_ERR(result)) {
+            pyro_panic(
+                vm, ERR_VALUE_ERROR,
+                "Failed to skip first %d items, iterator exhausted after %d.", num_to_skip, num_skipped
+            );
+            return NULL_VAL();
+        }
+        num_skipped++;
+    }
+
+    return OBJ_VAL(iter);
+}
+
+
 void pyro_load_std_core_iter(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$iter", fn_iter, 1);
@@ -221,4 +257,5 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "filter", iter_filter, 1);
     pyro_define_method(vm, vm->iter_class, "to_vec", iter_to_vec, 0);
     pyro_define_method(vm, vm->iter_class, "enum", iter_enum, -1);
+    pyro_define_method(vm, vm->iter_class, "skip_first", iter_skip_first, 1);
 }
