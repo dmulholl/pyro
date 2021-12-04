@@ -1,0 +1,32 @@
+class Range {
+    var next = 0;
+    var stop;
+
+    def $init(stop) {
+        self.stop = stop;
+    }
+
+    def $iter() {
+        return self;
+    }
+
+    def $next() {
+        if self.next < self.stop {
+            self.next += 1;
+            return self.next - 1;
+        }
+        return $err();
+    }
+}
+
+var index = 0;
+for i in Range(10) {
+    assert index == i;
+    index += 1;
+}
+assert index == 10;
+
+var vec = $vec(Range(10));
+assert vec:count() == 10;
+assert vec[0] == 0;
+assert vec[9] == 9;
