@@ -223,3 +223,24 @@ def $test_insert_at_index() {
     assert vec[5] == 4;
     assert vec[6] == "bar";
 }
+
+
+def $test_first() {
+    var vec = [1, 2, 3, 4];
+    assert vec:first() == 1;
+}
+
+
+def $test_last() {
+    var vec = [1, 2, 3, 4];
+    assert vec:last() == 4;
+}
+
+
+def $test_is_empty() {
+    var vec1 = [1, 2, 3, 4];
+    assert !vec1:is_empty();
+
+    var vec2 = [];
+    assert vec2:is_empty();
+}

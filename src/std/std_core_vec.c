@@ -362,6 +362,32 @@ static Value vec_insert_at_index(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_first(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    if (vec->count > 0) {
+        return vec->values[0];
+    }
+    pyro_panic(vm, ERR_VALUE_ERROR, "Vector is empty.");
+    return NULL_VAL();
+}
+
+
+static Value vec_last(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    if (vec->count > 0) {
+        return vec->values[vec->count - 1];
+    }
+    pyro_panic(vm, ERR_VALUE_ERROR, "Vector is empty.");
+    return NULL_VAL();
+}
+
+
+static Value vec_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    return BOOL_VAL(vec->count == 0);
+}
+
+
 void pyro_load_std_core_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
@@ -387,4 +413,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "remove_at", vec_remove_at_index, 1);
     pyro_define_method(vm, vm->vec_class, "insert_at", vec_insert_at_index, 2);
     pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
+    pyro_define_method(vm, vm->vec_class, "first", vec_first, 0);
+    pyro_define_method(vm, vm->vec_class, "last", vec_last, 0);
+    pyro_define_method(vm, vm->vec_class, "is_empty", vec_is_empty, 0);
 }
