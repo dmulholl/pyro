@@ -1004,9 +1004,14 @@ static void run(PyroVM* vm) {
             }
 
             case OP_ITER_NEXT: {
-                pyro_push(vm, pyro_peek(vm, 0));
-                invoke_method(vm, vm->str_next, 0);
-                frame = &vm->frames[vm->frame_count - 1];
+                if (IS_ITER(pyro_peek(vm, 0))) {
+                    Value next_value = ObjIter_next(AS_ITER(pyro_peek(vm, 0)), vm);
+                    pyro_push(vm, next_value);
+                } else {
+                    pyro_push(vm, pyro_peek(vm, 0));
+                    invoke_method(vm, vm->str_next, 0);
+                    frame = &vm->frames[vm->frame_count - 1];
+                }
                 break;
             }
 
