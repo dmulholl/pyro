@@ -137,3 +137,15 @@ def $test_entries_iter() {
     assert entries[0] == $tup("abc", 123);
     assert entries[1] == $tup("def", 456);
 }
+
+
+def $test_is_empty() {
+    var map1 = {
+        "abc" = 123,
+        "def" = 456,
+    };
+    assert !map1:is_empty();
+
+    var map2 = {};
+    assert map2:is_empty();
+}

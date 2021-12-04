@@ -29,6 +29,12 @@ static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value map_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map = AS_MAP(args[-1]);
+    return BOOL_VAL(map->count - map->tombstone_count == 0);
+}
+
+
 static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     if (!ObjMap_set(map, args[0], args[1], vm)) {
@@ -122,4 +128,5 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->map_class, "keys", map_keys, 0);
     pyro_define_method(vm, vm->map_class, "values", map_values, 0);
     pyro_define_method(vm, vm->map_class, "entries", map_entries, 0);
+    pyro_define_method(vm, vm->map_class, "is_empty", map_is_empty, 0);
 }
