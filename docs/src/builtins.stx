@@ -338,6 +338,11 @@ Vectors have the following methods:
     `callback` should be a callable that takes a single argument (the vector element) and returns `true` or `false`;
     if it returns `true` the corresponding element will be added to the new vector.
 
+[[ `:first() -> any` ]]
+
+    Returns the first item from the vector without removing it.
+    Panics if the vector is empty.
+
 [[ `:get(index: i64) -> any` ]]
 
     Returns the value at `index`. Will panic if `index` is out of range or not an integer.
@@ -352,6 +357,15 @@ Vectors have the following methods:
     Inserts `value` at the specified index.
     `index` must be less than or equal to the vector's item count.
     Panics if `index` is out of range.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the vector is empty.
+
+[[ `:last() -> any` ]]
+
+    Returns the last item from the vector without removing it.
+    Panics if the vector is empty.
 
 [[ `:map(callback: func(any) -> any) -> vec` ]]
 
@@ -528,7 +542,7 @@ The `iter` type can wrap any iterator to automatically add support for a set of 
 
 [[ `$iter(arg: iterator|iterable) -> iter` ]]
 
-   Wraps any iterator in an `iter` wrapper.
+   Wraps an iterator in an `iter` wrapper.
    `arg` can be either an iterator instance or an instance of an iterable type, e.g. a vector.
 
 Iterators returned by Pyro builtins come pre-wrapped in `iter` wrappers, e.g. the character iterator returned by a string's `:chars()` method:
