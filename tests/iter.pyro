@@ -94,3 +94,11 @@ def $test_skip_first() {
     assert vec[0] == 3;
     assert vec[1] == 4;
 }
+
+
+def $test_skip_last() {
+    var vec = $range(5):skip_last(3):to_vec();
+    assert vec:count() == 2;
+    assert vec[0] == 0;
+    assert vec[1] == 1;
+}

@@ -121,6 +121,9 @@ static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (true) {
         Value value = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
         if (IS_ERR(value)) {
             break;
         }
@@ -244,6 +247,67 @@ static Value iter_skip_first(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value iter_skip_last(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :skip_last(), expected an integer.");
+        return NULL_VAL();
+    }
+
+    int64_t num_to_skip = args[0].as.i64;
+    if (num_to_skip == 0) {
+        return OBJ_VAL(iter);
+    } else if (num_to_skip < 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument to :skip_last(), expected a positive integer.");
+        return NULL_VAL();
+    }
+
+    ObjVec* vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(vec));
+
+    while (true) {
+        Value value = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        if (IS_ERR(value)) {
+            break;
+        }
+
+        pyro_push(vm, value);
+        if (!ObjVec_append(vec, value, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL_VAL();
+        }
+        pyro_pop(vm); // value
+    }
+
+    if (vec->count < (size_t)num_to_skip) {
+        pyro_panic(
+            vm, ERR_VALUE_ERROR,
+            "Failed to skip last %d items, iterator exhausted after %d.", num_to_skip, vec->count
+        );
+        return NULL_VAL();
+    }
+
+    vec->count -= num_to_skip;
+
+    ObjIter* new_iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
+    if (!new_iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    pyro_pop(vm); // vec
+    return OBJ_VAL(new_iter);
+}
+
+
 void pyro_load_std_core_iter(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$iter", fn_iter, 1);
@@ -258,4 +322,5 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "to_vec", iter_to_vec, 0);
     pyro_define_method(vm, vm->iter_class, "enum", iter_enum, -1);
     pyro_define_method(vm, vm->iter_class, "skip_first", iter_skip_first, 1);
+    pyro_define_method(vm, vm->iter_class, "skip_last", iter_skip_last, 1);
 }
