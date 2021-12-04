@@ -772,6 +772,17 @@ if it returns <code>true</code> the corresponding element will be added to the n
 </div>
 <div>
 <dt>
+<code>:first() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the first item from the vector without removing it.
+Panics if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:get(index: i64) -&gt; any</code>
 </dt>
 <dd>
@@ -800,6 +811,27 @@ Returns an <code>err</code> if the vector does not contain <code>value</code>.
 Inserts <code>value</code> at the specified index.
 <code>index</code> must be less than or equal to the vector's item count.
 Panics if <code>index</code> is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:last() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the last item from the vector without removing it.
+Panics if the vector is empty.
 </p>
 </dd>
 </div>
@@ -1000,6 +1032,16 @@ Returns an iterator over <code>(key, value)</code> tuples.
 <dd>
 <p>
 Returns the value associated with <code>key</code> or <code>err</code> if <code>key</code> was not found.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the map is empty.
 </p>
 </dd>
 </div>

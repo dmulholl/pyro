@@ -467,6 +467,10 @@ Maps have the following methods:
 
     Returns the value associated with `key` or `err` if `key` was not found.
 
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the map is empty.
+
 [[ `:keys() -> iter` ]]
 
     Returns an iterator over the map's keys.
