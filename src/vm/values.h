@@ -90,6 +90,7 @@ struct Obj {
 #define IS_RANGE(value)             pyro_is_obj_of_type(value, OBJ_RANGE)
 #define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
 #define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
+#define IS_ITER(value)              pyro_is_obj_of_type(value, OBJ_ITER)
 
 // Macros for extracting object pointers from Value instances.
 #define AS_OBJ(value)               ((value).as.obj)

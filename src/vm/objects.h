@@ -377,6 +377,9 @@ typedef enum {
     ITER_MAP_VALUES,
     ITER_MAP_ENTRIES,
     ITER_TUP,
+    ITER_MAP_FUNC,
+    ITER_FILTER_FUNC,
+    ITER_GENERIC,
 } IterType;
 
 typedef struct {
@@ -384,11 +387,13 @@ typedef struct {
     Obj* source;
     IterType iter_type;
     size_t next_index;
+    Obj* callback;
 } ObjIter;
 
 // Creates a new iterator. Returns NULL if the attempt to allocate memory fails.
 ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
 
+// Returns the next item from the sequence or an [err] if the sequence has been exhausted.
 Value ObjIter_next(ObjIter* iter, PyroVM* vm);
 
 #endif

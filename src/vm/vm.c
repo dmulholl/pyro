@@ -199,7 +199,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 break;
         }
     }
-    pyro_panic(vm, ERR_TYPE_ERROR, "Value is not callable.");
+    pyro_panic(vm, ERR_TYPE_ERROR, "Object is not callable.");
 }
 
 

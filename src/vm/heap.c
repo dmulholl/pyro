@@ -117,6 +117,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_ITER: {
             ObjIter* iter = (ObjIter*)object;
             pyro_mark_object(vm, (Obj*)iter->source);
+            pyro_mark_object(vm, (Obj*)iter->callback);
             break;
         }
 

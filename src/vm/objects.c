@@ -1709,6 +1709,7 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
     iter->source = source;
     iter->iter_type = iter_type;
     iter->next_index = 0;
+    iter->callback = NULL;
     return iter;
 }
 
@@ -1719,7 +1720,8 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             ObjVec* vec = (ObjVec*)iter->source;
             if (iter->next_index < vec->count) {
                 iter->next_index++;
-                return vec->values[iter->next_index - 1];
+                Value result = vec->values[iter->next_index - 1];
+                return result;
             }
             return OBJ_VAL(vm->empty_error);
         }
@@ -1807,6 +1809,55 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 return OBJ_VAL(tup);
             }
             return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_MAP_FUNC: {
+            ObjIter* src_iter = (ObjIter*)iter->source;
+            Value next_value = ObjIter_next(src_iter, vm);
+            if (IS_ERR(next_value)) {
+                return next_value;
+            }
+
+            pyro_push(vm, OBJ_VAL(iter->callback));
+            pyro_push(vm, next_value);
+            Value result = pyro_call_fn(vm, OBJ_VAL(iter->callback), 1);
+            if (vm->halt_flag) {
+                return OBJ_VAL(vm->empty_error);
+            }
+
+            return result;
+        }
+
+        case ITER_FILTER_FUNC: {
+            ObjIter* src_iter = (ObjIter*)iter->source;
+
+            while (true) {
+                Value next_value = ObjIter_next(src_iter, vm);
+                if (IS_ERR(next_value)) {
+                    return next_value;
+                }
+
+                pyro_push(vm, OBJ_VAL(iter->callback));
+                pyro_push(vm, next_value);
+                Value result = pyro_call_fn(vm, OBJ_VAL(iter->callback), 1);
+                if (vm->halt_flag) {
+                    return OBJ_VAL(vm->empty_error);
+                }
+
+                if (pyro_is_truthy(result)) {
+                    return next_value;
+                }
+            }
+        }
+
+        case ITER_GENERIC: {
+            Value next_method = pyro_get_method(OBJ_VAL(iter->source), vm->str_next);
+            pyro_push(vm, OBJ_VAL(iter->source));
+            Value result = pyro_call_method(vm, next_method, 0);
+            if (vm->halt_flag) {
+                return OBJ_VAL(vm->empty_error);
+            }
+            return result;
         }
 
         default:
