@@ -1466,8 +1466,17 @@ static void run(PyroVM* vm) {
             }
 
             case OP_SET_INDEX: {
-                invoke_method(vm, vm->str_set_index, 2);
-                frame = &vm->frames[vm->frame_count - 1];
+                /* if (IS_MAP(pyro_peek(vm, 2))) { */
+                /*     if (!ObjMap_set(AS_MAP(pyro_peek(vm, 2)), pyro_peek(vm, 1), pyro_peek(vm, 0), vm)) { */
+                /*         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory."); */
+                /*         break; */
+                /*     } */
+                /*     vm->stack_top[-3] = NULL_VAL(); */
+                /*     vm->stack_top -= 2; */
+                /* } else { */
+                    invoke_method(vm, vm->str_set_index, 2);
+                    frame = &vm->frames[vm->frame_count - 1];
+                /* } */
                 break;
             }
 
