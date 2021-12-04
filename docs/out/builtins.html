@@ -72,9 +72,6 @@
 <a href="#iterator-wrappers">Iterator Wrappers</a>
 </li>
 <li>
-<a href="#ranges">Ranges</a>
-</li>
-<li>
 <a href="#byte-buffers">Byte Buffers</a>
 </li>
 <li>
@@ -1142,13 +1139,13 @@ The <code>iter</code> type can wrap any iterator to automatically add support fo
 <dd>
 <p>
 Wraps any iterator in an <code>iter</code> wrapper.
-<code>arg</code> can be either an iterator or an instance of an iterable type, e.g. a vector.
+<code>arg</code> can be either an iterator instance or an instance of an iterable type, e.g. a vector.
 </p>
 </dd>
 </div>
 </dl>
 <p>
-Iterators returned by Pyro builtins come pre-wrapped in <code>iter</code> wrappers, e.g. the character iterators returned by the string type's <code>:chars()</code> method:
+Iterators returned by Pyro builtins come pre-wrapped in <code>iter</code> wrappers, e.g. the character iterator returned by a string's <code>:chars()</code> method:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;abcd&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">enum</span><span class="p">()</span> <span class="p">{</span>
@@ -1156,7 +1153,7 @@ Iterators returned by Pyro builtins come pre-wrapped in <code>iter</code> wrappe
 <span class="p">}</span>
 </pre>
 <p>
-The <code>:enum()</code> method here is provided by an <code>iter</code> wrapper.
+The <code>:enum()</code> method is provided by the <code>iter</code> wrapper.
 It adds an index to each element in the input, giving us the following output:
 </p>
 <pre>
@@ -1214,46 +1211,6 @@ Drains the iterator into a new vector.
 </dd>
 </div>
 </dl>
-<h3 id="ranges">
-Ranges
-</h3>
-<p>
-A range object, <code>range</code>, is an iterator over a range of integers.
-</p>
-<dl>
-<div>
-<dt>
-<code>$range(stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64, step: i64) -&gt; range</code>
-</dt>
-<dd>
-<p>
-Returns an integer iterator over the half-open interval <code>[start, stop)</code>.
-<code>start</code> defaults to <code>0</code>, <code>step</code> defaults to <code>1</code> if not specified.
-</p>
-</dd>
-</div>
-</dl>
-<p>
-Ranges are useful with <code>for</code> loops, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-<p>
-This would print:
-</p>
-<pre>
-0
-1
-2
-3
-4
-</pre>
-<p>
-Note that the interval doesn't include the <code>stop</code> boundary itself.
-</p>
 <h3 id="byte-buffers">
 Byte Buffers
 </h3>

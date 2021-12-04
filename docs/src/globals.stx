@@ -255,12 +255,6 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$is_range(arg: any) -> bool` ]]
-
-    Returns `true` if the argument is a `range`.
-
-
-
 [[ `$is_str(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a `str`.
@@ -353,7 +347,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$range(stop: i64) -> range` <br> `$range(start: i64, stop: i64) -> range` <br> `$range(start: i64, stop: i64, step: i64) -> range` ]]
+[[ `$range(stop: i64) -> iter[i64]` <br> `$range(start: i64, stop: i64) -> iter[i64]` <br> `$range(start: i64, stop: i64, step: i64) -> iter[i64]` ]]
 
     Returns an integer iterator over the half-open interval `[start, stop)`.
     `start` defaults to `0`, `step` defaults to `1` if not specified.

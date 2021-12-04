@@ -77,6 +77,9 @@
 <li>
 <a href="#iterating-over-a-string">Iterating over a string</a>
 </li>
+<li>
+<a href="#iterating-over-a-range">Iterating over a range</a>
+</li>
 </ul>
 <h3 id="hello-world">
 Hello world
@@ -266,6 +269,27 @@ e
 l
 l
 o
+</pre>
+<h3 id="iterating-over-a-range">
+Iterating over a range
+</h3>
+<p>
+The <code>$range()</code> function returns an iterator over a range of integers:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+This gives the following output:
+</p>
+<pre>
+0
+1
+2
+3
+4
 </pre>
         </article>
         

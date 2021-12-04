@@ -3,7 +3,7 @@ title: Iterators
 meta_title: Pyro &mdash; Iterators
 ---
 
-Pyro's `for ... in ...` loop uses a simple iterator protocol:
+Pyro's `for` loop uses a simple iterator protocol:
 
 ::: code pyro
     for item in [123, 456, 789] {
@@ -50,7 +50,7 @@ We can try out our new type like this:
         echo i;
     }
 
-This should give us the following output:
+This gives us the following output:
 
     0
     1
@@ -58,4 +58,4 @@ This should give us the following output:
     3
     4
 
-Note that Pyro already has a builtin `range` type --- you can find a description of it [here](@root/builtins//#ranges).
+Note that Pyro already has a builtin `$range()` function that returns an iterator over a range of integers.

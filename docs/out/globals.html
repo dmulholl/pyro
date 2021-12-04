@@ -462,16 +462,6 @@ Returns <code>true</code> if the argument is the floating-point value <code>NaN<
 </div>
 <div>
 <dt>
-<code>$is_range(arg: any) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if the argument is a <code>range</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>$is_str(arg: any) -&gt; bool</code>
 </dt>
 <dd>
@@ -622,7 +612,7 @@ Like <code>$print()</code> but adds a terminating newline.
 </div>
 <div>
 <dt>
-<code>$range(stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64) -&gt; range</code> <br> <code>$range(start: i64, stop: i64, step: i64) -&gt; range</code>
+<code>$range(stop: i64) -&gt; iter[i64]</code> <br> <code>$range(start: i64, stop: i64) -&gt; iter[i64]</code> <br> <code>$range(start: i64, stop: i64, step: i64) -&gt; iter[i64]</code>
 </dt>
 <dd>
 <p>

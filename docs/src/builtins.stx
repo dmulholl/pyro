@@ -529,16 +529,16 @@ The `iter` type can wrap any iterator to automatically add support for a set of 
 [[ `$iter(arg: iterator|iterable) -> iter` ]]
 
    Wraps any iterator in an `iter` wrapper.
-   `arg` can be either an iterator or an instance of an iterable type, e.g. a vector.
+   `arg` can be either an iterator instance or an instance of an iterable type, e.g. a vector.
 
-Iterators returned by Pyro builtins come pre-wrapped in `iter` wrappers, e.g. the character iterators returned by the string type's `:chars()` method:
+Iterators returned by Pyro builtins come pre-wrapped in `iter` wrappers, e.g. the character iterator returned by a string's `:chars()` method:
 
 ::: code pyro
     for char in "abcd":chars():enum() {
         echo char;
     }
 
-The `:enum()` method here is provided by an `iter` wrapper.
+The `:enum()` method is provided by the `iter` wrapper.
 It adds an index to each element in the input, giving us the following output:
 
     (0, 'a')
@@ -567,33 +567,6 @@ Iterator wrappers have the following methods:
 [[ `:to_vec() -> vec` ]]
 
     Drains the iterator into a new vector.
-
-
-### Ranges
-
-A range object, `range`, is an iterator over a range of integers.
-
-[[ `$range(stop: i64) -> range` <br> `$range(start: i64, stop: i64) -> range` <br> `$range(start: i64, stop: i64, step: i64) -> range` ]]
-
-    Returns an integer iterator over the half-open interval `[start, stop)`.
-    `start` defaults to `0`, `step` defaults to `1` if not specified.
-
-Ranges are useful with `for` loops, e.g.
-
-::: code pyro
-    for i in $range(5) {
-        echo i;
-    }
-
-This would print:
-
-    0
-    1
-    2
-    3
-    4
-
-Note that the interval doesn't include the `stop` boundary itself.
 
 
 
