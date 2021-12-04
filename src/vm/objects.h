@@ -321,19 +321,6 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b);
 // new string.
 ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm);
 
-/* ------ */
-/* Ranges */
-/* ------ */
-
-typedef struct {
-    Obj obj;
-    int64_t next;
-    int64_t stop;
-    int64_t step;
-} ObjRange;
-
-ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm);
-
 /* ------- */
 /* Buffers */
 /* ------- */
@@ -381,6 +368,7 @@ typedef enum {
     ITER_FILTER_FUNC,
     ITER_GENERIC,
     ITER_ENUM,
+    ITER_RANGE,
 } IterType;
 
 typedef struct {
@@ -389,6 +377,9 @@ typedef struct {
     IterType iter_type;
     size_t next_index;
     int64_t next_enum;
+    int64_t range_next;
+    int64_t range_stop;
+    int64_t range_step;
     Obj* callback;
 } ObjIter;
 

@@ -1695,7 +1695,6 @@ PyroVM* pyro_new_vm() {
     vm->str_set_index = NULL;
     vm->main_module = NULL;
     vm->import_roots = NULL;
-    vm->range_class = NULL;
     vm->file_class = NULL;
     vm->mt64 = NULL;
     vm->str_debug = NULL;
@@ -1723,7 +1722,6 @@ PyroVM* pyro_new_vm() {
     vm->tup_class = ObjClass_new(vm);
     vm->vec_class = ObjClass_new(vm);
     vm->buf_class = ObjClass_new(vm);
-    vm->range_class = ObjClass_new(vm);
     vm->file_class = ObjClass_new(vm);
     vm->iter_class = ObjClass_new(vm);
 
@@ -1778,7 +1776,6 @@ PyroVM* pyro_new_vm() {
     pyro_load_std_core_str(vm);
     pyro_load_std_core_buf(vm);
     pyro_load_std_core_file(vm);
-    pyro_load_std_core_range(vm);
     pyro_load_std_core_iter(vm);
 
     // Load individual standard library modules.

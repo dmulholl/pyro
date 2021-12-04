@@ -496,7 +496,6 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_MAP: return "<map>";
         case OBJ_MODULE: return "<module>";
         case OBJ_NATIVE_FN: return "<native fn>";
-        case OBJ_RANGE: return "<range>";
         case OBJ_STR: return "<str>";
         case OBJ_TUP: return "<tup>";
         case OBJ_UPVALUE: return "<upvalue>";

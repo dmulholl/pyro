@@ -17,7 +17,6 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->tup_class);
     pyro_mark_object(vm, (Obj*)vm->vec_class);
     pyro_mark_object(vm, (Obj*)vm->buf_class);
-    pyro_mark_object(vm, (Obj*)vm->range_class);
     pyro_mark_object(vm, (Obj*)vm->file_class);
     pyro_mark_object(vm, (Obj*)vm->iter_class);
 
@@ -146,9 +145,6 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             pyro_mark_object(vm, (Obj*)native->name);
             break;
         }
-
-        case OBJ_RANGE:
-            break;
 
         case OBJ_STR:
             break;
@@ -331,11 +327,6 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_NATIVE_FN: {
             FREE_OBJECT(vm, ObjNativeFn, object);
-            break;
-        }
-
-        case OBJ_RANGE: {
-            FREE_OBJECT(vm, ObjRange, object);
             break;
         }
 

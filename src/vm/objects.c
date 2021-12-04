@@ -1548,24 +1548,6 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) 
 }
 
 
-/* ------ */
-/* Ranges */
-/* ------ */
-
-
-ObjRange* ObjRange_new(int64_t start, int64_t stop, int64_t step, PyroVM* vm) {
-    ObjRange* iter = ALLOCATE_OBJECT(vm, ObjRange, OBJ_RANGE);
-    if (!iter) {
-        return NULL;
-    }
-    iter->obj.class = vm->range_class;
-    iter->next = start;
-    iter->stop = stop;
-    iter->step = step;
-    return iter;
-}
-
-
 /* ------- */
 /* Buffers */
 /* ------- */
@@ -1711,6 +1693,9 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
     iter->next_index = 0;
     iter->next_enum = 0;
     iter->callback = NULL;
+    iter->range_next = 0;
+    iter->range_stop = 0;
+    iter->range_step = 0;
     return iter;
 }
 
@@ -1874,7 +1859,6 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return OBJ_VAL(tup);
         }
 
-
         case ITER_GENERIC: {
             Value next_method = pyro_get_method(OBJ_VAL(iter->source), vm->str_next);
             pyro_push(vm, OBJ_VAL(iter->source));
@@ -1885,6 +1869,27 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return result;
         }
 
+        case ITER_RANGE: {
+            if (iter->range_step > 0) {
+                if (iter->range_next < iter->range_stop) {
+                    int64_t range_next = iter->range_next;
+                    iter->range_next += iter->range_step;
+                    return I64_VAL(range_next);
+                }
+                return OBJ_VAL(vm->empty_error);
+            }
+
+            if (iter->range_step < 0) {
+                if (iter->range_next > iter->range_stop) {
+                    int64_t range_next = iter->range_next;
+                    iter->range_next += iter->range_step;
+                    return I64_VAL(range_next);
+                }
+                return OBJ_VAL(vm->empty_error);
+            }
+
+            return OBJ_VAL(vm->empty_error);
+        }
 
         default:
             assert(false);

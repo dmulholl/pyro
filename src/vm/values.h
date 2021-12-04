@@ -42,7 +42,6 @@ typedef enum {
     OBJ_MODULE,
     OBJ_VEC,
     OBJ_ERR,
-    OBJ_RANGE,
     OBJ_BUF,
     OBJ_FILE,
 } ObjType;
@@ -87,7 +86,6 @@ struct Obj {
 #define IS_MOD(value)               pyro_is_obj_of_type(value, OBJ_MODULE)
 #define IS_VEC(value)               pyro_is_obj_of_type(value, OBJ_VEC)
 #define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
-#define IS_RANGE(value)             pyro_is_obj_of_type(value, OBJ_RANGE)
 #define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
 #define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
 #define IS_ITER(value)              pyro_is_obj_of_type(value, OBJ_ITER)
@@ -105,7 +103,6 @@ struct Obj {
 #define AS_NATIVE_FN(value)         ((ObjNativeFn*)AS_OBJ(value))
 #define AS_MOD(value)               ((ObjModule*)AS_OBJ(value))
 #define AS_VEC(value)               ((ObjVec*)AS_OBJ(value))
-#define AS_RANGE(value)             ((ObjRange*)AS_OBJ(value))
 #define AS_BUF(value)               ((ObjBuf*)AS_OBJ(value))
 #define AS_FILE(value)              ((ObjFile*)AS_OBJ(value))
 #define AS_ITER(value)              ((ObjIter*)AS_OBJ(value))
