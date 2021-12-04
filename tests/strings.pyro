@@ -347,3 +347,21 @@ def $test_multiplication_by_int() {
     assert "foo" * 0 == "";
     assert "foo" * 3 == "foofoofoo";
 }
+
+
+def $test_bytes_iter() {
+    var bytes = "abc":bytes():to_vec();
+    assert bytes:count() == 3;
+    assert bytes[0] == 97;
+    assert bytes[1] == 98;
+    assert bytes[2] == 99;
+}
+
+
+def $test_chars_iter() {
+    var chars = "abc":chars():to_vec();
+    assert chars:count() == 3;
+    assert chars[0] == 'a';
+    assert chars[1] == 'b';
+    assert chars[2] == 'c';
+}

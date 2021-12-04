@@ -1709,6 +1709,7 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
     iter->source = source;
     iter->iter_type = iter_type;
     iter->next_index = 0;
+    iter->next_enum = 0;
     iter->callback = NULL;
     return iter;
 }
@@ -1850,6 +1851,30 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             }
         }
 
+        case ITER_ENUM: {
+            ObjIter* src_iter = (ObjIter*)iter->source;
+            Value next_value = ObjIter_next(src_iter, vm);
+            if (IS_ERR(next_value)) {
+                return next_value;
+            }
+
+            pyro_push(vm, next_value);
+            ObjTup* tup = ObjTup_new(2, vm);
+            pyro_pop(vm);
+
+            if (!tup) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return OBJ_VAL(vm->empty_error);
+            }
+
+            tup->values[0] = I64_VAL(iter->next_enum);
+            tup->values[1] = next_value;
+            iter->next_enum++;
+
+            return OBJ_VAL(tup);
+        }
+
+
         case ITER_GENERIC: {
             Value next_method = pyro_get_method(OBJ_VAL(iter->source), vm->str_next);
             pyro_push(vm, OBJ_VAL(iter->source));
@@ -1859,6 +1884,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             }
             return result;
         }
+
 
         default:
             assert(false);

@@ -1,0 +1,44 @@
+assert $is_iter("abc":chars());
+
+var chars = "abc":chars():to_vec();
+assert chars:count() == 3;
+assert chars[0] == 'a';
+assert chars[1] == 'b';
+assert chars[2] == 'c';
+
+var chars = "abc":chars():enum():to_vec();
+assert chars:count() == 3;
+assert chars[0] == $tup(0, 'a');
+assert chars[1] == $tup(1, 'b');
+assert chars[2] == $tup(2, 'c');
+
+def add_one(n) {
+    return n + 1;
+}
+
+var nums = $iter([1, 2, 3]):map(add_one):to_vec();
+assert nums:count() == 3;
+assert nums[0] == 2;
+assert nums[1] == 3;
+assert nums[2] == 4;
+
+var nums = $iter([1, 2, 3]):map(add_one):map(add_one):to_vec();
+assert nums:count() == 3;
+assert nums[0] == 3;
+assert nums[1] == 4;
+assert nums[2] == 5;
+
+def is_big(n) {
+    return n >= 5;
+}
+
+var nums = $iter([2, 4, 6, 8]):filter(is_big):to_vec();
+assert nums:count() == 2;
+assert nums[0] == 6;
+assert nums[1] == 8;
+
+var nums = $iter([2, 4, 6, 8]):map(add_one):filter(is_big):to_vec();
+assert nums:count() == 3;
+assert nums[0] == 5;
+assert nums[1] == 7;
+assert nums[2] == 9;

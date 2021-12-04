@@ -138,6 +138,33 @@ static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value iter_enum(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* src_iter = AS_ITER(args[-1]);
+
+    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_ENUM, vm);
+    if (!new_iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    if (arg_count == 0) {
+        new_iter->next_enum = 0;
+    } else if (arg_count == 1) {
+        if (IS_I64(args[0])) {
+            new_iter->next_enum = args[0].as.i64;
+        } else {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument for :enum(), expected an integer.");
+            return NULL_VAL();
+        }
+    } else {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :enum().");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_iter);
+}
+
+
 void pyro_load_std_core_iter(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$iter", fn_iter, 1);
@@ -149,4 +176,5 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "map", iter_map, 1);
     pyro_define_method(vm, vm->iter_class, "filter", iter_filter, 1);
     pyro_define_method(vm, vm->iter_class, "to_vec", iter_to_vec, 0);
+    pyro_define_method(vm, vm->iter_class, "enum", iter_enum, -1);
 }

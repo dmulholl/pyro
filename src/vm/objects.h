@@ -380,6 +380,7 @@ typedef enum {
     ITER_MAP_FUNC,
     ITER_FILTER_FUNC,
     ITER_GENERIC,
+    ITER_ENUM,
 } IterType;
 
 typedef struct {
@@ -387,6 +388,7 @@ typedef struct {
     Obj* source;
     IterType iter_type;
     size_t next_index;
+    int64_t next_enum;
     Obj* callback;
 } ObjIter;
 

@@ -98,3 +98,42 @@ def $test_copy() {
     assert copy["abc"] == 123;
     assert copy["def"] == 456;
 }
+
+
+def $test_keys_iter() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+    };
+
+    var keys = map:keys():to_vec();
+    assert keys:count() == 2;
+    assert keys[0] == "abc";
+    assert keys[1] == "def";
+}
+
+
+def $test_values_iter() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+    };
+
+    var values = map:values():to_vec();
+    assert values:count() == 2;
+    assert values[0] == 123;
+    assert values[1] == 456;
+}
+
+
+def $test_entries_iter() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+    };
+
+    var entries = map:entries():to_vec();
+    assert entries:count() == 2;
+    assert entries[0] == $tup("abc", 123);
+    assert entries[1] == $tup("def", 456);
+}
