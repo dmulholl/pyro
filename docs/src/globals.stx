@@ -279,6 +279,13 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$iter(arg: iterator|iterable) -> iter` ]]
+
+   Wraps any iterator in an `iter` wrapper, adding automatic support for a set of chainable, lazily-evaluated utility methods.
+   `arg` can be either an iterator or an instance of an iterable type, e.g. a vector.
+
+
+
 [[ `$map() -> map` ]]
 
     Creates a new `$map` object.

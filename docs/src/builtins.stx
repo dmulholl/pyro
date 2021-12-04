@@ -75,7 +75,7 @@ Strings have the following methods:
 
     Returns the number of bytes in the string.
 
-[[ `:bytes() -> iterator[i64]` ]]
+[[ `:bytes() -> iter[i64]` ]]
 
     Returns an iterator over the string's bytes as `i64` values.
 
@@ -94,7 +94,7 @@ Strings have the following methods:
     (This is a potentially expensive method as it needs to traverse the string.
     Note that it will panic if it encounters invalid UTF-8.)
 
-[[ `:chars() -> iterator[char]` ]]
+[[ `:chars() -> iter[char]` ]]
 
     Returns an iterator over the string's `char` values, i.e. UTF-8 encoded Unicode code points.
 
@@ -445,7 +445,7 @@ Maps have the following methods:
 
     Deletes the entry associated with `key` if it exists.
 
-[[ `:entries() -> iterator` ]]
+[[ `:entries() -> iter[tup]` ]]
 
     Returns an iterator over `(key, value)` tuples.
 
@@ -453,7 +453,7 @@ Maps have the following methods:
 
     Returns the value associated with `key` or `err` if `key` was not found.
 
-[[ `:keys() -> iterator` ]]
+[[ `:keys() -> iter` ]]
 
     Returns an iterator over the map's keys.
 
@@ -461,7 +461,7 @@ Maps have the following methods:
 
     Adds a new entry to the map or updates an existing entry.
 
-[[ `:values() -> iterator` ]]
+[[ `:values() -> iter` ]]
 
     Returns an iterator over the map's values.
 
@@ -520,6 +520,53 @@ Alternatively, you can use the error-coalescing operator `!!` to supply a defaul
 ::: code pyro
     var foo = might_fail() !! "default";
 
+
+
+### Iterator Wrappers
+
+The `iter` type can wrap any iterator to automatically add support for a set of chainable, lazily-evaluated utility methods.
+
+[[ `$iter(arg: iterator|iterable) -> iter` ]]
+
+   Wraps any iterator in an `iter` wrapper.
+   `arg` can be either an iterator or an instance of an iterable type, e.g. a vector.
+
+Iterators returned by Pyro builtins come pre-wrapped in `iter` wrappers, e.g. the character iterators returned by the string type's `:chars()` method:
+
+::: code pyro
+    for char in "abcd":chars():enum() {
+        echo char;
+    }
+
+The `:enum()` method here is provided by an `iter` wrapper.
+It adds an index to each element in the input, giving us the following output:
+
+    (0, 'a')
+    (1, 'b')
+    (2, 'c')
+    (3, 'd')
+
+Iterator wrappers have the following methods:
+
+[[ `:enum() -> tup[i64, any]` <br> `:enum(start_index: i64) -> tup[i64, any]` ]]
+
+    Adds an enumeration wrapper to an iterator.
+    Output values are two-item tuples containing an integer index and the original input value.
+    `start_index` defaults to zero if not specified.
+
+[[ `:filter(callback: func(any) -> bool) -> iter` ]]
+
+    Returns a new `iter` instance that filters the output of the source iterator using the `callback` function.
+    `callback` should be a callable that takes a single argument and returns a `bool`; input values will be passed through the filter if `callback` returns `true`.
+
+[[ `:map(callback: func(any) -> any) -> iter` ]]
+
+    Returns a new `iter` instance mapping the function `callback` to the output of the source iterator.
+    `callback` should be a callable that takes a single argument; its return values will form the output of the new iterator.
+
+[[ `:to_vec() -> vec` ]]
+
+    Drains the iterator into a new vector.
 
 
 ### Ranges

@@ -38,6 +38,8 @@ Annotations for builtin types are as follows:
 * `f64`
 * `file`
 * `i64`
+* `iter`
+* `iter[type]`
 * `map`
 * `map[key_type, value_type]`
 * `null`
