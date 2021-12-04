@@ -66,7 +66,8 @@ Note that Pyro already has a builtin `$range()` function that returns an iterato
 
 Pyro has a builtin function called `$iter()` that can wrap any iterator in a special `iter` type that automatically adds support for a set of chainable, lazily-evaluated utility methods.
 
-We can try it out on our custom `Range` type:
+We can try it out on our custom `Range` type.
+First, let's define some callback functions:
 
 ::: code pyro
     def is_even(n) {
@@ -77,6 +78,9 @@ We can try it out on our custom `Range` type:
         return n * n;
     }
 
+Now we can apply them using `:filter()` and `:map()`:
+
+::: code pyro
     for i in $iter(Range(10)):filter(is_even):map(square) {
         echo i;
     }

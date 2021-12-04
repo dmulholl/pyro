@@ -120,7 +120,8 @@ Iterator Wrappers
 Pyro has a builtin function called <code>$iter()</code> that can wrap any iterator in a special <code>iter</code> type that automatically adds support for a set of chainable, lazily-evaluated utility methods.
 </p>
 <p>
-We can try it out on our custom <code>Range</code> type:
+We can try it out on our custom <code>Range</code> type.
+First, let's define some callback functions:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">is_even</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
@@ -130,7 +131,11 @@ We can try it out on our custom <code>Range</code> type:
 <span class="kd">def</span> <span class="nx">square</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">n</span> <span class="o">*</span> <span class="nx">n</span><span class="p">;</span>
 <span class="p">}</span>
-
+</pre>
+<p>
+Now we can apply them using <code>:filter()</code> and <code>:map()</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$iter</span><span class="p">(</span><span class="nx">Range</span><span class="p">(</span><span class="mi">10</span><span class="p">)):</span><span class="nx">filter</span><span class="p">(</span><span class="nx">is_even</span><span class="p">):</span><span class="nx">map</span><span class="p">(</span><span class="nx">square</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
 <span class="p">}</span>
