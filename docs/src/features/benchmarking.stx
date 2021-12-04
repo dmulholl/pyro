@@ -24,4 +24,4 @@ Pyro has builtin support for benchmarking functions using the `time` command:
 
 For each input file specified, Pyro first executes the file, then runs any benchmarking functions it contains, i.e. functions whose names begin with `$time_`.
 
-By default Pyro runs each benchmarking function 100 times, then prints the mean execution time. The number of iterations can be customized using the `-n/--num-runs` option.
+By default Pyro runs each benchmarking function 10 times, then prints the mean execution time. The number of iterations can be customized using the `-n/--num-runs` option.
