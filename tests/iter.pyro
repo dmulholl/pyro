@@ -43,7 +43,6 @@ assert nums[0] == 5;
 assert nums[1] == 7;
 assert nums[2] == 9;
 
-
 class Counter {
     var stop;
     var next = 0;
@@ -71,3 +70,19 @@ assert counter[0] == 0;
 assert counter[1] == 1;
 assert counter[2] == 2;
 assert counter[3] == 3;
+
+def is_even(n) {
+    return n % 2 == 0;
+}
+
+def square(n) {
+    return n * n;
+}
+
+var vec = $range(10):filter(is_even):map(square):to_vec();
+assert vec:count() == 5;
+assert vec[0] == 0;
+assert vec[1] == 4;
+assert vec[2] == 16;
+assert vec[3] == 36;
+assert vec[4] == 64;
