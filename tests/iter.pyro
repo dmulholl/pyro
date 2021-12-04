@@ -42,3 +42,32 @@ assert nums:count() == 3;
 assert nums[0] == 5;
 assert nums[1] == 7;
 assert nums[2] == 9;
+
+
+class Counter {
+    var stop;
+    var next = 0;
+
+    def $init(stop) {
+        self.stop = stop;
+    }
+
+    def $iter() {
+        return self;
+    }
+
+    def $next() {
+        if self.next < self.stop {
+            self.next += 1;
+            return self.next - 1;
+        }
+        return $err();
+    }
+}
+
+var counter = $iter(Counter(4)):to_vec();
+assert counter:count() == 4;
+assert counter[0] == 0;
+assert counter[1] == 1;
+assert counter[2] == 2;
+assert counter[3] == 3;
