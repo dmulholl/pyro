@@ -109,6 +109,35 @@ static Value iter_filter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+
+    ObjVec* vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(vec));
+
+    while (true) {
+        Value value = ObjIter_next(iter, vm);
+        if (IS_ERR(value)) {
+            break;
+        }
+
+        pyro_push(vm, value);
+        if (!ObjVec_append(vec, value, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL_VAL();
+        }
+        pyro_pop(vm); // value
+    }
+
+    pyro_pop(vm); // vec
+    return OBJ_VAL(vec);
+}
+
+
 void pyro_load_std_core_iter(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$iter", fn_iter, 1);
@@ -119,4 +148,5 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "$next", iter_next, 0);
     pyro_define_method(vm, vm->iter_class, "map", iter_map, 1);
     pyro_define_method(vm, vm->iter_class, "filter", iter_filter, 1);
+    pyro_define_method(vm, vm->iter_class, "to_vec", iter_to_vec, 0);
 }
