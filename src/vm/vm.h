@@ -25,10 +25,6 @@ struct PyroVM {
     ObjClass* tup_class;
     ObjClass* vec_class;
     ObjClass* buf_class;
-    ObjClass* tup_iter_class;
-    ObjClass* vec_iter_class;
-    ObjClass* map_iter_class;
-    ObjClass* str_iter_class;
     ObjClass* range_class;
     ObjClass* file_class;
     ObjClass* iter_class;

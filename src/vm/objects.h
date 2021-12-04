@@ -59,21 +59,6 @@ ObjStr* ObjStr_empty(PyroVM* vm);
 // if memory could not be allocated for the new string.
 ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm);
 
-typedef enum {
-    STR_ITER_BYTES,
-    STR_ITER_CHARS,
-} StrIterType;
-
-typedef struct {
-    Obj obj;
-    ObjStr* string;
-    StrIterType iter_type;
-    size_t next_index;
-} ObjStrIter;
-
-// Creates a new string iterator. Returns NULL if the attempt to allocate memory fails.
-ObjStrIter* ObjStrIter_new(ObjStr* string, StrIterType iter_type, PyroVM* vm);
-
 /* ---- */
 /* Maps */
 /* ---- */
@@ -120,22 +105,6 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm);
 // the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
 // new string.
 ObjStr* ObjMap_stringify(ObjMap* map, PyroVM* vm);
-
-typedef enum {
-    MAP_ITER_KEYS,
-    MAP_ITER_VALUES,
-    MAP_ITER_ENTRIES,
-} MapIterType;
-
-typedef struct {
-    Obj obj;
-    ObjMap* map;
-    MapIterType iter_type;
-    size_t next_index;
-} ObjMapIter;
-
-ObjMapIter* ObjMapIter_new(ObjMap* map, MapIterType iter_type, PyroVM* vm);
-Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm);
 
 /* ------- */
 /* Vectors */
@@ -185,14 +154,6 @@ Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm);
 // Inserts [value] at [index], where [index] is less than or equal to the vector's item count.
 // Panics if [index] is out of range or if memory allocation fails.
 void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm);
-
-typedef struct {
-    Obj obj;
-    ObjVec* vec;
-    size_t next_index;
-} ObjVecIter;
-
-ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm);
 
 /* ------- */
 /* Modules */
@@ -359,14 +320,6 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b);
 // the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
 // new string.
 ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm);
-
-typedef struct {
-    Obj obj;
-    ObjTup* tup;
-    size_t next_index;
-} ObjTupIter;
-
-ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm);
 
 /* ------ */
 /* Ranges */

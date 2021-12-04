@@ -1693,10 +1693,6 @@ PyroVM* pyro_new_vm() {
     vm->str_next = NULL;
     vm->str_get_index = NULL;
     vm->str_set_index = NULL;
-    vm->tup_iter_class = NULL;
-    vm->vec_iter_class = NULL;
-    vm->map_iter_class = NULL;
-    vm->str_iter_class = NULL;
     vm->main_module = NULL;
     vm->import_roots = NULL;
     vm->range_class = NULL;
@@ -1727,10 +1723,6 @@ PyroVM* pyro_new_vm() {
     vm->tup_class = ObjClass_new(vm);
     vm->vec_class = ObjClass_new(vm);
     vm->buf_class = ObjClass_new(vm);
-    vm->tup_iter_class = ObjClass_new(vm);
-    vm->vec_iter_class = ObjClass_new(vm);
-    vm->map_iter_class = ObjClass_new(vm);
-    vm->str_iter_class = ObjClass_new(vm);
     vm->range_class = ObjClass_new(vm);
     vm->file_class = ObjClass_new(vm);
     vm->iter_class = ObjClass_new(vm);

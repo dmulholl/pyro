@@ -105,17 +105,6 @@ static Value map_entries(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_iter_iter(PyroVM* vm, size_t arg_count, Value* args) {
-    return args[-1];
-}
-
-
-static Value map_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjMapIter* iterator = AS_MAP_ITER(args[-1]);
-    return ObjMapIter_next(iterator, vm);
-}
-
-
 void pyro_load_std_core_map(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$map", fn_map, 0);
@@ -133,6 +122,4 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->map_class, "keys", map_keys, 0);
     pyro_define_method(vm, vm->map_class, "values", map_values, 0);
     pyro_define_method(vm, vm->map_class, "entries", map_entries, 0);
-    pyro_define_method(vm, vm->map_iter_class, "$iter", map_iter_iter, 0);
-    pyro_define_method(vm, vm->map_iter_class, "$next", map_iter_next, 0);
 }

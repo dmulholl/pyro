@@ -315,18 +315,6 @@ static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjVecIter* iterator = AS_VEC_ITER(args[-1]);
-
-    if (iterator->next_index < iterator->vec->count) {
-        iterator->next_index++;
-        return iterator->vec->values[iterator->next_index - 1];
-    }
-
-    return OBJ_VAL(vm->empty_error);
-}
-
-
 static Value vec_remove_last(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     return ObjVec_remove_last(vec, vm);
@@ -399,5 +387,4 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "remove_at", vec_remove_at_index, 1);
     pyro_define_method(vm, vm->vec_class, "insert_at", vec_insert_at_index, 2);
     pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
-    pyro_define_method(vm, vm->vec_iter_class, "$next", vec_iter_next, 0);
 }

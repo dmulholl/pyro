@@ -34,17 +34,13 @@ typedef enum {
     OBJ_INSTANCE,
     OBJ_ITER,
     OBJ_MAP,
-    OBJ_MAP_ITER,
     OBJ_NATIVE_FN,
     OBJ_STR,
-    OBJ_STR_ITER,
     OBJ_TUP,
-    OBJ_TUP_ITER,
     OBJ_UPVALUE,
     OBJ_WEAKREF_MAP,
     OBJ_MODULE,
     OBJ_VEC,
-    OBJ_VEC_ITER,
     OBJ_ERR,
     OBJ_RANGE,
     OBJ_BUF,
@@ -108,10 +104,6 @@ struct Obj {
 #define AS_NATIVE_FN(value)         ((ObjNativeFn*)AS_OBJ(value))
 #define AS_MOD(value)               ((ObjModule*)AS_OBJ(value))
 #define AS_VEC(value)               ((ObjVec*)AS_OBJ(value))
-#define AS_TUP_ITER(value)          ((ObjTupIter*)AS_OBJ(value))
-#define AS_VEC_ITER(value)          ((ObjVecIter*)AS_OBJ(value))
-#define AS_MAP_ITER(value)          ((ObjMapIter*)AS_OBJ(value))
-#define AS_STR_ITER(value)          ((ObjStrIter*)AS_OBJ(value))
 #define AS_RANGE(value)             ((ObjRange*)AS_OBJ(value))
 #define AS_BUF(value)               ((ObjBuf*)AS_OBJ(value))
 #define AS_FILE(value)              ((ObjFile*)AS_OBJ(value))

@@ -131,10 +131,6 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_FILE: return STR_OBJ("<file>");
         case OBJ_FN: return STR_OBJ("<fn>");
         case OBJ_BOUND_METHOD: return STR_OBJ("<method>");
-        case OBJ_STR_ITER: return STR_OBJ("<iterator>");
-        case OBJ_MAP_ITER: return STR_OBJ("<iterator>");
-        case OBJ_VEC_ITER: return STR_OBJ("<iterator>");
-        case OBJ_TUP_ITER: return STR_OBJ("<iterator>");
         case OBJ_ITER: return STR_OBJ("<iter>");
 
         case OBJ_ERR:
@@ -387,10 +383,6 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             pyro_out(vm, "<buf>");
             break;
 
-        case OBJ_MAP_ITER:
-        case OBJ_TUP_ITER:
-        case OBJ_VEC_ITER:
-        case OBJ_STR_ITER:
         case OBJ_ITER:
             pyro_out(vm, "<iter>");
             break;
@@ -502,19 +494,15 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_FN: return "<fn>";
         case OBJ_INSTANCE: return "<instance>";
         case OBJ_MAP: return "<map>";
-        case OBJ_MAP_ITER: return "<map iter>";
         case OBJ_MODULE: return "<module>";
         case OBJ_NATIVE_FN: return "<native fn>";
         case OBJ_RANGE: return "<range>";
         case OBJ_STR: return "<str>";
-        case OBJ_STR_ITER: return "<str iter>";
         case OBJ_TUP: return "<tup>";
-        case OBJ_TUP_ITER: return "<tup iter>";
         case OBJ_UPVALUE: return "<upvalue>";
         case OBJ_VEC: return "<vec>";
-        case OBJ_VEC_ITER: return "<vec iter>";
         case OBJ_WEAKREF_MAP: return "<weakref map>";
-        case OBJ_ITER: return "<vec iter>";
+        case OBJ_ITER: return "<iter>";
     }
 }
 

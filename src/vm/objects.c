@@ -153,19 +153,6 @@ ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm) {
 }
 
 
-ObjTupIter* ObjTupIter_new(ObjTup* tup, PyroVM* vm) {
-    ObjTupIter* iter = ALLOCATE_OBJECT(vm, ObjTupIter, OBJ_TUP_ITER);
-    if (iter == NULL) {
-        return NULL;
-    }
-
-    iter->obj.class = vm->tup_iter_class;
-    iter->tup = tup;
-    iter->next_index = 0;
-    return iter;
-}
-
-
 /* -------- */
 /* Closures */
 /* -------- */
@@ -505,48 +492,6 @@ bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm) {
         }
     }
     return true;
-}
-
-
-ObjMapIter* ObjMapIter_new(ObjMap* map, MapIterType iter_type, PyroVM* vm) {
-    ObjMapIter* iter = ALLOCATE_OBJECT(vm, ObjMapIter, OBJ_MAP_ITER);
-    if (!iter) {
-        return NULL;
-    }
-    iter->obj.class = vm->map_iter_class;
-    iter->map = map;
-    iter->iter_type = iter_type;
-    iter->next_index = 0;
-    return iter;
-}
-
-
-Value ObjMapIter_next(ObjMapIter* iterator, PyroVM* vm) {
-    while (iterator->next_index < iterator->map->capacity) {
-        MapEntry* entry = &iterator->map->entries[iterator->next_index];
-        iterator->next_index++;
-
-        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
-            continue;
-        }
-
-        switch (iterator->iter_type) {
-            case MAP_ITER_KEYS:
-                return entry->key;
-
-            case MAP_ITER_VALUES:
-                return entry->value;
-
-            case MAP_ITER_ENTRIES: {
-                ObjTup* tup = ObjTup_new(2, vm);
-                tup->values[0] = entry->key;
-                tup->values[1] = entry->value;
-                return OBJ_VAL(tup);
-            }
-        }
-    }
-
-    return OBJ_VAL(vm->empty_error);
 }
 
 
@@ -981,19 +926,6 @@ ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm) {
     ObjStr* output_string =  ObjBuf_to_str(buf, vm);
     pyro_pop(vm);
     return output_string;
-}
-
-
-ObjStrIter* ObjStrIter_new(ObjStr* string, StrIterType iter_type, PyroVM* vm) {
-    ObjStrIter* iter = ALLOCATE_OBJECT(vm, ObjStrIter, OBJ_STR_ITER);
-    if (!iter) {
-        return NULL;
-    }
-    iter->obj.class = vm->str_iter_class;
-    iter->string = string;
-    iter->iter_type = iter_type;
-    iter->next_index = 0;
-    return iter;
 }
 
 
@@ -1439,18 +1371,6 @@ ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm) {
     ObjStr* output_string = ObjBuf_to_str(buf, vm);
     pyro_pop(vm);
     return output_string;
-}
-
-
-ObjVecIter* ObjVecIter_new(ObjVec* vec, PyroVM* vm) {
-    ObjVecIter* iter = ALLOCATE_OBJECT(vm, ObjVecIter, OBJ_VEC_ITER);
-    if (!iter) {
-        return NULL;
-    }
-    iter->obj.class = vm->vec_iter_class;
-    iter->vec = vec;
-    iter->next_index = 0;
-    return iter;
 }
 
 

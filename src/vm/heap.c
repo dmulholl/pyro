@@ -17,10 +17,6 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->tup_class);
     pyro_mark_object(vm, (Obj*)vm->vec_class);
     pyro_mark_object(vm, (Obj*)vm->buf_class);
-    pyro_mark_object(vm, (Obj*)vm->tup_iter_class);
-    pyro_mark_object(vm, (Obj*)vm->vec_iter_class);
-    pyro_mark_object(vm, (Obj*)vm->map_iter_class);
-    pyro_mark_object(vm, (Obj*)vm->str_iter_class);
     pyro_mark_object(vm, (Obj*)vm->range_class);
     pyro_mark_object(vm, (Obj*)vm->file_class);
     pyro_mark_object(vm, (Obj*)vm->iter_class);
@@ -137,12 +133,6 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MAP_ITER: {
-            ObjMapIter* iter = (ObjMapIter*)object;
-            pyro_mark_object(vm, (Obj*)iter->map);
-            break;
-        }
-
         case OBJ_MODULE: {
             ObjModule* module = (ObjModule*)object;
             pyro_mark_object(vm, (Obj*)module->globals);
@@ -162,24 +152,12 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_STR:
             break;
 
-        case OBJ_STR_ITER: {
-            ObjStrIter* iter = (ObjStrIter*)object;
-            pyro_mark_object(vm, (Obj*)iter->string);
-            break;
-        }
-
         case OBJ_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             for (size_t i = 0; i < tup->count; i++) {
                 pyro_mark_value(vm, tup->values[i]);
             }
-            break;
-        }
-
-        case OBJ_TUP_ITER: {
-            ObjTupIter* iter = (ObjTupIter*)object;
-            pyro_mark_object(vm, (Obj*)iter->tup);
             break;
         }
 
@@ -194,12 +172,6 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             for (size_t i = 0; i < vec->count; i++) {
                 pyro_mark_value(vm, vec->values[i]);
             }
-            break;
-        }
-
-        case OBJ_VEC_ITER: {
-            ObjVecIter* iter = (ObjVecIter*)object;
-            pyro_mark_object(vm, (Obj*)iter->vec);
             break;
         }
 
@@ -351,11 +323,6 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MAP_ITER: {
-            FREE_OBJECT(vm, ObjMapIter, object);
-            break;
-        }
-
         case OBJ_MODULE: {
             FREE_OBJECT(vm, ObjModule, object);
             break;
@@ -379,20 +346,10 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_STR_ITER: {
-            FREE_OBJECT(vm, ObjStrIter, object);
-            break;
-        }
-
         case OBJ_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);
-            break;
-        }
-
-        case OBJ_TUP_ITER: {
-            FREE_OBJECT(vm, ObjTupIter, object);
             break;
         }
 
@@ -405,11 +362,6 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             ObjVec* vec = (ObjVec*)object;
             FREE_ARRAY(vm, Value, vec->values, vec->capacity);
             FREE_OBJECT(vm, ObjVec, object);
-            break;
-        }
-
-        case OBJ_VEC_ITER: {
-            FREE_OBJECT(vm, ObjVecIter, object);
             break;
         }
     }

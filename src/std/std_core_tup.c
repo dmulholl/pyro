@@ -55,18 +55,6 @@ static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value tup_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjTupIter* iterator = AS_TUP_ITER(args[-1]);
-
-    if (iterator->next_index < iterator->tup->count) {
-        iterator->next_index++;
-        return iterator->tup->values[iterator->next_index - 1];
-    }
-
-    return OBJ_VAL(vm->empty_error);
-}
-
-
 static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         return OBJ_VAL(vm->empty_error);
@@ -98,5 +86,4 @@ void pyro_load_std_core_tup(PyroVM* vm) {
     pyro_define_method(vm, vm->tup_class, "get", tup_get, 1);
     pyro_define_method(vm, vm->tup_class, "$get_index", tup_get, 1);
     pyro_define_method(vm, vm->tup_class, "$iter", tup_iter, 0);
-    pyro_define_method(vm, vm->tup_iter_class, "$next", tup_iter_next, 0);
 }

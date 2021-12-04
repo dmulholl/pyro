@@ -171,39 +171,6 @@ static Value str_is_utf8(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_iter_iter(PyroVM* vm, size_t arg_count, Value* args) {
-    return args[-1];
-}
-
-
-static Value str_iter_next(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjStrIter* iter = AS_STR_ITER(args[-1]);
-    ObjStr* str = iter->string;
-
-    if (iter->iter_type == STR_ITER_BYTES) {
-        if (iter->next_index < str->length) {
-            int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
-            iter->next_index++;
-            return I64_VAL(byte_value);
-        }
-        return OBJ_VAL(vm->empty_error);
-    }
-
-    if (iter->next_index < str->length) {
-        uint8_t* src = (uint8_t*)&str->bytes[iter->next_index];
-        size_t src_len = str->length - iter->next_index;
-        Utf8CodePoint cp;
-        if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
-            iter->next_index += cp.length;
-            return CHAR_VAL(cp.value);
-        }
-        pyro_panic(vm, ERR_VALUE_ERROR, "String contains invalid utf-8 at byte index %zu.", iter->next_index);
-    }
-
-    return OBJ_VAL(vm->empty_error);
-}
-
-
 static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
@@ -1075,8 +1042,6 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "char", str_char, 1);
     pyro_define_method(vm, vm->str_class, "chars", str_chars, 0);
     pyro_define_method(vm, vm->str_class, "char_count", str_char_count, 0);
-    pyro_define_method(vm, vm->str_iter_class, "$iter", str_iter_iter, 0);
-    pyro_define_method(vm, vm->str_iter_class, "$next", str_iter_next, 0);
     pyro_define_method(vm, vm->str_class, "to_ascii_upper", str_to_ascii_upper, 0);
     pyro_define_method(vm, vm->str_class, "to_ascii_lower", str_to_ascii_lower, 0);
     pyro_define_method(vm, vm->str_class, "starts_with", str_starts_with, 1);
