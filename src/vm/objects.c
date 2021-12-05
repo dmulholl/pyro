@@ -1243,9 +1243,9 @@ ObjModule* ObjModule_new(PyroVM* vm) {
 }
 
 
-/* ------- */
-/* Vectors */
-/* ------- */
+/* ------------------ */
+/*  Vectors & Stacks  */
+/* ------------------ */
 
 
 ObjVec* ObjVec_new(PyroVM* vm) {
@@ -1258,6 +1258,17 @@ ObjVec* ObjVec_new(PyroVM* vm) {
     vec->values = NULL;
     vec->obj.class = vm->vec_class;
     return vec;
+}
+
+
+ObjVec* ObjVec_new_as_stack(PyroVM* vm) {
+    ObjVec* stack = ObjVec_new(vm);
+    if (!stack) {
+        return NULL;
+    }
+    stack->obj.type = OBJ_VEC_AS_STACK;
+    stack->obj.class = vm->stack_class;
+    return stack;
 }
 
 

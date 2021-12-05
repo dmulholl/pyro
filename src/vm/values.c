@@ -141,6 +141,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
             return ObjTup_stringify(tup, vm);
         }
 
+        case OBJ_VEC_AS_STACK:
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
             return ObjVec_stringify(vec, vm);
@@ -330,6 +331,10 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             pyro_out(vm, "<vec>");
             break;
 
+        case OBJ_VEC_AS_STACK:
+            pyro_out(vm, "<stack>");
+            break;
+
         case OBJ_FILE:
             pyro_out(vm, "<file>");
             break;
@@ -429,7 +434,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
             return AS_STR(result);
         }
 
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by $fmt() method.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by :$fmt() method.");
         return NULL;
     }
 
@@ -455,6 +460,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_TUP: return "<tup>";
         case OBJ_UPVALUE: return "<upvalue>";
         case OBJ_VEC: return "<vec>";
+        case OBJ_VEC_AS_STACK: return "<stack>";
         case OBJ_MAP_AS_WEAKREF: return "<weakref map>";
         case OBJ_ITER: return "<iter>";
     }

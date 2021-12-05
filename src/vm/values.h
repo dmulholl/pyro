@@ -44,6 +44,7 @@ typedef enum {
     OBJ_TUP_AS_ERR,
     OBJ_UPVALUE,
     OBJ_VEC,
+    OBJ_VEC_AS_STACK,
 } ObjType;
 
 // The VM maintains a linked list of all heap-allocated objects using the [next] pointers.
@@ -91,6 +92,7 @@ struct Obj {
 #define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
 #define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
 #define IS_ITER(value)              pyro_is_obj_of_type(value, OBJ_ITER)
+#define IS_STACK(value)             pyro_is_obj_of_type(value, OBJ_VEC_AS_STACK)
 
 // Macros for extracting object pointers from Value instances.
 #define AS_OBJ(value)               ((value).as.obj)

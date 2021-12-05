@@ -19,6 +19,7 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->buf_class);
     pyro_mark_object(vm, (Obj*)vm->file_class);
     pyro_mark_object(vm, (Obj*)vm->iter_class);
+    pyro_mark_object(vm, (Obj*)vm->stack_class);
 
     // The VM's pool of canned objects.
     pyro_mark_object(vm, (Obj*)vm->empty_error);
@@ -164,6 +165,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
+        case OBJ_VEC_AS_STACK:
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
             for (size_t i = 0; i < vec->count; i++) {
@@ -350,6 +352,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
+        case OBJ_VEC_AS_STACK:
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
             FREE_ARRAY(vm, Value, vec->values, vec->capacity);
@@ -408,6 +411,10 @@ void pyro_collect_garbage(PyroVM* vm) {
         return;
     }
 
+    // We should never run the garbage collector while the VM is panicking. Consider this scenario:
+    // we temporarily push a value onto the stack to keep it safe from the GC. The stack is already
+    // full so push() panics with a stack overflow error. If the GC runs in this state it could
+    // unexpectedly collect the value out from under us while we thought it was safe.
     if (vm->panic_flag) {
         assert(false);
         return;

@@ -308,6 +308,7 @@ static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
     if (!iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();
     }
 
@@ -388,12 +389,40 @@ static Value vec_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_stack(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = ObjVec_new_as_stack(vm);
+    if (!vec) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+    return OBJ_VAL(vec);
+}
+
+
+static Value fn_is_stack(PyroVM* vm, size_t arg_count, Value* args) {
+    return BOOL_VAL(IS_STACK(args[0]));
+}
+
+
+static Value stack_pop(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    if (vec->count == 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Cannot pop empty stack.");
+        return NULL_VAL();
+    }
+    vec->count--;
+    return vec->values[vec->count];
+}
+
+
 void pyro_load_std_core_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
     pyro_define_global_fn(vm, "$is_vec", fn_is_vec, 1);
+    pyro_define_global_fn(vm, "$stack", fn_stack, 0);
+    pyro_define_global_fn(vm, "$is_stack", fn_is_stack, 1);
 
-    // Methods.
+    // Vector methods.
     pyro_define_method(vm, vm->vec_class, "count", vec_count, 0);
     pyro_define_method(vm, vm->vec_class, "append", vec_append, 1);
     pyro_define_method(vm, vm->vec_class, "get", vec_get, 1);
@@ -416,4 +445,11 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "first", vec_first, 0);
     pyro_define_method(vm, vm->vec_class, "last", vec_last, 0);
     pyro_define_method(vm, vm->vec_class, "is_empty", vec_is_empty, 0);
+
+    // Stack methods.
+    pyro_define_method(vm, vm->stack_class, "count", vec_count, 0);
+    pyro_define_method(vm, vm->stack_class, "is_empty", vec_is_empty, 0);
+    pyro_define_method(vm, vm->stack_class, "push", vec_append, 1);
+    pyro_define_method(vm, vm->stack_class, "pop", stack_pop, 0);
+    pyro_define_method(vm, vm->stack_class, "$iter", vec_iter, 0);
 }

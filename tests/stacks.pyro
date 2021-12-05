@@ -1,0 +1,27 @@
+assert !$is_stack("foobar");
+
+var foo = $stack();
+assert $is_stack(foo);
+assert foo:count() == 0;
+assert foo:is_empty();
+
+foo:push("abc");
+foo:push("def");
+assert foo:count() == 2;
+assert !foo:is_empty();
+
+assert foo:pop() == "def";
+assert foo:pop() == "abc";
+assert foo:count() == 0;
+assert foo:is_empty();
+
+var bar = $stack();
+for i in $range(5) {
+    bar:push(i);
+}
+
+var index = 0;
+for item in bar {
+    assert item == index;
+    index += 1;
+}
