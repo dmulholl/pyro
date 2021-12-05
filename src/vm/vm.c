@@ -998,8 +998,12 @@ static void run(PyroVM* vm) {
             }
 
             case OP_ITER: {
-                invoke_method(vm, vm->str_iter, 0);
-                frame = &vm->frames[vm->frame_count - 1];
+                if (pyro_has_method(pyro_peek(vm, 0), vm->str_iter)) {
+                    invoke_method(vm, vm->str_iter, 0);
+                    frame = &vm->frames[vm->frame_count - 1];
+                } else {
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Object is not iterable.");
+                }
                 break;
             }
 
