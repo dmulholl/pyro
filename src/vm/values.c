@@ -18,7 +18,7 @@ bool pyro_is_truthy(Value value) {
             return value.as.f64 != 0.0;
         case VAL_OBJ:
             switch (value.as.obj->type) {
-                case OBJ_ERR: return false;
+                case OBJ_TUP_AS_ERR: return false;
                 default: return true;
             }
         case VAL_CHAR:
@@ -65,13 +65,15 @@ bool pyro_check_equal(Value a, Value b) {
             case VAL_F64:
                 return a.as.f64 == b.as.f64;
             case VAL_OBJ:
-                if (a.as.obj->type == OBJ_TUP && b.as.obj->type == OBJ_TUP) {
+                if (a.as.obj == b.as.obj) {
+                    return true;
+                } else if (a.as.obj->type == OBJ_TUP && b.as.obj->type == OBJ_TUP) {
                     return ObjTup_check_equal(AS_TUP(a), AS_TUP(b));
-                }
-                if (a.as.obj->type == OBJ_ERR && b.as.obj->type == OBJ_ERR) {
+                } else if (a.as.obj->type == OBJ_TUP_AS_ERR && b.as.obj->type == OBJ_TUP_AS_ERR) {
                     return ObjTup_check_equal(AS_TUP(a), AS_TUP(b));
+                } else {
+                    return false;
                 }
-                return a.as.obj == b.as.obj;
             case VAL_TOMBSTONE:
                 return true;
             case VAL_EMPTY:
@@ -98,7 +100,7 @@ uint64_t pyro_hash_value(Value value) {
             switch (value.as.obj->type) {
                 case OBJ_STR: return AS_STR(value)->hash;
                 case OBJ_TUP: return ObjTup_hash(AS_TUP(value));
-                case OBJ_ERR: return ObjTup_hash(AS_TUP(value));
+                case OBJ_TUP_AS_ERR: return ObjTup_hash(AS_TUP(value));
                 default: return (uint64_t)value.as.obj;
             }
         case VAL_CHAR:
@@ -120,7 +122,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         if (IS_STR(stringified)) {
             return AS_STR(stringified);
         }
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by $str() method.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by :$str() method.");
         return NULL;
     }
 
@@ -133,7 +135,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_BOUND_METHOD: return STR_OBJ("<method>");
         case OBJ_ITER: return STR_OBJ("<iter>");
 
-        case OBJ_ERR:
+        case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             return ObjTup_stringify(tup, vm);
@@ -156,78 +158,31 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
 
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
-            char* array = pyro_str_fmt(vm, "<fn %s>", native->name->bytes);
-            if (!array) {
-                return NULL;
-            }
-
-            ObjStr* string = ObjStr_take(array, strlen(array), vm);
-            if (!string) {
-                FREE_ARRAY(vm, char, array, strlen(array) + 1);
-                return NULL;
-            }
-
-            return string;
+            return ObjStr_from_fmt(vm, "<fn %s>", native->name->bytes);
         }
 
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
-            if (closure->fn->name == NULL) {
-                return STR_OBJ("<fn>");
+            if (closure->fn->name) {
+                ObjStr_from_fmt(vm, "<fn %s>", closure->fn->name->bytes);
             }
-
-            char* array = pyro_str_fmt(vm, "<fn %s>", closure->fn->name->bytes);
-            if (!array) {
-                return NULL;
-            }
-
-            ObjStr* string = ObjStr_take(array, strlen(array), vm);
-            if (!string) {
-                FREE_ARRAY(vm, char, array, strlen(array) + 1);
-                return NULL;
-            }
-
-            return string;
+            return STR_OBJ("<fn>");
         }
 
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
-            if (class->name == NULL) {
-                return STR_OBJ("<class>");
+            if (class->name) {
+                ObjStr_from_fmt(vm, "<class %s>", class->name->bytes);
             }
-
-            char* array = pyro_str_fmt(vm, "<class %s>", class->name->bytes);
-            if (!array) {
-                return NULL;
-            }
-
-            ObjStr* string = ObjStr_take(array, strlen(array), vm);
-            if (!string) {
-                FREE_ARRAY(vm, char, array, strlen(array) + 1);
-                return NULL;
-            }
-
-            return string;
+            return STR_OBJ("<class>");
         }
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
-            if (instance->obj.class->name == NULL) {
-                return STR_OBJ("<instance>");
+            if (instance->obj.class->name) {
+                ObjStr_from_fmt(vm, "<instance %s>", instance->obj.class->name->bytes);
             }
-
-            char* array = pyro_str_fmt(vm, "<instance %s>", instance->obj.class->name->bytes);
-            if (!array) {
-                return NULL;
-            }
-
-            ObjStr* string = ObjStr_take(array, strlen(array), vm);
-            if (!string) {
-                FREE_ARRAY(vm, char, array, strlen(array) + 1);
-                return NULL;
-            }
-
-            return string;
+            return STR_OBJ("<instance>");
         }
 
         default:
@@ -359,7 +314,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_ERR:
+        case OBJ_TUP_AS_ERR:
             pyro_out(vm, "<err>");
             break;
 
@@ -387,7 +342,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             pyro_out(vm, "<iter>");
             break;
 
-        case OBJ_WEAKREF_MAP:
+        case OBJ_MAP_AS_WEAKREF:
             pyro_out(vm, "<weakref map>");
             break;
 
@@ -489,7 +444,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_BUF: return "<buf>";
         case OBJ_CLASS: return "<class>";
         case OBJ_CLOSURE: return "<closure>";
-        case OBJ_ERR: return "<err>";
+        case OBJ_TUP_AS_ERR: return "<err>";
         case OBJ_FILE: return "<file>";
         case OBJ_FN: return "<fn>";
         case OBJ_INSTANCE: return "<instance>";
@@ -500,7 +455,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_TUP: return "<tup>";
         case OBJ_UPVALUE: return "<upvalue>";
         case OBJ_VEC: return "<vec>";
-        case OBJ_WEAKREF_MAP: return "<weakref map>";
+        case OBJ_MAP_AS_WEAKREF: return "<weakref map>";
         case OBJ_ITER: return "<iter>";
     }
 }

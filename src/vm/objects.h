@@ -31,6 +31,10 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm);
 // the input array is not altered or freed.
 ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm);
 
+// Creates a new string object by interpolating values into a format string.
+// Returns NULL if memory allocation fails or if there was a formatting error.
+ObjStr* ObjStr_from_fmt(PyroVM* vm, const char* fmtstr, ...);
+
 // Creates a new string object by concatenating two source strings. Returns NULL if memory cannot
 // be allocated for the new string.
 ObjStr* ObjStr_concat(ObjStr* s1, ObjStr* s2, PyroVM* vm);
@@ -240,10 +244,10 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int 
 
 struct ObjClass {
     Obj obj;
-    ObjStr* name;                       // Can be NULL.
     ObjMap* methods;
     ObjVec* field_initializers;
     ObjMap* field_indexes;
+    ObjStr* name;                       // Can be NULL.
     ObjClass* superclass;               // Can be NULL.
 };
 

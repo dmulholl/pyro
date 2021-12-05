@@ -28,27 +28,29 @@ typedef struct {
 
 typedef enum {
     OBJ_BOUND_METHOD,
+    OBJ_BUF,
     OBJ_CLASS,
     OBJ_CLOSURE,
+    OBJ_FILE,
     OBJ_FN,
     OBJ_INSTANCE,
     OBJ_ITER,
     OBJ_MAP,
+    OBJ_MAP_AS_WEAKREF,
+    OBJ_MODULE,
     OBJ_NATIVE_FN,
     OBJ_STR,
     OBJ_TUP,
+    OBJ_TUP_AS_ERR,
     OBJ_UPVALUE,
-    OBJ_WEAKREF_MAP,
-    OBJ_MODULE,
     OBJ_VEC,
-    OBJ_ERR,
-    OBJ_BUF,
-    OBJ_FILE,
 } ObjType;
 
+// The VM maintains a linked list of all heap-allocated objects using the [next] pointers.
+// Not ever object has an associated class so [class] can be NULL.
 struct Obj {
     Obj* next;
-    ObjClass* class;    // Can be NULL.
+    ObjClass* class;
     ObjType type;
     bool is_marked;
 };
@@ -85,7 +87,7 @@ struct Obj {
 #define IS_TUP(value)               pyro_is_obj_of_type(value, OBJ_TUP)
 #define IS_MOD(value)               pyro_is_obj_of_type(value, OBJ_MODULE)
 #define IS_VEC(value)               pyro_is_obj_of_type(value, OBJ_VEC)
-#define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
+#define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_TUP_AS_ERR)
 #define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
 #define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
 #define IS_ITER(value)              pyro_is_obj_of_type(value, OBJ_ITER)

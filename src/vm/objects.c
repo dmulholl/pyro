@@ -70,7 +70,7 @@ ObjTup* ObjTup_new_err(size_t count, PyroVM* vm) {
     if (!tup) {
         return NULL;
     }
-    tup->obj.type = OBJ_ERR;
+    tup->obj.type = OBJ_TUP_AS_ERR;
     return tup;
 }
 
@@ -367,7 +367,7 @@ ObjMap* ObjMap_new_weakref(PyroVM* vm) {
     if (!map) {
         return NULL;
     }
-    map->obj.type = OBJ_WEAKREF_MAP;
+    map->obj.type = OBJ_MAP_AS_WEAKREF;
     return map;
 }
 
@@ -627,6 +627,39 @@ ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm) {
     }
 
     return allocate_string(vm, src, length, hash);
+}
+
+
+ObjStr* ObjStr_from_fmt(PyroVM* vm, const char* fmtstr, ...) {
+    va_list args;
+
+    // Figure out how much memory we need to allocate. [length] will be the output string length,
+    // not counting the terminating null, so we'll need to allocate [length + 1] bytes.
+    va_start(args, fmtstr);
+    int length = vsnprintf(NULL, 0, fmtstr, args);
+    va_end(args);
+
+    // If [length] is negative, an encoding error occurred.
+    if (length < 0) {
+        return NULL;
+    }
+
+    char* array = ALLOCATE_ARRAY(vm, char, length + 1);
+    if (array == NULL) {
+        return NULL;
+    }
+
+    va_start(args, fmtstr);
+    vsnprintf(array, length + 1, fmtstr, args);
+    va_end(args);
+
+    ObjStr* string = ObjStr_take(array, length, vm);
+    if (!string) {
+        FREE_ARRAY(vm, char, array, length + 1);
+        return NULL;
+    }
+
+    return string;
 }
 
 

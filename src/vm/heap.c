@@ -149,7 +149,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_STR:
             break;
 
-        case OBJ_ERR:
+        case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             for (size_t i = 0; i < tup->count; i++) {
@@ -172,7 +172,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_WEAKREF_MAP:
+        case OBJ_MAP_AS_WEAKREF:
             break;
     }
 }
@@ -313,7 +313,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         }
 
         case OBJ_MAP:
-        case OBJ_WEAKREF_MAP: {
+        case OBJ_MAP_AS_WEAKREF: {
             ObjMap* map = (ObjMap*)object;
             FREE_ARRAY(vm, MapEntry, map->entries, map->capacity);
             FREE_OBJECT(vm, ObjMap, object);
@@ -338,7 +338,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_ERR:
+        case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);
