@@ -39,7 +39,7 @@ assert bound_method("alpha") == 123;
 assert bound_method(4) == "foo";
 
 assert foo:count() == 8;
-foo:del("alpha");
+foo:remove("alpha");
 assert foo:count() == 7;
 assert $is_err(foo:get("alpha"));
 

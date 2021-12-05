@@ -54,7 +54,7 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_del(PyroVM* vm, size_t arg_count, Value* args) {
+static Value map_remove(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     return BOOL_VAL(ObjMap_remove(map, args[0]));
 }
@@ -122,7 +122,7 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->map_class, "$get_index", map_get, 1);
     pyro_define_method(vm, vm->map_class, "set", map_set, 2);
     pyro_define_method(vm, vm->map_class, "$set_index", map_set, 2);
-    pyro_define_method(vm, vm->map_class, "del", map_del, 1);
+    pyro_define_method(vm, vm->map_class, "remove", map_remove, 1);
     pyro_define_method(vm, vm->map_class, "contains", map_contains, 1);
     pyro_define_method(vm, vm->map_class, "copy", map_copy, 0);
     pyro_define_method(vm, vm->map_class, "keys", map_keys, 0);
