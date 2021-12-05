@@ -455,10 +455,6 @@ Maps have the following methods:
 
     Returns the number of entries in the map.
 
-[[ `:del(key: any)` ]]
-
-    Deletes the entry associated with `key` if it exists.
-
 [[ `:entries() -> iter[tup]` ]]
 
     Returns an iterator over `(key, value)` tuples.
@@ -474,6 +470,10 @@ Maps have the following methods:
 [[ `:keys() -> iter` ]]
 
     Returns an iterator over the map's keys.
+
+[[ `:remove(key: any)` ]]
+
+    Deletes the entry associated with `key` if it exists.
 
 [[ `:set(key: any, value: any)` ]]
 
@@ -751,3 +751,33 @@ Files have the following methods:
 
     Writes a byte value to the file, where `byte` is an integer in the range `[0, 255]`.
     Panics if an I/O write error occurs or if the argument is an invalid type or is out of range.
+
+
+
+### Stacks
+
+A stack is a LIFO container type that supports only two operations --- *pushing* and *popping*.
+
+[[ `$stack() -> stack` ]]
+
+    Creates a new `stack` object.
+
+Stacks have the following methods:
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of items in the stack.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the stack is empty.
+
+[[ `:pop() -> any` ]]
+
+    Pops and returns the value on top of the stack.
+    Panics if the stack is empty.
+
+[[ `:push(value: any)` ]]
+
+    Pushes a value onto the stack.
+

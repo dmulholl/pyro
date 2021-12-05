@@ -18,7 +18,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.4.9</p>
+                <p class="version">Version 0.4.10</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -76,6 +76,9 @@
 </li>
 <li>
 <a href="#files">Files</a>
+</li>
+<li>
+<a href="#stacks">Stacks</a>
 </li>
 </ul>
 <h3 id="strings">
@@ -1007,16 +1010,6 @@ Returns the number of entries in the map.
 </div>
 <div>
 <dt>
-<code>:del(key: any)</code>
-</dt>
-<dd>
-<p>
-Deletes the entry associated with <code>key</code> if it exists.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:entries() -&gt; iter[tup]</code>
 </dt>
 <dd>
@@ -1052,6 +1045,16 @@ Returns <code>true</code> if the map is empty.
 <dd>
 <p>
 Returns an iterator over the map's keys.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:remove(key: any)</code>
+</dt>
+<dd>
+<p>
+Deletes the entry associated with <code>key</code> if it exists.
 </p>
 </dd>
 </div>
@@ -1600,6 +1603,70 @@ Panics if an I/O write error occurs or if an error occurs while formatting the o
 <p>
 Writes a byte value to the file, where <code>byte</code> is an integer in the range <code>[0, 255]</code>.
 Panics if an I/O write error occurs or if the argument is an invalid type or is out of range.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="stacks">
+Stacks
+</h3>
+<p>
+A stack is a LIFO container type that supports only two operations &mdash; <i>pushing</i> and <i>popping</i>.
+</p>
+<dl>
+<div>
+<dt>
+<code>$stack() -&gt; stack</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>stack</code> object.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Stacks have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of items in the stack.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the stack is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:pop() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Pops and returns the value on top of the stack.
+Panics if the stack is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:push(value: any)</code>
+</dt>
+<dd>
+<p>
+Pushes a value onto the stack.
 </p>
 </dd>
 </div>

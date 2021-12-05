@@ -255,6 +255,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$is_stack(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `stack`.
+
+
+
 [[ `$is_str(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a `str`.
@@ -378,6 +384,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
     In this case the function will raise a panic.
     The actual time slept may be longer than the requested duration due to system latency.
     )
+
+
+
+[[ `$stack() -> stack` ]]
+
+    Creates a new `stack` object.
 
 
 
