@@ -14,6 +14,7 @@ void pyro_load_std_core_buf(PyroVM* vm);
 void pyro_load_std_core_file(PyroVM* vm);
 void pyro_load_std_core_range(PyroVM* vm);
 void pyro_load_std_core_iter(PyroVM* vm);
+void pyro_load_std_core_queue(PyroVM* vm);
 
 Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args);
 

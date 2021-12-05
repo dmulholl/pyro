@@ -400,4 +400,29 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
 // [vm->halt_flag] before relying on the return value.
 Value ObjIter_next(ObjIter* iter, PyroVM* vm);
 
+/* ------ */
+/* Queues */
+/* ------ */
+
+typedef struct QueueItem {
+    Value value;
+    struct QueueItem* next;
+} QueueItem;
+
+typedef struct {
+    Obj obj;
+    QueueItem* head;
+    QueueItem* tail;
+    size_t count;
+} ObjQueue;
+
+// Creates a new queue object. Returns NULL if memory allocation failed.
+ObjQueue* ObjQueue_new(PyroVM* vm);
+
+// Returns true if the value was successfully enqueued, false if memory allocation failed.
+bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm);
+
+// Returns true if a value was successfully dequeued, false if the queue was empty.
+bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm);
+
 #endif

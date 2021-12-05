@@ -134,6 +134,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_FN: return STR("<fn>");
         case OBJ_BOUND_METHOD: return STR("<method>");
         case OBJ_ITER: return STR("<iter>");
+        case OBJ_QUEUE: return STR("<queue>");
 
         case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
@@ -353,6 +354,10 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             pyro_out(vm, "<buf>");
             break;
 
+        case OBJ_QUEUE:
+            pyro_out(vm, "<queue>");
+            break;
+
         case OBJ_ITER:
             pyro_out(vm, "<iter>");
             break;
@@ -474,6 +479,7 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_VEC: return "<vec>";
         case OBJ_VEC_AS_STACK: return "<stack>";
         case OBJ_ITER: return "<iter>";
+        case OBJ_QUEUE: return "<queue>";
     }
 }
 

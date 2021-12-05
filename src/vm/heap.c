@@ -21,6 +21,7 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->iter_class);
     pyro_mark_object(vm, (Obj*)vm->stack_class);
     pyro_mark_object(vm, (Obj*)vm->set_class);
+    pyro_mark_object(vm, (Obj*)vm->queue_class);
 
     // The VM's pool of canned objects.
     pyro_mark_object(vm, (Obj*)vm->empty_error);
@@ -157,6 +158,16 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
             pyro_mark_object(vm, (Obj*)native->name);
+            break;
+        }
+
+        case OBJ_QUEUE: {
+            ObjQueue* queue = (ObjQueue*)object;
+            QueueItem* next_item = queue->head;
+            while (next_item) {
+                pyro_mark_value(vm, next_item->value);
+                next_item = next_item->next;
+            }
             break;
         }
 
@@ -343,6 +354,18 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_NATIVE_FN: {
             FREE_OBJECT(vm, ObjNativeFn, object);
+            break;
+        }
+
+        case OBJ_QUEUE: {
+            ObjQueue* queue = (ObjQueue*)object;
+            QueueItem* next_item = queue->head;
+            while (next_item) {
+                QueueItem* current_item = next_item;
+                next_item = current_item->next;
+                pyro_realloc(vm, current_item, sizeof(QueueItem), 0);
+            }
+            FREE_OBJECT(vm, ObjQueue, object);
             break;
         }
 

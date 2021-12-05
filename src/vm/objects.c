@@ -2015,3 +2015,65 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return OBJ_VAL(vm->empty_error);
     }
 }
+
+
+/* ------ */
+/* Queues */
+/* ------ */
+
+
+ObjQueue* ObjQueue_new(PyroVM* vm) {
+    ObjQueue* queue = ALLOCATE_OBJECT(vm, ObjQueue, OBJ_QUEUE);
+    if (!queue) {
+        return NULL;
+    }
+    queue->obj.class = vm->queue_class;
+    queue->head = NULL;
+    queue->tail = NULL;
+    queue->count = 0;
+    return queue;
+}
+
+
+// Add the new item to the end of the linked list.
+bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm) {
+    QueueItem* item = pyro_realloc(vm, NULL, 0, sizeof(QueueItem));
+    if (!item) {
+        return false;
+    }
+    item->value = value;
+    item->next = NULL;
+
+    if (queue->count == 0) {
+        queue->head = item;
+        queue->tail = item;
+    } else {
+        queue->tail->next = item;
+        queue->tail = item;
+    }
+
+    queue->count++;
+    return true;
+}
+
+
+// Remove the item at the front of the linked list.
+bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm) {
+    if (queue->count == 0) {
+        return false;
+    }
+
+    QueueItem* item = queue->head;
+    *value = item->value;
+
+    if (queue->count == 1) {
+        queue->head = NULL;
+        queue->tail = NULL;
+    } else {
+        queue->head = item->next;
+    }
+
+    pyro_realloc(vm, item, sizeof(QueueItem), 0);
+    queue->count--;
+    return true;
+}

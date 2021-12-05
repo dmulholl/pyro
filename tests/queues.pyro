@@ -1,0 +1,33 @@
+assert !$is_queue("foobar");
+
+var foo = $queue();
+assert $is_queue(foo);
+assert foo:count() == 0;
+assert foo:is_empty();
+
+foo:enqueue("foo");
+foo:enqueue("bar");
+foo:enqueue("baz");
+
+assert foo:count() == 3;
+assert !foo:is_empty();
+
+assert foo:dequeue() == "foo";
+assert foo:dequeue() == "bar";
+assert foo:dequeue() == "baz";
+
+assert foo:count() == 0;
+assert foo:is_empty();
+
+for i in $range(100) {
+    foo:enqueue(i);
+}
+
+assert foo:count() == 100;
+
+for i in $range(100) {
+    assert foo:dequeue() == i;
+}
+
+assert foo:count() == 0;
+assert foo:is_empty();

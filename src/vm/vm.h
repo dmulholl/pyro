@@ -29,6 +29,7 @@ struct PyroVM {
     ObjClass* iter_class;
     ObjClass* stack_class;
     ObjClass* set_class;
+    ObjClass* queue_class;
 
     // Exit signal, set by the $exit() function.
     bool exit_flag;
