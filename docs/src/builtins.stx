@@ -777,9 +777,9 @@ Stacks have the following methods:
     Pops and returns the value on top of the stack.
     Panics if the stack is empty.
 
-[[ `:push(value: any)` ]]
+[[ `:push(item: any)` ]]
 
-    Pushes a value onto the stack.
+    Pushes an item onto the stack.
 
 
 
@@ -802,7 +802,7 @@ Queues have the following methods:
     Removes and returns the first item from the queue.
     Panics if the queue is empty.
 
-[[ `:enqueue(value: any)` ]]
+[[ `:enqueue(item: any)` ]]
 
     Adds a new item to the end of the queue.
 
