@@ -1180,7 +1180,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
 
 
 ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int arity) {
-    ObjStr* name_object = STR_OBJ(name);
+    ObjStr* name_object = STR(name);
     if (!name_object) {
         return NULL;
     }

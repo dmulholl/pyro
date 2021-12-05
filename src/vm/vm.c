@@ -1754,17 +1754,17 @@ PyroVM* pyro_new_vm() {
     // Canned objects, mostly static strings.
     vm->empty_error = ObjTup_new_err(0, vm);
     vm->empty_string = ObjStr_empty(vm);
-    vm->str_init = STR_OBJ("$init");
-    vm->str_str = STR_OBJ("$str");
-    vm->str_true = STR_OBJ("true");
-    vm->str_false = STR_OBJ("false");
-    vm->str_null = STR_OBJ("null");
-    vm->str_fmt = STR_OBJ("$fmt");
-    vm->str_iter = STR_OBJ("$iter");
-    vm->str_next = STR_OBJ("$next");
-    vm->str_get_index = STR_OBJ("$get_index");
-    vm->str_set_index = STR_OBJ("$set_index");
-    vm->str_debug = STR_OBJ("$debug");
+    vm->str_init = STR("$init");
+    vm->str_str = STR("$str");
+    vm->str_true = STR("true");
+    vm->str_false = STR("false");
+    vm->str_null = STR("null");
+    vm->str_fmt = STR("$fmt");
+    vm->str_iter = STR("$iter");
+    vm->str_next = STR("$next");
+    vm->str_get_index = STR("$get_index");
+    vm->str_set_index = STR("$set_index");
+    vm->str_debug = STR("$debug");
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -1961,7 +1961,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 
 
 void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
-    ObjStr* path_string = STR_OBJ(path);
+    ObjStr* path_string = STR(path);
     if (!path_string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
@@ -2003,7 +2003,7 @@ void pyro_test_compile_file(PyroVM* vm, const char* path) {
 
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
-    ObjStr* path_string = STR_OBJ(path);
+    ObjStr* path_string = STR(path);
     if (!path_string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
@@ -2047,7 +2047,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
 
 
 void pyro_run_main_func(PyroVM* vm) {
-    ObjStr* main_string = STR_OBJ("$main");
+    ObjStr* main_string = STR("$main");
     if (!main_string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
@@ -2216,7 +2216,7 @@ Value pyro_call_fn(PyroVM* vm, Value func, uint8_t arg_count) {
 
 
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
-    ObjStr* name_object = STR_OBJ(name);
+    ObjStr* name_object = STR(name);
     if (!name_object) {
         return NULL;
     }
@@ -2244,7 +2244,7 @@ ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
 
 
 ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name) {
-    ObjStr* parent_object = STR_OBJ(parent);
+    ObjStr* parent_object = STR(parent);
     if (!parent_object) {
         return NULL;
     }
@@ -2255,7 +2255,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
         return NULL;
     }
 
-    ObjStr* name_object = STR_OBJ(name);
+    ObjStr* name_object = STR(name);
     if (!name_object) {
         return NULL;
     }
@@ -2289,7 +2289,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
 
 
 ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name) {
-    ObjStr* grandparent_object = STR_OBJ(parent);
+    ObjStr* grandparent_object = STR(parent);
     if (!grandparent_object) {
         return NULL;
     }
@@ -2300,7 +2300,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
         return NULL;
     }
 
-    ObjStr* parent_object = STR_OBJ(parent);
+    ObjStr* parent_object = STR(parent);
     if (!parent_object) {
         return NULL;
     }
@@ -2311,7 +2311,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
         return NULL;
     }
 
-    ObjStr* name_object = STR_OBJ(name);
+    ObjStr* name_object = STR(name);
     if (!name_object) {
         return NULL;
     }
@@ -2347,7 +2347,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
     pyro_push(vm, value);
 
-    ObjStr* name_object = STR_OBJ(name);
+    ObjStr* name_object = STR(name);
     if (!name_object) {
         pyro_pop(vm); // value
         return;
@@ -2371,7 +2371,7 @@ void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, Nati
 
 
 void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity) {
-    ObjStr* name_object = STR_OBJ(name);
+    ObjStr* name_object = STR(name);
     if (!name_object) {
         return;
     }
@@ -2395,7 +2395,7 @@ void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn 
 void pyro_define_global(PyroVM* vm, const char* name, Value value) {
     pyro_push(vm, value);
 
-    ObjStr* name_object = STR_OBJ(name);
+    ObjStr* name_object = STR(name);
     if (!name_object) {
         pyro_pop(vm); // value
         return;
@@ -2458,7 +2458,7 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
     pyro_push(vm, OBJ_VAL(tup));
 
     for (size_t i = 0; i < arg_count; i++) {
-        ObjStr* string = STR_OBJ(args[i]);
+        ObjStr* string = STR(args[i]);
         if (!string) {
             pyro_pop(vm);
             return false;
@@ -2476,7 +2476,7 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
     if (!path) {
         return false;
     }
-    ObjStr* string = STR_OBJ(path);
+    ObjStr* string = STR(path);
     if (string) {
         pyro_push(vm, OBJ_VAL(string));
         bool result = ObjVec_append(vm->import_roots, OBJ_VAL(string), vm);

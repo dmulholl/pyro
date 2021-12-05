@@ -128,12 +128,12 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
 
     switch (object->type) {
         case OBJ_STR: return (ObjStr*)object;
-        case OBJ_MODULE: return STR_OBJ("<module>");
-        case OBJ_UPVALUE: return STR_OBJ("<upvalue>");
-        case OBJ_FILE: return STR_OBJ("<file>");
-        case OBJ_FN: return STR_OBJ("<fn>");
-        case OBJ_BOUND_METHOD: return STR_OBJ("<method>");
-        case OBJ_ITER: return STR_OBJ("<iter>");
+        case OBJ_MODULE: return STR("<module>");
+        case OBJ_UPVALUE: return STR("<upvalue>");
+        case OBJ_FILE: return STR("<file>");
+        case OBJ_FN: return STR("<fn>");
+        case OBJ_BOUND_METHOD: return STR("<method>");
+        case OBJ_ITER: return STR("<iter>");
 
         case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
@@ -158,35 +158,35 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
 
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
-            return ObjStr_from_fmt(vm, "<fn %s>", native->name->bytes);
+            return FMT("<fn %s>", native->name->bytes);
         }
 
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             if (closure->fn->name) {
-                ObjStr_from_fmt(vm, "<fn %s>", closure->fn->name->bytes);
+                FMT("<fn %s>", closure->fn->name->bytes);
             }
-            return STR_OBJ("<fn>");
+            return STR("<fn>");
         }
 
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
             if (class->name) {
-                ObjStr_from_fmt(vm, "<class %s>", class->name->bytes);
+                FMT("<class %s>", class->name->bytes);
             }
-            return STR_OBJ("<class>");
+            return STR("<class>");
         }
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             if (instance->obj.class->name) {
-                ObjStr_from_fmt(vm, "<instance %s>", instance->obj.class->name->bytes);
+                FMT("<instance %s>", instance->obj.class->name->bytes);
             }
-            return STR_OBJ("<instance>");
+            return STR("<instance>");
         }
 
         default:
-            return STR_OBJ("<object>");
+            return STR("<object>");
     }
 }
 
@@ -245,7 +245,7 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
         }
 
         default:
-            return STR_OBJ("<value>");
+            return STR("<value>");
     }
 }
 
