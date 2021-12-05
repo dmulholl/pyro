@@ -36,6 +36,7 @@ typedef enum {
     OBJ_INSTANCE,
     OBJ_ITER,
     OBJ_MAP,
+    OBJ_MAP_AS_SET,
     OBJ_MAP_AS_WEAKREF,
     OBJ_MODULE,
     OBJ_NATIVE_FN,
@@ -93,6 +94,7 @@ struct Obj {
 #define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
 #define IS_ITER(value)              pyro_is_obj_of_type(value, OBJ_ITER)
 #define IS_STACK(value)             pyro_is_obj_of_type(value, OBJ_VEC_AS_STACK)
+#define IS_SET(value)               pyro_is_obj_of_type(value, OBJ_MAP_AS_SET)
 
 // Macros for extracting object pointers from Value instances.
 #define AS_OBJ(value)               ((value).as.obj)

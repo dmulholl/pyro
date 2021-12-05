@@ -1717,6 +1717,7 @@ PyroVM* pyro_new_vm() {
     vm->gc_disallows = 0;
     vm->iter_class = NULL;
     vm->stack_class = NULL;
+    vm->set_class = NULL;
 
     // Disable garbage collection until the VM has been fully initialized. This is to avoid the
     // possibility of the GC triggering and panicking if it fails to allocate memory for the
@@ -1740,6 +1741,7 @@ PyroVM* pyro_new_vm() {
     vm->file_class = ObjClass_new(vm);
     vm->iter_class = ObjClass_new(vm);
     vm->stack_class = ObjClass_new(vm);
+    vm->set_class = ObjClass_new(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -1747,7 +1749,7 @@ PyroVM* pyro_new_vm() {
     }
 
     // We need to initialize the interned strings pool before we create any strings.
-    vm->strings = ObjMap_new_weakref(vm);
+    vm->strings = ObjMap_new_as_weakref(vm);
     if (!vm->strings) {
         pyro_free_vm(vm);
         return NULL;

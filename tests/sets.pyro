@@ -1,0 +1,28 @@
+assert !$is_set("foobar");
+
+var foo = $set();
+assert $is_set(foo);
+assert foo:count() == 0;
+assert foo:is_empty();
+
+foo:add("abc");
+foo:add("def");
+foo:add(123);
+foo:add(456);
+
+foo:add("abc");
+foo:add(123);
+
+assert foo:count() == 4;
+assert !foo:is_empty();
+assert foo:contains("abc");
+assert foo:contains(123);
+assert !foo:contains("foo");
+assert !foo:contains(999);
+
+foo:remove("abc");
+foo:remove(123);
+
+assert foo:count() == 2;
+assert !foo:contains("abc");
+assert !foo:contains(123);

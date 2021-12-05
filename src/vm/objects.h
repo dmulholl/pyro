@@ -82,7 +82,8 @@ struct ObjMap {
 };
 
 ObjMap* ObjMap_new(PyroVM* vm);
-ObjMap* ObjMap_new_weakref(PyroVM* vm);
+ObjMap* ObjMap_new_as_weakref(PyroVM* vm);
+ObjMap* ObjMap_new_as_set(PyroVM* vm);
 bool ObjMap_get(ObjMap* map, Value key, Value* value);
 bool ObjMap_remove(ObjMap* map, Value key);
 
@@ -109,6 +110,7 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm);
 // the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
 // new string.
 ObjStr* ObjMap_stringify(ObjMap* map, PyroVM* vm);
+ObjStr* ObjMap_stringify_as_set(ObjMap* map, PyroVM* vm);
 
 /* ------- */
 /* Vectors */

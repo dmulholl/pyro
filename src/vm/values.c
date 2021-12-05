@@ -152,6 +152,11 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
             return ObjMap_stringify(map, vm);
         }
 
+        case OBJ_MAP_AS_SET: {
+            ObjMap* map = (ObjMap*)object;
+            return ObjMap_stringify_as_set(map, vm);
+        }
+
         case OBJ_BUF: {
             ObjBuf* buf = (ObjBuf*)object;
             return ObjStr_copy_raw((char*)buf->bytes, buf->count, vm);
@@ -301,6 +306,11 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
 
         case OBJ_MAP: {
             pyro_out(vm, "<map>");
+            break;
+        }
+
+        case OBJ_MAP_AS_SET: {
+            pyro_out(vm, "<set>");
             break;
         }
 
@@ -454,6 +464,8 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_FN: return "<fn>";
         case OBJ_INSTANCE: return "<instance>";
         case OBJ_MAP: return "<map>";
+        case OBJ_MAP_AS_SET: return "<set>";
+        case OBJ_MAP_AS_WEAKREF: return "<weakref map>";
         case OBJ_MODULE: return "<module>";
         case OBJ_NATIVE_FN: return "<native fn>";
         case OBJ_STR: return "<str>";
@@ -461,7 +473,6 @@ char* pyro_stringify_obj_type(ObjType type) {
         case OBJ_UPVALUE: return "<upvalue>";
         case OBJ_VEC: return "<vec>";
         case OBJ_VEC_AS_STACK: return "<stack>";
-        case OBJ_MAP_AS_WEAKREF: return "<weakref map>";
         case OBJ_ITER: return "<iter>";
     }
 }

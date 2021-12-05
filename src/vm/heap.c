@@ -20,6 +20,7 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->file_class);
     pyro_mark_object(vm, (Obj*)vm->iter_class);
     pyro_mark_object(vm, (Obj*)vm->stack_class);
+    pyro_mark_object(vm, (Obj*)vm->set_class);
 
     // The VM's pool of canned objects.
     pyro_mark_object(vm, (Obj*)vm->empty_error);
@@ -130,6 +131,18 @@ static void blacken_object(PyroVM* vm, Obj* object) {
                 }
                 pyro_mark_value(vm, entry->key);
                 pyro_mark_value(vm, entry->value);
+            }
+            break;
+        }
+
+        case OBJ_MAP_AS_SET: {
+            ObjMap* map = (ObjMap*)object;
+            for (size_t i = 0; i < map->capacity; i++) {
+                MapEntry* entry = &map->entries[i];
+                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+                    continue;
+                }
+                pyro_mark_value(vm, entry->key);
             }
             break;
         }
@@ -314,8 +327,9 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MAP:
-        case OBJ_MAP_AS_WEAKREF: {
+        case OBJ_MAP_AS_WEAKREF:
+        case OBJ_MAP_AS_SET:
+        case OBJ_MAP: {
             ObjMap* map = (ObjMap*)object;
             FREE_ARRAY(vm, MapEntry, map->entries, map->capacity);
             FREE_OBJECT(vm, ObjMap, object);
