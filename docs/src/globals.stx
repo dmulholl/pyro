@@ -255,6 +255,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$is_set(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `set`.
+
+
+
 [[ `$is_stack(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a `stack`.
@@ -365,6 +371,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
     Reads the content of the file at `path` and returns it as a string.
 
     Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+
+
+
+[[ `$set() -> set` ]]
+
+    Creates a new `set` object.
 
 
 

@@ -781,3 +781,35 @@ Stacks have the following methods:
 
     Pushes a value onto the stack.
 
+
+
+### Sets
+
+A set is an unordered collection of distinct objects.
+
+[[ `$set() -> set` ]]
+
+    Creates a new `set` object.
+
+Sets have the following methods:
+
+[[ `:add(item: any)` ]]
+
+    Adds an item to the set.
+    This is a null operation if the set already contains a member equal to `item`.
+
+[[ `:contains(item: any) -> bool` ]]
+
+    Returns `true` if the set contains a member equal to `item`.
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of items in the set.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the set is empty.
+
+[[ `:remove(item: any)` ]]
+
+    Removes `item` from the set.

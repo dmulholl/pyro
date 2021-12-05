@@ -80,6 +80,9 @@
 <li>
 <a href="#stacks">Stacks</a>
 </li>
+<li>
+<a href="#sets">Sets</a>
+</li>
 </ul>
 <h3 id="strings">
 Strings
@@ -1667,6 +1670,80 @@ Panics if the stack is empty.
 <dd>
 <p>
 Pushes a value onto the stack.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="sets">
+Sets
+</h3>
+<p>
+A set is an unordered collection of distinct objects.
+</p>
+<dl>
+<div>
+<dt>
+<code>$set() -&gt; set</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>set</code> object.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Sets have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:add(item: any)</code>
+</dt>
+<dd>
+<p>
+Adds an item to the set.
+This is a null operation if the set already contains a member equal to <code>item</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:contains(item: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the set contains a member equal to <code>item</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of items in the set.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the set is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:remove(item: any)</code>
+</dt>
+<dd>
+<p>
+Removes <code>item</code> from the set.
 </p>
 </dd>
 </div>
