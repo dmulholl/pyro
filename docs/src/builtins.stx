@@ -783,6 +783,35 @@ Stacks have the following methods:
 
 
 
+### Queues
+
+A queue is a FIFO container type that supports only two operations --- *enqueueing* and *dequeueing*.
+
+[[ `$queue() -> queue` ]]
+
+    Creates a new `queue` object.
+
+Queues have the following methods:
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of items in the queue.
+
+[[ `:dequeue() -> any` ]]
+
+    Removes and returns the first item from the queue.
+    Panics if the queue is empty.
+
+[[ `:enqueue(value: any)` ]]
+
+    Adds a new item to the end of the queue.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the queue is empty.
+
+
+
 ### Sets
 
 A set is an unordered collection of distinct objects.

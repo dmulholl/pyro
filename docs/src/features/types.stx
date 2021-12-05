@@ -43,6 +43,8 @@ Annotations for builtin types are as follows:
 * `map`
 * `map[key_type, value_type]`
 * `null`
+* `queue`
+* `queue[type]`
 * `set`
 * `set[type]`
 * `stack`

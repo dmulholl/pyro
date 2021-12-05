@@ -255,6 +255,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$is_queue(arg: any) -> bool` ]]
+
+    Returns `true` if the argument a `queue`.
+
+
+
 [[ `$is_set(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a `set`.
@@ -356,6 +362,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 [[ `$println()` <br> `$println(arg: any)` <br> `$println(format_string: str, arg1: any, arg2: any, ...)` ]]
 
     Like `$print()` but adds a terminating newline.
+
+
+
+[[ `$queue() -> queue` ]]
+
+    Creates a new `queue` object.
 
 
 
