@@ -26,3 +26,16 @@ foo:remove(123);
 assert foo:count() == 2;
 assert !foo:contains("abc");
 assert !foo:contains(123);
+
+
+def $test_make_set_from_iterable() {
+    var foo = $set([1, 2, 3, 1, 2, 3]);
+    assert $is_set(foo);
+    assert foo:count() == 3;
+    assert foo:contains(1);
+
+    var bar = $set("abc":chars());
+    assert $is_set(bar);
+    assert bar:count() == 3;
+    assert bar:contains('a');
+}
