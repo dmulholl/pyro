@@ -131,8 +131,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return constant_instruction(vm, "OP_DEFINE_GLOBAL", fn, ip);
         case OP_DUP:
             return atomic_instruction(vm, "OP_DUP", ip);
-        case OP_DUP2:
-            return atomic_instruction(vm, "OP_DUP2", ip);
+        case OP_DUP_2:
+            return atomic_instruction(vm, "OP_DUP_2", ip);
         case OP_ECHO:
             return u8_instruction(vm, "OP_ECHO", fn, ip);
         case OP_BINARY_EQUAL_EQUAL:

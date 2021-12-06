@@ -998,13 +998,13 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_SET_INDEX);
             } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
-                emit_byte(parser, OP_DUP2);
+                emit_byte(parser, OP_DUP_2);
                 emit_byte(parser, OP_GET_INDEX);
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_BINARY_PLUS);
                 emit_byte(parser, OP_SET_INDEX);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
-                emit_byte(parser, OP_DUP2);
+                emit_byte(parser, OP_DUP_2);
                 emit_byte(parser, OP_GET_INDEX);
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_BINARY_MINUS);

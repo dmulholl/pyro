@@ -1154,6 +1154,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BINARY_PLUS:
         case OP_CLOSE_UPVALUE:
         case OP_DUP:
+        case OP_DUP_2:
         case OP_BINARY_EQUAL_EQUAL:
         case OP_BINARY_SLASH:
         case OP_BINARY_GREATER:
@@ -1177,7 +1178,6 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_TRY:
         case OP_GET_INDEX:
         case OP_SET_INDEX:
-        case OP_DUP2:
         case OP_BINARY_STAR_STAR:
         case OP_BINARY_PERCENT:
         case OP_UNARY_TILDE:

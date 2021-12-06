@@ -599,7 +599,7 @@ static void run(PyroVM* vm) {
             }
 
             // Duplicate the top 2 items on the stack.
-            case OP_DUP2: {
+            case OP_DUP_2: {
                 pyro_push(vm, pyro_peek(vm, 1));
                 pyro_push(vm, pyro_peek(vm, 1));
                 break;
