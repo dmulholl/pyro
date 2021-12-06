@@ -71,7 +71,7 @@ typedef enum {
     OP_BITWISE_NOT,
     OP_BITWISE_XOR,
     OP_BITWISE_AND,
-    OP_BITWISE_OR,
+    OP_BINARY_BAR,
     OP_LSHIFT,
     OP_RSHIFT,
     OP_UNPACK,
