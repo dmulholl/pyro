@@ -1113,7 +1113,7 @@ static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in
 static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     parse_unary_expr(parser, can_assign, can_assign_in_parens);
     while (true) {
-        if (match(parser, TOKEN_XOR)) {
+        if (match(parser, TOKEN_CARET)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_BITWISE_XOR);
         } else if (match(parser, TOKEN_AMP)) {
