@@ -496,12 +496,12 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_BITWISE_NOT: {
+            case OP_UNARY_TILDE: {
                 Value operand = pyro_pop(vm);
                 if (IS_I64(operand)) {
                     pyro_push(vm, I64_VAL(~operand.as.i64));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Bitwise 'not' requires an integer operand.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Bitwise '~' requires an integer operand.");
                 }
                 break;
             }

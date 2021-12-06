@@ -1180,7 +1180,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_DUP2:
         case OP_BINARY_STAR_STAR:
         case OP_BINARY_PERCENT:
-        case OP_BITWISE_NOT:
+        case OP_UNARY_TILDE:
         case OP_BINARY_CARET:
         case OP_BINARY_AMP:
         case OP_BINARY_BAR:
