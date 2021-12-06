@@ -428,6 +428,7 @@ Token pyro_next_token(Lexer* lexer) {
         case '*': return make_token(lexer, match_char(lexer, '*') ? TOKEN_STAR_STAR : TOKEN_STAR);
         case '|': return make_token(lexer, match_char(lexer, '|') ? TOKEN_BAR_BAR : TOKEN_BAR);
         case '?': return make_token(lexer, match_char(lexer, '?') ? TOKEN_HOOK_HOOK: TOKEN_HOOK);
+        case '&': return make_token(lexer, match_char(lexer, '&') ? TOKEN_AMP_AMP: TOKEN_AMP);
 
         case '"': return read_string(lexer);
         case '`': return read_raw_string(lexer);
@@ -457,10 +458,6 @@ Token pyro_next_token(Lexer* lexer) {
             if (match_char(lexer, '=')) return make_token(lexer, TOKEN_BANG_EQUAL);
             if (match_char(lexer, '!')) return make_token(lexer, TOKEN_BANG_BANG);
             return make_token(lexer, TOKEN_BANG);
-    }
-
-    if (c == '&' && match_char(lexer, '&')) {
-        return make_token(lexer, TOKEN_AMP_AMP);
     }
 
     if (lexer->vm->try_depth == 0) {
