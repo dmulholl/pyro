@@ -24,11 +24,11 @@ Operator precedence in the table below goes from high at the top to low at the b
     Comparison       |   `>` `>=` `<` `<=`              |   Left
     Equality         |   `==` `!=`                      |   Left
     Logical          |   `&&` `\|\|` `??` `!!`          |   Left
-    Conditional      |   `?\|`                          |   None
+    Conditional      |   `?:\|`                         |   None
     Assignment       |   `=` `+=` `-=`                  |   Right
 
 
-Note that conditional expressions using the ternary operator `?|` can't be nested. (Checkmate, Satan.)
+Note that conditional expressions using the ternary operator `?:|` can't be nested. (Checkmate, Satan.)
 
 
 
@@ -125,7 +125,7 @@ This means you can use the `&&` operator to conditionally chain a sequence of ex
 The conditional or ternary operator takes three operands. It looks like this:
 
 ::: code pyro
-    var foo = condition ? expr1 | expr2;
+    var foo = condition ? expr1 :| expr2;
 
 The value of the expression is `expr1` if `condition` evaluates as truthy, otherwise `expr2`.
 
