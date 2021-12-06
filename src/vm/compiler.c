@@ -1200,10 +1200,10 @@ static void parse_equality_expr(Parser* parser, bool can_assign, bool can_assign
     while (true) {
         if (match(parser, TOKEN_EQUAL_EQUAL)) {
             parse_comparative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_EQUAL);
+            emit_byte(parser, OP_BINARY_EQUAL_EQUAL);
         } else if (match(parser, TOKEN_BANG_EQUAL)) {
             parse_comparative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_NOT_EQUAL);
+            emit_byte(parser, OP_BINARY_BANG_EQUAL);
         } else {
             break;
         }

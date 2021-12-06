@@ -1154,7 +1154,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BINARY_PLUS:
         case OP_CLOSE_UPVALUE:
         case OP_DUP:
-        case OP_EQUAL:
+        case OP_BINARY_EQUAL_EQUAL:
         case OP_BINARY_SLASH:
         case OP_GREATER:
         case OP_GREATER_EQUAL:
@@ -1169,7 +1169,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BINARY_STAR:
         case OP_UNARY_MINUS:
         case OP_UNARY_BANG:
-        case OP_NOT_EQUAL:
+        case OP_BINARY_BANG_EQUAL:
         case OP_POP:
         case OP_RETURN:
         case OP_BINARY_MINUS:

@@ -135,8 +135,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_DUP2", ip);
         case OP_ECHO:
             return u8_instruction(vm, "OP_ECHO", fn, ip);
-        case OP_EQUAL:
-            return atomic_instruction(vm, "OP_EQUAL", ip);
+        case OP_BINARY_EQUAL_EQUAL:
+            return atomic_instruction(vm, "OP_BINARY_EQUAL_EQUAL", ip);
         case OP_FIELD:
             return constant_instruction(vm, "OP_FIELD", fn, ip);
         case OP_BINARY_SLASH:
@@ -217,8 +217,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_UNARY_MINUS", ip);
         case OP_UNARY_BANG:
             return atomic_instruction(vm, "OP_UNARY_BANG", ip);
-        case OP_NOT_EQUAL:
-            return atomic_instruction(vm, "OP_NOT_EQUAL", ip);
+        case OP_BINARY_BANG_EQUAL:
+            return atomic_instruction(vm, "OP_BINARY_BANG_EQUAL", ip);
         case OP_POP:
             return atomic_instruction(vm, "OP_POP", ip);
         case OP_POP_JUMP_IF_FALSE:

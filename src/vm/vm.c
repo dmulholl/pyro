@@ -629,7 +629,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_EQUAL: {
+            case OP_BINARY_EQUAL_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
                 pyro_push(vm, BOOL_VAL(pyro_check_equal(a, b)));
@@ -1364,7 +1364,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_NOT_EQUAL: {
+            case OP_BINARY_BANG_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
                 pyro_push(vm, BOOL_VAL(!pyro_check_equal(a, b)));
