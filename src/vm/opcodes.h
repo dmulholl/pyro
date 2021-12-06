@@ -70,7 +70,7 @@ typedef enum {
     OP_BINARY_PERCENT,
     OP_BITWISE_NOT,
     OP_BITWISE_XOR,
-    OP_BITWISE_AND,
+    OP_BINARY_AMP,
     OP_BINARY_BAR,
     OP_LSHIFT,
     OP_RSHIFT,

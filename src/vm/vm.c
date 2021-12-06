@@ -474,7 +474,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_BITWISE_AND: {
+            case OP_BINARY_AMP: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {

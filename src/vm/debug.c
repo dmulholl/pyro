@@ -80,8 +80,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_ASSERT", ip);
         case OP_BINARY_PLUS:
             return atomic_instruction(vm, "OP_BINARY_PLUS", ip);
-        case OP_BITWISE_AND:
-            return atomic_instruction(vm, "OP_BITWISE_AND", ip);
+        case OP_BINARY_AMP:
+            return atomic_instruction(vm, "OP_BINARY_AMP", ip);
         case OP_BITWISE_NOT:
             return atomic_instruction(vm, "OP_BITWISE_NOT", ip);
         case OP_BINARY_BAR:
