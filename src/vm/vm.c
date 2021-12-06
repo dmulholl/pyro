@@ -480,7 +480,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 & b.as.i64));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to 'and' must both be integers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '&' must both be integers.");
                 }
                 break;
             }
@@ -506,13 +506,13 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_BITWISE_XOR: {
+            case OP_BINARY_CARET: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, I64_VAL(a.as.i64 ^ b.as.i64));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to 'xor' must both be integers.");
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '^' must both be integers.");
                 }
                 break;
             }
@@ -1155,7 +1155,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_LSHIFT: {
+            case OP_BINARY_LESS_LESS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {
@@ -1418,7 +1418,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_RSHIFT: {
+            case OP_BINARY_GREATER_GREATER: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
                 if (IS_I64(a) && IS_I64(b)) {

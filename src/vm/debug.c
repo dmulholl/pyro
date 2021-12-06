@@ -86,8 +86,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BITWISE_NOT", ip);
         case OP_BINARY_BAR:
             return atomic_instruction(vm, "OP_BINARY_BAR", ip);
-        case OP_BITWISE_XOR:
-            return atomic_instruction(vm, "OP_BITWISE_XOR", ip);
+        case OP_BINARY_CARET:
+            return atomic_instruction(vm, "OP_BINARY_CARET", ip);
         case OP_CALL:
             return u8_instruction(vm, "OP_CALL", fn, ip);
         case OP_CLASS:
@@ -201,8 +201,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_LOAD_TRUE", ip);
         case OP_LOOP:
             return jump_instruction(vm, "OP_LOOP", -1, fn, ip);
-        case OP_LSHIFT:
-            return atomic_instruction(vm, "OP_LSHIFT", ip);
+        case OP_BINARY_LESS_LESS:
+            return atomic_instruction(vm, "OP_BINARY_LESS_LESS", ip);
         case OP_MAKE_MAP:
             return u16_instruction(vm, "OP_MAKE_MAP", fn, ip);
         case OP_MAKE_VEC:
@@ -227,8 +227,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BINARY_STAR_STAR", ip);
         case OP_RETURN:
             return atomic_instruction(vm, "OP_RETURN", ip);
-        case OP_RSHIFT:
-            return atomic_instruction(vm, "OP_RSHIFT", ip);
+        case OP_BINARY_GREATER_GREATER:
+            return atomic_instruction(vm, "OP_BINARY_GREATER_GREATER", ip);
         case OP_SET_FIELD:
             return constant_instruction(vm, "OP_SET_FIELD", fn, ip);
         case OP_SET_GLOBAL:

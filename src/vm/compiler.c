@@ -1115,7 +1115,7 @@ static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_
     while (true) {
         if (match(parser, TOKEN_CARET)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BITWISE_XOR);
+            emit_byte(parser, OP_BINARY_CARET);
         } else if (match(parser, TOKEN_AMP)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_BINARY_AMP);
@@ -1124,10 +1124,10 @@ static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_
             emit_byte(parser, OP_BINARY_BAR);
         } else if (match(parser, TOKEN_LESS_LESS)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_LSHIFT);
+            emit_byte(parser, OP_BINARY_LESS_LESS);
         } else if (match(parser, TOKEN_GREATER_GREATER)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_RSHIFT);
+            emit_byte(parser, OP_BINARY_GREATER_GREATER);
         } else {
             break;
         }

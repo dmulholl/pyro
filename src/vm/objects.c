@@ -1181,11 +1181,11 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BINARY_STAR_STAR:
         case OP_BINARY_PERCENT:
         case OP_BITWISE_NOT:
-        case OP_BITWISE_XOR:
+        case OP_BINARY_CARET:
         case OP_BINARY_AMP:
         case OP_BINARY_BAR:
-        case OP_LSHIFT:
-        case OP_RSHIFT:
+        case OP_BINARY_LESS_LESS:
+        case OP_BINARY_GREATER_GREATER:
             return 0;
 
         case OP_CALL:
