@@ -392,9 +392,10 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$set() -> set` ]]
+[[ `$set() -> set` <br> `$set(arg: iterable) -> set` ]]
 
     Creates a new `set` object.
+    If `arg` is iterable, initializes the new set by iterating over its values.
 
 
 

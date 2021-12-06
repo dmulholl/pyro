@@ -820,9 +820,16 @@ Queues have the following methods:
 
 A set is an unordered collection of distinct objects.
 
-[[ `$set() -> set` ]]
+[[ `$set() -> set` <br> `$set(arg: iterable) -> set` ]]
 
     Creates a new `set` object.
+    If `arg` is iterable, initializes the new set by iterating over its values.
+
+Alternatively, you can create a set by draining an iterator, e.g.
+
+::: code pyro
+    var chars = "supercalifragilistic":chars():to_set();
+    assert chars:count() == 12;
 
 Sets have the following methods:
 

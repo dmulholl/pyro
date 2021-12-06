@@ -686,11 +686,12 @@ Panics if the argument is invalid, if the file cannot be opened, if an I/O read 
 </div>
 <div>
 <dt>
-<code>$set() -&gt; set</code>
+<code>$set() -&gt; set</code> <br> <code>$set(arg: iterable) -&gt; set</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>set</code> object.
+If <code>arg</code> is iterable, initializes the new set by iterating over its values.
 </p>
 </dd>
 </div>

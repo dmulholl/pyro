@@ -1760,15 +1760,23 @@ A set is an unordered collection of distinct objects.
 <dl>
 <div>
 <dt>
-<code>$set() -&gt; set</code>
+<code>$set() -&gt; set</code> <br> <code>$set(arg: iterable) -&gt; set</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>set</code> object.
+If <code>arg</code> is iterable, initializes the new set by iterating over its values.
 </p>
 </dd>
 </div>
 </dl>
+<p>
+Alternatively, you can create a set by draining an iterator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">chars</span> <span class="p">=</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">chars</span><span class="p">:</span><span class="nx">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">12</span><span class="p">;</span>
+</pre>
 <p>
 Sets have the following methods:
 </p>
