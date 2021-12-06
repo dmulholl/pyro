@@ -73,7 +73,7 @@ def $test_init_with_vec() {
 }
 
 
-def $test_stress() {
+def $test_stress_allocation() {
     var vec = $vec();
 
     for i in $range(1000) {
@@ -88,9 +88,7 @@ def $test_stress() {
 
 def $test_reverse() {
     var vec = [123, 456, 789];
-
     vec = vec:reverse();
-
     assert vec[0] == 789;
     assert vec[1] == 456;
     assert vec[2] == 123;
@@ -99,9 +97,7 @@ def $test_reverse() {
 
 def $test_copy() {
     var vec = [123, 456, 789];
-
     var copy = vec:copy();
-
     assert copy:count() == 3;
     assert copy[0] == 123;
     assert copy[1] == 456;

@@ -19,52 +19,47 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     else if (arg_count == 1) {
+        // Does the object have an :$iter() method?
         Value iter_method = pyro_get_method(args[0], vm->str_iter);
         if (IS_NULL(iter_method)) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $vec() is not iterable.");
             return NULL_VAL();
         }
 
-        pyro_push(vm, args[0]);
+        // Call the object's :$iter() method to get an iterator.
+        pyro_push(vm, args[0]); // receiver for the $iter() method call
         Value iterator = pyro_call_method(vm, iter_method, 0);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
-        pyro_push(vm, iterator); // keep safe from the GC
+        pyro_push(vm, iterator); // protect from GC
 
+        // Get the iterator's :$next() method.
         Value next_method = pyro_get_method(iterator, vm->str_next);
         if (IS_NULL(next_method)) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
             return NULL_VAL();
         }
-        pyro_push(vm, next_method); // keep safe from the GC
+        pyro_push(vm, next_method); // protect from GC
 
         ObjVec* vec = ObjVec_new(vm);
         if (!vec) {
-            pyro_pop(vm); // next_method
-            pyro_pop(vm); // iterator
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
         }
-        pyro_push(vm, OBJ_VAL(vec)); // keep safe from the GC
+        pyro_push(vm, OBJ_VAL(vec)); // protect from GC
 
         while (true) {
-            pyro_push(vm, iterator);
+            pyro_push(vm, iterator); // receiver for the :$next() method call
             Value next_value = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
                 return NULL_VAL();
             }
-
             if (IS_ERR(next_value)) {
                 break;
             }
-
-            pyro_push(vm, next_value);
+            pyro_push(vm, next_value); // protect from GC
             if (!ObjVec_append(vec, next_value, vm)) {
-                pyro_pop(vm); // next_value
-                pyro_pop(vm); // vec
-                pyro_pop(vm); // next_method
-                pyro_pop(vm); // iterator
                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                 return NULL_VAL();
             }

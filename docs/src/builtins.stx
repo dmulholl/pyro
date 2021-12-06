@@ -594,6 +594,10 @@ Iterator wrappers have the following methods:
 
     Note that this method needs to buffer the iterator's full output to determine the end point.
 
+[[ `:to_set() -> set` ]]
+
+    Drains the iterator into a new set.
+
 [[ `:to_vec() -> vec` ]]
 
     Drains the iterator into a new vector.
