@@ -102,3 +102,12 @@ def $test_skip_last() {
     assert vec[0] == 0;
     assert vec[1] == 1;
 }
+
+
+def $test_to_set() {
+    var set = "abcabcabc":chars():to_set();
+    assert $is_set(set);
+    assert set:count() == 3;
+    assert set:contains('a');
+    assert !set:contains('z');
+}

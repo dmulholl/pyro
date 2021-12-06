@@ -120,24 +120,56 @@ static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_push(vm, OBJ_VAL(vec));
 
     while (true) {
-        Value value = ObjIter_next(iter, vm);
+        Value next_value = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
-        if (IS_ERR(value)) {
+        if (IS_ERR(next_value)) {
             break;
         }
 
-        pyro_push(vm, value);
-        if (!ObjVec_append(vec, value, vm)) {
+        pyro_push(vm, next_value);
+        if (!ObjVec_append(vec, next_value, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
         }
-        pyro_pop(vm); // value
+        pyro_pop(vm); // next_value
     }
 
     pyro_pop(vm); // vec
     return OBJ_VAL(vec);
+}
+
+
+static Value iter_to_set(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+
+    ObjMap* map = ObjMap_new_as_set(vm);
+    if (!map) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(map));
+
+    while (true) {
+        Value next_value = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        if (IS_ERR(next_value)) {
+            break;
+        }
+
+        pyro_push(vm, next_value);
+        if (ObjMap_set(map, next_value, NULL_VAL(), vm) == 0) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL_VAL();
+        }
+        pyro_pop(vm); // next_value
+    }
+
+    pyro_pop(vm); // map
+    return OBJ_VAL(map);
 }
 
 
@@ -320,6 +352,7 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "map", iter_map, 1);
     pyro_define_method(vm, vm->iter_class, "filter", iter_filter, 1);
     pyro_define_method(vm, vm->iter_class, "to_vec", iter_to_vec, 0);
+    pyro_define_method(vm, vm->iter_class, "to_set", iter_to_set, 0);
     pyro_define_method(vm, vm->iter_class, "enum", iter_enum, -1);
     pyro_define_method(vm, vm->iter_class, "skip_first", iter_skip_first, 1);
     pyro_define_method(vm, vm->iter_class, "skip_last", iter_skip_last, 1);

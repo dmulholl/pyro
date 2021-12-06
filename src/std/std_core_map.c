@@ -37,7 +37,7 @@ static Value map_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    if (!ObjMap_set(map, args[0], args[1], vm)) {
+    if (ObjMap_set(map, args[0], args[1], vm) == 0) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
     }
     return NULL_VAL();
@@ -128,7 +128,7 @@ static Value fn_is_set(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value set_add(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    if (!ObjMap_set(map, args[0], NULL_VAL(), vm)) {
+    if (ObjMap_set(map, args[0], NULL_VAL(), vm) == 0) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
     }
     return NULL_VAL();
