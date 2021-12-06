@@ -775,7 +775,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_GREATER: {
+            case OP_BINARY_GREATER: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
@@ -808,7 +808,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_GREATER_EQUAL: {
+            case OP_BINARY_GREATER_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
@@ -1065,7 +1065,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_LESS: {
+            case OP_BINARY_LESS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
@@ -1098,7 +1098,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_LESS_EQUAL: {
+            case OP_BINARY_LESS_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 

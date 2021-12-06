@@ -157,10 +157,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return constant_instruction(vm, "OP_GET_SUPER_METHOD", fn, ip);
         case OP_GET_UPVALUE:
             return u8_instruction(vm, "OP_GET_UPVALUE", fn, ip);
-        case OP_GREATER:
-            return atomic_instruction(vm, "OP_GREATER", ip);
-        case OP_GREATER_EQUAL:
-            return atomic_instruction(vm, "OP_GREATER_EQUAL", ip);
+        case OP_BINARY_GREATER:
+            return atomic_instruction(vm, "OP_BINARY_GREATER", ip);
+        case OP_BINARY_GREATER_EQUAL:
+            return atomic_instruction(vm, "OP_BINARY_GREATER_EQUAL", ip);
         case OP_IMPORT_MODULE:
             return u8_instruction(vm, "OP_IMPORT_MODULE", fn, ip);
         case OP_IMPORT_MEMBERS:
@@ -187,10 +187,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return jump_instruction(vm, "OP_JUMP_IF_NOT_NULL", 1, fn, ip);
         case OP_JUMP_IF_TRUE:
             return jump_instruction(vm, "OP_JUMP_IF_TRUE", 1, fn, ip);
-        case OP_LESS:
-            return atomic_instruction(vm, "OP_LESS", ip);
-        case OP_LESS_EQUAL:
-            return atomic_instruction(vm, "OP_LESS_EQUAL", ip);
+        case OP_BINARY_LESS:
+            return atomic_instruction(vm, "OP_BINARY_LESS", ip);
+        case OP_BINARY_LESS_EQUAL:
+            return atomic_instruction(vm, "OP_BINARY_LESS_EQUAL", ip);
         case OP_LOAD_CONSTANT:
             return constant_instruction(vm, "OP_LOAD_CONSTANT", fn, ip);
         case OP_LOAD_FALSE:

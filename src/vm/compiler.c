@@ -1178,16 +1178,16 @@ static void parse_comparative_expr(Parser* parser, bool can_assign, bool can_ass
     while (true) {
         if (match(parser, TOKEN_GREATER)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_GREATER);
+            emit_byte(parser, OP_BINARY_GREATER);
         } else if (match(parser, TOKEN_GREATER_EQUAL)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_GREATER_EQUAL);
+            emit_byte(parser, OP_BINARY_GREATER_EQUAL);
         } else if (match(parser, TOKEN_LESS)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_LESS);
+            emit_byte(parser, OP_BINARY_LESS);
         } else if (match(parser, TOKEN_LESS_EQUAL)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_LESS_EQUAL);
+            emit_byte(parser, OP_BINARY_LESS_EQUAL);
         } else {
             break;
         }
