@@ -17,18 +17,18 @@ Operator precedence in the table below goes from high at the top to low at the b
 
     Call             |   `()` `.` `:` `::`              |   Left
     Power            |   `**`                           |   Right
-    Unary            |   `!` `-` `try` `not`            |   Right
-    Bitwise          |   `and` `\|` `xor` `>>` `<<`     |   Left
+    Unary            |   `!` `-` `~` `try`              |   Right
+    Bitwise          |   `&` `\|` `^` `>>` `<<`         |   Left
     Multiplication   |   `*` `/` `//` `%`               |   Left
     Addition         |   `+` `-`                        |   Left
     Comparison       |   `>` `>=` `<` `<=`              |   Left
     Equality         |   `==` `!=`                      |   Left
     Logical          |   `&&` `\|\|` `??` `!!`          |   Left
-    Conditional      |   `?:\|`                         |   None
+    Conditional      |   `? :\|`                        |   None
     Assignment       |   `=` `+=` `-=`                  |   Right
 
 
-Note that conditional expressions using the ternary operator `?:|` can't be nested. (Checkmate, Satan.)
+Note that conditional expressions using the ternary operator `? :|` can't be nested. (Checkmate, Satan.)
 
 
 

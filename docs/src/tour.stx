@@ -290,10 +290,10 @@ As you'd expect, they support optional `else if` and `else` clauses:
         echo "we're poor";
     }
 
-Pyro also has support for conditional expressions using the ternary operator `?|`:
+Pyro also has support for conditional expressions using the ternary operator `? :|`:
 
 ::: code pyro
-    var status = money > 100 ? "rich" | "poor";
+    var status = money > 100 ? "rich" :| "poor";
 
 
 

@@ -18,7 +18,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.4.11</p>
+                <p class="version">Version 0.5.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -109,7 +109,7 @@ Left
 Power
 </td>
 <td>
-<code>^</code>
+<code>**</code>
 </td>
 <td>
 Right
@@ -120,7 +120,7 @@ Right
 Unary
 </td>
 <td>
-<code>!</code> <code>-</code> <code>try</code> <code>not</code>
+<code>!</code> <code>-</code> <code>~</code> <code>try</code>
 </td>
 <td>
 Right
@@ -131,7 +131,7 @@ Right
 Bitwise
 </td>
 <td>
-<code>and</code> <code>or</code> <code>xor</code> <code>&gt;&gt;</code> <code>&lt;&lt;</code>
+<code>&amp;</code> <code>|</code> <code>^</code> <code>&gt;&gt;</code> <code>&lt;&lt;</code>
 </td>
 <td>
 Left
@@ -197,7 +197,7 @@ Left
 Conditional
 </td>
 <td>
-<code>?|</code>
+<code>? :|</code>
 </td>
 <td>
 None
@@ -217,7 +217,7 @@ Right
 </tbody>
 </table>
 <p>
-Note that conditional expressions using the ternary operator <code>?|</code> can't be nested. (Checkmate, Satan.)
+Note that conditional expressions using the ternary operator <code>? :|</code> can't be nested. (Checkmate, Satan.)
 </p>
 <h3 id="mathematical-operators">
 Mathematical Operators
@@ -406,7 +406,7 @@ The Conditional Operator
 The conditional or ternary operator takes three operands. It looks like this:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">condition</span> <span class="o">?</span> <span class="nx">expr1</span> <span class="o">|</span> <span class="nx">expr2</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">condition</span> <span class="o">?</span> <span class="nx">expr1</span> <span class="p">:</span><span class="o">|</span> <span class="nx">expr2</span><span class="p">;</span>
 </pre>
 <p>
 The value of the expression is <code>expr1</code> if <code>condition</code> evaluates as truthy, otherwise <code>expr2</code>.

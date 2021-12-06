@@ -45,7 +45,7 @@ Getting concurrency right is a tough challenge and not one I'm in a rush to tack
 String interpolation for double-quoted strings is planned but not yet implemented. The syntax will be:
 
 ::: code pyro
-    echo "string with ${expr|fmt_spec} interpolations";
+    echo "string with ${expr:|fmt_spec} interpolations";
 
 For example:
 
@@ -59,6 +59,6 @@ Or:
 ::: code pyro
     var foo = 123;
     var bar = 456.789
-    echo "${foo|%04i} and ${bar|%.2f}"; # "0123 and 456.79"
+    echo "${foo:|%04i} and ${bar:|%.2f}"; # "0123 and 456.79"
 
 Interpolation syntax will be backwards-compatible with the existing string-formatting syntax.
