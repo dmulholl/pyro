@@ -425,7 +425,6 @@ Token pyro_next_token(Lexer* lexer) {
         case '+': return make_token(lexer, match_char(lexer, '=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
         case '/': return make_token(lexer, match_char(lexer, '/') ? TOKEN_SLASH_SLASH : TOKEN_SLASH);
         case '=': return make_token(lexer, match_char(lexer, '=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
-        case ':': return make_token(lexer, match_char(lexer, ':') ? TOKEN_COLON_COLON : TOKEN_COLON);
         case '*': return make_token(lexer, match_char(lexer, '*') ? TOKEN_STAR_STAR : TOKEN_STAR);
         case '|': return make_token(lexer, match_char(lexer, '|') ? TOKEN_BAR_BAR : TOKEN_BAR);
         case '?': return make_token(lexer, match_char(lexer, '?') ? TOKEN_HOOK_HOOK: TOKEN_HOOK);
@@ -433,6 +432,11 @@ Token pyro_next_token(Lexer* lexer) {
         case '"': return read_string(lexer);
         case '`': return read_raw_string(lexer);
         case '\'': return read_char_literal(lexer);
+
+        case ':':
+            if (match_char(lexer, ':')) return make_token(lexer, TOKEN_COLON_COLON);
+            if (match_char(lexer, '|')) return make_token(lexer, TOKEN_COLON_BAR);
+            return make_token(lexer, TOKEN_COLON);
 
         case '-':
             if (match_char(lexer, '=')) return make_token(lexer, TOKEN_MINUS_EQUAL);

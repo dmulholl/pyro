@@ -1250,7 +1250,7 @@ static void parse_conditional_expr(Parser* parser, bool can_assign, bool can_ass
         emit_byte(parser, OP_POP);
         parse_logical_expr(parser, false, can_assign_in_parens);
         size_t jump_to_end = emit_jump(parser, OP_JUMP);
-        consume(parser, TOKEN_BAR, "Expected '|' after condition.");
+        consume(parser, TOKEN_COLON_BAR, "Expected ':|' after condition.");
         patch_jump(parser, jump_to_false_branch);
         emit_byte(parser, OP_POP);
         parse_logical_expr(parser, false, can_assign_in_parens);

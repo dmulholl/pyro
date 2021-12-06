@@ -1,5 +1,5 @@
-var foo = true ? "true branch" | "false branch";
+var foo = true ? "true branch" :| "false branch";
 assert foo == "true branch";
 
-var bar = false ? "true branch" | "false branch";
+var bar = false ? "true branch" :| "false branch";
 assert bar == "false branch";
