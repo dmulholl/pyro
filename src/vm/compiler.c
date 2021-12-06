@@ -1094,7 +1094,7 @@ static void parse_power_expr(Parser* parser, bool can_assign, bool can_assign_in
 static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     if (match(parser, TOKEN_MINUS)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
-        emit_byte(parser, OP_NEGATE);
+        emit_byte(parser, OP_UNARY_MINUS);
     } else if (match(parser, TOKEN_BANG)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
         emit_byte(parser, OP_LOGICAL_NOT);

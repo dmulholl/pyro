@@ -1343,7 +1343,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_NEGATE: {
+            case OP_UNARY_MINUS: {
                 Value operand = pyro_pop(vm);
                 switch (operand.type) {
                     case VAL_I64:

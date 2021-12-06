@@ -34,7 +34,7 @@ typedef enum {
     OP_BINARY_SLASH,
     OP_BINARY_SLASH_SLASH,
     OP_LOGICAL_NOT,
-    OP_NEGATE,
+    OP_UNARY_MINUS,
     OP_ECHO,
     OP_JUMP,
     OP_JUMP_IF_FALSE,
