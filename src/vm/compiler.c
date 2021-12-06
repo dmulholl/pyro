@@ -1084,9 +1084,9 @@ static void parse_try_expr(Parser* parser) {
 
 static void parse_power_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     parse_call_expr(parser, can_assign, can_assign_in_parens);
-    if (match(parser, TOKEN_CARET)) {
+    if (match(parser, TOKEN_STAR_STAR)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
-        emit_byte(parser, OP_POWER);
+        emit_byte(parser, OP_BINARY_STAR_STAR);
     }
 }
 

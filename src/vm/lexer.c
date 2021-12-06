@@ -420,6 +420,7 @@ Token pyro_next_token(Lexer* lexer) {
         case '.': return make_token(lexer, TOKEN_DOT);
         case '^': return make_token(lexer, TOKEN_CARET);
         case '%': return make_token(lexer, TOKEN_PERCENT);
+        case '~': return make_token(lexer, TOKEN_TILDE);
 
         case '+': return make_token(lexer, match_char(lexer, '=') ? TOKEN_PLUS_EQUAL : TOKEN_PLUS);
         case '/': return make_token(lexer, match_char(lexer, '/') ? TOKEN_SLASH_SLASH : TOKEN_SLASH);

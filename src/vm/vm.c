@@ -1383,7 +1383,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_POWER: {
+            case OP_BINARY_STAR_STAR: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 

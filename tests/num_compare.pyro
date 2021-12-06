@@ -53,8 +53,8 @@ assert $num_compare(-5.5, -6) == 1;
 assert $num_compare($std::math::inf, 123) == 1;
 assert $num_compare(-$std::math::inf, 123) == -1;
 
-assert $num_compare(2.0 ^ 65, 123) == 1;
-assert $num_compare(-(2.0 ^ 65), 123) == -1;
+assert $num_compare(2.0 ** 65, 123) == 1;
+assert $num_compare(-(2.0 ** 65), 123) == -1;
 
 assert $num_eq(123, 123.0);
 assert !$num_eq(123, 123.1);

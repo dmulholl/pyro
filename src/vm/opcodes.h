@@ -66,7 +66,7 @@ typedef enum {
     OP_GET_INDEX,
     OP_SET_INDEX,
     OP_DUP2,
-    OP_POWER,
+    OP_BINARY_STAR_STAR,
     OP_MODULO,
     OP_BITWISE_NOT,
     OP_BITWISE_XOR,

@@ -1178,7 +1178,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_GET_INDEX:
         case OP_SET_INDEX:
         case OP_DUP2:
-        case OP_POWER:
+        case OP_BINARY_STAR_STAR:
         case OP_MODULO:
         case OP_BITWISE_NOT:
         case OP_BITWISE_XOR:
