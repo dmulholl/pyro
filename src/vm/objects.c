@@ -1159,8 +1159,8 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BINARY_GREATER:
         case OP_BINARY_GREATER_EQUAL:
         case OP_INHERIT:
-        case OP_ITER:
-        case OP_ITER_NEXT:
+        case OP_GET_ITERATOR_OBJECT:
+        case OP_GET_ITERATOR_NEXT_VALUE:
         case OP_BINARY_LESS:
         case OP_BINARY_LESS_EQUAL:
         case OP_LOAD_FALSE:

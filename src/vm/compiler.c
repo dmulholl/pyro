@@ -1582,7 +1582,7 @@ static void parse_for_in_stmt(Parser* parser) {
     consume(parser, TOKEN_LEFT_BRACE, "Expected '{' before the loop body.");
 
     // Replace the object on top of the stack with the result of calling :$iter() on it.
-    emit_byte(parser, OP_ITER);
+    emit_byte(parser, OP_GET_ITERATOR_OBJECT);
     add_local(parser, syntoken("*iterator*"));
 
     // This is the point in the bytecode the loop will jump back to.
@@ -1593,7 +1593,7 @@ static void parse_for_in_stmt(Parser* parser) {
     loop.enclosing = parser->compiler->loop_compiler;
     parser->compiler->loop_compiler = &loop;
 
-    emit_byte(parser, OP_ITER_NEXT);
+    emit_byte(parser, OP_GET_ITERATOR_NEXT_VALUE);
     size_t exit_jump_index = emit_jump(parser, OP_JUMP_IF_ERR);
 
     begin_scope(parser);

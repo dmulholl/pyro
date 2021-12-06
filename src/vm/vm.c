@@ -997,7 +997,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_ITER: {
+            case OP_GET_ITERATOR_OBJECT: {
                 if (pyro_has_method(pyro_peek(vm, 0), vm->str_iter)) {
                     invoke_method(vm, vm->str_iter, 0);
                     frame = &vm->frames[vm->frame_count - 1];
@@ -1007,7 +1007,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_ITER_NEXT: {
+            case OP_GET_ITERATOR_NEXT_VALUE: {
                 if (IS_ITER(pyro_peek(vm, 0))) {
                     Value next_value = ObjIter_next(AS_ITER(pyro_peek(vm, 0)), vm);
                     pyro_push(vm, next_value);
