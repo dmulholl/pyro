@@ -1119,7 +1119,7 @@ static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_
         } else if (match(parser, TOKEN_AND)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_BITWISE_AND);
-        } else if (match(parser, TOKEN_OR)) {
+        } else if (match(parser, TOKEN_BAR)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_BITWISE_OR);
         } else if (match(parser, TOKEN_LESS_LESS)) {
