@@ -33,7 +33,7 @@ typedef enum {
     OP_BINARY_STAR,
     OP_BINARY_SLASH,
     OP_BINARY_SLASH_SLASH,
-    OP_LOGICAL_NOT,
+    OP_UNARY_BANG,
     OP_UNARY_MINUS,
     OP_ECHO,
     OP_JUMP,

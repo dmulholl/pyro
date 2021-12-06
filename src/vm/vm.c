@@ -1358,7 +1358,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_LOGICAL_NOT: {
+            case OP_UNARY_BANG: {
                 Value operand = pyro_pop(vm);
                 pyro_push(vm, BOOL_VAL(!pyro_is_truthy(operand)));
                 break;
