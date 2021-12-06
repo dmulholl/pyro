@@ -42,7 +42,7 @@ Note that conditional expressions using the ternary operator `? :|` can't be nes
     /       | Floating-point division. Both operands will be converted to floats and the result will be a float.
     //      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
     %       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
-    ^       | Power operator. Both operands are converted to floats and the result is a float.
+    **      | Power operator. Both operands are converted to floats and the result is a float.
 
 
 
