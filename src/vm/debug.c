@@ -78,8 +78,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
     switch (instruction) {
         case OP_ASSERT:
             return atomic_instruction(vm, "OP_ASSERT", ip);
-        case OP_ADD:
-            return atomic_instruction(vm, "OP_ADD", ip);
+        case OP_BINARY_PLUS:
+            return atomic_instruction(vm, "OP_BINARY_PLUS", ip);
         case OP_BITWISE_AND:
             return atomic_instruction(vm, "OP_BITWISE_AND", ip);
         case OP_BITWISE_NOT:
@@ -139,8 +139,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_EQUAL", ip);
         case OP_FIELD:
             return constant_instruction(vm, "OP_FIELD", fn, ip);
-        case OP_FLOAT_DIV:
-            return atomic_instruction(vm, "OP_FLOAT_DIV", ip);
+        case OP_BINARY_SLASH:
+            return atomic_instruction(vm, "OP_BINARY_SLASH", ip);
         case OP_GET_FIELD:
             return constant_instruction(vm, "OP_GET_FIELD", fn, ip);
         case OP_GET_GLOBAL:
@@ -209,10 +209,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u16_instruction(vm, "OP_MAKE_VEC", fn, ip);
         case OP_METHOD:
             return constant_instruction(vm, "OP_METHOD", fn, ip);
-        case OP_MODULO:
+        case OP_BINARY_PERCENT:
             return atomic_instruction(vm, "OP_MOD", ip);
-        case OP_MULTIPLY:
-            return atomic_instruction(vm, "OP_MULTIPLY", ip);
+        case OP_BINARY_STAR:
+            return atomic_instruction(vm, "OP_BINARY_STAR", ip);
         case OP_NEGATE:
             return atomic_instruction(vm, "OP_NEGATE", ip);
         case OP_LOGICAL_NOT:
@@ -241,8 +241,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u8_instruction(vm, "OP_SET_UPVALUE", fn, ip);
         case OP_SUBTRACT:
             return atomic_instruction(vm, "OP_SUBTRACT", ip);
-        case OP_TRUNC_DIV:
-            return atomic_instruction(vm, "OP_TRUNC_DIV", ip);
+        case OP_BINARY_SLASH_SLASH:
+            return atomic_instruction(vm, "OP_BINARY_SLASH_SLASH", ip);
         case OP_TRY:
             return atomic_instruction(vm, "OP_TRY", ip);
         case OP_UNPACK:

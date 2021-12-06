@@ -1151,11 +1151,11 @@ int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
 size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
     switch (fn->code[ip]) {
         case OP_ASSERT:
-        case OP_ADD:
+        case OP_BINARY_PLUS:
         case OP_CLOSE_UPVALUE:
         case OP_DUP:
         case OP_EQUAL:
-        case OP_FLOAT_DIV:
+        case OP_BINARY_SLASH:
         case OP_GREATER:
         case OP_GREATER_EQUAL:
         case OP_INHERIT:
@@ -1166,20 +1166,20 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_LOAD_FALSE:
         case OP_LOAD_NULL:
         case OP_LOAD_TRUE:
-        case OP_MULTIPLY:
+        case OP_BINARY_STAR:
         case OP_NEGATE:
         case OP_LOGICAL_NOT:
         case OP_NOT_EQUAL:
         case OP_POP:
         case OP_RETURN:
         case OP_SUBTRACT:
-        case OP_TRUNC_DIV:
+        case OP_BINARY_SLASH_SLASH:
         case OP_TRY:
         case OP_GET_INDEX:
         case OP_SET_INDEX:
         case OP_DUP2:
         case OP_BINARY_STAR_STAR:
-        case OP_MODULO:
+        case OP_BINARY_PERCENT:
         case OP_BITWISE_NOT:
         case OP_BITWISE_XOR:
         case OP_BITWISE_AND:

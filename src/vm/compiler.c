@@ -642,7 +642,7 @@ static void parse_variable(Parser* parser, bool can_assign) {
     } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
         get_named_variable(parser, name);
         parse_expression(parser, true, true);
-        emit_byte(parser, OP_ADD);
+        emit_byte(parser, OP_BINARY_PLUS);
         set_named_variable(parser, name);
 
     } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
@@ -1001,7 +1001,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 emit_byte(parser, OP_DUP2);
                 emit_byte(parser, OP_GET_INDEX);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_ADD);
+                emit_byte(parser, OP_BINARY_PLUS);
                 emit_byte(parser, OP_SET_INDEX);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
                 emit_byte(parser, OP_DUP2);
@@ -1024,7 +1024,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 emit_byte(parser, OP_DUP);
                 emit_op_u16(parser, OP_GET_FIELD, index);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_ADD);
+                emit_byte(parser, OP_BINARY_PLUS);
                 emit_op_u16(parser, OP_SET_FIELD, index);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
                 emit_byte(parser, OP_DUP);
@@ -1140,16 +1140,16 @@ static void parse_multiplicative_expr(Parser* parser, bool can_assign, bool can_
     while (true) {
         if (match(parser, TOKEN_STAR)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_MULTIPLY);
+            emit_byte(parser, OP_BINARY_STAR);
         } else if (match(parser, TOKEN_SLASH)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_FLOAT_DIV);
+            emit_byte(parser, OP_BINARY_SLASH);
         } else if (match(parser, TOKEN_SLASH_SLASH)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_TRUNC_DIV);
+            emit_byte(parser, OP_BINARY_SLASH_SLASH);
         } else if (match(parser, TOKEN_PERCENT)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_MODULO);
+            emit_byte(parser, OP_BINARY_PERCENT);
         } else {
             break;
         }
@@ -1162,7 +1162,7 @@ static void parse_additive_expr(Parser* parser, bool can_assign, bool can_assign
     while (true) {
         if (match(parser, TOKEN_PLUS)) {
             parse_multiplicative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_ADD);
+            emit_byte(parser, OP_BINARY_PLUS);
         } else if (match(parser, TOKEN_MINUS)) {
             parse_multiplicative_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_SUBTRACT);

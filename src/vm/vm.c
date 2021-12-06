@@ -361,7 +361,7 @@ static void run(PyroVM* vm) {
         uint8_t instruction;
         switch (instruction = READ_BYTE()) {
 
-            case OP_ADD: {
+            case OP_BINARY_PLUS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
@@ -636,7 +636,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_FLOAT_DIV: {
+            case OP_BINARY_SLASH: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
@@ -1225,7 +1225,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_MODULO: {
+            case OP_BINARY_PERCENT: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
@@ -1260,7 +1260,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_MULTIPLY: {
+            case OP_BINARY_STAR: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
@@ -1515,7 +1515,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_TRUNC_DIV: {
+            case OP_BINARY_SLASH_SLASH: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 
