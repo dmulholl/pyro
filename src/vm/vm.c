@@ -1496,7 +1496,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_SUBTRACT: {
+            case OP_BINARY_MINUS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
 

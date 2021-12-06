@@ -239,8 +239,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u8_instruction(vm, "OP_SET_LOCAL", fn, ip);
         case OP_SET_UPVALUE:
             return u8_instruction(vm, "OP_SET_UPVALUE", fn, ip);
-        case OP_SUBTRACT:
-            return atomic_instruction(vm, "OP_SUBTRACT", ip);
+        case OP_BINARY_MINUS:
+            return atomic_instruction(vm, "OP_BINARY_MINUS", ip);
         case OP_BINARY_SLASH_SLASH:
             return atomic_instruction(vm, "OP_BINARY_SLASH_SLASH", ip);
         case OP_TRY:

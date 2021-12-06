@@ -648,7 +648,7 @@ static void parse_variable(Parser* parser, bool can_assign) {
     } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
         get_named_variable(parser, name);
         parse_expression(parser, true, true);
-        emit_byte(parser, OP_SUBTRACT);
+        emit_byte(parser, OP_BINARY_MINUS);
         set_named_variable(parser, name);
 
     } else {
@@ -1007,7 +1007,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 emit_byte(parser, OP_DUP2);
                 emit_byte(parser, OP_GET_INDEX);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_SUBTRACT);
+                emit_byte(parser, OP_BINARY_MINUS);
                 emit_byte(parser, OP_SET_INDEX);
             } else {
                 emit_byte(parser, OP_GET_INDEX);
@@ -1030,7 +1030,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 emit_byte(parser, OP_DUP);
                 emit_op_u16(parser, OP_GET_FIELD, index);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_SUBTRACT);
+                emit_byte(parser, OP_BINARY_MINUS);
                 emit_op_u16(parser, OP_SET_FIELD, index);
             } else {
                 emit_op_u16(parser, OP_GET_FIELD, index);
@@ -1165,7 +1165,7 @@ static void parse_additive_expr(Parser* parser, bool can_assign, bool can_assign
             emit_byte(parser, OP_BINARY_PLUS);
         } else if (match(parser, TOKEN_MINUS)) {
             parse_multiplicative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_SUBTRACT);
+            emit_byte(parser, OP_BINARY_MINUS);
         } else {
             break;
         }
