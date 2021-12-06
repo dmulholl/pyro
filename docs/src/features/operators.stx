@@ -16,7 +16,7 @@ Operator precedence in the table below goes from high at the top to low at the b
     ---------------------------------------------------------------------
 
     Call             |   `()` `.` `:` `::`              |   Left
-    Power            |   `^`                            |   Right
+    Power            |   `**`                           |   Right
     Unary            |   `!` `-` `try` `not`            |   Right
     Bitwise          |   `and` `or` `xor` `>>` `<<`     |   Left
     Multiplication   |   `*` `/` `//` `%`               |   Left
