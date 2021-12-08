@@ -50,49 +50,10 @@ Note that conditional expressions using the ternary operator `? :|` can't be nes
 
 The equality (`==`, `!=`) and comparison (`>`, `>=`, `<`, `<=`) operators each take two operands and evaluate to a boolean.
 
-Pyro has a strict concept of equality --- two numbers are equal if and only if they have the same type and the same value.
-(This makes checking for equality fast at runtime as Pyro doesn't need to consider all possible conversions.)
-
-Strings are equal if they have the same content;
-tuples are equal if they have the same length and their elements are equal;
-other objects are equal only if they are the same object.
-
-The comparison operators require that both their operands have the same type. They will panic if this is not case.
-
-Pyro also has a suite of numerical comparison functions which you can use to compare any combination of numerical types:
-
-
-[[ `$num_compare(a: i64|f64|char, b: i64|f64|char) -> i64` ]]
-
-    Compares the arguments numerically.
-    Returns `-1` if `a < b`, `0` if `a == b`, or `1` if `a > b`.
-
-    Will panic if either argument is the `f64` value `NaN`.
-
-
-[[ `$num_eq(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
-
-    Returns `true` if the arguments are numerically equal.
-
-
-[[ `$num_ge(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
-
-    Returns `true` if `a` is numerically greater than or equal to `b`.
-
-
-[[ `$num_gt(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
-
-    Returns `true` if `a` is numerically greater than `b`.
-
-
-[[ `$num_le(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
-
-    Returns `true` if `a` is numerically less than or equal to `b`.
-
-
-[[ `$num_lt(a: i64|f64|char, b: i64|f64|char) -> bool` ]]
-
-    Returns `true` if `a` is numerically less than `b`.
+* Numbers are equal if their values are numerically equal.
+* Strings are equal if they have the same content.
+* Tuples are equal if they have the same length and their elements are equal.
+* By default, other objects are equal only if they are the same object.
 
 
 
@@ -109,7 +70,7 @@ This means you can use the `||` operator to swap in a default value in place of 
 ::: code pyro
     var foo = maybe_falsey() || "default";
 
-The value of the logical-AND expresson `a && b` is the value of the first operand if that operand is falsey, otherwise the value of the second operand.
+The value of the logical-AND expression `a && b` is the value of the first operand if that operand is falsey, otherwise the value of the second operand.
 
 This means you can use the `&&` operator to conditionally chain a sequence of expressions:
 

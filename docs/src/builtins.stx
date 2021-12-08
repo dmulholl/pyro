@@ -407,7 +407,7 @@ Vectors have the following methods:
     Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).
     Returns the vector to allow chaining.
 
-    If a callable argument `callback` is supplied it will be used to compare pairs of values.
+    If a `callback` function is supplied it will be used to compare pairs of values.
     It should accept two arguments `a` and `b` and return `true` if `a < b`.
 
 

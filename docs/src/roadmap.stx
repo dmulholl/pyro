@@ -22,7 +22,7 @@ A regex library, a built-in SQLite implementation, and a networking library are 
 
 (*) Support for variadic functions.
 
-(*) Default values for function parameters.
+(*) Support for default values for function parameters.
 
 
 

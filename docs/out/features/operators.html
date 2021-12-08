@@ -18,7 +18,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.5.0</p>
+                <p class="version">Version 0.5.1</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -288,87 +288,20 @@ Equality &amp; Comparison Operators
 <p>
 The equality (<code>==</code>, <code>!=</code>) and comparison (<code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>) operators each take two operands and evaluate to a boolean.
 </p>
-<p>
-Pyro has a strict concept of equality &mdash; two numbers are equal if and only if they have the same type and the same value.
-(This makes checking for equality fast at runtime as Pyro doesn't need to consider all possible conversions.)
-</p>
-<p>
-Strings are equal if they have the same content;
-tuples are equal if they have the same length and their elements are equal;
-other objects are equal only if they are the same object.
-</p>
-<p>
-The comparison operators require that both their operands have the same type. They will panic if this is not case.
-</p>
-<p>
-Pyro also has a suite of numerical comparison functions which you can use to compare any combination of numerical types:
-</p>
-<dl>
-<div>
-<dt>
-<code>$num_compare(a: i64|f64|char, b: i64|f64|char) -&gt; i64</code>
-</dt>
-<dd>
-<p>
-Compares the arguments numerically.
-Returns <code>-1</code> if <code>a &lt; b</code>, <code>0</code> if <code>a == b</code>, or <code>1</code> if <code>a &gt; b</code>.
-</p>
-<p>
-Will panic if either argument is the <code>f64</code> value <code>NaN</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$num_eq(a: i64|f64|char, b: i64|f64|char) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if the arguments are numerically equal.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$num_ge(a: i64|f64|char, b: i64|f64|char) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if <code>a</code> is numerically greater than or equal to <code>b</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$num_gt(a: i64|f64|char, b: i64|f64|char) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if <code>a</code> is numerically greater than <code>b</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$num_le(a: i64|f64|char, b: i64|f64|char) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if <code>a</code> is numerically less than or equal to <code>b</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$num_lt(a: i64|f64|char, b: i64|f64|char) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if <code>a</code> is numerically less than <code>b</code>.
-</p>
-</dd>
-</div>
-</dl>
+<ul>
+<li>
+Numbers are equal if their values are numerically equal.
+</li>
+<li>
+Strings are equal if they have the same content.
+</li>
+<li>
+Tuples are equal if they have the same length and their elements are equal.
+</li>
+<li>
+By default, other objects are equal only if they are the same object.
+</li>
+</ul>
 <h3 id="logical-operators">
 Logical Operators
 </h3>
@@ -388,7 +321,7 @@ This means you can use the <code>||</code> operator to swap in a default value i
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
-The value of the logical-AND expresson <code>a &amp;&amp; b</code> is the value of the first operand if that operand is falsey, otherwise the value of the second operand.
+The value of the logical-AND expression <code>a &amp;&amp; b</code> is the value of the first operand if that operand is falsey, otherwise the value of the second operand.
 </p>
 <p>
 This means you can use the <code>&amp;&amp;</code> operator to conditionally chain a sequence of expressions:

@@ -18,7 +18,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.5.0</p>
+                <p class="version">Version 0.5.1</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -923,7 +923,7 @@ Returns the vector to enable chaining.
 </div>
 <div>
 <dt>
-<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: func(any, any) -&gt; i64) -&gt; vec</code>
+<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -931,11 +931,8 @@ Sorts the vector in-place using the default stable sorting algorithm (currently 
 Returns the vector to allow chaining.
 </p>
 <p>
-If a callable argument <code>callback</code> is supplied it will be used to compare pairs of values.
-It should accept two arguments <code>a</code> and <code>b</code> and return <code>-1</code> if <code>a &lt; b</code>, <code>0</code> if <code>a == b</code>, or <code>1</code> if <code>a &gt; b</code>.
-</p>
-<p>
-By default, values which are not comparable are treated as equal.
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
 </p>
 </dd>
 </div>

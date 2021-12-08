@@ -153,22 +153,12 @@ You can use the null-coalescing operator `??` to supply a default value in place
 
 ### Equality
 
-Pyro has a strict concept of equality --- two objects are equal if they have the same type and the same value.
+Numbers are equal if their values are numerically equal:
 
 ::: code pyro
-    assert 1 == 1;        # True.
-    assert 1.0 == 1.0;    # True.
-    assert 1 == 1.0;      # False. i64 != f64.
-
-Note that characters don't compare equal to their integer value without conversion:
-
-::: code pyro
-    assert 'a' == 'a';          # True.
-    assert 'a' == 61;           # False. char != i64.
-    assert $i64('a') == 61;     # True.
-    assert 'a' == $char(61);    # True.
-
-Note that a `map` can have three distinct keys with the values `61`, `61.0`, and `'a'`, even though the values are numerically equivalent. (Pyro's strict concept of equality is partly designed to enable fast map lookups without needing to consider all possible conversions.)
+    assert 1 == 1.0;
+    assert 'a' == 97;
+    assert 'b' == 98.0;
 
 Strings are equal if they have the same content:
 
@@ -184,7 +174,7 @@ Tuples are equal if they have the same length and their elements are equal:
     var bar = $tup("foo", 123);
     assert foo == bar;
 
-Other objects are equal only if they are the same object:
+By default, other objects are equal only if they are the same object:
 
 ::: code pyro
     class Foo {}
@@ -194,6 +184,25 @@ Other objects are equal only if they are the same object:
 
     assert foo1 == foo1;    # True.
     assert foo1 == foo2;    # False.
+
+You can overload the equality operator to customize its behaviour for your own types.
+
+
+
+### Comparisons
+
+You can use the comparison operators (`<`, `<=`, `>`, `>=`) with any combination of numerical types:
+
+::: code pyro
+    assert 2.0 > 1;
+    assert 'a' > 42;
+
+The comparison operators also work with strings:
+
+::: code pyro
+    assert "abc" < "def"
+
+Strings are compared lexicographically by byte value.
 
 
 
