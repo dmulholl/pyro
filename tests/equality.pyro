@@ -1,6 +1,6 @@
 assert 1 == 1;
 assert 1 != 2;
-assert 1 != 1.0;
+assert 1 == 1.0;
 assert 1 != null;
 assert 1 != true;
 assert 1 != false;
@@ -8,7 +8,7 @@ assert 1 != "foo";
 
 assert 1.0 == 1.0;
 assert 1.0 != 2.0;
-assert 1.0 != 1;
+assert 1.0 == 1;
 assert 1.0 != null;
 assert 1.0 != true;
 assert 1.0 != false;

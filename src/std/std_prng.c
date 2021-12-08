@@ -17,7 +17,7 @@ static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_seed(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_mt64_init(vm->mt64, pyro_hash_value(args[0]));
+    pyro_mt64_init(vm->mt64, pyro_hash_value(vm, args[0]));
     return NULL_VAL();
 }
 

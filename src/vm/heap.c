@@ -37,6 +37,12 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->str_get_index);
     pyro_mark_object(vm, (Obj*)vm->str_set_index);
     pyro_mark_object(vm, (Obj*)vm->str_debug);
+    pyro_mark_object(vm, (Obj*)vm->str_op_binary_equals_equals);
+    pyro_mark_object(vm, (Obj*)vm->str_op_binary_less);
+    pyro_mark_object(vm, (Obj*)vm->str_op_binary_less_equals);
+    pyro_mark_object(vm, (Obj*)vm->str_op_binary_greater);
+    pyro_mark_object(vm, (Obj*)vm->str_op_binary_greater_equals);
+    pyro_mark_object(vm, (Obj*)vm->str_hash);
 
     // Other object fields.
     pyro_mark_object(vm, (Obj*)vm->globals);
@@ -371,7 +377,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_STR: {
             ObjStr* string = (ObjStr*)object;
-            ObjMap_remove(vm->strings, OBJ_VAL(string));
+            ObjMap_remove(vm->strings, OBJ_VAL(string), vm);
             FREE_ARRAY(vm, char, string->bytes, string->length + 1);
             FREE_OBJECT(vm, ObjStr, object);
             break;

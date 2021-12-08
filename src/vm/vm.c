@@ -173,7 +173,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 vm->stack_top[-arg_count - 1] = OBJ_VAL(instance);
 
                 Value initializer;
-                if (ObjMap_get(class->methods, OBJ_VAL(vm->str_init), &initializer)) {
+                if (ObjMap_get(class->methods, OBJ_VAL(vm->str_init), &initializer, vm)) {
                     call_closure(vm, AS_CLOSURE(initializer), arg_count);
                 } else if (arg_count != 0) {
                     pyro_panic(
@@ -285,7 +285,7 @@ static void define_field(PyroVM* vm, ObjStr* name) {
 // Pops the receiver and replaces it with the bound method object.
 static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
     Value method;
-    if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method)) {
+    if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method, vm)) {
         pyro_panic(vm, ERR_NAME_ERROR, "Invalid method name '%s'.", method_name->bytes);
         return;
     }
@@ -303,7 +303,7 @@ static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
 
 static void invoke_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
     Value method;
-    if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method)) {
+    if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method, vm)) {
         pyro_panic(vm, ERR_NAME_ERROR, "Invalid method name '%s'.", method_name->bytes);
         return;
     }
@@ -632,7 +632,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_EQUAL_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(pyro_check_equal(a, b)));
+                pyro_push(vm, BOOL_VAL(pyro_compare_eq(vm, a, b)));
                 break;
             }
 
@@ -687,7 +687,7 @@ static void run(PyroVM* vm) {
                 ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 0));
 
                 Value field_index;
-                if (ObjMap_get(instance->obj.class->field_indexes, field_name, &field_index)) {
+                if (ObjMap_get(instance->obj.class->field_indexes, field_name, &field_index, vm)) {
                     pyro_pop(vm); // pop the instance
                     pyro_push(vm, instance->fields[field_index.as.i64]);
                     break;
@@ -702,8 +702,8 @@ static void run(PyroVM* vm) {
                 ObjMap* globals = frame->closure->module->globals;
 
                 Value value;
-                if (!ObjMap_get(globals, name, &value)) {
-                    if (!ObjMap_get(vm->globals, name, &value)) {
+                if (!ObjMap_get(globals, name, &value, vm)) {
+                    if (!ObjMap_get(vm->globals, name, &value, vm)) {
                         pyro_panic(vm, ERR_NAME_ERROR, "Undefined variable '%s'.", AS_STR(name)->bytes);
                         break;
                     }
@@ -739,7 +739,7 @@ static void run(PyroVM* vm) {
                 ObjModule* module = AS_MOD(pyro_pop(vm));
 
                 Value value;
-                if (ObjMap_get(module->globals, member_name, &value)) {
+                if (ObjMap_get(module->globals, member_name, &value, vm)) {
                     pyro_push(vm, value);
                     break;
                 }
@@ -778,69 +778,14 @@ static void run(PyroVM* vm) {
             case OP_BINARY_GREATER: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                if (a.type == b.type) {
-                    switch (a.type) {
-                        case VAL_I64:
-                            pyro_push(vm, BOOL_VAL(a.as.i64 > b.as.i64));
-                            break;
-                        case VAL_F64:
-                            pyro_push(vm, BOOL_VAL(a.as.f64 > b.as.f64));
-                            break;
-                        case VAL_CHAR:
-                            pyro_push(vm, BOOL_VAL(a.as.u32 > b.as.u32));
-                            break;
-                        case VAL_OBJ:
-                            if (IS_STR(a) && IS_STR(b)) {
-                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                pyro_push(vm, BOOL_VAL(result > 0));
-                            } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '>' operand types.");
-                            }
-                            break;
-                        default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '>' operand types.");
-                    }
-                } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>' must both have the same type.");
-                }
-
+                pyro_push(vm, BOOL_VAL(pyro_compare_gt(vm, a, b)));
                 break;
             }
 
             case OP_BINARY_GREATER_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                if (a.type == b.type) {
-                    switch (a.type) {
-                        case VAL_I64:
-                            pyro_push(vm, BOOL_VAL(a.as.i64 >= b.as.i64));
-                            break;
-                        case VAL_F64:
-                            pyro_push(vm, BOOL_VAL(a.as.f64 >= b.as.f64));
-                            break;
-                        case VAL_CHAR:
-                            pyro_push(vm, BOOL_VAL(a.as.u32 >= b.as.u32));
-                            break;
-                        case VAL_OBJ:
-                            if (IS_STR(a) && IS_STR(b)) {
-                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                pyro_push(vm, BOOL_VAL(result >= 0));
-                            } else {
-                                pyro_panic(
-                                    vm, ERR_TYPE_ERROR,
-                                    "Unable to compare '>=' operand types."
-                                );
-                            }
-                            break;
-                        default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '>=' operand types.");
-                    }
-                } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>=' must both have the same type.");
-                }
-
+                pyro_push(vm, BOOL_VAL(pyro_compare_ge(vm, a, b)));
                 break;
             }
 
@@ -854,7 +799,7 @@ static void run(PyroVM* vm) {
                 for (uint8_t i = 0; i < arg_count; i++) {
                     Value name = args[i];
 
-                    if (ObjMap_get(supermod_modules_map, name, &module_value)) {
+                    if (ObjMap_get(supermod_modules_map, name, &module_value, vm)) {
                         supermod_modules_map = AS_MOD(module_value)->submodules;
                         continue;
                     }
@@ -875,7 +820,7 @@ static void run(PyroVM* vm) {
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
-                        ObjMap_remove(supermod_modules_map, name);
+                        ObjMap_remove(supermod_modules_map, name, vm);
                         return;
                     }
 
@@ -898,7 +843,7 @@ static void run(PyroVM* vm) {
                 for (uint8_t i = 0; i < module_count; i++) {
                     Value name = args[i];
 
-                    if (ObjMap_get(supermod_modules_map, name, &module_value)) {
+                    if (ObjMap_get(supermod_modules_map, name, &module_value, vm)) {
                         supermod_modules_map = AS_MOD(module_value)->submodules;
                         continue;
                     }
@@ -919,7 +864,7 @@ static void run(PyroVM* vm) {
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
-                        ObjMap_remove(supermod_modules_map, name);
+                        ObjMap_remove(supermod_modules_map, name, vm);
                         return;
                     }
 
@@ -931,7 +876,7 @@ static void run(PyroVM* vm) {
                 for (uint8_t i = 0; i < member_count; i++) {
                     Value name = args[module_count + i];
                     Value member;
-                    if (!ObjMap_get(module_globals, name, &member)) {
+                    if (!ObjMap_get(module_globals, name, &member, vm)) {
                         pyro_panic(
                             vm, ERR_NAME_ERROR,
                             "Member '%s' not found in module.", AS_STR(name)->bytes
@@ -998,7 +943,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_GET_ITERATOR_OBJECT: {
-                if (pyro_has_method(pyro_peek(vm, 0), vm->str_iter)) {
+                if (pyro_has_method(vm, pyro_peek(vm, 0), vm->str_iter)) {
                     invoke_method(vm, vm->str_iter, 0);
                     frame = &vm->frames[vm->frame_count - 1];
                 } else {
@@ -1068,66 +1013,14 @@ static void run(PyroVM* vm) {
             case OP_BINARY_LESS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                if (a.type == b.type) {
-                    switch (a.type) {
-                        case VAL_I64:
-                            pyro_push(vm, BOOL_VAL(a.as.i64 < b.as.i64));
-                            break;
-                        case VAL_F64:
-                            pyro_push(vm, BOOL_VAL(a.as.f64 < b.as.f64));
-                            break;
-                        case VAL_CHAR:
-                            pyro_push(vm, BOOL_VAL(a.as.u32 < b.as.u32));
-                            break;
-                        case VAL_OBJ:
-                            if (IS_STR(a) && IS_STR(b)) {
-                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                pyro_push(vm, BOOL_VAL(result < 0));
-                            } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<' operand types.");
-                            }
-                            break;
-                        default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<' operand types.");
-                    }
-                } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<' must both have the same type.");
-                }
-
+                pyro_push(vm, BOOL_VAL(pyro_compare_lt(vm, a, b)));
                 break;
             }
 
             case OP_BINARY_LESS_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                if (a.type == b.type) {
-                    switch (a.type) {
-                        case VAL_I64:
-                            pyro_push(vm, BOOL_VAL(a.as.i64 <= b.as.i64));
-                            break;
-                        case VAL_F64:
-                            pyro_push(vm, BOOL_VAL(a.as.f64 <= b.as.f64));
-                            break;
-                        case VAL_CHAR:
-                            pyro_push(vm, BOOL_VAL(a.as.u32 <= b.as.u32));
-                            break;
-                        case VAL_OBJ:
-                            if (IS_STR(a) && IS_STR(b)) {
-                                int result = pyro_compare_strings(AS_STR(a), AS_STR(b));
-                                pyro_push(vm, BOOL_VAL(result <= 0));
-                            } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<=' operand types.");
-                            }
-                            break;
-                        default:
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Unable to compare '<=' operand types.");
-                    }
-                } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<=' must both have the same type.");
-                }
-
+                pyro_push(vm, BOOL_VAL(pyro_compare_le(vm, a, b)));
                 break;
             }
 
@@ -1367,7 +1260,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_BANG_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(!pyro_check_equal(a, b)));
+                pyro_push(vm, BOOL_VAL(!pyro_compare_eq(vm, a, b)));
                 break;
             }
 
@@ -1446,7 +1339,7 @@ static void run(PyroVM* vm) {
                 Value field_name = READ_CONSTANT();
 
                 Value field_index;
-                if (ObjMap_get(instance->obj.class->field_indexes, field_name, &field_index)) {
+                if (ObjMap_get(instance->obj.class->field_indexes, field_name, &field_index, vm)) {
                     Value new_value = pyro_pop(vm);
                     pyro_pop(vm); // pop the instance
                     instance->fields[field_index.as.i64] = new_value;
@@ -1716,6 +1609,12 @@ PyroVM* pyro_new_vm() {
     vm->file_class = NULL;
     vm->mt64 = NULL;
     vm->str_debug = NULL;
+    vm->str_op_binary_equals_equals = NULL;
+    vm->str_op_binary_less = NULL;
+    vm->str_op_binary_less_equals = NULL;
+    vm->str_op_binary_greater = NULL;
+    vm->str_op_binary_greater_equals = NULL;
+    vm->str_hash = NULL;
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
     vm->gc_disallows = 0;
@@ -1775,6 +1674,12 @@ PyroVM* pyro_new_vm() {
     vm->str_get_index = STR("$get_index");
     vm->str_set_index = STR("$set_index");
     vm->str_debug = STR("$debug");
+    vm->str_op_binary_equals_equals = STR("$op_binary_equals_equals");
+    vm->str_op_binary_less = STR("$op_binary_less");
+    vm->str_op_binary_less_equals = STR("$op_binary_less_equals");
+    vm->str_op_binary_greater = STR("$op_binary_greater");
+    vm->str_op_binary_greater_equals = STR("$op_binary_greater_equals");
+    vm->str_hash = STR("$hash");
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -2065,7 +1970,7 @@ void pyro_run_main_func(PyroVM* vm) {
     }
 
     Value main_value;
-    if (ObjMap_get(vm->main_module->globals, OBJ_VAL(main_string), &main_value)) {
+    if (ObjMap_get(vm->main_module->globals, OBJ_VAL(main_string), &main_value, vm)) {
         if (IS_CLOSURE(main_value)) {
             if (AS_CLOSURE(main_value)->fn->arity == 0) {
                 pyro_push(vm, main_value);
@@ -2261,7 +2166,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
     }
 
     Value parent_module;
-    if (!ObjMap_get(vm->modules, OBJ_VAL(parent_object), &parent_module)) {
+    if (!ObjMap_get(vm->modules, OBJ_VAL(parent_object), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -2306,7 +2211,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     }
 
     Value grandparent_module;
-    if (!ObjMap_get(vm->modules, OBJ_VAL(grandparent_object), &grandparent_module)) {
+    if (!ObjMap_get(vm->modules, OBJ_VAL(grandparent_object), &grandparent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -2317,7 +2222,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     }
 
     Value parent_module;
-    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, OBJ_VAL(parent_object), &parent_module)) {
+    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, OBJ_VAL(parent_object), &parent_module, vm)) {
         assert(false);
         return NULL;
     }

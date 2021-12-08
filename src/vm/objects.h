@@ -84,8 +84,8 @@ struct ObjMap {
 ObjMap* ObjMap_new(PyroVM* vm);
 ObjMap* ObjMap_new_as_weakref(PyroVM* vm);
 ObjMap* ObjMap_new_as_set(PyroVM* vm);
-bool ObjMap_get(ObjMap* map, Value key, Value* value);
-bool ObjMap_remove(ObjMap* map, Value key);
+bool ObjMap_get(ObjMap* map, Value key, Value* value, PyroVM* vm);
+bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm);
 
 // Adds a new entry to the map or updates an existing entry.
 // - Returns 0 if the entry was not added because additional memory could not be allocated.
@@ -322,8 +322,8 @@ typedef struct {
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm);
 ObjTup* ObjTup_new_err(size_t count, PyroVM* vm);
-uint64_t ObjTup_hash(ObjTup* tup);
-bool ObjTup_check_equal(ObjTup* a, ObjTup* b);
+uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup);
+bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm);
 
 // This function can call into Pyro code and can trigger an exit or a panic. The caller should check
 // the halt flag before using the return value. Returns NULL if memory cannot be allocated for the

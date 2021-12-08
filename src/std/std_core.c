@@ -404,7 +404,7 @@ static Value fn_has_method(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $has_method(), method name must be a string.");
         return NULL_VAL();
     }
-    return BOOL_VAL(pyro_has_method(args[0], AS_STR(args[1])));
+    return BOOL_VAL(pyro_has_method(vm, args[0], AS_STR(args[1])));
 }
 
 
@@ -418,7 +418,7 @@ static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_INSTANCE(args[0])) {
         ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->field_indexes;
         Value field_index;
-        if (ObjMap_get(field_index_map, field_name, &field_index)) {
+        if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
             return BOOL_VAL(true);
         }
     }
@@ -481,7 +481,7 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
-    Value method = pyro_get_method(args[0], vm->str_debug);
+    Value method = pyro_get_method(vm, args[0], vm->str_debug);
     if (!IS_NULL(method)) {
         pyro_push(vm, args[0]);
         Value debug_string = pyro_call_method(vm, method, 0);
@@ -624,7 +624,7 @@ static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
-    return I64_VAL((int64_t)pyro_hash_value(args[0]));
+    return I64_VAL((int64_t)pyro_hash_value(vm, args[0]));
 }
 
 

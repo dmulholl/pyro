@@ -124,20 +124,20 @@ struct Obj {
 ObjClass* pyro_get_class(Value value);
 
 // Returns the named method if it is defined for the value, otherwise NULL_VAL().
-Value pyro_get_method(Value value, ObjStr* method_name);
+Value pyro_get_method(PyroVM* vm, Value value, ObjStr* method_name);
 
 // Returns [true] if the named method is defined for the value.
-bool pyro_has_method(Value value, ObjStr* method_name);
+bool pyro_has_method(PyroVM* vm, Value value, ObjStr* method_name);
 
 // Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
 // Pyro code.
 void pyro_dump_value(PyroVM* vm, Value value);
 
 // Returns the value's 64-bit hash.
-uint64_t pyro_hash_value(Value value);
+uint64_t pyro_hash_value(PyroVM* vm, Value value);
 
-// Returns [true] if the values are equal.
-bool pyro_check_equal(Value a, Value b);
+// Checks for strict equality -- same type, same value/object.
+bool pyro_compare_eq_strict(Value a, Value b);
 
 // Returns [true] if the value is truthy.
 bool pyro_is_truthy(Value value);
@@ -200,5 +200,25 @@ ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value c);
 static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
+
+// Returns true if [a] == [b].
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_eq(PyroVM* vm, Value a, Value b);
+
+// Returns true if [a] < [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_lt(PyroVM* vm, Value a, Value b);
+
+// Returns true if [a] <= [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_le(PyroVM* vm, Value a, Value b);
+
+// Returns true if [a] > [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_gt(PyroVM* vm, Value a, Value b);
+
+// Returns true if [a] >= [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_ge(PyroVM* vm, Value a, Value b);
 
 #endif

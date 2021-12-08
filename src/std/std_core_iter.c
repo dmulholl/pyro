@@ -20,7 +20,7 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // If the argument is an iterator, wrap it in an ObjIter instance.
-    if (IS_OBJ(args[0]) && pyro_has_method(args[0], vm->str_next)) {
+    if (IS_OBJ(args[0]) && pyro_has_method(vm, args[0], vm->str_next)) {
         ObjIter* iter = ObjIter_new(AS_OBJ(args[0]), ITER_GENERIC, vm);
         if (!iter) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
@@ -30,7 +30,7 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // If the argument is iterable, call its :iter() method.
-    Value iter_method = pyro_get_method(args[0], vm->str_iter);
+    Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
     if (!IS_NULL(iter_method)) {
         pyro_push(vm, args[0]);
         Value result = pyro_call_method(vm, iter_method, 0);
@@ -42,7 +42,7 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
             return result;
         }
 
-        if (IS_OBJ(result) && pyro_has_method(result, vm->str_next)) {
+        if (IS_OBJ(result) && pyro_has_method(vm, result, vm->str_next)) {
             pyro_push(vm, result);
             ObjIter* iter = ObjIter_new(AS_OBJ(result), ITER_GENERIC, vm);
             if (!iter) {

@@ -75,19 +75,19 @@ ObjTup* ObjTup_new_err(size_t count, PyroVM* vm) {
 }
 
 
-uint64_t ObjTup_hash(ObjTup* tup) {
+uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup) {
     uint64_t hash = 0;
     for (size_t i = 0; i < tup->count; i++) {
-        hash ^= pyro_hash_value(tup->values[i]);
+        hash ^= pyro_hash_value(vm, tup->values[i]);
     }
     return hash;
 }
 
 
-bool ObjTup_check_equal(ObjTup* a, ObjTup* b) {
+bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm) {
     if (a->count == b->count) {
         for (size_t i = 0; i < a->count; i++) {
-            if (!pyro_check_equal(a->values[i], b->values[i])) {
+            if (!pyro_compare_eq(vm, a->values[i], b->values[i])) {
                 return false;
             }
         }
@@ -263,10 +263,10 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 /* ------ */
 
 
-static MapEntry* find_entry(MapEntry* entries, size_t capacity, Value key) {
+static MapEntry* find_entry(PyroVM* vm, MapEntry* entries, size_t capacity, Value key) {
     // Capacity is always a power of 2 so we can use bitwise-AND as a fast
     // modulo operator, i.e. this is equivalent to: index = key_hash % capacity.
-    size_t index = (size_t)pyro_hash_value(key) & (capacity - 1);
+    size_t index = (size_t)pyro_hash_value(vm, key) & (capacity - 1);
     MapEntry* tombstone = NULL;
 
     for (;;) {
@@ -276,7 +276,7 @@ static MapEntry* find_entry(MapEntry* entries, size_t capacity, Value key) {
             return tombstone == NULL ? entry : tombstone;
         } else if (IS_TOMBSTONE(entry->key)) {
             if (tombstone == NULL) tombstone = entry;
-        } else if (pyro_check_equal(key, entry->key)) {
+        } else if (pyro_compare_eq(vm, key, entry->key)) {
             return entry;
         }
 
@@ -330,7 +330,7 @@ static bool resize_map(ObjMap* map, size_t new_capacity, PyroVM* vm) {
         if (IS_EMPTY(src->key) || IS_TOMBSTONE(src->key)) {
             continue;
         }
-        MapEntry* dst = find_entry(new_entries, new_capacity, src->key);
+        MapEntry* dst = find_entry(vm, new_entries, new_capacity, src->key);
         dst->key = src->key;
         dst->value = src->value;
         new_count++;
@@ -416,7 +416,7 @@ int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
         }
     }
 
-    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
 
     if (IS_EMPTY(entry->key)) {
         if (map->count == map->max_load_threshold) {
@@ -424,7 +424,7 @@ int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
             if (!resize_map(map, new_capacity, vm)) {
                 return 0;
             }
-            entry = find_entry(map->entries, map->capacity, key);
+            entry = find_entry(vm, map->entries, map->capacity, key);
         }
         entry->key = key;
         entry->value = value;
@@ -450,7 +450,7 @@ bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
         return false;
     }
 
-    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
     if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
         return false;
     }
@@ -461,12 +461,12 @@ bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
 }
 
 
-bool ObjMap_get(ObjMap* map, Value key, Value* value) {
+bool ObjMap_get(ObjMap* map, Value key, Value* value, PyroVM* vm) {
     if (map->count == 0) {
         return false;
     }
 
-    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
     if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
         return false;
     }
@@ -476,12 +476,12 @@ bool ObjMap_get(ObjMap* map, Value key, Value* value) {
 }
 
 
-bool ObjMap_remove(ObjMap* map, Value key) {
+bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
     if (map->count == 0) {
         return false;
     }
 
-    MapEntry* entry = find_entry(map->entries, map->capacity, key);
+    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
     if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
         return false;
     }
@@ -1124,7 +1124,7 @@ size_t ObjFn_get_line_number(ObjFn* fn, size_t ip) {
 
 int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
     for (size_t i = 0; i < fn->constants_count; i++) {
-        if (pyro_check_equal(value, fn->constants[i])) {
+        if (pyro_compare_eq_strict(value, fn->constants[i])) {
             return i;
         }
     }
@@ -1979,7 +1979,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
         }
 
         case ITER_GENERIC: {
-            Value next_method = pyro_get_method(OBJ_VAL(iter->source), vm->str_next);
+            Value next_method = pyro_get_method(vm, OBJ_VAL(iter->source), vm->str_next);
             pyro_push(vm, OBJ_VAL(iter->source));
             Value result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {

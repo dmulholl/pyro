@@ -29,18 +29,18 @@ assert foo:get(3) == false;
 foo:set(4, "foo");
 foo:set(4.0, "bar");
 
-assert foo:get(4) == "foo";
+assert foo:get(4) == "bar";
 assert foo:get(4.0) == "bar";
 
 assert $is_err(foo:get("undefined"));
 
 var bound_method = foo:get;
 assert bound_method("alpha") == 123;
-assert bound_method(4) == "foo";
+assert bound_method(4) == "bar";
 
-assert foo:count() == 8;
-foo:remove("alpha");
 assert foo:count() == 7;
+foo:remove("alpha");
+assert foo:count() == 6;
 assert $is_err(foo:get("alpha"));
 
 assert foo:contains("beta") == true;

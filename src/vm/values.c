@@ -37,10 +37,10 @@ ObjClass* pyro_get_class(Value value) {
 }
 
 
-Value pyro_get_method(Value receiver, ObjStr* method_name) {
+Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
     if (IS_OBJ(receiver) && AS_OBJ(receiver)->class) {
         Value method;
-        if (ObjMap_get(AS_OBJ(receiver)->class->methods, OBJ_VAL(method_name), &method)) {
+        if (ObjMap_get(AS_OBJ(receiver)->class->methods, OBJ_VAL(method_name), &method, vm)) {
             return method;
         }
     }
@@ -48,63 +48,86 @@ Value pyro_get_method(Value receiver, ObjStr* method_name) {
 }
 
 
-bool pyro_has_method(Value receiver, ObjStr* method_name) {
-    return !IS_NULL(pyro_get_method(receiver, method_name));
+bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+    return !IS_NULL(pyro_get_method(vm, receiver, method_name));
 }
 
 
-bool pyro_check_equal(Value a, Value b) {
+bool pyro_compare_eq_strict(Value a, Value b) {
     if (a.type == b.type) {
         switch (a.type) {
             case VAL_BOOL:
                 return a.as.boolean == b.as.boolean;
-            case VAL_NULL:
-                return true;
             case VAL_I64:
                 return a.as.i64 == b.as.i64;
             case VAL_F64:
                 return a.as.f64 == b.as.f64;
+            case VAL_CHAR:
+                return a.as.u32 == b.as.u32;
             case VAL_OBJ:
-                if (a.as.obj == b.as.obj) {
-                    return true;
-                } else if (a.as.obj->type == OBJ_TUP && b.as.obj->type == OBJ_TUP) {
-                    return ObjTup_check_equal(AS_TUP(a), AS_TUP(b));
-                } else if (a.as.obj->type == OBJ_TUP_AS_ERR && b.as.obj->type == OBJ_TUP_AS_ERR) {
-                    return ObjTup_check_equal(AS_TUP(a), AS_TUP(b));
-                } else {
-                    return false;
-                }
+                return a.as.obj == b.as.obj;
+            case VAL_NULL:
+                return true;
             case VAL_TOMBSTONE:
                 return true;
             case VAL_EMPTY:
                 return true;
-            case VAL_CHAR:
-                return a.as.u32 == b.as.u32;
         }
     }
     return false;
 }
 
 
-uint64_t pyro_hash_value(Value value) {
+// Values which compare as equal should also hash as equal. This is why we cast floats that compare
+// equal to an integer to that integer first.
+uint64_t pyro_hash_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_NULL:
             return 123;
+
         case VAL_BOOL:
             return value.as.boolean ? 456 : 789;
+
         case VAL_I64:
             return value.as.u64;
-        case VAL_F64:
-            return value.as.u64;
-        case VAL_OBJ:
-            switch (value.as.obj->type) {
-                case OBJ_STR: return AS_STR(value)->hash;
-                case OBJ_TUP: return ObjTup_hash(AS_TUP(value));
-                case OBJ_TUP_AS_ERR: return ObjTup_hash(AS_TUP(value));
-                default: return (uint64_t)value.as.obj;
-            }
+
         case VAL_CHAR:
             return value.as.u32;
+
+        case VAL_F64:
+            if (value.as.f64 >= -9223372036854775808.0    // -2^63
+                && value.as.f64 < 9223372036854775808.0   // 2^63
+                && floor(value.as.f64) == value.as.f64    // is a whole number
+            ) {
+                return (uint64_t)(int64_t)value.as.f64;
+            } else {
+                return value.as.u64;
+            }
+
+        case VAL_OBJ:
+            switch (value.as.obj->type) {
+                case OBJ_STR:
+                    return AS_STR(value)->hash;
+                case OBJ_TUP:
+                    return ObjTup_hash(vm, AS_TUP(value));
+                case OBJ_TUP_AS_ERR:
+                    return ObjTup_hash(vm, AS_TUP(value));
+                case OBJ_INSTANCE: {
+                    Value method = pyro_get_method(vm, value, vm->str_hash);
+                    if (!IS_NULL(method)) {
+                        pyro_push(vm, value);
+                        Value result = pyro_call_method(vm, method, 0);
+                        if (vm->halt_flag) {
+                            return 0;
+                        }
+                        return result.as.u64;
+                    }
+                    return (uint64_t)value.as.obj;
+                }
+                default:
+                    return (uint64_t)value.as.obj;
+            }
+
         default:
             return 0;
     }
@@ -113,7 +136,7 @@ uint64_t pyro_hash_value(Value value) {
 
 static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
     Value method;
-    if (object->class && ObjMap_get(object->class->methods, OBJ_VAL(vm->str_str), &method)) {
+    if (object->class && ObjMap_get(object->class->methods, OBJ_VAL(vm->str_str), &method, vm)) {
         pyro_push(vm, OBJ_VAL(object));
         Value stringified = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
@@ -435,7 +458,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
         return string;
     }
 
-    Value fmt_method = pyro_get_method(value, vm->str_fmt);
+    Value fmt_method = pyro_get_method(vm, value, vm->str_fmt);
     if (!IS_NULL(fmt_method)) {
         pyro_push(vm, value);
         pyro_push(vm, OBJ_VAL(ObjStr_copy_raw(format, strlen(format), vm)));
@@ -550,11 +573,13 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
         return 2;
     }
 
-    if (b > (double)INT64_MAX) {
+    // 2^63. INT64_MAX is 2^63 - 1 -- as a double this gets rounded to 2^63.
+    if (b >= 9223372036854775808.0) {
         return -1;
     }
 
-    if (b < (double)INT64_MIN) {
+    // -(2^63). INT64_MIN is -(2^63).
+    if (b < -9223372036854775808.0) {
         return 1;
     }
 
@@ -698,4 +723,445 @@ ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value value) {
     ObjStr* output_string =  ObjBuf_to_str(buf, vm);
     pyro_pop(vm);
     return output_string;
+}
+
+
+// Returns true if [a] == [b].
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_eq(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return a.as.i64 == b.as.i64;
+                case VAL_F64:
+                    return pyro_compare_int_and_float(a.as.i64, b.as.f64) == 0;
+                case VAL_CHAR:
+                    return a.as.i64 == (int64_t)b.as.u32;
+                default:
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_CHAR: {
+            switch (b.type) {
+                case VAL_I64:
+                    return (int64_t)a.as.u32 == b.as.i64;
+                case VAL_F64:
+                    return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64) == 0;
+                case VAL_CHAR:
+                    return a.as.u32 == b.as.u32;
+                default:
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_F64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return pyro_compare_int_and_float(b.as.i64, a.as.f64) == 0;
+                case VAL_F64:
+                    return a.as.f64 == b.as.f64;
+                case VAL_CHAR:
+                    return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) == 0;
+                default:
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_OBJ: {
+            switch (AS_OBJ(a)->type) {
+                case OBJ_TUP:
+                    return IS_TUP(b) && ObjTup_check_equal(AS_TUP(a), AS_TUP(b), vm);
+                case OBJ_TUP_AS_ERR:
+                    return IS_ERR(b) && ObjTup_check_equal(AS_TUP(a), AS_TUP(b), vm);
+                case OBJ_INSTANCE: {
+                    Value method = pyro_get_method(vm, a, vm->str_op_binary_equals_equals);
+                    if (!IS_NULL(method)) {
+                        pyro_push(vm, a);
+                        pyro_push(vm, b);
+                        Value result = pyro_call_method(vm, method, 1);
+                        if (vm->halt_flag) {
+                            return false;
+                        }
+                        return pyro_is_truthy(result);
+                    }
+                    return a.as.obj == b.as.obj;
+                }
+                default:
+                    return a.as.obj == b.as.obj;
+            }
+        }
+
+        case VAL_BOOL:
+            return IS_BOOL(b) && a.as.boolean == b.as.boolean;
+
+        case VAL_NULL:
+            return IS_NULL(b);
+
+        case VAL_TOMBSTONE:
+            return IS_TOMBSTONE(b);
+
+        case VAL_EMPTY:
+            return IS_EMPTY(b);
+    }
+}
+
+
+// Returns true if [a] < [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_lt(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return a.as.i64 < b.as.i64;
+                case VAL_F64:
+                    return pyro_compare_int_and_float(a.as.i64, b.as.f64) == -1;
+                case VAL_CHAR:
+                    return a.as.i64 < (int64_t)b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_CHAR: {
+            switch (b.type) {
+                case VAL_I64:
+                    return (int64_t)a.as.u32 < b.as.i64;
+                case VAL_F64:
+                    return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64) == -1;
+                case VAL_CHAR:
+                    return a.as.u32 < b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_F64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return pyro_compare_int_and_float(b.as.i64, a.as.f64) == 1;
+                case VAL_F64:
+                    return a.as.f64 < b.as.f64;
+                case VAL_CHAR:
+                    return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) == 1;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_OBJ: {
+            switch (AS_OBJ(a)->type) {
+                case OBJ_STR: {
+                    if (IS_STR(b)) {
+                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) == -1;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_INSTANCE: {
+                    Value method = pyro_get_method(vm, a, vm->str_op_binary_less);
+                    if (!IS_NULL(method)) {
+                        pyro_push(vm, a);
+                        pyro_push(vm, b);
+                        Value result = pyro_call_method(vm, method, 1);
+                        if (vm->halt_flag) {
+                            return false;
+                        }
+                        return pyro_is_truthy(result);
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+        }
+
+        default:
+            pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+            return false;
+    }
+}
+
+
+// Returns true if [a] <= [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_le(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return a.as.i64 <= b.as.i64;
+                case VAL_F64: {
+                    int result = pyro_compare_int_and_float(a.as.i64, b.as.f64);
+                    return result == -1 || result == 0;
+                }
+                case VAL_CHAR:
+                    return a.as.i64 <= (int64_t)b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_CHAR: {
+            switch (b.type) {
+                case VAL_I64:
+                    return (int64_t)a.as.u32 <= b.as.i64;
+                case VAL_F64: {
+                    int result = pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64);
+                    return result == -1 || result == 0;
+                }
+                case VAL_CHAR:
+                    return a.as.u32 <= b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_F64: {
+            switch (b.type) {
+                case VAL_I64: {
+                    int result = pyro_compare_int_and_float(b.as.i64, a.as.f64);
+                    return result == 0 || result == 1;
+                }
+                case VAL_F64:
+                    return a.as.f64 <= b.as.f64;
+                case VAL_CHAR: {
+                    int result = pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64);
+                    return result == 0 || result == 1;
+                }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_OBJ: {
+            switch (AS_OBJ(a)->type) {
+                case OBJ_STR: {
+                    if (IS_STR(b)) {
+                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) <= 0;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_INSTANCE: {
+                    Value method = pyro_get_method(vm, a, vm->str_op_binary_less_equals);
+                    if (!IS_NULL(method)) {
+                        pyro_push(vm, a);
+                        pyro_push(vm, b);
+                        Value result = pyro_call_method(vm, method, 1);
+                        if (vm->halt_flag) {
+                            return false;
+                        }
+                        return pyro_is_truthy(result);
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+        }
+
+        default:
+            pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+            return false;
+    }
+}
+
+
+// Returns true if [a] > [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_gt(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return a.as.i64 > b.as.i64;
+                case VAL_F64:
+                    return pyro_compare_int_and_float(a.as.i64, b.as.f64) == 1;
+                case VAL_CHAR:
+                    return a.as.i64 > (int64_t)b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_CHAR: {
+            switch (b.type) {
+                case VAL_I64:
+                    return (int64_t)a.as.u32 > b.as.i64;
+                case VAL_F64:
+                    return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64) == 1;
+                case VAL_CHAR:
+                    return a.as.u32 > b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_F64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return pyro_compare_int_and_float(b.as.i64, a.as.f64) == -1;
+                case VAL_F64:
+                    return a.as.f64 > b.as.f64;
+                case VAL_CHAR:
+                    return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) == -1;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_OBJ: {
+            switch (AS_OBJ(a)->type) {
+                case OBJ_STR: {
+                    if (IS_STR(b)) {
+                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) == 1;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_INSTANCE: {
+                    Value method = pyro_get_method(vm, a, vm->str_op_binary_greater);
+                    if (!IS_NULL(method)) {
+                        pyro_push(vm, a);
+                        pyro_push(vm, b);
+                        Value result = pyro_call_method(vm, method, 1);
+                        if (vm->halt_flag) {
+                            return false;
+                        }
+                        return pyro_is_truthy(result);
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+        }
+
+        default:
+            pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+            return false;
+    }
+}
+
+
+// Returns true if [a] >= [b]. Panics if the values are not comparable.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_compare_ge(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return a.as.i64 >= b.as.i64;
+                case VAL_F64: {
+                    int result = pyro_compare_int_and_float(a.as.i64, b.as.f64);
+                    return result == 1 || result == 0;
+                }
+                case VAL_CHAR:
+                    return a.as.i64 >= (int64_t)b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_CHAR: {
+            switch (b.type) {
+                case VAL_I64:
+                    return (int64_t)a.as.u32 >= b.as.i64;
+                case VAL_F64: {
+                    int result = pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64);
+                    return result == 1 || result == 0;
+                }
+                case VAL_CHAR:
+                    return a.as.u32 >= b.as.u32;
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_F64: {
+            switch (b.type) {
+                case VAL_I64: {
+                    int result = pyro_compare_int_and_float(b.as.i64, a.as.f64);
+                    return result == 0 || result == -1;
+                }
+                case VAL_F64:
+                    return a.as.f64 >= b.as.f64;
+                case VAL_CHAR: {
+                    int result = pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64);
+                    return result == 0 || result == -1;
+                }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+            break;
+        }
+
+        case VAL_OBJ: {
+            switch (AS_OBJ(a)->type) {
+                case OBJ_STR: {
+                    if (IS_STR(b)) {
+                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) >= 0;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_INSTANCE: {
+                    Value method = pyro_get_method(vm, a, vm->str_op_binary_greater_equals);
+                    if (!IS_NULL(method)) {
+                        pyro_push(vm, a);
+                        pyro_push(vm, b);
+                        Value result = pyro_call_method(vm, method, 1);
+                        if (vm->halt_flag) {
+                            return false;
+                        }
+                        return pyro_is_truthy(result);
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+            }
+        }
+
+        default:
+            pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+            return false;
+    }
 }

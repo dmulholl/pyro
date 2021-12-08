@@ -20,6 +20,10 @@ A regex library, a built-in SQLite implementation, and a networking library are 
 
 (*) Destructor methods: `:$free()`.
 
+(*) Support for variadic functions.
+
+(*) Default values for function parameters.
+
 
 
 ### Packaging

@@ -20,7 +20,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
     else if (arg_count == 1) {
         // Does the object have an :$iter() method?
-        Value iter_method = pyro_get_method(args[0], vm->str_iter);
+        Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
         if (IS_NULL(iter_method)) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $vec() is not iterable.");
             return NULL_VAL();
@@ -35,7 +35,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_push(vm, iterator); // protect from GC
 
         // Get the iterator's :$next() method.
-        Value next_method = pyro_get_method(iterator, vm->str_next);
+        Value next_method = pyro_get_method(vm, iterator, vm->str_next);
         if (IS_NULL(next_method)) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
             return NULL_VAL();
@@ -220,7 +220,7 @@ static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     for (size_t i = 0; i < vec->count; i++) {
-        if (pyro_check_equal(vec->values[i], args[0])) {
+        if (pyro_compare_eq(vm, vec->values[i], args[0])) {
             return BOOL_VAL(true);
         }
     }
@@ -233,7 +233,7 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     for (size_t i = 0; i < vec->count; i++) {
-        if (pyro_check_equal(vec->values[i], args[0])) {
+        if (pyro_compare_eq(vm, vec->values[i], args[0])) {
             return I64_VAL((int64_t)i);
         }
     }

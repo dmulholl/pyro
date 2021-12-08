@@ -47,7 +47,7 @@ static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
 static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     Value value;
-    if (ObjMap_get(map, args[0], &value)) {
+    if (ObjMap_get(map, args[0], &value, vm)) {
         return value;
     }
     return OBJ_VAL(vm->empty_error);
@@ -56,14 +56,14 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_remove(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return BOOL_VAL(ObjMap_remove(map, args[0]));
+    return BOOL_VAL(ObjMap_remove(map, args[0], vm));
 }
 
 
 static Value map_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     Value value;
-    return BOOL_VAL(ObjMap_get(map, args[0], &value));
+    return BOOL_VAL(ObjMap_get(map, args[0], &value, vm));
 }
 
 
@@ -127,7 +127,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // Does the object have an :$iter() method?
-    Value iter_method = pyro_get_method(args[0], vm->str_iter);
+    Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
     if (IS_NULL(iter_method)) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $set() is not iterable.");
         return NULL_VAL();
@@ -142,7 +142,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_push(vm, iterator); // protect from GC
 
     // Get the iterator's :$next() method.
-    Value next_method = pyro_get_method(iterator, vm->str_next);
+    Value next_method = pyro_get_method(vm, iterator, vm->str_next);
     if (IS_NULL(next_method)) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
         return NULL_VAL();
