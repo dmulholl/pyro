@@ -95,8 +95,8 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
             return value.as.u32;
 
         case VAL_F64:
-            if (value.as.f64 >= -9223372036854775808.0    // -2^63
-                && value.as.f64 < 9223372036854775808.0   // 2^63
+            if (value.as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
+                && value.as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
                 && floor(value.as.f64) == value.as.f64    // is a whole number
             ) {
                 return (uint64_t)(int64_t)value.as.f64;
@@ -579,7 +579,7 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
         return 2;
     }
 
-    // 2^63. INT64_MAX is 2^63 - 1 -- as a double this gets rounded to 2^63.
+    // 2^63. INT64_MAX is 2^63 - 1 --- as a double this gets rounded to 2^63.
     if (b >= 9223372036854775808.0) {
         return -1;
     }
