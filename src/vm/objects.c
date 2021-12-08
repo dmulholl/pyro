@@ -1518,26 +1518,26 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
             continue;
         }
 
-        int result;
+        bool j_is_less_than_i;
 
         if (IS_NULL(fn)) {
-            result = pyro_compare_values(aux_array[i], aux_array[j]);
+            j_is_less_than_i = pyro_compare_lt(vm, aux_array[j], aux_array[i]);
         } else {
             pyro_push(vm, fn);
-            pyro_push(vm, aux_array[i]);
             pyro_push(vm, aux_array[j]);
+            pyro_push(vm, aux_array[i]);
             Value return_value = pyro_call_fn(vm, fn, 2);
             if (vm->halt_flag) {
                 return;
-            } else if (!IS_I64(return_value)) {
-                pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return an integer.");
+            } else if (!IS_BOOL(return_value)) {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
                 return;
             } else {
-                result = return_value.as.i64;
+                j_is_less_than_i = return_value.as.boolean;
             }
         }
 
-        if (result == 1) {
+        if (j_is_less_than_i) {
             array[k] = aux_array[j];
             j++;
         } else {

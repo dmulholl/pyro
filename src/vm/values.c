@@ -523,32 +523,32 @@ int pyro_compare_strings(ObjStr* a, ObjStr* b) {
 }
 
 
-int pyro_compare_values(Value a, Value b) {
-    if (a.type == b.type) {
-        switch (a.type) {
-            case VAL_I64:
-                if (a.as.i64 == b.as.i64) return 0;
-                return a.as.i64 < b.as.i64 ? -1 : 1;
-            case VAL_F64:
-                if (isnan(a.as.f64) || isnan(b.as.f64)) return 2;
-                if (a.as.f64 == b.as.f64) return 0;
-                return a.as.f64 < b.as.f64 ? -1 : 1;
-            case VAL_CHAR:
-                if (a.as.u32 == b.as.u32) return 0;
-                return a.as.u32 < b.as.u32 ? -1 : 1;
-            case VAL_OBJ:
-                if (IS_STR(a) && IS_STR(b)) {
-                    return pyro_compare_strings(AS_STR(a), AS_STR(b));
-                } else {
-                    return 2;
-                }
-            default:
-                return 2;
-        }
-    } else {
-        return 2;
-    }
-}
+/* int pyro_compare_values(Value a, Value b) { */
+/*     if (a.type == b.type) { */
+/*         switch (a.type) { */
+/*             case VAL_I64: */
+/*                 if (a.as.i64 == b.as.i64) return 0; */
+/*                 return a.as.i64 < b.as.i64 ? -1 : 1; */
+/*             case VAL_F64: */
+/*                 if (isnan(a.as.f64) || isnan(b.as.f64)) return 2; */
+/*                 if (a.as.f64 == b.as.f64) return 0; */
+/*                 return a.as.f64 < b.as.f64 ? -1 : 1; */
+/*             case VAL_CHAR: */
+/*                 if (a.as.u32 == b.as.u32) return 0; */
+/*                 return a.as.u32 < b.as.u32 ? -1 : 1; */
+/*             case VAL_OBJ: */
+/*                 if (IS_STR(a) && IS_STR(b)) { */
+/*                     return pyro_compare_strings(AS_STR(a), AS_STR(b)); */
+/*                 } else { */
+/*                     return 2; */
+/*                 } */
+/*             default: */
+/*                 return 2; */
+/*         } */
+/*     } else { */
+/*         return 2; */
+/*     } */
+/* } */
 
 
 // Comparing integers and floats is tricky. We can't just cast the i64 to a double (which is what
