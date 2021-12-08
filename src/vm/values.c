@@ -523,34 +523,6 @@ int pyro_compare_strings(ObjStr* a, ObjStr* b) {
 }
 
 
-/* int pyro_compare_values(Value a, Value b) { */
-/*     if (a.type == b.type) { */
-/*         switch (a.type) { */
-/*             case VAL_I64: */
-/*                 if (a.as.i64 == b.as.i64) return 0; */
-/*                 return a.as.i64 < b.as.i64 ? -1 : 1; */
-/*             case VAL_F64: */
-/*                 if (isnan(a.as.f64) || isnan(b.as.f64)) return 2; */
-/*                 if (a.as.f64 == b.as.f64) return 0; */
-/*                 return a.as.f64 < b.as.f64 ? -1 : 1; */
-/*             case VAL_CHAR: */
-/*                 if (a.as.u32 == b.as.u32) return 0; */
-/*                 return a.as.u32 < b.as.u32 ? -1 : 1; */
-/*             case VAL_OBJ: */
-/*                 if (IS_STR(a) && IS_STR(b)) { */
-/*                     return pyro_compare_strings(AS_STR(a), AS_STR(b)); */
-/*                 } else { */
-/*                     return 2; */
-/*                 } */
-/*             default: */
-/*                 return 2; */
-/*         } */
-/*     } else { */
-/*         return 2; */
-/*     } */
-/* } */
-
-
 // Comparing integers and floats is tricky. We can't just cast the i64 to a double (which is what
 // C does by default) without losing precision. Only integers in the range [-(2^53), 2^53] can be
 // represented exactly as 64-bit floats. Outside this range, multiple integer values convert to the
@@ -593,67 +565,6 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
         return a > 0 ? -1 : 1;
     } else {
         return a < (int64_t)b_whole_part ? -1 : 1;
-    }
-}
-
-
-// Can compare any combination of i64, f64, or char values.
-// Returns -1 if a < b.
-// Returns 0 if a == b.
-// Returns 1 if a > b.
-// Returns 2 or -2 if the values cannot be compared.
-int pyro_compare_values_numerically(Value a, Value b) {
-    switch (a.type) {
-        case VAL_I64: {
-            switch (b.type) {
-                case VAL_I64:
-                    if (a.as.i64 == b.as.i64) return 0;
-                    return a.as.i64 < b.as.i64 ? -1 : 1;
-                case VAL_F64:
-                    return pyro_compare_int_and_float(a.as.i64, b.as.f64);
-                case VAL_CHAR:
-                    if (a.as.i64 == (int64_t)b.as.u32) return 0;
-                    return a.as.i64 < (int64_t)b.as.u32 ? -1 : 0;
-                default:
-                    return 2;
-            }
-            break;
-        }
-
-        case VAL_F64: {
-            switch (b.type) {
-                case VAL_I64:
-                    return pyro_compare_int_and_float(b.as.i64, a.as.f64) * -1;
-                case VAL_F64:
-                    if (isnan(a.as.f64) || isnan(b.as.f64)) return 2;
-                    if (a.as.f64 == b.as.f64) return 0;
-                    return a.as.f64 < b.as.f64 ? -1 : 1;
-                case VAL_CHAR:
-                    return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) * -1;
-                default:
-                    return 2;
-            }
-            break;
-        }
-
-        case VAL_CHAR: {
-            switch (b.type) {
-                case VAL_I64:
-                    if ((int64_t)a.as.u32 == b.as.i64) return 0;
-                    return (int64_t)a.as.u32 < b.as.i64 ? -1 : 0;
-                case VAL_F64:
-                    return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64);
-                case VAL_CHAR:
-                    if (a.as.u32 == b.as.u32) return 0;
-                    return a.as.u32 < b.as.u32 ? -1 : 1;
-                default:
-                    return 2;
-            }
-            break;
-        }
-
-        default:
-            return 2;
     }
 }
 
