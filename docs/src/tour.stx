@@ -204,6 +204,13 @@ The comparison operators also work with strings:
 
 Strings are compared lexicographically by byte value.
 
+You can use the comparison operators directly on tuples:
+
+::: code pyro
+    assert $tup(1, 2, 3) < $tup(1, 2, 4);
+
+Tuples are compared lexicographically by element.
+
 
 
 ### Printing

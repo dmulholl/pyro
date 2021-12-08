@@ -382,6 +382,15 @@ The comparison operators also work with strings:
 <p>
 Strings are compared lexicographically by byte value.
 </p>
+<p>
+You can use the comparison operators directly on tuples:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">&lt;</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</pre>
+<p>
+Tuples are compared lexicographically by element.
+</p>
 <h3 id="printing">
 Printing
 </h3>
