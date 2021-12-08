@@ -2,7 +2,7 @@
 
 import time
 
-num_runs = 25
+num_runs = 50
 
 # ------------------------------------------------------------------------------
 
@@ -124,7 +124,9 @@ def main():
     for i in range(num_runs):
         benchmark()
     runtime = time.process_time() - start
-    print(f"Average time: {runtime/num_runs:0.6f} secs")
+    average = runtime / num_runs
+    average_in_ms = average * 1000
+    print(f"Average time: {average:0.6f} s  ::  {average_in_ms:0.3f} ms")
 
 if __name__ == "__main__":
     main()
