@@ -40,3 +40,20 @@ assert $str($tup()) == "()";
 
 var tup = $tup("foo", 123, 'a', true);
 assert $str(tup) == `("foo", 123, 'a', true)`;
+
+
+def $test_tuple_comparisons() {
+    assert $tup(1, 2, 3) < $tup(1, 2, 4);
+    assert $tup(1, 2) < $tup(1, 2, 3);
+
+    assert $tup(1, 2, 3) <= $tup(1, 2, 3);
+    assert $tup(1, 2, 3) <= $tup(1, 2, 4);
+    assert $tup(1, 2) <= $tup(1, 2, 3);
+
+    assert $tup(1, 2, 3) > $tup(1, 2, 2);
+    assert $tup(1, 2, 3) > $tup(1, 2);
+
+    assert $tup(1, 2, 3) >= $tup(1, 2, 3);
+    assert $tup(1, 2, 3) >= $tup(1, 2, 2);
+    assert $tup(1, 2, 3) >= $tup(1, 2);
+}

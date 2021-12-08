@@ -172,12 +172,6 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format);
 // Returns a pointer to a static string. Can be safely called from the GC.
 char* pyro_stringify_obj_type(ObjType type);
 
-// Performs a lexicographic comparison using byte values.
-// - Returns -1 if a < b.
-// - Returns 0 if a == b.
-// - Returns 1 if a > b.
-int pyro_compare_strings(ObjStr* a, ObjStr* b);
-
 // Creates a quoted, backslash-escaped string representing the character's value. Returns NULL if
 // memory could not be allocated for the new string.
 ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value c);

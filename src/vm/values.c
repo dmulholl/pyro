@@ -507,7 +507,11 @@ char* pyro_stringify_obj_type(ObjType type) {
 }
 
 
-int pyro_compare_strings(ObjStr* a, ObjStr* b) {
+// Performs a lexicographic comparison using byte values.
+// - Returns -1 if a < b.
+// - Returns 0 if a == b.
+// - Returns 1 if a > b.
+static int compare_strings(ObjStr* a, ObjStr* b) {
     if (a == b) {
         return 0;
     }
@@ -520,6 +524,36 @@ int pyro_compare_strings(ObjStr* a, ObjStr* b) {
     }
 
     return a->length < b->length ? -1 : 1;
+}
+
+
+// Can call into Pyro code and set the panic or exit flags.
+// - Returns -1 if a < b.
+// - Returns 0 if a == b.
+// - Returns 1 if a > b.
+static int compare_tuples(PyroVM* vm, ObjTup* a, ObjTup* b) {
+    if (ObjTup_check_equal(a, b, vm)) {
+        return 0;
+    }
+    if (vm->halt_flag) {
+        return 0;
+    }
+
+    size_t min_len = a->count < b->count ? a->count : b->count;
+
+    for (size_t i = 0; i < min_len; i++) {
+        if (pyro_compare_lt(vm, a->values[i], b->values[i])) {
+            return -1;
+        }
+        if (vm->halt_flag) {
+            return 0;
+        }
+        if (pyro_compare_gt(vm, a->values[i], b->values[i])) {
+            return 1;
+        }
+    }
+
+    return a->count < b->count ? -1 : 1;
 }
 
 
@@ -775,7 +809,14 @@ bool pyro_compare_lt(PyroVM* vm, Value a, Value b) {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
-                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) == -1;
+                        return compare_strings(AS_STR(a), AS_STR(b)) == -1;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_TUP: {
+                    if (IS_TUP(b)) {
+                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) == -1;
                     }
                     pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
                     return false;
@@ -868,7 +909,14 @@ bool pyro_compare_le(PyroVM* vm, Value a, Value b) {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
-                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) <= 0;
+                        return compare_strings(AS_STR(a), AS_STR(b)) <= 0;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_TUP: {
+                    if (IS_TUP(b)) {
+                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) <= 0;
                     }
                     pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
                     return false;
@@ -953,7 +1001,14 @@ bool pyro_compare_gt(PyroVM* vm, Value a, Value b) {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
-                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) == 1;
+                        return compare_strings(AS_STR(a), AS_STR(b)) == 1;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_TUP: {
+                    if (IS_TUP(b)) {
+                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) == 1;
                     }
                     pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
                     return false;
@@ -1046,7 +1101,14 @@ bool pyro_compare_ge(PyroVM* vm, Value a, Value b) {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
-                        return pyro_compare_strings(AS_STR(a), AS_STR(b)) >= 0;
+                        return compare_strings(AS_STR(a), AS_STR(b)) >= 0;
+                    }
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
+                    return false;
+                }
+                case OBJ_TUP: {
+                    if (IS_TUP(b)) {
+                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) >= 0;
                     }
                     pyro_panic(vm, ERR_TYPE_ERROR, "Values are not comparable.");
                     return false;
