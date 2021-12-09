@@ -70,6 +70,7 @@ Strings have the following methods:
 
     Returns the byte value at `index` as an integer in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
+    Indices are zero-based.
 
 [[ `:byte_count() -> i64` ]]
 
@@ -81,7 +82,7 @@ Strings have the following methods:
 
 [[ `:char(index: i64) -> char` ]]
 
-    Returns the `char` at `index`, where `index` is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
+    Returns the `char` at `index`, where `index` is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
     Will panic if `index` isn't an integer or is out of range.
 
     (This is a potentially expensive method as it needs to seek forward from the beginning of the string.
@@ -282,7 +283,7 @@ You can multiply a character by an integer `n` to produce a string with `n` UTF-
 
 ### Vectors
 
-A vector, `vec`, is a dynamic array of values.
+A vector, `vec`, is a dynamic array of values. Vectors use zero-based indices.
 
 [[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
 
@@ -485,7 +486,7 @@ Maps have the following methods:
 
 ### Tuples
 
-A tuple, `tup`, is an immutable array of values.
+A tuple, `tup`, is an immutable array of values. Tuples use zero-based indices
 
 [[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
 
@@ -604,7 +605,7 @@ Iterator wrappers have the following methods:
 
 ### Byte Buffers
 
-A byte buffer, `buf`, is a dynamic array of bytes.
+A byte buffer, `buf`, is a dynamic array of bytes. Buffers use zero-based indices.
 
 [[ `$buf() -> buf` ]]
 

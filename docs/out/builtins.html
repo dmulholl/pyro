@@ -254,6 +254,7 @@ Strings have the following methods:
 <p>
 Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
 Will panic if <code>index</code> isn't an integer or is out of range.
+Indices are zero-based.
 </p>
 </dd>
 </div>
@@ -283,7 +284,7 @@ Returns an iterator over the string's bytes as <code>i64</code> values.
 </dt>
 <dd>
 <p>
-Returns the <code>char</code> at <code>index</code>, where <code>index</code> is an offset into the sequence of UTF-8 encoded Unicode code points in the string.
+Returns the <code>char</code> at <code>index</code>, where <code>index</code> is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
 Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 <p>
@@ -679,7 +680,7 @@ You can multiply a character by an integer <code>n</code> to produce a string wi
 Vectors
 </h3>
 <p>
-A vector, <code>vec</code>, is a dynamic array of values.
+A vector, <code>vec</code>, is a dynamic array of values. Vectors use zero-based indices.
 </p>
 <dl>
 <div>
@@ -1086,7 +1087,7 @@ Returns an iterator over the map's values.
 Tuples
 </h3>
 <p>
-A tuple, <code>tup</code>, is an immutable array of values.
+A tuple, <code>tup</code>, is an immutable array of values. Tuples use zero-based indices
 </p>
 <dl>
 <div>
@@ -1298,7 +1299,7 @@ Drains the iterator into a new vector.
 Byte Buffers
 </h3>
 <p>
-A byte buffer, <code>buf</code>, is a dynamic array of bytes.
+A byte buffer, <code>buf</code>, is a dynamic array of bytes. Buffers use zero-based indices.
 </p>
 <dl>
 <div>
