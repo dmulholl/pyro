@@ -264,6 +264,20 @@ Implementing this method adds support for index-style read access to instances.
 </div>
 <div>
 <dt>
+<code>:$hash() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Implementing this method allows you to set a custom hash value for instances.
+(By default an instance's hash value is simply its memory address.)
+</p>
+<p>
+Hash values are used for looking up entries in the builtin <code>map</code> and <code>set</code> types.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:$init()</code>
 </dt>
 <dd>
@@ -291,6 +305,60 @@ The method should return an iterator, i.e. an object with a <code>:$next()</code
 <p>
 Implementing this method makes the type an iterator.
 The method should return either the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_equals_equals(other: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the <code>==</code> operator for expressions of the form <code>receiver == other</code>.
+(The <code>!=</code> operator automatically returns the logical inverse of <code>==</code> and cannot be separately overloaded.)
+</p>
+<p>
+If you overload this operator and you want to use your overloaded type as a key in hash maps or as a member in sets you should also overload the <code>:$hash()</code> method to ensure that instances that compare as equal also have the same hash value.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_greater(other: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the <code>&gt;</code> operator for expressions of the form <code>receiver &gt; other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_greater_equals(other: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the <code>&gt;=</code> operator for expressions of the form <code>receiver &gt;= other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_less(other: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the <code>&lt;</code> operator for expressions of the form <code>receiver &lt; other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_less_equals(other: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the <code>&lt;=</code> operator for expressions of the form <code>receiver &lt;= other</code>.
 </p>
 </dd>
 </div>
