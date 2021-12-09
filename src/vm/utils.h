@@ -64,4 +64,12 @@ typedef struct {
 // returns false if there was a memory-allocation or I/O read error.
 bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellResult* out);
 
+// Parse a string as an integer. The string can contain underscores and can begin with 0b, 0o, or
+// 0x to specify the base. Returns true if successful, false if the string was invalid.
+bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value);
+
+// Parse a string as a float. The string can contain underscores. Returns true if successful,
+// false if the string was invalid.
+bool pyro_parse_string_as_float(const char* string, size_t length, double* value);
+
 #endif

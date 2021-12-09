@@ -144,3 +144,8 @@ def $time_benchmark() {
 def $test_benchmark() {
     benchmark();
 }
+
+
+def $main() {
+    benchmark();
+}

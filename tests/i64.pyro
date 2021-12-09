@@ -15,6 +15,8 @@ assert $i64(1.5) == 1;
 assert $i64(-1.5) == -1;
 
 # -2^63. This is INT64_MIN.
+# Note that we can't supply the integer literal -9223372036854775808 directly as this will get
+# parsed as as -1 times the positive literal and the positive literal is out of range.
 assert $i64(-9223372036854775808.0) == -9223372036854775807 - 1;
 
 # 2^62. INT64_MAX (2^63 - 1) isn't exactly representable as 64-bit float so we check 2^62 instead.
@@ -25,3 +27,23 @@ assert $is_err(try $i64(-18446744073709551616.0));
 
 # 2^63. This is out-of-range for a 64-bit int so $i64() will panic.
 assert $is_err(try $i64(9223372036854775808.0));
+
+assert $i64("0") == 0;
+assert $i64("1") == 1;
+assert $i64("123") == 123;
+assert $i64("123_456") == 123456;
+
+assert $i64("0b0") == 0;
+assert $i64("0b1") == 1;
+assert $i64("0b101") == 5;
+assert $i64("0b1111_1111") == 255;
+
+assert $i64("0o0") == 0;
+assert $i64("0o1") == 1;
+assert $i64("0o101") == 65;
+assert $i64("0o1_0_1") == 65;
+
+assert $i64("0x0") == 0;
+assert $i64("0x1") == 1;
+assert $i64("0x101") == 257;
+assert $i64("0xab_CD") == 43981;

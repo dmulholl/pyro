@@ -357,3 +357,90 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellResult* out) {
 
     return true;
 }
+
+
+// The max allowable length for an integer literal is 65 --- a plus or minus sign followed by
+// 64 binary digits.
+bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value) {
+    char buffer[65 + 1];
+    size_t count = 0;
+    int base = 10;
+    size_t next_index = 0;
+
+    if (length > 1 && string[0] == '0') {
+        if (string[1] == 'x') {
+            next_index += 2;
+            base = 16;
+        }
+        if (string[1] == 'o') {
+            next_index += 2;
+            base = 8;
+        }
+        if (string[1] == 'b') {
+            next_index += 2;
+            base = 2;
+        }
+    }
+
+    while (next_index < length) {
+        if (string[next_index] == '_') {
+            next_index++;
+            continue;
+        }
+        buffer[count] = string[next_index];
+        next_index++;
+        count++;
+        if (count > 65) {
+            return false;
+        }
+    }
+
+    if (count == 0) {
+        return false;
+    }
+
+    buffer[count] = '\0';
+    errno = 0;
+    char* endptr;
+    *value = strtoll(buffer, &endptr, base);
+    if (errno != 0 || *endptr != '\0') {
+        return false;
+    }
+
+    return true;
+}
+
+
+// May want to revisit the max allowed literal length of 24.
+bool pyro_parse_string_as_float(const char* string, size_t length, double* value) {
+    char buffer[24 + 1];
+    size_t count = 0;
+    size_t next_index = 0;
+
+    while (next_index < length) {
+        if (string[next_index] == '_') {
+            next_index++;
+            continue;
+        }
+        buffer[count] = string[next_index];
+        next_index++;
+        count++;
+        if (count > 24) {
+            return false;
+        }
+    }
+
+    if (count == 0) {
+        return false;
+    }
+
+    buffer[count] = '\0';
+    errno = 0;
+    char* endptr;
+    *value = strtod(buffer, &endptr);
+    if (errno != 0 || *endptr != '\0') {
+        return false;
+    }
+
+    return true;
+}

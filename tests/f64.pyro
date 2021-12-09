@@ -16,3 +16,9 @@ assert $is_nan($std::math::nan);
 assert $is_f64($std::math::inf);
 assert $is_inf($std::math::inf);
 assert $is_inf(-$std::math::inf);
+
+assert $f64("0") == 0.0;
+assert $f64("1") == 1.0;
+assert $f64("123") == 123.0;
+assert $f64("123.456") == 123.456;
+assert $f64("1_234.567") == 1234.567;

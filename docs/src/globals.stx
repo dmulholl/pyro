@@ -114,9 +114,10 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$f64(arg: i64|char) -> f64` ]]
+[[ `$f64(arg: i64|char|str) -> f64` ]]
 
     Converts `arg` to a float.
+    String arguments can contain underscores for readability.
 
 
 
@@ -158,10 +159,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$i64(arg: f64|char)` ]]
+[[ `$i64(arg: f64|char|str)` ]]
 
     Converts `arg` to an `i64`.
     Panics if the argument is out-of-range for an `i64`.
+
+    String arguments can contain underscores and can begin with `0b`, `0o`, or `0x` to specify the base as binary, octal, or hexadecimal; otherwise the base is assumed to be 10.
 
 
 

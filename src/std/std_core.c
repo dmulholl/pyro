@@ -328,10 +328,27 @@ static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
         case VAL_I64:
             return F64_VAL((double)args[0].as.i64);
+
         case VAL_F64:
             return args[0];
+
         case VAL_CHAR:
             return F64_VAL((double)args[0].as.u32);
+
+        case VAL_OBJ: {
+            if (IS_STR(args[0])) {
+                double value;
+                ObjStr* string = AS_STR(args[0]);
+                if (pyro_parse_string_as_float(string->bytes, string->length, &value)) {
+                    return F64_VAL(value);
+                }
+                pyro_panic(vm, ERR_VALUE_ERROR, "Unable to parse string argument to $f64().");
+                return NULL_VAL();
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $i64().");
+            return NULL_VAL();
+        }
+
         default:
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $f64().");
             return NULL_VAL();
@@ -348,17 +365,34 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
         case VAL_I64:
             return args[0];
-        case VAL_F64: {
-            // Check that the value is inside the range -2^63 to 2^63 - 1. (Note that both
-            // double literals below are powers of 2 so they're exactly representable.)
-            if (args[0].as.f64 >= -9223372036854775808.0 && args[0].as.f64 < 9223372036854775808.0) {
-                return I64_VAL((int64_t)args[0].as.f64);
-            }
-            pyro_panic(vm, ERR_VALUE_ERROR, "Floating-point value is out-of-range for $i64().");
-            return NULL_VAL();
-        }
+
         case VAL_CHAR:
             return I64_VAL((int64_t)args[0].as.u32);
+
+        case VAL_F64: {
+            if (args[0].as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
+                && args[0].as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
+            ) {
+                return I64_VAL((int64_t)args[0].as.f64);
+            }
+            pyro_panic(vm, ERR_VALUE_ERROR, "Floating-point value is out-of-range.");
+            return NULL_VAL();
+        }
+
+        case VAL_OBJ: {
+            if (IS_STR(args[0])) {
+                int64_t value;
+                ObjStr* string = AS_STR(args[0]);
+                if (pyro_parse_string_as_int(string->bytes, string->length, &value)) {
+                    return I64_VAL(value);
+                }
+                pyro_panic(vm, ERR_VALUE_ERROR, "Unable to parse string argument to $i64().");
+                return NULL_VAL();
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $i64().");
+            return NULL_VAL();
+        }
+
         default:
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $i64().");
             return NULL_VAL();
