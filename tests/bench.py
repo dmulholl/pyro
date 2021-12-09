@@ -117,6 +117,10 @@ def benchmark():
     for i in range(1000):
         local_variable += 1
 
+    # Type conversions.
+    for i in range(1000):
+        vec[i] = int(str(i))
+
 # ------------------------------------------------------------------------------
 
 def main():
