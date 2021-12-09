@@ -126,7 +126,7 @@ ObjClass* pyro_get_class(Value value);
 // Returns the named method if it is defined for the value, otherwise NULL_VAL().
 Value pyro_get_method(PyroVM* vm, Value value, ObjStr* method_name);
 
-// Returns [true] if the named method is defined for the value.
+// Returns true if the named method is defined for the value.
 bool pyro_has_method(PyroVM* vm, Value value, ObjStr* method_name);
 
 // Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
@@ -139,7 +139,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value);
 // Checks for strict equality -- same type, same value/object.
 bool pyro_compare_eq_strict(Value a, Value b);
 
-// Returns [true] if the value is truthy.
+// Returns true if the value is truthy.
 bool pyro_is_truthy(Value value);
 
 // Constructs and returns the default string representation of a value. A lot can go wrong here:

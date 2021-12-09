@@ -229,20 +229,8 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
         case VAL_NULL:
             return vm->str_null;
 
-        case VAL_I64: {
-            char* array = pyro_str_fmt(vm, "%lld", value.as.i64);
-            if (!array) {
-                return NULL;
-            }
-
-            ObjStr* string = ObjStr_take(array, strlen(array), vm);
-            if (!string) {
-                FREE_ARRAY(vm, char, array, strlen(array) + 1);
-                return NULL;
-            }
-
-            return string;
-        }
+        case VAL_I64:
+            return FMT("%lld", value.as.i64);
 
         case VAL_F64: {
             char* array = pyro_str_fmt(vm, "%.6f", value.as.f64);
