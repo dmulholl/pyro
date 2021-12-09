@@ -90,15 +90,15 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BINARY_CARET", ip);
         case OP_CALL:
             return u8_instruction(vm, "OP_CALL", fn, ip);
-        case OP_CLASS:
-            return constant_instruction(vm, "OP_CLASS", fn, ip);
+        case OP_MAKE_CLASS:
+            return constant_instruction(vm, "OP_MAKE_CLASS", fn, ip);
         case OP_CLOSE_UPVALUE:
             return atomic_instruction(vm, "OP_CLOSE_UPVALUE", ip);
-        case OP_CLOSURE: {
+        case OP_MAKE_CLOSURE: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
             ip += 3;
 
-            pyro_out(vm, "%-24s %4d    ", "OP_CLOSURE", const_index);
+            pyro_out(vm, "%-24s %4d    ", "OP_MAKE_CLOSURE", const_index);
             pyro_dump_value(vm, fn->constants[const_index]);
             pyro_out(vm, "\n");
 

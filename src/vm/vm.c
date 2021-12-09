@@ -525,7 +525,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_CLASS: {
+            case OP_MAKE_CLASS: {
                 ObjClass* class = ObjClass_new(vm);
                 if (class) {
                     class->name = READ_STRING();
@@ -542,7 +542,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_CLOSURE: {
+            case OP_MAKE_CLOSURE: {
                 ObjFn* fn = AS_FN(READ_CONSTANT());
                 ObjModule* module = frame->closure->module;
                 ObjClosure* closure = ObjClosure_new(vm, fn, module);
@@ -904,9 +904,9 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                // "Copy-down inheritance". We copy all the superclass's methods into the subclass's
-                // method table. This means that there's no extra runtime work involved in looking
-                // up an inherited method.
+                // "Copy-down inheritance". We copy all the superclass's methods, field indexes,
+                // and field initializers to the subclass. This means that there's no extra
+                // runtime work involved in looking up inherited methods or fields.
                 if (!ObjMap_copy_entries(superclass->methods, subclass->methods, vm)) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;

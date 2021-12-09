@@ -1209,7 +1209,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 1;
 
         case OP_BREAK:
-        case OP_CLASS:
+        case OP_MAKE_CLASS:
         case OP_DEFINE_GLOBAL:
         case OP_FIELD:
         case OP_GET_FIELD:
@@ -1239,7 +1239,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 3;
 
         // 2 bytes for the constant index, plus two for each upvalue.
-        case OP_CLOSURE: {
+        case OP_MAKE_CLOSURE: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
             ObjFn* closure_fn = AS_FN(fn->constants[const_index]);
             return 2 + closure_fn->upvalue_count * 2;
