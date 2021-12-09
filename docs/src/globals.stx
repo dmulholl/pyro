@@ -159,7 +159,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$i64(arg: f64|char|str)` ]]
+[[ `$i64(arg: f64|char|str) -> i64` ]]
 
     Converts `arg` to an `i64`.
     Panics if the argument is out-of-range for an `i64`.
