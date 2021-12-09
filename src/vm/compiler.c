@@ -212,9 +212,25 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
 }
 
 
-// Stores the specified value in the current function's constant table and emits bytecode to load
-// it onto the top of the stack.
+// Stores [value] in the current function's constant table and emits bytecode to load it onto the
+// top of the stack. Uses an optimized instruction set for loading small integer values.
 static void emit_constant(Parser* parser, Value value) {
+    if (IS_I64(value) && value.as.i64 >= 0 && value.as.i64 <= 9) {
+        switch (value.as.i64) {
+            case 0: emit_byte(parser, OP_LOAD_INT_0); return;
+            case 1: emit_byte(parser, OP_LOAD_INT_1); return;
+            case 2: emit_byte(parser, OP_LOAD_INT_2); return;
+            case 3: emit_byte(parser, OP_LOAD_INT_3); return;
+            case 4: emit_byte(parser, OP_LOAD_INT_4); return;
+            case 5: emit_byte(parser, OP_LOAD_INT_5); return;
+            case 6: emit_byte(parser, OP_LOAD_INT_6); return;
+            case 7: emit_byte(parser, OP_LOAD_INT_7); return;
+            case 8: emit_byte(parser, OP_LOAD_INT_8); return;
+            case 9: emit_byte(parser, OP_LOAD_INT_9); return;
+            default: return;
+        }
+    }
+
     uint16_t index = make_constant(parser, value);
     emit_byte(parser, OP_LOAD_CONSTANT);
     emit_u16(parser, index);
