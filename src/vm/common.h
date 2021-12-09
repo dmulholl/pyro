@@ -33,7 +33,7 @@ typedef struct ObjClass ObjClass;
 
 // Sets the (count/capacity) threshold for map resizing.
 #ifndef PYRO_MAX_HASHMAP_LOAD
-    #define PYRO_MAX_HASHMAP_LOAD 0.65
+    #define PYRO_MAX_HASHMAP_LOAD 0.5
 #endif
 
 // Max number of values on the stack. Each value is 16 bytes so the default size is 256KB.
