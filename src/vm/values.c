@@ -194,7 +194,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             if (closure->fn->name) {
-                FMT("<fn %s>", closure->fn->name->bytes);
+                return FMT("<fn %s>", closure->fn->name->bytes);
             }
             return STR("<fn>");
         }
@@ -202,7 +202,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
             if (class->name) {
-                FMT("<class %s>", class->name->bytes);
+                return FMT("<class %s>", class->name->bytes);
             }
             return STR("<class>");
         }
@@ -210,7 +210,7 @@ static ObjStr* pyro_stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             if (instance->obj.class->name) {
-                FMT("<instance %s>", instance->obj.class->name->bytes);
+                return FMT("<instance %s>", instance->obj.class->name->bytes);
             }
             return STR("<instance>");
         }
