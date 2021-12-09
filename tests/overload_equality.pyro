@@ -1,0 +1,34 @@
+class Foo {}
+
+var foo1 = Foo();
+var foo2 = Foo();
+assert foo1 == foo1;
+assert foo1 != foo2;
+
+class Bar {
+    var value;
+
+    def $init(value) {
+        self.value = value;
+    }
+
+    def $op_binary_equals_equals(other) {
+        return $is_instance(other, Bar) && other.value == self.value;
+    }
+
+    def $hash() {
+        return self.value;
+    }
+}
+
+var bar1 = Bar(123);
+var bar2 = Bar(123);
+assert bar1 != foo1;
+assert bar1 == bar1;
+assert bar1 == bar2;
+
+var bar3 = Bar(456);
+assert bar1 != bar3;
+
+assert $hash(bar1) == 123;
+assert $hash(bar3) == 456;
