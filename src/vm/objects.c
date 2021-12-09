@@ -1227,7 +1227,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_LOOP:
         case OP_MAKE_MAP:
         case OP_MAKE_VEC:
-        case OP_METHOD:
+        case OP_DEFINE_METHOD:
         case OP_IMPORT_MEMBERS:
         case OP_POP_JUMP_IF_FALSE:
         case OP_SET_FIELD:

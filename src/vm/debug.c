@@ -227,8 +227,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u16_instruction(vm, "OP_MAKE_MAP", fn, ip);
         case OP_MAKE_VEC:
             return u16_instruction(vm, "OP_MAKE_VEC", fn, ip);
-        case OP_METHOD:
-            return constant_instruction(vm, "OP_METHOD", fn, ip);
+        case OP_DEFINE_METHOD:
+            return constant_instruction(vm, "OP_DEFINE_METHOD", fn, ip);
         case OP_BINARY_PERCENT:
             return atomic_instruction(vm, "OP_MOD", ip);
         case OP_BINARY_STAR:

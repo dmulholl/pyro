@@ -1886,7 +1886,7 @@ static void parse_method_declaration(Parser* parser) {
     }
     parse_function_definition(parser, type, parser->previous);
 
-    emit_op_u16(parser, OP_METHOD, index);
+    emit_op_u16(parser, OP_DEFINE_METHOD, index);
 }
 
 

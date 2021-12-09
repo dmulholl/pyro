@@ -1153,7 +1153,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_METHOD: {
+            case OP_DEFINE_METHOD: {
                 define_method(vm, READ_STRING());
                 break;
             }

@@ -72,7 +72,7 @@ typedef enum {
     OP_LOOP,
     OP_MAKE_MAP,
     OP_MAKE_VEC,
-    OP_METHOD,
+    OP_DEFINE_METHOD,
     OP_POP,
     OP_POP_JUMP_IF_FALSE,
     OP_RETURN,
