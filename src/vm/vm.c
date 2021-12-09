@@ -174,7 +174,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
 
                 Value initializer;
                 if (ObjMap_get(class->methods, OBJ_VAL(vm->str_init), &initializer, vm)) {
-                    call_closure(vm, AS_CLOSURE(initializer), arg_count);
+                    call_value(vm, initializer, arg_count);
                 } else if (arg_count != 0) {
                     pyro_panic(
                         vm, ERR_ARGS_ERROR,
@@ -252,12 +252,12 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 // The method's ObjClosure will be sitting on top of the stack, the ObjClass just below it.
 static void define_method(PyroVM* vm, ObjStr* name) {
     Value method_value = pyro_peek(vm, 0);
-    /* ObjClosure* method_closure = AS_CLOSURE(method_value); */
-    // if name == vm->str_init add as property on class object...
     ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
     if (ObjMap_set(class->methods, OBJ_VAL(name), method_value, vm) == 0) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
     }
+
     pyro_pop(vm);
 }
 
