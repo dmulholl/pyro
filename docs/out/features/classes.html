@@ -18,7 +18,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.5.1</p>
+                <p class="version">Version 0.5.3</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -224,11 +224,21 @@ You can implement the <code>$special</code> methods listed below to add support 
 <dl>
 <div>
 <dt>
+<code>:$call()</code>
+</dt>
+<dd>
+<p>
+Implementing this method makes instances of the type callable.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:$debug() -&gt; str</code>
 </dt>
 <dd>
 <p>
-Should return a string representation of the instance suitable for debugging.
+This method should return a string representation of the instance suitable for debugging.
 </p>
 </dd>
 </div>
@@ -238,7 +248,7 @@ Should return a string representation of the instance suitable for debugging.
 </dt>
 <dd>
 <p>
-Should return a string representation of the instance formatted according to the <code>format_specifier</code> string.
+This method should return a string representation of the instance formatted according to the <code>format_specifier</code> string.
 </p>
 </dd>
 </div>
@@ -300,7 +310,7 @@ Implementing this method adds support for index-style write access to instances.
 </dt>
 <dd>
 <p>
-Should return the instance's default string representation.
+This method should return the instance's default string representation.
 </p>
 </dd>
 </div>

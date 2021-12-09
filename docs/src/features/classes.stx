@@ -144,14 +144,19 @@ is equivalent to calling the object's `$set_index(key, value)` method.
 You can implement the `$special` methods listed below to add support for various language features to your types:
 
 
+[[ `:$call()` ]]
+
+    Implementing this method makes instances of the type callable.
+
+
 [[ `:$debug() -> str` ]]
 
-    Should return a string representation of the instance suitable for debugging.
+    This method should return a string representation of the instance suitable for debugging.
 
 
 [[ `:$fmt(format_specifier: str) -> str` ]]
 
-    Should return a string representation of the instance formatted according to the `format_specifier` string.
+    This method should return a string representation of the instance formatted according to the `format_specifier` string.
 
 
 [[ `:$get_index(key: any) -> any` ]]
@@ -183,4 +188,4 @@ You can implement the `$special` methods listed below to add support for various
 
 [[ `:$str() -> str` ]]
 
-    Should return the instance's default string representation.
+    This method should return the instance's default string representation.
