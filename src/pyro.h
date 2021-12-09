@@ -8,8 +8,8 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 5
-#define PYRO_VERSION_PATCH 2
-#define PYRO_VERSION_STRING "0.5.2"
+#define PYRO_VERSION_PATCH 3
+#define PYRO_VERSION_STRING "0.5.3"
 
 // All runtime state is stored on a PyroVM instance.
 typedef struct PyroVM PyroVM;

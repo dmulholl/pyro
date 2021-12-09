@@ -1,0 +1,17 @@
+class Callable {
+    var value;
+
+    def $init(value) {
+        self.value = value;
+    }
+
+    def $call(arg) {
+        return self.value + arg;
+    }
+}
+
+var foo = Callable(123);
+assert foo(1) == 124;
+
+var bar = Callable(456);
+assert bar(2) == 458;

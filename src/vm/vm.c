@@ -195,6 +195,19 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 return;
             }
 
+            case OBJ_INSTANCE: {
+                ObjClass* class = AS_OBJ(callee)->class;
+
+                Value call_method;
+                if (ObjMap_get(class->methods, OBJ_VAL(vm->str_call), &call_method, vm)) {
+                    call_value(vm, call_method, arg_count);
+                } else {
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Object is not callable.");
+                }
+
+                return;
+            }
+
             default:
                 break;
         }
@@ -1655,6 +1668,7 @@ PyroVM* pyro_new_vm() {
     vm->str_op_binary_greater = NULL;
     vm->str_op_binary_greater_equals = NULL;
     vm->str_hash = NULL;
+    vm->str_call = NULL;
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
     vm->gc_disallows = 0;
@@ -1720,6 +1734,7 @@ PyroVM* pyro_new_vm() {
     vm->str_op_binary_greater = STR("$op_binary_greater");
     vm->str_op_binary_greater_equals = STR("$op_binary_greater_equals");
     vm->str_hash = STR("$hash");
+    vm->str_call = STR("$call");
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
