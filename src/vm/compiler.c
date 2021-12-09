@@ -214,7 +214,7 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
 
 // Stores [value] in the current function's constant table and emits bytecode to load it onto the
 // top of the stack. Uses an optimized instruction set for loading small integer values.
-static void emit_constant(Parser* parser, Value value) {
+static void emit_load_constant_instruction(Parser* parser, Value value) {
     if (IS_I64(value) && value.as.i64 >= 0 && value.as.i64 <= 9) {
         switch (value.as.i64) {
             case 0: emit_byte(parser, OP_LOAD_INT_0); return;
@@ -896,27 +896,27 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
 
     else if (match(parser, TOKEN_INT)) {
         int64_t value = parse_int_literal(parser);
-        emit_constant(parser, I64_VAL(value));
+        emit_load_constant_instruction(parser, I64_VAL(value));
     }
 
     else if (match(parser, TOKEN_HEX_INT)) {
         int64_t value = parse_hex_literal(parser);
-        emit_constant(parser, I64_VAL(value));
+        emit_load_constant_instruction(parser, I64_VAL(value));
     }
 
     else if (match(parser, TOKEN_BINARY_INT)) {
         int64_t value = parse_binary_literal(parser);
-        emit_constant(parser, I64_VAL(value));
+        emit_load_constant_instruction(parser, I64_VAL(value));
     }
 
     else if (match(parser, TOKEN_OCTAL_INT)) {
         int64_t value = parse_octal_literal(parser);
-        emit_constant(parser, I64_VAL(value));
+        emit_load_constant_instruction(parser, I64_VAL(value));
     }
 
     else if (match(parser, TOKEN_FLOAT)) {
         double value = parse_float_literal(parser);
-        emit_constant(parser, F64_VAL(value));
+        emit_load_constant_instruction(parser, F64_VAL(value));
     }
 
     else if (match(parser, TOKEN_LEFT_PAREN)) {
@@ -928,19 +928,19 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
         const char* start = parser->previous.start + 1;
         size_t length = parser->previous.length - 2;
         ObjStr* string = ObjStr_copy_raw(start, length, parser->vm);
-        emit_constant(parser, OBJ_VAL(string));
+        emit_load_constant_instruction(parser, OBJ_VAL(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
         const char* start = parser->previous.start + 1;
         size_t length = parser->previous.length - 2;
         ObjStr* string = ObjStr_copy_esc(start, length, parser->vm);
-        emit_constant(parser, OBJ_VAL(string));
+        emit_load_constant_instruction(parser, OBJ_VAL(string));
     }
 
     else if (match(parser, TOKEN_CHAR)) {
         uint32_t codepoint = parse_char_literal(parser);
-        emit_constant(parser, CHAR_VAL(codepoint));
+        emit_load_constant_instruction(parser, CHAR_VAL(codepoint));
     }
 
     else if (match(parser, TOKEN_IDENTIFIER)) {
