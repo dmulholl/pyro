@@ -48,3 +48,44 @@ assert 'b' > 'a' == true;
 assert 'a' >= 'a' == true;
 assert 'a' >= 'b' == false;
 assert 'b' >= 'a' == true;
+
+# Mixed types.
+assert 1 < 1.1;
+assert 1 < 'a';
+assert 1.0 < 2;
+assert 1.0 < 'a';
+assert 'a' < 100;
+assert 'a' < 100.0;
+
+assert 2 > 1.0;
+assert 100 > 'a';
+assert 2.0 > 1;
+assert 100.0 > 'a';
+assert 'a' > 1;
+assert 'a' > 1.0;
+
+assert 1 <= 1.0;
+assert 1 <= 1.1;
+assert 97 <= 'a';
+assert 97 <= 'b';
+assert 1.0 <= 1;
+assert 1.0 <= 2;
+assert 97.0 <= 'a';
+assert 97.0 <= 'b';
+assert 'a' <= 97;
+assert 'a' <= 100;
+assert 'a' <= 97.0;
+assert 'a' <= 100.0;
+
+assert 2 >= 1.0;
+assert 2 >= 2.0;
+assert 97 >= 'a';
+assert 100 >= 'a';
+assert 2.0 >= 1;
+assert 2.0 >= 2;
+assert 97.0 >= 'a';
+assert 100.0 >= 'a';
+assert 'a' >= 1;
+assert 'a' >= 97;
+assert 'a' >= 1.0;
+assert 'a' >= 97.0;
