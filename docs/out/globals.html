@@ -232,11 +232,12 @@ Instructs the program to exit with the specified exit code.
 </div>
 <div>
 <dt>
-<code>$f64(arg: i64|char) -&gt; f64</code>
+<code>$f64(arg: i64|char|str) -&gt; f64</code>
 </dt>
 <dd>
 <p>
 Converts <code>arg</code> to a float.
+String arguments can contain underscores for readability.
 </p>
 </dd>
 </div>
@@ -301,12 +302,15 @@ Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will c
 </div>
 <div>
 <dt>
-<code>$i64(arg: f64|char)</code>
+<code>$i64(arg: f64|char|str)</code>
 </dt>
 <dd>
 <p>
 Converts <code>arg</code> to an <code>i64</code>.
 Panics if the argument is out-of-range for an <code>i64</code>.
+</p>
+<p>
+String arguments can contain underscores and can begin with <code>0b</code>, <code>0o</code>, or <code>0x</code> to specify the base as binary, octal, or hexadecimal; otherwise the base is assumed to be 10.
 </p>
 </dd>
 </div>
