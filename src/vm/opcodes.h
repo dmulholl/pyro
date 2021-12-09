@@ -33,7 +33,7 @@ typedef enum {
     OP_DUP,
     OP_DUP_2,
     OP_ECHO,
-    OP_FIELD,
+    OP_DEFINE_FIELD,
     OP_GET_FIELD,
     OP_GET_GLOBAL,
     OP_GET_INDEX,

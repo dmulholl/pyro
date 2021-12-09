@@ -1901,7 +1901,7 @@ static void parse_field_declaration(Parser* parser) {
             emit_byte(parser, OP_LOAD_NULL);
         }
 
-        emit_op_u16(parser, OP_FIELD, index);
+        emit_op_u16(parser, OP_DEFINE_FIELD, index);
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "Expected ';' after field declaration.");
 }

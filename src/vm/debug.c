@@ -137,8 +137,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u8_instruction(vm, "OP_ECHO", fn, ip);
         case OP_BINARY_EQUAL_EQUAL:
             return atomic_instruction(vm, "OP_BINARY_EQUAL_EQUAL", ip);
-        case OP_FIELD:
-            return constant_instruction(vm, "OP_FIELD", fn, ip);
+        case OP_DEFINE_FIELD:
+            return constant_instruction(vm, "OP_DEFINE_FIELD", fn, ip);
         case OP_BINARY_SLASH:
             return atomic_instruction(vm, "OP_BINARY_SLASH", ip);
         case OP_GET_FIELD:

@@ -671,7 +671,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_FIELD: {
+            case OP_DEFINE_FIELD: {
                 define_field(vm, READ_STRING());
                 break;
             }
