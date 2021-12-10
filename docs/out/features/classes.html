@@ -169,7 +169,7 @@ A class can inherit from a superclass.
     <span class="p">}</span>
 
     <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">echo</span> <span class="s">&quot;color: &quot;</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">color</span><span class="p">;</span>
+        <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;color: {}&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -183,7 +183,7 @@ A class can inherit from a superclass.
 
     <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
         <span class="kc">super</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
-        <span class="k">echo</span> <span class="s">&quot;radius: &quot;</span> <span class="o">+</span> <span class="nx">$str</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">radius</span><span class="p">);</span>
+        <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;radius: {}&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">radius</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre>
@@ -379,6 +379,16 @@ Implementing this method overloads the <code>-</code> operator for expressions o
 <dd>
 <p>
 Implementing this method overloads the <code>+</code> operator for expressions of the form <code>receiver + other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_slash(other: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the <code>/</code> operator for expressions of the form <code>receiver / other</code>.
 </p>
 </dd>
 </div>
