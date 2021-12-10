@@ -96,7 +96,7 @@ A class can inherit from a superclass.
         }
 
         def info() {
-            echo "color: " + self.color;
+            $println("color: {}", self.color);
         }
     }
 
@@ -110,7 +110,7 @@ A class can inherit from a superclass.
 
         def info() {
             super:info();
-            echo "radius: " + $str(self.radius);
+            $println("radius: {}", self.radius);
         }
     }
 
