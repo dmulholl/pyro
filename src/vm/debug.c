@@ -1,6 +1,6 @@
 #include "debug.h"
-#include "vm.h"
 #include "opcodes.h"
+#include "utils.h"
 
 
 // A single-byte instruction with no arguments.

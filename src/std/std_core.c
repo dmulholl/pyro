@@ -5,6 +5,7 @@
 #include "../vm/utils.h"
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
+#include "../vm/setup.h"
 
 #include "../lib/os/os.h"
 

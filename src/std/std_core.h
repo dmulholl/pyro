@@ -3,6 +3,7 @@
 
 #include "../vm/common.h"
 #include "../vm/values.h"
+#include "../vm/exec.h"
 
 void pyro_load_std_core(PyroVM* vm);
 

@@ -4,8 +4,9 @@
 #include "common.h"
 #include "values.h"
 #include "objects.h"
-#include "../lib/mt64/mt64.h"
+#include "utils.h"
 
+#include "../lib/mt64/mt64.h"
 
 // We create a new [CallFrame] on the call stack for each function call. [ip] is the instruction
 // pointer -- it points to the next instruction in the function's bytecode to be executed. [fp] is
@@ -15,7 +16,6 @@ typedef struct {
     uint8_t* ip;
     Value* fp;
 } CallFrame;
-
 
 struct PyroVM {
     // Class objects for builtin types.
@@ -140,69 +140,13 @@ struct PyroVM {
 };
 
 
-// Creates a new VM-level global variable. [value] is shielded from garbage-collection for the
-// duration of this function.
-void pyro_define_global(PyroVM* vm, const char* name, Value value);
-
-// Creates a new VM-level global variable pointing to a native function.
-void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity);
-
-// Adds a new member to [module], i.e. creates a module-level global variable called [name] with
-// initial value [value]. [value] is shielded from garbage-collection while inside this function.
-void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value);
-
-// Convenience function for adding a new member to [module] where the value is a native function.
-void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity);
-
-// Adds a new method to the class.
-void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity);
-
-// Creates a new top-level module. Returns the module or [NULL] if memory allocation fails.
-ObjModule* pyro_define_module_1(PyroVM* vm, const char* name);
-
-// Defines a new 2nd level module where [parent] is a top-level module.
-// Returns the module or [NULL] if memory allocation fails.
-ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name);
-
-// Defines a new 3rd level module where [grandparent] is a top-level module and [parent] is a
-// submodule of [grandparent]. Returns the module or [NULL] if memory allocation fails.
-ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name);
-
-// Calls a method from a native function. Returns the value returned by the method. Before calling
-// this function the receiver and the method's arguments should be pushed onto the stack. These
-// values (and the return value of the method) will be popped off the stack before this function
-// returns. The called method can set the panic or exit flags so the caller should check the
-// [vm->halt_flag] immediately on return before using the result. If the halt flag is set the
-// caller should clean up any allocated resources and unwind the call stack.
-Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
-
-// Calls a function [fn] from a native function. Returns the value returned by [fn]. Before calling
-// this function [fn] itself and its arguments should be pushed onto the stack. These values (and
-// the return value of the function) will be popped off the stack before this function returns. The
-// called function can set the panic or exit flags so the caller should check the [vm->halt_flag]
-// immediately on return before using the result. If the halt flag is set the caller should clean up
-// any allocated resources and unwind the call stack.
-Value pyro_call_fn(PyroVM* vm, Value fn, uint8_t arg_count);
-
-// Called to signal that an error has occurred.
-void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...);
-
-// Writes a printf-style formatted string to the VM's output stream, unless that stream is NULL.
-void pyro_out(PyroVM* vm, const char* format, ...);
-
-// Writes a printf-style formatted string to the VM's error stream, unless that stream is NULL.
-void pyro_err(PyroVM* vm, const char* format, ...);
-
-// Executes a file in the context of the specified module.
-void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module);
-
 // Peeks at a value on the stack without popping it. Pass [distance = 0] to peek at the value on
 // top of the stack, [distance = 1] to peek at the value below that, etc.
 static inline Value pyro_peek(PyroVM* vm, int distance) {
     return vm->stack_top[-1 - distance];
 }
 
-// Pushes a value onto the stack.
+// Pushes a value onto the stack. Panics if the stack overflows.
 static inline void pyro_push(PyroVM* vm, Value value) {
     if (vm->stack_top == vm->stack_max) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Stack overflow.");

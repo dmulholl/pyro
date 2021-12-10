@@ -3,6 +3,7 @@
 #include "../vm/values.h"
 #include "../vm/vm.h"
 #include "../lib/mt64/mt64.h"
+#include "../vm/setup.h"
 
 
 static Value fn_test_mt64(PyroVM* vm, size_t arg_count, Value* args) {

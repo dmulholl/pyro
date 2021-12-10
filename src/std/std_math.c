@@ -2,6 +2,7 @@
 
 #include "../vm/values.h"
 #include "../vm/vm.h"
+#include "../vm/setup.h"
 
 
 static Value fn_abs(PyroVM* vm, size_t arg_count, Value* args) {

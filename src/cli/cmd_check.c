@@ -16,7 +16,7 @@ void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
         }
 
         char* path = ap_arg(cmd_parser, i);
-        pyro_test_compile_file(vm, path);
+        pyro_try_compile_file(vm, path);
         if (pyro_get_panic_flag(vm)) {
             had_panic = true;
         }

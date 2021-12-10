@@ -443,3 +443,94 @@ bool pyro_parse_string_as_float(const char* string, size_t length, double* value
 
     return true;
 }
+
+
+static void pyro_print_stack_trace(PyroVM* vm, FILE* file) {
+    if (file) {
+        fprintf(file, "Traceback (most recent function first):\n\n");
+
+        for (size_t i = vm->frame_count; i > 0; i--) {
+            CallFrame* frame = &vm->frames[i - 1];
+            ObjFn* fn = frame->closure->fn;
+
+            size_t line_number = 1;
+            if (frame->ip > fn->code) {
+                size_t ip = frame->ip - fn->code - 1;
+                line_number = ObjFn_get_line_number(fn, ip);
+            }
+
+            fprintf(file, "%s:%zu\n", fn->source->bytes, line_number);
+            fprintf(file, "  [%zu] --> in %s\n", i, fn->name->bytes);
+        }
+    }
+}
+
+
+void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
+    vm->panic_flag = true;
+    vm->halt_flag = true;
+    vm->status_code = error_code;
+
+    if (format == NULL) {
+        return;
+    }
+
+    // If we're inside a try expression and the panic is catchable, we don't print anything to the
+    // error stream. We simply store the error message in the panic buffer so it can be returned
+    // by the try expression.
+    if (vm->try_depth > 0 && !vm->hard_panic) {
+        va_list args;
+        va_start(args, format);
+        vsnprintf(vm->panic_buffer, PYRO_PANIC_BUFFER_SIZE, format, args);
+        va_end(args);
+        return;
+    }
+
+    // Print the source filename and line number if available.
+    if (vm->frame_count > 0 && vm->err_file) {
+        CallFrame* frame = &vm->frames[vm->frame_count - 1];
+        ObjFn* fn = frame->closure->fn;
+        size_t line_number = 1;
+        if (frame->ip > fn->code) {
+            size_t ip = frame->ip - fn->code - 1;
+            line_number = ObjFn_get_line_number(fn, ip);
+        }
+        fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line_number);
+    }
+
+    // Print the error message.
+    if (vm->err_file) {
+        fprintf(vm->err_file, "[Code %lld] Error: ", error_code);
+        va_list args;
+        va_start(args, format);
+        vfprintf(vm->err_file, format, args);
+        va_end(args);
+        fprintf(vm->err_file, "\n");
+    }
+
+    // Print a stack trace if the panic occurred inside a Pyro function.
+    if (vm->frame_count > 1 && vm->err_file) {
+        fprintf(vm->err_file, "\n");
+        pyro_print_stack_trace(vm, vm->err_file);
+    }
+}
+
+
+void pyro_out(PyroVM* vm, const char* format, ...) {
+    if (vm->out_file) {
+        va_list args;
+        va_start(args, format);
+        vfprintf(vm->out_file, format, args);
+        va_end(args);
+    }
+}
+
+
+void pyro_err(PyroVM* vm, const char* format, ...) {
+    if (vm->err_file) {
+        va_list args;
+        va_start(args, format);
+        vfprintf(vm->err_file, format, args);
+        va_end(args);
+    }
+}

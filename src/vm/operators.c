@@ -1,6 +1,7 @@
 #include "operators.h"
 #include "objects.h"
 #include "vm.h"
+#include "exec.h"
 
 
 // Returns [a] + [b]. Panics if the operation is not defined for the operand types.

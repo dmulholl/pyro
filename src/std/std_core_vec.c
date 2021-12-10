@@ -6,6 +6,7 @@
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
 #include "../vm/operators.h"
+#include "../vm/setup.h"
 
 
 static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
@@ -255,7 +256,7 @@ static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the map function
         pyro_push(vm, vec->values[i]); // push the argument for the map function
-        Value result = pyro_call_fn(vm, args[0], 1);
+        Value result = pyro_call_function(vm, args[0], 1);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
@@ -281,7 +282,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the filter function
         pyro_push(vm, vec->values[i]); // push the argument for the filter function
-        Value result = pyro_call_fn(vm, args[0], 1);
+        Value result = pyro_call_function(vm, args[0], 1);
         if (vm->halt_flag) {
             return NULL_VAL();
         }

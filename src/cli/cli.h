@@ -17,7 +17,9 @@
 #include <errno.h>
 
 // Local headers.
-#include "../pyro.h"
+#include "../vm/setup.h"
+#include "../vm/exec.h"
+
 #include "../lib/args/args.h"
 #include "../lib/os/os.h"
 

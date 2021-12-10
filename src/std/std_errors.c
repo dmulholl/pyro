@@ -2,6 +2,7 @@
 
 #include "../vm/vm.h"
 #include "../vm/values.h"
+#include "../vm/setup.h"
 
 
 void pyro_load_std_errors(PyroVM* vm) {

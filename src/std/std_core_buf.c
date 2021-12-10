@@ -1,10 +1,8 @@
 #include "std_core.h"
 
-#include "../vm/values.h"
 #include "../vm/vm.h"
 #include "../vm/utils.h"
-#include "../vm/heap.h"
-#include "../vm/utf8.h"
+#include "../vm/setup.h"
 
 
 static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {

@@ -2,6 +2,7 @@
 
 #include "../vm/vm.h"
 #include "../vm/heap.h"
+#include "../vm/setup.h"
 
 
 static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {

@@ -168,11 +168,11 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm);
 /* Modules */
 /* ------- */
 
-typedef struct {
+struct ObjModule {
     Obj obj;
     ObjMap* globals;
     ObjMap* submodules;
-} ObjModule;
+};
 
 ObjModule* ObjModule_new(PyroVM* vm);
 

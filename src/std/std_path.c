@@ -4,6 +4,7 @@
 #include "../vm/vm.h"
 #include "../vm/utils.h"
 #include "../vm/heap.h"
+#include "../vm/setup.h"
 
 #include "../lib/os/os.h"
 
