@@ -5,7 +5,6 @@
 #include "heap.h"
 #include "values.h"
 #include "utils.h"
-#include "errors.h"
 #include "operators.h"
 
 #include "../std/std_core.h"

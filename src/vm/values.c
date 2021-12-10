@@ -3,7 +3,6 @@
 #include "vm.h"
 #include "utils.h"
 #include "utf8.h"
-#include "errors.h"
 
 
 bool pyro_is_truthy(Value value) {

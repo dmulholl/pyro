@@ -5,7 +5,6 @@
 #include "../vm/utils.h"
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
-#include "../vm/errors.h"
 #include "../vm/operators.h"
 
 

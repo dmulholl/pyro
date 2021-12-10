@@ -2,7 +2,6 @@
 #include "heap.h"
 #include "vm.h"
 #include "utf8.h"
-#include "errors.h"
 
 #include "../lib/os/os.h"
 

@@ -4,7 +4,6 @@
 #include "vm.h"
 #include "utils.h"
 #include "opcodes.h"
-#include "errors.h"
 #include "utf8.h"
 #include "operators.h"
 

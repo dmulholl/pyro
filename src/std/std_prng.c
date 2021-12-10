@@ -2,7 +2,6 @@
 
 #include "../vm/values.h"
 #include "../vm/vm.h"
-#include "../vm/errors.h"
 #include "../lib/mt64/mt64.h"
 
 

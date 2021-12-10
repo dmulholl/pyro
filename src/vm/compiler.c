@@ -6,7 +6,6 @@
 #include "utf8.h"
 #include "utils.h"
 #include "lexer.h"
-#include "errors.h"
 
 
 typedef struct {

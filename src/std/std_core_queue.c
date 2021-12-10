@@ -5,7 +5,6 @@
 #include "../vm/utils.h"
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
-#include "../vm/errors.h"
 
 
 static Value fn_queue(PyroVM* vm, size_t arg_count, Value* args) {
