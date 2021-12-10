@@ -44,12 +44,6 @@ char* pyro_dirname(char* path);
 // statically allocated memory.
 char* pyro_basename(char* path);
 
-// Wrapper for popen().
-FILE* pyro_popen(const char* command, const char* mode);
-
-// Wrapper for pclose().
-int pyro_pclose(FILE* stream);
-
 // Equivalent to `rm -rf` in the shell.
 // Deletes the symlink or file or directory at [path]. If [path] is a symlink, the link itself will
 // be deleted, not its target. If [path] is a directory, its content will be recursively deleted,

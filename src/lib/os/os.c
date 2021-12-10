@@ -81,16 +81,6 @@ char* pyro_basename(char* path) {
 }
 
 
-FILE* pyro_popen(const char* command, const char* mode) {
-    return popen(command, mode);
-}
-
-
-int pyro_pclose(FILE* stream) {
-    return pclose(stream);
-}
-
-
 // Returns 0 if successful, -1 if an error occurs.
 static int rmrf_callback(const char* path, const struct stat* s, int type, struct FTW* ftw_buf) {
     return remove(path);
