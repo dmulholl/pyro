@@ -6,6 +6,7 @@
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
 #include "../vm/errors.h"
+#include "../vm/operators.h"
 
 
 static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
@@ -220,7 +221,7 @@ static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     for (size_t i = 0; i < vec->count; i++) {
-        if (pyro_compare_eq(vm, vec->values[i], args[0])) {
+        if (pyro_op_compare_eq(vm, vec->values[i], args[0])) {
             return BOOL_VAL(true);
         }
     }
@@ -233,7 +234,7 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     for (size_t i = 0; i < vec->count; i++) {
-        if (pyro_compare_eq(vm, vec->values[i], args[0])) {
+        if (pyro_op_compare_eq(vm, vec->values[i], args[0])) {
             return I64_VAL((int64_t)i);
         }
     }

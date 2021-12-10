@@ -6,6 +6,7 @@
 #include "opcodes.h"
 #include "errors.h"
 #include "utf8.h"
+#include "operators.h"
 
 
 // Allocates memory for a fixed-size object.
@@ -87,7 +88,7 @@ uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup) {
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm) {
     if (a->count == b->count) {
         for (size_t i = 0; i < a->count; i++) {
-            if (!pyro_compare_eq(vm, a->values[i], b->values[i])) {
+            if (!pyro_op_compare_eq(vm, a->values[i], b->values[i])) {
                 return false;
             }
         }
@@ -276,7 +277,7 @@ static MapEntry* find_entry(PyroVM* vm, MapEntry* entries, size_t capacity, Valu
             return tombstone == NULL ? entry : tombstone;
         } else if (IS_TOMBSTONE(entry->key)) {
             if (tombstone == NULL) tombstone = entry;
-        } else if (pyro_compare_eq(vm, key, entry->key)) {
+        } else if (pyro_op_compare_eq(vm, key, entry->key)) {
             return entry;
         }
 
@@ -1531,7 +1532,7 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
         bool j_is_less_than_i;
 
         if (IS_NULL(fn)) {
-            j_is_less_than_i = pyro_compare_lt(vm, aux_array[j], aux_array[i]);
+            j_is_less_than_i = pyro_op_compare_lt(vm, aux_array[j], aux_array[i]);
         } else {
             pyro_push(vm, fn);
             pyro_push(vm, aux_array[j]);

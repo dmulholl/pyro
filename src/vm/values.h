@@ -181,24 +181,4 @@ static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
-// Returns true if [a] == [b].
-// This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_compare_eq(PyroVM* vm, Value a, Value b);
-
-// Returns true if [a] < [b]. Panics if the values are not comparable.
-// This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_compare_lt(PyroVM* vm, Value a, Value b);
-
-// Returns true if [a] <= [b]. Panics if the values are not comparable.
-// This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_compare_le(PyroVM* vm, Value a, Value b);
-
-// Returns true if [a] > [b]. Panics if the values are not comparable.
-// This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_compare_gt(PyroVM* vm, Value a, Value b);
-
-// Returns true if [a] >= [b]. Panics if the values are not comparable.
-// This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_compare_ge(PyroVM* vm, Value a, Value b);
-
 #endif

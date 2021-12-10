@@ -6,6 +6,7 @@
 #include "values.h"
 #include "utils.h"
 #include "errors.h"
+#include "operators.h"
 
 #include "../std/std_core.h"
 #include "../std/std_math.h"
@@ -377,122 +378,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_PLUS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                switch (a.type) {
-                    case VAL_I64: {
-                        switch (b.type) {
-                            case VAL_I64:
-                                pyro_push(vm, I64_VAL(a.as.i64 + b.as.i64));
-                                break;
-                            case VAL_F64:
-                                pyro_push(vm, F64_VAL((double)a.as.i64 + b.as.f64));
-                                break;
-                            default:
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                                break;
-                        }
-                        break;
-                    }
-
-                    case VAL_F64: {
-                        switch (b.type) {
-                            case VAL_I64:
-                                pyro_push(vm, F64_VAL(a.as.f64 + (double)b.as.i64));
-                                break;
-                            case VAL_F64:
-                                pyro_push(vm, F64_VAL(a.as.f64 + b.as.f64));
-                                break;
-                            default:
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                                break;
-                        }
-                        break;
-                    }
-
-                    case VAL_OBJ: {
-                        switch (AS_OBJ(a)->type) {
-                            case OBJ_STR: {
-                                if (IS_STR(b)) {
-                                    vm->stack_top += 2;
-                                    ObjStr* s2 = AS_STR(b);
-                                    ObjStr* s1 = AS_STR(a);
-                                    ObjStr* result = ObjStr_concat(s1, s2, vm);
-                                    if (!result) {
-                                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                                        break;
-                                    }
-                                    vm->stack_top -= 2;
-                                    pyro_push(vm, OBJ_VAL(result));
-                                } else if (IS_CHAR(b)) {
-                                    vm->stack_top += 2;
-                                    ObjStr* result = ObjStr_append_codepoint_as_utf8(AS_STR(a), b.as.u32, vm);
-                                    if (!result) {
-                                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                                        break;
-                                    }
-                                    vm->stack_top -= 2;
-                                    pyro_push(vm, OBJ_VAL(result));
-                                } else {
-                                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                                }
-                                break;
-                            }
-
-                            case OBJ_INSTANCE: {
-                                Value method = pyro_get_method(vm, a, vm->str_op_binary_plus);
-                                if (!IS_NULL(method)) {
-                                    pyro_push(vm, a);
-                                    pyro_push(vm, b);
-                                    Value result = pyro_call_method(vm, method, 1);
-                                    if (vm->halt_flag) {
-                                        return;
-                                    }
-                                    pyro_push(vm, result);
-                                } else {
-                                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                                }
-                                break;
-                            }
-
-                            default:
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                                break;
-                        }
-                        break;
-                    }
-
-                    case VAL_CHAR: {
-                        if (IS_CHAR(b)) {
-                            ObjStr* result = ObjStr_concat_codepoints_as_utf8(a.as.u32, b.as.u32, vm);
-                            if (!result) {
-                                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                                break;
-                            }
-                            pyro_push(vm, OBJ_VAL(result));
-                            break;
-                        } else if (IS_STR(b)) {
-                            vm->stack_top += 2;
-                            ObjStr* result = ObjStr_prepend_codepoint_as_utf8(AS_STR(b), a.as.u32, vm);
-                            if (!result) {
-                                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                                break;
-                            }
-                            vm->stack_top -= 2;
-                            pyro_push(vm, OBJ_VAL(result));
-                            break;
-                        } else {
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                            break;
-                        }
-                        break;
-                    }
-
-                    default: {
-                        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                        break;
-                    }
-                }
-
+                pyro_push(vm, pyro_op_binary_plus(vm, a, b));
                 break;
             }
 
@@ -662,7 +548,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_EQUAL_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(pyro_compare_eq(vm, a, b)));
+                pyro_push(vm, BOOL_VAL(pyro_op_compare_eq(vm, a, b)));
                 break;
             }
 
@@ -808,14 +694,14 @@ static void run(PyroVM* vm) {
             case OP_BINARY_GREATER: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(pyro_compare_gt(vm, a, b)));
+                pyro_push(vm, BOOL_VAL(pyro_op_compare_gt(vm, a, b)));
                 break;
             }
 
             case OP_BINARY_GREATER_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(pyro_compare_ge(vm, a, b)));
+                pyro_push(vm, BOOL_VAL(pyro_op_compare_ge(vm, a, b)));
                 break;
             }
 
@@ -1043,14 +929,14 @@ static void run(PyroVM* vm) {
             case OP_BINARY_LESS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(pyro_compare_lt(vm, a, b)));
+                pyro_push(vm, BOOL_VAL(pyro_op_compare_lt(vm, a, b)));
                 break;
             }
 
             case OP_BINARY_LESS_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(pyro_compare_le(vm, a, b)));
+                pyro_push(vm, BOOL_VAL(pyro_op_compare_le(vm, a, b)));
                 break;
             }
 
@@ -1330,7 +1216,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_BANG_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, BOOL_VAL(!pyro_compare_eq(vm, a, b)));
+                pyro_push(vm, BOOL_VAL(!pyro_op_compare_eq(vm, a, b)));
                 break;
             }
 
@@ -1462,62 +1348,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_MINUS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                switch (a.type) {
-                    case VAL_I64: {
-                        switch (b.type) {
-                            case VAL_I64:
-                                pyro_push(vm, I64_VAL(a.as.i64 - b.as.i64));
-                                break;
-                            case VAL_F64:
-                                pyro_push(vm, F64_VAL((double)a.as.i64 - b.as.f64));
-                                break;
-                            default:
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                                break;
-                        }
-                        break;
-                    }
-
-                    case VAL_F64: {
-                        switch (b.type) {
-                            case VAL_I64:
-                                pyro_push(vm, F64_VAL(a.as.f64 - (double)b.as.i64));
-                                break;
-                            case VAL_F64:
-                                pyro_push(vm, F64_VAL(a.as.f64 - b.as.f64));
-                                break;
-                            default:
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                                break;
-                        }
-                        break;
-                    }
-
-                    case VAL_OBJ: {
-                        if (IS_INSTANCE(a)) {
-                            Value method = pyro_get_method(vm, a, vm->str_op_binary_minus);
-                            if (!IS_NULL(method)) {
-                                pyro_push(vm, a);
-                                pyro_push(vm, b);
-                                Value result = pyro_call_method(vm, method, 1);
-                                if (vm->halt_flag) {
-                                    return;
-                                }
-                                pyro_push(vm, result);
-                            } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                            }
-                        } else {
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                        }
-                        break;
-                    }
-
-                    default:
-                        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                        break;
-                }
+                pyro_push(vm, pyro_op_binary_minus(vm, a, b));
                 break;
             }
 
