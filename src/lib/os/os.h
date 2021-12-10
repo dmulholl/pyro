@@ -64,7 +64,17 @@ int pyro_sleep(double time_in_seconds);
 // with free().
 char* pyro_getcwd(void);
 
-// Reads directory entries into a vector. Skips '.' and '..'. Panics if an error occurs.
+// Reads directory entries into a vector. Skips '.' and '..'. Panics if there was a memory-
+// allocation or I/O read error.
 ObjVec* pyro_listdir(PyroVM* vm, const char* path);
+
+typedef struct {
+    ObjStr* output;
+    int exit_code;
+} ShellCmdResult;
+
+// Runs a shell command. Returns true if the attempt to run the command was successful. Panics and
+// returns false if there was a memory-allocation or I/O read error.
+bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out);
 
 #endif

@@ -490,7 +490,7 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
         return NULL_VAL();
     }
 
-    ShellResult result;
+    ShellCmdResult result;
     if (!pyro_run_shell_cmd(vm, AS_STR(args[0])->bytes, &result)) {
         // We've already panicked.
         return NULL_VAL();

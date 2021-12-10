@@ -43,15 +43,6 @@ uint64_t pyro_sdbm_64(const char* string, size_t length);
 // will be less than or equal to [src_len].
 size_t pyro_unescape_string(const char* src, size_t src_len, char* dst);
 
-typedef struct {
-    ObjStr* output;
-    int exit_code;
-} ShellResult;
-
-// Runs a shell command. Returns true if the attempt to run the command was successful. Panics and
-// returns false if there was a memory-allocation or I/O read error.
-bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellResult* out);
-
 // Parse a string as an integer. The string can contain underscores and can begin with 0b, 0o, or
 // 0x to specify the base. Returns true if successful, false if the string was invalid.
 bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value);
