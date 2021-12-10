@@ -113,6 +113,7 @@ struct PyroVM {
     ObjStr* str_op_binary_greater_equals;
     ObjStr* str_op_binary_plus;
     ObjStr* str_op_binary_minus;
+    ObjStr* str_op_binary_star;
     ObjStr* str_hash;
     ObjStr* str_call;
 

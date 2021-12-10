@@ -160,6 +160,88 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
 }
 
 
+// Returns [a] * [b]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return I64_VAL(a.as.i64 * b.as.i64);
+                case VAL_F64:
+                    return F64_VAL((double)a.as.i64 * b.as.f64);
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                    return NULL_VAL();
+            }
+        }
+
+        case VAL_F64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return F64_VAL(a.as.f64 * (double)b.as.i64);
+                case VAL_F64:
+                    return F64_VAL(a.as.f64 * b.as.f64);
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                    return NULL_VAL();
+            }
+        }
+
+        case VAL_OBJ: {
+            if (IS_STR(a)) {
+                if (IS_I64(b) && b.as.i64 >= 0) {
+                    vm->gc_disallows++;
+                    ObjStr* result = ObjStr_concat_n_copies(AS_STR(a), b.as.i64, vm);
+                    vm->gc_disallows--;
+                    if (!result) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return NULL_VAL();
+                    }
+                    return OBJ_VAL(result);
+                } else {
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                    return NULL_VAL();
+                }
+            } else if (IS_INSTANCE(a)) {
+                Value method = pyro_get_method(vm, a, vm->str_op_binary_star);
+                if (!IS_NULL(method)) {
+                    pyro_push(vm, a);
+                    pyro_push(vm, b);
+                    Value result = pyro_call_method(vm, method, 1);
+                    return result;
+                } else {
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                    return NULL_VAL();
+                }
+            } else {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                return NULL_VAL();
+            }
+        }
+
+        case VAL_CHAR: {
+            if (IS_I64(b) && b.as.i64 >= 0) {
+                ObjStr* result = ObjStr_concat_n_codepoints_as_utf8(a.as.u32, b.as.i64, vm);
+                if (!result) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    return NULL_VAL();
+                }
+                return OBJ_VAL(result);
+            } else {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+                return NULL_VAL();
+            }
+        }
+
+        default: {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
+            return NULL_VAL();
+        }
+    }
+}
+
+
 /* ------------- */
 /*  Comparisons  */
 /* ------------- */

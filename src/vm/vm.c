@@ -1112,83 +1112,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_STAR: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                switch (a.type) {
-                    case VAL_I64: {
-                        switch (b.type) {
-                            case VAL_I64:
-                                pyro_push(vm, I64_VAL(a.as.i64 * b.as.i64));
-                                break;
-                            case VAL_F64:
-                                pyro_push(vm, F64_VAL((double)a.as.i64 * b.as.f64));
-                                break;
-                            default:
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                                break;
-                        }
-                        break;
-                    }
-
-                    case VAL_F64: {
-                        switch (b.type) {
-                            case VAL_I64:
-                                pyro_push(vm, F64_VAL(a.as.f64 * (double)b.as.i64));
-                                break;
-                            case VAL_F64:
-                                pyro_push(vm, F64_VAL(a.as.f64 * b.as.f64));
-                                break;
-                            default:
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                                break;
-                        }
-                        break;
-                    }
-
-                    case VAL_OBJ: {
-                        if (IS_STR(a)) {
-                            if (IS_I64(b) && b.as.i64 >= 0) {
-                                vm->stack_top += 2;
-                                ObjStr* result = ObjStr_concat_n_copies(AS_STR(a), b.as.i64, vm);
-                                if (!result) {
-                                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                                    break;
-                                }
-                                vm->stack_top -= 2;
-                                pyro_push(vm, OBJ_VAL(result));
-                                break;
-                            } else {
-                                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                                break;
-                            }
-                        } else {
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                            break;
-                        }
-                        break;
-                    }
-
-                    case VAL_CHAR: {
-                        if (IS_I64(b) && b.as.i64 >= 0) {
-                            ObjStr* result = ObjStr_concat_n_codepoints_as_utf8(a.as.u32, b.as.i64, vm);
-                            if (!result) {
-                                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                                break;
-                            }
-                            pyro_push(vm, OBJ_VAL(result));
-                            break;
-                        } else {
-                            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                            break;
-                        }
-                        break;
-                    }
-
-                    default: {
-                        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                        break;
-                    }
-                }
-
+                pyro_push(vm, pyro_op_binary_star(vm, a, b));
                 break;
             }
 
@@ -1560,6 +1484,7 @@ PyroVM* pyro_new_vm() {
     vm->str_op_binary_greater_equals = NULL;
     vm->str_op_binary_plus = NULL;
     vm->str_op_binary_minus = NULL;
+    vm->str_op_binary_star = NULL;
     vm->str_hash = NULL;
     vm->str_call = NULL;
     vm->max_bytes = SIZE_MAX;
@@ -1628,6 +1553,7 @@ PyroVM* pyro_new_vm() {
     vm->str_op_binary_greater_equals = STR("$op_binary_greater_equals");
     vm->str_op_binary_plus = STR("$op_binary_plus");
     vm->str_op_binary_minus = STR("$op_binary_minus");
+    vm->str_op_binary_star = STR("$op_binary_star");
     vm->str_hash = STR("$hash");
     vm->str_call = STR("$call");
 
