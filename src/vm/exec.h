@@ -16,6 +16,9 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 // module.
 void pyro_exec_file_as_main(PyroVM* vm, const char* path);
 
+// Executes a file in the context of the specified module.
+void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module);
+
 // Runs the $main() function if it is defined in the main module.
 void pyro_run_main_func(PyroVM* vm);
 
@@ -28,12 +31,12 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
 // Attempts to compile but not execute the file.
 void pyro_try_compile_file(PyroVM* vm, const char* path);
 
-// Calls a method from a native function. Returns the value returned by the method. Before calling
-// this function the receiver and the method's arguments should be pushed onto the stack. These
-// values (and the return value of the method) will be popped off the stack before this function
-// returns. The called method can set the panic or exit flags so the caller should check the
-// [vm->halt_flag] immediately on return before using the result. If the halt flag is set the
-// caller should clean up any allocated resources and unwind the call stack.
+// Calls a method from C. Returns the value returned by the method. Before calling this function the
+// receiver and the method's arguments should be pushed onto the stack. These values (and the return
+// value of the method) will be popped off the stack before this function returns. The called method
+// can set the panic or exit flags so the caller should check the [vm->halt_flag] immediately on
+// return before using the result. If the halt flag is set the caller should clean up any allocated
+// resources and unwind the call stack.
 //
 // Checklist:
 //  1. Push the receiver value.
@@ -43,12 +46,12 @@ void pyro_try_compile_file(PyroVM* vm, const char* path);
 //
 Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 
-// Calls a function from a native function. Returns the value returned by [fn]. Before calling this
-// function the function value [fn] itself and its arguments should be pushed onto the stack. These
-// values (and the return value of the function) will be popped off the stack before this function
-// returns. The called function can set the panic or exit flags so the caller should check the
-// [vm->halt_flag] immediately on return before using the result. If the halt flag is set the caller
-// should clean up any allocated resources and unwind the call stack.
+// Calls a function from C. Returns the value returned by the function. Before calling this function
+// the function value itself and its arguments should be pushed onto the stack. These values (and the
+// return value of the function) will be popped off the stack before this function returns. The
+// called function can set the panic or exit flags so the caller should check the [vm->halt_flag]
+// immediately on return before using the result. If the halt flag is set the caller should clean up
+// any allocated resources and unwind the call stack.
 //
 // Checklist:
 //  1. Push the function value.
@@ -57,8 +60,5 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 //  4. Check [vm->halt_flag].
 //
 Value pyro_call_function(PyroVM* vm, Value func, uint8_t arg_count);
-
-// Executes a file in the context of the specified module.
-void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module);
 
 #endif
