@@ -217,6 +217,16 @@ You can implement the `$special` methods listed below to add support for various
     Implementing this method overloads the `<=` operator for expressions of the form `receiver <= other`.
 
 
+[[ `:$op_binary_minus(other: any) -> any` ]]
+
+    Implementing this method overloads the `-` operator for expressions of the form `receiver - other`.
+
+
+[[ `:$op_binary_plus(other: any) -> any` ]]
+
+    Implementing this method overloads the `+` operator for expressions of the form `receiver + other`.
+
+
 [[ `:$set_index(key: any, value: any)` ]]
 
     Implementing this method adds support for index-style write access to instances.

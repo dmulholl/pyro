@@ -1,0 +1,27 @@
+class Complex {
+    var re;
+    var im;
+
+    def $init(re, im) {
+        self.re = re;
+        self.im = im;
+    }
+
+    def $op_binary_plus(other) {
+        assert $is_instance(other, Complex);
+        return Complex(self.re + other.re, self.im + other.im);
+    }
+
+    def $op_binary_minus(other) {
+        assert $is_instance(other, Complex);
+        return Complex(self.re - other.re, self.im - other.im);
+    }
+}
+
+var foo = Complex(1, 2) + Complex(3, 4);
+assert foo.re == 1 + 3;
+assert foo.im == 2 + 4;
+
+var bar = Complex(1, 2) - Complex(3, 4);
+assert bar.re == 1 - 3;
+assert bar.im == 2 - 4;
