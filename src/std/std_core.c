@@ -691,6 +691,8 @@ static Value fn_is_callable(PyroVM* vm, size_t arg_count, Value* args) {
         return BOOL_VAL(true);
     } else if (IS_BOUND_METHOD(args[0])) {
         return BOOL_VAL(true);
+    } else if (IS_INSTANCE(args[0]) && pyro_has_method(vm, args[0], vm->str_call)) {
+        return BOOL_VAL(true);
     }
     return BOOL_VAL(false);
 }

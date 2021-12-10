@@ -182,7 +182,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$is_callable(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is callable, i.e. a function, method, or class.
+    Returns `true` if the argument is callable, i.e. a function, method, class, or callable instance.
 
 
 

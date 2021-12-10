@@ -11,7 +11,9 @@ class Callable {
 }
 
 var foo = Callable(123);
+assert $is_callable(foo);
 assert foo(1) == 124;
 
 var bar = Callable(456);
+assert $is_callable(bar);
 assert bar(2) == 458;
