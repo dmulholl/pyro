@@ -32,32 +32,32 @@ bool pyro_get_panic_flag(PyroVM* vm);
 // Returns the status of the VM's hard panic flag.
 bool pyro_get_hard_panic_flag(PyroVM* vm);
 
-// This function sets the content of the global $args variable, a tuple of strings. Returns [true]
-// on success, [false] if memory could not be allocated for the tuple.
+// This function sets the content of the global $args variable, a tuple of strings. Returns true
+// on success, false if memory could not be allocated for the tuple.
 bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args);
 
 // This function appends an entry to the list of directories checked when attempting to import a
 // module. [path] should be a directory path, optionally ending with a single trailing slash '/'.
-// Use "." for the current working directory, "/" for the root directory. Returns [true] if the
-// entry was successfully added, [false] if memory could not be allocated for the entry.
+// Use "." for the current working directory, "/" for the root directory. Returns true if the
+// entry was successfully added, false if memory could not be allocated for the entry.
 bool pyro_add_import_root(PyroVM* vm, const char* path);
 
 // Creates a new VM-level global variable. [value] is shielded from garbage-collection for the
 // duration of this function.
-void pyro_define_global(PyroVM* vm, const char* name, Value value);
+bool pyro_define_global(PyroVM* vm, const char* name, Value value);
 
 // Creates a new VM-level global variable pointing to a native function.
-void pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity);
+bool pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity);
 
 // Adds a new member to [module], i.e. creates a module-level global variable called [name] with
 // initial value [value]. [value] is shielded from garbage-collection while inside this function.
-void pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value);
+bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value);
 
 // Convenience function for adding a new member to [module] where the value is a native function.
-void pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity);
+bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity);
 
 // Adds a new method to the class.
-void pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity);
+bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity);
 
 // Creates a new top-level module. Returns the module or [NULL] if memory allocation fails.
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name);
