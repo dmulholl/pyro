@@ -549,35 +549,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_SLASH: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                if (IS_I64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        break;
-                    }
-                    pyro_push(vm, F64_VAL((double)a.as.i64 / (double)b.as.i64));
-                } else if (IS_F64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        break;
-                    }
-                    pyro_push(vm, F64_VAL(a.as.f64 / b.as.f64));
-                } else if (IS_I64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        break;
-                    }
-                    pyro_push(vm, F64_VAL((double)a.as.i64 / b.as.f64));
-                } else if (IS_F64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        break;
-                    }
-                    pyro_push(vm, F64_VAL(a.as.f64 / (double)b.as.i64));
-                } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '/' must both be numbers.");
-                }
-
+                pyro_push(vm, pyro_op_binary_slash(vm, a, b));
                 break;
             }
 

@@ -243,6 +243,80 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
 }
 
 
+// Returns [a] / [b]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        return NULL_VAL();
+                    } else {
+                        return F64_VAL((double)a.as.i64 / (double)b.as.i64);
+                    }
+                case VAL_F64:
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        return NULL_VAL();
+                    } else {
+                        return F64_VAL((double)a.as.i64 / b.as.f64);
+                    }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
+                    return NULL_VAL();
+            }
+        }
+
+        case VAL_F64: {
+            switch (b.type) {
+                case VAL_I64:
+                    if (b.as.i64 == 0) {
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        return NULL_VAL();
+                    } else {
+                        return F64_VAL(a.as.f64 / (double)b.as.i64);
+                    }
+                case VAL_F64:
+                    if (b.as.f64 == 0.0) {
+                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        return NULL_VAL();
+                    } else {
+                        return F64_VAL(a.as.f64 / b.as.f64);
+                    }
+                default:
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
+                    return NULL_VAL();
+            }
+        }
+
+        case VAL_OBJ: {
+            if (IS_INSTANCE(a)) {
+                Value method = pyro_get_method(vm, a, vm->str_op_binary_slash);
+                if (!IS_NULL(method)) {
+                    pyro_push(vm, a);
+                    pyro_push(vm, b);
+                    Value result = pyro_call_method(vm, method, 1);
+                    return result;
+                } else {
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
+                    return NULL_VAL();
+                }
+            } else {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
+                return NULL_VAL();
+            }
+        }
+
+        default: {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
+            return NULL_VAL();
+        }
+    }
+}
+
+
 /* ------------- */
 /*  Comparisons  */
 /* ------------- */
