@@ -18,7 +18,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.5.3</p>
+                <p class="version">Version 0.5.4</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -379,6 +379,16 @@ Implementing this method overloads the <code>-</code> operator for expressions o
 <dd>
 <p>
 Implementing this method overloads the <code>+</code> operator for expressions of the form <code>receiver + other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_star(other: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the <code>*</code> operator for expressions of the form <code>receiver * other</code>.
 </p>
 </dd>
 </div>
