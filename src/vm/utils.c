@@ -76,46 +76,6 @@ char* pyro_str_fmt(PyroVM* vm, const char* fmtstr, ...) {
 }
 
 
-char* pyro_str_dup(PyroVM* vm, const char* source) {
-    size_t length = strlen(source);
-    char* dest = ALLOCATE_ARRAY(vm, char, length + 1);
-    if (dest == NULL) {
-        return NULL;
-    }
-    memcpy(dest, source, length);
-    dest[length] = '\0';
-    return dest;
-}
-
-
-char* pyro_str_copy(PyroVM* vm, const char* source, size_t n) {
-    char* dest = ALLOCATE_ARRAY(vm, char, n + 1);
-    if (dest == NULL) {
-        return NULL;
-    }
-    memcpy(dest, source, n);
-    dest[n] = '\0';
-    return dest;
-}
-
-
-char* pyro_str_cat(PyroVM* vm, const char* a, const char* b) {
-    size_t len_a = strlen(a);
-    size_t len_b = strlen(b);
-    size_t length = len_a + len_b;
-
-    char* dest = ALLOCATE_ARRAY(vm, char, length + 1);
-    if (dest == NULL) {
-        return NULL;
-    }
-
-    memcpy(dest, a, len_a);
-    memcpy(dest + len_a, b, len_b);
-    dest[length] = '\0';
-    return dest;
-}
-
-
 // String hash: FNV-1a, 64-bit version.
 uint64_t pyro_fnv1a_64(const char* string, size_t length) {
     uint64_t hash = UINT64_C(14695981039346656037);

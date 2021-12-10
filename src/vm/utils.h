@@ -26,18 +26,6 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd);
 //
 char* pyro_str_fmt(PyroVM* vm, const char* fmtstr, ...);
 
-// Duplicates a null-terminated string, automatically allocating memory for the copy. Returns NULL
-// if sufficient memory cannot be allocated.
-char* pyro_str_dup(PyroVM* vm, const char* source);
-
-// Duplicates an n-character portion of a string, automatically allocating memory for the copy.
-// Returns NULL if sufficient memory cannot be allocated.
-char* pyro_str_copy(PyroVM* vm, const char* source, size_t n);
-
-// Creates a new string by concatenating two strings, automatically allocating memory for the copy.
-// Returns NULL if sufficient memory cannot be allocated.
-char* pyro_str_cat(PyroVM* vm, const char* a, const char* b);
-
 // String hash functions, 32-bit versions.
 uint32_t pyro_fnv1a_32(const char* string, size_t length);
 uint32_t pyro_fnv1a_32_opt(const char* string, size_t length);
