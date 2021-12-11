@@ -1173,6 +1173,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_UNARY_BANG:
         case OP_BINARY_BANG_EQUAL:
         case OP_POP:
+        case OP_POP_ECHO_IN_REPL:
         case OP_RETURN:
         case OP_BINARY_MINUS:
         case OP_BINARY_SLASH_SLASH:

@@ -138,6 +138,9 @@ void pyro_run_repl(ArgParser* parser) {
         exit(1);
     }
 
+    // Turn on automatic printing of expression statement values.
+    pyro_set_repl_flag(vm, true);
+
     // Set the VM"s max memory allocation.
     pyro_cli_set_max_memory(vm, parser);
 

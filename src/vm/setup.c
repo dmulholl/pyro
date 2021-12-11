@@ -84,6 +84,7 @@ PyroVM* pyro_new_vm() {
     vm->stack_class = NULL;
     vm->set_class = NULL;
     vm->queue_class = NULL;
+    vm->in_repl = false;
 
     // Disable garbage collection until the VM has been fully initialized. This is to avoid the
     // possibility of the GC triggering and panicking if it fails to allocate memory for the
@@ -501,4 +502,9 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
 
 void pyro_set_max_memory(PyroVM* vm, size_t bytes) {
     vm->max_bytes = bytes;
+}
+
+
+void pyro_set_repl_flag(PyroVM* vm, bool flag) {
+    vm->in_repl = flag;
 }

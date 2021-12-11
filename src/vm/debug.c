@@ -241,6 +241,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BINARY_BANG_EQUAL", ip);
         case OP_POP:
             return atomic_instruction(vm, "OP_POP", ip);
+        case OP_POP_ECHO_IN_REPL:
+            return atomic_instruction(vm, "OP_POP_ECHO_IN_REPL", ip);
         case OP_POP_JUMP_IF_FALSE:
             return jump_instruction(vm, "OP_POP_JUMP_IF_FALSE", 1, fn, ip);
         case OP_BINARY_STAR_STAR:

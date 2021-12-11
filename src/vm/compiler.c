@@ -72,6 +72,8 @@ typedef struct {
     FnCompiler* compiler;
     ClassCompiler* class_compiler;
     const char* src_id;
+    size_t num_statements;
+    size_t num_expression_statements;
 } Parser;
 
 
@@ -2043,7 +2045,9 @@ static void parse_statement(Parser* parser) {
         parse_import_stmt(parser);
     } else {
         parse_expression_stmt(parser);
+        parser->num_expression_statements++;
     }
+    parser->num_statements++;
 }
 
 
@@ -2060,6 +2064,8 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
     parser.had_memory_error = false;
     parser.src_id = src_id;
     parser.vm = vm;
+    parser.num_statements = 0;
+    parser.num_expression_statements = 0;
 
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we report the
     // correct line number for syntax errors at the end of the input, e.g. a missing trailing
@@ -2091,6 +2097,14 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
     }
 
     ObjFn* fn = end_fn_compiler(&parser);
+
+    // If the code consisted of a single expression statement, we might want to print the value of
+    // the expression if we're running inside a REPL.
+    if (parser.num_statements == 1 && parser.num_expression_statements == 1) {
+        assert(fn->code[fn->code_count - 3] == OP_POP);
+        fn->code[fn->code_count - 3] = OP_POP_ECHO_IN_REPL;
+    }
+
     return fn;
 }
 

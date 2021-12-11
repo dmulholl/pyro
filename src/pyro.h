@@ -4,8 +4,8 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 5
-#define PYRO_VERSION_PATCH 4
-#define PYRO_VERSION_STRING "0.5.4"
+#define PYRO_VERSION_PATCH 5
+#define PYRO_VERSION_STRING "0.5.5"
 
 // Selects the hash function for strings.
 #ifndef PYRO_STRING_HASH

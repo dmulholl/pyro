@@ -1114,6 +1114,22 @@ static void run(PyroVM* vm) {
                 pyro_pop(vm);
                 break;
 
+            case OP_POP_ECHO_IN_REPL: {
+                Value value = pyro_pop(vm);
+                if (vm->in_repl && !IS_NULL(value)) {
+                    ObjStr* string = pyro_stringify_value(vm, value);
+                    if (vm->halt_flag) {
+                        return;
+                    }
+                    if (!string) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+                    pyro_out(vm, "%s\n", string->bytes);
+                }
+                break;
+            }
+
             case OP_POP_JUMP_IF_FALSE: {
                 uint16_t offset = READ_U16();
                 if (!pyro_is_truthy(pyro_pop(vm))) {

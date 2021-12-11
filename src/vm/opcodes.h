@@ -74,6 +74,7 @@ typedef enum {
     OP_MAKE_MAP,
     OP_MAKE_VEC,
     OP_POP,
+    OP_POP_ECHO_IN_REPL,
     OP_POP_JUMP_IF_FALSE,
     OP_RETURN,
     OP_SET_FIELD,

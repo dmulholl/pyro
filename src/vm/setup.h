@@ -73,4 +73,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
 // submodule of [grandparent]. Returns the module or [NULL] if memory allocation fails.
 ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name);
 
+// Sets the value of the VM's REPL flag.
+void pyro_set_repl_flag(PyroVM* vm, bool flag);
+
 #endif

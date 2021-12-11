@@ -138,6 +138,9 @@ struct PyroVM {
     // collection, add 1. To restore the previous state, subtract 1. The garbage collector can
     // only run when this value is 0.
     int gc_disallows;
+
+    // Set to true if the VM executing in a REPL.
+    bool in_repl;
 };
 
 
