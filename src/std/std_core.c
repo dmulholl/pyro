@@ -84,19 +84,12 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
             ObjStr* formatted;
             if (fmt_spec_count == 0) {
-                formatted = pyro_stringify_value(vm, arg);
+                formatted = pyro_stringify(vm, arg);
             } else {
                 formatted = pyro_stringify_formatted(vm, arg, fmt_spec_buffer);
             }
-
             if (vm->halt_flag) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                return NULL_VAL();
-            }
-
-            if (!formatted) {
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                 return NULL_VAL();
             }
 
@@ -150,12 +143,8 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        ObjStr* string = pyro_stringify(vm, args[0]);
         if (vm->halt_flag) {
-            return NULL_VAL();
-        }
-        if (!string) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
         }
         pyro_err(vm, "%s", string->bytes);
@@ -184,12 +173,8 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        ObjStr* string = pyro_stringify(vm, args[0]);
         if (vm->halt_flag) {
-            return NULL_VAL();
-        }
-        if (!string) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
         }
         pyro_err(vm, "%s", string->bytes);
@@ -218,12 +203,8 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        ObjStr* string = pyro_stringify(vm, args[0]);
         if (vm->halt_flag) {
-            return NULL_VAL();
-        }
-        if (!string) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
         }
         pyro_err(vm, "%s\n", string->bytes);
@@ -252,12 +233,8 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        ObjStr* string = pyro_stringify(vm, args[0]);
         if (vm->halt_flag) {
-            return NULL_VAL();
-        }
-        if (!string) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL_VAL();
         }
         pyro_out(vm, "%s\n", string->bytes);

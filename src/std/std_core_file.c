@@ -5,6 +5,7 @@
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
 #include "../vm/setup.h"
+#include "../vm/stringify.h"
 
 
 static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
@@ -320,12 +321,8 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
             }
             return I64_VAL((int64_t)n);
         } else {
-            ObjStr* string = pyro_stringify_value(vm, args[0]);
+            ObjStr* string = pyro_stringify(vm, args[0]);
             if (vm->halt_flag) {
-                return NULL_VAL();
-            }
-            if (!string) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                 return NULL_VAL();
             }
             size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);

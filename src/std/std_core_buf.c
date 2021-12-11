@@ -3,6 +3,7 @@
 #include "../vm/vm.h"
 #include "../vm/utils.h"
 #include "../vm/setup.h"
+#include "../vm/stringify.h"
 
 
 static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
@@ -168,12 +169,9 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        ObjStr* string = pyro_stringify(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
-        }
-        if (!string) {
-            return BOOL_VAL(false);
         }
         pyro_push(vm, OBJ_VAL(string));
         if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
