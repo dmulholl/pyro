@@ -148,9 +148,6 @@ bool pyro_is_truthy(Value value);
 // sufficient memory cannot be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
 
-// Returns a pointer to a static string. Can be safely called from the GC.
-char* pyro_stringify_obj_type(ObjType type);
-
 // Creates a quoted, backslash-escaped string representing the character's value. Returns NULL if
 // memory could not be allocated for the new string.
 ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value c);

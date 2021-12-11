@@ -7,6 +7,7 @@
 #include "utf8.h"
 #include "operators.h"
 #include "exec.h"
+#include "stringify.h"
 
 
 // Allocates memory for a fixed-size object.
@@ -38,7 +39,7 @@ static Obj* allocate_object(PyroVM* vm, size_t size, ObjType type) {
         pyro_out(vm, ">> %p allocate %zu bytes for %s\n",
             (void*)object,
             size,
-            pyro_stringify_obj_type(type)
+            pyro_stringify_object_type(type)
         );
     #endif
 

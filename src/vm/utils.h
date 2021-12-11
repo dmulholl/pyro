@@ -18,20 +18,6 @@ typedef struct {
 // be true and [fd.data] will be NULL.
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd);
 
-// This function prints to an automatically-allocated, null-terminated array. It panics and returns
-// NULL if a formatting error occurs or if sufficient memory cannot be allocated -- i.e. a NULL
-// return value means the function has already panicked. If successful, the caller is responsible
-// for freeing the returned array via:
-//
-//   FREE_ARRAY(vm, char, string, strlen(string) + 1)
-//
-char* pyro_sprintf(PyroVM* vm, const char* format_string, ...);
-
-// This function prints to a new ObjStr instance. It panics and returns NULL if a formatting error
-// occurs or if sufficient memory cannot be allocated -- i.e. a NULL return value means the function
-// has already panicked.
-ObjStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...);
-
 // String hash functions, 64-bit versions.
 uint64_t pyro_fnv1a_64(const char* string, size_t length);
 uint64_t pyro_fnv1a_64_opt(const char* string, size_t length);

@@ -1,5 +1,6 @@
 #include "heap.h"
 #include "vm.h"
+#include "stringify.h"
 
 
 // Mark every root object as reachable. (A root object is an object the VM can access directly
@@ -69,7 +70,12 @@ static void mark_roots(PyroVM* vm) {
 
 static void blacken_object(PyroVM* vm, Obj* object) {
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(vm, "   %p blacken %s\n", (void*)object, pyro_stringify_obj_type(object->type));
+        pyro_out(
+            vm,
+            "   %p blacken %s\n",
+            (void*)object,
+            pyro_stringify_object_type(object->type)
+        );
     #endif
 
     switch (object->type) {
@@ -284,7 +290,12 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) 
 
 void pyro_free_object(PyroVM* vm, Obj* object) {
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(vm, "   %p free object %s\n", (void*)object, pyro_stringify_obj_type(object->type));
+        pyro_out(
+            vm,
+            "   %p free object %s\n",
+            (void*)object,
+            pyro_stringify_object_type(object->type)
+        );
     #endif
 
     #define FREE_OBJECT(vm, type, pointer) \
@@ -418,7 +429,12 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
     }
 
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(vm, "   %p mark %s\n", (void*)object, pyro_stringify_obj_type(object->type));
+        pyro_out(
+            vm,
+            "   %p mark %s\n",
+            (void*)object,
+            pyro_stringify_object_type(object->type)
+        );
     #endif
 
     if (vm->grey_count == vm->grey_capacity) {

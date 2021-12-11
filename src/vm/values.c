@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "utf8.h"
 #include "exec.h"
+#include "stringify.h"
 
 
 bool pyro_is_truthy(Value value) {
@@ -409,32 +410,6 @@ void pyro_dump_value(PyroVM* vm, Value value) {
         default:
             pyro_out(vm, "<value>");
             break;
-    }
-}
-
-
-char* pyro_stringify_obj_type(ObjType type) {
-    switch (type) {
-        case OBJ_BOUND_METHOD: return "<method>";
-        case OBJ_BUF: return "<buf>";
-        case OBJ_CLASS: return "<class>";
-        case OBJ_CLOSURE: return "<closure>";
-        case OBJ_TUP_AS_ERR: return "<err>";
-        case OBJ_FILE: return "<file>";
-        case OBJ_FN: return "<fn>";
-        case OBJ_INSTANCE: return "<instance>";
-        case OBJ_MAP: return "<map>";
-        case OBJ_MAP_AS_SET: return "<set>";
-        case OBJ_MAP_AS_WEAKREF: return "<weakref map>";
-        case OBJ_MODULE: return "<module>";
-        case OBJ_NATIVE_FN: return "<native fn>";
-        case OBJ_STR: return "<str>";
-        case OBJ_TUP: return "<tup>";
-        case OBJ_UPVALUE: return "<upvalue>";
-        case OBJ_VEC: return "<vec>";
-        case OBJ_VEC_AS_STACK: return "<stack>";
-        case OBJ_ITER: return "<iter>";
-        case OBJ_QUEUE: return "<queue>";
     }
 }
 
