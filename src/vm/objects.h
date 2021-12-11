@@ -106,12 +106,6 @@ bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm);
 // for the copy.
 ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm);
 
-// This function can call into Pyro code and can trigger an exit or a panic. The caller should check
-// the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
-// new string.
-ObjStr* ObjMap_stringify(ObjMap* map, PyroVM* vm);
-ObjStr* ObjMap_stringify_as_set(ObjMap* map, PyroVM* vm);
-
 /* ------- */
 /* Vectors */
 /* ------- */
@@ -130,11 +124,6 @@ ObjVec* ObjVec_new_as_stack(PyroVM* vm);
 
 // Returns true if the value was successfully appended, false if memory allocation failed.
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
-
-// This function can call into Pyro code and can trigger an exit or a panic. The caller should check
-// the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
-// new string.
-ObjStr* ObjVec_stringify(ObjVec* vec, PyroVM* vm);
 
 // Sorts the vector in-place using the mergesort algorithm. If [fn] is not NULL it will be used
 // to compare pairs of values. This function calls into code which may panic or set the exit flag.
@@ -324,11 +313,6 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm);
 ObjTup* ObjTup_new_err(size_t count, PyroVM* vm);
 uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup);
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm);
-
-// This function can call into Pyro code and can trigger an exit or a panic. The caller should check
-// the halt flag before using the return value. Returns NULL if memory cannot be allocated for the
-// new string.
-ObjStr* ObjTup_stringify(ObjTup* tup, PyroVM* vm);
 
 /* ------- */
 /* Buffers */

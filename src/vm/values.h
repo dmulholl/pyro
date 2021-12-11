@@ -142,16 +142,6 @@ bool pyro_compare_eq_strict(Value a, Value b);
 // Returns true if the value is truthy.
 bool pyro_is_truthy(Value value);
 
-// Returns the default string representation of [value]. This function can call into Pyro code and
-// can set the panic or exit flags. The caller should check [vm->halt_flag] immediately on return
-// before using the result. This function can also return NULL without setting the panic flag if
-// sufficient memory cannot be allocated for the string.
-ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
-
-// Creates a quoted, backslash-escaped string representing the character's value. Returns NULL if
-// memory could not be allocated for the new string.
-ObjStr* pyro_char_to_debug_str(PyroVM* vm, Value c);
-
 // True if [value] is an object of the specified type.
 static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
