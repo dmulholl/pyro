@@ -48,28 +48,31 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
 }
 
 
-// Possible optimization: print first to a static buffer then memcpy to the output array if it fits.
-char* pyro_str_fmt(PyroVM* vm, const char* fmtstr, ...) {
+char* pyro_sprintf(PyroVM* vm, const char* format_string, ...) {
     va_list args;
 
     // Figure out how much memory we need to allocate. [len] will be the output string length,
     // not counting the terminating null, so we'll need to allocate [len + 1] bytes.
-    va_start(args, fmtstr);
-    int len = vsnprintf(NULL, 0, fmtstr, args);
+    // Possible optimization: print to a static buffer here, then if the output fits memcpy it to
+    // the output array.
+    va_start(args, format_string);
+    int len = vsnprintf(NULL, 0, format_string, args);
     va_end(args);
 
     // If [len] is negative, an encoding error occurred.
     if (len < 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid format string '%s'.", format_string);
         return NULL;
     }
 
     char* string = ALLOCATE_ARRAY(vm, char, len + 1);
     if (string == NULL) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
 
-    va_start(args, fmtstr);
-    vsnprintf(string, len + 1, fmtstr, args);
+    va_start(args, format_string);
+    vsnprintf(string, len + 1, format_string, args);
     va_end(args);
 
     return string;

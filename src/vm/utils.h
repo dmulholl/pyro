@@ -18,13 +18,13 @@ typedef struct {
 // be true and [fd.data] will be NULL.
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd);
 
-// This function prints to an automatically-allocated null-terminated string. Returns NULL if an
-// encoding error occurs or if sufficient memory cannot be allocated. The caller is responsible for
-// freeing the returned string via:
+// This function prints to an automatically-allocated, null-terminated string. It panics and returns
+// NULL if a formatting error occurs or if sufficient memory cannot be allocated. The caller is
+// responsible for freeing the returned string via:
 //
 //   FREE_ARRAY(vm, char, string, strlen(string) + 1)
 //
-char* pyro_str_fmt(PyroVM* vm, const char* fmtstr, ...);
+char* pyro_sprintf(PyroVM* vm, const char* format_string, ...);
 
 // String hash functions, 64-bit versions.
 uint64_t pyro_fnv1a_64(const char* string, size_t length);

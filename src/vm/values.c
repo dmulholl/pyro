@@ -233,8 +233,8 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
             return FMT("%lld", value.as.i64);
 
         case VAL_F64: {
-            char* array = pyro_str_fmt(vm, "%.6f", value.as.f64);
-            if (!array) {
+            char* array = pyro_sprintf(vm, "%.6f", value.as.f64);
+            if (vm->halt_flag) {
                 return NULL;
             }
 
@@ -413,58 +413,60 @@ void pyro_dump_value(PyroVM* vm, Value value) {
 }
 
 
-ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format) {
+ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
     if (IS_I64(value)) {
-        char* array = pyro_str_fmt(vm, format, value.as.i64);
-        if (array == NULL) {
-            pyro_panic(vm, ERR_VALUE_ERROR, "Error applying format specifier {%s}.", format);
+        char* array = pyro_sprintf(vm, format_string, value.as.i64);
+        if (vm->halt_flag) {
             return NULL;
         }
-
         ObjStr* string = ObjStr_take(array, strlen(array), vm);
         if (!string) {
             FREE_ARRAY(vm, char, array, strlen(array) + 1);
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
         }
-
         return string;
     }
 
     if (IS_F64(value)) {
-        char* array = pyro_str_fmt(vm, format, value.as.f64);
-        if (array == NULL) {
-            pyro_panic(vm, ERR_VALUE_ERROR, "Error applying format specifier {%s}.", format);
-            return NULL;
-        }
-
-        ObjStr* string = ObjStr_take(array, strlen(array), vm);
-        if (!string) {
-            FREE_ARRAY(vm, char, array, strlen(array) + 1);
-            return NULL;
-        }
-
-        return string;
-    }
-
-    Value fmt_method = pyro_get_method(vm, value, vm->str_fmt);
-    if (!IS_NULL(fmt_method)) {
-        pyro_push(vm, value);
-        pyro_push(vm, OBJ_VAL(ObjStr_copy_raw(format, strlen(format), vm)));
-        Value result = pyro_call_method(vm, fmt_method, 1);
-
+        char* array = pyro_sprintf(vm, format_string, value.as.f64);
         if (vm->halt_flag) {
             return NULL;
         }
-
-        if (IS_STR(result)) {
-            return AS_STR(result);
+        ObjStr* string = ObjStr_take(array, strlen(array), vm);
+        if (!string) {
+            FREE_ARRAY(vm, char, array, strlen(array) + 1);
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
         }
+        return string;
+    }
 
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by :$fmt() method.");
+    Value method = pyro_get_method(vm, value, vm->str_fmt);
+    if (IS_NULL(method)) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "No handler for format specifier '%s'.", format_string);
         return NULL;
     }
 
-    pyro_panic(vm, ERR_VALUE_ERROR, "No handler for format specifier {%s}.", format);
+    ObjStr* format_string_object = STR(format_string);
+    if (!format_string_object) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    pyro_push(vm, value);
+    pyro_push(vm, OBJ_VAL(format_string_object));
+    Value result = pyro_call_method(vm, method, 1);
+
+    if (vm->halt_flag) {
+        return NULL;
+    }
+
+    if (IS_STR(result)) {
+        return AS_STR(result);
+    }
+
+    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by :$fmt() method.");
     return NULL;
 }
 

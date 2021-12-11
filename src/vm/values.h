@@ -142,32 +142,16 @@ bool pyro_compare_eq_strict(Value a, Value b);
 // Returns true if the value is truthy.
 bool pyro_is_truthy(Value value);
 
-// Constructs and returns the default string representation of a value. A lot can go wrong here:
-//
-// 1 - This function attempts to allocate memory and can trigger the GC.
-// 2 - This function assumes that any object passed into it has been fully initialized.
-// 3 - This function can call into Pyro code to execute an object's :$str() method.
-// 4 - This function can trigger a panic, exit, or memory error, setting the halt flag.
-//
-// The caller should check the halt flag immediately on return. If the flag is set the caller should
-// clean up any allocated resources and unwind the call stack.
-//
-// These functions return NULL if sufficient memory could not be allocated for the string.
+// Returns the default string representation of [value]. This function can call into Pyro code and
+// can set the panic or exit flags. The caller should check [vm->halt_flag] immediately on return
+// before using the result. This function can also return NULL without setting the panic flag if
+// sufficient memory cannot be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
 
-// Constructs and returns the formatted string representation of a value using the format string
-// [format]. A lot can go wrong here:
-//
-// 1 - This function attempts to allocate memory and can trigger the GC.
-// 2 - This function assumes that any object passed into it has been fully initialized.
-// 3 - This function can call into Pyro code to execute an object's :$fmt() method.
-// 4 - This function can trigger a panic, exit, or memory error, setting the halt flag.
-//
-// The caller should check the halt flag immediately on return. If the flag is set the caller should
-// clean up any allocated resources and unwind the call stack.
-//
-// This function returns NULL if sufficient memory could not be allocated for the string.
-ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format);
+// Returns the string representation of [value] formatted according to [format_string]. Panics and
+// returns NULL if an error occurs. This function can call into Pyro code and so can set the exit
+// flag. The caller should check [vm->halt_flag] immediately on return before using the result.
+ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string);
 
 // Returns a pointer to a static string. Can be safely called from the GC.
 char* pyro_stringify_obj_type(ObjType type);
