@@ -194,6 +194,59 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
 
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
+static ObjStr* stringify_vector(PyroVM* vm, ObjVec* vec) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '[', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    for (size_t i = 0; i < vec->count; i++) {
+        Value item = vec->values[i];
+        ObjStr* item_string = pyro_stringify_debug(vm, item);
+        if (vm->halt_flag) {
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(item_string));
+        if (!ObjBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+        pyro_pop(vm); // item_string
+
+        if (i + 1 < vec->count) {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL;
+            }
+        }
+    }
+
+    if (!ObjBuf_append_byte(buf, ']', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm); // buf
+
+    if (!output_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    return output_string;
+}
+
+
+// Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
     Value method = pyro_get_method(vm, OBJ_VAL(object), vm->str_str);
     if (!IS_NULL(method)) {
@@ -250,11 +303,10 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return stringify_tuple(vm, tup);
         }
 
-        // TODO: check this!
         case OBJ_VEC_AS_STACK:
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
-            return ObjVec_stringify(vec, vm);
+            return stringify_vector(vm, vec);
         }
 
         // TODO: check this!
