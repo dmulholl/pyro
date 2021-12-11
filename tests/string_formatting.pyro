@@ -1,0 +1,44 @@
+assert $str(true) == "true";
+assert $str(false) == "false";
+assert $str(null) == "null";
+assert $str(0) == "0";
+assert $str(123) == "123";
+assert $str(0.0) == "0.0";
+assert $str(123.0) == "123.0";
+assert $str(123.456) == "123.456";
+assert $str(123.000456) == "123.000456";
+assert $str("foo") == "foo";
+
+assert $fmt("{}", true) == "true";
+assert $fmt("{}", 1234) == "1234";
+assert $fmt("{}", 12.3) == "12.3";
+assert $fmt("{}", "ab") == "ab";
+assert $fmt("--{}--", 123) == "--123--";
+
+assert $fmt("{} and {}", 123, 456) == "123 and 456";
+assert $fmt("{} and {}", 123.456, "foobar") == "123.456 and foobar";
+assert $fmt("foo {} bar {} baz", 123, 456) == "foo 123 bar 456 baz";
+
+assert $fmt("{%.2f}", 1.23456) == "1.23";
+assert $fmt("{%05.2f}", 1.23456) == "01.23";
+assert $fmt("{%04i}", 99) == "0099";
+assert $fmt("{%02x}", 10) == "0a";
+assert $fmt("{%02X}", 26) == "1A";
+assert $fmt("{%02X}", 255) == "FF";
+
+
+class Foo {
+    def $str() {
+        return "<foo>";
+    }
+
+    def $fmt(arg) {
+        return "<" + arg + ">";
+    }
+}
+
+
+var foo = Foo();
+assert $str(foo) == "<foo>";
+assert $fmt("{}", foo) == "<foo>";
+assert $fmt("{xyz}", foo) == "<xyz>";

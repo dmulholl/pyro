@@ -415,31 +415,15 @@ void pyro_dump_value(PyroVM* vm, Value value) {
 
 ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
     if (IS_I64(value)) {
-        char* array = pyro_sprintf(vm, format_string, value.as.i64);
-        if (vm->halt_flag) {
-            return NULL;
-        }
-        ObjStr* string = ObjStr_take(array, strlen(array), vm);
-        if (!string) {
-            FREE_ARRAY(vm, char, array, strlen(array) + 1);
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL;
-        }
-        return string;
+        return pyro_sprintf_to_obj(vm, format_string, value.as.i64);
     }
 
     if (IS_F64(value)) {
-        char* array = pyro_sprintf(vm, format_string, value.as.f64);
-        if (vm->halt_flag) {
-            return NULL;
-        }
-        ObjStr* string = ObjStr_take(array, strlen(array), vm);
-        if (!string) {
-            FREE_ARRAY(vm, char, array, strlen(array) + 1);
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL;
-        }
-        return string;
+        return pyro_sprintf_to_obj(vm, format_string, value.as.f64);
+    }
+
+    if (IS_CHAR(value)) {
+        return pyro_sprintf_to_obj(vm, format_string, value.as.u32);
     }
 
     Value method = pyro_get_method(vm, value, vm->str_fmt);
