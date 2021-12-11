@@ -516,40 +516,11 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
-    Value method = pyro_get_method(vm, args[0], vm->str_debug);
-    if (!IS_NULL(method)) {
-        pyro_push(vm, args[0]);
-        Value debug_string = pyro_call_method(vm, method, 0);
-        if (vm->halt_flag) {
-            return NULL_VAL();
-        }
-        if (IS_STR(debug_string)) {
-            return debug_string;
-        }
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid type returned by $debug() method.");
-        return NULL_VAL();
-    }
-
-    ObjStr* debug_string;
-
-    if (IS_STR(args[0])) {
-        debug_string = ObjStr_debug_str(AS_STR(args[0]), vm);
-    } else if (IS_CHAR(args[0])) {
-        debug_string = pyro_char_to_debug_str(vm, args[0]);
-    } else {
-        debug_string = pyro_stringify_value(vm, args[0]);
-    }
-
+    ObjStr* string = pyro_stringify_debug(vm, args[0]);
     if (vm->halt_flag) {
         return NULL_VAL();
     }
-
-    if (!debug_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
-    }
-
-    return OBJ_VAL(debug_string);
+    return OBJ_VAL(string);
 }
 
 
