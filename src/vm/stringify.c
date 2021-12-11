@@ -247,6 +247,145 @@ static ObjStr* stringify_vector(PyroVM* vm, ObjVec* vec) {
 
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
+static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '{', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    bool is_first_entry = true;
+
+    for (size_t i = 0; i < map->capacity; i++) {
+        MapEntry* entry = &map->entries[i];
+
+        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (!is_first_entry) {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL;
+            }
+        }
+        is_first_entry = false;
+
+        ObjStr* key_string = pyro_stringify_debug(vm, entry->key);
+        if (vm->halt_flag) {
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(key_string));
+        if (!ObjBuf_append_bytes(buf, key_string->length, (uint8_t*)key_string->bytes, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+        pyro_pop(vm); // key_string
+
+        if (!ObjBuf_append_bytes(buf, 3, (uint8_t*)" = ", vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+
+        ObjStr* value_string = pyro_stringify_debug(vm, entry->value);
+        if (vm->halt_flag) {
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(value_string));
+        if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+        pyro_pop(vm); // value_string
+    }
+
+    if (!ObjBuf_append_byte(buf, '}', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm); // buf
+
+    if (!output_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    return output_string;
+}
+
+
+// Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
+static ObjStr* stringify_map_as_set(PyroVM* vm, ObjMap* map) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '{', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    bool is_first_entry = true;
+
+    for (size_t i = 0; i < map->capacity; i++) {
+        MapEntry* entry = &map->entries[i];
+
+        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (!is_first_entry) {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL;
+            }
+        }
+        is_first_entry = false;
+
+        ObjStr* key_string = pyro_stringify_debug(vm, entry->key);
+        if (vm->halt_flag) {
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(key_string));
+        if (!ObjBuf_append_bytes(buf, key_string->length, (uint8_t*)key_string->bytes, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+        pyro_pop(vm); // key_string
+    }
+
+    if (!ObjBuf_append_byte(buf, '}', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm); // buf
+
+    if (!output_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    return output_string;
+}
+
+
+// Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
     Value method = pyro_get_method(vm, OBJ_VAL(object), vm->str_str);
     if (!IS_NULL(method)) {
@@ -309,16 +448,14 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return stringify_vector(vm, vec);
         }
 
-        // TODO: check this!
         case OBJ_MAP: {
             ObjMap* map = (ObjMap*)object;
-            return ObjMap_stringify(map, vm);
+            return stringify_map(vm, map);
         }
 
-        // TODO: check this!
         case OBJ_MAP_AS_SET: {
             ObjMap* map = (ObjMap*)object;
-            return ObjMap_stringify_as_set(map, vm);
+            return stringify_map_as_set(vm, map);
         }
 
         case OBJ_NATIVE_FN: {
