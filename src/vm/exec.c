@@ -521,12 +521,8 @@ static void run(PyroVM* vm) {
 
                 for (uint8_t i = arg_count; i > 0; i--) {
                     Value value = vm->stack_top[-i];
-                    ObjStr* string = pyro_stringify_value(vm, value);
+                    ObjStr* string = pyro_stringify(vm, value);
                     if (vm->halt_flag) {
-                        return;
-                    }
-                    if (!string) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
                     pyro_out(vm, "%s", string->bytes);
