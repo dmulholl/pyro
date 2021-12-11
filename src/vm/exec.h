@@ -31,12 +31,12 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
 // Attempts to compile but not execute the file.
 void pyro_try_compile_file(PyroVM* vm, const char* path);
 
-// Calls a method from C. Returns the value returned by the method. Before calling this function the
-// receiver and the method's arguments should be pushed onto the stack. These values (and the return
-// value of the method) will be popped off the stack before this function returns. The called method
-// can set the panic or exit flags so the caller should check the [vm->halt_flag] immediately on
-// return before using the result. If the halt flag is set the caller should clean up any allocated
-// resources and unwind the call stack.
+// Calls a method on a receiver. Returns the value returned by the method. Before calling this
+// function the receiver and the method's arguments should be pushed onto the stack. These values
+// (and the return value of the method) will be popped off the stack before this function returns.
+// The called method can set the panic or exit flags so the caller should check the [vm->halt_flag]
+// immediately on return before using the result. If the halt flag is set the caller should clean
+// up any allocated resources and unwind the call stack.
 //
 // Checklist:
 //  1. Push the receiver value.
@@ -46,12 +46,12 @@ void pyro_try_compile_file(PyroVM* vm, const char* path);
 //
 Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 
-// Calls a function from C. Returns the value returned by the function. Before calling this function
-// the function value itself and its arguments should be pushed onto the stack. These values (and the
+// Calls a function. Returns the value returned by the function. Before calling this function the
+// function value itself and its arguments should be pushed onto the stack. These values (and the
 // return value of the function) will be popped off the stack before this function returns. The
 // called function can set the panic or exit flags so the caller should check the [vm->halt_flag]
-// immediately on return before using the result. If the halt flag is set the caller should clean up
-// any allocated resources and unwind the call stack.
+// immediately on return before using the result. If the halt flag is set the caller should clean
+// up any allocated resources and unwind the call stack.
 //
 // Checklist:
 //  1. Push the function value.
@@ -59,6 +59,6 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 //  3. Call this function.
 //  4. Check [vm->halt_flag].
 //
-Value pyro_call_function(PyroVM* vm, Value func, uint8_t arg_count);
+Value pyro_call_function(PyroVM* vm, uint8_t arg_count);
 
 #endif

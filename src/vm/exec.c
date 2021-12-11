@@ -1672,12 +1672,13 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count) {
 }
 
 
-Value pyro_call_function(PyroVM* vm, Value func, uint8_t arg_count) {
-    if (IS_NATIVE_FN(func)) {
-        call_native_fn(vm, AS_NATIVE_FN(func), arg_count);
+Value pyro_call_function(PyroVM* vm, uint8_t arg_count) {
+    Value function = pyro_peek(vm, arg_count);
+    if (IS_NATIVE_FN(function)) {
+        call_native_fn(vm, AS_NATIVE_FN(function), arg_count);
         return pyro_pop(vm);
     } else {
-        call_value(vm, func, arg_count);
+        call_value(vm, function, arg_count);
         run(vm);
         return pyro_pop(vm);
     }

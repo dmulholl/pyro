@@ -1537,7 +1537,7 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
             pyro_push(vm, fn);
             pyro_push(vm, aux_array[j]);
             pyro_push(vm, aux_array[i]);
-            Value return_value = pyro_call_function(vm, fn, 2);
+            Value return_value = pyro_call_function(vm, 2);
             if (vm->halt_flag) {
                 return;
             } else if (!IS_BOOL(return_value)) {
@@ -1936,7 +1936,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
             pyro_push(vm, OBJ_VAL(iter->callback));
             pyro_push(vm, next_value);
-            Value result = pyro_call_function(vm, OBJ_VAL(iter->callback), 1);
+            Value result = pyro_call_function(vm, 1);
             if (vm->halt_flag) {
                 return OBJ_VAL(vm->empty_error);
             }
@@ -1955,7 +1955,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
                 pyro_push(vm, OBJ_VAL(iter->callback));
                 pyro_push(vm, next_value);
-                Value result = pyro_call_function(vm, OBJ_VAL(iter->callback), 1);
+                Value result = pyro_call_function(vm, 1);
                 if (vm->halt_flag) {
                     return OBJ_VAL(vm->empty_error);
                 }
