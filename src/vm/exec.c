@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "operators.h"
 #include "setup.h"
+#include "stringify.h"
 
 #include "../lib/os/os.h"
 
@@ -1115,18 +1116,17 @@ static void run(PyroVM* vm) {
                 break;
 
             case OP_POP_ECHO_IN_REPL: {
-                Value value = pyro_pop(vm);
+                Value value = pyro_peek(vm, 0);
+
                 if (vm->in_repl && !IS_NULL(value)) {
-                    ObjStr* string = pyro_stringify_value(vm, value);
+                    ObjStr* string = pyro_stringify_debug(vm, value);
                     if (vm->halt_flag) {
-                        return;
-                    }
-                    if (!string) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
                     pyro_out(vm, "%s\n", string->bytes);
                 }
+
+                pyro_pop(vm);
                 break;
             }
 
