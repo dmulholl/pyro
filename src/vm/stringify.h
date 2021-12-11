@@ -5,10 +5,17 @@
 #include "values.h"
 
 // Returns the debug string representation of [value].
-// Panics and returns NULL if an error occurs.
-// This function can call into Pyro code and can therefore set the exit flag.
-// The caller should check [vm->halt_flag] immediately on return before using the result.
-// If [vm->halt_flag] is false the return value is safe to use.
+// - Panics and returns NULL if an error occurs.
+// - This function can call into Pyro code and can therefore set the exit flag.
+// - The caller should check [vm->halt_flag] immediately on return before using the result.
+// - If [vm->halt_flag] is false the return value is safe to use.
 ObjStr* pyro_stringify_debug(PyroVM* vm, Value value);
+
+// Returns the formatted string representation of [value].
+// - Panics and returns NULL if an error occurs.
+// - This function can call into Pyro code and can therefore set the exit flag.
+// - The caller should check [vm->halt_flag] immediately on return before using the result.
+// - If [vm->halt_flag] is false the return value is safe to use.
+ObjStr* pyro_stringify_formatted(PyroVM* vm, Value value, const char* format_string);
 
 #endif

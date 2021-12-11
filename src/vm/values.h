@@ -148,11 +148,6 @@ bool pyro_is_truthy(Value value);
 // sufficient memory cannot be allocated for the string.
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value);
 
-// Returns the string representation of [value] formatted according to [format_string]. Panics and
-// returns NULL if an error occurs. This function can call into Pyro code and so can set the exit
-// flag. The caller should check [vm->halt_flag] immediately on return before using the result.
-ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string);
-
 // Returns a pointer to a static string. Can be safely called from the GC.
 char* pyro_stringify_obj_type(ObjType type);
 

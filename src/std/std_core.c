@@ -6,6 +6,7 @@
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
 #include "../vm/setup.h"
+#include "../vm/stringify.h"
 
 #include "../lib/os/os.h"
 
@@ -85,7 +86,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             if (fmt_spec_count == 0) {
                 formatted = pyro_stringify_value(vm, arg);
             } else {
-                formatted = pyro_format_value(vm, arg, fmt_spec_buffer);
+                formatted = pyro_stringify_formatted(vm, arg, fmt_spec_buffer);
             }
 
             if (vm->halt_flag) {
