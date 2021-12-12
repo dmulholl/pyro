@@ -5,7 +5,7 @@
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     char* realpath = pyro_realpath(path);
     if (!realpath) {
-        fprintf(stderr, "Error: Failed to resolve path '%s'.\n", path);
+        fprintf(stderr, "Error: Unable to resolve path '%s'.\n", path);
         exit(1);
     }
 

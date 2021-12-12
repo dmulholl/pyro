@@ -1442,12 +1442,20 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 
 
 void pyro_exec_file_as_main(PyroVM* vm, const char* filepath) {
-    ObjStr* path_string = STR(filepath);
-    if (!path_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+    char* realpath = pyro_realpath(filepath);
+    if (!realpath) {
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve path '%s'.", filepath);
         return;
     }
-    pyro_define_member(vm, vm->main_module, "$filepath", OBJ_VAL(path_string));
+
+    ObjStr* realpath_string = STR(realpath);
+    if (!realpath_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        free(realpath);
+        return;
+    }
+    pyro_define_member(vm, vm->main_module, "$filepath", OBJ_VAL(realpath_string));
+    free(realpath);
 
     FileData fd;
     if (!pyro_read_file(vm, filepath, &fd) || fd.size == 0) {
@@ -1514,28 +1522,36 @@ void pyro_try_compile_file(PyroVM* vm, const char* path) {
 }
 
 
-void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
-    ObjStr* path_string = STR(path);
-    if (!path_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* module) {
+    char* realpath = pyro_realpath(filepath);
+    if (!realpath) {
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve path '%s'.", filepath);
         return;
     }
-    pyro_define_member(vm, module, "$filepath", OBJ_VAL(path_string));
+
+    ObjStr* realpath_string = STR(realpath);
+    if (!realpath_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        free(realpath);
+        return;
+    }
+    pyro_define_member(vm, module, "$filepath", OBJ_VAL(realpath_string));
+    free(realpath);
 
     FileData fd;
-    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
+    if (!pyro_read_file(vm, filepath, &fd) || fd.size == 0) {
         return;
     }
 
-    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path);
+    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, filepath);
     FREE_ARRAY(vm, char, fd.data, fd.size);
     if (!fn) {
         if (vm->status_code == ERR_SYNTAX_ERROR) {
-            pyro_panic(vm, ERR_SYNTAX_ERROR, "Unable to compile module '%s'.", path);
+            pyro_panic(vm, ERR_SYNTAX_ERROR, "Unable to compile module '%s'.", filepath);
         } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
             pyro_panic(
                 vm, ERR_OUT_OF_MEMORY,
-                "Out of memory, unable to compile module '%s'.", path
+                "Out of memory, unable to compile module '%s'.", filepath
             );
         } else {
             assert(false);
