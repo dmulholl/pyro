@@ -24,13 +24,14 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
             exit(2);
         }
 
-        char* path_copy = strdup(path);
-        if (!path_copy) {
-            fprintf(stderr, "Error: Out of memory.\n");
-            exit(2);
-        }
-        pyro_add_import_root(vm, pyro_dirname(path_copy));
-        free(path_copy);
+        // Set the VM"s max memory allocation.
+        pyro_cli_set_max_memory(vm, cmd_parser);
+
+        // Add any import roots supplied on the command line.
+        pyro_cli_add_command_line_import_roots(vm, cmd_parser);
+
+        // Add the standard import roots.
+        pyro_cli_add_import_roots_from_path(vm, path);
 
         pyro_exec_file_as_main(vm, path);
         if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {

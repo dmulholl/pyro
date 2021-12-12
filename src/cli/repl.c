@@ -112,7 +112,7 @@ void pyro_run_repl(ArgParser* parser) {
     pyro_cli_set_max_memory(vm, parser);
 
     // Add any import roots supplied on the command line.
-    pyro_cli_add_import_roots(vm, parser);
+    pyro_cli_add_command_line_import_roots(vm, parser);
 
     // Add the current working directory to the list of import roots.
     pyro_add_import_root(vm, ".");

@@ -236,3 +236,20 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out) {
     return true;
 }
 
+
+// Wrapper for realpath(). Returns NULL on failure. If the return value is non-NULL, the caller
+// should free it using free().
+char* pyro_realpath(const char* path) {
+    char* array = malloc(PATH_MAX);
+    if (!array) {
+        return NULL;
+    }
+
+    char* result = realpath(path, array);
+    if (!result) {
+        free(array);
+        return NULL;
+    }
+
+    return array;
+}

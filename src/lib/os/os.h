@@ -71,4 +71,8 @@ typedef struct {
 // returns false if there was a memory-allocation or I/O read error.
 bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out);
 
+// Wrapper for realpath(). Returns NULL on failure. If the return value is non-NULL, the caller
+// should free it using free().
+char* pyro_realpath(const char* path);
+
 #endif

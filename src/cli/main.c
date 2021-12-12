@@ -78,6 +78,9 @@ static const char* TIME_HELPTEXT =
     "  [files]                    Files to test.\n"
     "\n"
     "Options:\n"
+    "  -i, --import-root <dir>    Add a directory to the list of import roots.\n"
+    "  -m, --max-memory <int>     Maximum allowed memory allocation in bytes.\n"
+    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "  -n, --num-runs <int>       Number of times to run each function.\n"
     "\n"
     "Flags:\n"
@@ -135,6 +138,8 @@ int main(int argc, char* argv[]) {
 
     ap_helptext(time_cmd_parser, TIME_HELPTEXT);
     ap_callback(time_cmd_parser, pyro_cmd_time);
+    ap_str_opt(time_cmd_parser, "max-memory m", NULL);
+    ap_str_opt(time_cmd_parser, "import-root i", NULL);
     ap_int_opt(time_cmd_parser, "num-runs n", 10);
 
     // Register the parser for the 'check' comand.

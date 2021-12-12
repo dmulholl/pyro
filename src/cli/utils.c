@@ -1,7 +1,37 @@
 #include "cli.h"
 
 
-void pyro_cli_add_import_roots(PyroVM* vm, ArgParser* parser) {
+// [path] can be a script file or a module directory.
+void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
+    char* realpath = pyro_realpath(path);
+    if (!realpath) {
+        fprintf(stderr, "Error: Failed to resolve path '%s'.\n", path);
+        exit(1);
+    }
+
+    // Add the directory containing [path].
+    char* dirpath = pyro_dirname(realpath);
+    size_t dirpath_length = strlen(dirpath);
+    pyro_add_import_root(vm, dirpath);
+
+    char* array = malloc(dirpath_length + 9);
+    if (!array) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(2);
+    }
+
+    // Add [dirpath/modules].
+    memcpy(array, dirpath, dirpath_length);
+    memcpy(&array[dirpath_length], "/modules", 8);
+    array[dirpath_length + 8] = '\0';
+    pyro_add_import_root(vm, array);
+
+    free(array);
+    free(realpath);
+}
+
+
+void pyro_cli_add_command_line_import_roots(PyroVM* vm, ArgParser* parser) {
     if (!ap_found(parser, "import-root")) {
         return;
     }
