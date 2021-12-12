@@ -6,6 +6,7 @@ assert $str(123) == "123";
 assert $str(0.0) == "0.0";
 assert $str(123.0) == "123.0";
 assert $str(123.456) == "123.456";
+assert $str(123.456000) == "123.456";
 assert $str(123.000456) == "123.000456";
 assert $str("foo") == "foo";
 
