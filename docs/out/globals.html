@@ -426,6 +426,26 @@ Returns <code>true</code> if the argument is an <code>iter</code>.
 </div>
 <div>
 <dt>
+<code>$is_iterable(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is iterable, i.e. has an <code>:$iter()</code> method that returns an iterator.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_iterator(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an iterator, i.e. has a <code>:$next()</code> method that returns the next item from a sequence.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$is_instance(object, class_object) -&gt; bool</code>
 </dt>
 <dd>
