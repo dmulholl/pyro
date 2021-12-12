@@ -38,7 +38,7 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
         pyro_cli_add_import_roots_from_path(vm, path);
 
         // Compile and execute the script.
-        pyro_exec_file_as_main(vm, path);
+        pyro_exec_path_as_main(vm, path);
 
         if (pyro_get_exit_flag(vm)) {
             printf(" · \x1B[1;31mEXIT\x1B[0m (%lld)\n\n", pyro_get_status_code(vm));

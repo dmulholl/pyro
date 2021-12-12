@@ -33,7 +33,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         // Add the standard import roots.
         pyro_cli_add_import_roots_from_path(vm, path);
 
-        pyro_exec_file_as_main(vm, path);
+        pyro_exec_path_as_main(vm, path);
         if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
             pyro_free_vm(vm);
             exit(pyro_get_status_code(vm));

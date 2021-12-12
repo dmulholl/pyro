@@ -2,6 +2,8 @@
 
 
 void pyro_run_file(ArgParser* parser) {
+    char* path = ap_arg(parser, 0);
+
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
         fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
@@ -15,7 +17,7 @@ void pyro_run_file(ArgParser* parser) {
     pyro_cli_add_command_line_import_roots(vm, parser);
 
     // Add the standard import roots.
-    pyro_cli_add_import_roots_from_path(vm, ap_arg(parser, 0));
+    pyro_cli_add_import_roots_from_path(vm, path);
 
     // Add the command line args to the global $args variable.
     char** args = ap_args(parser);
@@ -23,7 +25,7 @@ void pyro_run_file(ArgParser* parser) {
     free(args);
 
     // Compile and execute the script.
-    pyro_exec_file_as_main(vm, ap_arg(parser, 0));
+    pyro_exec_path_as_main(vm, path);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         pyro_free_vm(vm);
         exit(pyro_get_status_code(vm));

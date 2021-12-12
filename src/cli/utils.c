@@ -14,7 +14,7 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     size_t dirpath_length = strlen(dirpath);
     pyro_add_import_root(vm, dirpath);
 
-    char* array = malloc(dirpath_length + 9);
+    char* array = malloc(dirpath_length + strlen("/modules") + 1);
     if (!array) {
         fprintf(stderr, "Error: Out of memory.\n");
         exit(2);
@@ -22,8 +22,8 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
 
     // Add [dirpath/modules].
     memcpy(array, dirpath, dirpath_length);
-    memcpy(&array[dirpath_length], "/modules", 8);
-    array[dirpath_length + 8] = '\0';
+    memcpy(&array[dirpath_length], "/modules", strlen("/modules"));
+    array[dirpath_length + strlen("/modules")] = '\0';
     pyro_add_import_root(vm, array);
 
     free(array);

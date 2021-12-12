@@ -1441,8 +1441,8 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 }
 
 
-void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
-    ObjStr* path_string = STR(path);
+void pyro_exec_file_as_main(PyroVM* vm, const char* filepath) {
+    ObjStr* path_string = STR(filepath);
     if (!path_string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
@@ -1450,12 +1450,43 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
     pyro_define_member(vm, vm->main_module, "$filepath", OBJ_VAL(path_string));
 
     FileData fd;
-    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
+    if (!pyro_read_file(vm, filepath, &fd) || fd.size == 0) {
         return;
     }
 
-    pyro_exec_code_as_main(vm, fd.data, fd.size, path);
+    pyro_exec_code_as_main(vm, fd.data, fd.size, filepath);
     FREE_ARRAY(vm, char, fd.data, fd.size);
+}
+
+
+void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
+    if (pyro_is_file(path)) {
+        pyro_exec_file_as_main(vm, path);
+        return;
+    }
+
+    if (pyro_is_dir(path)) {
+        size_t path_length = strlen(path);
+        char* filepath = malloc(path_length + strlen("/self.pyro") + 1);
+        if (!filepath) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return;
+        }
+        memcpy(filepath, path, path_length);
+        memcpy(&filepath[path_length], "/self.pyro", strlen("/self.pyro"));
+        filepath[path_length + strlen("/self.pyro")] = '\0';
+
+        if (pyro_is_file(filepath)) {
+            pyro_exec_file_as_main(vm, filepath);
+        } else {
+            pyro_panic(vm, ERR_ERROR, "Module requires 'self.pyro' file to be executable.");
+        }
+
+        free(filepath);
+        return;
+    }
+
+    pyro_panic(vm, ERR_ERROR, "Invalid path '%s'.", path);
 }
 
 
