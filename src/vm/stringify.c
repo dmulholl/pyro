@@ -386,6 +386,64 @@ static ObjStr* stringify_map_as_set(PyroVM* vm, ObjMap* map) {
 
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
+static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+    pyro_push(vm, OBJ_VAL(buf));
+
+    if (!ObjBuf_append_byte(buf, '[', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    QueueItem* next_item = queue->head;
+    bool is_first_item = true;
+
+    while (next_item) {
+        if (!is_first_item) {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)", ", vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL;
+            }
+        }
+
+        ObjStr* item_string = pyro_stringify_debug(vm, next_item->value);
+        if (vm->halt_flag) {
+            return NULL;
+        }
+
+        pyro_push(vm, OBJ_VAL(item_string));
+        if (!ObjBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+        pyro_pop(vm); // item_string
+
+        is_first_item = false;
+        next_item = next_item->next;
+    }
+
+    if (!ObjBuf_append_byte(buf, ']', vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
+    pyro_pop(vm); // buf
+
+    if (!output_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    return output_string;
+}
+
+
+// Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
     Value method = pyro_get_method(vm, OBJ_VAL(object), vm->str_str);
     if (!IS_NULL(method)) {
@@ -423,8 +481,10 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_ITER:
             return pyro_sprintf_to_obj(vm, "<iter>");
 
-        case OBJ_QUEUE:
-            return pyro_sprintf_to_obj(vm, "<queue>");
+        case OBJ_QUEUE: {
+            ObjQueue* queue = (ObjQueue*)object;
+            return stringify_queue(vm, queue);
+        }
 
         case OBJ_BUF: {
             ObjBuf* buf = (ObjBuf*)object;
