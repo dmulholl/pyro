@@ -116,9 +116,8 @@ struct Obj {
 #define AS_ITER(value)              ((ObjIter*)AS_OBJ(value))
 #define AS_QUEUE(value)             ((ObjQueue*)AS_OBJ(value))
 
-// Macros for creating string objects by copying/interpolating C strings.
+// Macro for creating a string object by copying a C string.
 #define STR(c_string)               ObjStr_copy_raw(c_string, strlen(c_string), vm)
-#define FMT(fmt_string, ...)        ObjStr_from_fmt(vm, fmt_string, __VA_ARGS__)
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
 ObjClass* pyro_get_class(Value value);
