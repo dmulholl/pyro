@@ -18,7 +18,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.5.4</p>
+                <p class="version">Version 0.5.6</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -212,7 +212,11 @@ Import Roots
 The global <code>$roots</code> vector contains the list of root directories that Pyro checks when attempting to import a module.
 </p>
 <p>
-Currently, if Pyro is executing a script it checks the parent directory containing that script. If the REPL is executing it checks the current working directory.
+When Pyro is executing a script it adds the parent directory containing that script to the <code>$roots</code> vector, along with a <code>modules</code> directory within that parent directory.
+(This means that the modules required by a script can be located either in the same directory as the script or in a <code>modules</code> directory alongside the script.)
+</p>
+<p>
+When Pyro is executing the REPL it adds the current working directory to the <code>$roots</code> vector.
 </p>
 <p>
 You can add or remove entries from the <code>$roots</code> vector to customize Pyro's default behaviour.

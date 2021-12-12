@@ -136,6 +136,9 @@ You can alias the imported members using a comma-separated `as` list, e.g.
 
 The global `$roots` vector contains the list of root directories that Pyro checks when attempting to import a module.
 
-Currently, if Pyro is executing a script it checks the parent directory containing that script. If the REPL is executing it checks the current working directory.
+When Pyro is executing a script it adds the parent directory containing that script to the `$roots` vector, along with a `modules` directory within that parent directory.
+(This means that the modules required by a script can be located either in the same directory as the script or in a `modules` directory alongside the script.)
+
+When Pyro is executing the REPL it adds the current working directory to the `$roots` vector.
 
 You can add or remove entries from the `$roots` vector to customize Pyro's default behaviour.
