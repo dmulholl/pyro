@@ -65,6 +65,9 @@
 <li>
 <a href="#import-roots">Import Roots</a>
 </li>
+<li>
+<a href="#executing-module-directories">Executing Module Directories</a>
+</li>
 </ul>
 <hr>
 <p>
@@ -220,6 +223,18 @@ When Pyro is executing the REPL it adds the current working directory to the <co
 </p>
 <p>
 You can add or remove entries from the <code>$roots</code> vector to customize Pyro's default behaviour.
+</p>
+<h3 id="executing-module-directories">
+Executing Module Directories
+</h3>
+<p>
+You can execute a module directory if it contains a <code>self.pyro</code> file:
+</p>
+<pre>
+$ pyro path/to/module/directory
+</pre>
+<p>
+Pyro executes the <code>self.pyro</code> file, then the <code>$main()</code> function if it finds one.
 </p>
         </article>
         

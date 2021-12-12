@@ -142,3 +142,13 @@ When Pyro is executing a script it adds the parent directory containing that scr
 When Pyro is executing the REPL it adds the current working directory to the `$roots` vector.
 
 You can add or remove entries from the `$roots` vector to customize Pyro's default behaviour.
+
+
+
+### Executing Module Directories
+
+You can execute a module directory if it contains a `self.pyro` file:
+
+    $ pyro path/to/module/directory
+
+Pyro executes the `self.pyro` file, then the `$main()` function if it finds one.
