@@ -2009,6 +2009,10 @@ static void parse_continue_stmt(Parser* parser) {
 
 
 static void parse_statement(Parser* parser) {
+    if (match(parser, TOKEN_SEMICOLON)) {
+        return;
+    }
+
     if (match(parser, TOKEN_LEFT_BRACE)) {
         begin_scope(parser);
         parse_block(parser);
@@ -2047,6 +2051,7 @@ static void parse_statement(Parser* parser) {
         parse_expression_stmt(parser);
         parser->num_expression_statements++;
     }
+
     parser->num_statements++;
 }
 
