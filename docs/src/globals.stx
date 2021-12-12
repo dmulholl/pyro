@@ -234,6 +234,18 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$is_iterable(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is iterable, i.e. has an `:$iter()` method that returns an iterator.
+
+
+
+[[ `$is_iterator(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an iterator, i.e. has a `:$next()` method that returns the next item from a sequence.
+
+
+
 [[ `$is_instance(object, class_object) -> bool` ]]
 
     Returns `true` if `object` is an instance of the specified class or of a subclass of the specified class.

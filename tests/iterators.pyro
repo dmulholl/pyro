@@ -30,3 +30,6 @@ var vec = $vec(Range(10));
 assert vec:count() == 10;
 assert vec[0] == 0;
 assert vec[9] == 9;
+
+assert $is_iterable(Range(10));
+assert $is_iterator(Range(10));

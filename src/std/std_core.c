@@ -679,6 +679,16 @@ static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_is_iterable(PyroVM* vm, size_t arg_count, Value* args) {
+    return BOOL_VAL(pyro_has_method(vm, args[0], vm->str_iter));
+}
+
+
+static Value fn_is_iterator(PyroVM* vm, size_t arg_count, Value* args) {
+    return BOOL_VAL(pyro_has_method(vm, args[0], vm->str_next));
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -764,4 +774,6 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_pyro_func", fn_is_pyro_func, 1);
     pyro_define_global_fn(vm, "$is_native_func", fn_is_native_func, 1);
     pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
+    pyro_define_global_fn(vm, "$is_iterable", fn_is_iterable, 1);
+    pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
 }
