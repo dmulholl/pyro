@@ -225,6 +225,30 @@ static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::realpath(), expected a string.");
+        return NULL_VAL();
+    }
+
+    char* realpath = pyro_realpath(AS_STR(args[0])->bytes);
+    if (!realpath) {
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve path '%s'.", AS_STR(args[0])->bytes);
+        return NULL_VAL();
+    }
+
+    ObjStr* string = ObjStr_copy_raw(realpath, strlen(realpath), vm);
+    free(realpath);
+
+    if (!string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(string);
+}
+
+
 void pyro_load_std_path(PyroVM* vm) {
     ObjModule* mod_path = pyro_define_module_2(vm, "$std", "path");
     if (!mod_path) {
@@ -241,4 +265,5 @@ void pyro_load_std_path(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_path, "rm", fn_rm, 1);
     pyro_define_member_fn(vm, mod_path, "cwd", fn_cwd, 0);
     pyro_define_member_fn(vm, mod_path, "listdir", fn_listdir, 1);
+    pyro_define_member_fn(vm, mod_path, "realpath", fn_realpath, 1);
 }
