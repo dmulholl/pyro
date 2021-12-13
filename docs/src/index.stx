@@ -19,17 +19,19 @@ This means that it lives in roughly the same neighbourhood in programming langua
         return fib(n - 1) + fib(n - 2);
     }
 
-Unlike Python or Ruby, Pyro isn't ready for real-world use.
-It's an experimental language that still has a lot of maturing to do.
+Pyro is a classic braces-and-semicolons language. If you've used any C-family language before you should find it instantly intuitive.
 
 * Take Pyro for a test drive with the [quickstart tutorial][2].
 * Learn more about the language by taking the [tour][3].
+
+Pyro is an experimental language that's still under development --- you should only write
+the control code for your pacemaker/space station in it if you're feeling particularly adventurous.
 
 
 
 ### Design Goals
 
-* Clarity
+* Legibility
 * Simplicity
 * Elegance
 
