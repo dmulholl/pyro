@@ -55,6 +55,20 @@ static Value queue_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value queue_iter(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjQueue* queue = AS_QUEUE(args[-1]);
+
+    ObjIter* iter = ObjIter_new((Obj*)queue, ITER_QUEUE, vm);
+    if (!iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+    iter->next_queue_item = queue->head;
+
+    return OBJ_VAL(iter);
+}
+
+
 void pyro_load_std_core_queue(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$queue", fn_queue, 0);
@@ -65,4 +79,5 @@ void pyro_load_std_core_queue(PyroVM* vm) {
     pyro_define_method(vm, vm->queue_class, "enqueue", queue_enqueue, 1);
     pyro_define_method(vm, vm->queue_class, "dequeue", queue_dequeue, 0);
     pyro_define_method(vm, vm->queue_class, "is_empty", queue_is_empty, 0);
+    pyro_define_method(vm, vm->queue_class, "$iter", queue_iter, 0);
 }

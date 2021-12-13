@@ -341,45 +341,6 @@ typedef struct {
 
 ObjFile* ObjFile_new(PyroVM* vm);
 
-/* --------- */
-/* Iterators */
-/* --------- */
-
-typedef enum {
-    ITER_STR_BYTES,
-    ITER_STR_CHARS,
-    ITER_VEC,
-    ITER_MAP_KEYS,
-    ITER_MAP_VALUES,
-    ITER_MAP_ENTRIES,
-    ITER_TUP,
-    ITER_MAP_FUNC,
-    ITER_FILTER_FUNC,
-    ITER_GENERIC,
-    ITER_ENUM,
-    ITER_RANGE,
-} IterType;
-
-typedef struct {
-    Obj obj;
-    Obj* source;
-    IterType iter_type;
-    size_t next_index;
-    int64_t next_enum;
-    int64_t range_next;
-    int64_t range_stop;
-    int64_t range_step;
-    Obj* callback;
-} ObjIter;
-
-// Creates a new iterator. Returns NULL if the attempt to allocate memory fails.
-ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
-
-// Returns the next item from the sequence or an [err] if the sequence has been exhausted.
-// Note that this method may call into Pyro code and can panic or set the exit flag. Check
-// [vm->halt_flag] before relying on the return value.
-Value ObjIter_next(ObjIter* iter, PyroVM* vm);
-
 /* ------ */
 /* Queues */
 /* ------ */
@@ -404,5 +365,46 @@ bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm);
 
 // Returns true if a value was successfully dequeued, false if the queue was empty.
 bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm);
+
+/* --------- */
+/* Iterators */
+/* --------- */
+
+typedef enum {
+    ITER_ENUM,
+    ITER_FILTER_FUNC,
+    ITER_GENERIC,
+    ITER_MAP_ENTRIES,
+    ITER_MAP_FUNC,
+    ITER_MAP_KEYS,
+    ITER_MAP_VALUES,
+    ITER_QUEUE,
+    ITER_RANGE,
+    ITER_STR_BYTES,
+    ITER_STR_CHARS,
+    ITER_TUP,
+    ITER_VEC,
+} IterType;
+
+typedef struct {
+    Obj obj;
+    Obj* source;
+    IterType iter_type;
+    size_t next_index;
+    int64_t next_enum;
+    int64_t range_next;
+    int64_t range_stop;
+    int64_t range_step;
+    QueueItem* next_queue_item;
+    Obj* callback;
+} ObjIter;
+
+// Creates a new iterator. Returns NULL if the attempt to allocate memory fails.
+ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
+
+// Returns the next item from the sequence or an [err] if the sequence has been exhausted.
+// Note that this method may call into Pyro code and can panic or set the exit flag. Check
+// [vm->halt_flag] before relying on the return value.
+Value ObjIter_next(ObjIter* iter, PyroVM* vm);
 
 #endif

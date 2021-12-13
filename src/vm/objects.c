@@ -1527,6 +1527,7 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
     iter->range_next = 0;
     iter->range_stop = 0;
     iter->range_step = 0;
+    iter->next_queue_item = NULL;
     return iter;
 }
 
@@ -1548,6 +1549,15 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             if (iter->next_index < tup->count) {
                 iter->next_index++;
                 return tup->values[iter->next_index - 1];
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case ITER_QUEUE: {
+            if (iter->next_queue_item) {
+                Value next_value = iter->next_queue_item->value;
+                iter->next_queue_item = iter->next_queue_item->next;
+                return next_value;
             }
             return OBJ_VAL(vm->empty_error);
         }
