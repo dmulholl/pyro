@@ -61,6 +61,13 @@ This module contains filepath utilities.
     Skips `"."` and `".."`.
 
 
+[[ `realpath(path: str) -> str` ]]
+
+    Returns the canonicalized absolute path, resolving all symbolic links.
+    All the components of `path` must exist.
+    Equivalent to POSIX `realpath()`.
+
+
 [[ `rm(path: str)` ]]
 
     Deletes the symlink, file, or directory at `path`.
