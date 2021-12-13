@@ -162,7 +162,6 @@ static bool check_keyword(Lexer* lexer, const char* keyword) {
 static TokenType get_identifier_type(Lexer* lexer) {
     switch (lexer->start[0]) {
         case 'a':
-            if (check_keyword(lexer, "and")) return TOKEN_AND;
             if (check_keyword(lexer, "as")) return TOKEN_AS;
             if (check_keyword(lexer, "assert")) return TOKEN_ASSERT;
             break;
@@ -201,12 +200,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
             break;
 
         case 'n':
-            if (check_keyword(lexer, "not")) return TOKEN_NOT;
             if (check_keyword(lexer, "null")) return TOKEN_NULL;
-            break;
-
-        case 'o':
-            if (check_keyword(lexer, "or")) return TOKEN_OR;
             break;
 
         case 'r':
@@ -229,10 +223,6 @@ static TokenType get_identifier_type(Lexer* lexer) {
 
         case 'w':
             if (check_keyword(lexer, "while")) return TOKEN_WHILE;
-            break;
-
-        case 'x':
-            if (check_keyword(lexer, "xor")) return TOKEN_XOR;
             break;
     }
 

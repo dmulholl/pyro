@@ -44,7 +44,7 @@ typedef enum {
     TOKEN_CHAR,
 
     // Keywords.
-    TOKEN_AND, TOKEN_AS, TOKEN_ASSERT,
+    TOKEN_AS, TOKEN_ASSERT,
     TOKEN_BREAK,
     TOKEN_CLASS, TOKEN_CONTINUE,
     TOKEN_DEF,
@@ -52,14 +52,12 @@ typedef enum {
     TOKEN_FALSE, TOKEN_FOR,
     TOKEN_IF, TOKEN_IMPORT, TOKEN_IN,
     TOKEN_LOOP,
-    TOKEN_NOT, TOKEN_NULL,
-    TOKEN_OR,
+    TOKEN_NULL,
     TOKEN_RETURN,
     TOKEN_SELF, TOKEN_SUPER,
     TOKEN_TRUE, TOKEN_TRY,
     TOKEN_VAR,
     TOKEN_WHILE,
-    TOKEN_XOR,
 
     // Synthetic tokens.
     TOKEN_ERROR,
