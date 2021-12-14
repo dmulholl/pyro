@@ -33,6 +33,7 @@ The following keywords are reserved for future use:
 * `async`
 * `await`
 * `case`
+* `catch`
 * `default`
 * `let`
 * `match`

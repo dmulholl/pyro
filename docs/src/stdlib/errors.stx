@@ -3,7 +3,7 @@ title: <code>$std::errors</code>
 meta_title: Pyro Standard Library &mdash; $std::errors
 ---
 
-You can use any `i64: i64` value as an error code.
+You can use any `i64` value as an error code.
 This module contains aliases for the set of standard error codes used by Pyro itself.
 
 
