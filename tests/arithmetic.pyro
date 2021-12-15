@@ -1,4 +1,4 @@
-# Integers
+# Integers.
 assert 1 + 2 == 3;
 assert 3 - 2 == 1;
 assert 1 * 2 == 2;
@@ -6,7 +6,7 @@ assert 2 + 3 * 4 == 14;
 assert 2 * 3 + 4 == 10;
 assert (2 + 3) * 4 == 20;
 
-# Floats
+# Floats.
 assert 1.0 + 2.0 == 3.0;
 assert 3.0 - 2.0 == 1.0;
 assert 1.0 * 2.0 == 2.0;
@@ -14,7 +14,7 @@ assert 2.0 + 3.0 * 4.0 == 14.0;
 assert 2.0 * 3.0 + 4.0 == 10.0;
 assert (2.0 + 3.0) * 4.0 == 20.0;
 
-# Mixed
+# Mixed floats and integers.
 assert 1 + 1.0 == 2.0;
 assert 1.0 + 1 == 2.0;
 assert 3 - 2.0 == 1.0;
