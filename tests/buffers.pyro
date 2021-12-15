@@ -1,10 +1,13 @@
+assert !$is_buf("foo");
+
 var foo = $buf();
 assert $is_buf(foo);
-assert !$is_buf("foo");
 assert foo:count() == 0;
+assert foo:is_empty();
 
 foo:write_byte(0x61);
 assert foo:count() == 1;
+assert !foo:is_empty();
 
 foo:write_byte(0x62);
 assert foo:count() == 2;
