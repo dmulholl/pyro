@@ -1299,16 +1299,18 @@ Drains the iterator into a new vector.
 Byte Buffers
 </h3>
 <p>
-A byte buffer, <code>buf</code>, is a dynamic array of bytes. Buffers use zero-based indices.
+A byte buffer, <code>buf</code>, is a dynamic array of bytes. Byte buffers use zero-based indices.
 </p>
 <dl>
 <div>
 <dt>
-<code>$buf() -&gt; buf</code>
+<code>$buf() -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>buf</code> object.
+If called with zero arguments, creates a new empty buffer.
+If called with two arguments, creates a new buffer with the specified initial size and fill value, where <code>size</code> is a positive integer and <code>value</code> is an integer value in the range <code>[0, 255]</code>.
 </p>
 </dd>
 </div>

@@ -57,9 +57,11 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$buf() -> buf` ]]
+[[ `$buf() -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
 
-    Creates a new `$buf` object.
+    Creates a new `buf` object.
+    If called with zero arguments, creates a new empty buffer.
+    If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
 
 
 

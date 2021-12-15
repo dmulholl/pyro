@@ -142,11 +142,13 @@ Converts <code>arg</code> to a <code>$bool</code>.
 </div>
 <div>
 <dt>
-<code>$buf() -&gt; buf</code>
+<code>$buf() -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
 </dt>
 <dd>
 <p>
-Creates a new <code>$buf</code> object.
+Creates a new <code>buf</code> object.
+If called with zero arguments, creates a new empty buffer.
+If called with two arguments, creates a new buffer with the specified initial size and fill value, where <code>size</code> is a positive integer and <code>value</code> is an integer value in the range <code>[0, 255]</code>.
 </p>
 </dd>
 </div>
