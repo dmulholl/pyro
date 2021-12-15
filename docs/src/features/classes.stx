@@ -191,7 +191,7 @@ You can implement the `$special` methods listed below to add support for various
 
 [[ `:$op_binary_equals_equals(other: any) -> bool` ]]
 
-    Implementing this method overloads the `==` operator for expressions of the form `receiver == other`.
+    Implementing this method overloads the binary `==` operator for expressions of the form `receiver == other`.
     (The `!=` operator automatically returns the logical inverse of `==` and cannot be separately overloaded.)
 
     If you overload this operator and you want to use your overloaded type as a key in hash maps or as a member in sets you should also overload the `:$hash()` method to ensure that instances that compare as equal also have the same hash value.
@@ -199,42 +199,52 @@ You can implement the `$special` methods listed below to add support for various
 
 [[ `:$op_binary_greater(other: any) -> bool` ]]
 
-    Implementing this method overloads the `>` operator for expressions of the form `receiver > other`.
+    Implementing this method overloads the binary `>` operator for expressions of the form `receiver > other`.
 
 
 [[ `:$op_binary_greater_equals(other: any) -> bool` ]]
 
-    Implementing this method overloads the `>=` operator for expressions of the form `receiver >= other`.
+    Implementing this method overloads the binary `>=` operator for expressions of the form `receiver >= other`.
 
 
 [[ `:$op_binary_less(other: any) -> bool` ]]
 
-    Implementing this method overloads the `<` operator for expressions of the form `receiver < other`.
+    Implementing this method overloads the binary `<` operator for expressions of the form `receiver < other`.
 
 
 [[ `:$op_binary_less_equals(other: any) -> bool` ]]
 
-    Implementing this method overloads the `<=` operator for expressions of the form `receiver <= other`.
+    Implementing this method overloads the binary `<=` operator for expressions of the form `receiver <= other`.
 
 
 [[ `:$op_binary_minus(other: any) -> any` ]]
 
-    Implementing this method overloads the `-` operator for expressions of the form `receiver - other`.
+    Implementing this method overloads the binary `-` operator for expressions of the form `receiver - other`.
 
 
 [[ `:$op_binary_plus(other: any) -> any` ]]
 
-    Implementing this method overloads the `+` operator for expressions of the form `receiver + other`.
+    Implementing this method overloads the binary `+` operator for expressions of the form `receiver + other`.
 
 
 [[ `:$op_binary_slash(other: any) -> any` ]]
 
-    Implementing this method overloads the `/` operator for expressions of the form `receiver / other`.
+    Implementing this method overloads the binary `/` operator for expressions of the form `receiver / other`.
 
 
 [[ `:$op_binary_star(other: any) -> any` ]]
 
-    Implementing this method overloads the `*` operator for expressions of the form `receiver * other`.
+    Implementing this method overloads the binary `*` operator for expressions of the form `receiver * other`.
+
+
+[[ `:$op_unary_minus() -> any` ]]
+
+    Implementing this method overloads the unary `-` operator for expressions of the form `-receiver`.
+
+
+[[ `:$op_unary_plus() -> any` ]]
+
+    Implementing this method overloads the unary `+` operator for expressions of the form `+receiver`.
 
 
 [[ `:$set_index(key: any, value: any)` ]]

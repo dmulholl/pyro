@@ -314,7 +314,7 @@ The method should return either the next item from a sequence or an <code>err</c
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>==</code> operator for expressions of the form <code>receiver == other</code>.
+Implementing this method overloads the binary <code>==</code> operator for expressions of the form <code>receiver == other</code>.
 (The <code>!=</code> operator automatically returns the logical inverse of <code>==</code> and cannot be separately overloaded.)
 </p>
 <p>
@@ -328,7 +328,7 @@ If you overload this operator and you want to use your overloaded type as a key 
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>&gt;</code> operator for expressions of the form <code>receiver &gt; other</code>.
+Implementing this method overloads the binary <code>&gt;</code> operator for expressions of the form <code>receiver &gt; other</code>.
 </p>
 </dd>
 </div>
@@ -338,7 +338,7 @@ Implementing this method overloads the <code>&gt;</code> operator for expression
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>&gt;=</code> operator for expressions of the form <code>receiver &gt;= other</code>.
+Implementing this method overloads the binary <code>&gt;=</code> operator for expressions of the form <code>receiver &gt;= other</code>.
 </p>
 </dd>
 </div>
@@ -348,7 +348,7 @@ Implementing this method overloads the <code>&gt;=</code> operator for expressio
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>&lt;</code> operator for expressions of the form <code>receiver &lt; other</code>.
+Implementing this method overloads the binary <code>&lt;</code> operator for expressions of the form <code>receiver &lt; other</code>.
 </p>
 </dd>
 </div>
@@ -358,7 +358,7 @@ Implementing this method overloads the <code>&lt;</code> operator for expression
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>&lt;=</code> operator for expressions of the form <code>receiver &lt;= other</code>.
+Implementing this method overloads the binary <code>&lt;=</code> operator for expressions of the form <code>receiver &lt;= other</code>.
 </p>
 </dd>
 </div>
@@ -368,7 +368,7 @@ Implementing this method overloads the <code>&lt;=</code> operator for expressio
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>-</code> operator for expressions of the form <code>receiver - other</code>.
+Implementing this method overloads the binary <code>-</code> operator for expressions of the form <code>receiver - other</code>.
 </p>
 </dd>
 </div>
@@ -378,7 +378,7 @@ Implementing this method overloads the <code>-</code> operator for expressions o
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>+</code> operator for expressions of the form <code>receiver + other</code>.
+Implementing this method overloads the binary <code>+</code> operator for expressions of the form <code>receiver + other</code>.
 </p>
 </dd>
 </div>
@@ -388,7 +388,7 @@ Implementing this method overloads the <code>+</code> operator for expressions o
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>/</code> operator for expressions of the form <code>receiver / other</code>.
+Implementing this method overloads the binary <code>/</code> operator for expressions of the form <code>receiver / other</code>.
 </p>
 </dd>
 </div>
@@ -398,7 +398,27 @@ Implementing this method overloads the <code>/</code> operator for expressions o
 </dt>
 <dd>
 <p>
-Implementing this method overloads the <code>*</code> operator for expressions of the form <code>receiver * other</code>.
+Implementing this method overloads the binary <code>*</code> operator for expressions of the form <code>receiver * other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_unary_minus() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the unary <code>-</code> operator for expressions of the form <code>-receiver</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_unary_plus() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the unary <code>+</code> operator for expressions of the form <code>+receiver</code>.
 </p>
 </dd>
 </div>
