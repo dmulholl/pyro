@@ -64,3 +64,15 @@ assert $str(fmt3) == "foo";
 assert fmt3:count() == 3;
 assert $str(fmt3) == "foo";
 assert fmt3:count() == 3;
+
+
+def $test_buf_with_size_and_fill() {
+    var buf1 = $buf(10, 97);
+    assert buf1:count() == 10;
+    assert buf1[0] = 97;
+
+    var buf2 = $buf(10, 'a');
+    assert buf2:count() == 10;
+    assert buf2[0] = 97;
+    assert buf2[0] == 'a';
+}

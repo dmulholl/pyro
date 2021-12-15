@@ -1423,6 +1423,36 @@ ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
 }
 
 
+ObjBuf* ObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return NULL;
+    }
+
+    if (capacity == 0) {
+        return buf;
+    }
+
+    pyro_push(vm, OBJ_VAL(buf));
+    uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
+    pyro_pop(vm);
+
+    if (!new_array) {
+        return NULL;
+    }
+
+    buf->bytes = new_array;
+    buf->capacity = capacity + 1;
+    buf->count = capacity;
+
+    for (size_t i = 0; i < capacity; i++) {
+        buf->bytes[i] = fill_value;
+    }
+
+    return buf;
+}
+
+
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
     return ObjBuf_append_bytes(buf, 1, &byte, vm);
 }

@@ -7,12 +7,40 @@
 
 
 static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjBuf* buf = ObjBuf_new(vm);
-    if (!buf) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+    if (arg_count == 0) {
+        ObjBuf* buf = ObjBuf_new(vm);
+        if (!buf) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL_VAL();
+        }
+        return OBJ_VAL(buf);
     }
-    return OBJ_VAL(buf);
+
+    else if (arg_count == 2) {
+        if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
+            uint8_t fill_value;
+            if (IS_I64(args[1]) && args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
+                fill_value = (uint8_t)args[1].as.i64;
+            } else if (IS_CHAR(args[1]) && args[1].as.u32 >= 0 && args[1].as.u32 <= 255) {
+                fill_value = (uint8_t)args[1].as.u32;
+            } else {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid fill argument for $buf().");
+                return NULL_VAL();
+            }
+            ObjBuf* buf = ObjBuf_new_with_cap_and_fill((size_t)args[0].as.i64, fill_value, vm);
+            if (!buf) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL_VAL();
+            }
+            return OBJ_VAL(buf);
+        } else {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid size argument for $buf().");
+            return NULL_VAL();
+        }
+    }
+
+    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 2 arguments for $buf(), found %d.", arg_count);
+    return NULL_VAL();
 }
 
 
@@ -204,7 +232,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_core_buf(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$buf", fn_buf, 0);
+    pyro_define_global_fn(vm, "$buf", fn_buf, -1);
     pyro_define_global_fn(vm, "$is_buf", fn_is_buf, 1);
 
     // Methods.
