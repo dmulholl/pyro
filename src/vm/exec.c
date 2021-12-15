@@ -1081,16 +1081,13 @@ static void run(PyroVM* vm) {
 
             case OP_UNARY_MINUS: {
                 Value operand = pyro_pop(vm);
-                switch (operand.type) {
-                    case VAL_I64:
-                        pyro_push(vm, I64_VAL(-operand.as.i64));
-                        break;
-                    case VAL_F64:
-                        pyro_push(vm, F64_VAL(-operand.as.f64));
-                        break;
-                    default:
-                        pyro_panic(vm, ERR_TYPE_ERROR, "Operand to '-' must be a number.");
-                }
+                pyro_push(vm, pyro_op_unary_minus(vm, operand));
+                break;
+            }
+
+            case OP_UNARY_PLUS: {
+                Value operand = pyro_pop(vm);
+                pyro_push(vm, pyro_op_unary_plus(vm, operand));
                 break;
             }
 

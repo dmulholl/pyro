@@ -85,6 +85,7 @@ typedef enum {
     OP_TRY,
     OP_UNARY_BANG,
     OP_UNARY_MINUS,
+    OP_UNARY_PLUS,
     OP_UNARY_TILDE,
     OP_UNPACK,
 } OpCode;

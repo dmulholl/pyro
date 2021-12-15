@@ -4,6 +4,11 @@
 #include "exec.h"
 
 
+/* ------------------ */
+/*  Binary Operators  */
+/* ------------------ */
+
+
 // Returns [a] + [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
@@ -317,9 +322,78 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
 }
 
 
-/* ------------- */
-/*  Comparisons  */
-/* ------------- */
+/* ----------------- */
+/*  Unary Operators  */
+/* ----------------- */
+
+
+Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
+    switch (operand.type) {
+        case VAL_I64:
+            return operand;
+
+        case VAL_F64:
+            return operand;
+
+        case VAL_OBJ: {
+            if (IS_INSTANCE(operand)) {
+                Value method = pyro_get_method(vm, operand, vm->str_op_unary_plus);
+                if (!IS_NULL(method)) {
+                    pyro_push(vm, operand);
+                    Value result = pyro_call_method(vm, method, 0);
+                    return result;
+                } else {
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '+'.");
+                    return NULL_VAL();
+                }
+            } else {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '+'.");
+                return NULL_VAL();
+            }
+        }
+
+        default:
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '+'.");
+            return NULL_VAL();
+    }
+}
+
+
+Value pyro_op_unary_minus(PyroVM* vm, Value operand) {
+    switch (operand.type) {
+        case VAL_I64:
+            return I64_VAL(-operand.as.i64);
+
+        case VAL_F64:
+            return F64_VAL(-operand.as.f64);
+
+        case VAL_OBJ: {
+            if (IS_INSTANCE(operand)) {
+                Value method = pyro_get_method(vm, operand, vm->str_op_unary_minus);
+                if (!IS_NULL(method)) {
+                    pyro_push(vm, operand);
+                    Value result = pyro_call_method(vm, method, 0);
+                    return result;
+                } else {
+                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '-'.");
+                    return NULL_VAL();
+                }
+            } else {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '-'.");
+                return NULL_VAL();
+            }
+        }
+
+        default:
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '-'.");
+            return NULL_VAL();
+    }
+}
+
+
+/* ---------------------- */
+/*  Comparison Operators  */
+/* ---------------------- */
 
 
 // Performs a lexicographic comparison using byte values.

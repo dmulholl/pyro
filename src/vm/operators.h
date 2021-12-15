@@ -20,6 +20,14 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b);
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b);
 
+// Returns +[operand]. Panics if the operation is not defined for the operand type.
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_unary_plus(PyroVM* vm, Value operand);
+
+// Returns -[operand]. Panics if the operation is not defined for the operand type.
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_unary_minus(PyroVM* vm, Value operand);
+
 // Returns true if [a] == [b].
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b);

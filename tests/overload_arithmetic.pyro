@@ -23,6 +23,10 @@ class Complex {
         var im = self.re * other.im + self.im * other.re;
         return Complex(re, im);
     }
+
+    def $op_unary_minus() {
+        return Complex(-self.re, -self.im);
+    }
 }
 
 
@@ -39,3 +43,8 @@ assert bar.im == 2 - 4;
 var baz = Complex(1, 2) * Complex(3, 4);
 assert baz.re == -5;
 assert baz.im == 10;
+
+
+var bam = -Complex(1, 2);
+assert bam.re == -1;
+assert bam.im == -2;

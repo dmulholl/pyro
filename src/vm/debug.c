@@ -230,11 +230,13 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
         case OP_DEFINE_METHOD:
             return constant_instruction(vm, "OP_DEFINE_METHOD", fn, ip);
         case OP_BINARY_PERCENT:
-            return atomic_instruction(vm, "OP_MOD", ip);
+            return atomic_instruction(vm, "OP_BINARY_PERCENT", ip);
         case OP_BINARY_STAR:
             return atomic_instruction(vm, "OP_BINARY_STAR", ip);
         case OP_UNARY_MINUS:
             return atomic_instruction(vm, "OP_UNARY_MINUS", ip);
+        case OP_UNARY_PLUS:
+            return atomic_instruction(vm, "OP_UNARY_PLUS", ip);
         case OP_UNARY_BANG:
             return atomic_instruction(vm, "OP_UNARY_BANG", ip);
         case OP_BINARY_BANG_EQUAL:

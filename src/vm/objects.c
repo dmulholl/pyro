@@ -926,6 +926,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_LOAD_TRUE:
         case OP_BINARY_STAR:
         case OP_UNARY_MINUS:
+        case OP_UNARY_PLUS:
         case OP_UNARY_BANG:
         case OP_BINARY_BANG_EQUAL:
         case OP_POP:

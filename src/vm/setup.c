@@ -75,6 +75,8 @@ PyroVM* pyro_new_vm() {
     vm->str_op_binary_minus = NULL;
     vm->str_op_binary_star = NULL;
     vm->str_op_binary_slash = NULL;
+    vm->str_op_unary_plus = NULL;
+    vm->str_op_unary_minus = NULL;
     vm->str_hash = NULL;
     vm->str_call = NULL;
     vm->max_bytes = SIZE_MAX;
@@ -146,6 +148,8 @@ PyroVM* pyro_new_vm() {
     vm->str_op_binary_minus = STR("$op_binary_minus");
     vm->str_op_binary_star = STR("$op_binary_star");
     vm->str_op_binary_slash = STR("$op_binary_slash");
+    vm->str_op_unary_plus = STR("$op_unary_plus");
+    vm->str_op_unary_minus = STR("$op_unary_minus");
     vm->str_hash = STR("$hash");
     vm->str_call = STR("$call");
 

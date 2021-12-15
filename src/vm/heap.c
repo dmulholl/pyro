@@ -46,6 +46,8 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->str_op_binary_minus);
     pyro_mark_object(vm, (Obj*)vm->str_op_binary_star);
     pyro_mark_object(vm, (Obj*)vm->str_op_binary_slash);
+    pyro_mark_object(vm, (Obj*)vm->str_op_unary_plus);
+    pyro_mark_object(vm, (Obj*)vm->str_op_unary_minus);
     pyro_mark_object(vm, (Obj*)vm->str_hash);
     pyro_mark_object(vm, (Obj*)vm->str_call);
 
