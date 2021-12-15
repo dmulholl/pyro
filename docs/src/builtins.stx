@@ -635,6 +635,10 @@ Buffers have the following methods:
     Returns the byte value at `index` as an integer in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
 
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the buffer is emtpy.
+
 [[ `:set(index: i64, byte: i64)` ]]
 
     Sets the byte value at `index` to `byte` where `byte` is an integer in the range `[0, 255]`.
