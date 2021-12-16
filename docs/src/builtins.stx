@@ -403,6 +403,17 @@ Vectors have the following methods:
     Uses Fisher-Yates/Durstenfeld shuffling and random numbers from the `$std::prng` module.
     Returns the vector to enable chaining.
 
+[[ `:slice(start_index: i64) -> vec` <br> `:slice(start_index: i64, length: i64) -> vec` ]]
+
+    Copies a slice of the source vector and returns it as a new vector.
+    The source vector is left unchanged.
+
+    If `start_index` is negative, counts backwards from the end of the vector --- i.e. a `start_index` of `-1` refers to to the last item in the vector.
+
+    If `length` is omitted, copies to the end of the source vector.
+
+    Panics if either argument is out of range.
+
 [[ `:sort() -> vec` <br> `:sort(callback: func(any, any) -> bool) -> vec` ]]
 
     Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).

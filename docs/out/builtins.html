@@ -924,6 +924,26 @@ Returns the vector to enable chaining.
 </div>
 <div>
 <dt>
+<code>:slice(start_index: i64) -&gt; vec</code> <br> <code>:slice(start_index: i64, length: i64) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Copies a slice of the source vector and returns it as a new vector.
+The source vector is left unchanged.
+</p>
+<p>
+If <code>start_index</code> is negative, counts backwards from the end of the vector &mdash; i.e. a <code>start_index</code> of <code>-1</code> refers to to the last item in the vector.
+</p>
+<p>
+If <code>length</code> is omitted, copies to the end of the source vector.
+</p>
+<p>
+Panics if either argument is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:sort() -&gt; vec</code> <br> <code>:sort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>

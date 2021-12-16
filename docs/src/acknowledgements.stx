@@ -12,6 +12,8 @@ I was inspired to build Pyro by reading Bob Nystrom's wonderful book [Crafting I
 
 As Pyro develops it will incorporate code from external libraries and projects released under permissive open source licenses --- e.g. MIT, BSD, or public domain. These inclusions will be noted here.
 
+(*) Like most modern programming languages, Pyro stands on the shoulders of giants. Particular thanks must go to all those who have built, maintained, and expanded the C programming language and its standard library over the years --- their work provides the foundation on which Pyro is built.
+
 (*) Many of the implementation's core mechanics were adapted from or inspired by *Lox*, the sample language from Bob Nystrom's [Crafting Interpreters][1] book. This code was released under an MIT license.
 
 (*) The `$std::prng` module's Mersenne Twister was adapted from the [original implementation][2] by the algorithm's inventors, Takuji Nishimura and Makoto Matsumoto. This code was released under a 3-clause BSD license.
