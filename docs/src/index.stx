@@ -31,10 +31,9 @@ the control code for your pacemaker/space station in it if you're feeling partic
 
 ### Design Goals
 
-* Legibility
-* Simplicity
-* Elegance
-
+* *Legibility* --- Pyro code should be easy to read and understand.
+* *Simplicity* --- Simple problems should have simple solutions.
+* *Elegance* --- A well-crafted tool should be a pleasure to use.
 
 
 ### Source
