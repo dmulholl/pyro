@@ -411,6 +411,73 @@ static Value stack_pop(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    if (!(arg_count == 1 || arg_count == 2)) {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for :slice(), found %i.", arg_count);
+        return NULL_VAL();
+    }
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, start_index must be an integer.");
+        return NULL_VAL();
+    }
+
+    size_t start_index;
+    if (args[0].as.i64 >= 0 && (size_t)args[0].as.i64 <= vec->count) {
+        start_index = (size_t)args[0].as.i64;
+    } else if (args[0].as.i64 < 0 && (size_t)(args[0].as.i64 * -1) <= vec->count) {
+        start_index = (size_t)((int64_t)vec->count + args[0].as.i64);
+    } else {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, start_index is out of range.");
+        return NULL_VAL();
+    }
+
+    size_t length = vec->count - start_index;
+    if (arg_count == 2) {
+        if (!IS_I64(args[1])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, length must be an integer.");
+            return NULL_VAL();
+        }
+        if (args[1].as.i64 < 0) {
+            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length cannot be negative.");
+            return NULL_VAL();
+        }
+        if (start_index + (size_t)args[1].as.i64 > vec->count) {
+            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length is out of range.");
+            return NULL_VAL();
+        }
+        length = (size_t)args[1].as.i64;
+    }
+
+    ObjVec* new_vec = ObjVec_new(vm);
+    if (!new_vec) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    if (length == 0) {
+        return OBJ_VAL(new_vec);
+    }
+
+    pyro_push(vm, OBJ_VAL(new_vec));
+    Value* new_array = ALLOCATE_ARRAY(vm, Value, length);
+    if (!new_array) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_pop(vm); // new_vec
+
+    memcpy(new_array, &vec->values[start_index], sizeof(Value) * length);
+    new_vec->values = new_array;
+    new_vec->capacity = length;
+    new_vec->count = length;
+
+    return OBJ_VAL(new_vec);
+}
+
+
 void pyro_load_std_core_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
@@ -441,6 +508,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "first", vec_first, 0);
     pyro_define_method(vm, vm->vec_class, "last", vec_last, 0);
     pyro_define_method(vm, vm->vec_class, "is_empty", vec_is_empty, 0);
+    pyro_define_method(vm, vm->vec_class, "slice", vec_slice, -1);
 
     // Stack methods.
     pyro_define_method(vm, vm->stack_class, "count", vec_count, 0);

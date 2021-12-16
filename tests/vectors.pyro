@@ -240,3 +240,79 @@ def $test_is_empty() {
     var vec2 = [];
     assert vec2:is_empty();
 }
+
+
+def $test_slice() {
+    var vec = [1, 2, 3, 4, 5];
+
+    var foo = vec:slice(2, 2);
+    assert $is_vec(foo);
+    assert foo:count() == 2;
+    assert foo[0] == 3;
+    assert foo[1] == 4;
+
+    var bar = vec:slice(0, 5);
+    assert $is_vec(bar);
+    assert bar:count() == 5;
+    assert bar[0] == 1;
+    assert bar[1] == 2;
+    assert bar[4] == 5;
+
+    var baz = vec:slice(0, 0);
+    assert $is_vec(baz);
+    assert baz:count() == 0;
+
+    var bam = vec:slice(5, 0);
+    assert $is_vec(bam);
+    assert bam:count() == 0;
+
+    assert $is_err(try vec:slice(0, 6));
+    assert $is_err(try vec:slice(3, 6));
+    assert $is_err(try vec:slice(5, 1));
+    assert $is_err(try []:slice(0, 1));
+}
+
+
+def $test_slice_with_negative_start_index() {
+    var vec = [1, 2, 3, 4, 5];
+
+    var foo = vec:slice(-1, 1);
+    assert $is_vec(foo);
+    assert foo:count() == 1;
+    assert foo[0] == 5;
+
+    var bar = vec:slice(-2, 2);
+    assert $is_vec(bar);
+    assert bar:count() == 2;
+    assert bar[0] == 4;
+    assert bar[1] == 5;
+
+    assert $is_err(try vec:slice(-1, 2));
+    assert $is_err(try []:slice(-1, 1));
+}
+
+
+def $test_slice_with_missing_length() {
+    var vec = [1, 2, 3, 4, 5];
+
+    var foo = vec:slice(2);
+    assert $is_vec(foo);
+    assert foo:count() == 3;
+    assert foo[0] == 3;
+    assert foo[1] == 4;
+    assert foo[2] == 5;
+
+    var bar = vec:slice(-2);
+    assert $is_vec(bar);
+    assert bar:count() == 2;
+    assert bar[0] == 4;
+    assert bar[1] == 5;
+
+    var baz = vec:slice(5);
+    assert $is_vec(baz);
+    assert baz:count() == 0;
+
+    assert $is_err(try vec:slice(6));
+    assert $is_err(try vec:slice(-6));
+    assert $is_err(try []:slice(-1));
+}
