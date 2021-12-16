@@ -1561,7 +1561,7 @@ static void parse_if_stmt(Parser* parser) {
 
 // Emits an instruction to jump backwards in the bytecode to the index identified by [start_index].
 static void emit_loop(Parser* parser, size_t start_index) {
-    emit_byte(parser, OP_LOOP);
+    emit_byte(parser, OP_JUMP_BACK);
 
     size_t offset = parser->compiler->fn->code_count - start_index + 2;
     if (offset > UINT16_MAX) {

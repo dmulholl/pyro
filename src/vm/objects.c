@@ -983,7 +983,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_JUMP_IF_NOT_NULL:
         case OP_JUMP_IF_TRUE:
         case OP_LOAD_CONSTANT:
-        case OP_LOOP:
+        case OP_JUMP_BACK:
         case OP_MAKE_MAP:
         case OP_MAKE_VEC:
         case OP_DEFINE_METHOD:

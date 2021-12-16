@@ -961,7 +961,7 @@ static void run(PyroVM* vm) {
                 pyro_push(vm, BOOL_VAL(true));
                 break;
 
-            case OP_LOOP: {
+            case OP_JUMP_BACK: {
                 uint16_t offset = READ_U16();
                 frame->ip -= offset;
                 break;

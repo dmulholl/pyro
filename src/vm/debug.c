@@ -219,8 +219,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_LOAD_NULL", ip);
         case OP_LOAD_TRUE:
             return atomic_instruction(vm, "OP_LOAD_TRUE", ip);
-        case OP_LOOP:
-            return jump_instruction(vm, "OP_LOOP", -1, fn, ip);
+        case OP_JUMP_BACK:
+            return jump_instruction(vm, "OP_JUMP_BACK", -1, fn, ip);
         case OP_BINARY_LESS_LESS:
             return atomic_instruction(vm, "OP_BINARY_LESS_LESS", ip);
         case OP_MAKE_MAP:
