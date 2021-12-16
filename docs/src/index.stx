@@ -21,6 +21,9 @@ This means that it lives in roughly the same neighbourhood in programming langua
 
 Pyro is a classic braces-and-semicolons language. If you've used any C-family language before you should find it instantly intuitive.
 
+
+### Getting Started
+
 * Take Pyro for a test drive with the [quickstart tutorial][2].
 * Learn more about the language by taking the [tour][3].
 
