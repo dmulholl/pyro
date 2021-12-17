@@ -140,6 +140,18 @@ Strings have the following methods:
 
     Returns a new string with all instances of the string `old` replaced by the string `new`.
 
+[[ `:slice(start_index: i64) -> str` <br> `:slice(start_index: i64, length: i64) -> str` ]]
+
+    Copies a slice of the source string and returns it as a new string.
+    The source string is left unchanged.
+    The slice starts at byte index `start_index` and contains `length` bytes.
+
+    If `start_index` is negative, counts backwards from the end of the string --- i.e. a `start_index` of `-1` refers to to the last byte in the string.
+
+    If `length` is omitted, copies to the end of the source string.
+
+    Panics if either argument is out of range.
+
 [[ `:split(sep: str) -> vec[str]` ]]
 
     Splits the string on instances of the delimiter string `sep`.
@@ -204,10 +216,6 @@ Strings have the following methods:
 [[ `:strip_utf8_ws() -> str` ]]
 
     Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
-
-[[ `:substr(index: i64, length: i64) -> str` ]]
-
-    Returns a new string consisting of the substring starting at byte index `index` and containing `length` bytes.
 
 [[ `:to_ascii_lower() -> str` ]]
 

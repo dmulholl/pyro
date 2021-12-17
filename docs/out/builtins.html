@@ -414,6 +414,27 @@ Returns a new string with all instances of the string <code>old</code> replaced 
 </div>
 <div>
 <dt>
+<code>:slice(start_index: i64) -&gt; str</code> <br> <code>:slice(start_index: i64, length: i64) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Copies a slice of the source string and returns it as a new string.
+The source string is left unchanged.
+The slice starts at byte index <code>start_index</code> and contains <code>length</code> bytes.
+</p>
+<p>
+If <code>start_index</code> is negative, counts backwards from the end of the string &mdash; i.e. a <code>start_index</code> of <code>-1</code> refers to to the last byte in the string.
+</p>
+<p>
+If <code>length</code> is omitted, copies to the end of the source string.
+</p>
+<p>
+Panics if either argument is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:split(sep: str) -&gt; vec[str]</code>
 </dt>
 <dd>
@@ -559,16 +580,6 @@ Returns the new string formed by stripping any trailing UTF-8 encoded codepoints
 <dd>
 <p>
 Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:substr(index: i64, length: i64) -&gt; str</code>
-</dt>
-<dd>
-<p>
-Returns a new string consisting of the substring starting at byte index <code>index</code> and containing <code>length</code> bytes.
 </p>
 </dd>
 </div>
