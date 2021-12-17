@@ -197,12 +197,45 @@ def $test_replace() {
 }
 
 
-def $test_substr() {
+def $test_slice() {
     var str = "foobar";
-    assert str:substr(0, 0) == "";
-    assert str:substr(0, 3) == "foo";
-    assert str:substr(3, 3) == "bar";
-    assert str:substr(0, str:byte_count()) == "foobar";
+
+    assert str:slice(0, 0) == "";
+    assert str:slice(0, 3) == "foo";
+    assert str:slice(3, 3) == "bar";
+    assert str:slice(6, 0) == "";
+    assert str:slice(0, str:byte_count()) == "foobar";
+
+    assert $is_err(try str:slice(0, 7));
+    assert $is_err(try str:slice(3, 7));
+    assert $is_err(try str:slice(6, 1));
+    assert $is_err(try "":slice(0, 1));
+}
+
+
+def $test_slice_with_negative_start_index() {
+    var str = "foobar";
+
+    assert str:slice(-1, 1) == "r";
+    assert str:slice(-2, 2) == "ar";
+
+    assert $is_err(try str:slice(-1, 2));
+    assert $is_err(try "":slice(-1, 1));
+}
+
+
+def $test_slice_with_missing_length() {
+    var str = "foobar";
+
+    assert str:slice(0) == "foobar";
+    assert str:slice(3) == "bar";
+    assert str:slice(6) == "";
+
+    assert str:slice(-1) == "r";
+    assert str:slice(-3) == "bar";
+
+    assert $is_err(try str:slice(7));
+    assert $is_err(try "":slice(-1));
 }
 
 

@@ -768,36 +768,6 @@ static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_substr(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjStr* str = AS_STR(args[-1]);
-
-    if (!IS_I64(args[0]) && args[0].as.i64 > 0) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :substr().");
-        return NULL_VAL();
-    }
-    size_t index = (size_t)args[0].as.i64;
-
-    if (!IS_I64(args[1]) && args[1].as.i64 > 0) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :substr().");
-        return NULL_VAL();
-    }
-    size_t length = (size_t)args[1].as.i64;
-
-    if (index + length > str->length) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
-        return NULL_VAL();
-    }
-
-    ObjStr* new_str = ObjStr_copy_raw(&str->bytes[index], length, vm);
-    if (!new_str) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
-    }
-
-    return OBJ_VAL(new_str);
-}
-
-
 static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
 
@@ -1026,6 +996,60 @@ static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_slice(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!(arg_count == 1 || arg_count == 2)) {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for :slice(), found %i.", arg_count);
+        return NULL_VAL();
+    }
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, start_index must be an integer.");
+        return NULL_VAL();
+    }
+
+    size_t start_index;
+    if (args[0].as.i64 >= 0 && (size_t)args[0].as.i64 <= str->length) {
+        start_index = (size_t)args[0].as.i64;
+    } else if (args[0].as.i64 < 0 && (size_t)(args[0].as.i64 * -1) <= str->length) {
+        start_index = (size_t)((int64_t)str->length + args[0].as.i64);
+    } else {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, start_index is out of range.");
+        return NULL_VAL();
+    }
+
+    size_t length = str->length - start_index;
+    if (arg_count == 2) {
+        if (!IS_I64(args[1])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, length must be an integer.");
+            return NULL_VAL();
+        }
+        if (args[1].as.i64 < 0) {
+            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length cannot be negative.");
+            return NULL_VAL();
+        }
+        if (start_index + (size_t)args[1].as.i64 > str->length) {
+            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length is out of range.");
+            return NULL_VAL();
+        }
+        length = (size_t)args[1].as.i64;
+    }
+
+    if (length == 0) {
+        return OBJ_VAL(vm->empty_string);
+    }
+
+    ObjStr* new_str = ObjStr_copy_raw(&str->bytes[start_index], length, vm);
+    if (!new_str) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    return OBJ_VAL(new_str);
+}
+
+
 void pyro_load_std_core_str(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$str", fn_str, 1);
@@ -1059,10 +1083,10 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "strip_utf8_ws", str_strip_utf8_ws, 0);
     pyro_define_method(vm, vm->str_class, "match", str_match, 2);
     pyro_define_method(vm, vm->str_class, "replace", str_replace, 2);
-    pyro_define_method(vm, vm->str_class, "substr", str_substr, 2);
     pyro_define_method(vm, vm->str_class, "index_of", str_index_of, 2);
     pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
     pyro_define_method(vm, vm->str_class, "split", str_split, 1);
     pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
     pyro_define_method(vm, vm->str_class, "to_hex", str_to_hex, 0);
+    pyro_define_method(vm, vm->str_class, "slice", str_slice, -1);
 }
