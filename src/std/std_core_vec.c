@@ -500,6 +500,23 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    Value compare_func;
+    if (arg_count == 0) {
+        compare_func = NULL_VAL();
+    } else if (arg_count == 1) {
+        compare_func = args[0];
+    } else {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :is_sorted(), found %d.", arg_count);
+        return NULL_VAL();
+    }
+
+    return BOOL_VAL(ObjVec_is_sorted(vec, compare_func, vm));
+}
+
+
 void pyro_load_std_core_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
@@ -533,6 +550,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "last", vec_last, 0);
     pyro_define_method(vm, vm->vec_class, "is_empty", vec_is_empty, 0);
     pyro_define_method(vm, vm->vec_class, "slice", vec_slice, -1);
+    pyro_define_method(vm, vm->vec_class, "is_sorted", vec_is_sorted, -1);
 
     // Stack methods.
     pyro_define_method(vm, vm->stack_class, "count", vec_count, 0);

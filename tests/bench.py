@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import time
+import random
 
 num_runs = 25
 
@@ -120,6 +121,13 @@ def benchmark():
     # Type conversions.
     for i in range(1000):
         vec[i] = int(str(i))
+
+    # Sorting.
+    sort_vec = list()
+    for i in range(1000):
+        sort_vec.append(i)
+    random.shuffle(sort_vec)
+    sort_vec.sort()
 
 # ------------------------------------------------------------------------------
 

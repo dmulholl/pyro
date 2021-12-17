@@ -98,6 +98,7 @@ def $test_reverse() {
 def $test_copy() {
     var vec = [123, 456, 789];
     var copy = vec:copy();
+    assert $is_vec(copy);
     assert copy:count() == 3;
     assert copy[0] == 123;
     assert copy[1] == 456;
@@ -315,4 +316,24 @@ def $test_slice_with_missing_length() {
     assert $is_err(try vec:slice(6));
     assert $is_err(try vec:slice(-6));
     assert $is_err(try []:slice(-1));
+}
+
+
+def $test_is_sorted() {
+    assert []:is_sorted();
+
+    assert [1]:is_sorted();
+
+    assert [1, 2]:is_sorted();
+    assert ![2, 1]:is_sorted();
+
+    assert [1, 2, 3]:is_sorted();
+    assert ![1, 3, 2]:is_sorted();
+
+    def callback(a, b) {
+        return a < b;
+    }
+
+    assert [1, 2, 3]:is_sorted(callback);
+    assert ![1, 3, 2]:is_sorted(callback);
 }

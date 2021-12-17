@@ -155,6 +155,10 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm);
 // Shuffles the vector in-place using the Fisher-Yates/Durstenfeld algorithm.
 void ObjVec_shuffle(ObjVec* vec, PyroVM* vm);
 
+// Returns true if the vector is sorted in ascending order.
+// This function can call into Pyro code and can set the panic or exit flags.
+bool ObjVec_is_sorted(ObjVec* vec, Value fn, PyroVM* vm);
+
 /* ------- */
 /* Modules */
 /* ------- */

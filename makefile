@@ -23,7 +23,9 @@ FILES = ${PYRO_FILES} ${LIB_FILES}
 # --------------- #
 
 all:
+	@echo "Building debug binary..."
 	@make debug
+	@echo "Building release binary..."
 	@make release
 
 # Optimized release build.

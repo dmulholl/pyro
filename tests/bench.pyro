@@ -138,6 +138,14 @@ def benchmark() {
     for i in $range(1000) {
         vec[i] = $i64($str(i));
     }
+
+    # Sorting.
+    var sort_vec = $vec();
+    for i in $range(1000) {
+        sort_vec:append(i);
+    }
+    sort_vec:shuffle();
+    sort_vec:sort();
 }
 
 

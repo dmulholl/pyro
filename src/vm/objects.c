@@ -1345,8 +1345,8 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
 }
 
 
-// Sorts the slice of [array] identified by the inclusive indices [low] and [high]. [aux_array] is
-// used as scratch space and should have the same length as [array].
+// Sorts the slice array[low..high] using the mergesort algorithm. Indices are inclusive.
+// [aux_array] is used as scratch space and should have the same length as [array].
 static void pyro_mergesort(Value* array, Value* aux_array, size_t low, size_t high, Value fn, PyroVM* vm) {
     if (high <= low) {
         return;
@@ -1373,6 +1373,43 @@ void ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm) {
 
     pyro_mergesort(vec->values, aux_array, 0, vec->count - 1, fn, vm);
     FREE_ARRAY(vm, Value, aux_array, vec->count);
+}
+
+
+bool ObjVec_is_sorted(ObjVec* vec, Value fn, PyroVM* vm) {
+    if (vec->count < 2) {
+        return true;
+    }
+
+    for (size_t i = 0; i < vec->count - 1; i++) {
+        Value a = vec->values[i];
+        Value b = vec->values[i + 1];
+
+        bool b_is_less_than_a;
+
+        if (IS_NULL(fn)) {
+            b_is_less_than_a = pyro_op_compare_lt(vm, b, a);
+        } else {
+            pyro_push(vm, fn);
+            pyro_push(vm, b);
+            pyro_push(vm, a);
+            Value return_value = pyro_call_function(vm, 2);
+            if (vm->halt_flag) {
+                return false;
+            } else if (!IS_BOOL(return_value)) {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
+                return false;
+            } else {
+                b_is_less_than_a = return_value.as.boolean;
+            }
+        }
+
+        if (b_is_less_than_a) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 
