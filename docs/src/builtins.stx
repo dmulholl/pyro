@@ -382,6 +382,22 @@ Vectors have the following methods:
     `callback` should be a callable that takes a single argument (the vector element);
     its return values will form the elements of the new vector.
 
+[[ `:mergesort() -> vec` <br> `:mergesort(callback: func(any, any) -> bool) -> vec` ]]
+
+    Sorts the vector in-place using a stable implementation of the mergesort algorithm.
+    Returns the vector to allow chaining.
+
+    If a `callback` function is supplied it will be used to compare pairs of values.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+
+[[ `:quicksort() -> vec` <br> `:quicksort(callback: func(any, any) -> bool) -> vec` ]]
+
+    Sorts the vector in-place using the quicksort algorithm.
+    Returns the vector to allow chaining.
+
+    If a `callback` function is supplied it will be used to compare pairs of values.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+
 [[ `:remove_at(index: i64) -> any` ]]
 
     Removes and returns the value at the specified index.

@@ -870,6 +870,36 @@ its return values will form the elements of the new vector.
 </div>
 <div>
 <dt>
+<code>:mergesort() -&gt; vec</code> <br> <code>:mergesort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Sorts the vector in-place using a stable implementation of the mergesort algorithm.
+Returns the vector to allow chaining.
+</p>
+<p>
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:quicksort() -&gt; vec</code> <br> <code>:quicksort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Sorts the vector in-place using the quicksort algorithm.
+Returns the vector to allow chaining.
+</p>
+<p>
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:remove_at(index: i64) -&gt; any</code>
 </dt>
 <dd>
