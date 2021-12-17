@@ -1,0 +1,86 @@
+def is_sorted(vec) {
+    if vec:count() < 2 {
+        return true;
+    }
+    for i in $range(vec:count() - 1) {
+        if vec[i] > vec[i + 1] {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+def $test_sequential_integers() {
+    var vec = $range(1000):to_vec();
+    vec:quicksort();
+    assert is_sorted(vec);
+}
+
+
+def $test_reversed_sequential_integers() {
+    var vec = $range(1000):to_vec():reverse();
+    vec:quicksort();
+    assert is_sorted(vec);
+}
+
+
+def $test_shuffled_sequential_integers() {
+    var vec = $range(1000):to_vec():shuffle();
+    vec:quicksort();
+    assert is_sorted(vec);
+}
+
+
+def $test_random_integers() {
+    var vec = $vec();
+
+    for i in $range(1000) {
+        vec:append($std::prng::rand_int(10));
+    }
+
+    vec:quicksort();
+    assert is_sorted(vec);
+}
+
+
+def $test_strings() {
+    var vec = ["a", "aa", "aaa", "aaa", "ab", "abc", "abcd", "def", "zef", "zzz"];
+
+    vec:shuffle();
+    vec:quicksort();
+    assert is_sorted(vec);
+
+    assert vec[0] == "a";
+    assert vec[1] == "aa";
+    assert vec[2] == "aaa";
+    assert vec[3] == "aaa";
+    assert vec[4] == "ab";
+    assert vec[5] == "abc";
+    assert vec[6] == "abcd";
+    assert vec[7] == "def";
+    assert vec[8] == "zef";
+    assert vec[9] == "zzz";
+}
+
+
+def $test_custom_comparison_func_1() {
+    def standard_sort(a, b) {
+        return a < b;
+    }
+
+    var vec = $range(1000):to_vec():shuffle();
+    vec:quicksort(standard_sort);
+    assert is_sorted(vec);
+}
+
+
+def $test_custom_comparison_func_2() {
+    def reverse_sort(a, b) {
+        return a > b;
+    }
+
+    var vec = $range(1000):to_vec():shuffle();
+    vec:quicksort(reverse_sort):reverse();
+    assert is_sorted(vec);
+}

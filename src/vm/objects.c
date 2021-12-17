@@ -1206,6 +1206,90 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 }
 
 
+static void swap(Value* a, Value* b) {
+    Value temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
+// Fisher-Yates/Durstenfeld algorithm: iterate over the array and at each index choose randomly from
+// the remaining unshuffled entries.
+void ObjVec_shuffle(ObjVec* vec, PyroVM* vm) {
+    for (size_t i = 0; i < vec->count; i++) {
+        // Choose [j] from the half-open interval [i, vec->count).
+        size_t j = i + pyro_mt64_gen_int(vm->mt64, vec->count - i);
+        swap(&vec->values[i], &vec->values[j]);
+    }
+}
+
+
+// Partitions the slice array[low..high] for the quicksort algorithm. Indices are inclusive.
+// Uses the last element as the pivot. Returns the sorted (i.e. final) index of the pivot value.
+// After partitioning, every element to the left of the pivot is less than or equal to it, every
+// element to the right of the pivot is greater than or equal to it.
+static size_t partition(Value* array, size_t low, size_t high, Value fn, PyroVM* vm) {
+    Value pivot = array[high];
+    size_t i = low;
+
+    for (size_t j = low; j < high; j++) {
+        bool item_j_is_less_than_pivot;
+
+        if (IS_NULL(fn)) {
+            item_j_is_less_than_pivot = pyro_op_compare_lt(vm, array[j], pivot);
+        } else {
+            pyro_push(vm, fn);
+            pyro_push(vm, array[j]);
+            pyro_push(vm, pivot);
+            Value return_value = pyro_call_function(vm, 2);
+            if (vm->halt_flag) {
+                return 0;
+            } else if (!IS_BOOL(return_value)) {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
+                return 0;
+            } else {
+                item_j_is_less_than_pivot = return_value.as.boolean;
+            }
+        }
+
+        if (item_j_is_less_than_pivot) {
+            swap(&array[i], &array[j]);
+            i++;
+        }
+    }
+
+    swap(&array[i], &array[high]);
+    return i;
+}
+
+
+// Sorts the slice array[low..high] using the quicksort algorithm. Indices are inclusive.
+static void quicksort(Value* array, size_t low, size_t high, Value fn, PyroVM* vm) {
+    if (vm->halt_flag) {
+        return;
+    }
+
+    if (low < high) {
+        // After partitioning, the element at index p is at its final location.
+        size_t p = partition(array, low, high, fn, vm);
+
+        // Sort the elements before the partition index.
+        if (p > 1) quicksort(array, low, p - 1, fn, vm);
+
+        // Sort the elements after the partition index.
+        quicksort(array, p + 1, high, fn, vm);
+    }
+}
+
+
+void ObjVec_quicksort(ObjVec* vec, Value fn, PyroVM* vm) {
+    if (vec->count > 1) {
+        ObjVec_shuffle(vec, vm);
+        quicksort(vec->values, 0, vec->count - 1, fn, vm);
+    }
+}
+
+
 // Merges the sorted slices array[low..mid] and array[mid+1..high]. Indices are inclusive.
 static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t high, Value fn, PyroVM* vm) {
     if (vm->halt_flag) {
@@ -1231,10 +1315,10 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
             continue;
         }
 
-        bool j_is_less_than_i;
+        bool item_j_is_less_than_item_i;
 
         if (IS_NULL(fn)) {
-            j_is_less_than_i = pyro_op_compare_lt(vm, aux_array[j], aux_array[i]);
+            item_j_is_less_than_item_i = pyro_op_compare_lt(vm, aux_array[j], aux_array[i]);
         } else {
             pyro_push(vm, fn);
             pyro_push(vm, aux_array[j]);
@@ -1246,11 +1330,11 @@ static void merge(Value* array, Value* aux_array, size_t low, size_t mid, size_t
                 pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
                 return;
             } else {
-                j_is_less_than_i = return_value.as.boolean;
+                item_j_is_less_than_item_i = return_value.as.boolean;
             }
         }
 
-        if (j_is_less_than_i) {
+        if (item_j_is_less_than_item_i) {
             array[k] = aux_array[j];
             j++;
         } else {
@@ -1276,19 +1360,19 @@ static void pyro_mergesort(Value* array, Value* aux_array, size_t low, size_t hi
 }
 
 
-bool ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm) {
+void ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm) {
     if (vec->count < 2) {
-        return true;
+        return;
     }
 
     Value* aux_array = ALLOCATE_ARRAY(vm, Value, vec->count);
     if (!aux_array) {
-        return false;
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
     }
 
     pyro_mergesort(vec->values, aux_array, 0, vec->count - 1, fn, vm);
     FREE_ARRAY(vm, Value, aux_array, vec->count);
-    return true;
 }
 
 

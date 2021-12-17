@@ -176,32 +176,54 @@ static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
     } else if (arg_count == 1) {
         compare_func = args[0];
     } else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments to :sort(), found %d.", arg_count);
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :sort(), found %d.", arg_count);
         return NULL_VAL();
     }
 
-    if (!ObjVec_mergesort(vec, compare_func, vm)) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+    ObjVec_mergesort(vec, compare_func, vm);
+    return OBJ_VAL(vec);
+}
+
+
+static Value vec_mergesort(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    Value compare_func;
+    if (arg_count == 0) {
+        compare_func = NULL_VAL();
+    } else if (arg_count == 1) {
+        compare_func = args[0];
+    } else {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :mergesort(), found %d.", arg_count);
         return NULL_VAL();
     }
 
+    ObjVec_mergesort(vec, compare_func, vm);
+    return OBJ_VAL(vec);
+}
+
+
+static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    Value compare_func;
+    if (arg_count == 0) {
+        compare_func = NULL_VAL();
+    } else if (arg_count == 1) {
+        compare_func = args[0];
+    } else {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :quicksort(), found %d.", arg_count);
+        return NULL_VAL();
+    }
+
+    ObjVec_mergesort(vec, compare_func, vm);
     return OBJ_VAL(vec);
 }
 
 
 static Value vec_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-
-    // Fisher-Yates/Durstenfeld algorithm: iterate over the array and at each index choose
-    // randomly from the remaining unshuffled entries.
-    for (size_t i = 0; i < vec->count; i++) {
-        // Choose [j] from the half-open interval [i, vec->count).
-        size_t j = i + pyro_mt64_gen_int(vm->mt64, vec->count - i);
-        Value temp = vec->values[i];
-        vec->values[i] = vec->values[j];
-        vec->values[j] = temp;
-    }
-
+    ObjVec_shuffle(vec, vm);
     return OBJ_VAL(vec);
 }
 
@@ -494,6 +516,8 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "$set_index", vec_set, 2);
     pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
     pyro_define_method(vm, vm->vec_class, "sort", vec_sort, -1);
+    pyro_define_method(vm, vm->vec_class, "mergesort", vec_mergesort, -1);
+    pyro_define_method(vm, vm->vec_class, "quicksort", vec_quicksort, -1);
     pyro_define_method(vm, vm->vec_class, "shuffle", vec_shuffle, 0);
     pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
     pyro_define_method(vm, vm->vec_class, "index_of", vec_index_of, 1);
