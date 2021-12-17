@@ -371,6 +371,13 @@ Vectors have the following methods:
 
     Returns `true` if the vector is empty.
 
+[[ `:is_sorted() -> bool` <br> `:is_sorted(callback: func(any, any) -> bool) -> bool` ]]
+
+    Returns `true` if the vector is sorted in ascending order.
+
+    If a `callback` function is supplied it will be used to compare pairs of values.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+
 [[ `:last() -> any` ]]
 
     Returns the last item from the vector without removing it.

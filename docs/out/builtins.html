@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.7</p>
+                <p class="version">Version 0.5.8</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -842,6 +842,20 @@ Panics if <code>index</code> is out of range.
 <dd>
 <p>
 Returns <code>true</code> if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_sorted() -&gt; bool</code> <br> <code>:is_sorted(callback: func(any, any) -&gt; bool) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the vector is sorted in ascending order.
+</p>
+<p>
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
 </p>
 </dd>
 </div>
