@@ -55,15 +55,16 @@ def $test_stability_for_values_that_compare_equal() {
     var vec = [100, 97, 200, 97.0, 300, 'a', 400, 'b', 500, 98.0, 600, 98, 700, 99.0, 'c', 99];
     vec:mergesort();
 
-    assert $is_i64(vec[0]) && vec[0] == 97;
-    assert $is_f64(vec[1]) && vec[1] == 97.0;
-    assert $is_char(vec[2]) && vec[2] == 'a';
-    assert $is_char(vec[3]) && vec[3] == 'b';
-    assert $is_f64(vec[4]) && vec[4] == 98.0;
-    assert $is_i64(vec[5]) && vec[5] == 98;
-    assert $is_f64(vec[6]) && vec[6] == 99.0;
-    assert $is_char(vec[7]) && vec[7] == 'c';
-    assert $is_i64(vec[8]) && vec[8] == 99;
+    assert $is_i64(vec[0]) && vec[0] == 97;     # 97
+    assert $is_f64(vec[1]) && vec[1] == 97;     # 97.0
+    assert $is_char(vec[2]) && vec[2] == 97;    # 'a'
+    assert $is_char(vec[3]) && vec[3] == 98;    # 'b'
+    assert $is_f64(vec[4]) && vec[4] == 98;     # 98.0
+    assert $is_i64(vec[5]) && vec[5] == 98;     # 98
+    assert $is_f64(vec[6]) && vec[6] == 99;     # 99.0
+    assert $is_char(vec[7]) && vec[7] == 99;    # 'c'
+    assert $is_i64(vec[8]) && vec[8] == 99;     # 99
+
     assert vec[9] == 100;
     assert vec[10] == 200;
     assert vec[11] == 300;
