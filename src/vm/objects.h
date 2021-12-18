@@ -121,14 +121,6 @@ ObjVec* ObjVec_new_as_stack(PyroVM* vm);
 // Returns true if the value was successfully appended, false if memory allocation failed.
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
 
-// Sorts the vector in-place using mergesort. If [fn] is not NULL_VAL it will be used to compare
-// pairs of values. This function can call into Pyro code and can set the panic or exit flags.
-void ObjVec_mergesort(ObjVec* vec, Value fn, PyroVM* vm);
-
-// Sorts the vector in-place using quicksort. If [fn] is not NULL_VAL it will be used to compare
-// pairs of values. This function can call into Pyro code and can set the panic or exit flags.
-void ObjVec_quicksort(ObjVec* vec, Value fn, PyroVM* vm);
-
 // Returns a copy of the [src] vector. Returns NULL if memory cannot be allocated for the copy.
 ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm);
 
@@ -151,13 +143,6 @@ Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm);
 // Inserts [value] at [index], where [index] is less than or equal to the vector's item count.
 // Panics if [index] is out of range or if memory allocation fails.
 void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm);
-
-// Shuffles the vector in-place using the Fisher-Yates/Durstenfeld algorithm.
-void ObjVec_shuffle(ObjVec* vec, PyroVM* vm);
-
-// Returns true if the vector is sorted in ascending order.
-// This function can call into Pyro code and can set the panic or exit flags.
-bool ObjVec_is_sorted(ObjVec* vec, Value fn, PyroVM* vm);
 
 /* ------- */
 /* Modules */

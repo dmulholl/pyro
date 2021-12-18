@@ -7,6 +7,7 @@
 #include "../vm/utf8.h"
 #include "../vm/operators.h"
 #include "../vm/setup.h"
+#include "../vm/sorting.h"
 
 
 static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
@@ -170,60 +171,60 @@ static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
-    Value compare_func;
     if (arg_count == 0) {
-        compare_func = NULL_VAL();
-    } else if (arg_count == 1) {
-        compare_func = args[0];
-    } else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :sort(), found %d.", arg_count);
-        return NULL_VAL();
+        pyro_mergesort(vm, vec->values, vec->count);
+        return OBJ_VAL(vec);
     }
 
-    ObjVec_mergesort(vec, compare_func, vm);
-    return OBJ_VAL(vec);
+    if (arg_count == 1) {
+        pyro_mergesort_with_callback(vm, vec->values, vec->count, args[0]);
+        return OBJ_VAL(vec);
+    }
+
+    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :sort(), found %d.", arg_count);
+    return NULL_VAL();
 }
 
 
 static Value vec_mergesort(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
-    Value compare_func;
     if (arg_count == 0) {
-        compare_func = NULL_VAL();
-    } else if (arg_count == 1) {
-        compare_func = args[0];
-    } else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :mergesort(), found %d.", arg_count);
-        return NULL_VAL();
+        pyro_mergesort(vm, vec->values, vec->count);
+        return OBJ_VAL(vec);
     }
 
-    ObjVec_mergesort(vec, compare_func, vm);
-    return OBJ_VAL(vec);
+    if (arg_count == 1) {
+        pyro_mergesort_with_callback(vm, vec->values, vec->count, args[0]);
+        return OBJ_VAL(vec);
+    }
+
+    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :mergesort(), found %d.", arg_count);
+    return NULL_VAL();
 }
 
 
 static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
-    Value compare_func;
     if (arg_count == 0) {
-        compare_func = NULL_VAL();
-    } else if (arg_count == 1) {
-        compare_func = args[0];
-    } else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :quicksort(), found %d.", arg_count);
-        return NULL_VAL();
+        pyro_quicksort(vm, vec->values, vec->count);
+        return OBJ_VAL(vec);
     }
 
-    ObjVec_mergesort(vec, compare_func, vm);
-    return OBJ_VAL(vec);
+    if (arg_count == 1) {
+        pyro_quicksort_with_callback(vm, vec->values, vec->count, args[0]);
+        return OBJ_VAL(vec);
+    }
+
+    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :quicksort(), found %d.", arg_count);
+    return NULL_VAL();
 }
 
 
 static Value vec_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    ObjVec_shuffle(vec, vm);
+    pyro_shuffle(vm, vec->values, vec->count);
     return OBJ_VAL(vec);
 }
 
@@ -503,17 +504,16 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
-    Value compare_func;
     if (arg_count == 0) {
-        compare_func = NULL_VAL();
-    } else if (arg_count == 1) {
-        compare_func = args[0];
-    } else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :is_sorted(), found %d.", arg_count);
-        return NULL_VAL();
+        return BOOL_VAL(pyro_is_sorted(vm, vec->values, vec->count));
     }
 
-    return BOOL_VAL(ObjVec_is_sorted(vec, compare_func, vm));
+    if (arg_count == 1) {
+        return BOOL_VAL(pyro_is_sorted_with_callback(vm, vec->values, vec->count, args[0]));
+    }
+
+    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :is_sorted(), found %d.", arg_count);
+    return NULL_VAL();
 }
 
 
