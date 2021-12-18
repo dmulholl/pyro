@@ -27,6 +27,57 @@ void pyro_shuffle(PyroVM* vm, Value* values, size_t count) {
 }
 
 
+/* ---------------- */
+/*  Insertion Sort  */
+/* ---------------- */
+
+
+// Sorts the slice array[low..high] where the indices are inclusive.
+static void insertion_sort_slice(PyroVM* vm, Value* array, size_t low, size_t high) {
+    for (size_t i = low + 1; i <= high; i++) {
+        for (size_t j = i; j > low; j--) {
+            bool item_j_is_less_than_previous = pyro_op_compare_lt(vm, array[j], array[j - 1]);
+            if (vm->halt_flag) {
+                return;
+            }
+            if (item_j_is_less_than_previous) {
+                swap(&array[j], &array[j - 1]);
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+
+// Sorts the slice array[low..high] where the indices are inclusive.
+static void insertion_sort_slice_with_cb(PyroVM* vm, Value* array, size_t low, size_t high, Value callback) {
+    for (size_t i = low + 1; i <= high; i++) {
+        for (size_t j = i; j > low; j--) {
+            pyro_push(vm, callback);
+            pyro_push(vm, array[j]);
+            pyro_push(vm, array[j - 1]);
+            Value item_j_is_less_than_previous = pyro_call_function(vm, 2);
+
+            if (vm->halt_flag) {
+                return;
+            }
+
+            if (!IS_BOOL(item_j_is_less_than_previous)) {
+                pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
+                return;
+            }
+
+            if (item_j_is_less_than_previous.as.boolean) {
+                swap(&array[j], &array[j - 1]);
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+
 /* ----------- */
 /*  Quicksort  */
 /* ----------- */
@@ -96,16 +147,20 @@ static void quicksort_slice_with_cb(PyroVM* vm, Value* array, size_t low, size_t
         return;
     }
 
-    if (low < high) {
-        // After partitioning, the element at index p is at its final location.
-        size_t p = partition_slice_with_cb(vm, array, low, high, callback);
-
-        // Sort the elements before the partition index.
-        if (p > 1) quicksort_slice_with_cb(vm, array, low, p - 1, callback);
-
-        // Sort the elements after the partition index.
-        quicksort_slice_with_cb(vm, array, p + 1, high, callback);
+    // Use insertion sort for small slices.
+    if (high <= low + 10) {
+        insertion_sort_slice_with_cb(vm, array, low, high, callback);
+        return;
     }
+
+    // After partitioning, the element at index p is at its final location.
+    size_t p = partition_slice_with_cb(vm, array, low, high, callback);
+
+    // Sort the elements before the partition index.
+    if (p > 1) quicksort_slice_with_cb(vm, array, low, p - 1, callback);
+
+    // Sort the elements after the partition index.
+    quicksort_slice_with_cb(vm, array, p + 1, high, callback);
 }
 
 
@@ -115,16 +170,20 @@ static void quicksort_slice(PyroVM* vm, Value* array, size_t low, size_t high) {
         return;
     }
 
-    if (low < high) {
-        // After partitioning, the element at index p is at its final location.
-        size_t p = partition_slice(vm, array, low, high);
-
-        // Sort the elements before the partition index.
-        if (p > 1) quicksort_slice(vm, array, low, p - 1);
-
-        // Sort the elements after the partition index.
-        quicksort_slice(vm, array, p + 1, high);
+    // Use insertion sort for small slices.
+    if (high <= low + 10) {
+        insertion_sort_slice(vm, array, low, high);
+        return;
     }
+
+    // After partitioning, the element at index p is at its final location.
+    size_t p = partition_slice(vm, array, low, high);
+
+    // Sort the elements before the partition index.
+    if (p > 1) quicksort_slice(vm, array, low, p - 1);
+
+    // Sort the elements after the partition index.
+    quicksort_slice(vm, array, p + 1, high);
 }
 
 
@@ -257,7 +316,9 @@ static void mergesort_slice_with_cb(
     size_t high,
     Value callback
 ) {
-    if (high <= low) {
+    // Use insertion sort for small slices.
+    if (high <= low + 10) {
+        insertion_sort_slice_with_cb(vm, array, low, high, callback);
         return;
     }
 
@@ -271,7 +332,9 @@ static void mergesort_slice_with_cb(
 
 // Sorts the slice array[low..high] where the indices are inclusive.
 static void mergesort_slice(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t high) {
-    if (high <= low) {
+    // Use insertion sort for small slices.
+    if (high <= low + 10) {
+        insertion_sort_slice(vm, array, low, high);
         return;
     }
 
