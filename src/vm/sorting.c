@@ -191,7 +191,15 @@ static void merge(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t
 
 
 // Merges the sorted slices array[low..mid] and array[mid+1..high]. Indices are inclusive.
-static void merge_with_cb(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t mid, size_t high, Value cb) {
+static void merge_with_cb(
+    PyroVM* vm,
+    Value* array,
+    Value* aux_array,
+    size_t low,
+    size_t mid,
+    size_t high,
+    Value callback
+) {
     if (vm->halt_flag) {
         return;
     }
@@ -215,7 +223,7 @@ static void merge_with_cb(PyroVM* vm, Value* array, Value* aux_array, size_t low
             continue;
         }
 
-        pyro_push(vm, cb);
+        pyro_push(vm, callback);
         pyro_push(vm, aux_array[j]);
         pyro_push(vm, aux_array[i]);
         Value item_j_is_less_than_item_i = pyro_call_function(vm, 2);
@@ -241,16 +249,23 @@ static void merge_with_cb(PyroVM* vm, Value* array, Value* aux_array, size_t low
 
 
 // Sorts the slice array[low..high] where the indices are inclusive.
-static void mergesort_slice_with_cb(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t high, Value cb) {
+static void mergesort_slice_with_cb(
+    PyroVM* vm,
+    Value* array,
+    Value* aux_array,
+    size_t low,
+    size_t high,
+    Value callback
+) {
     if (high <= low) {
         return;
     }
 
     size_t mid = low + (high - low) / 2;
 
-    mergesort_slice_with_cb(vm, array, aux_array, low, mid, cb);
-    mergesort_slice_with_cb(vm, array, aux_array, mid + 1, high, cb);
-    merge_with_cb(vm, array, aux_array, low, mid, high, cb);
+    mergesort_slice_with_cb(vm, array, aux_array, low, mid, callback);
+    mergesort_slice_with_cb(vm, array, aux_array, mid + 1, high, callback);
+    merge_with_cb(vm, array, aux_array, low, mid, high, callback);
 }
 
 
