@@ -22,10 +22,6 @@ FILES = ${PYRO_FILES} ${LIB_FILES}
 #  Phony Targets  #
 # --------------- #
 
-all:
-	@make debug
-	@make release
-
 # Optimized release build.
 release::
 	@mkdir -p out/release
@@ -38,6 +34,7 @@ debug debug1::
 	@mkdir -p out/debug
 	@printf "\x1B[1;32mBuilding\x1B[0m debug binary\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) -o out/debug/pyro $(FILES)
+	@printf "\x1B[1;32m Version\x1B[0m " && ./out/release/pyro --version
 
 # As debug1, also dumps bytecode and traces execution opcode-by-opcode.
 debug2::
