@@ -112,6 +112,10 @@ Strings have the following methods:
 
     Returns `true` if the string ends with the string `suffix`, otherwise `false`.
 
+[[ `:join(items: iterable) -> str` ]]
+
+    Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified --- this is equivalent to calling `$str()` on each element.
+
 [[ `:index_of(target: str, start_index: i64) -> i64|err` ]]
 
     Returns the byte index of the next matching instance of the string `target`.

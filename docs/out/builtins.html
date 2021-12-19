@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.8</p>
+                <p class="version">Version 0.5.9</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -345,6 +345,16 @@ This method is an alias for <code>:byte_count()</code>.
 <dd>
 <p>
 Returns <code>true</code> if the string ends with the string <code>suffix</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:join(items: iterable) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
 </p>
 </dd>
 </div>
