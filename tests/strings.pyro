@@ -398,3 +398,11 @@ def $test_chars_iter() {
     assert chars[1] == 'b';
     assert chars[2] == 'c';
 }
+
+
+def $test_join() {
+    assert ", ":join(["foo", "bar", "baz"]) == "foo, bar, baz";
+    assert "":join(["foo", "bar", "baz"]) == "foobarbaz";
+    assert ", ":join(["foo"]) == "foo";
+    assert ", ":join([]) == "";
+}

@@ -1050,6 +1050,89 @@ static Value str_slice(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    // Does the argument have an :$iter() method?
+    Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
+    if (IS_NULL(iter_method)) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Argument to :join() is not iterable.");
+        return NULL_VAL();
+    }
+
+    // Call the :$iter() method to get an iterator.
+    pyro_push(vm, args[0]); // receiver for the :$iter() method call
+    Value iterator = pyro_call_method(vm, iter_method, 0);
+    if (vm->halt_flag) {
+        return NULL_VAL();
+    }
+    pyro_push(vm, iterator); // protect from GC
+
+    // Get the iterator's :$next() method.
+    Value next_method = pyro_get_method(vm, iterator, vm->str_next);
+    if (IS_NULL(next_method)) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, next_method); // protect from GC
+
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+    pyro_push(vm, OBJ_VAL(buf)); // protect from GC
+
+    bool is_first_item = true;
+
+    while (true) {
+        pyro_push(vm, iterator); // receiver for the :$next() method call
+        Value next_value = pyro_call_method(vm, next_method, 0);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        if (IS_ERR(next_value)) {
+            break;
+        }
+
+        if (!is_first_item) {
+            if (!ObjBuf_append_bytes(buf, str->length, (uint8_t*)str->bytes, vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL_VAL();
+            }
+        }
+
+        pyro_push(vm, next_value);
+        ObjStr* value_string = pyro_stringify(vm, next_value);
+        if (vm->halt_flag) {
+            return NULL_VAL();
+        }
+        pyro_pop(vm); // next_value
+
+        pyro_push(vm, OBJ_VAL(value_string));
+        if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL_VAL();
+        }
+        pyro_pop(vm); // value_string
+
+        is_first_item = false;
+    }
+
+    ObjStr* output_string = ObjBuf_to_str(buf, vm);
+    if (!output_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL_VAL();
+    }
+
+    pyro_pop(vm); // buf
+    pyro_pop(vm); // next_method
+    pyro_pop(vm); // iterator
+
+    return OBJ_VAL(output_string);
+}
+
+
 void pyro_load_std_core_str(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$str", fn_str, 1);
@@ -1089,4 +1172,5 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
     pyro_define_method(vm, vm->str_class, "to_hex", str_to_hex, 0);
     pyro_define_method(vm, vm->str_class, "slice", str_slice, -1);
+    pyro_define_method(vm, vm->str_class, "join", str_join, 1);
 }
