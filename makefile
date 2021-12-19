@@ -34,7 +34,7 @@ debug debug1::
 	@mkdir -p out/debug
 	@printf "\x1B[1;32mBuilding\x1B[0m debug binary\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) -o out/debug/pyro $(FILES)
-	@printf "\x1B[1;32m Version\x1B[0m " && ./out/release/pyro --version
+	@printf "\x1B[1;32m Version\x1B[0m " && ./out/debug/pyro --version
 
 # As debug1, also dumps bytecode and traces execution opcode-by-opcode.
 debug2::

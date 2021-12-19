@@ -5,7 +5,28 @@
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 5
 #define PYRO_VERSION_PATCH 9
-#define PYRO_VERSION_STRING "0.5.9"
+#define PYRO_VERSION_LABEL ""
+
+// Utility for converting a macro's value into a string constant.
+#define PYRO_STRINGIFY(macro) PYRO_STRINGIFY_QUOTE(macro)
+#define PYRO_STRINGIFY_QUOTE(name) #name
+
+// Language version as a string constant.
+#define PYRO_VERSION_STRING \
+    strlen(PYRO_VERSION_LABEL) > 0 ? \
+        PYRO_STRINGIFY(PYRO_VERSION_MAJOR) \
+        "." \
+        PYRO_STRINGIFY(PYRO_VERSION_MINOR) \
+        "." \
+        PYRO_STRINGIFY(PYRO_VERSION_PATCH) \
+        "-" \
+        PYRO_VERSION_LABEL \
+    : \
+        PYRO_STRINGIFY(PYRO_VERSION_MAJOR) \
+        "." \
+        PYRO_STRINGIFY(PYRO_VERSION_MINOR) \
+        "." \
+        PYRO_STRINGIFY(PYRO_VERSION_PATCH)
 
 // Selects the hash function for strings.
 #ifndef PYRO_STRING_HASH
