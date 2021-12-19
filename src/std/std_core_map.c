@@ -204,9 +204,7 @@ void pyro_load_std_core_map(PyroVM* vm) {
     // Map methods.
     pyro_define_method(vm, vm->map_class, "count", map_count, 0);
     pyro_define_method(vm, vm->map_class, "get", map_get, 1);
-    pyro_define_method(vm, vm->map_class, "$get_index", map_get, 1);
     pyro_define_method(vm, vm->map_class, "set", map_set, 2);
-    pyro_define_method(vm, vm->map_class, "$set_index", map_set, 2);
     pyro_define_method(vm, vm->map_class, "remove", map_remove, 1);
     pyro_define_method(vm, vm->map_class, "contains", map_contains, 1);
     pyro_define_method(vm, vm->map_class, "copy", map_copy, 0);

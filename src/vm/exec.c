@@ -310,7 +310,7 @@ static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
 }
 
 
-static void invoke_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
+static void invoke_method_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
     Value method;
     if (!ObjMap_get(class->methods, OBJ_VAL(method_name), &method, vm)) {
         pyro_panic(vm, ERR_NAME_ERROR, "Invalid method name '%s'.", method_name->bytes);
@@ -330,7 +330,7 @@ static void invoke_method(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
     ObjClass* class = pyro_get_class(receiver);
 
     if (class) {
-        invoke_from_class(vm, class, method_name, arg_count);
+        invoke_method_from_class(vm, class, method_name, arg_count);
     } else {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid method call '%s'.", method_name->bytes);
     }
@@ -593,8 +593,9 @@ static void run(PyroVM* vm) {
             }
 
             case OP_GET_INDEX: {
-                invoke_method(vm, vm->str_get_index, 1);
-                frame = &vm->frames[vm->frame_count - 1];
+                Value key = pyro_pop(vm);
+                Value receiver = pyro_pop(vm);
+                pyro_push(vm, pyro_op_get_index(vm, receiver, key));
                 break;
             }
 
@@ -816,7 +817,7 @@ static void run(PyroVM* vm) {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
-                invoke_from_class(vm, superclass, method_name, arg_count);
+                invoke_method_from_class(vm, superclass, method_name, arg_count);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
@@ -1218,17 +1219,10 @@ static void run(PyroVM* vm) {
             }
 
             case OP_SET_INDEX: {
-                /* if (IS_MAP(pyro_peek(vm, 2))) { */
-                /*     if (!ObjMap_set(AS_MAP(pyro_peek(vm, 2)), pyro_peek(vm, 1), pyro_peek(vm, 0), vm)) { */
-                /*         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory."); */
-                /*         break; */
-                /*     } */
-                /*     vm->stack_top[-3] = NULL_VAL(); */
-                /*     vm->stack_top -= 2; */
-                /* } else { */
-                    invoke_method(vm, vm->str_set_index, 2);
-                    frame = &vm->frames[vm->frame_count - 1];
-                /* } */
+                Value value = pyro_pop(vm);
+                Value key = pyro_pop(vm);
+                Value receiver = pyro_pop(vm);
+                pyro_push(vm, pyro_op_set_index(vm, receiver, key, value));
                 break;
             }
 

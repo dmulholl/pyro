@@ -529,8 +529,6 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "append", vec_append, 1);
     pyro_define_method(vm, vm->vec_class, "get", vec_get, 1);
     pyro_define_method(vm, vm->vec_class, "set", vec_set, 2);
-    pyro_define_method(vm, vm->vec_class, "$get_index", vec_get, 1);
-    pyro_define_method(vm, vm->vec_class, "$set_index", vec_set, 2);
     pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
     pyro_define_method(vm, vm->vec_class, "sort", vec_sort, -1);
     pyro_define_method(vm, vm->vec_class, "mergesort", vec_mergesort, -1);

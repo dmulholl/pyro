@@ -959,3 +959,114 @@ bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
             return false;
     }
 }
+
+
+/* ----------------- */
+/*  Index Operators  */
+/* ----------------- */
+
+
+Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
+    if (!IS_OBJ(receiver)) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Value does not support [] indexing.");
+        return NULL_VAL();
+    }
+
+    switch (AS_OBJ(receiver)->type) {
+        case OBJ_MAP: {
+            ObjMap* map = AS_MAP(receiver);
+            Value value;
+            if (ObjMap_get(map, key, &value, vm)) {
+                return value;
+            }
+            return OBJ_VAL(vm->empty_error);
+        }
+
+        case OBJ_VEC: {
+            ObjVec* vec = AS_VEC(receiver);
+            if (IS_I64(key)) {
+                int64_t index = key.as.i64;
+                if (index >= 0 && (size_t)index < vec->count) {
+                    return vec->values[index];
+                }
+                pyro_panic(vm, ERR_VALUE_ERROR, "Index is out of range.");
+                return NULL_VAL();
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+            return NULL_VAL();
+        }
+
+        case OBJ_TUP_AS_ERR:
+        case OBJ_TUP: {
+            ObjTup* tup = AS_TUP(receiver);
+            if (IS_I64(key)) {
+                int64_t index = key.as.i64;
+                if (index >= 0 && (size_t)index < tup->count) {
+                    return tup->values[index];
+                }
+                pyro_panic(vm, ERR_VALUE_ERROR, "Index is out of range.");
+                return NULL_VAL();
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+            return NULL_VAL();
+        }
+
+        default: {
+            Value method = pyro_get_method(vm, receiver, vm->str_get_index);
+            if (!IS_NULL(method)) {
+                pyro_push(vm, receiver);
+                pyro_push(vm, key);
+                return pyro_call_method(vm, method, 1);
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Object does not support [] indexing.");
+            return NULL_VAL();
+        }
+    }
+}
+
+
+Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
+    if (!IS_OBJ(receiver)) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Value does not support [] indexing.");
+        return NULL_VAL();
+    }
+
+    switch (AS_OBJ(receiver)->type) {
+        case OBJ_MAP: {
+            ObjMap* map = AS_MAP(receiver);
+            vm->gc_disallows++;
+            if (ObjMap_set(map, key, value, vm) == 0) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            }
+            vm->gc_disallows--;
+            return value;
+        }
+
+        case OBJ_VEC: {
+            ObjVec* vec = AS_VEC(receiver);
+            if (IS_I64(key)) {
+                int64_t index = key.as.i64;
+                if (index >= 0 && (size_t)index < vec->count) {
+                    vec->values[index] = value;
+                    return value;
+                }
+                pyro_panic(vm, ERR_VALUE_ERROR, "Index is out of range.");
+                return NULL_VAL();
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+            return NULL_VAL();
+        }
+
+        default: {
+            Value method = pyro_get_method(vm, receiver, vm->str_set_index);
+            if (!IS_NULL(method)) {
+                pyro_push(vm, receiver);
+                pyro_push(vm, key);
+                pyro_push(vm, value);
+                return pyro_call_method(vm, method, 2);
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Object does not support [] index assignment.");
+            return NULL_VAL();
+        }
+    }
+}

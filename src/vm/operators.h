@@ -48,4 +48,12 @@ bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b);
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b);
 
+// Implements the get-index operator, [].
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key);
+
+// Implements the set-index operator, [].
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value);
+
 #endif

@@ -84,6 +84,5 @@ void pyro_load_std_core_tup(PyroVM* vm) {
     // Methods.
     pyro_define_method(vm, vm->tup_class, "count", tup_count, 0);
     pyro_define_method(vm, vm->tup_class, "get", tup_get, 1);
-    pyro_define_method(vm, vm->tup_class, "$get_index", tup_get, 1);
     pyro_define_method(vm, vm->tup_class, "$iter", tup_iter, 0);
 }
