@@ -31,8 +31,7 @@ release::
 	@mkdir -p out/release
 	@printf "\x1B[1;32mBuilding\x1B[0m release binary\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES)
-	@printf "\x1B[1;32m Version\x1B[0m "
-	@./out/release/pyro --version
+	@printf "\x1B[1;32m Version\x1B[0m " && ./out/release/pyro --version
 
 # Basic debug build. Assertions are checked and the GC is run before every allocation.
 debug debug1::
