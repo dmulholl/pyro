@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.3.0
+" v0.3.2
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -16,7 +16,6 @@ syn region pyroChar start=+'+ end=+'+ skip=+\\\\\|\\'+
 syn keyword pyroKeyword var def class
 syn keyword pyroKeyword if else for while in loop
 syn keyword pyroKeyword return break continue
-syn keyword pyroKeyword and or xor not
 syn keyword pyroKeyword try echo
 syn keyword pyroAssert assert
 syn keyword pyroImport import as
@@ -35,12 +34,12 @@ syn case match
 " Default highlighting styles.
 hi def link pyroComment Comment
 hi def link pyroString String
+hi def link pyroChar String
 hi def link pyroKeyword Statement
 hi def link pyroAssert PreProc
 hi def link pyroImport PreProc
 hi def link pyroConstant Special
 hi def link pyroNumber Constant
 hi def link pyroSpecial Normal
-hi def link pyroChar Constant
 
 let b:current_syntax = "pyro"
