@@ -350,16 +350,6 @@ Returns <code>true</code> if the string ends with the string <code>suffix</code>
 </div>
 <div>
 <dt>
-<code>:join(items: iterable) -&gt; str</code>
-</dt>
-<dd>
-<p>
-Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:index_of(target: str, start_index: i64) -&gt; i64|err</code>
 </dt>
 <dd>
@@ -399,6 +389,16 @@ Returns <code>true</code> if the string is empty, i.e. if its length is zero.
 <p>
 Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 (This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:join(items: iterable) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
 </p>
 </dd>
 </div>
