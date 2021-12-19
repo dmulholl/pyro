@@ -50,7 +50,7 @@ Variables have lexical scope and declarations inside blocks will shadow outer de
 
     assert foo == 123;
 
-Identifier names (this includes variables, functions, and classes) should begin with a letter or an underscore and contain only letters, numbers, and underscores.
+Identifier names (this includes variables, functions, and classes) should begin with an ASCII letter or an underscore and contain only ASCII letters, numbers, and underscores.
 
 Names beginning with a `$` symbol are `$pecial` --- this namespace is reserved by the language for builtin variables and functions.
 
@@ -148,6 +148,8 @@ You can use the null-coalescing operator `??` to supply a default value in place
 
 ::: code pyro
     var foo = maybe_null() ?? "default";
+
+Functions which don't explicitly specify a return value have the return value `null`.
 
 
 

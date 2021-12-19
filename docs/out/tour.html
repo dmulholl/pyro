@@ -161,7 +161,7 @@ Variables have lexical scope and declarations inside blocks will shadow outer de
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
-Identifier names (this includes variables, functions, and classes) should begin with a letter or an underscore and contain only letters, numbers, and underscores.
+Identifier names (this includes variables, functions, and classes) should begin with an ASCII letter or an underscore and contain only ASCII letters, numbers, and underscores.
 </p>
 <p>
 Names beginning with a <code>$</code> symbol are <code>$pecial</code> &mdash; this namespace is reserved by the language for builtin variables and functions.
@@ -321,6 +321,9 @@ You can use the null-coalescing operator <code>??</code> to supply a default val
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
+<p>
+Functions which don't explicitly specify a return value have the return value <code>null</code>.
+</p>
 <h3 id="equality">
 Equality
 </h3>
