@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "utf8.h"
 #include "exec.h"
+#include "panics.h"
 
 
 bool pyro_is_truthy(Value value) {

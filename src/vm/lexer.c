@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "vm.h"
+#include "panics.h"
 
 
 static bool is_alpha(char c) {
@@ -277,14 +278,13 @@ static Token read_raw_string(Lexer* lexer) {
     }
 
     if (is_at_end(lexer)) {
-        if (lexer->vm->try_depth == 0) {
-            pyro_err(lexer->vm,
-                "%s:%zu\n  Syntax Error: Unterminated raw string literal, opened in line %zu.\n",
-                lexer->src_id,
-                start_line,
-                start_line
-            );
-        }
+        pyro_syntax_error(
+            lexer->vm,
+            lexer->src_id,
+            start_line,
+            "Unterminated raw string literal, opened in line %zu.",
+            start_line
+        );
         return make_error_token(lexer);
     }
 
@@ -309,14 +309,13 @@ static Token read_string(Lexer* lexer) {
     }
 
     if (is_at_end(lexer)) {
-        if (lexer->vm->try_depth == 0) {
-            pyro_err(lexer->vm,
-                "%s:%zu\n  Syntax Error: Unterminated string literal, opened in line %zu.\n",
-                lexer->src_id,
-                start_line,
-                start_line
-            );
-        }
+        pyro_syntax_error(
+            lexer->vm,
+            lexer->src_id,
+            start_line,
+            "Unterminated string literal, opened in line %zu.",
+            start_line
+        );
         return make_error_token(lexer);
     }
 
@@ -339,14 +338,13 @@ static Token read_char_literal(Lexer* lexer) {
     }
 
     if (is_at_end(lexer)) {
-        if (lexer->vm->try_depth == 0) {
-            pyro_err(lexer->vm,
-                "%s:%zu\n  Syntax Error: Unterminated character literal, opened in line %zu.\n",
-                lexer->src_id,
-                start_line,
-                start_line
-            );
-        }
+        pyro_syntax_error(
+            lexer->vm,
+            lexer->src_id,
+            start_line,
+            "Unterminated character literal, opened in line %zu.",
+            start_line
+        );
         return make_error_token(lexer);
     }
 
@@ -449,22 +447,22 @@ Token pyro_next_token(Lexer* lexer) {
             return make_token(lexer, TOKEN_BANG);
     }
 
-    if (lexer->vm->try_depth == 0) {
-        if (isprint(c)) {
-            pyro_err(lexer->vm,
-                "%s:%zu\n  Syntax Error: Unexpected character '%c' in input.\n",
-                lexer->src_id,
-                lexer->line,
-                c
-            );
-        } else {
-            pyro_err(lexer->vm,
-                "%s:%zu\n  Syntax Error: Unexpected byte value (0x%02X) in input.\n",
-                lexer->src_id,
-                lexer->line,
-                c
-            );
-        }
+    if (isprint(c)) {
+        pyro_syntax_error(
+            lexer->vm,
+            lexer->src_id,
+            lexer->line,
+            "Unexpected character '%c' in input.",
+            c
+        );
+    } else {
+        pyro_syntax_error(
+            lexer->vm,
+            lexer->src_id,
+            lexer->line,
+            "Unexpected byte value (0x%02X) in input.",
+            c
+        );
     }
 
     return make_error_token(lexer);

@@ -4,6 +4,7 @@
 #include "exec.h"
 #include "heap.h"
 #include "utf8.h"
+#include "panics.h"
 
 
 // Returns a quoted, escaped string or NULL if memory allocation fails.

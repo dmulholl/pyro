@@ -2,6 +2,7 @@
 #include "objects.h"
 #include "vm.h"
 #include "exec.h"
+#include "panics.h"
 
 
 /* ------------------ */

@@ -5,6 +5,7 @@
 #include "values.h"
 #include "objects.h"
 #include "utils.h"
+#include "panics.h"
 
 #include "../lib/mt64/mt64.h"
 

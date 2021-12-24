@@ -8,6 +8,7 @@
 #include "operators.h"
 #include "exec.h"
 #include "stringify.h"
+#include "panics.h"
 
 
 // Allocates memory for a fixed-size object.

@@ -37,9 +37,6 @@ bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value)
 // false if the string was invalid.
 bool pyro_parse_string_as_float(const char* string, size_t length, double* value);
 
-// Called to signal that an error has occurred.
-void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...);
-
 // Writes a printf-style formatted string to the VM's output stream, unless that stream is NULL.
 void pyro_out(PyroVM* vm, const char* format, ...);
 

@@ -6,6 +6,7 @@
 #include "../vm/heap.h"
 #include "../vm/utf8.h"
 #include "../vm/setup.h"
+#include "../vm/panics.h"
 
 
 static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {

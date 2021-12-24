@@ -152,13 +152,8 @@ void pyro_run_repl(ArgParser* parser) {
         }
 
         // Tack a semicolon onto the end. Multiple semicolons are simply ignored.
-        code = realloc(code, code_count + 1);
-        if (!code) {
-            fprintf(stderr, "Error: Failed to allocate memory for input.\n");
-            exit(1);
-        }
-        code[code_count] = ';';
-        code_count++;
+        // This will replace the trailing newline character.
+        code[code_count - 1] = ';';
 
         pyro_exec_code_as_main(vm, code, code_count, "repl");
         if (pyro_get_exit_flag(vm) || pyro_get_hard_panic_flag(vm)) {

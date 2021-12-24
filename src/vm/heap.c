@@ -1,6 +1,7 @@
 #include "heap.h"
 #include "vm.h"
 #include "stringify.h"
+#include "panics.h"
 
 
 // Mark every root object as reachable. (A root object is an object the VM can access directly

@@ -3,6 +3,7 @@
 #include "vm.h"
 #include "exec.h"
 #include "heap.h"
+#include "panics.h"
 
 
 static void swap(Value* a, Value* b) {

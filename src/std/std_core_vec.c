@@ -8,6 +8,7 @@
 #include "../vm/operators.h"
 #include "../vm/setup.h"
 #include "../vm/sorting.h"
+#include "../vm/panics.h"
 
 
 static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {

@@ -3,6 +3,7 @@
 #include "heap.h"
 #include "values.h"
 #include "utils.h"
+#include "panics.h"
 
 #include "../std/std_core.h"
 #include "../std/std_math.h"

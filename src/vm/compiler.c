@@ -6,6 +6,41 @@
 #include "utf8.h"
 #include "utils.h"
 #include "lexer.h"
+#include "panics.h"
+
+
+/* -------------- */
+/*  Error Macros  */
+/* -------------- */
+
+
+// Signals a syntax error at the previous token. The argument is the error message specified as
+// a printf-style format string along with any values to be interpolated.
+#define ERROR_AT_PREVIOUS_TOKEN(...) \
+    do { \
+        if (!parser->had_syntax_error) { \
+            parser->had_syntax_error = true; \
+            Token* token = &parser->previous_token; \
+            pyro_syntax_error(parser->vm, parser->src_id, token->line, __VA_ARGS__); \
+        } \
+    } while (false)
+
+
+// Signals a syntax error at the next token. The argument is the error message specified as
+// a printf-style format string along with any values to be interpolated.
+#define ERROR_AT_NEXT_TOKEN(...) \
+    do { \
+        if (!parser->had_syntax_error) { \
+            parser->had_syntax_error = true; \
+            Token* token = &parser->next_token; \
+            pyro_syntax_error(parser->vm, parser->src_id, token->line, __VA_ARGS__); \
+        } \
+    } while (false)
+
+
+/* ------- */
+/*  Types  */
+/* ------- */
 
 
 typedef struct {
@@ -64,8 +99,8 @@ typedef struct ClassCompiler {
 
 typedef struct {
     Lexer lexer;
-    Token previous;
-    Token current;
+    Token previous_token;
+    Token next_token;
     bool had_syntax_error;
     bool had_memory_error;
     PyroVM* vm;
@@ -94,43 +129,6 @@ static void parse_type(Parser* parser);
 /* ----------------- */
 
 
-// Signals a syntax error at [token].
-static void err_at_token(Parser* parser, Token* token, const char* message) {
-    if (parser->had_syntax_error) {
-        return;
-    }
-    parser->had_syntax_error = true;
-
-    if (parser->vm->try_depth > 0) {
-        return;
-    }
-
-    pyro_err(parser->vm, "%s:%zu\n  Syntax Error", parser->src_id, token->line);
-
-    if (token->type == TOKEN_EOF || token->type == TOKEN_ERROR) {
-        pyro_err(parser->vm, ": %s\n", message);
-    } else if (token->type == TOKEN_STRING || token->type == TOKEN_ESCAPED_STRING) {
-        pyro_err(parser->vm, ": %s\n", message);
-    } else if (token->type == TOKEN_CHAR) {
-        pyro_err(parser->vm, " at %.*s: %s\n", token->length, token->start, message);
-    } else {
-        pyro_err(parser->vm, " at '%.*s': %s\n", token->length, token->start, message);
-    }
-}
-
-
-// Signals a syntax error at the current token.
-static void err_at_curr(Parser* parser, const char* message) {
-    err_at_token(parser, &parser->current, message);
-}
-
-
-// Signals a syntax error at the previous token.
-static void err_at_prev(Parser* parser, const char* message) {
-    err_at_token(parser, &parser->previous, message);
-}
-
-
 // Make a synthetic token to pass a hardcoded string around.
 static Token syntoken(const char* text) {
     return (Token) {
@@ -138,6 +136,46 @@ static Token syntoken(const char* text) {
         .line = 0,
         .start = text,
         .length = strlen(text)
+    };
+}
+
+
+// Make a synthetic token containing the basename from [source_id].
+static Token basename_syntoken(const char* source_id) {
+    if (strlen(source_id) == 0) {
+        return (Token) {
+            .type = TOKEN_SYNTHETIC,
+            .line = 0,
+            .start = "code",
+            .length = strlen("code")
+        };
+    }
+
+    const char* last_char = source_id + strlen(source_id) - 1;
+
+    // Find the first character of the basename.
+    const char* start = last_char;
+    while (start > source_id) {
+        if (*(start - 1) == '/') {
+            break;
+        }
+        start--;
+    }
+
+    // Find the last character of the basename.
+    const char* end = start;
+    while (end < last_char) {
+        if (*(end + 1) == '.') {
+            break;
+        }
+        end++;
+    }
+
+    return (Token) {
+        .type = TOKEN_SYNTHETIC,
+        .line = 0,
+        .start = start,
+        .length = end - start + 1
     };
 }
 
@@ -151,7 +189,7 @@ static bool lexemes_are_equal(Token* a, Token* b) {
 
 
 static void emit_byte(Parser* parser, uint8_t byte) {
-    if (!ObjFn_write(parser->compiler->fn, byte, parser->previous.line, parser->vm)) {
+    if (!ObjFn_write(parser->compiler->fn, byte, parser->previous_token.line, parser->vm)) {
         parser->had_memory_error = true;
     }
 }
@@ -194,7 +232,7 @@ static uint16_t make_constant(Parser* parser, Value value) {
         parser->had_memory_error = true;
         return 0;
     } else if (index > UINT16_MAX) {
-        err_at_prev(parser, "Too many constants in function.");
+        ERROR_AT_PREVIOUS_TOKEN("Too many constants in function.");
         return 0;
     }
     return (uint16_t)index;
@@ -240,29 +278,32 @@ static void emit_load_constant_instruction(Parser* parser, Value value) {
 
 // Reads the next token from the lexer.
 static void advance(Parser* parser) {
-    parser->previous = parser->current;
-    parser->current = pyro_next_token(&parser->lexer);
-    if (parser->current.type == TOKEN_ERROR) {
+    parser->previous_token = parser->next_token;
+    parser->next_token = pyro_next_token(&parser->lexer);
+    if (parser->next_token.type == TOKEN_ERROR) {
         parser->had_syntax_error = true;
     }
 }
 
 
 // Reads the next token from the lexer and validates that it has the expected type.
-static void consume(Parser* parser, TokenType type, const char* message) {
-    if (parser->current.type == type) {
+static bool consume(Parser* parser, TokenType type, const char* error_message) {
+    if (parser->next_token.type == type) {
         advance(parser);
-        return;
+        return true;
     }
-    err_at_curr(parser, message);
+    ERROR_AT_NEXT_TOKEN(error_message);
+    return false;
 }
 
 
+// Returns true if the next token has type [type].
 static bool check(Parser* parser, TokenType type) {
-    return parser->current.type == type;
+    return parser->next_token.type == type;
 }
 
 
+// Returns true and advances the parser if the next token has type [type].
 static bool match(Parser* parser, TokenType type) {
     if (check(parser, type)) {
         advance(parser);
@@ -272,6 +313,7 @@ static bool match(Parser* parser, TokenType type) {
 }
 
 
+// Returns true and advances the parser if the next token has type [type1] or [type2].
 static bool match2(Parser* parser, TokenType type1, TokenType type2) {
     if (check(parser, type1) || check(parser, type2)) {
         advance(parser);
@@ -281,6 +323,7 @@ static bool match2(Parser* parser, TokenType type1, TokenType type2) {
 }
 
 
+// Returns true and advances the parser if the next token has type [type1] or [type2] or [type3].
 static bool match3(Parser* parser, TokenType type1, TokenType type2, TokenType type3) {
     if (check(parser, type1) || check(parser, type2) || check(parser, type3)) {
         advance(parser);
@@ -298,7 +341,7 @@ static bool match_assignment_token(Parser* parser) {
 }
 
 
-// Returns [true] if initialization succeeded, [false] if initialization failed because memory
+// Returns true if initialization succeeded, false if initialization failed because memory
 // could not be allocated.
 static bool init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, Token name) {
     // Set this compiler's enclosing compiler to the parser's current compiler.
@@ -373,7 +416,7 @@ static int resolve_local(Parser* parser, FnCompiler* compiler, Token* name) {
             if (local->is_initialized) {
                 return i;
             }
-            err_at_prev(parser, "Can't read a local variable in its own initializer.");
+            ERROR_AT_PREVIOUS_TOKEN("Can't read a local variable in its own initializer.");
         }
     }
     return -1;
@@ -395,7 +438,7 @@ static int add_upvalue(Parser* parser, FnCompiler* compiler, uint8_t index, bool
     }
 
     if (upvalue_count == 256) {
-        err_at_prev(parser, "Too many closure variables in function (max: 256).");
+        ERROR_AT_PREVIOUS_TOKEN("Too many closure variables in function (max: 256).");
         return 0;
     }
 
@@ -437,7 +480,7 @@ static int resolve_upvalue(Parser* parser, FnCompiler* compiler, Token* name) {
 
 static void add_local(Parser* parser, Token name) {
     if (parser->compiler->local_count == 256) {
-        err_at_prev(parser, "Too many local variables in scope (max 256).");
+        ERROR_AT_PREVIOUS_TOKEN("Too many local variables in scope (max 256).");
         return;
     }
     Local* local = &parser->compiler->locals[parser->compiler->local_count++];
@@ -506,7 +549,7 @@ static void declare_variable(Parser* parser, Token name) {
             break;
         }
         if (lexemes_are_equal(&name, &local->name)) {
-            err_at_prev(parser, "A variable with this name already exists in this scope.");
+            ERROR_AT_PREVIOUS_TOKEN("A variable with this name already exists in this scope.");
         }
     }
 
@@ -517,7 +560,7 @@ static void declare_variable(Parser* parser, Token name) {
 // Called when declaring a variable or function parameter.
 static uint16_t consume_variable_name(Parser* parser, const char* error_message) {
     consume(parser, TOKEN_IDENTIFIER, error_message);
-    declare_variable(parser, parser->previous);
+    declare_variable(parser, parser->previous_token);
 
     // Local variables are referenced by index not by name so we don't need to add the name
     // of a local to the list of constants. This return value will simply be ignored.
@@ -526,7 +569,7 @@ static uint16_t consume_variable_name(Parser* parser, const char* error_message)
     }
 
     // Global variables are referenced by name.
-    return make_string_constant_from_identifier(parser, &parser->previous);
+    return make_string_constant_from_identifier(parser, &parser->previous_token);
 }
 
 
@@ -579,7 +622,7 @@ static void patch_jump(Parser* parser, size_t index) {
 
     size_t jump = parser->compiler->fn->code_count - index - 2;
     if (jump > UINT16_MAX) {
-        err_at_prev(parser, "Too much code to jump over.");
+        ERROR_AT_PREVIOUS_TOKEN("Too much code to jump over.");
         return;
     }
 
@@ -599,7 +642,7 @@ static uint8_t parse_argument_list(Parser* parser) {
         do {
             parse_expression(parser, false, true);
             if (arg_count == 255) {
-                err_at_prev(parser, "Too many arguments (max: 255).");
+                ERROR_AT_PREVIOUS_TOKEN("Too many arguments (max: 255).");
             }
             arg_count++;
         } while (match(parser, TOKEN_COMMA));
@@ -650,7 +693,7 @@ static void set_named_variable(Parser* parser, Token name) {
 
 
 static void parse_variable(Parser* parser, bool can_assign) {
-    Token name = parser->previous;
+    Token name = parser->previous_token;
 
     if (can_assign && match(parser, TOKEN_EQUAL)) {
         parse_expression(parser, true, true);
@@ -678,26 +721,26 @@ static int64_t parse_hex_literal(Parser* parser) {
     char buffer[16 + 1];
     size_t count = 0;
 
-    for (size_t i = 2; i < parser->previous.length; i++) {
-        if (parser->previous.start[i] == '_') {
+    for (size_t i = 2; i < parser->previous_token.length; i++) {
+        if (parser->previous_token.start[i] == '_') {
             continue;
         }
         if (count == 16) {
-            err_at_prev(parser, "Too many digits in hex literal (max: 16).");
+            ERROR_AT_PREVIOUS_TOKEN("Too many digits in hex literal (max: 16).");
             return 0;
         }
-        buffer[count++] = parser->previous.start[i];
+        buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        err_at_prev(parser, "Invalid hex literal (zero digits).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid hex literal (zero digits).");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 16);
     if (errno != 0) {
-        err_at_prev(parser, "Invalid hex literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid hex literal (out of range).");
     }
 
     return value;
@@ -708,26 +751,26 @@ static int64_t parse_binary_literal(Parser* parser) {
     char buffer[64 + 1];
     size_t count = 0;
 
-    for (size_t i = 2; i < parser->previous.length; i++) {
-        if (parser->previous.start[i] == '_') {
+    for (size_t i = 2; i < parser->previous_token.length; i++) {
+        if (parser->previous_token.start[i] == '_') {
             continue;
         }
         if (count == 64) {
-            err_at_prev(parser, "Too many digits in binary literal (max: 64).");
+            ERROR_AT_PREVIOUS_TOKEN("Too many digits in binary literal (max: 64).");
             return 0;
         }
-        buffer[count++] = parser->previous.start[i];
+        buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        err_at_prev(parser, "Invalid binary literal (zero digits).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid binary literal (zero digits).");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 2);
     if (errno != 0) {
-        err_at_prev(parser, "Invalid binary literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid binary literal (out of range).");
     }
 
     return value;
@@ -738,26 +781,26 @@ static int64_t parse_octal_literal(Parser* parser) {
     char buffer[22 + 1];
     size_t count = 0;
 
-    for (size_t i = 2; i < parser->previous.length; i++) {
-        if (parser->previous.start[i] == '_') {
+    for (size_t i = 2; i < parser->previous_token.length; i++) {
+        if (parser->previous_token.start[i] == '_') {
             continue;
         }
         if (count == 22) {
-            err_at_prev(parser, "Too many digits in octal literal (max: 22).");
+            ERROR_AT_PREVIOUS_TOKEN("Too many digits in octal literal (max: 22).");
             return 0;
         }
-        buffer[count++] = parser->previous.start[i];
+        buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        err_at_prev(parser, "Invalid octal literal (zero digits).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid octal literal (zero digits).");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 8);
     if (errno != 0) {
-        err_at_prev(parser, "Invalid octal literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid octal literal (out of range).");
     }
 
     return value;
@@ -768,22 +811,22 @@ static int64_t parse_int_literal(Parser* parser) {
     char buffer[20 + 1];
     size_t count = 0;
 
-    for (size_t i = 0; i < parser->previous.length; i++) {
-        if (parser->previous.start[i] == '_') {
+    for (size_t i = 0; i < parser->previous_token.length; i++) {
+        if (parser->previous_token.start[i] == '_') {
             continue;
         }
         if (count == 20) {
-            err_at_prev(parser, "Too many digits in integer literal (max: 20).");
+            ERROR_AT_PREVIOUS_TOKEN("Too many digits in integer literal (max: 20).");
             return 0;
         }
-        buffer[count++] = parser->previous.start[i];
+        buffer[count++] = parser->previous_token.start[i];
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 10);
     if (errno != 0) {
-        err_at_prev(parser, "Invalid integer literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid integer literal (out of range).");
     }
 
     return value;
@@ -800,22 +843,22 @@ static double parse_float_literal(Parser* parser) {
     char buffer[24 + 1];
     size_t count = 0;
 
-    for (size_t i = 0; i < parser->previous.length; i++) {
-        if (parser->previous.start[i] == '_') {
+    for (size_t i = 0; i < parser->previous_token.length; i++) {
+        if (parser->previous_token.start[i] == '_') {
             continue;
         }
         if (count == 24) {
-            err_at_prev(parser, "Too many digits in floating-point literal (max: 24).");
+            ERROR_AT_PREVIOUS_TOKEN("Too many digits in floating-point literal (max: 24).");
             return 0;
         }
-        buffer[count++] = parser->previous.start[i];
+        buffer[count++] = parser->previous_token.start[i];
     }
 
     buffer[count] = '\0';
     errno = 0;
     double value = strtod(buffer, NULL);
     if (errno != 0) {
-        err_at_prev(parser, "Invalid floating-point literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid floating-point literal (out of range).");
     }
 
     return value;
@@ -823,12 +866,12 @@ static double parse_float_literal(Parser* parser) {
 
 
 static uint32_t parse_char_literal(Parser* parser) {
-    const char* start = parser->previous.start + 1;
-    size_t length = parser->previous.length - 2;
+    const char* start = parser->previous_token.start + 1;
+    size_t length = parser->previous_token.length - 2;
 
     // The longest valid character literal is a unicode escape sequence of the form: '\UXXXXXXXX'.
     if (length == 0 || length > 10) {
-        err_at_prev(parser, "Invalid character literal.");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid character literal.");
         return 0;
     }
 
@@ -837,12 +880,12 @@ static uint32_t parse_char_literal(Parser* parser) {
 
     Utf8CodePoint cp;
     if (!pyro_read_utf8_codepoint((uint8_t*)buffer, count, &cp)) {
-        err_at_prev(parser, "Invalid character literal (not utf-8).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid character literal (not utf-8).");
         return 0;
     }
 
     if (cp.length != count) {
-        err_at_prev(parser, "Invalid character literal (too many bytes).");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid character literal (too many bytes).");
         return 0;
     }
 
@@ -926,15 +969,15 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
     }
 
     else if (match(parser, TOKEN_STRING)) {
-        const char* start = parser->previous.start + 1;
-        size_t length = parser->previous.length - 2;
+        const char* start = parser->previous_token.start + 1;
+        size_t length = parser->previous_token.length - 2;
         ObjStr* string = ObjStr_copy_raw(start, length, parser->vm);
         emit_load_constant_instruction(parser, OBJ_VAL(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
-        const char* start = parser->previous.start + 1;
-        size_t length = parser->previous.length - 2;
+        const char* start = parser->previous_token.start + 1;
+        size_t length = parser->previous_token.length - 2;
         ObjStr* string = ObjStr_copy_esc(start, length, parser->vm);
         emit_load_constant_instruction(parser, OBJ_VAL(string));
     }
@@ -950,23 +993,23 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
 
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
-            err_at_prev(parser, "Invalid use of 'self' outside a method declaration.");
+            ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'self' outside a method declaration.");
         }
-        load_named_variable(parser, parser->previous);
+        load_named_variable(parser, parser->previous_token);
     }
 
     else if (match(parser, TOKEN_SUPER)) {
         if (parser->class_compiler == NULL) {
-            err_at_prev(parser, "Invalid use of 'super' outside a class.");
+            ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'super' outside a class.");
             return;
         } else if (!parser->class_compiler->has_superclass) {
-            err_at_prev(parser, "Invalid use of 'super' in a class with no superclass.");
+            ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'super' in a class with no superclass.");
         }
 
         consume(parser, TOKEN_COLON, "Expected ':' after 'super'.");
         consume(parser, TOKEN_IDENTIFIER, "Expected superclass method name.");
 
-        uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
+        uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
         load_named_variable(parser, syntoken("self"));    // load the instance
 
         if (match(parser, TOKEN_LEFT_PAREN)) {
@@ -995,7 +1038,11 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
     }
 
     else {
-        err_at_curr(parser, "Invalid token. Expected an expression.");
+        ERROR_AT_NEXT_TOKEN(
+            "Unexpected token '%.*s'. Expected an expression.",
+            parser->next_token.length,
+            parser->next_token.start
+        );
     }
 }
 
@@ -1033,7 +1080,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
 
         else if (match(parser, TOKEN_DOT)) {
             consume(parser, TOKEN_IDENTIFIER, "Expected a field name after '.'.");
-            uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
+            uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (can_assign && match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
                 emit_op_u16(parser, OP_SET_FIELD, index);
@@ -1056,7 +1103,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
 
         else if (match(parser, TOKEN_COLON)) {
             consume(parser, TOKEN_IDENTIFIER, "Expected a method name after ':'.");
-            uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
+            uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (match(parser, TOKEN_LEFT_PAREN)) {
                 uint8_t arg_count = parse_argument_list(parser);
                 emit_op_u16(parser, OP_INVOKE_METHOD, index);
@@ -1068,7 +1115,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
 
         else if (match(parser, TOKEN_COLON_COLON)) {
             consume(parser, TOKEN_IDENTIFIER, "Expected a module name after '::'.");
-            uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
+            uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             emit_op_u16(parser, OP_GET_MEMBER, index);
         }
 
@@ -1283,7 +1330,7 @@ static void parse_assignment_expr(Parser* parser, bool can_assign, bool can_assi
     parse_conditional_expr(parser, can_assign, can_assign_in_parens);
 
     if (can_assign && match_assignment_token(parser)) {
-        err_at_prev(parser, "Invalid assignment target.");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid assignment target.");
     }
 }
 
@@ -1352,7 +1399,7 @@ static void parse_echo_stmt(Parser* parser) {
         count++;
     }
     if (count > 255) {
-        err_at_prev(parser, "Too many arguments for 'echo' (max: 255).");
+        ERROR_AT_PREVIOUS_TOKEN("Too many arguments for 'echo' (max: 255).");
     }
     consume(parser, TOKEN_SEMICOLON, "Expected ';' after expression.");
     emit_bytes(parser, OP_ECHO, count);
@@ -1381,7 +1428,7 @@ static void parse_unpacking_declaration(Parser* parser) {
         uint16_t index = consume_variable_name(parser, "Expected variable name.");
         indexes[count++] = index;
         if (count > 16) {
-            err_at_prev(parser, "Too many variable names in list (max: 16).");
+            ERROR_AT_PREVIOUS_TOKEN("Too many variable names in list (max: 16).");
         }
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
@@ -1421,10 +1468,10 @@ static void parse_var_declaration(Parser* parser) {
 
 static void parse_import_stmt(Parser* parser) {
     consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
-    uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous);
+    uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
     emit_op_u16(parser, OP_LOAD_CONSTANT, module_index);
 
-    Token module_name = parser->previous;
+    Token module_name = parser->previous_token;
     Token member_names[16];
     uint16_t member_indexes[16];
     int module_count = 1;
@@ -1434,12 +1481,12 @@ static void parse_import_stmt(Parser* parser) {
         if (match(parser, TOKEN_LEFT_BRACE)) {
             do {
                 consume(parser, TOKEN_IDENTIFIER, "Expected member name.");
-                member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous);
+                member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous_token);
                 emit_op_u16(parser, OP_LOAD_CONSTANT, member_indexes[member_count]);
-                member_names[member_count] = parser->previous;
+                member_names[member_count] = parser->previous_token;
                 member_count++;
                 if (member_count > 16) {
-                    err_at_prev(parser, "Too many member names in import statement.");
+                    ERROR_AT_PREVIOUS_TOKEN("Too many member names in import statement.");
                     break;
                 }
             } while (match(parser, TOKEN_COMMA));
@@ -1447,14 +1494,14 @@ static void parse_import_stmt(Parser* parser) {
             break;
         }
         consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
-        module_index = make_string_constant_from_identifier(parser, &parser->previous);
+        module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
         emit_op_u16(parser, OP_LOAD_CONSTANT, module_index);
-        module_name = parser->previous;
+        module_name = parser->previous_token;
         module_count++;
     }
 
     if (module_count > 255) {
-        err_at_prev(parser, "Too many module names in import statement.");
+        ERROR_AT_PREVIOUS_TOKEN("Too many module names in import statement.");
     }
 
     if (member_count > 0) {
@@ -1470,13 +1517,13 @@ static void parse_import_stmt(Parser* parser) {
     if (match(parser, TOKEN_AS)) {
         do {
             consume(parser, TOKEN_IDENTIFIER, "Expected alias name in import statement.");
-            module_index = make_string_constant_from_identifier(parser, &parser->previous);
-            module_name = parser->previous;
-            member_names[alias_count] = parser->previous;
+            module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
+            module_name = parser->previous_token;
+            member_names[alias_count] = parser->previous_token;
             member_indexes[alias_count] = module_index;
             alias_count++;
             if (alias_count > 16) {
-                err_at_prev(parser, "Too many alias names in import statement.");
+                ERROR_AT_PREVIOUS_TOKEN("Too many alias names in import statement.");
                 break;
             }
         } while (match(parser, TOKEN_COMMA));
@@ -1484,7 +1531,7 @@ static void parse_import_stmt(Parser* parser) {
 
     if (member_count > 0) {
         if (alias_count > 0 && alias_count != member_count) {
-            err_at_prev(parser, "Alias and member numbers do not match.");
+            ERROR_AT_PREVIOUS_TOKEN("Alias and member numbers do not match.");
             return;
         }
         for (int i = 0; i < member_count; i++) {
@@ -1493,7 +1540,7 @@ static void parse_import_stmt(Parser* parser) {
         define_variables(parser, member_indexes, member_count);
     } else {
         if (alias_count > 1) {
-            err_at_prev(parser, "Too many alias names in import statement.");
+            ERROR_AT_PREVIOUS_TOKEN("Too many alias names in import statement.");
             return;
         }
         declare_variable(parser, module_name);
@@ -1519,8 +1566,7 @@ static void parse_if_stmt(Parser* parser) {
     // Parse the condition.
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
-        err_at_prev(
-            parser,
+        ERROR_AT_PREVIOUS_TOKEN(
             "Assignment is disabled inside 'if' conditions. "
             "(Wrap the assignment in parentheses to enable it.)"
         );
@@ -1565,7 +1611,7 @@ static void emit_loop(Parser* parser, size_t start_index) {
 
     size_t offset = parser->compiler->fn->code_count - start_index + 2;
     if (offset > UINT16_MAX) {
-        err_at_prev(parser, "Loop body is too large.");
+        ERROR_AT_PREVIOUS_TOKEN("Loop body is too large.");
     }
 
     emit_byte(parser, (offset >> 8) & 0xff);
@@ -1584,15 +1630,15 @@ static void parse_for_in_stmt(Parser* parser) {
     if (match(parser, TOKEN_LEFT_PAREN)) {
         do {
             consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
-            unpacking_names[unpacking_count++] = parser->previous;
+            unpacking_names[unpacking_count++] = parser->previous_token;
             if (unpacking_count > 8) {
-                err_at_prev(parser, "Too many variable names in list (max: 8).");
+                ERROR_AT_PREVIOUS_TOKEN("Too many variable names to unpack (max: 8).");
             }
         } while (match(parser, TOKEN_COMMA));
         consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after variable names.");
     } else {
         consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
-        loop_var_name = parser->previous;
+        loop_var_name = parser->previous_token;
     }
 
     consume(parser, TOKEN_IN, "Expected keyword 'in'.");
@@ -1829,7 +1875,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     if (!check(parser, TOKEN_RIGHT_PAREN)) {
         do {
             if (compiler.fn->arity == 255) {
-                err_at_curr(parser, "Too many parameters (max: 255).");
+                ERROR_AT_NEXT_TOKEN("Too many parameters (max: 255).");
             }
             compiler.fn->arity++;
             uint16_t index = consume_variable_name(parser, "Expected parameter name.");
@@ -1844,11 +1890,11 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     // Check the arity for known method names.
     if (type == TYPE_METHOD) {
         if (strcmp(compiler.fn->name->bytes, "$fmt") == 0 && compiler.fn->arity != 1) {
-            err_at_prev(parser, "Invalid method definition, $fmt() takes 1 argument.");
+            ERROR_AT_PREVIOUS_TOKEN("Invalid method definition, $fmt() takes 1 argument.");
             return;
         }
         if (strcmp(compiler.fn->name->bytes, "$str") == 0 && compiler.fn->arity != 0) {
-            err_at_prev(parser, "Invalid method definition, $str() takes no arguments.");
+            ERROR_AT_PREVIOUS_TOKEN("Invalid method definition, $str() takes no arguments.");
             return;
         }
     }
@@ -1875,20 +1921,20 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 static void parse_function_declaration(Parser* parser) {
     uint16_t index = consume_variable_name(parser, "Expected function name.");
     mark_initialized(parser);
-    parse_function_definition(parser, TYPE_FUNCTION, parser->previous);
+    parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
     define_variable(parser, index);
 }
 
 
 static void parse_method_declaration(Parser* parser) {
     consume(parser, TOKEN_IDENTIFIER, "Expected method name.");
-    uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
+    uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
     FnType type = TYPE_METHOD;
-    if (parser->previous.length == 5 && memcmp(parser->previous.start, "$init", 5) == 0) {
+    if (parser->previous_token.length == 5 && memcmp(parser->previous_token.start, "$init", 5) == 0) {
         type = TYPE_INIT_METHOD;
     }
-    parse_function_definition(parser, type, parser->previous);
+    parse_function_definition(parser, type, parser->previous_token);
 
     emit_op_u16(parser, OP_DEFINE_METHOD, index);
 }
@@ -1897,7 +1943,7 @@ static void parse_method_declaration(Parser* parser) {
 static void parse_field_declaration(Parser* parser) {
     do {
         consume(parser, TOKEN_IDENTIFIER, "Expected field name.");
-        uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
+        uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
         if (match(parser, TOKEN_EQUAL)) {
             parse_expression(parser, true, true);
@@ -1913,24 +1959,24 @@ static void parse_field_declaration(Parser* parser) {
 
 static void parse_class_declaration(Parser* parser) {
     consume(parser, TOKEN_IDENTIFIER, "Expected class name.");
-    Token class_name = parser->previous;
+    Token class_name = parser->previous_token;
 
-    uint16_t index = make_string_constant_from_identifier(parser, &parser->previous);
-    declare_variable(parser, parser->previous);
+    uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
+    declare_variable(parser, parser->previous_token);
 
     emit_op_u16(parser, OP_MAKE_CLASS, index);
     define_variable(parser, index);
 
     // Push a new class compiler onto the implicit linked-list stack.
     ClassCompiler class_compiler;
-    class_compiler.name = parser->previous;
+    class_compiler.name = parser->previous_token;
     class_compiler.has_superclass = false;
     class_compiler.enclosing = parser->class_compiler;
     parser->class_compiler = &class_compiler;
 
     if (match(parser, TOKEN_LESS)) {
         consume(parser, TOKEN_IDENTIFIER, "Expected superclass name.");
-        load_named_variable(parser, parser->previous);
+        load_named_variable(parser, parser->previous_token);
 
         // We declare 'super' as a local variable in a new lexical scope wrapping the method
         // declarations so it can be captured by the upvalue machinery.
@@ -1970,14 +2016,14 @@ static void parse_class_declaration(Parser* parser) {
 
 static void parse_return_stmt(Parser* parser) {
     if (parser->compiler->type == TYPE_MODULE) {
-        err_at_prev(parser, "Can't return from top-level code.");
+        ERROR_AT_PREVIOUS_TOKEN("Can't return from top-level code.");
     }
 
     if (match(parser, TOKEN_SEMICOLON)) {
         emit_return(parser);
     } else {
         if (parser->compiler->type == TYPE_INIT_METHOD) {
-            err_at_prev(parser, "Can't return a value from an initializer.");
+            ERROR_AT_PREVIOUS_TOKEN("Can't return a value from an initializer.");
         }
         parse_expression(parser, true, true);
         consume(parser, TOKEN_SEMICOLON, "Expected ';' after return value.");
@@ -1988,7 +2034,7 @@ static void parse_return_stmt(Parser* parser) {
 
 static void parse_break_stmt(Parser* parser) {
     if (parser->compiler->loop_compiler == NULL) {
-        err_at_prev(parser, "Invalid use of 'break' outside a loop.");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'break' outside a loop.");
         return;
     }
     parser->compiler->loop_compiler->had_break = true;
@@ -2001,7 +2047,7 @@ static void parse_break_stmt(Parser* parser) {
 
 static void parse_continue_stmt(Parser* parser) {
     if (parser->compiler->loop_compiler == NULL) {
-        err_at_prev(parser, "Invalid use of 'continue' outside a loop.");
+        ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'continue' outside a loop.");
         return;
     }
 
@@ -2084,22 +2130,26 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
     FnCompiler compiler;
-    if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, syntoken("module"))) {
+    if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, basename_syntoken(src_id))) {
         vm->status_code = ERR_OUT_OF_MEMORY;
         return NULL;
     }
 
-    // Prime the token pump.
+    // Prime the token pump by reading the first token from the lexer.
     advance(&parser);
+    if (parser.had_syntax_error) {
+        return NULL;
+    }
 
+    // We can get a cascade of syntax errors while parsing a single statement but only the first
+    // will be reported. If the [had_syntax_error] flag is set, a panic has already been raised.
     while (!match(&parser, TOKEN_EOF)) {
         parse_statement(&parser);
         if (parser.had_syntax_error) {
-            vm->status_code = ERR_SYNTAX_ERROR;
             return NULL;
         }
         if (parser.had_memory_error) {
-            vm->status_code = ERR_OUT_OF_MEMORY;
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
         }
     }
@@ -2117,14 +2167,15 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
 }
 
 
-// We disable the garbage collector during compilation to simplify the compiler's interface by
-// guaranteeing that it can never panic. If the garbage collector were to fire during compilation
-// it could theoretically raise a hard panic in the background if it failed to allocate sufficient
-// memory for the grey stack. With the GC disabled, the compiler never panics, it simply returns
-// NULL in case of a syntax error or memory allocation failure.
+// This wrappper disables the garbage collector during compilation.
 ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     vm->gc_disallows++;
     ObjFn* fn = compile(vm, src_code, src_len, src_id);
     vm->gc_disallows--;
     return fn;
 }
+
+
+// Undefine file-specific macros.
+#undef ERROR_AT_PREVIOUS_TOKEN
+#undef ERROR_AT_NEXT_TOKEN

@@ -9,6 +9,7 @@
 #include "operators.h"
 #include "setup.h"
 #include "stringify.h"
+#include "panics.h"
 
 #include "../lib/os/os.h"
 
@@ -1398,17 +1399,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
     vm->status_code = 0;
 
     ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id);
-    if (!fn) {
-        if (vm->status_code == ERR_SYNTAX_ERROR) {
-            pyro_panic(vm, ERR_SYNTAX_ERROR, NULL);
-        } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
-            pyro_panic(
-                vm, ERR_OUT_OF_MEMORY,
-                "Out of memory, unable to compile '%s'.", src_id
-            );
-        } else {
-            assert(false);
-        }
+    if (vm->halt_flag) {
         return;
     }
 
@@ -1494,22 +1485,8 @@ void pyro_try_compile_file(PyroVM* vm, const char* path) {
     if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
         return;
     }
-
-    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path);
+    pyro_compile(vm, fd.data, fd.size, path);
     FREE_ARRAY(vm, char, fd.data, fd.size);
-    if (!fn) {
-        if (vm->status_code == ERR_SYNTAX_ERROR) {
-            pyro_panic(vm, ERR_SYNTAX_ERROR, NULL);
-        } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
-            pyro_panic(
-                vm, ERR_OUT_OF_MEMORY,
-                "Out of memory, unable to compile file '%s'.", path
-            );
-        } else {
-            assert(false);
-        }
-    }
-    return;
 }
 
 
@@ -1536,17 +1513,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
 
     ObjFn* fn = pyro_compile(vm, fd.data, fd.size, filepath);
     FREE_ARRAY(vm, char, fd.data, fd.size);
-    if (!fn) {
-        if (vm->status_code == ERR_SYNTAX_ERROR) {
-            pyro_panic(vm, ERR_SYNTAX_ERROR, "Unable to compile module '%s'.", filepath);
-        } else if (vm->status_code == ERR_OUT_OF_MEMORY) {
-            pyro_panic(
-                vm, ERR_OUT_OF_MEMORY,
-                "Out of memory, unable to compile module '%s'.", filepath
-            );
-        } else {
-            assert(false);
-        }
+    if (vm->halt_flag) {
         return;
     }
 
