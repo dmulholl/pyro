@@ -279,15 +279,15 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
 
 
 void pyro_disassemble_function(PyroVM* vm, ObjFn* fn) {
-    pyro_out(vm, "== %s constant table ==\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
+    pyro_out(vm, "\x1B[1;32mconstants\x1B[0m %s\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
+
     for (size_t i = 0; i < fn->constants_count; i++) {
         pyro_out(vm, "%04d    ", i);
         pyro_dump_value(vm, fn->constants[i]);
         pyro_out(vm, "\n");
     }
-    pyro_out(vm, "\n");
 
-    pyro_out(vm, "== %s bytecode ==\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
+    pyro_out(vm, "\n\x1B[1;32mbytecode\x1B[0m %s\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
     for (size_t ip = 0; ip < fn->code_count;) {
         ip = pyro_disassemble_instruction(vm, fn, ip);
     }

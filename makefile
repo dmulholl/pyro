@@ -29,23 +29,35 @@ release::
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES)
 	@printf "\x1B[1;32m Version\x1B[0m " && ./out/release/pyro --version
 
-# Basic debug build. Assertions are checked and the GC is run before every allocation.
-debug debug1::
+# Debug build. Assertions are checked and the GC is run before every allocation.
+debug1 debug::
 	@mkdir -p out/debug
 	@printf "\x1B[1;32mBuilding\x1B[0m debug binary\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) -o out/debug/pyro $(FILES)
 	@printf "\x1B[1;32m Version\x1B[0m " && ./out/debug/pyro --version
 
-# As debug1, also dumps bytecode and traces execution opcode-by-opcode.
+# Debug build. Dumps bytecode.
 debug2::
 	@mkdir -p out/debug
-	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (code dump, execution trace)\n"
-	@$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP_CODE) $(TRACE_EXEC) -o out/debug/pyro $(FILES)
+	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (dumps bytecode)\n"
+	@$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP_CODE) -o out/debug/pyro $(FILES)
 
-# As debug2, with GC logging. This generates *very* verbose output.
+# Debug build. Traces execution.
 debug3::
 	@mkdir -p out/debug
-	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (code dump, execution trace, GC logging)\n"
+	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (traces execution)\n"
+	@$(CC) $(CFLAGS) $(STRESS_GC) $(TRACE_EXEC) -o out/debug/pyro $(FILES)
+
+# Debug build. Dumps bytecode and traces execution.
+debug4::
+	@mkdir -p out/debug
+	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (dumps bytecode, traces execution)\n"
+	@$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP_CODE) $(TRACE_EXEC) -o out/debug/pyro $(FILES)
+
+# Debug build. Dumps bytecode, traces execution, and logs the GC.
+debug5::
+	@mkdir -p out/debug
+	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (dumps code, traces execution, logs GC)\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP_CODE) $(TRACE_EXEC) $(LOG_GC) -o out/debug/pyro $(FILES)
 
 # Runs the standard debug build, then runs the test suite.

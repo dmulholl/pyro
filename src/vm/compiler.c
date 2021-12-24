@@ -165,9 +165,9 @@ static Token basename_syntoken(const char* source_id) {
     // Find the last character of the basename.
     const char* end = start;
     while (end < last_char) {
-        if (*(end + 1) == '.') {
-            break;
-        }
+        /* if (*(end + 1) == '.') { */
+        /*     break; */
+        /* } */
         end++;
     }
 
