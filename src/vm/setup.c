@@ -5,13 +5,7 @@
 #include "utils.h"
 #include "panics.h"
 
-#include "../std/std_core.h"
-#include "../std/std_math.h"
-#include "../std/std_pyro.h"
-#include "../std/std_prng.h"
-#include "../std/std_errors.h"
-#include "../std/std_path.h"
-
+#include "../std/std_lib.h"
 #include "../lib/os/os.h"
 #include "../lib/mt64/mt64.h"
 

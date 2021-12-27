@@ -1,4 +1,4 @@
-#include "std_pyro.h"
+#include "std_lib.h"
 
 #include "../vm/vm.h"
 #include "../vm/heap.h"

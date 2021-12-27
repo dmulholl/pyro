@@ -1,4 +1,4 @@
-#include "std_prng.h"
+#include "std_lib.h"
 
 #include "../vm/values.h"
 #include "../vm/vm.h"

@@ -1,4 +1,4 @@
-#include "std_errors.h"
+#include "std_lib.h"
 
 #include "../vm/vm.h"
 #include "../vm/values.h"

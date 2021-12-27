@@ -1,4 +1,4 @@
-#include "std_core.h"
+#include "std_lib.h"
 
 #include "../vm/values.h"
 #include "../vm/vm.h"
@@ -8,6 +8,7 @@
 #include "../vm/setup.h"
 #include "../vm/stringify.h"
 #include "../vm/panics.h"
+#include "../vm/exec.h"
 
 
 static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
