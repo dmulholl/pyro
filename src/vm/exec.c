@@ -10,95 +10,9 @@
 #include "setup.h"
 #include "stringify.h"
 #include "panics.h"
+#include "imports.h"
 
 #include "../lib/os/os.h"
-
-
-// Attempts to import the module specified by the argument list --- an array of [ObjStr*] values
-// specifying the import path. This function attempts to find a file or directory matching the
-// import path, compiles the file if it finds one, then executes it in the context of the supplied
-// [module] object.
-//
-// This function can panic or exit, setting the halt flag in either case. It will panic if a file
-// or directory matching the import path cannot be found, if the module code contains syntax errors,
-// if the VM runs out of memory, or if executing the code raises a panic for any reason.
-static void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
-    for (size_t i = 0; i < vm->import_roots->count; i++) {
-        ObjStr* base = AS_STR(vm->import_roots->values[i]);
-
-        bool has_trailing_slash = false;
-        if (base->length > 0 && base->bytes[base->length - 1] == '/') {
-            has_trailing_slash = true;
-        }
-
-        size_t path_length = has_trailing_slash ? base->length : base->length + 1;
-        for (uint8_t j = 0; j < arg_count; j++) {
-            path_length += AS_STR(args[j])->length + 1;
-        }
-        path_length += 4 + 5; // add space for a [.pyro] or [/self.pyro] suffix
-
-        char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
-        if (!path) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return;
-        }
-
-        // We start with path = BASE/
-        memcpy(path, base->bytes, base->length);
-        size_t path_count = base->length;
-        if (!has_trailing_slash) {
-            path[path_count++] = '/';
-        }
-
-        // Given 'import foo::bar::baz', assemble path = BASE/foo/bar/baz/
-        for (uint8_t j = 0; j < arg_count; j++) {
-            ObjStr* name = AS_STR(args[j]);
-            memcpy(path + path_count, name->bytes, name->length);
-            path_count += name->length;
-            path[path_count++] = '/';
-        }
-
-        // 1. Try file: BASE/foo/bar/baz.pyro
-        memcpy(path + path_count - 1, ".pyro", 5);
-        path_count += 4;
-        path[path_count] = '\0';
-
-        if (pyro_is_file(path)) {
-            pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_length + 1);
-            return;
-        }
-
-        // 2. Try file: BASE/foo/bar/baz/self.pyro
-        memcpy(path + path_count - 5, "/self.pyro", 10);
-        path_count += 5;
-        path[path_count] = '\0';
-
-        if (pyro_is_file(path)) {
-            pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_length + 1);
-            return;
-        }
-
-        // 3. Try dir: BASE/foo/bar/baz
-        path_count -= 10;
-        path[path_count] = '\0';
-
-        if (pyro_is_dir(path)) {
-            FREE_ARRAY(vm, char, path, path_length + 1);
-            return;
-        }
-
-        FREE_ARRAY(vm, char, path, path_length + 1);
-    }
-
-    pyro_panic(
-        vm, ERR_MODULE_NOT_FOUND,
-        "Unable to locate module '%s'.", AS_STR(args[arg_count - 1])->bytes
-    );
-
-    return;
-}
 
 
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
@@ -671,12 +585,16 @@ static void run(PyroVM* vm) {
             }
 
             case OP_IMPORT_MODULE: {
+                // The import path is stored on the stack as an array of [arg_count] strings.
                 uint8_t arg_count = READ_BYTE();
                 Value* args = vm->stack_top - arg_count;
 
                 ObjMap* supermod_modules_map = vm->modules;
                 Value module_value;
 
+                // This loop imports ancestor modules along the path if they haven't already been
+                // imported, i.e. if the path is foo::bar::baz this loop will first import foo then
+                // foo::bar then foo::bar::baz.
                 for (uint8_t i = 0; i < arg_count; i++) {
                     Value name = args[i];
 
