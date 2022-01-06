@@ -656,7 +656,7 @@ ObjStr* pyro_stringify(PyroVM* vm, Value value) {
             return vm->str_null;
 
         case VAL_I64:
-            return pyro_sprintf_to_obj(vm, "%lld", value.as.i64);
+            return pyro_sprintf_to_obj(vm, "%" PRId64, value.as.i64);
 
         case VAL_F64: {
             char* array = pyro_sprintf(vm, "%.6f", value.as.f64);
