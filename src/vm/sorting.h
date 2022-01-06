@@ -1,7 +1,7 @@
 #ifndef pyro_sorting_h
 #define pyro_sorting_h
 
-#include "common.h"
+#include "pyro.h"
 #include "values.h"
 
 // Shuffles the array using Fisher-Yates/Durstenfeld shuffling.

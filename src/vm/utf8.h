@@ -1,7 +1,7 @@
 #ifndef pyro_utf8_h
 #define pyro_utf8_h
 
-#include "common.h"
+#include "pyro.h"
 
 // Output struct for [pyro_read_utf8_codepoint]. [length] is the number of bytes in the utf-8
 // encoding.

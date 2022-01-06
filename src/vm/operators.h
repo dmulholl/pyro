@@ -1,7 +1,7 @@
 #ifndef pyro_operators_h
 #define pyro_operators_h
 
-#include "common.h"
+#include "pyro.h"
 #include "values.h"
 
 // Returns [a] + [b]. Panics if the operation is not defined for the operand types.

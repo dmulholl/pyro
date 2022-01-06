@@ -1,7 +1,7 @@
 #ifndef pyro_utils_h
 #define pyro_utils_h
 
-#include "common.h"
+#include "pyro.h"
 
 // Output struct for [pyro_read_file].
 typedef struct {

@@ -53,7 +53,7 @@ static Value fn_dirname(PyroVM* vm, size_t arg_count, Value* args) {
     }
     char* path = AS_STR(args[0])->bytes;
 
-    char* path_copy = strdup(path);
+    char* path_copy = pyro_strdup(path);
     if (!path_copy) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();
@@ -85,7 +85,7 @@ static Value fn_basename(PyroVM* vm, size_t arg_count, Value* args) {
     }
     char* path = AS_STR(args[0])->bytes;
 
-    char* path_copy = strdup(path);
+    char* path_copy = pyro_strdup(path);
     if (!path_copy) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL_VAL();

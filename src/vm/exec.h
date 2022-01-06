@@ -1,7 +1,7 @@
 #ifndef pyro_exec_h
 #define pyro_exec_h
 
-#include "common.h"
+#include "pyro.h"
 #include "values.h"
 
 // Executes a chunk of code in the context of the VM's main module. Outside of string literals the

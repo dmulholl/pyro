@@ -1,7 +1,7 @@
 #ifndef pyro_values_h
 #define pyro_values_h
 
-#include "common.h"
+#include "pyro.h"
 
 typedef enum {
     VAL_BOOL,       // A Pyro boolean, true or false.

@@ -1,22 +1,7 @@
 #ifndef pyro_os_h
 #define pyro_os_h
 
-// C standard library. (No OS-dependent headers.)
-#include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <math.h>
-#include <time.h>
-#include <inttypes.h>
-#include <ctype.h>
-#include <errno.h>
-
-#include "../../vm/common.h"
+#include "../../vm/pyro.h"
 
 // Returns true if a file or directory exists at [path].
 // If [path] is a symlink, returns true if the target of the link exists.
@@ -54,7 +39,7 @@ int pyro_rmrf(const char* path);
 // Returns 0 if successful, -1 if an error occurs.
 int pyro_sleep(double time_in_seconds);
 
-// Wrapper for getcwd(). Returns NULL if an error occurs. The returned striing should be freed
+// Wrapper for POSIX getcwd(). Returns NULL if an error occurs. The returned string should be freed
 // with free().
 char* pyro_getcwd(void);
 
@@ -74,5 +59,8 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out);
 // Wrapper for POSIX realpath(). Returns NULL on failure, a freshly allocated string on success.
 // If the return value is non-NULL, the caller should free it using free().
 char* pyro_realpath(const char* path);
+
+// Wrapper for POSIX strdup().
+char* pyro_strdup(const char* source);
 
 #endif

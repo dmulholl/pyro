@@ -1,7 +1,7 @@
 #ifndef pyro_opcodes_h
 #define pyro_opcodes_h
 
-#include "common.h"
+#include "pyro.h"
 
 typedef enum {
     OP_ASSERT,

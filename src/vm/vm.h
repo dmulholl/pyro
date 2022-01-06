@@ -1,7 +1,7 @@
 #ifndef pyro_vm_h
 #define pyro_vm_h
 
-#include "common.h"
+#include "pyro.h"
 #include "values.h"
 #include "objects.h"
 #include "utils.h"

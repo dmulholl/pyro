@@ -1,7 +1,7 @@
 #ifndef pyro_objects_h
 #define pyro_objects_h
 
-#include "common.h"
+#include "pyro.h"
 #include "values.h"
 
 /* ------- */

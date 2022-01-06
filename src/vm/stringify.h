@@ -1,7 +1,7 @@
 #ifndef pyro_stringify_h
 #define pyro_stringify_h
 
-#include "common.h"
+#include "pyro.h"
 #include "values.h"
 
 // Prints to an automatically-allocated, null-terminated array using printf-style formatting.

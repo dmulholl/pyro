@@ -1,7 +1,7 @@
 #ifndef pyro_panics_h
 #define pyro_panics_h
 
-#include "common.h"
+#include "pyro.h"
 
 // This function triggers a panic. It:
 // - Sets vm->panic_flag to true.

@@ -24,6 +24,9 @@
 // POSIX: opendir() closedir()
 #include <dirent.h>
 
+// POSIX: strdup()
+#include <string.h>
+
 
 // If [path] is a symlink, stat() returns info about the target of the link.
 bool pyro_exists(const char* path) {
@@ -252,4 +255,9 @@ char* pyro_realpath(const char* path) {
     }
 
     return array;
+}
+
+
+char* pyro_strdup(const char* source) {
+    return strdup(source);
 }
