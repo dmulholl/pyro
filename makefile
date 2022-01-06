@@ -25,45 +25,45 @@ FILES = ${PYRO_FILES} ${LIB_FILES} -lm
 # Optimized release build.
 release::
 	@mkdir -p out/release
-	@printf "\x1B[1;32mBuilding\x1B[0m release binary\n"
+	@printf "\e[1;32mBuilding\e[0m release binary\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES)
-	@printf "\x1B[1;32m Version\x1B[0m " && ./out/release/pyro --version
+	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 # Debug build. Assertions are checked and the GC is run before every allocation.
 debug1 debug::
 	@mkdir -p out/debug
-	@printf "\x1B[1;32mBuilding\x1B[0m debug binary\n"
+	@printf "\e[1;32mBuilding\e[0m debug binary\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) -o out/debug/pyro $(FILES)
-	@printf "\x1B[1;32m Version\x1B[0m " && ./out/debug/pyro --version
+	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 # Debug build. Dumps bytecode.
 debug2::
 	@mkdir -p out/debug
-	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (dumps bytecode)\n"
+	@printf "\e[1;32mBuilding\e[0m debug binary (dumps bytecode)\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP_CODE) -o out/debug/pyro $(FILES)
 
 # Debug build. Traces execution.
 debug3::
 	@mkdir -p out/debug
-	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (traces execution)\n"
+	@printf "\e[1;32mBuilding\e[0m debug binary (traces execution)\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) $(TRACE_EXEC) -o out/debug/pyro $(FILES)
 
 # Debug build. Dumps bytecode and traces execution.
 debug4::
 	@mkdir -p out/debug
-	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (dumps bytecode, traces execution)\n"
+	@printf "\e[1;32mBuilding\e[0m debug binary (dumps bytecode, traces execution)\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP_CODE) $(TRACE_EXEC) -o out/debug/pyro $(FILES)
 
 # Debug build. Dumps bytecode, traces execution, and logs the GC.
 debug5::
 	@mkdir -p out/debug
-	@printf "\x1B[1;32mBuilding\x1B[0m debug binary (dumps code, traces execution, logs GC)\n"
+	@printf "\e[1;32mBuilding\e[0m debug binary (dumps code, traces execution, logs GC)\n"
 	@$(CC) $(CFLAGS) $(STRESS_GC) $(DUMP_CODE) $(TRACE_EXEC) $(LOG_GC) -o out/debug/pyro $(FILES)
 
 # Runs the standard debug build, then runs the test suite.
 check::
 	@make debug
-	@printf "\x1B[1;32m Running\x1B[0m test suite\n\n"
+	@printf "\e[1;32m Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
 
 clean::
