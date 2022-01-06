@@ -1,5 +1,5 @@
-#include "vm.h"
 #include "exec.h"
+#include "vm.h"
 #include "opcodes.h"
 #include "debug.h"
 #include "compiler.h"
