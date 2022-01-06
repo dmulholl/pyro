@@ -7,4 +7,8 @@ A line-editing library by Salvatore Sanfilippo.
 * Last commit date: 2020-03-12
 * Last commit hash: 97d2850af13c339369093b78abe5265845d78220
 
-Gently edited to eliminate a compiler warning about a debugging macro.
+Changes:
+
+* Edited to eliminate a compiler warning about an unused debugging macro.
+* Added a POSIX define to enable compiler support for `strdup()` and `strcasecmp()`.
+* Added a `<strings.h>` include for `strcasecmp()`.

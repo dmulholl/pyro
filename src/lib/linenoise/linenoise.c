@@ -103,6 +103,11 @@
  *
  */
 
+// Add support for the POSIX functions strdup() and strcasecmp().
+#ifndef _XOPEN_SOURCE
+    #define _XOPEN_SOURCE 700
+#endif
+
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -115,6 +120,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <strings.h> // for strcasecmp()
 #include "linenoise.h"
 
 #define LINENOISE_DEFAULT_HISTORY_MAX_LEN 100
