@@ -16,7 +16,7 @@ PYRO_FILES = src/vm/*.c src/std/*.c src/cli/*.c
 
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c src/lib/os/*.c
 
-FILES = ${PYRO_FILES} ${LIB_FILES}
+FILES = ${PYRO_FILES} ${LIB_FILES} -lm
 
 # --------------- #
 #  Phony Targets  #
