@@ -74,8 +74,10 @@
     #define PYRO_PANIC_BUFFER_SIZE 256
 #endif
 
-// Enable functionality from the 2008 edition of the POSIX standard (IEEE Standard 1003.1-2008).
-#define _XOPEN_SOURCE 700
+// Defining this macro causes header files to expose definitions conforming to POSIX 2008.
+#ifndef _XOPEN_SOURCE
+    #define _XOPEN_SOURCE 700
+#endif
 
 // C standard library -- no OS-dependent headers.
 #include <assert.h>
