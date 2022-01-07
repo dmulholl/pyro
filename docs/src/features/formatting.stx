@@ -32,9 +32,10 @@ A placeholder can contain a format specifier --- if the value has a `:$fmt(spec)
 You can use `printf`--style formatting specifiers to format `i64` values, e.g.
 
 ::: code pyro
-    assert $fmt("{d}", 99) == "99";
-    assert $fmt("{4d}", 99) == "  99";
-    assert $fmt("{04d}", 99) == "0099";
+    assert $fmt("{d}", 123) == "123";
+    assert $fmt("{4d}", 123) == " 123";
+    assert $fmt("{04d}", 123) == "0123";
+    assert $fmt("{04x}", 123) == "007b";
 
 The set of valid letters is:
 
@@ -43,7 +44,7 @@ The set of valid letters is:
 * `x` for lowercase hexadecimal.
 * `X` for uppercase hexadecimal.
 
-Applying octal or hexadecimal formatting to a negative integer value returns its two's complement.
+(Note that applying octal or hexadecimal formatting to a negative integer value returns its two's complement.)
 
 
 

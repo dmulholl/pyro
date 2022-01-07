@@ -90,9 +90,10 @@ Formatting Integers
 You can use <code>printf</code>&ndash;style formatting specifiers to format <code>i64</code> values, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{d}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;99&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{4d}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;  99&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{04d}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;0099&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{d}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;123&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{4d}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot; 123&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{04d}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;0123&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{04x}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;007b&quot;</span><span class="p">;</span>
 </pre>
 <p>
 The set of valid letters is:
@@ -112,7 +113,7 @@ The set of valid letters is:
 </li>
 </ul>
 <p>
-Applying octal or hexadecimal formatting to a negative integer value returns its two's complement.
+(Note that applying octal or hexadecimal formatting to a negative integer value returns its two's complement.)
 </p>
 <h3 id="formatting-floats">
 Formatting Floats
