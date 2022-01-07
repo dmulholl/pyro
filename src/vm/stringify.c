@@ -157,7 +157,7 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
 
     for (size_t i = 0; i < tup->count; i++) {
         Value item = tup->values[i];
-        ObjStr* item_string = pyro_stringify_debug(vm, item);
+        ObjStr* item_string = pyro_debugify_value(vm, item);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -210,7 +210,7 @@ static ObjStr* stringify_vector(PyroVM* vm, ObjVec* vec) {
 
     for (size_t i = 0; i < vec->count; i++) {
         Value item = vec->values[i];
-        ObjStr* item_string = pyro_stringify_debug(vm, item);
+        ObjStr* item_string = pyro_debugify_value(vm, item);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -278,7 +278,7 @@ static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
         }
         is_first_entry = false;
 
-        ObjStr* key_string = pyro_stringify_debug(vm, entry->key);
+        ObjStr* key_string = pyro_debugify_value(vm, entry->key);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -295,7 +295,7 @@ static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
             return NULL;
         }
 
-        ObjStr* value_string = pyro_stringify_debug(vm, entry->value);
+        ObjStr* value_string = pyro_debugify_value(vm, entry->value);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -356,7 +356,7 @@ static ObjStr* stringify_map_as_set(PyroVM* vm, ObjMap* map) {
         }
         is_first_entry = false;
 
-        ObjStr* key_string = pyro_stringify_debug(vm, entry->key);
+        ObjStr* key_string = pyro_debugify_value(vm, entry->key);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -411,7 +411,7 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
             }
         }
 
-        ObjStr* item_string = pyro_stringify_debug(vm, next_item->value);
+        ObjStr* item_string = pyro_debugify_value(vm, next_item->value);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -647,7 +647,7 @@ ObjStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...) {
 }
 
 
-ObjStr* pyro_stringify(PyroVM* vm, Value value) {
+ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_BOOL:
             return value.as.boolean ? vm->str_true : vm->str_false;
@@ -704,7 +704,7 @@ ObjStr* pyro_stringify(PyroVM* vm, Value value) {
 }
 
 
-ObjStr* pyro_stringify_debug(PyroVM* vm, Value value) {
+ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
     Value method = pyro_get_method(vm, value, vm->str_debug);
     if (!IS_NULL(method)) {
         pyro_push(vm, value);
@@ -737,7 +737,7 @@ ObjStr* pyro_stringify_debug(PyroVM* vm, Value value) {
         return string;
     }
 
-    return pyro_stringify(vm, value);
+    return pyro_stringify_value(vm, value);
 }
 
 
@@ -846,7 +846,7 @@ static ObjStr* format_f64(PyroVM* vm, Value value, const char* format_string) {
 }
 
 
-ObjStr* pyro_stringify_formatted(PyroVM* vm, Value value, const char* format_string) {
+ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
     if (IS_I64(value)) {
         if (format_string[0] == '%') {
             return pyro_sprintf_to_obj(vm, format_string, value.as.i64);

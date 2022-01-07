@@ -436,7 +436,7 @@ static void run(PyroVM* vm) {
 
                 for (uint8_t i = arg_count; i > 0; i--) {
                     Value value = vm->stack_top[-i];
-                    ObjStr* string = pyro_stringify(vm, value);
+                    ObjStr* string = pyro_stringify_value(vm, value);
                     if (vm->halt_flag) {
                         return;
                     }
@@ -1032,7 +1032,7 @@ static void run(PyroVM* vm) {
                 Value value = pyro_peek(vm, 0);
 
                 if (vm->in_repl && !IS_NULL(value)) {
-                    ObjStr* string = pyro_stringify_debug(vm, value);
+                    ObjStr* string = pyro_debugify_value(vm, value);
                     if (vm->halt_flag) {
                         return;
                     }

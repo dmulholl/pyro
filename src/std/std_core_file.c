@@ -322,7 +322,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
             }
             return I64_VAL((int64_t)n);
         } else {
-            ObjStr* string = pyro_stringify(vm, args[0]);
+            ObjStr* string = pyro_stringify_value(vm, args[0]);
             if (vm->halt_flag) {
                 return NULL_VAL();
             }

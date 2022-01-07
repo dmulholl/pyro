@@ -12,7 +12,7 @@
 
 
 static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjStr* string = pyro_stringify(vm, args[0]);
+    ObjStr* string = pyro_stringify_value(vm, args[0]);
     if (vm->halt_flag) {
         return NULL_VAL();
     }
@@ -1105,7 +1105,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         pyro_push(vm, next_value);
-        ObjStr* value_string = pyro_stringify(vm, next_value);
+        ObjStr* value_string = pyro_stringify_value(vm, next_value);
         if (vm->halt_flag) {
             return NULL_VAL();
         }

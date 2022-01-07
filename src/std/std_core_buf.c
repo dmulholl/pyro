@@ -198,7 +198,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify(vm, args[0]);
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return NULL_VAL();
         }
