@@ -741,17 +741,131 @@ ObjStr* pyro_stringify_debug(PyroVM* vm, Value value) {
 }
 
 
+static ObjStr* format_i64(PyroVM* vm, Value value, const char* format_string) {
+    char buffer[24] = {'%'};
+    size_t buffer_count = 1;
+
+    size_t format_string_length = strlen(format_string);
+    if (format_string_length > 16) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Format string is too long.");
+        return NULL;
+    }
+
+    memcpy(&buffer[1], format_string, format_string_length - 1);
+    buffer_count += format_string_length - 1;
+
+    switch (format_string[format_string_length - 1]) {
+        case 'd':
+            memcpy(&buffer[buffer_count], PRId64, strlen(PRId64));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.i64);
+
+        case 'o':
+            memcpy(&buffer[buffer_count], PRIo64, strlen(PRIo64));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.u64);
+
+        case 'x':
+            memcpy(&buffer[buffer_count], PRIx64, strlen(PRIx64));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.u64);
+
+        case 'X':
+            memcpy(&buffer[buffer_count], PRIX64, strlen(PRIX64));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.u64);
+
+        default:
+            pyro_panic(vm, ERR_VALUE_ERROR, "Format string '%s' is invalid for i64 value.", format_string);
+            return NULL;
+    }
+}
+
+
+static ObjStr* format_char(PyroVM* vm, Value value, const char* format_string) {
+    char buffer[24] = {'%'};
+    size_t buffer_count = 1;
+
+    size_t format_string_length = strlen(format_string);
+    if (format_string_length > 16) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Format string is too long.");
+        return NULL;
+    }
+
+    memcpy(&buffer[1], format_string, format_string_length - 1);
+    buffer_count += format_string_length - 1;
+
+    switch (format_string[format_string_length - 1]) {
+        case 'd':
+            memcpy(&buffer[buffer_count], PRIu32, strlen(PRIu32));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.u32);
+
+        case 'o':
+            memcpy(&buffer[buffer_count], PRIo32, strlen(PRIo32));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.u32);
+
+        case 'x':
+            memcpy(&buffer[buffer_count], PRIx32, strlen(PRIx32));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.u32);
+
+        case 'X':
+            memcpy(&buffer[buffer_count], PRIX32, strlen(PRIX32));
+            return pyro_sprintf_to_obj(vm, buffer, value.as.u32);
+
+        default:
+            pyro_panic(vm, ERR_VALUE_ERROR, "Format string '%s' is invalid for char value.", format_string);
+            return NULL;
+    }
+}
+
+
+static ObjStr* format_f64(PyroVM* vm, Value value, const char* format_string) {
+    char buffer[24] = {'%'};
+    size_t buffer_count = 1;
+
+    size_t format_string_length = strlen(format_string);
+    if (format_string_length > 16) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Format string is too long.");
+        return NULL;
+    }
+
+    memcpy(&buffer[1], format_string, format_string_length);
+    buffer_count += format_string_length;
+
+    switch (format_string[format_string_length - 1]) {
+        case 'a':
+        case 'A':
+        case 'e':
+        case 'E':
+        case 'f':
+        case 'F':
+        case 'g':
+        case 'G':
+            return pyro_sprintf_to_obj(vm, buffer, value.as.f64);
+
+        default:
+            pyro_panic(vm, ERR_VALUE_ERROR, "Format string '%s' is invalid for f64 value.", format_string);
+            return NULL;
+    }
+}
+
+
 ObjStr* pyro_stringify_formatted(PyroVM* vm, Value value, const char* format_string) {
     if (IS_I64(value)) {
-        return pyro_sprintf_to_obj(vm, format_string, value.as.i64);
+        if (format_string[0] == '%') {
+            return pyro_sprintf_to_obj(vm, format_string, value.as.i64);
+        }
+        return format_i64(vm, value, format_string);
     }
 
     if (IS_F64(value)) {
-        return pyro_sprintf_to_obj(vm, format_string, value.as.f64);
+        if (format_string[0] == '%') {
+            return pyro_sprintf_to_obj(vm, format_string, value.as.f64);
+        }
+        return format_f64(vm, value, format_string);
     }
 
     if (IS_CHAR(value)) {
-        return pyro_sprintf_to_obj(vm, format_string, value.as.u32);
+        if (format_string[0] == '%') {
+            return pyro_sprintf_to_obj(vm, format_string, value.as.u32);
+        }
+        return format_char(vm, value, format_string);
     }
 
     Value method = pyro_get_method(vm, value, vm->str_fmt);

@@ -37,6 +37,7 @@ ObjStr* pyro_stringify_debug(PyroVM* vm, Value value);
 // - This function can call into Pyro code and can therefore set the exit flag.
 // - The caller should check [vm->halt_flag] immediately on return before using the result.
 // - If [vm->halt_flag] is false the return value is safe to use.
+// - [format_string] must be non-NULL and non-zero-length.
 ObjStr* pyro_stringify_formatted(PyroVM* vm, Value value, const char* format_string);
 
 // Returns a pointer to a static string.
