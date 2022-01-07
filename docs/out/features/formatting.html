@@ -83,15 +83,108 @@ A placeholder can contain a format specifier &mdash; if the value has a <code>:$
 <p>
 (The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(spec)</code> method.)
 </p>
+<h3 id="formatting-integers">
+Formatting Integers
+</h3>
 <p>
-For integers and floats the format specifier is handled directly by the C runtime so you can use <code>printf</code>&ndash;style formatting directives:
+You can use <code>printf</code>&ndash;style formatting specifiers to format <code>i64</code> values, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{%.2f}&quot;</span><span class="p">,</span> <span class="mf">1.23456</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;1.23&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{%04i}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;0099&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{d}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;99&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{4d}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;  99&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{04d}&quot;</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;0099&quot;</span><span class="p">;</span>
 </pre>
-<h3 id="example">
-Example
+<p>
+The set of valid letters is:
+</p>
+<ul>
+<li>
+<code>d</code> for decimal.
+</li>
+<li>
+<code>o</code> for octal.
+</li>
+<li>
+<code>x</code> for lowercase hexadecimal.
+</li>
+<li>
+<code>X</code> for uppercase hexadecimal.
+</li>
+</ul>
+<p>
+Applying octal or hexadecimal formatting to a negative integer value returns its two's complement.
+</p>
+<h3 id="formatting-floats">
+Formatting Floats
+</h3>
+<p>
+You can use <code>printf</code>&ndash;style formatting specifiers to format <code>f64</code> values, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{.2f}&quot;</span><span class="p">,</span> <span class="mf">1.23456</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;1.23&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{5.2f}&quot;</span><span class="p">,</span> <span class="mf">1.23456</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot; 1.23&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{05.2f}&quot;</span><span class="p">,</span> <span class="mf">1.23456</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;01.23&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The set of valid letters is:
+</p>
+<ul>
+<li>
+<code>a</code> &mdash; hexadecimal floating point, lowercase.
+</li>
+<li>
+<code>A</code> &mdash; hexadecimal floating point, uppercase.
+</li>
+<li>
+<code>e</code> &mdash; scientific notation, lowercase.
+</li>
+<li>
+<code>E</code> &mdash; scientific notation, uppercase.
+</li>
+<li>
+<code>f</code> &mdash; decimal floating point, lowercase.
+</li>
+<li>
+<code>F</code> &mdash; decimal floating point, uppercase.
+</li>
+<li>
+<code>g</code> &mdash; uses the shortest representation, <code>e</code> or <code>f</code>.
+</li>
+<li>
+<code>g</code> &mdash; uses the shortest representation, <code>E</code> or <code>F</code>.
+</li>
+</ul>
+<h3 id="formatting-characters">
+Formatting Characters
+</h3>
+<p>
+You can use <code>printf</code>&ndash;style formatting specifiers to format <code>char</code> values as unsigned 32-bit integers, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{d}&quot;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;97&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{4d}&quot;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;  97&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{x}&quot;</span><span class="p">,</span> <span class="sc">&#39;z&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;7a&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{04x}&quot;</span><span class="p">,</span> <span class="sc">&#39;z&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;007a&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The set of valid letters is:
+</p>
+<ul>
+<li>
+<code>d</code> for decimal.
+</li>
+<li>
+<code>o</code> for octal.
+</li>
+<li>
+<code>x</code> for lowercase hexadecimal.
+</li>
+<li>
+<code>X</code> for uppercase hexadecimal.
+</li>
+</ul>
+<h3 id="custom-class-example">
+Custom Class Example
 </h3>
 <p>
 Here's a sample class with custom <code>:$str()</code> and <code>:$fmt(spec)</code> methods:

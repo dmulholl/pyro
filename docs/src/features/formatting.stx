@@ -25,15 +25,70 @@ A placeholder can contain a format specifier --- if the value has a `:$fmt(spec)
 
 (The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(spec)` method.)
 
-For integers and floats the format specifier is handled directly by the C runtime so you can use `printf`--style formatting directives:
+
+
+### Formatting Integers
+
+You can use `printf`--style formatting specifiers to format `i64` values, e.g.
 
 ::: code pyro
-    assert $fmt("{%.2f}", 1.23456) == "1.23";
-    assert $fmt("{%04i}", 99) == "0099";
+    assert $fmt("{d}", 99) == "99";
+    assert $fmt("{4d}", 99) == "  99";
+    assert $fmt("{04d}", 99) == "0099";
+
+The set of valid letters is:
+
+* `d` for decimal.
+* `o` for octal.
+* `x` for lowercase hexadecimal.
+* `X` for uppercase hexadecimal.
+
+Applying octal or hexadecimal formatting to a negative integer value returns its two's complement.
 
 
 
-### Example
+### Formatting Floats
+
+You can use `printf`--style formatting specifiers to format `f64` values, e.g.
+
+::: code pyro
+    assert $fmt("{.2f}", 1.23456) == "1.23";
+    assert $fmt("{5.2f}", 1.23456) == " 1.23";
+    assert $fmt("{05.2f}", 1.23456) == "01.23";
+
+The set of valid letters is:
+
+* `a` --- hexadecimal floating point, lowercase.
+* `A` --- hexadecimal floating point, uppercase.
+* `e` --- scientific notation, lowercase.
+* `E` --- scientific notation, uppercase.
+* `f` --- decimal floating point, lowercase.
+* `F` --- decimal floating point, uppercase.
+* `g` --- uses the shortest representation, `e` or `f`.
+* `g` --- uses the shortest representation, `E` or `F`.
+
+
+
+### Formatting Characters
+
+You can use `printf`--style formatting specifiers to format `char` values as unsigned 32-bit integers, e.g.
+
+::: code pyro
+    assert $fmt("{d}", 'a') == "97";
+    assert $fmt("{4d}", 'a') == "  97";
+    assert $fmt("{x}", 'z') == "7a";
+    assert $fmt("{04x}", 'z') == "007a";
+
+The set of valid letters is:
+
+* `d` for decimal.
+* `o` for octal.
+* `x` for lowercase hexadecimal.
+* `X` for uppercase hexadecimal.
+
+
+
+### Custom Class Example
 
 Here's a sample class with custom `:$str()` and `:$fmt(spec)` methods:
 
