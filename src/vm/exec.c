@@ -11,8 +11,7 @@
 #include "stringify.h"
 #include "panics.h"
 #include "imports.h"
-
-#include "../lib/os/os.h"
+#include "os.h"
 
 
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {

@@ -4,8 +4,8 @@
 #include "../vm/pyro.h"
 #include "../vm/setup.h"
 #include "../vm/exec.h"
+#include "../vm/os.h"
 #include "../lib/args/args.h"
-#include "../lib/os/os.h"
 
 void pyro_run_file(ArgParser* parser);
 void pyro_run_repl(ArgParser* parser);

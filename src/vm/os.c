@@ -1,10 +1,10 @@
 #include "os.h"
 
-// Pyro imports.
-#include "../../vm/vm.h"
-#include "../../vm/values.h"
-#include "../../vm/objects.h"
-#include "../../vm/heap.h"
+// Local imports.
+#include "vm.h"
+#include "values.h"
+#include "objects.h"
+#include "heap.h"
 
 // POSIX: popen(), pclose()
 #include <stdio.h>

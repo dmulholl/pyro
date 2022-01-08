@@ -3,8 +3,7 @@
 #include "vm.h"
 #include "utf8.h"
 #include "panics.h"
-
-#include "../lib/os/os.h"
+#include "os.h"
 
 
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {

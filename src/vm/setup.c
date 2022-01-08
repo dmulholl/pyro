@@ -4,9 +4,9 @@
 #include "values.h"
 #include "utils.h"
 #include "panics.h"
+#include "os.h"
 
 #include "../std/std_lib.h"
-#include "../lib/os/os.h"
 #include "../lib/mt64/mt64.h"
 
 

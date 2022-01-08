@@ -1,7 +1,10 @@
 #ifndef pyro_os_h
 #define pyro_os_h
 
-#include "../../vm/pyro.h"
+#include "pyro.h"
+
+// This file quarantines all functions with OS-specific dependencies.
+// Currently only POSIX systems are supported.
 
 // Returns true if a file or directory exists at [path].
 // If [path] is a symlink, returns true if the target of the link exists.
@@ -29,7 +32,6 @@ char* pyro_dirname(char* path);
 // statically allocated memory.
 char* pyro_basename(char* path);
 
-// Equivalent to `rm -rf` in the shell.
 // Deletes the symlink or file or directory at [path]. If [path] is a symlink, the link itself will
 // be deleted, not its target. If [path] is a directory, its content will be recursively deleted,
 // then the directory itself.

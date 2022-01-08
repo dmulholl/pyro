@@ -16,7 +16,7 @@ DEBUG_5 = $(DEBUG_4) -D PYRO_DEBUG_LOG_GC
 
 SRC_FILES = src/vm/*.c src/std/*.c src/cli/*.c
 
-LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c src/lib/os/*.c
+LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
 
 FILES = $(SRC_FILES) $(LIB_FILES) -lm
 

@@ -8,8 +8,7 @@
 #include "../vm/setup.h"
 #include "../vm/stringify.h"
 #include "../vm/panics.h"
-
-#include "../lib/os/os.h"
+#include "../vm/os.h"
 
 
 static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {

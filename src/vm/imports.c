@@ -3,8 +3,7 @@
 #include "exec.h"
 #include "heap.h"
 #include "panics.h"
-
-#include "../lib/os/os.h"
+#include "os.h"
 
 
 void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
