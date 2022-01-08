@@ -37,7 +37,7 @@ You can use `printf`--style formatting specifiers to format `i64` values, e.g.
     assert $fmt("{04d}", 123) == "0123";
     assert $fmt("{04x}", 123) == "007b";
 
-The set of valid letters is:
+The set of valid letters for `i64` values is:
 
 * `d` for decimal.
 * `o` for octal.
@@ -57,7 +57,7 @@ You can use `printf`--style formatting specifiers to format `f64` values, e.g.
     assert $fmt("{5.2f}", 1.23456) == " 1.23";
     assert $fmt("{05.2f}", 1.23456) == "01.23";
 
-The set of valid letters is:
+The set of valid letters for `f64` values is:
 
 * `a` --- hexadecimal floating point, lowercase.
 * `A` --- hexadecimal floating point, uppercase.
@@ -80,7 +80,7 @@ You can use `printf`--style formatting specifiers to format `char` values as uns
     assert $fmt("{x}", 'z') == "7a";
     assert $fmt("{04x}", 'z') == "007a";
 
-The set of valid letters is:
+The set of valid letters for `char` values is:
 
 * `d` for decimal.
 * `o` for octal.
