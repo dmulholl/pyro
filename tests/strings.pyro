@@ -14,11 +14,17 @@ assert "foo":is_empty() == false;
 assert "\n":byte_count() == 1;
 assert "\n":byte(0) == 10;
 
+assert "\r":byte_count() == 1;
+assert "\r":byte(0) == 13;
+
 assert "\\":byte_count() == 1;
 assert "\\":byte(0) == 92;
 
 assert "\"":byte_count() == 1;
 assert "\"":byte(0) == 34;
+
+assert "\e":byte_count() == 1;
+assert "\e":byte(0) == 27;
 
 assert "\x21" == "!";
 assert "\x21":byte_count() == 1;

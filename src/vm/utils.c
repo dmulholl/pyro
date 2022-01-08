@@ -139,6 +139,14 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
                     dst[count++] = 8;
                     i++;
                     break;
+                case 'e':
+                    dst[count++] = 27;
+                    i++;
+                    break;
+                case 'f':
+                    dst[count++] = 12;
+                    i++;
+                    break;
                 case 'n':
                     dst[count++] = 10;
                     i++;
@@ -149,6 +157,10 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
                     break;
                 case 't':
                     dst[count++] = 9;
+                    i++;
+                    break;
+                case 'v':
+                    dst[count++] = 11;
                     i++;
                     break;
 
