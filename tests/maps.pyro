@@ -104,12 +104,14 @@ def $test_keys_iter() {
     var map = {
         "abc" = 123,
         "def" = 456,
+        "ghi" = 789,
     };
 
     var keys = map:keys():to_vec();
-    assert keys:count() == 2;
+    assert keys:count() == 3;
     assert keys[0] == "abc";
     assert keys[1] == "def";
+    assert keys[2] == "ghi";
 }
 
 
@@ -117,12 +119,14 @@ def $test_values_iter() {
     var map = {
         "abc" = 123,
         "def" = 456,
+        "ghi" = 789,
     };
 
     var values = map:values():to_vec();
-    assert values:count() == 2;
+    assert values:count() == 3;
     assert values[0] == 123;
     assert values[1] == 456;
+    assert values[2] == 789;
 }
 
 
@@ -130,12 +134,14 @@ def $test_entries_iter() {
     var map = {
         "abc" = 123,
         "def" = 456,
+        "ghi" = 789,
     };
 
     var entries = map:entries():to_vec();
-    assert entries:count() == 2;
+    assert entries:count() == 3;
     assert entries[0] == $tup("abc", 123);
     assert entries[1] == $tup("def", 456);
+    assert entries[2] == $tup("ghi", 789);
 }
 
 
@@ -148,4 +154,47 @@ def $test_is_empty() {
 
     var map2 = {};
     assert map2:is_empty();
+}
+
+
+def $test_insertion_order_is_preserved() {
+    var map = $map();
+
+    map["q"] = null;
+    map["w"] = null;
+    map["e"] = null;
+    map["r"] = null;
+    map["t"] = null;
+    map["y"] = null;
+    map["u"] = null;
+    map["i"] = null;
+    map["o"] = null;
+    map["p"] = null;
+
+    var keys = map:keys():to_vec();
+
+    assert keys[0] == "q";
+    assert keys[1] == "w";
+    assert keys[2] == "e";
+    assert keys[3] == "r";
+    assert keys[4] == "t";
+    assert keys[5] == "y";
+    assert keys[6] == "u";
+    assert keys[7] == "i";
+    assert keys[8] == "o";
+    assert keys[9] == "p";
+
+    map:remove("w");
+    map:remove("r");
+    map:remove("y");
+    map:remove("i");
+    map:remove("p");
+
+    var remaining_keys = map:keys():to_vec();
+
+    assert remaining_keys[0] == "q";
+    assert remaining_keys[1] == "e";
+    assert remaining_keys[2] == "t";
+    assert remaining_keys[3] == "u";
+    assert remaining_keys[4] == "o";
 }
