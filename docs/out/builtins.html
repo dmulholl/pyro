@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.12</p>
+                <p class="version">Version 0.5.13</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -1051,7 +1051,8 @@ It should accept two arguments <code>a</code> and <code>b</code> and return <cod
 Hash Maps
 </h3>
 <p>
-A hash map, <code>map</code>, is an unordered collection of key-value pairs.
+A hash map, <code>map</code>, is a collection of key-value pairs.
+Pyro's map type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
 </p>
 <dl>
 <div>
@@ -1086,6 +1087,19 @@ You can index into a map to get or set entries:
 </pre>
 <p>
 Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+</p>
+<p>
+Maps are iterable:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="k">in</span> <span class="nx">map</span><span class="p">:</span><span class="nx">entries</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">key</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="nx">value</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+The <code>:entries()</code> method returns an iterator over key-value tuples which you can unpack in a for-loop as shown.
+Maps also have a <code>:keys()</code> method which returns an iterator over the map's keys and a <code>:values()</code> method which returns an iterator over the map's values.
 </p>
 <p>
 Maps have the following methods:

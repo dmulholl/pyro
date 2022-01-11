@@ -464,7 +464,8 @@ Vectors have the following methods:
 
 ### Hash Maps
 
-A hash map, `map`, is an unordered collection of key-value pairs.
+A hash map, `map`, is a collection of key-value pairs.
+Pyro's map type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
 
 [[ `$map() -> map` ]]
 
@@ -488,6 +489,17 @@ You can index into a map to get or set entries:
     map:set(key, value);
 
 Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+
+Maps are iterable:
+
+::: code pyro
+    for (key, value) in map:entries() {
+        echo key;
+        echo value;
+    }
+
+The `:entries()` method returns an iterator over key-value tuples which you can unpack in a for-loop as shown.
+Maps also have a `:keys()` method which returns an iterator over the map's keys and a `:values()` method which returns an iterator over the map's values.
 
 Maps have the following methods:
 
