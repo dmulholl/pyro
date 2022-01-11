@@ -227,7 +227,7 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 // - If the slot contains a non-negative index value, the map contains an entry matching [key].
 //   This entry can be found in [entry_array] at the specified index.
 //
-// [index_array] must have a non-zero length before this function is called.
+// Note that [index_array] must have a non-zero length before this function is called.
 static int64_t* find_entry(
     PyroVM* vm,
     MapEntry* entry_array,
@@ -289,7 +289,10 @@ static ObjStr* find_string(ObjMap* map, const char* string, size_t length, uint6
 }
 
 
-// This function doubles the capacity of the map's index array and then rebuilds the index.
+// This function doubles the capacity of the index array, then rebuilds the index. (Rebuilding the
+// index has the side-effect of eliminating any tombstone slots. This function also takes the
+// opportunity to eliminate any tombstones from the entry array so when this function returns
+// the map contains no tombstone entries.)
 static bool resize_index_array(ObjMap* map, PyroVM* vm) {
     size_t new_index_array_capacity = GROW_CAPACITY(map->index_array_capacity);
 
