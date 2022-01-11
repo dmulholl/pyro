@@ -68,13 +68,35 @@ typedef struct {
     Value value;
 } MapEntry;
 
+// A linear-probing hash map. New entries are appended to [entry_array] so iterating over this
+// array returns the entries in insertion order.
 struct ObjMap {
     Obj obj;
-    size_t count;
-    size_t capacity;
-    size_t tombstone_count;
+
+    // The number of live entries in the map. In addition to these live entries [entry_array]
+    // and [index_array] can contain independently varying numbers of tombstones.
+    size_t live_entry_count;
+
+    // This array is the map's data store -- new entries are appended to this array so iterating
+    // over it preserves insertion order. [entry_array_count] includes both live entries and
+    // tombstones.
+    MapEntry* entry_array;
+    size_t entry_array_capacity;
+    size_t entry_array_count;
+
+    // This is the array that gets linearly-probed using key hashes. It stores the indexes of
+    // entries in [entry_array]. Negative values indicate that a slot is empty or a tombstone.
+    // [index_array_count] includes both live entries and tombstones.
+    int64_t* index_array;
+    size_t index_array_capacity;
+    size_t index_array_count;
+
+    // This gets recalculated every time [index_array] is resized using the formula:
+    //
+    //   [max_load_threshold] = [index_array_capacity] * PYRO_MAX_HASHMAP_LOAD
+    //
+    // Invariant: [index_array_count] <= [max_load_threshold].
     size_t max_load_threshold;
-    MapEntry* entries;
 };
 
 ObjMap* ObjMap_new(PyroVM* vm);

@@ -144,9 +144,9 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_MAP: {
             ObjMap* map = (ObjMap*)object;
-            for (size_t i = 0; i < map->capacity; i++) {
-                MapEntry* entry = &map->entries[i];
-                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            for (size_t i = 0; i < map->entry_array_count; i++) {
+                MapEntry* entry = &map->entry_array[i];
+                if (IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 pyro_mark_value(vm, entry->key);
@@ -157,9 +157,9 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_MAP_AS_SET: {
             ObjMap* map = (ObjMap*)object;
-            for (size_t i = 0; i < map->capacity; i++) {
-                MapEntry* entry = &map->entries[i];
-                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+            for (size_t i = 0; i < map->entry_array_count; i++) {
+                MapEntry* entry = &map->entry_array[i];
+                if (IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 pyro_mark_value(vm, entry->key);
@@ -366,7 +366,8 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case OBJ_MAP_AS_SET:
         case OBJ_MAP: {
             ObjMap* map = (ObjMap*)object;
-            FREE_ARRAY(vm, MapEntry, map->entries, map->capacity);
+            FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
+            FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
             FREE_OBJECT(vm, ObjMap, object);
             break;
         }

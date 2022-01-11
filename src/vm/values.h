@@ -10,7 +10,6 @@ typedef enum {
     VAL_F64,        // A 64-bit float.
     VAL_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
     VAL_OBJ,        // A pointer to a heap-allocated object.
-    VAL_EMPTY,      // Used internally by the map implementation.
     VAL_TOMBSTONE,  // Used internally by the map implementation.
 } ValueType;
 
@@ -64,7 +63,6 @@ struct Obj {
 #define F64_VAL(c_f64)              ((Value){VAL_F64, {.f64 = c_f64}})
 #define OBJ_VAL(c_ptr)              ((Value){VAL_OBJ, {.obj = (Obj*)c_ptr}})
 #define TOMBSTONE_VAL()             ((Value){VAL_TOMBSTONE, {.i64 = 0}})
-#define EMPTY_VAL()                 ((Value){VAL_EMPTY, {.i64 = 0}})
 #define NULL_VAL()                  ((Value){VAL_NULL, {.i64 = 0}})
 #define CHAR_VAL(c_u32)             ((Value){VAL_CHAR, {.u32 = c_u32}})
 
@@ -75,7 +73,6 @@ struct Obj {
 #define IS_F64(value)               ((value).type == VAL_F64)
 #define IS_OBJ(value)               ((value).type == VAL_OBJ)
 #define IS_TOMBSTONE(value)         ((value).type == VAL_TOMBSTONE)
-#define IS_EMPTY(value)             ((value).type == VAL_EMPTY)
 #define IS_CHAR(value)              ((value).type == VAL_CHAR)
 
 // Macros for checking if a Value instance is an object of a specific type.

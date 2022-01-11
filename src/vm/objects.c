@@ -210,85 +210,147 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 /* ------ */
 
 
-static MapEntry* find_entry(PyroVM* vm, MapEntry* entries, size_t capacity, Value key) {
-    // Capacity is always a power of 2 so we can use bitwise-AND as a fast
-    // modulo operator, i.e. this is equivalent to: index = key_hash % capacity.
-    size_t index = (size_t)pyro_hash_value(vm, key) & (capacity - 1);
-    MapEntry* tombstone = NULL;
+// Sentinel value: indicates that a slot in [index_array] is empty.
+#define EMPTY -1
+
+// Sentinel value: indicates that a slot in [index_array] is a tombstone.
+#define TOMBSTONE -2
+
+
+// This function returns a pointer to a slot in [index_array]. This slot can (1) be empty,
+// (2) contain a tombstone, or (3) contain the index of an entry in [entry_array].
+//
+// - If the slot is empty or contains a tombstone, the map does not contain an entry matching [key].
+//   If a new entry with [key] is appended to [entry_array], its index should be inserted into the
+//   slot returned by this function.
+//
+// - If the slot contains a non-negative index value, the map contains an entry matching [key].
+//   This entry can be found in [entry_array] at the specified index.
+//
+// [index_array] must have a non-zero length before this function is called.
+static int64_t* find_entry(
+    PyroVM* vm,
+    MapEntry* entry_array,
+    int64_t* index_array,
+    size_t index_array_capacity,
+    Value key
+) {
+    // Capacity is always a power of 2 so we can use bitwise-AND as a fast modulo operator, i.e.
+    // this is equivalent to: i = key_hash % index_array_capacity.
+    size_t i = (size_t)pyro_hash_value(vm, key) & (index_array_capacity - 1);
+    int64_t* first_tombstone = NULL;
 
     for (;;) {
-        MapEntry* entry = &entries[index];
+        int64_t* slot = &index_array[i];
 
-        if (IS_EMPTY(entry->key)) {
-            return tombstone == NULL ? entry : tombstone;
-        } else if (IS_TOMBSTONE(entry->key)) {
-            if (tombstone == NULL) tombstone = entry;
-        } else if (pyro_op_compare_eq(vm, key, entry->key)) {
-            return entry;
+        if (*slot == EMPTY) {
+            return first_tombstone == NULL ? slot : first_tombstone;
+        } else if (*slot == TOMBSTONE) {
+            if (first_tombstone == NULL) first_tombstone = slot;
+        } else if (pyro_op_compare_eq(vm, key, entry_array[*slot].key)) {
+            return slot;
         }
 
-        index = (index + 1) & (capacity - 1);
+        i = (i + 1) & (index_array_capacity - 1);
     }
 }
 
 
+// This function is only used for looking up strings in the interned strings pool. If the pool
+// contains an entry identical to [string], it returns a pointer to that entry, otherwise it
+// returns NULL.
 static ObjStr* find_string(ObjMap* map, const char* string, size_t length, uint64_t hash) {
-    if (map->count == 0) {
+    if (map->live_entry_count == 0) {
         return NULL;
     }
 
-    size_t index = (size_t)hash & (map->capacity - 1);
+    size_t i = (size_t)hash & (map->index_array_capacity - 1);
 
     for (;;) {
-        MapEntry* entry = &map->entries[index];
+        int64_t* slot = &map->index_array[i];
 
-        if (IS_EMPTY(entry->key)) {
+        if (*slot == EMPTY) {
             return NULL;
-        }
-
-        if (IS_STR(entry->key)) {
-            if (AS_STR(entry->key)->length == length) {
-                if (AS_STR(entry->key)->hash == hash) {
-                    if (memcmp(AS_STR(entry->key)->bytes, string, length) == 0) {
-                        return AS_STR(entry->key);
+        } else if (*slot == TOMBSTONE) {
+            // Skip over the tombstone and keep looking for a matching entry.
+        } else {
+            ObjStr* entry = AS_STR(map->entry_array[*slot].key);
+            if (entry->length == length) {
+                if (entry->hash == hash) {
+                    if (memcmp(entry->bytes, string, length) == 0) {
+                        return entry;
                     }
                 }
             }
         }
 
-        index = (index + 1) & (map->capacity - 1);
+        i = (i + 1) & (map->index_array_capacity - 1);
     }
 }
 
 
-static bool resize_map(ObjMap* map, size_t new_capacity, PyroVM* vm) {
-    MapEntry* new_entries = ALLOCATE_ARRAY(vm, MapEntry, new_capacity);
-    if (!new_entries) {
+// This function doubles the capacity of the map's index array and then rebuilds the index.
+static bool resize_index_array(ObjMap* map, PyroVM* vm) {
+    size_t new_index_array_capacity = GROW_CAPACITY(map->index_array_capacity);
+
+    int64_t* new_index_array = ALLOCATE_ARRAY(vm, int64_t, new_index_array_capacity);
+    if (!new_index_array) {
         return false;
     }
 
-    for (size_t i = 0; i < new_capacity; i++) {
-        new_entries[i].key = EMPTY_VAL();
+    for (size_t i = 0; i < new_index_array_capacity; i++) {
+        new_index_array[i] = EMPTY;
     }
 
-    size_t new_count = 0;
-    for (size_t i = 0; i < map->capacity; i++) {
-        MapEntry* src = &map->entries[i];
-        if (IS_EMPTY(src->key) || IS_TOMBSTONE(src->key)) {
-            continue;
+    FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
+    map->index_array = new_index_array;
+    map->index_array_capacity = new_index_array_capacity;
+    map->index_array_count = map->live_entry_count;
+    map->max_load_threshold = new_index_array_capacity * PYRO_MAX_HASHMAP_LOAD;
+
+    // 1. If the entry array contains tombstones, this is a good time to compact it by removing
+    // them while we're rebuilding the index.
+    if (map->entry_array_count > map->live_entry_count) {
+        size_t dst_index = 0;
+
+        for (size_t src_index = 0; src_index < map->entry_array_count; src_index++) {
+            if (IS_TOMBSTONE(map->entry_array[src_index].key)) {
+                continue;
+            }
+
+            if (src_index > dst_index) {
+                map->entry_array[dst_index] = map->entry_array[src_index];
+            }
+
+            int64_t* slot = find_entry(
+                vm,
+                map->entry_array,
+                new_index_array,
+                new_index_array_capacity,
+                map->entry_array[src_index].key
+            );
+
+            *slot = (int64_t)dst_index;
+            dst_index++;
         }
-        MapEntry* dst = find_entry(vm, new_entries, new_capacity, src->key);
-        dst->key = src->key;
-        dst->value = src->value;
-        new_count++;
+
+        assert(dst_index == map->live_entry_count);
+        map->entry_array_count = map->live_entry_count;
+        return true;
     }
 
-    FREE_ARRAY(vm, MapEntry, map->entries, map->capacity);
-    map->entries = new_entries;
-    map->capacity = new_capacity;
-    map->count = new_count;
-    map->tombstone_count = 0;
-    map->max_load_threshold = new_capacity * PYRO_MAX_HASHMAP_LOAD;
+    // 2. The entry array doesn't contain any tombstones so all we need to do is rebuild the index.
+    for (size_t i = 0; i < map->entry_array_count; i++) {
+        int64_t* slot = find_entry(
+            vm,
+            map->entry_array,
+            new_index_array,
+            new_index_array_capacity,
+            map->entry_array[i].key
+        );
+        *slot = (int64_t)i;
+    }
+
     return true;
 }
 
@@ -299,10 +361,13 @@ ObjMap* ObjMap_new(PyroVM* vm) {
         return NULL;
     }
 
-    map->count = 0;
-    map->capacity = 0;
-    map->tombstone_count = 0;
-    map->entries = NULL;
+    map->live_entry_count = 0;
+    map->entry_array = NULL;
+    map->entry_array_capacity = 0;
+    map->entry_array_count = 0;
+    map->index_array = NULL;
+    map->index_array_capacity = 0;
+    map->index_array_count = 0;
     map->max_load_threshold = 0;
     map->obj.class = vm->map_class;
     return map;
@@ -335,114 +400,164 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
     if (!dst) {
         return NULL;
     }
-
     pyro_push(vm, OBJ_VAL(dst));
-    MapEntry* array = ALLOCATE_ARRAY(vm, MapEntry, src->capacity);
-    pyro_pop(vm);
-    if (!array) {
+
+    MapEntry* entry_array = ALLOCATE_ARRAY(vm, MapEntry, src->entry_array_capacity);
+    if (!entry_array) {
+        pyro_pop(vm);
         return NULL;
     }
+    memcpy(entry_array, src->entry_array, sizeof(MapEntry) * src->entry_array_count);
 
-    memcpy(array, src->entries, sizeof(MapEntry) * src->capacity);
+    int64_t* index_array = ALLOCATE_ARRAY(vm, int64_t, src->index_array_capacity);
+    if (!index_array) {
+        FREE_ARRAY(vm, MapEntry, entry_array, src->entry_array_capacity);
+        pyro_pop(vm);
+        return NULL;
+    }
+    memcpy(index_array, src->index_array, sizeof(int64_t) * src->index_array_capacity);
 
-    dst->count = src->count;
-    dst->capacity = src->capacity;
-    dst->tombstone_count = src->tombstone_count;
-    dst->entries = array;
+    dst->live_entry_count = src->live_entry_count;
     dst->max_load_threshold = src->max_load_threshold;
 
+    dst->entry_array = entry_array;
+    dst->entry_array_capacity = src->entry_array_capacity;
+    dst->entry_array_count = src->entry_array_count;
+
+    dst->index_array = index_array;
+    dst->index_array_capacity = src->index_array_capacity;
+    dst->index_array_count = src->index_array_count;
+
+    pyro_pop(vm);
     return dst;
 }
 
 
+// This function appends a new entry to the map's entry array. It returns -1 if memory could not
+// be allocated for the new entry -- in this case the map is unchanged. Otherwise it returns the
+// index of the new entry.
+static int64_t append_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
+    if (map->entry_array_count == map->entry_array_capacity) {
+        size_t new_entry_array_capacity = GROW_CAPACITY(map->entry_array_capacity);
+        MapEntry* new_entry_array = REALLOCATE_ARRAY(
+            vm,
+            MapEntry,
+            map->entry_array,
+            map->entry_array_capacity,
+            new_entry_array_capacity
+        );
+        if (!new_entry_array) {
+            return -1;
+        }
+        map->entry_array = new_entry_array;
+        map->entry_array_capacity = new_entry_array_capacity;
+    }
+
+    int64_t index = (int64_t)map->entry_array_count;
+    map->entry_array[index].key = key;
+    map->entry_array[index].value = value;
+    map->entry_array_count++;
+    return index;
+}
+
+
 int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
-    if (map->capacity == 0) {
-        size_t new_capacity = GROW_CAPACITY(map->capacity);
-        if (!resize_map(map, new_capacity, vm)) {
+    if (map->index_array_capacity == 0) {
+        if (!resize_index_array(map, vm)) {
             return 0;
         }
     }
 
-    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
+    int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
 
-    if (IS_EMPTY(entry->key)) {
-        if (map->count == map->max_load_threshold) {
-            size_t new_capacity = GROW_CAPACITY(map->capacity);
-            if (!resize_map(map, new_capacity, vm)) {
+    // 1. The slot is empty.
+    if (*slot == EMPTY) {
+        if (map->index_array_count == map->max_load_threshold) {
+            if (!resize_index_array(map, vm)) {
                 return 0;
             }
-            entry = find_entry(vm, map->entries, map->capacity, key);
+            slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
         }
-        entry->key = key;
-        entry->value = value;
-        map->count++;
+        int64_t index = append_entry(map, key, value, vm);
+        if (index < 0) {
+            return 0;
+        }
+        *slot = index;
+        map->live_entry_count++;
+        map->index_array_count++;
         return 1;
     }
 
-    if (IS_TOMBSTONE(entry->key)) {
-        entry->key = key;
-        entry->value = value;
-        map->tombstone_count--;
+    // 2. The slot contains a tombstone.
+    if (*slot == TOMBSTONE) {
+        int64_t index = append_entry(map, key, value, vm);
+        if (index < 0) {
+            return 0;
+        }
+        *slot = index;
+        map->live_entry_count++;
         return 1;
     }
 
-    entry->key = key;
-    entry->value = value;
+    // 3. The slot contains the index of an existing entry.
+    map->entry_array[*slot].key = key;
+    map->entry_array[*slot].value = value;
     return 2;
 }
 
 
 bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
-    if (map->count == 0) {
+    if (map->live_entry_count == 0) {
         return false;
     }
 
-    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
-    if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+    int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
+    if (*slot == EMPTY || *slot == TOMBSTONE) {
         return false;
     }
 
-    entry->key = key;
-    entry->value = value;
+    map->entry_array[*slot].key = key;
+    map->entry_array[*slot].value = value;
     return true;
 }
 
 
 bool ObjMap_get(ObjMap* map, Value key, Value* value, PyroVM* vm) {
-    if (map->count == 0) {
+    if (map->live_entry_count == 0) {
         return false;
     }
 
-    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
-    if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+    int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
+    if (*slot == EMPTY || *slot == TOMBSTONE) {
         return false;
     }
 
-    *value = entry->value;
+    *value = map->entry_array[*slot].value;
     return true;
 }
 
 
 bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
-    if (map->count == 0) {
+    if (map->live_entry_count == 0) {
         return false;
     }
 
-    MapEntry* entry = find_entry(vm, map->entries, map->capacity, key);
-    if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+    int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
+    if (*slot == EMPTY || *slot == TOMBSTONE) {
         return false;
     }
 
-    entry->key = TOMBSTONE_VAL();
-    map->tombstone_count++;
+    map->entry_array[*slot].key = TOMBSTONE_VAL();
+    *slot = TOMBSTONE;
+    map->live_entry_count--;
     return true;
 }
 
 
 bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm) {
-    for (size_t i = 0; i < src->capacity; i++) {
-        MapEntry* entry = &src->entries[i];
-        if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+    for (size_t i = 0; i < src->entry_array_count; i++) {
+        MapEntry* entry = &src->entry_array[i];
+        if (IS_TOMBSTONE(entry->key)) {
             continue;
         }
         if (ObjMap_set(dst, entry->key, entry->value, vm) == 0) {
@@ -1538,10 +1653,10 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
         case ITER_MAP_KEYS: {
             ObjMap* map = (ObjMap*)iter->source;
-            while (iter->next_index < map->capacity) {
-                MapEntry* entry = &map->entries[iter->next_index];
+            while (iter->next_index < map->entry_array_count) {
+                MapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
-                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+                if (IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 return entry->key;
@@ -1551,10 +1666,10 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
         case ITER_MAP_VALUES: {
             ObjMap* map = (ObjMap*)iter->source;
-            while (iter->next_index < map->capacity) {
-                MapEntry* entry = &map->entries[iter->next_index];
+            while (iter->next_index < map->entry_array_count) {
+                MapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
-                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+                if (IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 return entry->value;
@@ -1564,10 +1679,10 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
         case ITER_MAP_ENTRIES: {
             ObjMap* map = (ObjMap*)iter->source;
-            while (iter->next_index < map->capacity) {
-                MapEntry* entry = &map->entries[iter->next_index];
+            while (iter->next_index < map->entry_array_count) {
+                MapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
-                if (IS_EMPTY(entry->key) || IS_TOMBSTONE(entry->key)) {
+                if (IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
 

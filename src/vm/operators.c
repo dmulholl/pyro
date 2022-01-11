@@ -571,9 +571,6 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
 
         case VAL_TOMBSTONE:
             return IS_TOMBSTONE(b);
-
-        case VAL_EMPTY:
-            return IS_EMPTY(b);
     }
 }
 

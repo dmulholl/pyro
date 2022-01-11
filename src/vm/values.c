@@ -71,8 +71,6 @@ bool pyro_compare_eq_strict(Value a, Value b) {
                 return true;
             case VAL_TOMBSTONE:
                 return true;
-            case VAL_EMPTY:
-                return true;
         }
     }
     return false;

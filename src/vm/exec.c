@@ -1478,12 +1478,12 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
     int tests_passed = 0;
     int tests_failed = 0;
 
-    for (size_t i = 0; i < vm->main_module->globals->capacity; i++) {
-        MapEntry entry = vm->main_module->globals->entries[i];
-        if (IS_STR(entry.key) && IS_CLOSURE(entry.value)) {
-            ObjStr* name = AS_STR(entry.key);
+    for (size_t i = 0; i < vm->main_module->globals->entry_array_count; i++) {
+        MapEntry* entry = &vm->main_module->globals->entry_array[i];
+        if (IS_STR(entry->key) && IS_CLOSURE(entry->value)) {
+            ObjStr* name = AS_STR(entry->key);
             if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
-                if (AS_CLOSURE(entry.value)->fn->arity > 0) {
+                if (AS_CLOSURE(entry->value)->fn->arity > 0) {
                     pyro_out(vm, " · Invalid test function (%s), too many args.\n", name->bytes);
                     tests_failed += 1;
                     continue;
@@ -1495,8 +1495,8 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 vm->hard_panic = false;
                 vm->status_code = 0;
 
-                pyro_push(vm, entry.value);
-                call_value(vm, entry.value, 0);
+                pyro_push(vm, entry->value);
+                call_value(vm, entry->value, 0);
                 run(vm);
                 pyro_pop(vm);
 
@@ -1536,12 +1536,12 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
 void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
     size_t max_name_length = 0;
 
-    for (size_t i = 0; i < vm->main_module->globals->capacity; i++) {
-        MapEntry entry = vm->main_module->globals->entries[i];
-        if (IS_STR(entry.key) && IS_CLOSURE(entry.value)) {
-            ObjStr* name = AS_STR(entry.key);
+    for (size_t i = 0; i < vm->main_module->globals->entry_array_count; i++) {
+        MapEntry* entry = &vm->main_module->globals->entry_array[i];
+        if (IS_STR(entry->key) && IS_CLOSURE(entry->value)) {
+            ObjStr* name = AS_STR(entry->key);
             if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
-                if (AS_CLOSURE(entry.value)->fn->arity > 0) {
+                if (AS_CLOSURE(entry->value)->fn->arity > 0) {
                     pyro_out(vm, " · Invalid time function (%s), too many args.\n", name->bytes);
                     return;
                 }
@@ -1552,16 +1552,16 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
         }
     }
 
-    for (size_t i = 0; i < vm->main_module->globals->capacity; i++) {
-        MapEntry entry = vm->main_module->globals->entries[i];
-        if (IS_STR(entry.key) && IS_CLOSURE(entry.value)) {
-            ObjStr* name = AS_STR(entry.key);
+    for (size_t i = 0; i < vm->main_module->globals->entry_array_count; i++) {
+        MapEntry* entry = &vm->main_module->globals->entry_array[i];
+        if (IS_STR(entry->key) && IS_CLOSURE(entry->value)) {
+            ObjStr* name = AS_STR(entry->key);
             if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                 double start_time = clock();
 
                 for (size_t j = 0; j < num_iterations; j++) {
-                    pyro_push(vm, entry.value);
-                    call_value(vm, entry.value, 0);
+                    pyro_push(vm, entry->value);
+                    call_value(vm, entry->value, 0);
                     run(vm);
                     pyro_pop(vm);
 

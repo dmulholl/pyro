@@ -27,13 +27,13 @@ static Value fn_is_map(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return I64_VAL(map->count - map->tombstone_count);
+    return I64_VAL(map->live_entry_count);
 }
 
 
 static Value map_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return BOOL_VAL(map->count - map->tombstone_count == 0);
+    return BOOL_VAL(map->live_entry_count == 0);
 }
 
 
