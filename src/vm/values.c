@@ -41,11 +41,11 @@ ObjClass* pyro_get_class(Value value) {
 Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
     if (IS_OBJ(receiver) && AS_OBJ(receiver)->class) {
         Value method;
-        if (ObjMap_get(AS_OBJ(receiver)->class->methods, OBJ_VAL(method_name), &method, vm)) {
+        if (ObjMap_get(AS_OBJ(receiver)->class->methods, MAKE_OBJ(method_name), &method, vm)) {
             return method;
         }
     }
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 

@@ -8,34 +8,34 @@
 
 
 static Value fn_test_mt64(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(pyro_mt64_test());
+    return MAKE_BOOL(pyro_mt64_test());
 }
 
 
 static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
-    return F64_VAL(pyro_mt64_gen_f64b(vm->mt64));
+    return MAKE_F64(pyro_mt64_gen_f64b(vm->mt64));
 }
 
 
 static Value fn_seed(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_mt64_init(vm->mt64, pyro_hash_value(vm, args[0]));
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::prng::rand_int().");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return I64_VAL(pyro_mt64_gen_int(vm->mt64, (uint64_t)args[0].as.i64));
+    return MAKE_I64(pyro_mt64_gen_int(vm->mt64, (uint64_t)args[0].as.i64));
 }
 
 
 static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0]) || !IS_I64(args[1])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::prng::rand_int_in_range().");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     int64_t lower = args[0].as.i64;
@@ -44,7 +44,7 @@ static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 
     // Select a random integer from the range [lower, upper).
     int64_t rand_int = lower + (int64_t)pyro_mt64_gen_int(vm->mt64, delta);
-    return I64_VAL(rand_int);
+    return MAKE_I64(rand_int);
 }
 
 
@@ -52,7 +52,7 @@ static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_VEC(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $std::prng::shuffle() must be a vector.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     ObjVec* vec = AS_VEC(args[0]);
 
@@ -65,7 +65,7 @@ static Value fn_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
         vec->values[i] = vec->values[j];
         vec->values[j] = temp;
     }
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 

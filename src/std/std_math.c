@@ -9,12 +9,12 @@
 static Value fn_abs(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 1) {
         if (IS_I64(args[0])) {
-            return I64_VAL(imaxabs(args[0].as.i64));
+            return MAKE_I64(imaxabs(args[0].as.i64));
         } else if (IS_F64(args[0])) {
-            return F64_VAL(fabs(args[0].as.f64));
+            return MAKE_F64(fabs(args[0].as.f64));
         }
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::abs(), must be a number.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (arg_count == 2) {
@@ -22,116 +22,116 @@ static Value fn_abs(PyroVM* vm, size_t arg_count, Value* args) {
             if (args[0].as.i64 == INT64_MIN) {
                 return args[1];
             } else {
-                return I64_VAL(imaxabs(args[0].as.i64));
+                return MAKE_I64(imaxabs(args[0].as.i64));
             }
         } else if (IS_F64(args[0])) {
-            return F64_VAL(fabs(args[0].as.f64));
+            return MAKE_F64(fabs(args[0].as.f64));
         }
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::abs(), must be a number.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for $std::math::abs(), found 0.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_acos(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(acos((double)args[0].as.i64));
+        return MAKE_F64(acos((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(acos(args[0].as.f64));
+        return MAKE_F64(acos(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::acos(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_asin(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(asin((double)args[0].as.i64));
+        return MAKE_F64(asin((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(asin(args[0].as.f64));
+        return MAKE_F64(asin(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::asin(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_atan(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(atan((double)args[0].as.i64));
+        return MAKE_F64(atan((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(atan(args[0].as.f64));
+        return MAKE_F64(atan(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::atan(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_cos(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(cos((double)args[0].as.i64));
+        return MAKE_F64(cos((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(cos(args[0].as.f64));
+        return MAKE_F64(cos(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::cos(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_sin(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(sin((double)args[0].as.i64));
+        return MAKE_F64(sin((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(sin(args[0].as.f64));
+        return MAKE_F64(sin(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::sin(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_tan(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(tan((double)args[0].as.i64));
+        return MAKE_F64(tan((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(tan(args[0].as.f64));
+        return MAKE_F64(tan(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::tan(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_ln(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(log((double)args[0].as.i64));
+        return MAKE_F64(log((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(log(args[0].as.f64));
+        return MAKE_F64(log(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::ln(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_log10(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(log10((double)args[0].as.i64));
+        return MAKE_F64(log10((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(log10(args[0].as.f64));
+        return MAKE_F64(log10(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::log10(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_log2(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(log((double)args[0].as.i64) / log(2.0));
+        return MAKE_F64(log((double)args[0].as.i64) / log(2.0));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(log(args[0].as.f64) / log(2.0));
+        return MAKE_F64(log(args[0].as.f64) / log(2.0));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::log2(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -145,7 +145,7 @@ static Value fn_log(PyroVM* vm, size_t arg_count, Value* args) {
         base = (double)args[0].as.i64;
     } else {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::log(), base must be a number.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (IS_F64(args[1])) {
@@ -154,10 +154,10 @@ static Value fn_log(PyroVM* vm, size_t arg_count, Value* args) {
         operand = (double)args[1].as.i64;
     } else {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::log(), operand must be a number.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
-    return F64_VAL(log(operand) / log(base));
+    return MAKE_F64(log(operand) / log(base));
 }
 
 
@@ -171,7 +171,7 @@ static Value fn_atan2(PyroVM* vm, size_t arg_count, Value* args) {
         y = (double)args[0].as.i64;
     } else {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::atan2(), y must be a number.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (IS_F64(args[1])) {
@@ -180,65 +180,65 @@ static Value fn_atan2(PyroVM* vm, size_t arg_count, Value* args) {
         x = (double)args[1].as.i64;
     } else {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::atan2(), x must be a number.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
-    return F64_VAL(atan2(y, x));
+    return MAKE_F64(atan2(y, x));
 }
 
 
 static Value fn_exp(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(exp((double)args[0].as.i64));
+        return MAKE_F64(exp((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(exp(args[0].as.f64));
+        return MAKE_F64(exp(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::exp(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_sqrt(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(sqrt((double)args[0].as.i64));
+        return MAKE_F64(sqrt((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(sqrt(args[0].as.f64));
+        return MAKE_F64(sqrt(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::sqrt(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_cbrt(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(cbrt((double)args[0].as.i64));
+        return MAKE_F64(cbrt((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(cbrt(args[0].as.f64));
+        return MAKE_F64(cbrt(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::cbrt(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_ceil(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(ceil((double)args[0].as.i64));
+        return MAKE_F64(ceil((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(ceil(args[0].as.f64));
+        return MAKE_F64(ceil(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::ceil(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value fn_floor(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
-        return F64_VAL(floor((double)args[0].as.i64));
+        return MAKE_F64(floor((double)args[0].as.i64));
     } else if (IS_F64(args[0])) {
-        return F64_VAL(floor(args[0].as.f64));
+        return MAKE_F64(floor(args[0].as.f64));
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::math::floor(), must be a number.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -248,12 +248,12 @@ void pyro_load_std_math(PyroVM* vm) {
         return;
     }
 
-    pyro_define_member(vm, mod_math, "pi", F64_VAL(PYRO_PI));
-    pyro_define_member(vm, mod_math, "e", F64_VAL(PYRO_E));
-    pyro_define_member(vm, mod_math, "nan", F64_VAL(NAN));
-    pyro_define_member(vm, mod_math, "inf", F64_VAL(INFINITY));
-    pyro_define_member(vm, mod_math, "i64_max", I64_VAL(INT64_MAX));
-    pyro_define_member(vm, mod_math, "i64_min", I64_VAL(INT64_MIN));
+    pyro_define_member(vm, mod_math, "pi", MAKE_F64(PYRO_PI));
+    pyro_define_member(vm, mod_math, "e", MAKE_F64(PYRO_E));
+    pyro_define_member(vm, mod_math, "nan", MAKE_F64(NAN));
+    pyro_define_member(vm, mod_math, "inf", MAKE_F64(INFINITY));
+    pyro_define_member(vm, mod_math, "i64_max", MAKE_I64(INT64_MAX));
+    pyro_define_member(vm, mod_math, "i64_min", MAKE_I64(INT64_MIN));
 
     pyro_define_member_fn(vm, mod_math, "abs", fn_abs, -1);
     pyro_define_member_fn(vm, mod_math, "acos", fn_acos, 1);

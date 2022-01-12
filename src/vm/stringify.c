@@ -13,7 +13,7 @@ static ObjStr* make_debug_string_for_string(PyroVM* vm, ObjStr* input_string) {
     if (!buf) {
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '"', vm)) {
         pyro_pop(vm);
@@ -81,7 +81,7 @@ static ObjStr* make_debug_string_for_char(PyroVM* vm, Value value) {
     if (!buf) {
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '\'', vm)) {
         pyro_pop(vm);
@@ -148,7 +148,7 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '(', vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
@@ -162,7 +162,7 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
             return NULL;
         }
 
-        pyro_push(vm, OBJ_VAL(item_string));
+        pyro_push(vm, MAKE_OBJ(item_string));
         if (!ObjBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
@@ -201,7 +201,7 @@ static ObjStr* stringify_vector(PyroVM* vm, ObjVec* vec) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '[', vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
@@ -215,7 +215,7 @@ static ObjStr* stringify_vector(PyroVM* vm, ObjVec* vec) {
             return NULL;
         }
 
-        pyro_push(vm, OBJ_VAL(item_string));
+        pyro_push(vm, MAKE_OBJ(item_string));
         if (!ObjBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
@@ -254,7 +254,7 @@ static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '{', vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
@@ -283,7 +283,7 @@ static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
             return NULL;
         }
 
-        pyro_push(vm, OBJ_VAL(key_string));
+        pyro_push(vm, MAKE_OBJ(key_string));
         if (!ObjBuf_append_bytes(buf, key_string->length, (uint8_t*)key_string->bytes, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
@@ -300,7 +300,7 @@ static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
             return NULL;
         }
 
-        pyro_push(vm, OBJ_VAL(value_string));
+        pyro_push(vm, MAKE_OBJ(value_string));
         if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
@@ -332,7 +332,7 @@ static ObjStr* stringify_map_as_set(PyroVM* vm, ObjMap* map) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '{', vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
@@ -361,7 +361,7 @@ static ObjStr* stringify_map_as_set(PyroVM* vm, ObjMap* map) {
             return NULL;
         }
 
-        pyro_push(vm, OBJ_VAL(key_string));
+        pyro_push(vm, MAKE_OBJ(key_string));
         if (!ObjBuf_append_bytes(buf, key_string->length, (uint8_t*)key_string->bytes, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
@@ -393,7 +393,7 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '[', vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
@@ -416,7 +416,7 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
             return NULL;
         }
 
-        pyro_push(vm, OBJ_VAL(item_string));
+        pyro_push(vm, MAKE_OBJ(item_string));
         if (!ObjBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
@@ -446,9 +446,9 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
-    Value method = pyro_get_method(vm, OBJ_VAL(object), vm->str_str);
+    Value method = pyro_get_method(vm, MAKE_OBJ(object), vm->str_str);
     if (!IS_NULL(method)) {
-        pyro_push(vm, OBJ_VAL(object));
+        pyro_push(vm, MAKE_OBJ(object));
         Value result = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
             return NULL;
@@ -876,7 +876,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
             return NULL;
         }
         pyro_push(vm, value);
-        pyro_push(vm, OBJ_VAL(format_string_object));
+        pyro_push(vm, MAKE_OBJ(format_string_object));
         Value result = pyro_call_method(vm, method, 1);
         if (vm->halt_flag) {
             return NULL;

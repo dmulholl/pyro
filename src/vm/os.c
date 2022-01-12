@@ -164,7 +164,7 @@ ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
             break;
         }
 
-        if (!ObjVec_append(vec, OBJ_VAL(string), vm)) {
+        if (!ObjVec_append(vec, MAKE_OBJ(string), vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             break;
         }

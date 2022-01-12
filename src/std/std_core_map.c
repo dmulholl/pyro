@@ -14,26 +14,26 @@ static Value fn_map(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = ObjMap_new(vm);
     if (!map) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(map);
+    return MAKE_OBJ(map);
 }
 
 
 static Value fn_is_map(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(IS_MAP(args[0]));
+    return MAKE_BOOL(IS_MAP(args[0]));
 }
 
 
 static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return I64_VAL(map->live_entry_count);
+    return MAKE_I64(map->live_entry_count);
 }
 
 
 static Value map_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return BOOL_VAL(map->live_entry_count == 0);
+    return MAKE_BOOL(map->live_entry_count == 0);
 }
 
 
@@ -42,7 +42,7 @@ static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_set(map, args[0], args[1], vm) == 0) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
     }
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -52,20 +52,20 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_get(map, args[0], &value, vm)) {
         return value;
     }
-    return OBJ_VAL(vm->empty_error);
+    return MAKE_OBJ(vm->empty_error);
 }
 
 
 static Value map_remove(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return BOOL_VAL(ObjMap_remove(map, args[0], vm));
+    return MAKE_BOOL(ObjMap_remove(map, args[0], vm));
 }
 
 
 static Value map_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     Value value;
-    return BOOL_VAL(ObjMap_get(map, args[0], &value, vm));
+    return MAKE_BOOL(ObjMap_get(map, args[0], &value, vm));
 }
 
 
@@ -74,9 +74,9 @@ static Value map_copy(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* copy = ObjMap_copy(map, vm);
     if (!copy) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(copy);
+    return MAKE_OBJ(copy);
 }
 
 
@@ -85,9 +85,9 @@ static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(iter);
+    return MAKE_OBJ(iter);
 }
 
 
@@ -96,9 +96,9 @@ static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_VALUES, vm);
     if (!iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(iter);
+    return MAKE_OBJ(iter);
 }
 
 
@@ -107,9 +107,9 @@ static Value map_entries(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_ENTRIES, vm);
     if (!iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(iter);
+    return MAKE_OBJ(iter);
 }
 
 
@@ -118,28 +118,28 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
         ObjMap* map = ObjMap_new_as_set(vm);
         if (!map) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
-        return OBJ_VAL(map);
+        return MAKE_OBJ(map);
     }
 
     if (arg_count > 1) {
         pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for $set(), found %d.", arg_count);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     // Does the object have an :$iter() method?
     Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
     if (IS_NULL(iter_method)) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $set() is not iterable.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     // Call the object's :$iter() method to get an iterator.
     pyro_push(vm, args[0]); // receiver for the $iter() method call
     Value iterator = pyro_call_method(vm, iter_method, 0);
     if (vm->halt_flag) {
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     pyro_push(vm, iterator); // protect from GC
 
@@ -147,30 +147,30 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     Value next_method = pyro_get_method(vm, iterator, vm->str_next);
     if (IS_NULL(next_method)) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     pyro_push(vm, next_method); // protect from GC
 
     ObjMap* map = ObjMap_new_as_set(vm);
     if (!map) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    pyro_push(vm, OBJ_VAL(map)); // protect from GC
+    pyro_push(vm, MAKE_OBJ(map)); // protect from GC
 
     while (true) {
         pyro_push(vm, iterator); // receiver for the :$next() method call
         Value next_value = pyro_call_method(vm, next_method, 0);
         if (vm->halt_flag) {
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         if (IS_ERR(next_value)) {
             break;
         }
         pyro_push(vm, next_value); // protect from GC
-        if (ObjMap_set(map, next_value, NULL_VAL(), vm) == 0) {
+        if (ObjMap_set(map, next_value, MAKE_NULL(), vm) == 0) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         pyro_pop(vm); // next_value
     }
@@ -178,21 +178,21 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_pop(vm); // map
     pyro_pop(vm); // next_method
     pyro_pop(vm); // iterator
-    return OBJ_VAL(map);
+    return MAKE_OBJ(map);
 }
 
 
 static Value fn_is_set(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(IS_SET(args[0]));
+    return MAKE_BOOL(IS_SET(args[0]));
 }
 
 
 static Value set_add(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    if (ObjMap_set(map, args[0], NULL_VAL(), vm) == 0) {
+    if (ObjMap_set(map, args[0], MAKE_NULL(), vm) == 0) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
     }
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 

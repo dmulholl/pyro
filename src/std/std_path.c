@@ -12,113 +12,113 @@
 static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::exists(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return BOOL_VAL(pyro_exists(AS_STR(args[0])->bytes));
+    return MAKE_BOOL(pyro_exists(AS_STR(args[0])->bytes));
 }
 
 
 static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::is_file(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return BOOL_VAL(pyro_is_file(AS_STR(args[0])->bytes));
+    return MAKE_BOOL(pyro_is_file(AS_STR(args[0])->bytes));
 }
 
 
 static Value fn_is_dir(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::is_dir(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return BOOL_VAL(pyro_is_dir(AS_STR(args[0])->bytes));
+    return MAKE_BOOL(pyro_is_dir(AS_STR(args[0])->bytes));
 }
 
 
 static Value fn_is_symlink(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::is_symlink(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return BOOL_VAL(pyro_is_symlink(AS_STR(args[0])->bytes));
+    return MAKE_BOOL(pyro_is_symlink(AS_STR(args[0])->bytes));
 }
 
 
 static Value fn_dirname(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::dirname(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     char* path = AS_STR(args[0])->bytes;
 
     char* path_copy = pyro_strdup(path);
     if (!path_copy) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     char* result = pyro_dirname(path_copy);
     if (!result) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         free(path_copy);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     ObjStr* output = ObjStr_copy_raw(result, strlen(result), vm);
     if (!output) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         free(path_copy);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     free(path_copy);
-    return OBJ_VAL(output);
+    return MAKE_OBJ(output);
 }
 
 
 static Value fn_basename(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::basename(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     char* path = AS_STR(args[0])->bytes;
 
     char* path_copy = pyro_strdup(path);
     if (!path_copy) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     char* result = pyro_basename(path_copy);
     if (!result) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         free(path_copy);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     ObjStr* output = ObjStr_copy_raw(result, strlen(result), vm);
     if (!output) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         free(path_copy);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     free(path_copy);
-    return OBJ_VAL(output);
+    return MAKE_OBJ(output);
 }
 
 
 static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count < 2) {
         pyro_panic(vm, ERR_ARGS_ERROR, "Expected at least 2 arguments for $std::path::join().");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     for (size_t i = 0; i < arg_count; i++) {
         if (!IS_STR(args[i])) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::join(), expected a string.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
     }
 
@@ -144,7 +144,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
                 FREE_ARRAY(vm, char, array, array_capacity);
             }
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         array = new_array;
         array_capacity = new_capacity;
@@ -159,7 +159,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (!array) {
-        return OBJ_VAL(vm->empty_string);
+        return MAKE_OBJ(vm->empty_string);
     }
 
     array[array_count] = '\0';
@@ -168,17 +168,17 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
     if (!output) {
         FREE_ARRAY(vm, char, array, array_capacity);
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
-    return OBJ_VAL(output);
+    return MAKE_OBJ(output);
 }
 
 
 static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::rm(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     ObjStr* path = AS_STR(args[0]);
@@ -187,7 +187,7 @@ static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, ERR_OS_ERROR, "Unable to delete '%s'.", path->bytes);
     }
 
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -195,7 +195,7 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
     char* cwd = pyro_getcwd();
     if (!cwd) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     ObjStr* string = ObjStr_copy_raw(cwd, strlen(cwd), vm);
@@ -203,38 +203,38 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
-    return OBJ_VAL(string);
+    return MAKE_OBJ(string);
 }
 
 
 static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::listdir(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     ObjVec* vec = pyro_listdir(vm, AS_STR(args[0])->bytes);
     if (vm->halt_flag) {
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
-    return OBJ_VAL(vec);
+    return MAKE_OBJ(vec);
 }
 
 
 static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::realpath(), expected a string.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     char* realpath = pyro_realpath(AS_STR(args[0])->bytes);
     if (!realpath) {
         pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve path '%s'.", AS_STR(args[0])->bytes);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     ObjStr* string = ObjStr_copy_raw(realpath, strlen(realpath), vm);
@@ -242,10 +242,10 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
-    return OBJ_VAL(string);
+    return MAKE_OBJ(string);
 }
 
 

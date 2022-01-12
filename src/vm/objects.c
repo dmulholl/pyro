@@ -62,7 +62,7 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
     tup->obj.class = vm->tup_class;
     tup->count = count;
     for (size_t i = 0; i < count; i++) {
-        tup->values[i] = NULL_VAL();
+        tup->values[i] = MAKE_NULL();
     }
     return tup;
 }
@@ -117,7 +117,7 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn, ObjModule* module) {
     closure->upvalue_count = 0;
 
     if (fn->upvalue_count > 0) {
-        pyro_push(vm, OBJ_VAL(closure));
+        pyro_push(vm, MAKE_OBJ(closure));
         closure->upvalues = ALLOCATE_ARRAY(vm, ObjUpvalue*, fn->upvalue_count);
         pyro_pop(vm);
 
@@ -146,7 +146,7 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
         return NULL;
     }
     upvalue->location = addr;
-    upvalue->closed = NULL_VAL();
+    upvalue->closed = MAKE_NULL();
     upvalue->next = NULL;
     return upvalue;
 }
@@ -169,7 +169,7 @@ ObjClass* ObjClass_new(PyroVM* vm) {
     class->field_indexes = NULL;
     class->superclass = NULL;
 
-    pyro_push(vm, OBJ_VAL(class));
+    pyro_push(vm, MAKE_OBJ(class));
     class->methods = ObjMap_new(vm);
     class->field_initializers = ObjVec_new(vm);
     class->field_indexes = ObjMap_new(vm);
@@ -403,7 +403,7 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
     if (!dst) {
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(dst));
+    pyro_push(vm, MAKE_OBJ(dst));
 
     MapEntry* entry_array = ALLOCATE_ARRAY(vm, MapEntry, src->entry_array_capacity);
     if (!entry_array) {
@@ -550,7 +550,7 @@ bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
         return false;
     }
 
-    map->entry_array[*slot].key = TOMBSTONE_VAL();
+    map->entry_array[*slot].key = MAKE_TOMBSTONE();
     *slot = TOMBSTONE;
     map->live_entry_count--;
     return true;
@@ -592,8 +592,8 @@ static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t 
     string->bytes = bytes;
     string->obj.class = vm->str_class;
 
-    pyro_push(vm, OBJ_VAL(string));
-    ObjMap_set(vm->strings, OBJ_VAL(string), NULL_VAL(), vm);
+    pyro_push(vm, MAKE_OBJ(string));
+    ObjMap_set(vm->strings, MAKE_OBJ(string), MAKE_NULL(), vm);
     pyro_pop(vm);
 
     return string;
@@ -854,7 +854,7 @@ ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm) {
     if (!buf) {
         return NULL;
     }
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
 
     if (!ObjBuf_append_byte(buf, '"', vm)) {
         pyro_pop(vm);
@@ -1148,7 +1148,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int 
         return NULL;
     }
 
-    pyro_push(vm, OBJ_VAL(name_object));
+    pyro_push(vm, MAKE_OBJ(name_object));
     ObjNativeFn* func = ALLOCATE_OBJECT(vm, ObjNativeFn, OBJ_NATIVE_FN);
     if (!func) {
         pyro_pop(vm);
@@ -1193,7 +1193,7 @@ ObjModule* ObjModule_new(PyroVM* vm) {
     module->globals = NULL;
     module->submodules = NULL;
 
-    pyro_push(vm, OBJ_VAL(module));
+    pyro_push(vm, MAKE_OBJ(module));
     module->globals = ObjMap_new(vm);
     module->submodules = ObjMap_new(vm);
     pyro_pop(vm);
@@ -1245,7 +1245,7 @@ ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
         return vec;
     }
 
-    pyro_push(vm, OBJ_VAL(vec));
+    pyro_push(vm, MAKE_OBJ(vec));
     Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
     pyro_pop(vm);
 
@@ -1270,7 +1270,7 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
         return vec;
     }
 
-    pyro_push(vm, OBJ_VAL(vec));
+    pyro_push(vm, MAKE_OBJ(vec));
     Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
     pyro_pop(vm);
 
@@ -1328,7 +1328,7 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, ERR_VALUE_ERROR, "Cannot remove last item from empty vector.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     vec->count--;
     return vec->values[vec->count];
@@ -1338,7 +1338,7 @@ Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
 Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, ERR_VALUE_ERROR, "Cannot remove first item from empty vector.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (vec->count == 1) {
@@ -1358,7 +1358,7 @@ Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
 Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
     if (index >= vec->count) {
         pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (vec->count == 1) {
@@ -1441,7 +1441,7 @@ ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
         return buf;
     }
 
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
     uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
     pyro_pop(vm);
 
@@ -1466,7 +1466,7 @@ ObjBuf* ObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM
         return buf;
     }
 
-    pyro_push(vm, OBJ_VAL(buf));
+    pyro_push(vm, MAKE_OBJ(buf));
     uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
     pyro_pop(vm);
 
@@ -1605,7 +1605,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 Value result = vec->values[iter->next_index - 1];
                 return result;
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_TUP: {
@@ -1614,7 +1614,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->next_index++;
                 return tup->values[iter->next_index - 1];
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_QUEUE: {
@@ -1623,7 +1623,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->next_queue_item = iter->next_queue_item->next;
                 return next_value;
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_STR_BYTES: {
@@ -1631,9 +1631,9 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             if (iter->next_index < str->length) {
                 int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
                 iter->next_index++;
-                return I64_VAL(byte_value);
+                return MAKE_I64(byte_value);
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_STR_CHARS: {
@@ -1644,14 +1644,14 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 Utf8CodePoint cp;
                 if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
                     iter->next_index += cp.length;
-                    return CHAR_VAL(cp.value);
+                    return MAKE_CHAR(cp.value);
                 }
                 pyro_panic(
                     vm, ERR_VALUE_ERROR,
                     "String contains invalid utf-8 at byte index %zu.", iter->next_index
                 );
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_MAP_KEYS: {
@@ -1664,7 +1664,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 }
                 return entry->key;
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_MAP_VALUES: {
@@ -1677,7 +1677,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 }
                 return entry->value;
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_MAP_ENTRIES: {
@@ -1692,14 +1692,14 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 ObjTup* tup = ObjTup_new(2, vm);
                 if (!tup) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                    return OBJ_VAL(vm->empty_error);
+                    return MAKE_OBJ(vm->empty_error);
                 }
 
                 tup->values[0] = entry->key;
                 tup->values[1] = entry->value;
-                return OBJ_VAL(tup);
+                return MAKE_OBJ(tup);
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case ITER_MAP_FUNC: {
@@ -1709,11 +1709,11 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 return next_value;
             }
 
-            pyro_push(vm, OBJ_VAL(iter->callback));
+            pyro_push(vm, MAKE_OBJ(iter->callback));
             pyro_push(vm, next_value);
             Value result = pyro_call_function(vm, 1);
             if (vm->halt_flag) {
-                return OBJ_VAL(vm->empty_error);
+                return MAKE_OBJ(vm->empty_error);
             }
 
             return result;
@@ -1728,11 +1728,11 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                     return next_value;
                 }
 
-                pyro_push(vm, OBJ_VAL(iter->callback));
+                pyro_push(vm, MAKE_OBJ(iter->callback));
                 pyro_push(vm, next_value);
                 Value result = pyro_call_function(vm, 1);
                 if (vm->halt_flag) {
-                    return OBJ_VAL(vm->empty_error);
+                    return MAKE_OBJ(vm->empty_error);
                 }
 
                 if (pyro_is_truthy(result)) {
@@ -1754,22 +1754,22 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
             if (!tup) {
                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                return OBJ_VAL(vm->empty_error);
+                return MAKE_OBJ(vm->empty_error);
             }
 
-            tup->values[0] = I64_VAL(iter->next_enum);
+            tup->values[0] = MAKE_I64(iter->next_enum);
             tup->values[1] = next_value;
             iter->next_enum++;
 
-            return OBJ_VAL(tup);
+            return MAKE_OBJ(tup);
         }
 
         case ITER_GENERIC: {
-            Value next_method = pyro_get_method(vm, OBJ_VAL(iter->source), vm->str_next);
-            pyro_push(vm, OBJ_VAL(iter->source));
+            Value next_method = pyro_get_method(vm, MAKE_OBJ(iter->source), vm->str_next);
+            pyro_push(vm, MAKE_OBJ(iter->source));
             Value result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
-                return OBJ_VAL(vm->empty_error);
+                return MAKE_OBJ(vm->empty_error);
             }
             return result;
         }
@@ -1779,26 +1779,26 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 if (iter->range_next < iter->range_stop) {
                     int64_t range_next = iter->range_next;
                     iter->range_next += iter->range_step;
-                    return I64_VAL(range_next);
+                    return MAKE_I64(range_next);
                 }
-                return OBJ_VAL(vm->empty_error);
+                return MAKE_OBJ(vm->empty_error);
             }
 
             if (iter->range_step < 0) {
                 if (iter->range_next > iter->range_stop) {
                     int64_t range_next = iter->range_next;
                     iter->range_next += iter->range_step;
-                    return I64_VAL(range_next);
+                    return MAKE_I64(range_next);
                 }
-                return OBJ_VAL(vm->empty_error);
+                return MAKE_OBJ(vm->empty_error);
             }
 
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         default:
             assert(false);
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
     }
 }
 

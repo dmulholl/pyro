@@ -58,13 +58,13 @@ struct Obj {
 };
 
 // Macros for creating Value instances.
-#define BOOL_VAL(c_bool)            ((Value){VAL_BOOL, {.boolean = c_bool}})
-#define I64_VAL(c_i64)              ((Value){VAL_I64, {.i64 = c_i64}})
-#define F64_VAL(c_f64)              ((Value){VAL_F64, {.f64 = c_f64}})
-#define OBJ_VAL(c_ptr)              ((Value){VAL_OBJ, {.obj = (Obj*)c_ptr}})
-#define TOMBSTONE_VAL()             ((Value){VAL_TOMBSTONE, {.i64 = 0}})
-#define NULL_VAL()                  ((Value){VAL_NULL, {.i64 = 0}})
-#define CHAR_VAL(c_u32)             ((Value){VAL_CHAR, {.u32 = c_u32}})
+#define MAKE_BOOL(c_bool)           ((Value){VAL_BOOL, {.boolean = c_bool}})
+#define MAKE_I64(c_i64)             ((Value){VAL_I64, {.i64 = c_i64}})
+#define MAKE_F64(c_f64)             ((Value){VAL_F64, {.f64 = c_f64}})
+#define MAKE_CHAR(c_u32)            ((Value){VAL_CHAR, {.u32 = c_u32}})
+#define MAKE_OBJ(c_ptr)             ((Value){VAL_OBJ, {.obj = (Obj*)c_ptr}})
+#define MAKE_TOMBSTONE()            ((Value){VAL_TOMBSTONE, {.i64 = 0}})
+#define MAKE_NULL()                 ((Value){VAL_NULL, {.i64 = 0}})
 
 // Macros for checking the type of a Value instance.
 #define IS_BOOL(value)              ((value).type == VAL_BOOL)
@@ -119,7 +119,7 @@ struct Obj {
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
 ObjClass* pyro_get_class(Value value);
 
-// Returns the named method if it is defined for the value, otherwise NULL_VAL().
+// Returns the named method if it is defined for the value, otherwise MAKE_NULL().
 Value pyro_get_method(PyroVM* vm, Value value, ObjStr* method_name);
 
 // Returns true if the named method is defined for the value.

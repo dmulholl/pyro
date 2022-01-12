@@ -7,13 +7,13 @@
 
 
 static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {
-    return I64_VAL((int64_t)vm->bytes_allocated);
+    return MAKE_I64((int64_t)vm->bytes_allocated);
 }
 
 
 static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_collect_garbage(vm);
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -25,10 +25,10 @@ void pyro_load_std_pyro(PyroVM* vm) {
 
     ObjTup* version = ObjTup_new(3, vm);
     if (version) {
-        version->values[0] = I64_VAL(PYRO_VERSION_MAJOR);
-        version->values[1] = I64_VAL(PYRO_VERSION_MINOR);
-        version->values[2] = I64_VAL(PYRO_VERSION_PATCH);
-        pyro_define_member(vm, mod_pyro, "version", OBJ_VAL(version));
+        version->values[0] = MAKE_I64(PYRO_VERSION_MAJOR);
+        version->values[1] = MAKE_I64(PYRO_VERSION_MINOR);
+        version->values[2] = MAKE_I64(PYRO_VERSION_PATCH);
+        pyro_define_member(vm, mod_pyro, "version", MAKE_OBJ(version));
     }
 
     pyro_define_member_fn(vm, mod_pyro, "memory", fn_memory, 0);

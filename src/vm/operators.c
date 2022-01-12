@@ -17,24 +17,24 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
         case VAL_I64: {
             switch (b.type) {
                 case VAL_I64:
-                    return I64_VAL(a.as.i64 + b.as.i64);
+                    return MAKE_I64(a.as.i64 + b.as.i64);
                 case VAL_F64:
-                    return F64_VAL((double)a.as.i64 + b.as.f64);
+                    return MAKE_F64((double)a.as.i64 + b.as.f64);
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
         case VAL_F64: {
             switch (b.type) {
                 case VAL_I64:
-                    return F64_VAL(a.as.f64 + (double)b.as.i64);
+                    return MAKE_F64(a.as.f64 + (double)b.as.i64);
                 case VAL_F64:
-                    return F64_VAL(a.as.f64 + b.as.f64);
+                    return MAKE_F64(a.as.f64 + b.as.f64);
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
@@ -47,21 +47,21 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                         vm->gc_disallows--;
                         if (!result) {
                             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                            return NULL_VAL();
+                            return MAKE_NULL();
                         }
-                        return OBJ_VAL(result);
+                        return MAKE_OBJ(result);
                     } else if (IS_CHAR(b)) {
                         vm->gc_disallows++;
                         ObjStr* result = ObjStr_append_codepoint_as_utf8(AS_STR(a), b.as.u32, vm);
                         vm->gc_disallows--;
                         if (!result) {
                             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                            return NULL_VAL();
+                            return MAKE_NULL();
                         }
-                        return OBJ_VAL(result);
+                        return MAKE_OBJ(result);
                     } else {
                         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                        return NULL_VAL();
+                        return MAKE_NULL();
                     }
                 }
 
@@ -74,13 +74,13 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                         return result;
                     } else {
                         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                        return NULL_VAL();
+                        return MAKE_NULL();
                     }
                 }
 
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
@@ -89,27 +89,27 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                 ObjStr* result = ObjStr_concat_codepoints_as_utf8(a.as.u32, b.as.u32, vm);
                 if (!result) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
-                return OBJ_VAL(result);
+                return MAKE_OBJ(result);
             } else if (IS_STR(b)) {
                 vm->gc_disallows++;
                 ObjStr* result = ObjStr_prepend_codepoint_as_utf8(AS_STR(b), a.as.u32, vm);
                 vm->gc_disallows--;
                 if (!result) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
-                return OBJ_VAL(result);
+                return MAKE_OBJ(result);
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
 
         default:
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '+'.");
-            return NULL_VAL();
+            return MAKE_NULL();
     }
 }
 
@@ -121,24 +121,24 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
         case VAL_I64: {
             switch (b.type) {
                 case VAL_I64:
-                    return I64_VAL(a.as.i64 - b.as.i64);
+                    return MAKE_I64(a.as.i64 - b.as.i64);
                 case VAL_F64:
-                    return F64_VAL((double)a.as.i64 - b.as.f64);
+                    return MAKE_F64((double)a.as.i64 - b.as.f64);
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
         case VAL_F64: {
             switch (b.type) {
                 case VAL_I64:
-                    return F64_VAL(a.as.f64 - (double)b.as.i64);
+                    return MAKE_F64(a.as.f64 - (double)b.as.i64);
                 case VAL_F64:
-                    return F64_VAL(a.as.f64 - b.as.f64);
+                    return MAKE_F64(a.as.f64 - b.as.f64);
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
@@ -152,17 +152,17 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
                     return result;
                 } else {
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
 
         default:
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '-'.");
-            return NULL_VAL();
+            return MAKE_NULL();
     }
 }
 
@@ -174,24 +174,24 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
         case VAL_I64: {
             switch (b.type) {
                 case VAL_I64:
-                    return I64_VAL(a.as.i64 * b.as.i64);
+                    return MAKE_I64(a.as.i64 * b.as.i64);
                 case VAL_F64:
-                    return F64_VAL((double)a.as.i64 * b.as.f64);
+                    return MAKE_F64((double)a.as.i64 * b.as.f64);
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
         case VAL_F64: {
             switch (b.type) {
                 case VAL_I64:
-                    return F64_VAL(a.as.f64 * (double)b.as.i64);
+                    return MAKE_F64(a.as.f64 * (double)b.as.i64);
                 case VAL_F64:
-                    return F64_VAL(a.as.f64 * b.as.f64);
+                    return MAKE_F64(a.as.f64 * b.as.f64);
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
@@ -203,12 +203,12 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
                     vm->gc_disallows--;
                     if (!result) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                        return NULL_VAL();
+                        return MAKE_NULL();
                     }
-                    return OBJ_VAL(result);
+                    return MAKE_OBJ(result);
                 } else {
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
             } else if (IS_INSTANCE(a)) {
                 Value method = pyro_get_method(vm, a, vm->str_op_binary_star);
@@ -219,11 +219,11 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
                     return result;
                 } else {
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
 
@@ -232,18 +232,18 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
                 ObjStr* result = ObjStr_concat_n_codepoints_as_utf8(a.as.u32, b.as.i64, vm);
                 if (!result) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
-                return OBJ_VAL(result);
+                return MAKE_OBJ(result);
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
 
         default: {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '*'.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
     }
 }
@@ -258,20 +258,20 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
                 case VAL_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        return NULL_VAL();
+                        return MAKE_NULL();
                     } else {
-                        return F64_VAL((double)a.as.i64 / (double)b.as.i64);
+                        return MAKE_F64((double)a.as.i64 / (double)b.as.i64);
                     }
                 case VAL_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        return NULL_VAL();
+                        return MAKE_NULL();
                     } else {
-                        return F64_VAL((double)a.as.i64 / b.as.f64);
+                        return MAKE_F64((double)a.as.i64 / b.as.f64);
                     }
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
@@ -280,20 +280,20 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
                 case VAL_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        return NULL_VAL();
+                        return MAKE_NULL();
                     } else {
-                        return F64_VAL(a.as.f64 / (double)b.as.i64);
+                        return MAKE_F64(a.as.f64 / (double)b.as.i64);
                     }
                 case VAL_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
-                        return NULL_VAL();
+                        return MAKE_NULL();
                     } else {
-                        return F64_VAL(a.as.f64 / b.as.f64);
+                        return MAKE_F64(a.as.f64 / b.as.f64);
                     }
                 default:
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
             }
         }
 
@@ -307,17 +307,17 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
                     return result;
                 } else {
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
 
         default: {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand types to '/'.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
     }
 }
@@ -345,17 +345,17 @@ Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
                     return result;
                 } else {
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '+'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '+'.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
 
         default:
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '+'.");
-            return NULL_VAL();
+            return MAKE_NULL();
     }
 }
 
@@ -363,10 +363,10 @@ Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
 Value pyro_op_unary_minus(PyroVM* vm, Value operand) {
     switch (operand.type) {
         case VAL_I64:
-            return I64_VAL(-operand.as.i64);
+            return MAKE_I64(-operand.as.i64);
 
         case VAL_F64:
-            return F64_VAL(-operand.as.f64);
+            return MAKE_F64(-operand.as.f64);
 
         case VAL_OBJ: {
             if (IS_INSTANCE(operand)) {
@@ -377,17 +377,17 @@ Value pyro_op_unary_minus(PyroVM* vm, Value operand) {
                     return result;
                 } else {
                     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '-'.");
-                    return NULL_VAL();
+                    return MAKE_NULL();
                 }
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '-'.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
 
         default:
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid operand type for unary '-'.");
-            return NULL_VAL();
+            return MAKE_NULL();
     }
 }
 
@@ -967,7 +967,7 @@ bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
 Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
     if (!IS_OBJ(receiver)) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Value does not support [] indexing.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     switch (AS_OBJ(receiver)->type) {
@@ -977,7 +977,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
             if (ObjMap_get(map, key, &value, vm)) {
                 return value;
             }
-            return OBJ_VAL(vm->empty_error);
+            return MAKE_OBJ(vm->empty_error);
         }
 
         case OBJ_VEC: {
@@ -988,10 +988,10 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
                     return vec->values[index];
                 }
                 pyro_panic(vm, ERR_VALUE_ERROR, "Index is out of range.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
 
         case OBJ_TUP_AS_ERR:
@@ -1003,10 +1003,10 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
                     return tup->values[index];
                 }
                 pyro_panic(vm, ERR_VALUE_ERROR, "Index is out of range.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
 
         default: {
@@ -1017,7 +1017,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
                 return pyro_call_method(vm, method, 1);
             }
             pyro_panic(vm, ERR_TYPE_ERROR, "Object does not support [] indexing.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
     }
 }
@@ -1026,7 +1026,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
 Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
     if (!IS_OBJ(receiver)) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Value does not support [] indexing.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     switch (AS_OBJ(receiver)->type) {
@@ -1049,10 +1049,10 @@ Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
                     return value;
                 }
                 pyro_panic(vm, ERR_VALUE_ERROR, "Index is out of range.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
 
         default: {
@@ -1064,7 +1064,7 @@ Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
                 return pyro_call_method(vm, method, 2);
             }
             pyro_panic(vm, ERR_TYPE_ERROR, "Object does not support [] index assignment.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
     }
 }

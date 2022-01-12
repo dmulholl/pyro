@@ -13,21 +13,21 @@ static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = ObjTup_new(arg_count, vm);
     if (tup == NULL) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
-    return OBJ_VAL(tup);
+    return MAKE_OBJ(tup);
 }
 
 
 static Value fn_is_tup(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(IS_TUP(args[0]));
+    return MAKE_BOOL(IS_TUP(args[0]));
 }
 
 
 static Value tup_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = AS_TUP(args[-1]);
-    return I64_VAL(tup->count);
+    return MAKE_I64(tup->count);
 }
 
 
@@ -39,10 +39,10 @@ static Value tup_get(PyroVM* vm, size_t arg_count, Value* args) {
             return tup->values[index];
         }
         pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index, must be an integer.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -50,28 +50,28 @@ static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = AS_TUP(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)tup, ITER_TUP, vm);
     if (!iter) {
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(iter);
+    return MAKE_OBJ(iter);
 }
 
 
 static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        return OBJ_VAL(vm->empty_error);
+        return MAKE_OBJ(vm->empty_error);
     }
     ObjTup* tup = ObjTup_new_err(arg_count, vm);
     if (!tup) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
-    return OBJ_VAL(tup);
+    return MAKE_OBJ(tup);
 }
 
 
 static Value fn_is_err(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(IS_ERR(args[0]));
+    return MAKE_BOOL(IS_ERR(args[0]));
 }
 
 

@@ -17,9 +17,9 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         ObjVec* vec = ObjVec_new(vm);
         if (!vec) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     else if (arg_count == 1) {
@@ -27,14 +27,14 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
         if (IS_NULL(iter_method)) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $vec() is not iterable.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
 
         // Call the object's :$iter() method to get an iterator.
         pyro_push(vm, args[0]); // receiver for the $iter() method call
         Value iterator = pyro_call_method(vm, iter_method, 0);
         if (vm->halt_flag) {
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         pyro_push(vm, iterator); // protect from GC
 
@@ -42,22 +42,22 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         Value next_method = pyro_get_method(vm, iterator, vm->str_next);
         if (IS_NULL(next_method)) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         pyro_push(vm, next_method); // protect from GC
 
         ObjVec* vec = ObjVec_new(vm);
         if (!vec) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
-        pyro_push(vm, OBJ_VAL(vec)); // protect from GC
+        pyro_push(vm, MAKE_OBJ(vec)); // protect from GC
 
         while (true) {
             pyro_push(vm, iterator); // receiver for the :$next() method call
             Value next_value = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
-                return NULL_VAL();
+                return MAKE_NULL();
             }
             if (IS_ERR(next_value)) {
                 break;
@@ -65,7 +65,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_push(vm, next_value); // protect from GC
             if (!ObjVec_append(vec, next_value, vm)) {
                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
             pyro_pop(vm); // next_value
         }
@@ -73,7 +73,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_pop(vm); // vec
         pyro_pop(vm); // next_method
         pyro_pop(vm); // iterator
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     else if (arg_count == 2) {
@@ -81,30 +81,30 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
             ObjVec* vec = ObjVec_new_with_cap_and_fill((size_t)args[0].as.i64, args[1], vm);
             if (!vec) {
                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
-            return OBJ_VAL(vec);
+            return MAKE_OBJ(vec);
         } else {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid size argument for $vec().");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
     }
 
     else {
         pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 2 arguments to $vec(), found %i.", arg_count);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 }
 
 
 static Value fn_is_vec(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(IS_VEC(args[0]));
+    return MAKE_BOOL(IS_VEC(args[0]));
 }
 
 
 static Value vec_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    return I64_VAL(vec->count);
+    return MAKE_I64(vec->count);
 }
 
 
@@ -113,7 +113,7 @@ static Value vec_append(PyroVM* vm, size_t arg_count, Value* args) {
     if (!ObjVec_append(vec, args[0], vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
     }
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -125,10 +125,10 @@ static Value vec_get(PyroVM* vm, size_t arg_count, Value* args) {
             return vec->values[index];
         }
         pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -141,10 +141,10 @@ static Value vec_set(PyroVM* vm, size_t arg_count, Value* args) {
             return args[1];
         }
         pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -152,7 +152,7 @@ static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (vec->count < 2) {
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     Value* low = &vec->values[0];
@@ -166,7 +166,7 @@ static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
         high--;
     }
 
-    return OBJ_VAL(vec);
+    return MAKE_OBJ(vec);
 }
 
 
@@ -175,16 +175,16 @@ static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         pyro_mergesort(vm, vec->values, vec->count);
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     if (arg_count == 1) {
         pyro_mergesort_with_callback(vm, vec->values, vec->count, args[0]);
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :sort(), found %d.", arg_count);
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -193,16 +193,16 @@ static Value vec_mergesort(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         pyro_mergesort(vm, vec->values, vec->count);
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     if (arg_count == 1) {
         pyro_mergesort_with_callback(vm, vec->values, vec->count, args[0]);
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :mergesort(), found %d.", arg_count);
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -211,23 +211,23 @@ static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         pyro_quicksort(vm, vec->values, vec->count);
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     if (arg_count == 1) {
         pyro_quicksort_with_callback(vm, vec->values, vec->count, args[0]);
-        return OBJ_VAL(vec);
+        return MAKE_OBJ(vec);
     }
 
     pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :quicksort(), found %d.", arg_count);
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value vec_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     pyro_shuffle(vm, vec->values, vec->count);
-    return OBJ_VAL(vec);
+    return MAKE_OBJ(vec);
 }
 
 
@@ -236,9 +236,9 @@ static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* copy = ObjVec_copy(vec, vm);
     if (!copy) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(vec);
+    return MAKE_OBJ(vec);
 }
 
 
@@ -247,11 +247,11 @@ static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
 
     for (size_t i = 0; i < vec->count; i++) {
         if (pyro_op_compare_eq(vm, vec->values[i], args[0])) {
-            return BOOL_VAL(true);
+            return MAKE_BOOL(true);
         }
     }
 
-    return BOOL_VAL(false);
+    return MAKE_BOOL(false);
 }
 
 
@@ -260,11 +260,11 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
 
     for (size_t i = 0; i < vec->count; i++) {
         if (pyro_op_compare_eq(vm, vec->values[i], args[0])) {
-            return I64_VAL((int64_t)i);
+            return MAKE_I64((int64_t)i);
         }
     }
 
-    return OBJ_VAL(vm->empty_error);
+    return MAKE_OBJ(vm->empty_error);
 }
 
 
@@ -274,23 +274,23 @@ static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* new_vec = ObjVec_new_with_cap(vec->count, vm);
     if (!vec) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    pyro_push(vm, OBJ_VAL(new_vec));
+    pyro_push(vm, MAKE_OBJ(new_vec));
 
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the map function
         pyro_push(vm, vec->values[i]); // push the argument for the map function
         Value result = pyro_call_function(vm, 1);
         if (vm->halt_flag) {
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         new_vec->values[i] = result;
         new_vec->count++;
     }
 
     pyro_pop(vm);
-    return OBJ_VAL(new_vec);
+    return MAKE_OBJ(new_vec);
 }
 
 
@@ -300,27 +300,27 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* new_vec = ObjVec_new(vm);
     if (!vec) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    pyro_push(vm, OBJ_VAL(new_vec));
+    pyro_push(vm, MAKE_OBJ(new_vec));
 
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the filter function
         pyro_push(vm, vec->values[i]); // push the argument for the filter function
         Value result = pyro_call_function(vm, 1);
         if (vm->halt_flag) {
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         if (pyro_is_truthy(result)) {
             if (!ObjVec_append(new_vec, vec->values[i], vm)) {
                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                return NULL_VAL();
+                return MAKE_NULL();
             }
         }
     }
 
     pyro_pop(vm);
-    return OBJ_VAL(new_vec);
+    return MAKE_OBJ(new_vec);
 }
 
 
@@ -330,10 +330,10 @@ static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
     if (!iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
-    return OBJ_VAL(iter);
+    return MAKE_OBJ(iter);
 }
 
 
@@ -354,12 +354,12 @@ static Value vec_remove_at_index(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (args[0].as.i64 < 0) {
         pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     return ObjVec_remove_at_index(vec, args[0].as.i64, vm);
@@ -371,16 +371,16 @@ static Value vec_insert_at_index(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (args[0].as.i64 < 0) {
         pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     ObjVec_insert_at_index(vec, args[0].as.i64, args[1], vm);
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -390,7 +390,7 @@ static Value vec_first(PyroVM* vm, size_t arg_count, Value* args) {
         return vec->values[0];
     }
     pyro_panic(vm, ERR_VALUE_ERROR, "Vector is empty.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
@@ -400,13 +400,13 @@ static Value vec_last(PyroVM* vm, size_t arg_count, Value* args) {
         return vec->values[vec->count - 1];
     }
     pyro_panic(vm, ERR_VALUE_ERROR, "Vector is empty.");
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 
 static Value vec_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    return BOOL_VAL(vec->count == 0);
+    return MAKE_BOOL(vec->count == 0);
 }
 
 
@@ -414,14 +414,14 @@ static Value fn_stack(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = ObjVec_new_as_stack(vm);
     if (!vec) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
-    return OBJ_VAL(vec);
+    return MAKE_OBJ(vec);
 }
 
 
 static Value fn_is_stack(PyroVM* vm, size_t arg_count, Value* args) {
-    return BOOL_VAL(IS_STACK(args[0]));
+    return MAKE_BOOL(IS_STACK(args[0]));
 }
 
 
@@ -429,7 +429,7 @@ static Value stack_pop(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (vec->count == 0) {
         pyro_panic(vm, ERR_VALUE_ERROR, "Cannot pop empty stack.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     vec->count--;
     return vec->values[vec->count];
@@ -441,12 +441,12 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!(arg_count == 1 || arg_count == 2)) {
         pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for :slice(), found %i.", arg_count);
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, start_index must be an integer.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     size_t start_index;
@@ -456,22 +456,22 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
         start_index = (size_t)((int64_t)vec->count + args[0].as.i64);
     } else {
         pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, start_index is out of range.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     size_t length = vec->count - start_index;
     if (arg_count == 2) {
         if (!IS_I64(args[1])) {
             pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, length must be an integer.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         if (args[1].as.i64 < 0) {
             pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length cannot be negative.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         if (start_index + (size_t)args[1].as.i64 > vec->count) {
             pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length is out of range.");
-            return NULL_VAL();
+            return MAKE_NULL();
         }
         length = (size_t)args[1].as.i64;
     }
@@ -479,18 +479,18 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* new_vec = ObjVec_new(vm);
     if (!new_vec) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
 
     if (length == 0) {
-        return OBJ_VAL(new_vec);
+        return MAKE_OBJ(new_vec);
     }
 
-    pyro_push(vm, OBJ_VAL(new_vec));
+    pyro_push(vm, MAKE_OBJ(new_vec));
     Value* new_array = ALLOCATE_ARRAY(vm, Value, length);
     if (!new_array) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return NULL_VAL();
+        return MAKE_NULL();
     }
     pyro_pop(vm); // new_vec
 
@@ -499,7 +499,7 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     new_vec->capacity = length;
     new_vec->count = length;
 
-    return OBJ_VAL(new_vec);
+    return MAKE_OBJ(new_vec);
 }
 
 
@@ -507,15 +507,15 @@ static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (arg_count == 0) {
-        return BOOL_VAL(pyro_is_sorted(vm, vec->values, vec->count));
+        return MAKE_BOOL(pyro_is_sorted(vm, vec->values, vec->count));
     }
 
     if (arg_count == 1) {
-        return BOOL_VAL(pyro_is_sorted_with_callback(vm, vec->values, vec->count, args[0]));
+        return MAKE_BOOL(pyro_is_sorted_with_callback(vm, vec->values, vec->count, args[0]));
     }
 
     pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :is_sorted(), found %d.", arg_count);
-    return NULL_VAL();
+    return MAKE_NULL();
 }
 
 

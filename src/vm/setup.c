@@ -215,7 +215,7 @@ ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
     if (!name_object) {
         return NULL;
     }
-    Value name_value = OBJ_VAL(name_object);
+    Value name_value = MAKE_OBJ(name_object);
     pyro_push(vm, name_value);
 
     ObjModule* module = ObjModule_new(vm);
@@ -223,7 +223,7 @@ ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
         pyro_pop(vm); // name_value
         return NULL;
     }
-    Value module_value = OBJ_VAL(module);
+    Value module_value = MAKE_OBJ(module);
     pyro_push(vm, module_value);
 
     if (ObjMap_set(vm->modules, name_value, module_value, vm) == 0) {
@@ -245,7 +245,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
     }
 
     Value parent_module;
-    if (!ObjMap_get(vm->modules, OBJ_VAL(parent_object), &parent_module, vm)) {
+    if (!ObjMap_get(vm->modules, MAKE_OBJ(parent_object), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -254,7 +254,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
     if (!name_object) {
         return NULL;
     }
-    Value name_value = OBJ_VAL(name_object);
+    Value name_value = MAKE_OBJ(name_object);
     pyro_push(vm, name_value);
 
     ObjModule* module_object = ObjModule_new(vm);
@@ -262,7 +262,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
         pyro_pop(vm); // name_value
         return NULL;
     }
-    Value module_value = OBJ_VAL(module_object);
+    Value module_value = MAKE_OBJ(module_object);
     pyro_push(vm, module_value);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
@@ -290,7 +290,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     }
 
     Value grandparent_module;
-    if (!ObjMap_get(vm->modules, OBJ_VAL(grandparent_object), &grandparent_module, vm)) {
+    if (!ObjMap_get(vm->modules, MAKE_OBJ(grandparent_object), &grandparent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -301,7 +301,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     }
 
     Value parent_module;
-    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, OBJ_VAL(parent_object), &parent_module, vm)) {
+    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, MAKE_OBJ(parent_object), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -310,7 +310,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     if (!name_object) {
         return NULL;
     }
-    Value name_value = OBJ_VAL(name_object);
+    Value name_value = MAKE_OBJ(name_object);
     pyro_push(vm, name_value);
 
     ObjModule* module_object = ObjModule_new(vm);
@@ -318,7 +318,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
         pyro_pop(vm); // name_value
         return NULL;
     }
-    Value module_value = OBJ_VAL(module_object);
+    Value module_value = MAKE_OBJ(module_object);
     pyro_push(vm, module_value);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
@@ -347,7 +347,7 @@ bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value v
         pyro_pop(vm); // value
         return false;
     }
-    Value name_value = OBJ_VAL(name_object);
+    Value name_value = MAKE_OBJ(name_object);
     pyro_push(vm, name_value);
 
     if (ObjMap_set(module->globals, name_value, value, vm) == 0) {
@@ -367,7 +367,7 @@ bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, Nati
     if (!func_object) {
         return false;
     }
-    return pyro_define_member(vm, module, name, OBJ_VAL(func_object));
+    return pyro_define_member(vm, module, name, MAKE_OBJ(func_object));
 }
 
 
@@ -376,7 +376,7 @@ bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn 
     if (!name_object) {
         return false;
     }
-    Value name_value = OBJ_VAL(name_object);
+    Value name_value = MAKE_OBJ(name_object);
     pyro_push(vm, name_value);
 
     ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
@@ -384,7 +384,7 @@ bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn 
         pyro_pop(vm); // name_value
         return false;
     }
-    Value func_value = OBJ_VAL(func_object);
+    Value func_value = MAKE_OBJ(func_object);
     pyro_push(vm, func_value);
 
     if (ObjMap_set(class->methods, name_value, func_value, vm) == 0) {
@@ -407,7 +407,7 @@ bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
         pyro_pop(vm); // value
         return false;
     }
-    Value name_value = OBJ_VAL(name_object);
+    Value name_value = MAKE_OBJ(name_object);
     pyro_push(vm, name_value);
 
     if (ObjMap_set(vm->globals, name_value, value, vm) == 0) {
@@ -427,7 +427,7 @@ bool pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int ar
     if (!func_object) {
         return false;
     }
-    return pyro_define_global(vm, name, OBJ_VAL(func_object));
+    return pyro_define_global(vm, name, MAKE_OBJ(func_object));
 }
 
 
@@ -467,7 +467,7 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
         return false;
     }
 
-    pyro_push(vm, OBJ_VAL(tup));
+    pyro_push(vm, MAKE_OBJ(tup));
 
     for (size_t i = 0; i < arg_count; i++) {
         ObjStr* string = STR(args[i]);
@@ -475,10 +475,10 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
             pyro_pop(vm);
             return false;
         }
-        tup->values[i] = OBJ_VAL(string);
+        tup->values[i] = MAKE_OBJ(string);
     }
 
-    pyro_define_global(vm, "$args", OBJ_VAL(tup));
+    pyro_define_global(vm, "$args", MAKE_OBJ(tup));
     pyro_pop(vm);
     return true;
 }
@@ -490,8 +490,8 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
     }
     ObjStr* string = STR(path);
     if (string) {
-        pyro_push(vm, OBJ_VAL(string));
-        bool result = ObjVec_append(vm->import_roots, OBJ_VAL(string), vm);
+        pyro_push(vm, MAKE_OBJ(string));
+        bool result = ObjVec_append(vm->import_roots, MAKE_OBJ(string), vm);
         pyro_pop(vm);
         return result;
     }
