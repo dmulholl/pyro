@@ -3,14 +3,17 @@ title: String Formatting
 meta_title: Pyro &mdash; String Formatting
 ---
 
+::: insert toc
+::: hr
+
+
 Use the `$fmt()` function to interpolate values into a string:
 
-[[ `$fmt(format_string, arg1, arg2, ...)` ]]
+[[ `$fmt(format_string: str, arg1: any, arg2: any, ...) -> str` ]]
 
     Returns the new string created by interpolating the argument values into the format string.
 
 A format string is a string containing `{}` placeholders:
-
 
 ::: code pyro
     var foo = $fmt("{} and {}", 123, 456);
