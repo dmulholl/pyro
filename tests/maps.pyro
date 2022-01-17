@@ -203,7 +203,7 @@ def $test_insertion_order_is_preserved() {
 def $test_stress_allocation_and_deletion() {
     var map = $map();
 
-    # Add 100, keys 0...99.
+    # Add 100 keys 0...99.
     for i in $range(100) {
         map[i] = null;
     }
