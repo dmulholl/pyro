@@ -22,7 +22,7 @@ static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
             uint8_t fill_value;
             if (IS_I64(args[1]) && args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
                 fill_value = (uint8_t)args[1].as.i64;
-            } else if (IS_CHAR(args[1]) && args[1].as.u32 >= 0 && args[1].as.u32 <= 255) {
+            } else if (IS_CHAR(args[1]) && args[1].as.u32 <= 255) {
                 fill_value = (uint8_t)args[1].as.u32;
             } else {
                 pyro_panic(vm, ERR_TYPE_ERROR, "Invalid fill argument for $buf().");

@@ -571,6 +571,9 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
 
         case VAL_TOMBSTONE:
             return IS_TOMBSTONE(b);
+
+        default:
+            return false;
     }
 }
 
