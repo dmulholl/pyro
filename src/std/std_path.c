@@ -249,6 +249,22 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_cd(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::path::cd(), expected a string.");
+        return MAKE_NULL();
+    }
+
+    ObjStr* path = AS_STR(args[0]);
+    if (!pyro_cd(path->bytes)) {
+        pyro_panic(vm, ERR_OS_ERROR, "Failed to change current working directory to '%s'.", path->bytes);
+        return MAKE_NULL();
+    }
+
+    return MAKE_NULL();
+}
+
+
 void pyro_load_std_path(PyroVM* vm) {
     ObjModule* mod_path = pyro_define_module_2(vm, "$std", "path");
     if (!mod_path) {
@@ -266,4 +282,5 @@ void pyro_load_std_path(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_path, "cwd", fn_cwd, 0);
     pyro_define_member_fn(vm, mod_path, "listdir", fn_listdir, 1);
     pyro_define_member_fn(vm, mod_path, "realpath", fn_realpath, 1);
+    pyro_define_member_fn(vm, mod_path, "cd", fn_cd, 1);
 }

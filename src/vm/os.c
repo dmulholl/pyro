@@ -18,7 +18,7 @@
 // POSIX: nftw()
 #include <ftw.h>
 
-// POSIX: getcwd()
+// POSIX: getcwd(), chdir().
 #include <unistd.h>
 
 // POSIX: opendir() closedir()
@@ -266,4 +266,9 @@ char* pyro_strdup(const char* source) {
 
 bool pyro_setenv(const char* name, const char* value) {
     return setenv(name, value, 1) == 0;
+}
+
+
+bool pyro_cd(const char* path) {
+    return chdir(path) == 0;
 }

@@ -15,6 +15,11 @@ This module contains filepath utilities.
     Equivalent to POSIX `basename()`.
 
 
+[[ `cd(path: str)` ]]
+
+    Changes the current working directory to `path`.
+
+
 [[ `cwd() -> str` ]]
 
     Returns the directory path of the current working directory.

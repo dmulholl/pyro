@@ -69,4 +69,7 @@ char* pyro_strdup(const char* source);
 // Wrapper for POSIX setenv(). Returns true on success, false on failure.
 bool pyro_setenv(const char* name, const char* value);
 
+// Wrapper for POSIX chdir(). Returns true on success, false on failure.
+bool pyro_cd(const char* path);
+
 #endif
