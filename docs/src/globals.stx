@@ -59,7 +59,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$buf() -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
 
-    Creates a new `buf` object.
+    Creates a new byte buffer.
     If called with zero arguments, creates a new empty buffer.
     If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
 
@@ -87,13 +87,25 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$env(name: str) -> str|err` <br> `$env(name: str, value: any)` ]]
+
+    Gets or sets environment variables.
+
+    If called with a single argument, returns the value of the environment variable `name` as a string.
+    Returns an `err` if `name` is not defined.
+
+    If called with two arguments, sets the environment variable `name` to `value`.
+    Stringifies `value` if `value` is not already a string.
+
+
+
 [[ `$eprint(arg: any)` <br> `$eprint(format_string: str, arg1: any, arg2: any, ...)` ]]
 
     Prints to the error stream.
-    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
-    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
-    This function can panic if an error occurs while formatting the output string.
+    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+
+    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
 
 
@@ -107,7 +119,6 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Creates a new `err` object.
     The arguments provide the error's values.
-
 
 
 [[ `$exit(code: i64)` ]]
@@ -134,7 +145,6 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 [[ `$fmt(format_string: str, arg1: any, arg2: any, ...) -> str` ]]
 
     Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/features/formatting//) documentation for details.
-    This function can panic if an error occurs while formatting the output string.
 
 
 
@@ -155,7 +165,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
     Returns the argument's 64-bit hash value.
 
     (
-    Note that this function can return negative values.
+    This function can return negative values.
     Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.
     )
 
@@ -184,7 +194,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$is_callable(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is callable, i.e. a function, method, class, or callable instance.
+    Returns `true` if the argument is callable, i.e. is a function, method, class, or callable instance.
 
 
 
@@ -336,10 +346,10 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 [[ `$print(arg: any)` <br> `$print(format_string: str, arg1: any, arg2: any, ...)` ]]
 
     Prints to the output stream.
-    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
-    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
-    This function can panic if an error occurs while formatting the output string.
+    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+
+    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
 
 
