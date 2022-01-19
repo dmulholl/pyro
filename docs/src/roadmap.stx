@@ -16,8 +16,6 @@ A regex library, a built-in SQLite implementation, and a networking library are 
 
 (*) Static fields and methods on classes.
 
-(*) Destructor methods: `:$free()`.
-
 (*) Support for variadic functions.
 
 (*) Support for default values for function parameters.
