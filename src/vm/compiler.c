@@ -1636,6 +1636,7 @@ static void parse_for_in_stmt(Parser* parser) {
             }
         } while (match(parser, TOKEN_COMMA));
         consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after variable names.");
+        loop_var_name = syntoken("undefined, keeps compiler happy...");
     } else {
         consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
         loop_var_name = parser->previous_token;
