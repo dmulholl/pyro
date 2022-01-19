@@ -27,6 +27,9 @@
 // POSIX: strdup()
 #include <string.h>
 
+// POSIX: setenv()
+#include <stdlib.h>
+
 
 // If [path] is a symlink, stat() returns info about the target of the link.
 bool pyro_exists(const char* path) {
@@ -240,8 +243,6 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out) {
 }
 
 
-// Wrapper for realpath(). Returns NULL on failure. If the return value is non-NULL, the caller
-// should free it using free().
 char* pyro_realpath(const char* path) {
     char* array = malloc(PATH_MAX);
     if (!array) {
@@ -260,4 +261,9 @@ char* pyro_realpath(const char* path) {
 
 char* pyro_strdup(const char* source) {
     return strdup(source);
+}
+
+
+bool pyro_setenv(const char* name, const char* value) {
+    return setenv(name, value, 1) == 0;
 }

@@ -66,4 +66,7 @@ char* pyro_realpath(const char* path);
 // freed using free(). Returns NULL if memory cannot be allocated.
 char* pyro_strdup(const char* source);
 
+// Wrapper for POSIX setenv(). Returns true on success, false on failure.
+bool pyro_setenv(const char* name, const char* value);
+
 #endif

@@ -689,6 +689,55 @@ static Value fn_is_iterator(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
+    // Note: getenv() is part of the C standard library.
+    if (arg_count == 1) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid 'name' argument to $env(), expected a string.");
+            return MAKE_NULL();
+        }
+
+        ObjStr* name = AS_STR(args[0]);
+        char* value = getenv(name->bytes);
+        if (!value) {
+            return MAKE_OBJ(vm->empty_error);
+        }
+
+        ObjStr* string = STR(value);
+        if (!string) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return MAKE_NULL();
+        }
+
+        return MAKE_OBJ(string);
+    }
+
+    // Note: setenv() is a POSIX function, not part of the C standard library.
+    if (arg_count == 2) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid 'name' argument to $env(), expected a string.");
+            return MAKE_NULL();
+        }
+
+        ObjStr* name = AS_STR(args[0]);
+        ObjStr* value = pyro_stringify_value(vm, args[1]);
+        if (vm->halt_flag) {
+            return MAKE_NULL();
+        }
+
+        if (!pyro_setenv(name->bytes, value->bytes)) {
+            pyro_panic(vm, ERR_OS_ERROR, "Failed to set environment variable '%s'.", name->bytes);
+            return MAKE_NULL();
+        }
+
+        return MAKE_NULL();
+    }
+
+    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for $env(), found %zu.", arg_count);
+    return MAKE_NULL();
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -776,4 +825,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
     pyro_define_global_fn(vm, "$is_iterable", fn_is_iterable, 1);
     pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
+    pyro_define_global_fn(vm, "$env", fn_env, -1);
 }
