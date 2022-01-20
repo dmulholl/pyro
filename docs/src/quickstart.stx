@@ -3,9 +3,17 @@ title: Quickstart Tutorial
 meta_title: Pyro &mdash; Quickstart Tutorial
 ---
 
-You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
+[wsl]: https://docs.microsoft.com/en-us/windows/wsl/
 
-First, download the repository from Github:
+::: insert toc
+
+
+### Building Pyro
+
+You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
+(If you're on Windows, you can use the [WSL][] to try Pyro out.)
+
+First, download the Pyro repository from Github:
 
 ::: code
     $ git clone https://github.com/dmulholl/pyro
@@ -43,8 +51,11 @@ The `pyro` binary will be created in a new `out/release` directory as `out/relea
       help <command>     Print the command's help text.
 
 
+
+### Hello World
+
 Let's make a simple test script.
-Create a file called `hello.pyro` and add the following line:
+Create a file called `hello.pyro` and add the following line to it:
 
 ::: code pyro
     echo "hello world";
@@ -56,5 +67,24 @@ Run the script by supplying its filename to the binary:
     hello world
 
 That's it, you can officially add Pyro to the list of languages on your CV.
-Take the [tour](@root/tour//) if you'd like to learn more.
+Take the [tour](@root/tour//) if you'd like to learn more about the language.
 
+
+
+### Installing Pyro
+
+You can run `make install` from the `pyro` directory to install Pyro on your system:
+
+::: code
+    $ sudo make install
+
+This copies the Pyro binary to the `/usr/local/bin/` directory.
+(You may need to use `sudo` to give Make permission to access this folder.)
+
+You can now run Pyro like any other installed binary:
+
+::: code
+    $ pyro
+
+Running Pyro without a script argument launches the REPL --- an interactive environment where you can try running Pyro commands directly.
+Type `exit` or hit `Ctrl-D` to end the REPL session.

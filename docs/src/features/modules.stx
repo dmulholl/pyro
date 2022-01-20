@@ -86,6 +86,24 @@ A child module can import its sibling -- e.g. in `root/math/calc.pyro`:
 
 
 
+### Circular Imports
+
+In general, circular imports are fine --- module `foo` can import module `bar` and module `bar` can import module `foo`.
+
+Do be aware that trying to *use* a member from an imported module that hasn't finished initializing can result in a panic.
+
+Note that you can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
+
+::: code pyro
+    def do_some_math(value) {
+        import math;
+        return math::abs(value) * math::pi;
+    }
+
+This import will only fire when the function is executed. (Imported modules are cached so the module won't be re-imported every time the function executes.)
+
+
+
 ### Aliasing
 
 You can import a module under an alias using an `import ... as ...` statement:

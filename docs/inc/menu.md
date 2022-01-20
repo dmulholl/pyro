@@ -1,5 +1,6 @@
 * [Home](@root/)
 * [Quickstart](@root/quickstart//)
+* [Install](@root/installing//)
 * [Language Tour](@root/tour//)
 * [Features](@root/features//)
 * [Builtin Types](@root/builtins//)

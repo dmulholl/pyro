@@ -30,6 +30,7 @@
                 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="installing.html">Install</a></li>
 <li><a href="tour.html">Language Tour</a></li>
 <li><a href="features.html">Features</a></li>
 <li><a href="builtins.html">Builtin Types</a></li>
@@ -246,8 +247,8 @@ Integer literals can use binary, octal, decimal, or hex notation:
 Integer literals can use underscores to improve readability:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">a</span> <span class="p">=</span> <span class="mi">123_456</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">b</span> <span class="p">=</span> <span class="mb">0b1010_0101</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123_456</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="mb">0b1010_0101</span><span class="p">;</span>
 </pre>
 <p>
 Float literals require a decimal point and can also use underscores to improve readability:
@@ -516,6 +517,9 @@ Function definitions look like this:
 <span class="p">}</span>
 </pre>
 <p>
+If you don't explicitly return a value from a function, its return value is <code>null</code>.
+</p>
+<p>
 Inner functions declared inside outer functions can capture the outer function's local variables, including its parameters:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
@@ -594,7 +598,7 @@ Get or set an instance's fields using the field access operator, <code>.</code>:
 Boo Dave.
 </p>
 <p>
-Classes are complex enough to deserve a page of their own which you can find <a href="features/classes.html">here</a>.
+Classes are a big enough topic to deserve a page of their own which you can find <a href="features/classes.html">here</a>.
 </p>
 <h3 id="errors">
 Errors
@@ -682,7 +686,7 @@ Modules can contain submodules. Assume we have a directory called <code>math</co
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <p>
-Modules are complex enough to deserve a page of their own which you can find <a href="features/modules.html">here</a>.
+Modules are a big enough topic to deserve a page of their own which you can find <a href="features/modules.html">here</a>.
 </p>
 <h3 id="the-main-function">
 The Main Function
@@ -708,7 +712,7 @@ You can unpack the values of a tuple, error, or vector in a <code>var</code> dec
 <span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
 </pre>
 <p>
-You can similarly unpack the loop variable of a <code>for</code> loop:
+Similarly, you can unpack the loop variable of a <code>for</code> loop:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span>

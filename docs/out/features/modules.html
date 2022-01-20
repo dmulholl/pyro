@@ -30,6 +30,7 @@
                 <ul>
 <li><a href="../index.html">Home</a></li>
 <li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
 <li><a href="../tour.html">Language Tour</a></li>
 <li><a href="../features.html">Features</a></li>
 <li><a href="../builtins.html">Builtin Types</a></li>
@@ -55,6 +56,9 @@
 </li>
 <li>
 <a href="#parents-children-siblings">Parents, Children, Siblings</a>
+</li>
+<li>
+<a href="#circular-imports">Circular Imports</a>
 </li>
 <li>
 <a href="#aliasing">Aliasing</a>
@@ -158,6 +162,27 @@ A child module can import its sibling &ndash; e.g. in <code>root/math/calc.pyro<
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
 </pre>
+<h3 id="circular-imports">
+Circular Imports
+</h3>
+<p>
+In general, circular imports are fine &mdash; module <code>foo</code> can import module <code>bar</code> and module <code>bar</code> can import module <code>foo</code>.
+</p>
+<p>
+Do be aware that trying to <i>use</i> a member from an imported module that hasn't finished initializing can result in a panic.
+</p>
+<p>
+Note that you can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">do_some_math</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kn">import</span> <span class="nx">math</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">*</span> <span class="nx">math</span><span class="p">::</span><span class="nx">pi</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+This import will only fire when the function is executed. (Imported modules are cached so the module won't be re-imported every time the function executes.)
+</p>
 <h3 id="aliasing">
 Aliasing
 </h3>

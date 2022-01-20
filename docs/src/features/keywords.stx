@@ -39,6 +39,7 @@ The following keywords are reserved for future use:
 * `match`
 * `pri`
 * `pub`
+* `reimport`
 * `run`
 * `static`
 * `switch`
