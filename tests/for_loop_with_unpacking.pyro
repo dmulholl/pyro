@@ -1,3 +1,13 @@
+# Verify that unpacking syntax works with a single variable name.
+var count = 0;
+
+for (i) in $range(10) {
+    assert i == count;
+    count += 1;
+}
+
+
+# Test unpacking into two loop variables.
 var vec = [
     $tup(1, 2),
     $tup(2, 4),
@@ -10,6 +20,34 @@ for (x, y) in vec {
 }
 
 
+# Test unpacking into three loop variables.
+var vec = [
+    $tup(1, 2, 4),
+    $tup(2, 4, 8),
+    $tup(3, 6, 12),
+    $tup(4, 8, 16),
+];
+
+for (x, y, z) in vec {
+    assert y == x * 2;
+    assert z == y * 2;
+}
+
+
+# Test partial unpacking.
+var vec = [
+    $tup(1, 2, 4),
+    $tup(2, 4, 8),
+    $tup(3, 6, 12),
+    $tup(4, 8, 16),
+];
+
+for (x, y) in vec {
+    assert y == x * 2;
+}
+
+
+# Test unpacking a map entry into key and value.
 var map = {
     "1" = 1,
     "2" = 2,

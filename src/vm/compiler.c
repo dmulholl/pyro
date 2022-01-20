@@ -1623,23 +1623,25 @@ static void parse_for_in_stmt(Parser* parser) {
     // Push a new scope to wrap a dummy local variable pointing to the iterator object.
     begin_scope(parser);
 
-    Token loop_var_name;
-    Token unpacking_names[8];
-    size_t unpacking_count = 0;
+    // Support unpacking syntax for up to 8 variable names: [for (foo, bar, baz) in ...]
+    // 8 is an arbitrary restriction. We don't really need the brackets here to recognise unpacking
+    // but they match the brackets in variable declarations where they really are required.
+    Token loop_variables[8];
+    size_t variable_count = 0;
 
     if (match(parser, TOKEN_LEFT_PAREN)) {
         do {
             consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
-            unpacking_names[unpacking_count++] = parser->previous_token;
-            if (unpacking_count > 8) {
+            loop_variables[variable_count++] = parser->previous_token;
+            if (variable_count > 8) {
                 ERROR_AT_PREVIOUS_TOKEN("Too many variable names to unpack (max: 8).");
             }
         } while (match(parser, TOKEN_COMMA));
         consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after variable names.");
-        loop_var_name = syntoken("undefined, give it a value to keep the compiler happy");
     } else {
         consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
-        loop_var_name = parser->previous_token;
+        loop_variables[0] = parser->previous_token;
+        variable_count++;
     }
 
     consume(parser, TOKEN_IN, "Expected keyword 'in'.");
@@ -1664,14 +1666,11 @@ static void parse_for_in_stmt(Parser* parser) {
     size_t exit_jump_index = emit_jump(parser, OP_JUMP_IF_ERR);
 
     begin_scope(parser);
-    if (unpacking_count > 0) {
-        emit_bytes(parser, OP_UNPACK, unpacking_count);
-        for (size_t i = 0; i < unpacking_count; i++) {
-            add_local(parser, unpacking_names[i]);
-            mark_initialized(parser);
-        }
-    } else {
-        add_local(parser, loop_var_name);
+    if (variable_count > 1) {
+        emit_bytes(parser, OP_UNPACK, variable_count);
+    }
+    for (size_t i = 0; i < variable_count; i++) {
+        add_local(parser, loop_variables[i]);
         mark_initialized(parser);
     }
     parse_block(parser);
