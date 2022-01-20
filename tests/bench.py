@@ -129,6 +129,10 @@ def benchmark():
     random.shuffle(sort_vec)
     sort_vec.sort()
 
+    # Iterating over a map.
+    for key, value in map.items():
+        map[key] = value
+
 # ------------------------------------------------------------------------------
 
 def main():
