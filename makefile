@@ -27,46 +27,55 @@ FILES = $(SRC_FILES) $(LIB_FILES) -lm
 # Optimized release build.
 release::
 	@mkdir -p out/release
-	@printf "\e[1;32mBuilding\e[0m release binary\n"
+	@printf "\e[1;32m  Building\e[0m release binary\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES)
-	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
+	@printf "\e[1;32m   Version\e[0m " && ./out/release/pyro --version
 
 # Debug build. Assertions are checked and the GC is run before every allocation.
 debug1 debug::
 	@mkdir -p out/debug
-	@printf "\e[1;32mBuilding\e[0m debug binary\n"
+	@printf "\e[1;32m  Building\e[0m debug binary\n"
 	@$(CC) $(CFLAGS) $(DEBUG_1) -o out/debug/pyro $(FILES)
-	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
+	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
 
 # Debug build. Dumps bytecode.
 debug2::
 	@mkdir -p out/debug
-	@printf "\e[1;32mBuilding\e[0m debug binary (dumps bytecode)\n"
+	@printf "\e[1;32m  Building\e[0m debug binary (dumps bytecode)\n"
 	@$(CC) $(CFLAGS) $(DEBUG_2) -o out/debug/pyro $(FILES)
+	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
 
 # Debug build. Traces execution.
 debug3::
 	@mkdir -p out/debug
-	@printf "\e[1;32mBuilding\e[0m debug binary (traces execution)\n"
+	@printf "\e[1;32m  Building\e[0m debug binary (traces execution)\n"
 	@$(CC) $(CFLAGS) $(DEBUG_3) -o out/debug/pyro $(FILES)
+	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
 
 # Debug build. Dumps bytecode and traces execution.
 debug4::
 	@mkdir -p out/debug
-	@printf "\e[1;32mBuilding\e[0m debug binary (dumps bytecode, traces execution)\n"
+	@printf "\e[1;32m  Building\e[0m debug binary (dumps bytecode, traces execution)\n"
 	@$(CC) $(CFLAGS) $(DEBUG_4) -o out/debug/pyro $(FILES)
+	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
 
 # Debug build. Dumps bytecode, traces execution, and logs the GC.
 debug5::
 	@mkdir -p out/debug
-	@printf "\e[1;32mBuilding\e[0m debug binary (dumps code, traces execution, logs GC)\n"
+	@printf "\e[1;32m  Building\e[0m debug binary (dumps code, traces execution, logs GC)\n"
 	@$(CC) $(CFLAGS) $(DEBUG_5) -o out/debug/pyro $(FILES)
+	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
 
 # Runs the standard debug build, then runs the test suite.
 check::
 	@make debug
-	@printf "\e[1;32m Running\e[0m test suite\n\n"
+	@printf "\e[1;32m   Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
+
+install::
+	@make release
+	@printf "\e[1;32mInstalling\e[0m /usr/local/bin/pyro\n"
+	@cp ./out/release/pyro /usr/local/bin/pyro
 
 clean::
 	rm -rf ./out/*
