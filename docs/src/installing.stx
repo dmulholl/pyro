@@ -1,0 +1,19 @@
+---
+title: Installing Pyro
+meta_title: Installing Pyro
+---
+
+You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build and install Pyro from source.
+
+First, download the Pyro repository from Github:
+
+::: code
+    $ git clone https://github.com/dmulholl/pyro
+
+`cd` into the `pyro` directory and run `make install`:
+
+::: code
+    $ sudo make install
+
+This installs the Pyro binary as `/usr/local/bin/pyro`.
+(You may need to use `sudo` to give Make permission to access this folder.)

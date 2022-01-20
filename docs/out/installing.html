@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Installing Pyro</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-installing node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.5.17</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="installing.html">Install</a></li>
+<li><a href="tour.html">Language Tour</a></li>
+<li><a href="features.html">Features</a></li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="globals.html">Globals</a></li>
+<li><a href="stdlib.html">Standard Library</a></li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Installing Pyro</h1>
+                
+                <hr>
+            </header>
+            <p>
+You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build and install Pyro from source.
+</p>
+<p>
+First, download the Pyro repository from Github:
+</p>
+<pre>
+$ git clone https://github.com/dmulholl/pyro
+</pre>
+<p>
+<code>cd</code> into the <code>pyro</code> directory and run <code>make install</code>:
+</p>
+<pre>
+$ sudo make install
+</pre>
+<p>
+This installs the Pyro binary as <code>/usr/local/bin/pyro</code>.
+(You may need to use <code>sudo</code> to give Make permission to access this folder.)
+</p>
+        </article>
+        
+    </body>
+</html>
