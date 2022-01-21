@@ -6,8 +6,8 @@ var foo = "global";
 
     loop var i = 0; i < 5; i += 1 {
         sum += i;
-        assert foo = "global";
-        assert bar = "local";
+        assert foo == "global";
+        assert bar == "local";
     }
 
     assert sum == 0 + 1 + 2 + 3 + 4;

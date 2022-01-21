@@ -13,4 +13,4 @@ for closure in closures {
     sum += closure();
 }
 
-assert sum = 1 + 2 + 3;
+assert sum == 1 + 2 + 3;

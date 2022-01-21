@@ -16,4 +16,4 @@ var foo = "global";
     assert bar == "local";
     assert sum == 0 + 1 + 2 + 4;
 }
-assert foo = "global";
+assert foo == "global";

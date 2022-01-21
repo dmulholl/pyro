@@ -16,4 +16,4 @@ var foo = "global";
     assert x == 10;
     assert y == 5;
 }
-assert foo = "global";
+assert foo == "global";

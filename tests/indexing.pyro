@@ -21,7 +21,7 @@ loop var i = 0; i < bar:count(); i += 1 {
     sum += bar[i];
 }
 
-assert sum = 1 + 2 + 3;
+assert sum == 1 + 2 + 3;
 
 bar[1] -= 2;
 assert bar[1] == 0;

@@ -7,8 +7,8 @@ var foo = "global";
     loop var x = 1; x < 4; x += 1 {
         loop var y = 1; y < 4; y += 1 {
             sum += x * y;
-            assert foo = "global";
-            assert bar = "local";
+            assert foo == "global";
+            assert bar == "local";
         }
     }
 

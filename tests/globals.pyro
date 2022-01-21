@@ -27,4 +27,4 @@ assert foo == "new foo";
     bar = "new bar";
 }
 
-assert bar = "new bar";
+assert bar == "new bar";
