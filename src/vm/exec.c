@@ -832,43 +832,43 @@ static void run(PyroVM* vm) {
                 pyro_push(vm, MAKE_BOOL(false));
                 break;
 
-            case OP_LOAD_INT_0:
+            case OP_LOAD_I64_0:
                 pyro_push(vm, MAKE_I64(0));
                 break;
 
-            case OP_LOAD_INT_1:
+            case OP_LOAD_I64_1:
                 pyro_push(vm, MAKE_I64(1));
                 break;
 
-            case OP_LOAD_INT_2:
+            case OP_LOAD_I64_2:
                 pyro_push(vm, MAKE_I64(2));
                 break;
 
-            case OP_LOAD_INT_3:
+            case OP_LOAD_I64_3:
                 pyro_push(vm, MAKE_I64(3));
                 break;
 
-            case OP_LOAD_INT_4:
+            case OP_LOAD_I64_4:
                 pyro_push(vm, MAKE_I64(4));
                 break;
 
-            case OP_LOAD_INT_5:
+            case OP_LOAD_I64_5:
                 pyro_push(vm, MAKE_I64(5));
                 break;
 
-            case OP_LOAD_INT_6:
+            case OP_LOAD_I64_6:
                 pyro_push(vm, MAKE_I64(6));
                 break;
 
-            case OP_LOAD_INT_7:
+            case OP_LOAD_I64_7:
                 pyro_push(vm, MAKE_I64(7));
                 break;
 
-            case OP_LOAD_INT_8:
+            case OP_LOAD_I64_8:
                 pyro_push(vm, MAKE_I64(8));
                 break;
 
-            case OP_LOAD_INT_9:
+            case OP_LOAD_I64_9:
                 pyro_push(vm, MAKE_I64(9));
                 break;
 

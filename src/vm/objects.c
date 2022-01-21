@@ -1064,16 +1064,16 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BINARY_BAR:
         case OP_BINARY_LESS_LESS:
         case OP_BINARY_GREATER_GREATER:
-        case OP_LOAD_INT_0:
-        case OP_LOAD_INT_1:
-        case OP_LOAD_INT_2:
-        case OP_LOAD_INT_3:
-        case OP_LOAD_INT_4:
-        case OP_LOAD_INT_5:
-        case OP_LOAD_INT_6:
-        case OP_LOAD_INT_7:
-        case OP_LOAD_INT_8:
-        case OP_LOAD_INT_9:
+        case OP_LOAD_I64_0:
+        case OP_LOAD_I64_1:
+        case OP_LOAD_I64_2:
+        case OP_LOAD_I64_3:
+        case OP_LOAD_I64_4:
+        case OP_LOAD_I64_5:
+        case OP_LOAD_I64_6:
+        case OP_LOAD_I64_7:
+        case OP_LOAD_I64_8:
+        case OP_LOAD_I64_9:
             return 0;
 
         case OP_CALL:

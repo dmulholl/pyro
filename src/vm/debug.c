@@ -195,26 +195,26 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return constant_instruction(vm, "OP_LOAD_CONSTANT", fn, ip);
         case OP_LOAD_FALSE:
             return atomic_instruction(vm, "OP_LOAD_FALSE", ip);
-        case OP_LOAD_INT_0:
-            return atomic_instruction(vm, "OP_LOAD_INT_0", ip);
-        case OP_LOAD_INT_1:
-            return atomic_instruction(vm, "OP_LOAD_INT_1", ip);
-        case OP_LOAD_INT_2:
-            return atomic_instruction(vm, "OP_LOAD_INT_2", ip);
-        case OP_LOAD_INT_3:
-            return atomic_instruction(vm, "OP_LOAD_INT_3", ip);
-        case OP_LOAD_INT_4:
-            return atomic_instruction(vm, "OP_LOAD_INT_4", ip);
-        case OP_LOAD_INT_5:
-            return atomic_instruction(vm, "OP_LOAD_INT_5", ip);
-        case OP_LOAD_INT_6:
-            return atomic_instruction(vm, "OP_LOAD_INT_6", ip);
-        case OP_LOAD_INT_7:
-            return atomic_instruction(vm, "OP_LOAD_INT_7", ip);
-        case OP_LOAD_INT_8:
-            return atomic_instruction(vm, "OP_LOAD_INT_8", ip);
-        case OP_LOAD_INT_9:
-            return atomic_instruction(vm, "OP_LOAD_INT_9", ip);
+        case OP_LOAD_I64_0:
+            return atomic_instruction(vm, "OP_LOAD_I64_0", ip);
+        case OP_LOAD_I64_1:
+            return atomic_instruction(vm, "OP_LOAD_I64_1", ip);
+        case OP_LOAD_I64_2:
+            return atomic_instruction(vm, "OP_LOAD_I64_2", ip);
+        case OP_LOAD_I64_3:
+            return atomic_instruction(vm, "OP_LOAD_I64_3", ip);
+        case OP_LOAD_I64_4:
+            return atomic_instruction(vm, "OP_LOAD_I64_4", ip);
+        case OP_LOAD_I64_5:
+            return atomic_instruction(vm, "OP_LOAD_I64_5", ip);
+        case OP_LOAD_I64_6:
+            return atomic_instruction(vm, "OP_LOAD_I64_6", ip);
+        case OP_LOAD_I64_7:
+            return atomic_instruction(vm, "OP_LOAD_I64_7", ip);
+        case OP_LOAD_I64_8:
+            return atomic_instruction(vm, "OP_LOAD_I64_8", ip);
+        case OP_LOAD_I64_9:
+            return atomic_instruction(vm, "OP_LOAD_I64_9", ip);
         case OP_LOAD_NULL:
             return atomic_instruction(vm, "OP_LOAD_NULL", ip);
         case OP_LOAD_TRUE:
