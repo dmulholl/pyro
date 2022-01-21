@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.17</p>
+                <p class="version">Version 0.5.19</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -475,6 +475,19 @@ Panics if either argument is out of range.
 <dd>
 <p>
 Splits the string on instances of the delimiter string <code>sep</code>.
+Returns a vector of strings.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:split_lines() -&gt; vec[str]</code>
+</dt>
+<dd>
+<p>
+Splits the string into lines.
+Recognised line breaks are <code>\r\n</code>, <code>\r</code>, and <code>\n</code>.
+Strips the line breaks from the returned strings.
 Returns a vector of strings.
 </p>
 </dd>
