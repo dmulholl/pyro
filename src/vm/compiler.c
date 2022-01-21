@@ -1407,7 +1407,14 @@ static void parse_echo_stmt(Parser* parser) {
 
 
 static void parse_assert_stmt(Parser* parser) {
-    parse_expression(parser, true, true);
+    parse_expression(parser, false, true);
+    if (match_assignment_token(parser)) {
+        ERROR_AT_PREVIOUS_TOKEN(
+            "Assignment is not allowed in 'assert' statements. "
+            "(Wrap the assignment in parentheses to enable it.)"
+        );
+        return;
+    }
     consume(parser, TOKEN_SEMICOLON, "Expected ';' after expression.");
     emit_byte(parser, OP_ASSERT);
 }
@@ -1567,7 +1574,7 @@ static void parse_if_stmt(Parser* parser) {
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "Assignment is disabled inside 'if' conditions. "
+            "Assignment is not allowed in the condition expression of an 'if' statement. "
             "(Wrap the assignment in parentheses to enable it.)"
         );
         return;
@@ -1829,6 +1836,13 @@ static void parse_while_stmt(Parser* parser) {
 
     // Parse the condition.
     parse_expression(parser, false, true);
+    if (match_assignment_token(parser)) {
+        ERROR_AT_PREVIOUS_TOKEN(
+            "Assignment is not allowed in the condition expression of a 'while' statement. "
+            "(Wrap the assignment in parentheses to enable it.)"
+        );
+        return;
+    }
     size_t exit_jump_index = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
 
     // Emit the bytecode for the block.
