@@ -967,6 +967,77 @@ static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    ObjVec* vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    pyro_push(vm, MAKE_OBJ(vec));
+
+    // Points to the byte *after* the last byte in the string.
+    char* string_end = str->bytes + str->length;
+
+    // Points to the first byte of the current line.
+    char* line_start = str->bytes;
+
+    // Once we've identified a complete line, this points to the byte *after* the last byte of the
+    // line, i.e. line_length = line_end - line_start.
+    char* line_end = str->bytes;
+
+    while (line_end < string_end) {
+        if (string_end - line_end > 1 && line_end[0] == '\r' && line_end[1] == '\n') {
+            ObjStr* new_string = ObjStr_copy_raw(line_start, line_end - line_start, vm);
+            if (!new_string) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            pyro_push(vm, MAKE_OBJ(new_string));
+            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            pyro_pop(vm);
+            line_end += 2;
+            line_start = line_end;
+        } else if (*line_end == '\n' || *line_end == '\r') {
+            ObjStr* new_string = ObjStr_copy_raw(line_start, line_end - line_start, vm);
+            if (!new_string) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            pyro_push(vm, MAKE_OBJ(new_string));
+            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            pyro_pop(vm);
+            line_end += 1;
+            line_start = line_end;
+        } else {
+            line_end++;
+        }
+    }
+
+    ObjStr* new_string = ObjStr_copy_raw(line_start, line_end - line_start, vm);
+    if (!new_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    pyro_push(vm, MAKE_OBJ(new_string));
+    if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    pyro_pop(vm);
+
+    pyro_pop(vm); // pop the vector
+    return MAKE_OBJ(vec);
+}
+
+
 static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
@@ -1172,6 +1243,7 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
     pyro_define_method(vm, vm->str_class, "split", str_split, 1);
     pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
+    pyro_define_method(vm, vm->str_class, "split_lines", str_split_lines, 0);
     pyro_define_method(vm, vm->str_class, "to_hex", str_to_hex, 0);
     pyro_define_method(vm, vm->str_class, "slice", str_slice, -1);
     pyro_define_method(vm, vm->str_class, "join", str_join, 1);
