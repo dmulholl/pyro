@@ -188,6 +188,8 @@ static bool lexemes_are_equal(Token* a, Token* b) {
 }
 
 
+// Appends a single byte to the current function's bytecode. All writes to the bytecode go through
+// this function.
 static void emit_byte(Parser* parser, uint8_t byte) {
     if (!ObjFn_write(parser->compiler->fn, byte, parser->previous_token.line, parser->vm)) {
         parser->had_memory_error = true;
@@ -195,29 +197,33 @@ static void emit_byte(Parser* parser, uint8_t byte) {
 }
 
 
-static void emit_bytes(Parser* parser, uint8_t byte1, uint8_t byte2) {
+// Emits two unsigned 8-bit integers.
+static void emit_u8_u8(Parser* parser, uint8_t byte1, uint8_t byte2) {
     emit_byte(parser, byte1);
     emit_byte(parser, byte2);
 }
 
 
-// Emit a 16-bit unsigned integer in big-endian format.
-static void emit_u16(Parser* parser, uint16_t value) {
+// Emits an unsigned 16-bit integer in big-endian format.
+static void emit_u16be(Parser* parser, uint16_t value) {
     emit_byte(parser, (value >> 8) & 0xff);
     emit_byte(parser, value & 0xff);
 }
 
 
-// Emit an opcode followed by a 16-bit argument.
-static void emit_op_u16(Parser* parser, uint8_t opcode, uint16_t arg) {
-    emit_byte(parser, opcode);
-    emit_u16(parser, arg);
+// Emits an unsigned 8-bit integer followed by an unsigned 16-bit integer in big-endian format.
+// (Typically an opcode and its argument.)
+static void emit_u8_u16be(Parser* parser, uint8_t u8_arg, uint16_t u16_arg) {
+    emit_byte(parser, u8_arg);
+    emit_u16be(parser, u16_arg);
 }
 
 
-static void emit_return(Parser* parser) {
+// Emits a naked return instruction -- i.e. a return with no value specified. Inside an $init()
+// method this returns the object instance being initialized, otherwise it returns null.
+static void emit_naked_return(Parser* parser) {
     if (parser->compiler->type == TYPE_INIT_METHOD) {
-        emit_bytes(parser, OP_GET_LOCAL, 0);
+        emit_u8_u8(parser, OP_GET_LOCAL, 0);
     } else {
         emit_byte(parser, OP_LOAD_NULL);
     }
@@ -226,7 +232,7 @@ static void emit_return(Parser* parser) {
 
 
 // Adds the value to the current function's constant table and returns its index.
-static uint16_t make_constant(Parser* parser, Value value) {
+static uint16_t add_value_to_constant_table(Parser* parser, Value value) {
     int64_t index = ObjFn_add_constant(parser->compiler->fn, value, parser->vm);
     if (index < 0) {
         parser->had_memory_error = true;
@@ -247,7 +253,7 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
         parser->had_memory_error = true;
         return 0;
     }
-    return make_constant(parser, MAKE_OBJ(string));
+    return add_value_to_constant_table(parser, MAKE_OBJ(string));
 }
 
 
@@ -270,9 +276,9 @@ static void emit_load_constant_instruction(Parser* parser, Value value) {
         }
     }
 
-    uint16_t index = make_constant(parser, value);
+    uint16_t index = add_value_to_constant_table(parser, value);
     emit_byte(parser, OP_LOAD_CONSTANT);
-    emit_u16(parser, index);
+    emit_u16be(parser, index);
 }
 
 
@@ -395,7 +401,7 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, 
 
 
 static ObjFn* end_fn_compiler(Parser* parser) {
-    emit_return(parser);
+    emit_naked_return(parser);
     ObjFn* fn = parser->compiler->fn;
 
     #ifdef PYRO_DEBUG_DUMP_BYTECODE
@@ -515,7 +521,7 @@ static void define_variable(Parser* parser, uint16_t index) {
         return;
     }
     emit_byte(parser, OP_DEFINE_GLOBAL);
-    emit_u16(parser, index);
+    emit_u16be(parser, index);
 }
 
 
@@ -524,9 +530,9 @@ static void define_variables(Parser* parser, uint16_t* indexes, size_t count) {
         mark_initialized_multi(parser, count);
         return;
     }
-    emit_bytes(parser, OP_DEFINE_GLOBALS, count);
+    emit_u8_u8(parser, OP_DEFINE_GLOBALS, count);
     for (size_t i = 0; i < count; i++) {
-        emit_u16(parser, indexes[i]);
+        emit_u16be(parser, indexes[i]);
     }
 }
 
@@ -656,19 +662,19 @@ static uint8_t parse_argument_list(Parser* parser) {
 static void emit_load_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->compiler, &name);
     if (local_index != -1) {
-        emit_bytes(parser, OP_GET_LOCAL, (uint8_t)local_index);
+        emit_u8_u8(parser, OP_GET_LOCAL, (uint8_t)local_index);
         return;
     }
 
     int upvalue_index = resolve_upvalue(parser, parser->compiler, &name);
     if (upvalue_index != -1) {
-        emit_bytes(parser, OP_GET_UPVALUE, (uint8_t)upvalue_index);
+        emit_u8_u8(parser, OP_GET_UPVALUE, (uint8_t)upvalue_index);
         return;
     }
 
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
     emit_byte(parser, OP_GET_GLOBAL);
-    emit_u16(parser, const_index);
+    emit_u16be(parser, const_index);
 }
 
 
@@ -676,19 +682,19 @@ static void emit_load_named_variable(Parser* parser, Token name) {
 static void emit_store_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->compiler, &name);
     if (local_index != -1) {
-        emit_bytes(parser, OP_SET_LOCAL, (uint8_t)local_index);
+        emit_u8_u8(parser, OP_SET_LOCAL, (uint8_t)local_index);
         return;
     }
 
     int upvalue_index = resolve_upvalue(parser, parser->compiler, &name);
     if (upvalue_index != -1) {
-        emit_bytes(parser, OP_SET_UPVALUE, (uint8_t)upvalue_index);
+        emit_u8_u8(parser, OP_SET_UPVALUE, (uint8_t)upvalue_index);
         return;
     }
 
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
     emit_byte(parser, OP_SET_GLOBAL);
-    emit_u16(parser, const_index);
+    emit_u16be(parser, const_index);
 }
 
 
@@ -881,7 +887,7 @@ static void parse_map_literal(Parser* parser) {
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after map literal.");
     emit_byte(parser, OP_MAKE_MAP);
-    emit_u16(parser, count);
+    emit_u16be(parser, count);
 }
 
 
@@ -896,7 +902,7 @@ static void parse_vec_literal(Parser* parser) {
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_BRACKET, "Expected ']' after vector literal.");
     emit_byte(parser, OP_MAKE_VEC);
-    emit_u16(parser, count);
+    emit_u16be(parser, count);
 }
 
 
@@ -1016,12 +1022,12 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
             uint8_t arg_count = parse_argument_list(parser);
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
             emit_byte(parser, OP_INVOKE_SUPER_METHOD);
-            emit_u16(parser, index);
+            emit_u16be(parser, index);
             emit_byte(parser, arg_count);
         } else {
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
             emit_byte(parser, OP_GET_SUPER_METHOD);
-            emit_u16(parser, index);
+            emit_u16be(parser, index);
         }
     }
 
@@ -1052,7 +1058,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
     while (true) {
         if (match(parser, TOKEN_LEFT_PAREN)) {
             uint8_t arg_count = parse_argument_list(parser);
-            emit_bytes(parser, OP_CALL, arg_count);
+            emit_u8_u8(parser, OP_CALL, arg_count);
         }
 
         else if (match(parser, TOKEN_LEFT_BRACKET)) {
@@ -1083,21 +1089,21 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (can_assign && match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
-                emit_op_u16(parser, OP_SET_FIELD, index);
+                emit_u8_u16be(parser, OP_SET_FIELD, index);
             } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
                 emit_byte(parser, OP_DUP);
-                emit_op_u16(parser, OP_GET_FIELD, index);
+                emit_u8_u16be(parser, OP_GET_FIELD, index);
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_BINARY_PLUS);
-                emit_op_u16(parser, OP_SET_FIELD, index);
+                emit_u8_u16be(parser, OP_SET_FIELD, index);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
                 emit_byte(parser, OP_DUP);
-                emit_op_u16(parser, OP_GET_FIELD, index);
+                emit_u8_u16be(parser, OP_GET_FIELD, index);
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_BINARY_MINUS);
-                emit_op_u16(parser, OP_SET_FIELD, index);
+                emit_u8_u16be(parser, OP_SET_FIELD, index);
             } else {
-                emit_op_u16(parser, OP_GET_FIELD, index);
+                emit_u8_u16be(parser, OP_GET_FIELD, index);
             }
         }
 
@@ -1106,17 +1112,17 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (match(parser, TOKEN_LEFT_PAREN)) {
                 uint8_t arg_count = parse_argument_list(parser);
-                emit_op_u16(parser, OP_INVOKE_METHOD, index);
+                emit_u8_u16be(parser, OP_INVOKE_METHOD, index);
                 emit_byte(parser, arg_count);
             } else {
-                emit_op_u16(parser, OP_GET_METHOD, index);
+                emit_u8_u16be(parser, OP_GET_METHOD, index);
             }
         }
 
         else if (match(parser, TOKEN_COLON_COLON)) {
             consume(parser, TOKEN_IDENTIFIER, "Expected a module name after '::'.");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
-            emit_op_u16(parser, OP_GET_MEMBER, index);
+            emit_u8_u16be(parser, OP_GET_MEMBER, index);
         }
 
         else {
@@ -1137,7 +1143,7 @@ static void parse_try_expr(Parser* parser) {
     emit_byte(parser, OP_RETURN);
 
     ObjFn* fn = end_fn_compiler(parser);
-    emit_op_u16(parser, OP_MAKE_CLOSURE, make_constant(parser, MAKE_OBJ(fn)));
+    emit_u8_u16be(parser, OP_MAKE_CLOSURE, add_value_to_constant_table(parser, MAKE_OBJ(fn)));
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
@@ -1402,7 +1408,7 @@ static void parse_echo_stmt(Parser* parser) {
         ERROR_AT_PREVIOUS_TOKEN("Too many arguments for 'echo' (max: 255).");
     }
     consume(parser, TOKEN_SEMICOLON, "Expected ';' after expression.");
-    emit_bytes(parser, OP_ECHO, count);
+    emit_u8_u8(parser, OP_ECHO, count);
 }
 
 
@@ -1446,7 +1452,7 @@ static void parse_unpacking_declaration(Parser* parser) {
     consume(parser, TOKEN_EQUAL, "Expected '=' after variable list.");
 
     parse_expression(parser, true, true);
-    emit_bytes(parser, OP_UNPACK, count);
+    emit_u8_u8(parser, OP_UNPACK, count);
 
     define_variables(parser, indexes, count);
 }
@@ -1476,7 +1482,7 @@ static void parse_var_declaration(Parser* parser) {
 static void parse_import_stmt(Parser* parser) {
     consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
     uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
-    emit_op_u16(parser, OP_LOAD_CONSTANT, module_index);
+    emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
 
     Token module_name = parser->previous_token;
     Token member_names[16];
@@ -1489,7 +1495,7 @@ static void parse_import_stmt(Parser* parser) {
             do {
                 consume(parser, TOKEN_IDENTIFIER, "Expected member name.");
                 member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous_token);
-                emit_op_u16(parser, OP_LOAD_CONSTANT, member_indexes[member_count]);
+                emit_u8_u16be(parser, OP_LOAD_CONSTANT, member_indexes[member_count]);
                 member_names[member_count] = parser->previous_token;
                 member_count++;
                 if (member_count > 16) {
@@ -1502,7 +1508,7 @@ static void parse_import_stmt(Parser* parser) {
         }
         consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
         module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
-        emit_op_u16(parser, OP_LOAD_CONSTANT, module_index);
+        emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
         module_name = parser->previous_token;
         module_count++;
     }
@@ -1674,7 +1680,7 @@ static void parse_for_in_stmt(Parser* parser) {
 
     begin_scope(parser);
     if (variable_count > 1) {
-        emit_bytes(parser, OP_UNPACK, variable_count);
+        emit_u8_u8(parser, OP_UNPACK, variable_count);
     }
     for (size_t i = 0; i < variable_count; i++) {
         add_local(parser, loop_variables[i]);
@@ -1923,7 +1929,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
     // Create the function object.
     ObjFn* fn = end_fn_compiler(parser);
-    emit_op_u16(parser, OP_MAKE_CLOSURE, make_constant(parser, MAKE_OBJ(fn)));
+    emit_u8_u16be(parser, OP_MAKE_CLOSURE, add_value_to_constant_table(parser, MAKE_OBJ(fn)));
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
@@ -1950,7 +1956,7 @@ static void parse_method_declaration(Parser* parser) {
     }
     parse_function_definition(parser, type, parser->previous_token);
 
-    emit_op_u16(parser, OP_DEFINE_METHOD, index);
+    emit_u8_u16be(parser, OP_DEFINE_METHOD, index);
 }
 
 
@@ -1965,7 +1971,7 @@ static void parse_field_declaration(Parser* parser) {
             emit_byte(parser, OP_LOAD_NULL);
         }
 
-        emit_op_u16(parser, OP_DEFINE_FIELD, index);
+        emit_u8_u16be(parser, OP_DEFINE_FIELD, index);
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "Expected ';' after field declaration.");
 }
@@ -1978,7 +1984,7 @@ static void parse_class_declaration(Parser* parser) {
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
     declare_variable(parser, parser->previous_token);
 
-    emit_op_u16(parser, OP_MAKE_CLASS, index);
+    emit_u8_u16be(parser, OP_MAKE_CLASS, index);
     define_variable(parser, index);
 
     // Push a new class compiler onto the implicit linked-list stack.
@@ -2034,7 +2040,7 @@ static void parse_return_stmt(Parser* parser) {
     }
 
     if (match(parser, TOKEN_SEMICOLON)) {
-        emit_return(parser);
+        emit_naked_return(parser);
     } else {
         if (parser->compiler->type == TYPE_INIT_METHOD) {
             ERROR_AT_PREVIOUS_TOKEN("Can't return a value from an initializer.");
