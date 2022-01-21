@@ -653,7 +653,7 @@ static uint8_t parse_argument_list(Parser* parser) {
 
 
 // Emits bytecode to load the value of the named variable onto the stack.
-static void load_named_variable(Parser* parser, Token name) {
+static void emit_load_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->compiler, &name);
     if (local_index != -1) {
         emit_bytes(parser, OP_GET_LOCAL, (uint8_t)local_index);
@@ -673,7 +673,7 @@ static void load_named_variable(Parser* parser, Token name) {
 
 
 // Emits bytecode to set the named variable to the value on top of the stack.
-static void set_named_variable(Parser* parser, Token name) {
+static void emit_store_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->compiler, &name);
     if (local_index != -1) {
         emit_bytes(parser, OP_SET_LOCAL, (uint8_t)local_index);
@@ -689,31 +689,6 @@ static void set_named_variable(Parser* parser, Token name) {
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
     emit_byte(parser, OP_SET_GLOBAL);
     emit_u16(parser, const_index);
-}
-
-
-static void parse_variable(Parser* parser, bool can_assign) {
-    Token name = parser->previous_token;
-
-    if (can_assign && match(parser, TOKEN_EQUAL)) {
-        parse_expression(parser, true, true);
-        set_named_variable(parser, name);
-
-    } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
-        load_named_variable(parser, name);
-        parse_expression(parser, true, true);
-        emit_byte(parser, OP_BINARY_PLUS);
-        set_named_variable(parser, name);
-
-    } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
-        load_named_variable(parser, name);
-        parse_expression(parser, true, true);
-        emit_byte(parser, OP_BINARY_MINUS);
-        set_named_variable(parser, name);
-
-    } else {
-        load_named_variable(parser, name);
-    }
 }
 
 
@@ -925,6 +900,31 @@ static void parse_vec_literal(Parser* parser) {
 }
 
 
+static void parse_variable_expression(Parser* parser, bool can_assign) {
+    Token name = parser->previous_token;
+
+    if (can_assign && match(parser, TOKEN_EQUAL)) {
+        parse_expression(parser, true, true);
+        emit_store_named_variable(parser, name);
+
+    } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
+        emit_load_named_variable(parser, name);
+        parse_expression(parser, true, true);
+        emit_byte(parser, OP_BINARY_PLUS);
+        emit_store_named_variable(parser, name);
+
+    } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
+        emit_load_named_variable(parser, name);
+        parse_expression(parser, true, true);
+        emit_byte(parser, OP_BINARY_MINUS);
+        emit_store_named_variable(parser, name);
+
+    } else {
+        emit_load_named_variable(parser, name);
+    }
+}
+
+
 static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     if (match(parser, TOKEN_TRUE)) {
         emit_byte(parser, OP_LOAD_TRUE);
@@ -988,14 +988,14 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
     }
 
     else if (match(parser, TOKEN_IDENTIFIER)) {
-        parse_variable(parser, can_assign);
+        parse_variable_expression(parser, can_assign);
     }
 
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
             ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'self' outside a method declaration.");
         }
-        load_named_variable(parser, parser->previous_token);
+        emit_load_named_variable(parser, parser->previous_token);
     }
 
     else if (match(parser, TOKEN_SUPER)) {
@@ -1010,16 +1010,16 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
         consume(parser, TOKEN_IDENTIFIER, "Expected superclass method name.");
 
         uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
-        load_named_variable(parser, syntoken("self"));    // load the instance
+        emit_load_named_variable(parser, syntoken("self"));    // load the instance
 
         if (match(parser, TOKEN_LEFT_PAREN)) {
             uint8_t arg_count = parse_argument_list(parser);
-            load_named_variable(parser, syntoken("super"));   // load the superclass
+            emit_load_named_variable(parser, syntoken("super"));   // load the superclass
             emit_byte(parser, OP_INVOKE_SUPER_METHOD);
             emit_u16(parser, index);
             emit_byte(parser, arg_count);
         } else {
-            load_named_variable(parser, syntoken("super"));   // load the superclass
+            emit_load_named_variable(parser, syntoken("super"));   // load the superclass
             emit_byte(parser, OP_GET_SUPER_METHOD);
             emit_u16(parser, index);
         }
@@ -1875,7 +1875,7 @@ static void parse_while_stmt(Parser* parser) {
 }
 
 
-// This helper parses a function definition, i.e. the bit that looks like (...){...}.
+// This helper parses a function definition, i.e. the bit after the name that looks like (...){...}.
 // It emits the bytecode to create an ObjClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
     FnCompiler compiler;
@@ -1990,7 +1990,7 @@ static void parse_class_declaration(Parser* parser) {
 
     if (match(parser, TOKEN_LESS)) {
         consume(parser, TOKEN_IDENTIFIER, "Expected superclass name.");
-        load_named_variable(parser, parser->previous_token);
+        emit_load_named_variable(parser, parser->previous_token);
 
         // We declare 'super' as a local variable in a new lexical scope wrapping the method
         // declarations so it can be captured by the upvalue machinery.
@@ -1998,13 +1998,13 @@ static void parse_class_declaration(Parser* parser) {
         add_local(parser, syntoken("super"));
         define_variable(parser, 0);
 
-        load_named_variable(parser, class_name);
+        emit_load_named_variable(parser, class_name);
         emit_byte(parser, OP_INHERIT);
         class_compiler.has_superclass = true;
     }
 
     // Load the class object back onto the top of the stack.
-    load_named_variable(parser, class_name);
+    emit_load_named_variable(parser, class_name);
 
     consume(parser, TOKEN_LEFT_BRACE, "Expected '{' before class body.");
     while (true) {
