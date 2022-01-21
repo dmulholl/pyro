@@ -225,6 +225,13 @@ The `echo` statement prints to the standard output stream. It's useful for simpl
 You can `echo` any value --- `echo` stringifies its argument before printing it.
 (It's equivalent to calling `$str()` on the argument first and printing the result.)
 
+You can supply multiple arguments to `echo`, separated by commas.
+
+::: code pyro
+    echo foo, 123, "bar";
+
+`echo` prints the stringified values separated by spaces.
+
 Pyro also has a family of `$print()` functions with support for format strings:
 
 ::: code pyro
