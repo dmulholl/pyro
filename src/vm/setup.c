@@ -181,6 +181,7 @@ PyroVM* pyro_new_vm() {
     pyro_load_std_pyro(vm);
     pyro_load_std_errors(vm);
     pyro_load_std_path(vm);
+    pyro_load_std_sqlite(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

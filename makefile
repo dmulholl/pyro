@@ -14,57 +14,53 @@ DEBUG_4 = $(DEBUG_1) -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION
 
 DEBUG_5 = $(DEBUG_4) -D PYRO_DEBUG_LOG_GC
 
+DEBUG = ${DEBUG_1}
+
 SRC_FILES = src/vm/*.c src/std/*.c src/cli/*.c
 
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
 
-FILES = $(SRC_FILES) $(LIB_FILES) -lm
+OBJ_FILES = out/lib/sqlite.o
+
+FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES}
 
 # --------------- #
 #  Phony Targets  #
 # --------------- #
 
 # Optimized release build.
-release::
+release:: ${OBJ_FILES}
 	@mkdir -p out/release
 	@printf "\e[1;32m  Building\e[0m out/release/pyro\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES)
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES) -lm
 	@printf "\e[1;32m   Version\e[0m " && ./out/release/pyro --version
 
-# Debug build. Assertions are checked and the GC is run before every allocation.
-debug1 debug::
+# Unoptimized debug build.
+debug:: ${OBJ_FILES}
 	@mkdir -p out/debug
 	@printf "\e[1;32m  Building\e[0m out/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_1) -o out/debug/pyro $(FILES)
+	@$(CC) $(CFLAGS) $(DEBUG) -o out/debug/pyro $(FILES) -lm
 	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
+
+# Default debug build. Assertions are checked and the GC is run before every allocation.
+debug1::
+	@make debug DEBUG="${DEBUG_1}"
 
 # Debug build. Dumps bytecode.
 debug2::
-	@mkdir -p out/debug
-	@printf "\e[1;32m  Building\e[0m out/debug/pyro (dumps bytecode)\n"
-	@$(CC) $(CFLAGS) $(DEBUG_2) -o out/debug/pyro $(FILES)
-	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
+	@make debug DEBUG="${DEBUG_2}"
 
 # Debug build. Traces execution.
 debug3::
-	@mkdir -p out/debug
-	@printf "\e[1;32m  Building\e[0m out/debug/pyro (traces execution)\n"
-	@$(CC) $(CFLAGS) $(DEBUG_3) -o out/debug/pyro $(FILES)
-	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
+	@make debug DEBUG="${DEBUG_3}"
 
 # Debug build. Dumps bytecode and traces execution.
 debug4::
-	@mkdir -p out/debug
-	@printf "\e[1;32m  Building\e[0m out/debug/pyro (dumps bytecode, traces execution)\n"
-	@$(CC) $(CFLAGS) $(DEBUG_4) -o out/debug/pyro $(FILES)
-	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
+	@make debug DEBUG="${DEBUG_4}"
 
 # Debug build. Dumps bytecode, traces execution, and logs the GC.
 debug5::
-	@mkdir -p out/debug
-	@printf "\e[1;32m  Building\e[0m out/debug/pyro (dumps code, traces execution, logs GC)\n"
-	@$(CC) $(CFLAGS) $(DEBUG_5) -o out/debug/pyro $(FILES)
-	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
+	@make debug DEBUG="${DEBUG_5}"
 
 # Runs the standard debug build, then runs the test suite.
 check::
@@ -79,3 +75,14 @@ install::
 
 clean::
 	rm -rf ./out/*
+
+# ----------- #
+#  Libraries  #
+# ----------- #
+
+sqlite:: out/lib/sqlite.o
+
+out/lib/sqlite.o:
+	@mkdir -p out/lib
+	@printf "\e[1;32m  Building\e[0m sqlite\n"
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/sqlite/sqlite3.c -o out/lib/sqlite.o

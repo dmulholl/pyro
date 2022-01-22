@@ -27,5 +27,6 @@ void pyro_load_std_math(PyroVM* vm);
 void pyro_load_std_path(PyroVM* vm);
 void pyro_load_std_prng(PyroVM* vm);
 void pyro_load_std_pyro(PyroVM* vm);
+void pyro_load_std_sqlite(PyroVM* vm);
 
 #endif
