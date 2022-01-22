@@ -9,21 +9,12 @@
 
 bool pyro_is_truthy(Value value) {
     switch (value.type) {
-        case VAL_NULL:
-            return false;
         case VAL_BOOL:
             return value.as.boolean;
-        case VAL_I64:
-            return value.as.i64 != 0;
-        case VAL_F64:
-            return value.as.f64 != 0.0;
+        case VAL_NULL:
+            return false;
         case VAL_OBJ:
-            switch (value.as.obj->type) {
-                case OBJ_TUP_AS_ERR: return false;
-                default: return true;
-            }
-        case VAL_CHAR:
-            return value.as.u32 != 0;
+            return value.as.obj->type != OBJ_TUP_AS_ERR;
         default:
             return true;
     }

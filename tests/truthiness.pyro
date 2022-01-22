@@ -4,29 +4,37 @@ assert !$is_bool("foo");
 assert !$is_bool(123);
 assert $is_bool($bool(123));
 
-assert $bool(true) == true;
+# Only the values [false], [null], and [err] are falsey.
 assert $bool(false) == false;
 assert $bool(null) == false;
+assert $bool($err()) == false;
+assert $bool($err("foo", 123)) == false;
 
-var err1 = $err();
-assert $bool(err1) == false;
-
-var err2 = $err("foo", 123);
-assert $bool(err2) == false;
+# All other values are truthy.
+assert $bool(true) == true;
 
 assert $bool(-1) == true;
-assert $bool(0) == false;
-assert $bool(-0) == false;
+assert $bool(0) == true;
+assert $bool(-0) == true;
 assert $bool(1) == true;
 
 assert $bool(-1.0) == true;
-assert $bool(0.0) == false;
-assert $bool(-0.0) == false;
+assert $bool(0.0) == true;
+assert $bool(-0.0) == true;
 assert $bool(1.0) == true;
 
 assert $bool("") == true;
 assert $bool("foo") == true;
+
+assert $bool('\0') == true;
+assert $bool('X') == true;
+
 assert $bool($tup()) == true;
-assert $bool($tup("foo")) == true;
+assert $bool($tup()) == true;
 assert $bool($map()) == true;
 assert $bool($vec()) == true;
+assert $bool($buf()) == true;
+
+class Foo {}
+assert $bool(Foo) == true;
+assert $bool(Foo()) == true;
