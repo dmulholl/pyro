@@ -32,14 +32,14 @@ FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES}
 release:: ${OBJ_FILES}
 	@mkdir -p out/release
 	@printf "\e[1;32m  Building\e[0m out/release/pyro\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES) -lm -ldl -lpthread
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES) -lm -ldl -pthread
 	@printf "\e[1;32m   Version\e[0m " && ./out/release/pyro --version
 
 # Unoptimized debug build.
 debug:: ${OBJ_FILES}
 	@mkdir -p out/debug
 	@printf "\e[1;32m  Building\e[0m out/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG) -o out/debug/pyro $(FILES) -lm -ldl -lpthread
+	@$(CC) $(CFLAGS) $(DEBUG) -o out/debug/pyro $(FILES) -lm -ldl -pthread
 	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
 
 # Default debug build. Assertions are checked and the GC is run before every allocation.
