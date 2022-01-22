@@ -989,14 +989,14 @@ static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_push(vm, MAKE_OBJ(vec));
 
     // Points to the byte *after* the last byte in the string.
-    char* string_end = str->bytes + str->length;
+    const char* const string_end = str->bytes + str->length;
 
     // Points to the first byte of the current line.
-    char* line_start = str->bytes;
+    const char* line_start = str->bytes;
 
     // Once we've identified a complete line, this points to the byte *after* the last byte of the
     // line, i.e. line_length = line_end - line_start.
-    char* line_end = str->bytes;
+    const char* line_end = str->bytes;
 
     while (line_end < string_end) {
         if (string_end - line_end > 1 && line_end[0] == '\r' && line_end[1] == '\n') {
