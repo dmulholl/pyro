@@ -331,6 +331,7 @@ void pyro_out(PyroVM* vm, const char* format, ...) {
         va_start(args, format);
         vfprintf(vm->out_file, format, args);
         va_end(args);
+        fflush(vm->out_file);
     }
 }
 
@@ -341,5 +342,6 @@ void pyro_err(PyroVM* vm, const char* format, ...) {
         va_start(args, format);
         vfprintf(vm->err_file, format, args);
         va_end(args);
+        fflush(vm->err_file);
     }
 }
