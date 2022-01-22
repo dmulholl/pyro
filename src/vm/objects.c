@@ -1654,6 +1654,58 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return MAKE_OBJ(vm->empty_error);
         }
 
+        case ITER_STR_LINES: {
+            // If the source is NULL, the iterator has been exhausted.
+            if (iter->source == NULL) {
+                return MAKE_OBJ(vm->empty_error);
+            }
+            ObjStr* str = (ObjStr*)iter->source;
+
+            // If we're at the end of the string, set the source to NULL and return an empty string.
+            if (iter->next_index == str->length) {
+                iter->source = NULL;
+                return MAKE_OBJ(vm->empty_string);
+            }
+
+            // Points to the byte *after* the last byte in the string.
+            const char* const string_end = str->bytes + str->length;
+
+            // Points to the first byte of the next line.
+            const char* const line_start = str->bytes + iter->next_index;
+
+            // Once we've identified the end of the next line, this will point to the byte *after*
+            // the last byte of the line, i.e. line_length = line_end - line_start.
+            const char* line_end = line_start;
+
+            // Find the end of the next line.
+            while (line_end < string_end) {
+                if (string_end - line_end > 1 && line_end[0] == '\r' && line_end[1] == '\n') {
+                    iter->next_index = line_end - str->bytes + 2;
+                    break;
+                } else if (*line_end == '\n' || *line_end == '\r') {
+                    iter->next_index = line_end - str->bytes + 1;
+                    break;
+                } else {
+                    line_end++;
+                }
+            }
+
+            ObjStr* next_line = ObjStr_copy_raw(line_start, line_end - line_start, vm);
+            if (!next_line) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_OBJ(vm->empty_error);
+            }
+
+            // If the string ends with a linebreak, we have one more (empty) string to return. This
+            // checks for the case where the strings ends without a linebreak -- in this case the
+            // returned string exhausts the iterator.
+            if (line_end == string_end && next_line->length > 0) {
+                iter->source = NULL;
+            }
+
+            return MAKE_OBJ(next_line);
+        }
+
         case ITER_MAP_KEYS: {
             ObjMap* map = (ObjMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {

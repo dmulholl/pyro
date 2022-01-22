@@ -400,6 +400,7 @@ typedef enum {
     ITER_RANGE,
     ITER_STR_BYTES,
     ITER_STR_CHARS,
+    ITER_STR_LINES,
     ITER_TUP,
     ITER_VEC,
 } IterType;

@@ -64,6 +64,17 @@ static Value str_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_lines(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    ObjIter* iter = ObjIter_new((Obj*)str, ITER_STR_LINES, vm);
+    if (!iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    return MAKE_OBJ(iter);
+}
+
+
 static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
 
@@ -1247,4 +1258,5 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "to_hex", str_to_hex, 0);
     pyro_define_method(vm, vm->str_class, "slice", str_slice, -1);
     pyro_define_method(vm, vm->str_class, "join", str_join, 1);
+    pyro_define_method(vm, vm->str_class, "lines", str_lines, 0);
 }
