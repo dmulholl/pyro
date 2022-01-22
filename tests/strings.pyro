@@ -270,46 +270,51 @@ def $test_contains() {
 
 
 def $test_split() {
-    var vec1 = "abc--de--f":split("--");
-    assert vec1:count() == 3;
-    assert vec1[0] == "abc";
-    assert vec1[1] == "de";
-    assert vec1[2] == "f";
+    var v1 = "":split("--");
+    assert v1:count() == 1;
+    assert v1[0] == "";
 
-    var vec2 = "--abc--de--f--":split("--");
-    assert vec2:count() == 5;
-    assert vec2[0] == "";
-    assert vec2[1] == "abc";
-    assert vec2[2] == "de";
-    assert vec2[3] == "f";
-    assert vec2[4] == "";
+    var v2 = "--":split("--");
+    assert v2:count() == 2;
+    assert v2[0] == "";
+    assert v2[1] == "";
 
-    var vec3 = "--":split("--");
-    assert vec3:count() == 2;
-    assert vec3[0] == "";
-    assert vec3[1] == "";
+    var v3 = "----":split("--");
+    assert v3:count() == 3;
+    assert v3[0] == "";
+    assert v3[1] == "";
+    assert v3[2] == "";
 
-    var vec4 = "abc":split("--");
-    assert vec4:count() == 1;
-    assert vec4[0] == "abc";
+    var v4 = "a":split("--");
+    assert v4:count() == 1;
+    assert v4[0] == "a";
 
-    var vec5 = "x":split("--");
-    assert vec5:count() == 1;
-    assert vec5[0] == "x";
+    var v5 = "abc":split("--");
+    assert v5:count() == 1;
+    assert v5[0] == "abc";
 
-    var vec6 = "":split("--");
-    assert vec6:count() == 1;
-    assert vec6[0] == "";
+    var v6 = "abc--de":split("--");
+    assert v6:count() == 2;
+    assert v6[0] == "abc";
+    assert v6[1] == "de";
 
-    var vec7 = "abc":split("");
-    assert vec7:count() == 1;
-    assert vec7[0] == "abc";
+    var v7 = "abc--de--f":split("--");
+    assert v7:count() == 3;
+    assert v7[0] == "abc";
+    assert v7[1] == "de";
+    assert v7[2] == "f";
 
-    var vec8 = "abc,,def":split(",");
-    assert vec8:count() == 3;
-    assert vec8[0] == "abc";
-    assert vec8[1] == "";
-    assert vec8[2] == "def";
+    var v8 = "--abc--de--f--":split("--");
+    assert v8:count() == 5;
+    assert v8[0] == "";
+    assert v8[1] == "abc";
+    assert v8[2] == "de";
+    assert v8[3] == "f";
+    assert v8[4] == "";
+
+    var v9 = "abc":split("");
+    assert v9:count() == 1;
+    assert v9[0] == "abc";
 }
 
 
