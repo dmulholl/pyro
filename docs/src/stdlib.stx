@@ -26,3 +26,4 @@ Alternatively, you can explicitly import the submodule you want to use, e.g.
 * [path](@root/stdlib/path//)
 * [prng](@root/stdlib/prng//)
 * [pyro](@root/stdlib/pyro//)
+* [sqlite](@root/stdlib/sqlite//)

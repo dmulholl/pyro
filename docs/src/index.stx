@@ -6,6 +6,7 @@ meta_title: The Pyro Programming Language
 [1]: https://github.com/dmulholl/pyro
 [2]: @root/quickstart//
 [3]: @root/tour//
+[4]: https://github.com/dmulholl/pyro/issues
 
 
 Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
@@ -20,6 +21,7 @@ This means that it lives in roughly the same neighbourhood in programming langua
     }
 
 Pyro is a classic braces-and-semicolons language. If you've used any C-family language before you should find it instantly intuitive.
+
 
 
 ### Getting Started
@@ -39,9 +41,22 @@ the control code for your pacemaker/anti-ballistic missile defence system in it 
 * *Elegance* --- A well-crafted tool should be a pleasure to use.
 
 
+
 ### Source
 
 You can find Pyro's source code on [Github][1].
+
+
+
+### Status
+
+Pyro is an experimental project I'm working on mostly for my own edutainment.
+It may graduate to being a practical programming language some day but it isn't suitable yet for real world use --- the standard library is too sparse and the language itself is under development and subject to arbitrary change.
+
+If you do decide to try Pyro out, your feedback would be very welcome!
+
+In particular, Pyro should build cleanly without any compiler warnings.
+If you do get compiler warnings when building Pyro, please let me know by opening an issue on [Github][4] and pasting in the compiler output.
 
 
 

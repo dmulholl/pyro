@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro &mdash; Unit Tests</title>
+        <title>Pyro Standard Library &mdash; $std::sqlite</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-features-testing node-features node">
+    <body class="node-stdlib-sqlite node-stdlib node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -46,45 +46,32 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>Unit Tests</h1>
+                <h1><code>$std::sqlite</code></h1>
                 
                 <hr>
             </header>
             <p>
-Pyro has builtin support for unit tests using the <code>test</code> command:
-</p>
-<pre>
-$ pyro test --help
-
-Usage: pyro test [files]
-
-  This command runs unit tests. Each input file is
-  executed in a new VM instance.
-
-Arguments:
-  [files]              Files to test.
-
-Flags:
-  -h, --help           Print this help text and exit.
-  -v, --verbose        Show error output.
-</pre>
-<p>
-For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose names begin with <code>$test_</code>. A test function passes if it executes without panicking.
+Pyro ships with builtin copy of the <a href="https://sqlite.org/">SQLite</a> database engine.
 </p>
 <p>
-You can use an <code>assert</code> statement to make a test function panic if the test fails, e.g.
+Eventually this module will provide a Pyro interface to all of SQLite's functionality.
+Currently it's just a stub while I design that interface.
 </p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">$test_addition</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">assert</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
+<h3 id="constants">
+Constants
+</h3>
+<dl>
+<div>
+<dt>
+<code>version: str</code>
+</dt>
+<dd>
 <p>
-An <code>assert</code> statement passes if its operand expression evaluates as truthy or fails if it evaluates as falsey.
+The SQLite version number.
 </p>
-<p>
-Note that test functions take no arguments.
-</p>
+</dd>
+</div>
+</dl>
         </article>
         
     </body>

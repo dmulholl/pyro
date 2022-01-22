@@ -7,7 +7,7 @@ This module provides a Pyro interface to the C standard library's mathematical f
 
 
 
-### Variables
+### Constants
 
 
 [[ `e: f64` ]]

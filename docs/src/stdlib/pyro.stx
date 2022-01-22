@@ -7,7 +7,7 @@ A utility module for interacting with the Pyro VM.
 
 
 
-### Variables
+### Constants
 
 
 [[ `version: tup[i64, i64, i64]` ]]

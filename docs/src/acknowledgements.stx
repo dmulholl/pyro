@@ -6,6 +6,7 @@ meta_title: Pyro &mdash; Acknowledgements
 [1]: http://craftinginterpreters.com
 [2]: http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/emt.html
 [3]: https://github.com/antirez/linenoise
+[4]: https://sqlite.org
 
 
 I was inspired to build Pyro by reading Bob Nystrom's wonderful book [Crafting Interpreters][1], so many of the cleverest ideas in the implementation build on his work.
@@ -20,3 +21,6 @@ As Pyro develops it will incorporate code from external libraries and projects r
 
 (*) The REPL uses the [Linenoise][3] library by Salvatore Sanfilippo to provide support for line-editing.
     This code was released under a 2-clause BSD license.
+
+(*) Pyro ships with a builtin copy of the [SQLite][4] database engine.
+    This code has been placed by its authors in the public domain.
