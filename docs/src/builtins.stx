@@ -139,6 +139,12 @@ Strings have the following methods:
 
     Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified --- this is equivalent to calling `$str()` on each element.
 
+[[ `:lines() -> iter[str]` ]]
+
+    Returns an iterator over the string's lines.
+    Recognised line breaks are `\r\n`, `\r`, and `\n`.
+    Strips the line breaks from the returned strings.
+
 [[ `:match(target: str, index: i64) -> bool` ]]
 
     Returns `true` if the string `target` matches at byte index `index`.

@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.19</p>
+                <p class="version">Version 0.5.20</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -424,6 +424,18 @@ Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 <dd>
 <p>
 Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:lines() -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's lines.
+Recognised line breaks are <code>\r\n</code>, <code>\r</code>, and <code>\n</code>.
+Strips the line breaks from the returned strings.
 </p>
 </dd>
 </div>
