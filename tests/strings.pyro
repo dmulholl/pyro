@@ -247,11 +247,15 @@ def $test_slice_with_missing_length() {
 
 def $test_index_of() {
     var str = "foobar";
+
     assert str:index_of("foo", 0) == 0;
     assert str:index_of("bar", 0) == 3;
     assert str:index_of("bar", 1) == 3;
     assert str:index_of("bar", 3) == 3;
     assert str:index_of("foobar", 0) == 0;
+
+    assert str:index_of("", 0) == 0; # str:slice(0, 0) == ""
+    assert str:index_of("", 3) == 3; # str:slice(3, 0) == ""
 
     assert $is_err(str:index_of("xxx", 0));
     assert $is_err(str:index_of("foo", 1));
@@ -266,6 +270,10 @@ def $test_contains() {
     assert !str:contains("xxx");
     assert !str:contains("foobarfoobar");
     assert !"":contains("xxx");
+
+    # Following Python's reasoning that the empty string is a valid substring of every string.
+    assert "foobar":contains("");
+    assert "":contains("");
 }
 
 

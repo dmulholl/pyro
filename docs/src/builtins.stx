@@ -104,7 +104,9 @@ Strings have the following methods:
 
 [[ `:contains(target: str) -> bool` ]]
 
-    Returns `true` if the string contains the string `target`.
+    Returns `true` if the string contains the substring `target`.
+
+    (Note that every string contains the empty string `""` as the empty string is a valid substring of every string.)
 
 [[ `:count() -> i64` ]]
 
