@@ -132,7 +132,7 @@ You can convert any value to a boolean using the `$bool(arg)` function.
 
 Values which convert to `true` are **truthy**, values which convert to `false` are **falsey**.
 
-The values `false` and `null` are falsey, as is any `err` value, the integer value `0`, and the floating-point value `0.0`. All other values are truthy.
+The values `false` and `null` are falsey, as is any `err` value. All other values are truthy.
 
 
 
