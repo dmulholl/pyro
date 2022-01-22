@@ -388,7 +388,7 @@ def $test_multiplication_by_int() {
 }
 
 
-def $test_iterator_over_bytes() {
+def $test_iterating_over_bytes() {
     var bytes = "abc":bytes():to_vec();
     assert bytes:count() == 3;
     assert bytes[0] == 97;
@@ -397,7 +397,7 @@ def $test_iterator_over_bytes() {
 }
 
 
-def $test_iterator_over_chars() {
+def $test_iterating_over_chars() {
     var chars = "abc🔥€":chars():to_vec();
     assert chars:count() == 5;
     assert chars[0] == 'a';
