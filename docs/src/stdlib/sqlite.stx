@@ -6,7 +6,7 @@ meta_title: Pyro Standard Library &mdash; $std::sqlite
 [1]: https://sqlite.org/
 
 
-Pyro ships with builtin copy of the [SQLite][1] database engine.
+Pyro ships with a builtin copy of the [SQLite][1] database engine.
 
 Eventually this module will provide a Pyro interface to all of SQLite's functionality.
 Currently it's just a stub while I design that interface.
