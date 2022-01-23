@@ -101,7 +101,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$eprint(arg: any)` <br> `$eprint(format_string: str, arg1: any, arg2: any, ...)` ]]
 
-    Prints to the error stream.
+    Prints to the standard error stream.
 
     Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
 
@@ -345,7 +345,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$print(arg: any)` <br> `$print(format_string: str, arg1: any, arg2: any, ...)` ]]
 
-    Prints to the output stream.
+    Prints to the standard output stream.
 
     Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
 
