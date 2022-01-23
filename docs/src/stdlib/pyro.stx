@@ -12,7 +12,11 @@ A utility module for interacting with the Pyro VM.
 
 [[ `version: tup[i64, i64, i64]` ]]
 
-    A three-item tuple containing the language version as `(MAJOR, MINIOR, PATCH)` integers.
+    The language version as a three-item tuple containing `(MAJOR, MINIOR, PATCH)` integers.
+
+[[ `version_string: str` ]]
+
+    The language version as a string.
 
 
 
