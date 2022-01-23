@@ -147,7 +147,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        pyro_err(vm, "%s", string->bytes);
+        pyro_write_stderr(vm, "%s", string->bytes);
         return MAKE_NULL();
     }
 
@@ -161,7 +161,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    pyro_err(vm, "%s", AS_STR(formatted)->bytes);
+    pyro_write_stderr(vm, "%s", AS_STR(formatted)->bytes);
     return MAKE_NULL();
 }
 
@@ -177,7 +177,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        pyro_out(vm, "%s", string->bytes);
+        pyro_write_stdout(vm, "%s", string->bytes);
         return MAKE_NULL();
     }
 
@@ -191,14 +191,14 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    pyro_out(vm, "%s", AS_STR(formatted)->bytes);
+    pyro_write_stdout(vm, "%s", AS_STR(formatted)->bytes);
     return MAKE_NULL();
 }
 
 
 static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        pyro_err(vm, "\n");
+        pyro_write_stderr(vm, "\n");
         return MAKE_NULL();
     }
 
@@ -207,7 +207,7 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        pyro_err(vm, "%s\n", string->bytes);
+        pyro_write_stderr(vm, "%s\n", string->bytes);
         return MAKE_NULL();
     }
 
@@ -221,14 +221,14 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    pyro_err(vm, "%s\n", AS_STR(formatted)->bytes);
+    pyro_write_stderr(vm, "%s\n", AS_STR(formatted)->bytes);
     return MAKE_NULL();
 }
 
 
 static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        pyro_out(vm, "\n");
+        pyro_write_stdout(vm, "\n");
         return MAKE_NULL();
     }
 
@@ -237,7 +237,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        pyro_out(vm, "%s\n", string->bytes);
+        pyro_write_stdout(vm, "%s\n", string->bytes);
         return MAKE_NULL();
     }
 
@@ -251,7 +251,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    pyro_out(vm, "%s\n", AS_STR(formatted)->bytes);
+    pyro_write_stdout(vm, "%s\n", AS_STR(formatted)->bytes);
     return MAKE_NULL();
 }
 

@@ -73,7 +73,7 @@ static void mark_roots(PyroVM* vm) {
 
 static void blacken_object(PyroVM* vm, Obj* object) {
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(
+        pyro_write_stdout(
             vm,
             "   %p blacken %s\n",
             (void*)object,
@@ -293,7 +293,7 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) 
 
 void pyro_free_object(PyroVM* vm, Obj* object) {
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(
+        pyro_write_stdout(
             vm,
             "   %p free object %s\n",
             (void*)object,
@@ -433,7 +433,7 @@ void pyro_mark_object(PyroVM* vm, Obj* object) {
     }
 
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(
+        pyro_write_stdout(
             vm,
             "   %p mark %s\n",
             (void*)object,
@@ -488,7 +488,7 @@ void pyro_collect_garbage(PyroVM* vm) {
     }
 
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(vm, "-- gc begin\n");
+        pyro_write_stdout(vm, "-- gc begin\n");
         size_t initial_bytes_allocated = vm->bytes_allocated;
     #endif
 
@@ -506,8 +506,8 @@ void pyro_collect_garbage(PyroVM* vm) {
     vm->next_gc_threshold = vm->bytes_allocated * PYRO_GC_HEAP_GROW_FACTOR;
 
     #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(vm, "-- gc end\n");
-        pyro_out(vm, "-- gc collected %zu bytes (from %zu to %zu) next gc at %zu\n",
+        pyro_write_stdout(vm, "-- gc end\n");
+        pyro_write_stdout(vm, "-- gc collected %zu bytes (from %zu to %zu) next gc at %zu\n",
             initial_bytes_allocated - vm->bytes_allocated,
             initial_bytes_allocated,
             vm->bytes_allocated,

@@ -128,20 +128,20 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
     switch (object->type) {
         case OBJ_STR: {
             ObjStr* string = (ObjStr*)object;
-            pyro_out(vm, "\"%s\"", string->bytes);
+            pyro_write_stdout(vm, "\"%s\"", string->bytes);
             break;
         }
 
         case OBJ_BOUND_METHOD:
-            pyro_out(vm, "<method>");
+            pyro_write_stdout(vm, "<method>");
             break;
 
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
             if (class->name == NULL) {
-                pyro_out(vm, "<class>");
+                pyro_write_stdout(vm, "<class>");
             } else {
-                pyro_out(vm, "<class %s>", class->name->bytes);
+                pyro_write_stdout(vm, "<class %s>", class->name->bytes);
             }
             break;
         }
@@ -149,9 +149,9 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             if (closure->fn->name == NULL) {
-                pyro_out(vm, "<fn>");
+                pyro_write_stdout(vm, "<fn>");
             } else {
-                pyro_out(vm, "<fn %s>", closure->fn->name->bytes);
+                pyro_write_stdout(vm, "<fn %s>", closure->fn->name->bytes);
             }
             break;
         }
@@ -159,82 +159,82 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
         case OBJ_FN: {
             ObjFn* fn = (ObjFn*)object;
             if (fn->name == NULL) {
-                pyro_out(vm, "<fn_obj>");
+                pyro_write_stdout(vm, "<fn_obj>");
             } else {
-                pyro_out(vm, "<fn_obj %s>", fn->name->bytes);
+                pyro_write_stdout(vm, "<fn_obj %s>", fn->name->bytes);
             }
             break;
         }
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
-            pyro_out(vm, "<instance %s>", instance->obj.class->name->bytes);
+            pyro_write_stdout(vm, "<instance %s>", instance->obj.class->name->bytes);
             break;
         }
 
         case OBJ_MAP: {
-            pyro_out(vm, "<map>");
+            pyro_write_stdout(vm, "<map>");
             break;
         }
 
         case OBJ_MAP_AS_SET: {
-            pyro_out(vm, "<set>");
+            pyro_write_stdout(vm, "<set>");
             break;
         }
 
         case OBJ_MODULE: {
-            pyro_out(vm, "<module>");
+            pyro_write_stdout(vm, "<module>");
             break;
         }
 
         case OBJ_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
-            pyro_out(vm, "<fn_nat %s>", native->name->bytes);
+            pyro_write_stdout(vm, "<fn_nat %s>", native->name->bytes);
             break;
         }
 
         case OBJ_TUP_AS_ERR:
-            pyro_out(vm, "<err>");
+            pyro_write_stdout(vm, "<err>");
             break;
 
         case OBJ_TUP:
-            pyro_out(vm, "<tup>");
+            pyro_write_stdout(vm, "<tup>");
             break;
 
         case OBJ_UPVALUE:
-            pyro_out(vm, "<upvalue>");
+            pyro_write_stdout(vm, "<upvalue>");
             break;
 
         case OBJ_VEC:
-            pyro_out(vm, "<vec>");
+            pyro_write_stdout(vm, "<vec>");
             break;
 
         case OBJ_VEC_AS_STACK:
-            pyro_out(vm, "<stack>");
+            pyro_write_stdout(vm, "<stack>");
             break;
 
         case OBJ_FILE:
-            pyro_out(vm, "<file>");
+            pyro_write_stdout(vm, "<file>");
             break;
 
         case OBJ_BUF:
-            pyro_out(vm, "<buf>");
+            pyro_write_stdout(vm, "<buf>");
             break;
 
         case OBJ_QUEUE:
-            pyro_out(vm, "<queue>");
+            pyro_write_stdout(vm, "<queue>");
             break;
 
         case OBJ_ITER:
-            pyro_out(vm, "<iter>");
+            pyro_write_stdout(vm, "<iter>");
             break;
 
         case OBJ_MAP_AS_WEAKREF:
-            pyro_out(vm, "<weakref map>");
+            pyro_write_stdout(vm, "<weakref map>");
             break;
 
         default:
-            pyro_out(vm, "<object>");
+            pyro_write_stdout(vm, "<object>");
             break;
     }
 }
@@ -243,19 +243,19 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
 void pyro_dump_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_BOOL:
-            pyro_out(vm, "%s", value.as.boolean ? "true" : "false");
+            pyro_write_stdout(vm, "%s", value.as.boolean ? "true" : "false");
             break;
 
         case VAL_NULL:
-            pyro_out(vm, "null");
+            pyro_write_stdout(vm, "null");
             break;
 
         case VAL_I64:
-            pyro_out(vm, "%lld", value.as.i64);
+            pyro_write_stdout(vm, "%lld", value.as.i64);
             break;
 
         case VAL_F64:
-            pyro_out(vm, "%.2f", value.as.f64);
+            pyro_write_stdout(vm, "%.2f", value.as.f64);
             break;
 
         case VAL_OBJ:
@@ -263,7 +263,7 @@ void pyro_dump_value(PyroVM* vm, Value value) {
             break;
 
         default:
-            pyro_out(vm, "<value>");
+            pyro_write_stdout(vm, "<value>");
             break;
     }
 }

@@ -325,23 +325,21 @@ bool pyro_parse_string_as_float(const char* string, size_t length, double* value
 }
 
 
-void pyro_out(PyroVM* vm, const char* format, ...) {
+void pyro_write_stdout(PyroVM* vm, const char* format, ...) {
     if (vm->out_file) {
         va_list args;
         va_start(args, format);
         vfprintf(vm->out_file, format, args);
         va_end(args);
-        fflush(vm->out_file);
     }
 }
 
 
-void pyro_err(PyroVM* vm, const char* format, ...) {
+void pyro_write_stderr(PyroVM* vm, const char* format, ...) {
     if (vm->err_file) {
         va_list args;
         va_start(args, format);
         vfprintf(vm->err_file, format, args);
         va_end(args);
-        fflush(vm->err_file);
     }
 }

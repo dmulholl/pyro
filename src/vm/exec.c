@@ -267,16 +267,16 @@ static void run(PyroVM* vm) {
         }
 
         #ifdef PYRO_DEBUG_TRACE_EXECUTION
-            pyro_out(vm, "             ");
+            pyro_write_stdout(vm, "             ");
             if (vm->stack == vm->stack_top) {
-                pyro_out(vm, "[ empty ]");
+                pyro_write_stdout(vm, "[ empty ]");
             }
             for (Value* slot = vm->stack; slot < vm->stack_top; slot++) {
-                pyro_out(vm, "[ ");
+                pyro_write_stdout(vm, "[ ");
                 pyro_dump_value(vm, *slot);
-                pyro_out(vm, " ]");
+                pyro_write_stdout(vm, " ]");
             }
-            pyro_out(vm, "\n");
+            pyro_write_stdout(vm, "\n");
             size_t ip = frame->ip - frame->closure->fn->code;
             pyro_disassemble_instruction(vm, frame->closure->fn, ip);
         #endif
@@ -439,13 +439,13 @@ static void run(PyroVM* vm) {
                     if (vm->halt_flag) {
                         return;
                     }
-                    pyro_out(vm, "%s", string->bytes);
+                    pyro_write_stdout(vm, "%s", string->bytes);
                     if (i > 1) {
                         fprintf(vm->out_file, " ");
                     }
                 }
 
-                pyro_out(vm, "\n");
+                pyro_write_stdout(vm, "\n");
                 vm->stack_top -= arg_count;
                 break;
             }
@@ -1035,7 +1035,7 @@ static void run(PyroVM* vm) {
                     if (vm->halt_flag) {
                         return;
                     }
-                    pyro_out(vm, "%s\n", string->bytes);
+                    pyro_write_stdout(vm, "%s\n", string->bytes);
                 }
 
                 pyro_pop(vm);
@@ -1484,7 +1484,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
             ObjStr* name = AS_STR(entry->key);
             if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                 if (AS_CLOSURE(entry->value)->fn->arity > 0) {
-                    pyro_out(vm, " · Invalid test function (%s), too many args.\n", name->bytes);
+                    pyro_write_stdout(vm, " · Invalid test function (%s), too many args.\n", name->bytes);
                     tests_failed += 1;
                     continue;
                 }
@@ -1506,19 +1506,19 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 assert(vm->stack_top == vm->stack);
 
                 if (vm->exit_flag) {
-                    pyro_out(vm, " · \x1B[1;31mEXIT\x1B[0m (%d) %s\n", vm->status_code, name->bytes);
+                    pyro_write_stdout(vm, " · \x1B[1;31mEXIT\x1B[0m (%d) %s\n", vm->status_code, name->bytes);
                     tests_failed += 1;
                     break;
                 }
 
                 if (vm->hard_panic) {
-                    pyro_out(vm, " · \x1B[1;31mHARD PANIC\x1B[0m %s\n", name->bytes);
+                    pyro_write_stdout(vm, " · \x1B[1;31mHARD PANIC\x1B[0m %s\n", name->bytes);
                     tests_failed += 1;
                     break;
                 }
 
                 if (vm->panic_flag) {
-                    pyro_out(vm, " · \x1B[1;31mFAIL\x1B[0m %s\n", name->bytes);
+                    pyro_write_stdout(vm, " · \x1B[1;31mFAIL\x1B[0m %s\n", name->bytes);
                     tests_failed += 1;
                     continue;
                 }
@@ -1542,7 +1542,7 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
             ObjStr* name = AS_STR(entry->key);
             if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                 if (AS_CLOSURE(entry->value)->fn->arity > 0) {
-                    pyro_out(vm, " · Invalid time function (%s), too many args.\n", name->bytes);
+                    pyro_write_stdout(vm, " · Invalid time function (%s), too many args.\n", name->bytes);
                     return;
                 }
                 if (name->length > max_name_length) {
@@ -1575,19 +1575,19 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
                 double average_in_secs = total_runtime / num_iterations;
                 double average_in_millisecs = average_in_secs * 1000;
 
-                pyro_out(vm, " · %s() ···", name->bytes);
+                pyro_write_stdout(vm, " · %s() ···", name->bytes);
                 for (size_t j = 0; j < max_name_length - name->length; j++) {
-                    pyro_out(vm, "·");
+                    pyro_write_stdout(vm, "·");
                 }
 
-                pyro_out(vm, " %.6f s", average_in_secs);
+                pyro_write_stdout(vm, " %.6f s", average_in_secs);
 
                 if (average_in_secs < 1.0) {
-                    pyro_out(vm, " ··· ");
-                    pyro_out(vm, "%.3f ms", average_in_millisecs);
+                    pyro_write_stdout(vm, " ··· ");
+                    pyro_write_stdout(vm, "%.3f ms", average_in_millisecs);
                 }
 
-                pyro_out(vm, "\n");
+                pyro_write_stdout(vm, "\n");
             }
         }
     }
