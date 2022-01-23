@@ -177,7 +177,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        pyro_err(vm, "%s", string->bytes);
+        pyro_out(vm, "%s", string->bytes);
         return MAKE_NULL();
     }
 
