@@ -23,13 +23,20 @@ void pyro_load_std_pyro(PyroVM* vm) {
         return;
     }
 
-    ObjTup* version = ObjTup_new(3, vm);
-    if (version) {
-        version->values[0] = MAKE_I64(PYRO_VERSION_MAJOR);
-        version->values[1] = MAKE_I64(PYRO_VERSION_MINOR);
-        version->values[2] = MAKE_I64(PYRO_VERSION_PATCH);
-        pyro_define_member(vm, mod_pyro, "version", MAKE_OBJ(version));
+    ObjTup* version_tuple = ObjTup_new(3, vm);
+    if (!version_tuple) {
+        return;
     }
+    version_tuple->values[0] = MAKE_I64(PYRO_VERSION_MAJOR);
+    version_tuple->values[1] = MAKE_I64(PYRO_VERSION_MINOR);
+    version_tuple->values[2] = MAKE_I64(PYRO_VERSION_PATCH);
+    pyro_define_member(vm, mod_pyro, "version", MAKE_OBJ(version_tuple));
+
+    ObjStr* version_string = STR(PYRO_VERSION_STRING);
+    if (!version_string) {
+        return;
+    }
+    pyro_define_member(vm, mod_pyro, "version_string", MAKE_OBJ(version_string));
 
     pyro_define_member_fn(vm, mod_pyro, "memory", fn_memory, 0);
     pyro_define_member_fn(vm, mod_pyro, "gc", fn_memory, 0);

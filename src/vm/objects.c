@@ -1506,6 +1506,9 @@ bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
 }
 
 
+// We make sure there's always at least one spare byte of capacity -- this means that we can
+// efficiently convert the buffer's underlying byte array to a string without needing to allocate
+// extra memory for the terminating \0.
 bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
     size_t req_capacity = buf->count + count + 1;
 
