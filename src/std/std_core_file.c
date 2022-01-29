@@ -20,19 +20,18 @@ static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    ObjFile* file = ObjFile_new(vm);
-    if (!file) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return MAKE_NULL();
-    }
-
     FILE* stream = fopen(AS_STR(args[0])->bytes, AS_STR(args[1])->bytes);
     if (!stream) {
         pyro_panic(vm, ERR_OS_ERROR, "Failed to open file '%s'.", AS_STR(args[0])->bytes);
         return MAKE_NULL();
     }
 
-    file->stream = stream;
+    ObjFile* file = ObjFile_new(vm, stream);
+    if (!file) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+
     return MAKE_OBJ(file);
 }
 

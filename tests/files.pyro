@@ -1,5 +1,9 @@
 assert !$is_file(123);
 
-assert $is_file($stdin);
-assert $is_file($stdout);
-assert $is_file($stderr);
+var stdin = $std::pyro::stdin();
+var stdout = $std::pyro::stdout();
+var stderr = $std::pyro::stderr();
+
+assert $is_file(stdin);
+assert $is_file(stdout);
+assert $is_file(stderr) || $is_null(stderr);

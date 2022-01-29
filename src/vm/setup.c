@@ -32,8 +32,6 @@ PyroVM* pyro_new_vm() {
     vm->hard_panic = false;
     vm->halt_flag = false;
     vm->status_code = 0;
-    vm->out_file = stdout;
-    vm->err_file = stderr;
     vm->try_depth = 0;
     vm->objects = NULL;
     vm->map_class = NULL;
@@ -82,6 +80,9 @@ PyroVM* pyro_new_vm() {
     vm->set_class = NULL;
     vm->queue_class = NULL;
     vm->in_repl = false;
+    vm->stderr_stream = NULL;
+    vm->stdout_stream = NULL;
+    vm->stdin_stream = NULL;
 
     // Disable garbage collection until the VM has been fully initialized. This is to avoid the
     // possibility of the GC triggering and panicking if it fails to allocate memory for the
@@ -158,6 +159,9 @@ PyroVM* pyro_new_vm() {
     vm->modules = ObjMap_new(vm);
     vm->main_module = ObjModule_new(vm);
     vm->import_roots = ObjVec_new(vm);
+    vm->stdout_stream = (Obj*)ObjFile_new(vm, stdout);
+    vm->stderr_stream = (Obj*)ObjFile_new(vm, stderr);
+    vm->stdin_stream = (Obj*)ObjFile_new(vm, stdin);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -452,13 +456,35 @@ bool pyro_get_hard_panic_flag(PyroVM* vm) {
 }
 
 
-void pyro_set_err_file(PyroVM* vm, FILE* file) {
-    vm->err_file = file;
+bool pyro_set_stderr(PyroVM* vm, FILE* stream) {
+    if (stream == NULL) {
+        vm->stderr_stream = NULL;
+        return true;
+    }
+
+    ObjFile* file = ObjFile_new(vm, stream);
+    if (!file) {
+        return false;
+    }
+
+    vm->stderr_stream = (Obj*)file;
+    return true;
 }
 
 
-void pyro_set_out_file(PyroVM* vm, FILE* file) {
-    vm->out_file = file;
+bool pyro_set_stdout(PyroVM* vm, FILE* stream) {
+    if (stream == NULL) {
+        vm->stdout_stream = NULL;
+        return true;
+    }
+
+    ObjFile* file = ObjFile_new(vm, stream);
+    if (!file) {
+        return false;
+    }
+
+    vm->stdout_stream = (Obj*)file;
+    return true;
 }
 
 

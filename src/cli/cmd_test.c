@@ -25,7 +25,7 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
 
         // Swallow error output unless the --verbose flag has been set.
         if (!ap_found(cmd_parser, "verbose")) {
-            pyro_set_err_file(vm, NULL);
+            pyro_set_stderr(vm, NULL);
         }
 
         // Set the VM"s max memory allocation.

@@ -602,7 +602,7 @@ char* pyro_sprintf(PyroVM* vm, const char* format_string, ...) {
     }
 
     va_start(args, format_string);
-    vsnprintf(array, length + 1, format_string, args);
+    vsprintf(array, format_string, args);
     va_end(args);
 
     return array;
@@ -633,7 +633,7 @@ ObjStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...) {
     }
 
     va_start(args, format_string);
-    vsnprintf(array, length + 1, format_string, args);
+    vsprintf(array, format_string, args);
     va_end(args);
 
     ObjStr* string = ObjStr_take(array, length, vm);

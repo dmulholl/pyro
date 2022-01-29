@@ -117,6 +117,7 @@ typedef enum {
     ERR_VALUE_ERROR,
     ERR_MODULE_NOT_FOUND,
     ERR_SYNTAX_ERROR,
+    ERR_IO_ERROR,
 } PyroErrorCode;
 
 #endif

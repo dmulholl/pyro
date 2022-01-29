@@ -1506,15 +1506,11 @@ bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
 }
 
 
-// We make sure there's always at least one spare byte of capacity -- this means that we can
-// efficiently convert the buffer's underlying byte array to a string without needing to allocate
-// extra memory for the terminating \0.
-bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
-    size_t req_capacity = buf->count + count + 1;
-
-    if (req_capacity > buf->capacity) {
+// Attempts to grow the buffer to at least the required capacity.
+bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
+    if (required_capacity > buf->capacity) {
         size_t new_capacity = GROW_CAPACITY(buf->capacity);
-        while (new_capacity < req_capacity) {
+        while (new_capacity < required_capacity) {
             new_capacity = GROW_CAPACITY(new_capacity);
         }
         uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
@@ -1523,6 +1519,21 @@ bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) 
         }
         buf->capacity = new_capacity;
         buf->bytes = new_array;
+    }
+    return true;
+}
+
+
+// We make sure there's always at least one spare byte of capacity -- this means that we can
+// efficiently convert the buffer's underlying byte array to a string without needing to allocate
+// extra memory for the terminating \0.
+bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
+    size_t required_capacity = buf->count + count + 1;
+
+    if (required_capacity > buf->capacity) {
+        if (!ObjBuf_grow(buf, required_capacity, vm)) {
+            return false;
+        }
     }
 
     memcpy(&buf->bytes[buf->count], bytes, count);
@@ -1559,17 +1570,55 @@ ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm) {
 }
 
 
+bool ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...) {
+    va_list args;
+    va_start(args, format_string);
+    bool result = ObjBuf_write_v(buf, vm, format_string, args);
+    va_end(args);
+    return result;
+}
+
+
+bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+    // Determine the length of the string. (Doesn't include the terminating null.)
+    // A negative length indicates a formatting error.
+    va_list args_copy;
+    va_copy(args_copy, args);
+    int length = vsnprintf(NULL, 0, format_string, args_copy);
+    va_end(args_copy);
+
+    if (length == 0) {
+        return true;
+    }
+
+    if (length < 0) {
+        return false;
+    }
+
+    size_t required_capacity = buf->count + (size_t)length + 1;
+    if (required_capacity > buf->capacity) {
+        if (!ObjBuf_grow(buf, required_capacity, vm)) {
+            return false;
+        }
+    }
+
+    vsprintf((char*)&buf->bytes[buf->count], format_string, args);
+    buf->count += length;
+    return true;
+}
+
+
 /* ----- */
 /* Files */
 /* ----- */
 
 
-ObjFile* ObjFile_new(PyroVM* vm) {
+ObjFile* ObjFile_new(PyroVM* vm, FILE* stream) {
     ObjFile* file = ALLOCATE_OBJECT(vm, ObjFile, OBJ_FILE);
     if (!file) {
         return NULL;
     }
-    file->stream = NULL;
+    file->stream = stream;
     file->obj.class = vm->file_class;
     return file;
 }

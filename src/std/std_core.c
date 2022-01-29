@@ -9,6 +9,7 @@
 #include "../vm/stringify.h"
 #include "../vm/panics.h"
 #include "../vm/os.h"
+#include "../vm/io.h"
 
 
 static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
@@ -738,6 +739,11 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_is_null(PyroVM* vm, size_t arg_count, Value* args) {
+    return MAKE_BOOL(IS_NULL(args[0]));
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -766,36 +772,13 @@ void pyro_load_std_core(PyroVM* vm) {
         pyro_pop(vm);
     }
 
-    ObjFile* stdin_file = ObjFile_new(vm);
-    if (stdin_file) {
-        stdin_file->stream = stdin;
-        pyro_push(vm, MAKE_OBJ(stdin_file));
-        pyro_define_global(vm, "$stdin", MAKE_OBJ(stdin_file));
-        pyro_pop(vm);
-    }
-
-    ObjFile* stdout_file = ObjFile_new(vm);
-    if (stdout_file) {
-        stdout_file->stream = stdout;
-        pyro_push(vm, MAKE_OBJ(stdout_file));
-        pyro_define_global(vm, "$stdout", MAKE_OBJ(stdout_file));
-        pyro_pop(vm);
-    }
-
-    ObjFile* stderr_file = ObjFile_new(vm);
-    if (stderr_file) {
-        stderr_file->stream = stderr;
-        pyro_push(vm, MAKE_OBJ(stderr_file));
-        pyro_define_global(vm, "$stderr", MAKE_OBJ(stderr_file));
-        pyro_pop(vm);
-    }
-
     pyro_define_global_fn(vm, "$exit", fn_exit, 1);
     pyro_define_global_fn(vm, "$panic", fn_panic, 2);
     pyro_define_global_fn(vm, "$clock", fn_clock, 0);
     pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
     pyro_define_global_fn(vm, "$is_inf", fn_is_inf, 1);
+    pyro_define_global_fn(vm, "$is_null", fn_is_null, 1);
     pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
     pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
     pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);

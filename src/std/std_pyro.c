@@ -17,6 +17,60 @@ static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
+    if (vm->stdout_stream) {
+        return MAKE_OBJ(vm->stdout_stream);
+    }
+    return MAKE_NULL();
+}
+
+
+static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
+    if (vm->stderr_stream) {
+        return MAKE_OBJ(vm->stderr_stream);
+    }
+    return MAKE_NULL();
+}
+
+
+static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
+    if (vm->stdin_stream) {
+        return MAKE_OBJ(vm->stdin_stream);
+    }
+    return MAKE_NULL();
+}
+
+
+static Value fn_set_stdout(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_FILE(args[0]) && !IS_BUF(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::pyro::set_stdout().");
+        return MAKE_NULL();
+    }
+    vm->stdout_stream = AS_OBJ(args[0]);
+    return MAKE_NULL();
+}
+
+
+static Value fn_set_stderr(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_FILE(args[0]) && !IS_BUF(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::pyro::set_stderr().");
+        return MAKE_NULL();
+    }
+    vm->stderr_stream = AS_OBJ(args[0]);
+    return MAKE_NULL();
+}
+
+
+static Value fn_set_stdin(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_FILE(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::pyro::set_stdin().");
+        return MAKE_NULL();
+    }
+    vm->stdin_stream = AS_OBJ(args[0]);
+    return MAKE_NULL();
+}
+
+
 void pyro_load_std_pyro(PyroVM* vm) {
     ObjModule* mod_pyro = pyro_define_module_2(vm, "$std", "pyro");
     if (!mod_pyro) {
@@ -40,4 +94,10 @@ void pyro_load_std_pyro(PyroVM* vm) {
 
     pyro_define_member_fn(vm, mod_pyro, "memory", fn_memory, 0);
     pyro_define_member_fn(vm, mod_pyro, "gc", fn_memory, 0);
+    pyro_define_member_fn(vm, mod_pyro, "stdin", fn_stdin, 0);
+    pyro_define_member_fn(vm, mod_pyro, "stdout", fn_stdout, 0);
+    pyro_define_member_fn(vm, mod_pyro, "stderr", fn_stderr, 0);
+    pyro_define_member_fn(vm, mod_pyro, "set_stdin", fn_set_stdin, 1);
+    pyro_define_member_fn(vm, mod_pyro, "set_stdout", fn_set_stdout, 1);
+    pyro_define_member_fn(vm, mod_pyro, "set_stderr", fn_set_stderr, 1);
 }

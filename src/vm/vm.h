@@ -50,14 +50,18 @@ struct PyroVM {
     // Counts the number of nested 'try' expressions.
     size_t try_depth;
 
-    // The VM's standard output stream. This defaults to [stdout].
-    // This is the stream that the [echo] statement and [$print()] functions write to.
-    FILE* out_file;
+    // The VM's standard output stream. This defaults to an ObjFile wrapping stdout.
+    // This is the stream that the echo statement and $print() functions write to.
+    // The object can be either an ObjFile or an ObjBuf.
+    Obj* stdout_stream;
 
-    // The VM's standard error stream. This defaults to [stderr].
+    // The VM's standard error stream. This defaults to an ObjFile wrapping stderr.
     // This is the stream that panic messages are written to. It's also the stream that the
-    // [$eprint()] functions write to.
-    FILE* err_file;
+    // $eprint() functions write to. The object can be either an ObjFile or an ObjBuf.
+    Obj* stderr_stream;
+
+    // The VM's standard input stream. This defaults to an ObjFile wrapping stdin.
+    Obj* stdin_stream;
 
     // The call stack.
     CallFrame frames[PYRO_MAX_CALL_FRAMES];

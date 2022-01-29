@@ -12,6 +12,7 @@
 #include "panics.h"
 #include "imports.h"
 #include "os.h"
+#include "io.h"
 
 
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
@@ -439,13 +440,23 @@ static void run(PyroVM* vm) {
                     if (vm->halt_flag) {
                         return;
                     }
-                    pyro_write_stdout(vm, "%s", string->bytes);
+                    if (!pyro_write_stdout(vm, "%s", string->bytes)) {
+                        pyro_panic(vm, ERR_IO_ERROR, "Unable to write to the standard output stream.");
+                        break;
+                    }
                     if (i > 1) {
-                        fprintf(vm->out_file, " ");
+                        if (!pyro_write_stdout(vm, " ")) {
+                            pyro_panic(vm, ERR_IO_ERROR, "Unable to write to the standard output stream.");
+                            break;
+                        }
                     }
                 }
 
-                pyro_write_stdout(vm, "\n");
+                if (!pyro_write_stdout(vm, "\n")) {
+                    pyro_panic(vm, ERR_IO_ERROR, "Unable to write to the standard output stream.");
+                    break;
+                }
+
                 vm->stack_top -= arg_count;
                 break;
             }
@@ -465,6 +476,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_DEFINE_FIELD: {
+
                 define_field(vm, READ_STRING());
                 break;
             }

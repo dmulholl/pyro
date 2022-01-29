@@ -1,0 +1,5 @@
+assert $is_null(null);
+assert !$is_null(123);
+
+assert null == null;
+assert 123 != null;

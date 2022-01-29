@@ -348,6 +348,10 @@ ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm);
 // Appends a byte value to the buffer as a hex-escaped string: \x##.
 bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 
+// Writes a printf-style formatted string to the buffer.
+bool ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...);
+bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+
 /* ----- */
 /* Files */
 /* ----- */
@@ -357,7 +361,7 @@ typedef struct {
     FILE* stream;
 } ObjFile;
 
-ObjFile* ObjFile_new(PyroVM* vm);
+ObjFile* ObjFile_new(PyroVM* vm, FILE* stream);
 
 /* ------ */
 /* Queues */

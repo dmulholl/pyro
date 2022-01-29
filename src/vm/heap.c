@@ -58,6 +58,9 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->strings);
     pyro_mark_object(vm, (Obj*)vm->main_module);
     pyro_mark_object(vm, (Obj*)vm->import_roots);
+    pyro_mark_object(vm, (Obj*)vm->stdout_stream);
+    pyro_mark_object(vm, (Obj*)vm->stderr_stream);
+    pyro_mark_object(vm, (Obj*)vm->stdin_stream);
 
     // Each CallFrame in the call stack has a pointer to an ObjClosure.
     for (size_t i = 0; i < vm->frame_count; i++) {

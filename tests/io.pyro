@@ -1,0 +1,17 @@
+var echo_buf = $buf();
+$std::pyro::set_stdout(echo_buf);
+echo "foo";
+echo "bar";
+assert $str(echo_buf) == "foo\nbar\n";
+
+var print_buf = $buf();
+$std::pyro::set_stdout(print_buf);
+$print("foo");
+$println("bar");
+assert $str(print_buf) == "foobar\n";
+
+var eprint_buf = $buf();
+$std::pyro::set_stderr(eprint_buf);
+$eprint("foo");
+$eprintln("bar");
+assert $str(eprint_buf) == "foobar\n";

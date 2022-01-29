@@ -1,24 +1,23 @@
 #include "panics.h"
 #include "vm.h"
+#include "io.h"
 
 
 static void print_stack_trace(PyroVM* vm) {
-    if (vm->err_file) {
-        fprintf(vm->err_file, "\nTraceback (most recent function call first):\n\n");
+    pyro_write_stderr(vm, "\nTraceback (most recent function call first):\n\n");
 
-        for (size_t i = vm->frame_count; i > 0; i--) {
-            CallFrame* frame = &vm->frames[i - 1];
-            ObjFn* fn = frame->closure->fn;
+    for (size_t i = vm->frame_count; i > 0; i--) {
+        CallFrame* frame = &vm->frames[i - 1];
+        ObjFn* fn = frame->closure->fn;
 
-            size_t line_number = 1;
-            if (frame->ip > fn->code) {
-                size_t ip = frame->ip - fn->code - 1;
-                line_number = ObjFn_get_line_number(fn, ip);
-            }
-
-            fprintf(vm->err_file, "%s:%zu\n", fn->source->bytes, line_number);
-            fprintf(vm->err_file, "  [%zu] --> in %s\n", i, fn->name->bytes);
+        size_t line_number = 1;
+        if (frame->ip > fn->code) {
+            size_t ip = frame->ip - fn->code - 1;
+            line_number = ObjFn_get_line_number(fn, ip);
         }
+
+        pyro_write_stderr(vm, "%s:%zu\n", fn->source->bytes, line_number);
+        pyro_write_stderr(vm, "  [%zu] --> in %s\n", i, fn->name->bytes);
     }
 }
 
@@ -41,7 +40,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
 
     // If we were executing Pyro code when the panic occured, print the source filename and line
     // number of the last instruction.
-    if (vm->frame_count > 0 && vm->err_file) {
+    if (vm->frame_count > 0) {
         CallFrame* frame = &vm->frames[vm->frame_count - 1];
         ObjFn* fn = frame->closure->fn;
         size_t line_number = 1;
@@ -50,24 +49,22 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
             line_number = ObjFn_get_line_number(fn, ip);
         }
         if (vm->in_repl) {
-            fprintf(vm->err_file, "line:%zu\n  ", line_number);
+            pyro_write_stderr(vm, "line:%zu\n  ", line_number);
         } else {
-            fprintf(vm->err_file, "%s:%zu\n  ", fn->source->bytes, line_number);
+            pyro_write_stderr(vm, "%s:%zu\n  ", fn->source->bytes, line_number);
         }
     }
 
     // Print the error message.
-    if (vm->err_file) {
-        fprintf(vm->err_file, "Error: ");
-        va_list args;
-        va_start(args, format);
-        vfprintf(vm->err_file, format, args);
-        va_end(args);
-        fprintf(vm->err_file, "\n");
-    }
+    pyro_write_stderr(vm, "Error: ");
+    va_list args;
+    va_start(args, format);
+    pyro_write_stderr_v(vm, format, args);
+    va_end(args);
+    pyro_write_stderr(vm, "\n");
 
     // Print a stack trace if the panic occurred inside a Pyro function.
-    if (vm->frame_count > 1 && vm->err_file) {
+    if (vm->frame_count > 1) {
         print_stack_trace(vm);
     }
 }
@@ -90,22 +87,20 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     }
 
     // Print the syntax error message.
-    if (vm->err_file) {
-        if (vm->in_repl) {
-            fprintf(vm->err_file, "line:%zu\n  Syntax Error: ", source_line);
-        } else {
-            fprintf(vm->err_file, "%s:%zu\n  Syntax Error: ", source_id, source_line);
-        }
-        va_list args;
-        va_start(args, format);
-        vfprintf(vm->err_file, format, args);
-        va_end(args);
-        fprintf(vm->err_file, "\n");
+    if (vm->in_repl) {
+        pyro_write_stderr(vm, "line:%zu\n  Syntax Error: ", source_line);
+    } else {
+        pyro_write_stderr(vm, "%s:%zu\n  Syntax Error: ", source_id, source_line);
     }
+    va_list args;
+    va_start(args, format);
+    pyro_write_stderr_v(vm, format, args);
+    va_end(args);
+    pyro_write_stderr(vm, "\n");
 
     // If we were executing Pyro code when the error occured, print the source filename and line
     // number of the last instruction.
-    if (vm->frame_count > 0 && vm->err_file) {
+    if (vm->frame_count > 0) {
         CallFrame* frame = &vm->frames[vm->frame_count - 1];
         ObjFn* fn = frame->closure->fn;
         size_t instruction_line_number = 1;
@@ -113,8 +108,8 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
             size_t ip = frame->ip - fn->code - 1;
             instruction_line_number = ObjFn_get_line_number(fn, ip);
         }
-        fprintf(
-            vm->err_file,
+        pyro_write_stderr(
+            vm,
             "\n%s:%zu\n  Error: Syntax error.\n",
             fn->source->bytes,
             instruction_line_number
@@ -122,7 +117,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     }
 
     // Print a stack trace if the error occurred inside a Pyro function.
-    if (vm->frame_count > 1 && vm->err_file) {
+    if (vm->frame_count > 1) {
         print_stack_trace(vm);
     }
 }
