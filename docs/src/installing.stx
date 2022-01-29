@@ -8,7 +8,7 @@ You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BS
 First, download the Pyro repository from Github:
 
 ::: code
-    $ git clone https://github.com/dmulholl/pyro
+    $ git clone https://github.com/dmulholl/pyro.git
 
 `cd` into the `pyro` directory and run `make install`:
 
