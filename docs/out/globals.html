@@ -96,36 +96,6 @@ A vector of strings containing the root directory paths that Pyro checks when at
 </p>
 </dd>
 </div>
-<div>
-<dt>
-<code>$stderr: file</code>
-</dt>
-<dd>
-<p>
-A <code>file</code> object wrapping the standard error stream.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$stdin: file</code>
-</dt>
-<dd>
-<p>
-A <code>file</code> object wrapping the standard input stream.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$stdout: file</code>
-</dt>
-<dd>
-<p>
-A <code>file</code> object wrapping the standard output stream.
-</p>
-</dd>
-</div>
 </dl>
 <h3 id="global-functions">
 Global Functions
@@ -512,6 +482,16 @@ Returns <code>true</code> if the argument is a module.
 <dd>
 <p>
 Returns <code>true</code> if the argument is the floating-point value <code>NaN</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_null(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is <code>null</code>.
 </p>
 </dd>
 </div>
