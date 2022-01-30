@@ -61,6 +61,7 @@ static void mark_roots(PyroVM* vm) {
     pyro_mark_object(vm, (Obj*)vm->stdout_stream);
     pyro_mark_object(vm, (Obj*)vm->stderr_stream);
     pyro_mark_object(vm, (Obj*)vm->stdin_stream);
+    pyro_mark_object(vm, (Obj*)vm->panic_buffer);
 
     // Each CallFrame in the call stack has a pointer to an ObjClosure.
     for (size_t i = 0; i < vm->frame_count; i++) {
@@ -475,18 +476,7 @@ void pyro_mark_value(PyroVM* vm, Value value) {
 
 
 void pyro_collect_garbage(PyroVM* vm) {
-    assert(vm->gc_disallows >= 0);
-
-    if (vm->gc_disallows > 0) {
-        return;
-    }
-
-    // We should never run the garbage collector while the VM is panicking. Consider this scenario:
-    // we temporarily push a value onto the stack to keep it safe from the GC. The stack is already
-    // full so push() panics with a stack overflow error. If the GC runs in this state it could
-    // unexpectedly collect the value out from under us while we thought it was safe.
-    if (vm->panic_flag) {
-        assert(false);
+    if (vm->gc_disallows > 0 || vm->panic_flag) {
         return;
     }
 

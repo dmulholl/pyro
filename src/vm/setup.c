@@ -83,6 +83,7 @@ PyroVM* pyro_new_vm() {
     vm->stderr_stream = NULL;
     vm->stdout_stream = NULL;
     vm->stdin_stream = NULL;
+    vm->panic_buffer = NULL;
 
     // Disable garbage collection until the VM has been fully initialized. This is to avoid the
     // possibility of the GC triggering and panicking if it fails to allocate memory for the
@@ -162,6 +163,7 @@ PyroVM* pyro_new_vm() {
     vm->stdout_stream = (Obj*)ObjFile_new(vm, stdout);
     vm->stderr_stream = (Obj*)ObjFile_new(vm, stderr);
     vm->stdin_stream = (Obj*)ObjFile_new(vm, stdin);
+    vm->panic_buffer = ObjBuf_new_with_cap(256, vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

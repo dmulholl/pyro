@@ -1506,7 +1506,8 @@ bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
 }
 
 
-// Attempts to grow the buffer to at least the required capacity.
+// Attempts to grow the buffer to at least the required capacity. Returns true on success, false
+// if memory allocation failed. In this case the buffer is unchanged.
 bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
     if (required_capacity > buf->capacity) {
         size_t new_capacity = GROW_CAPACITY(buf->capacity);
@@ -1596,15 +1597,44 @@ bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list 
     }
 
     size_t required_capacity = buf->count + (size_t)length + 1;
-    if (required_capacity > buf->capacity) {
-        if (!ObjBuf_grow(buf, required_capacity, vm)) {
-            return false;
-        }
+
+    if (required_capacity <= buf->capacity || ObjBuf_grow(buf, required_capacity, vm)) {
+        vsprintf((char*)&buf->bytes[buf->count], format_string, args);
+        buf->count += length;
+        return true;
     }
 
-    vsprintf((char*)&buf->bytes[buf->count], format_string, args);
-    buf->count += length;
-    return true;
+    return false;
+}
+
+
+bool ObjBuf_write_v_best_effort(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+    // Determine the length of the string. (Doesn't include the terminating null.)
+    // A negative length indicates a formatting error.
+    va_list args_copy;
+    va_copy(args_copy, args);
+    int length = vsnprintf(NULL, 0, format_string, args_copy);
+    va_end(args_copy);
+
+    if (length == 0) {
+        return true;
+    }
+
+    if (length < 0) {
+        return false;
+    }
+
+    size_t required_capacity = buf->count + (size_t)length + 1;
+
+    if (required_capacity <= buf->capacity || ObjBuf_grow(buf, required_capacity, vm)) {
+        vsprintf((char*)&buf->bytes[buf->count], format_string, args);
+        buf->count += length;
+        return true;
+    }
+
+    size_t available_capacity = buf->capacity - buf->count;
+    vsnprintf((char*)&buf->bytes[buf->count], available_capacity, format_string, args);
+    return false;
 }
 
 

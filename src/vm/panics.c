@@ -23,17 +23,30 @@ static void print_stack_trace(PyroVM* vm) {
 
 
 void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
+    if (vm->panic_flag) {
+        assert(false);
+    }
+
     vm->panic_flag = true;
     vm->halt_flag = true;
     vm->status_code = error_code;
 
-    // If we're inside a try expression and the panic is catchable, we don't print anything to the
-    // error stream. We simply store the error message in the panic buffer so it can be returned
-    // by the try expression.
+    // If we're inside a try expression and the panic is catchable, write the error message to the
+    // panic buffer so it can be returned by the try expression.
     if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
         va_start(args, format);
-        vsnprintf(vm->panic_buffer, PYRO_PANIC_BUFFER_SIZE, format, args);
+
+        #ifdef DEBUG
+            va_list args_copy;
+            va_copy(args_copy, args);
+            pyro_write_stderr(vm, "DEBUG: writing error message to panic buffer:\n  ");
+            pyro_write_stderr_v(vm, format, args);
+            pyro_write_stderr(vm, "\n");
+            va_end(args_copy);
+        #endif
+
+        ObjBuf_write_v_best_effort(vm->panic_buffer, vm, format, args);
         va_end(args);
         return;
     }
@@ -71,6 +84,10 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
 
 
 void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, const char* format, ...) {
+    if (vm->panic_flag) {
+        assert(false);
+    }
+
     vm->panic_flag = true;
     vm->halt_flag = true;
     vm->status_code = ERR_SYNTAX_ERROR;
@@ -81,7 +98,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
         va_start(args, format);
-        vsnprintf(vm->panic_buffer, PYRO_PANIC_BUFFER_SIZE, format, args);
+        ObjBuf_write_v_best_effort(vm->panic_buffer, vm, format, args);
         va_end(args);
         return;
     }

@@ -69,11 +69,6 @@
     #define PYRO_E 2.7182818284590452354
 #endif
 
-// Size in bytes of the buffer for recording panic messages inside try expressions.
-#ifndef PYRO_PANIC_BUFFER_SIZE
-    #define PYRO_PANIC_BUFFER_SIZE 256
-#endif
-
 // Defining this macro causes header files to expose definitions conforming to POSIX 2008.
 #ifndef _XOPEN_SOURCE
     #define _XOPEN_SOURCE 700

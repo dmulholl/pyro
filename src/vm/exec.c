@@ -1237,21 +1237,27 @@ static void run(PyroVM* vm) {
                     vm->frame_count = stashed_frame_count;
                     frame = &vm->frames[vm->frame_count - 1];
 
-                    // Create an error tuple as the return value of the try expression.
-                    ObjStr* err_msg = ObjStr_copy_raw(vm->panic_buffer, strlen(vm->panic_buffer), vm);
-                    if (err_msg) {
-                        pyro_push(vm, MAKE_OBJ(err_msg));
-                        ObjTup* err = ObjTup_new_err(2, vm);
-                        pyro_pop(vm);
-                        if (err) {
-                            err->values[0] = MAKE_I64(error_code);
-                            err->values[1] = MAKE_OBJ(err_msg);
-                            pyro_push(vm, MAKE_OBJ(err));
-                        }
+                    ObjStr* err_str = ObjBuf_to_str(vm->panic_buffer, vm);
+                    if (!err_str) {
+                        vm->hard_panic = true;
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
                     }
 
-                    // Hard panic if we failed to allocate memory for the error string or tuple.
-                    if (vm->memory_allocation_failed) {
+                    pyro_push(vm, MAKE_OBJ(err_str));
+                    ObjTup* err_tup = ObjTup_new_err(2, vm);
+                    if (!err_tup) {
+                        vm->hard_panic = true;
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+                    pyro_pop(vm);
+
+                    err_tup->values[0] = MAKE_I64(error_code);
+                    err_tup->values[1] = MAKE_OBJ(err_str);
+                    pyro_push(vm, MAKE_OBJ(err_tup));
+
+                    if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
                         vm->hard_panic = true;
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;

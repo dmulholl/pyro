@@ -343,14 +343,28 @@ ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm);
 ObjBuf* ObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM* vm);
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
+
+// This function converts the contents of the buffer into a string, leaving a valid but empty
+// buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
+// case the buffer is unchanged.
 ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm);
 
 // Appends a byte value to the buffer as a hex-escaped string: \x##.
 bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 
-// Writes a printf-style formatted string to the buffer.
+// Writes a printf-style formatted string to the buffer. Returns true if the entire string can be
+// written to the buffer. Otherwise writes nothing to the buffer and returns false.
 bool ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...);
 bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+
+// Writes a printf-style formatted string to the buffer. Returns true if the entire string can be
+// written to the buffer. Otherwise, writes as much as possible of the string to the buffer and
+// return false.
+bool ObjBuf_write_v_best_effort(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+
+// Attempts to grow the buffer to *at least* the required capacity. Returns true on success, false
+// if memory allocation failed. In this case the buffer is unchanged.
+bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm);
 
 /* ----- */
 /* Files */
