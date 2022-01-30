@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 5
-#define PYRO_VERSION_PATCH 25
+#define PYRO_VERSION_PATCH 26
 #define PYRO_VERSION_LABEL ""
 
 // Utility for converting a macro's value into a string constant.
