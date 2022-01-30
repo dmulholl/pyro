@@ -41,7 +41,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
             va_list args_copy;
             va_copy(args_copy, args);
             pyro_write_stderr(vm, "DEBUG: writing error message to panic buffer:\n  ");
-            pyro_write_stderr_v(vm, format, args);
+            pyro_write_stderr_v(vm, format, args_copy);
             pyro_write_stderr(vm, "\n");
             va_end(args_copy);
         #endif
