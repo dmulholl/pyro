@@ -162,6 +162,17 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$input() -> str?` ]]
+
+    Reads the next line of input from the standard input stream and returns it as a string.
+    Strips the terminating `\\n` or `\\r\\n` if present.
+
+    Returns `null` if the end of the stream had already been reached.
+
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+
+
+
 [[ `$is_bool(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a `bool`.

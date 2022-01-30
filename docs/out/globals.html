@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.24</p>
+                <p class="version">Version 0.5.25</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -302,6 +302,23 @@ Panics if the argument is out-of-range for an <code>i64</code>.
 </p>
 <p>
 String arguments can contain underscores and can begin with <code>0b</code>, <code>0o</code>, or <code>0x</code> to specify the base as binary, octal, or hexadecimal; otherwise the base is assumed to be 10.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$input() -&gt; str?</code>
+</dt>
+<dd>
+<p>
+Reads the next line of input from the standard input stream and returns it as a string.
+Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
+</p>
+<p>
+Returns <code>null</code> if the end of the stream had already been reached.
+</p>
+<p>
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
 </p>
 </dd>
 </div>

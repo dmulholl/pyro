@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.24</p>
+                <p class="version">Version 0.5.25</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -122,24 +122,24 @@ Calculate the n-th Fibonacci number:
 Reading from standard input
 </h3>
 <p>
-Read a single line from standard input:
+Read a single line from the standard input stream:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">line</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_line</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">line</span> <span class="p">=</span> <span class="nx">$input</span><span class="p">();</span>
 </pre>
 <p>
-Read in a loop from standard input:
+Read in a loop from the standard input stream:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">loop</span> <span class="p">{</span>
     <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;&gt;&gt;&gt; &quot;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">input</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_line</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">line</span> <span class="p">=</span> <span class="nx">$input</span><span class="p">();</span>
 
-    <span class="k">if</span> <span class="nx">input</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">input</span> <span class="o">==</span> <span class="s">&quot;exit&quot;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">line</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">line</span> <span class="o">==</span> <span class="s">&quot;exit&quot;</span> <span class="p">{</span>
         <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">echo</span> <span class="s">&quot;input was: &quot;</span> <span class="o">+</span> <span class="nx">input</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s">&quot;input was: &quot;</span> <span class="o">+</span> <span class="nx">line</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <h3 id="reading-from-a-file">
@@ -198,7 +198,7 @@ The classic guess-a-random-number game:
 <span class="k">loop</span> <span class="p">{</span>
     <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;Enter a number between 1 and 10: &quot;</span><span class="p">);</span>
 
-    <span class="kd">var</span> <span class="nx">guess</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_line</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">guess</span> <span class="p">=</span> <span class="nx">$input</span><span class="p">();</span>
     <span class="k">if</span> <span class="nx">guess</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">guess</span> <span class="o">==</span> <span class="s">&quot;exit&quot;</span> <span class="p">{</span>
         <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span>

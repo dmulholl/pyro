@@ -42,23 +42,23 @@ Calculate the n-th Fibonacci number:
 
 ### Reading from standard input
 
-Read a single line from standard input:
+Read a single line from the standard input stream:
 
 ::: code pyro
-    var line = $stdin:read_line();
+    var line = $input();
 
-Read in a loop from standard input:
+Read in a loop from the standard input stream:
 
 ::: code pyro
     loop {
         $print(">>> ");
-        var input = $stdin:read_line();
+        var line = $input();
 
-        if input == null || input == "exit" {
+        if line == null || line == "exit" {
             break;
         }
 
-        echo "input was: " + input;
+        echo "input was: " + line;
     }
 
 
@@ -115,7 +115,7 @@ The classic guess-a-random-number game:
     loop {
         $print("Enter a number between 1 and 10: ");
 
-        var guess = $stdin:read_line();
+        var guess = $input();
         if guess == null || guess == "exit" {
             break;
         }

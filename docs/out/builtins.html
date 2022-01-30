@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.24</p>
+                <p class="version">Version 0.5.25</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -1728,7 +1728,7 @@ Reads the next line of input from the file and returns it as a string.
 Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
 </p>
 <p>
-Returns the string or <code>null</code> if the end of the file had already been reached before the method was called.
+Returns <code>null</code> if the end of the file had already been reached.
 </p>
 <p>
 Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
