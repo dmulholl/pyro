@@ -744,6 +744,18 @@ static Value fn_is_null(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_input(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = (ObjFile*)vm->stdin_stream;
+
+    ObjStr* string = ObjFile_read_line(file, vm);
+    if (vm->halt_flag) {
+        return MAKE_NULL();
+    }
+
+    return string ? MAKE_OBJ(string) : MAKE_NULL();
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -809,4 +821,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_iterable", fn_is_iterable, 1);
     pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
     pyro_define_global_fn(vm, "$env", fn_env, -1);
+    pyro_define_global_fn(vm, "$input", fn_input, 0);
 }

@@ -236,70 +236,12 @@ static Value file_read_byte(PyroVM* vm, size_t arg_count, Value* args) {
 static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
 
-    size_t count = 0;
-    size_t capacity = 0;
-    uint8_t* array = NULL;
-
-    while (true) {
-        if (count + 1 > capacity) {
-            size_t new_capacity = GROW_CAPACITY(capacity);
-            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
-            if (!new_array) {
-                FREE_ARRAY(vm, uint8_t, array, capacity);
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                return MAKE_NULL();
-            }
-            capacity = new_capacity;
-            array = new_array;
-        }
-
-        int c = fgetc(file->stream);
-
-        if (c == EOF) {
-            if (ferror(file->stream)) {
-                FREE_ARRAY(vm, uint8_t, array, capacity);
-                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
-                return MAKE_NULL();
-            }
-            break;
-        }
-
-        array[count++] = c;
-
-        if (c == '\n') {
-            break;
-        }
-    }
-
-    if (count == 0) {
-        FREE_ARRAY(vm, uint8_t, array, capacity);
+    ObjStr* string = ObjFile_read_line(file, vm);
+    if (vm->halt_flag) {
         return MAKE_NULL();
     }
 
-    while (count > 0 && (array[count - 1] == '\n' || array[count - 1] == '\r')) {
-        count--;
-    }
-
-    if (count == 0) {
-        FREE_ARRAY(vm, uint8_t, array, capacity);
-        return MAKE_OBJ(vm->empty_string);
-    }
-
-    if (capacity > count + 1) {
-        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
-        capacity = count + 1;
-    }
-
-    array[count] = '\0';
-
-    ObjStr* string = ObjStr_take((char*)array, count, vm);
-    if (!string) {
-        FREE_ARRAY(vm, uint8_t, array, capacity);
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return MAKE_NULL();
-    }
-
-    return MAKE_OBJ(string);
+    return string ? MAKE_OBJ(string) : MAKE_NULL();
 }
 
 

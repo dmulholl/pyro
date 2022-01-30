@@ -377,6 +377,11 @@ typedef struct {
 
 ObjFile* ObjFile_new(PyroVM* vm, FILE* stream);
 
+// Reads the next line from the file and returns it as a string, stripping the terminating LF or
+// CRLF. Returns NULL on EOF. Will panic and return NULL if memory allocation fails or if an I/O
+// read error occurs.
+ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm);
+
 /* ------ */
 /* Queues */
 /* ------ */

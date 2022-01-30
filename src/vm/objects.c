@@ -1654,6 +1654,74 @@ ObjFile* ObjFile_new(PyroVM* vm, FILE* stream) {
 }
 
 
+ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
+    size_t count = 0;
+    size_t capacity = 0;
+    uint8_t* array = NULL;
+
+    while (true) {
+        if (count + 1 > capacity) {
+            size_t new_capacity = GROW_CAPACITY(capacity);
+            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
+            if (!new_array) {
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL;
+            }
+            capacity = new_capacity;
+            array = new_array;
+        }
+
+        int c = fgetc(file->stream);
+
+        if (c == EOF) {
+            if (ferror(file->stream)) {
+                FREE_ARRAY(vm, uint8_t, array, capacity);
+                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
+                return NULL;
+            }
+            break;
+        }
+
+        array[count++] = c;
+
+        if (c == '\n') {
+            break;
+        }
+    }
+
+    if (count == 0) {
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        return NULL;
+    }
+
+    while (count > 0 && (array[count - 1] == '\n' || array[count - 1] == '\r')) {
+        count--;
+    }
+
+    if (count == 0) {
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        return vm->empty_string;
+    }
+
+    if (capacity > count + 1) {
+        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
+        capacity = count + 1;
+    }
+
+    array[count] = '\0';
+
+    ObjStr* string = ObjStr_take((char*)array, count, vm);
+    if (!string) {
+        FREE_ARRAY(vm, uint8_t, array, capacity);
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    return string;
+}
+
+
 /* --------- */
 /* Iterators */
 /* --------- */
