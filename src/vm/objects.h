@@ -360,7 +360,7 @@ bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list 
 // Writes a printf-style formatted string to the buffer. Returns true if the entire string can be
 // written to the buffer. Otherwise, writes as much as possible of the string to the buffer and
 // return false.
-bool ObjBuf_write_v_best_effort(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+bool ObjBuf_best_effort_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
 // Attempts to grow the buffer to *at least* the required capacity. Returns true on success, false
 // if memory allocation failed. In this case the buffer is unchanged.

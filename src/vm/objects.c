@@ -1608,7 +1608,7 @@ bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list 
 }
 
 
-bool ObjBuf_write_v_best_effort(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+bool ObjBuf_best_effort_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
     // Determine the length of the string. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
     va_list args_copy;

@@ -46,7 +46,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
             va_end(args_copy);
         #endif
 
-        ObjBuf_write_v_best_effort(vm->panic_buffer, vm, format, args);
+        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format, args);
         va_end(args);
         return;
     }
@@ -98,7 +98,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
         va_start(args, format);
-        ObjBuf_write_v_best_effort(vm->panic_buffer, vm, format, args);
+        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format, args);
         va_end(args);
         return;
     }
