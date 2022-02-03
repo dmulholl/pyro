@@ -17,6 +17,20 @@ static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_OBJ(buf);
     }
 
+    else if (arg_count == 1) {
+        if (IS_STR(args[0])) {
+            ObjBuf* buf = ObjBuf_new_from_string(AS_STR(args[0]), vm);
+            if (!buf) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            return MAKE_OBJ(buf);
+        } else {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid content argument for $buf().");
+            return MAKE_NULL();
+        }
+    }
+
     else if (arg_count == 2) {
         if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
             uint8_t fill_value;

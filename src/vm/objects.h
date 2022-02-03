@@ -341,6 +341,7 @@ typedef struct {
 ObjBuf* ObjBuf_new(PyroVM* vm);
 ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm);
 ObjBuf* ObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM* vm);
+ObjBuf* ObjBuf_new_from_string(ObjStr* string, PyroVM* vm);
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 bool ObjBuf_append_bytes(ObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 

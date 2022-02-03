@@ -79,3 +79,15 @@ def $test_buf_with_size_and_fill() {
     assert buf2[0] == 97;
     assert buf2[0] == 'a';
 }
+
+
+def $test_buf_from_string() {
+    var b1 = $buf("");
+    assert b1:count() == 0;
+
+    var b2 = $buf("foo");
+    assert b2:count() == 3;
+    assert b2[0] == 'f';
+    assert b2[1] == 'o';
+    assert b2[2] == 'o';
+}

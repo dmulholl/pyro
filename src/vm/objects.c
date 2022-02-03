@@ -1486,6 +1486,31 @@ ObjBuf* ObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM
 }
 
 
+ObjBuf* ObjBuf_new_from_string(ObjStr* string, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        return NULL;
+    }
+
+    size_t capacity = string->length + 1;
+
+    pyro_push(vm, MAKE_OBJ(buf));
+    uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity);
+    pyro_pop(vm);
+
+    if (!new_array) {
+        return NULL;
+    }
+
+    buf->bytes = new_array;
+    buf->capacity = capacity;
+    buf->count = string->length;
+
+    memcpy(buf->bytes, string->bytes, string->length);
+    return buf;
+}
+
+
 bool ObjBuf_append_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
     return ObjBuf_append_bytes(buf, 1, &byte, vm);
 }
