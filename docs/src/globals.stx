@@ -39,11 +39,13 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$buf() -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
+[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
 
-    Creates a new byte buffer.
-    If called with zero arguments, creates a new empty buffer.
-    If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
+    Creates a new `buf` object.
+
+    * If called with zero arguments, creates a new empty buffer.
+    * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
+    * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
 
 
 
@@ -428,9 +430,10 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 [[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
 
     Creates a new `vec` object.
-    If called with zero arguments, creates an empty vector.
-    If called with a single iterable argument, fills the new vector by iterating over the argument.
-    If called with two arguments, creates a vector with the specified initial size and fill value.
+
+    * If called with zero arguments, creates an empty vector.
+    * If called with a single iterable argument, fills the new vector by iterating over the argument.
+    * If called with two arguments, creates a vector with the specified initial size and fill value.
 
 
 

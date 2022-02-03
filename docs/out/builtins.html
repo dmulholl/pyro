@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.25</p>
+                <p class="version">Version 0.5.27</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -754,7 +754,7 @@ You can multiply a character by an integer <code>n</code> to produce a string wi
 Vectors
 </h3>
 <p>
-A vector, <code>vec</code>, is a dynamic array of values. Vectors use zero-based indices.
+A vector, <code>vec</code>, is a dynamic array of values.
 </p>
 <dl>
 <div>
@@ -764,10 +764,18 @@ A vector, <code>vec</code>, is a dynamic array of values. Vectors use zero-based
 <dd>
 <p>
 Creates a new <code>vec</code> object.
-If called with zero arguments, creates an empty vector.
-If called with a single iterable argument, fills the new vector by iterating over the argument.
-If called with two arguments, creates a vector with the specified initial size and fill value.
 </p>
+<ul>
+<li>
+If called with zero arguments, creates an empty vector.
+</li>
+<li>
+If called with a single iterable argument, fills the new vector by iterating over the argument.
+</li>
+<li>
+If called with two arguments, creates a vector with the specified initial size and fill value.
+</li>
+</ul>
 </dd>
 </div>
 </dl>
@@ -788,7 +796,7 @@ You can index into a vector to get or set entries:
 <span class="nx">vec</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
 </pre>
 <p>
-Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
 </p>
 <p>
 Vectors are iterable:
@@ -1239,7 +1247,7 @@ Returns an iterator over the map's values.
 Tuples
 </h3>
 <p>
-A tuple, <code>tup</code>, is an immutable array of values. Tuples use zero-based indices
+A tuple, <code>tup</code>, is an immutable array of values.
 </p>
 <dl>
 <div>
@@ -1262,7 +1270,7 @@ You can index into a tuple to get (but not set) entries:
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">tup</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
 </pre>
 <p>
-Indexing is equivalent to using the <code>:get()</code> method as shown.
+Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> method as shown.
 </p>
 <p>
 Tuples are iterable:
@@ -1451,19 +1459,28 @@ Drains the iterator into a new vector.
 Byte Buffers
 </h3>
 <p>
-A byte buffer, <code>buf</code>, is a dynamic array of bytes. Byte buffers use zero-based indices.
+A byte buffer, <code>buf</code>, is a dynamic array of bytes.
 </p>
 <dl>
 <div>
 <dt>
-<code>$buf() -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
+<code>$buf() -&gt; buf</code> <br> <code>$buf(content: str) -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>buf</code> object.
-If called with zero arguments, creates a new empty buffer.
-If called with two arguments, creates a new buffer with the specified initial size and fill value, where <code>size</code> is a positive integer and <code>value</code> is an integer value in the range <code>[0, 255]</code>.
 </p>
+<ul>
+<li>
+If called with zero arguments, creates a new empty buffer.
+</li>
+<li>
+If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
+</li>
+<li>
+If called with two arguments, creates a new buffer with the specified initial size and fill value, where <code>size</code> is a positive integer and <code>value</code> is an integer value in the range <code>[0, 255]</code>.
+</li>
+</ul>
 </dd>
 </div>
 </dl>
@@ -1478,7 +1495,7 @@ You can index into a buffer to get or set byte values:
 <span class="nx">buf</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
 </pre>
 <p>
-Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
 </p>
 <p>
 Buffers have the following methods:

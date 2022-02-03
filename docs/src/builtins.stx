@@ -313,14 +313,15 @@ You can multiply a character by an integer `n` to produce a string with `n` UTF-
 
 ### Vectors
 
-A vector, `vec`, is a dynamic array of values. Vectors use zero-based indices.
+A vector, `vec`, is a dynamic array of values.
 
 [[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
 
     Creates a new `vec` object.
-    If called with zero arguments, creates an empty vector.
-    If called with a single iterable argument, fills the new vector by iterating over the argument.
-    If called with two arguments, creates a vector with the specified initial size and fill value.
+
+    * If called with zero arguments, creates an empty vector.
+    * If called with a single iterable argument, fills the new vector by iterating over the argument.
+    * If called with two arguments, creates a vector with the specified initial size and fill value.
 
 Alternatively, you can create a vector using literal syntax:
 
@@ -336,7 +337,7 @@ You can index into a vector to get or set entries:
     vec[index] = value;
     vec:set(index, value);
 
-Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
 Vectors are iterable:
 
@@ -562,7 +563,7 @@ Maps have the following methods:
 
 ### Tuples
 
-A tuple, `tup`, is an immutable array of values. Tuples use zero-based indices
+A tuple, `tup`, is an immutable array of values.
 
 [[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
 
@@ -575,7 +576,7 @@ You can index into a tuple to get (but not set) entries:
     var value = tup[index];
     var value = tup:get(index);
 
-Indexing is equivalent to using the `:get()` method as shown.
+Indices are zero-based. Indexing is equivalent to using the `:get()` method as shown.
 
 Tuples are iterable:
 
@@ -681,13 +682,15 @@ Iterator wrappers have the following methods:
 
 ### Byte Buffers
 
-A byte buffer, `buf`, is a dynamic array of bytes. Byte buffers use zero-based indices.
+A byte buffer, `buf`, is a dynamic array of bytes.
 
-[[ `$buf() -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
+[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
 
     Creates a new `buf` object.
-    If called with zero arguments, creates a new empty buffer.
-    If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
+
+    * If called with zero arguments, creates a new empty buffer.
+    * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
+    * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
 
 You can index into a buffer to get or set byte values:
 
@@ -698,7 +701,7 @@ You can index into a buffer to get or set byte values:
     buf[index] = value;
     buf:set(index, value);
 
-Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
 Buffers have the following methods:
 
