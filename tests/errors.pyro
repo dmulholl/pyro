@@ -3,7 +3,7 @@ assert $is_err("foobar") == false;
 var foo = $err();
 assert $is_err(foo) == true;
 assert foo:count() == 0;
-assert $str(foo) == "()";
+assert $str(foo) == `err()`;
 
 var bar = $err(123, "bar");
 assert $is_err(bar) == true;
@@ -12,4 +12,4 @@ assert bar:get(0) == 123;
 assert bar:get(1) == "bar";
 assert bar[0] == 123;
 assert bar[1] == "bar";
-assert $str(bar) == `(123, "bar")`;
+assert $str(bar) == `err(123, "bar")`;

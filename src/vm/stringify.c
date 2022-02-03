@@ -150,6 +150,13 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
     }
     pyro_push(vm, MAKE_OBJ(buf));
 
+    if (((Obj*)tup)->type == OBJ_TUP_AS_ERR) {
+        if (!ObjBuf_append_bytes(buf, 3, (uint8_t*)"err", vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+    }
+
     if (!ObjBuf_append_byte(buf, '(', vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
