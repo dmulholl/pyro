@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.29</p>
+                <p class="version">Version 0.5.30</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -932,11 +932,21 @@ It should accept two arguments <code>a</code> and <code>b</code> and return <cod
 </div>
 <div>
 <dt>
+<code>:iter() -&gt; iter</code>
+</dt>
+<dd>
+<p>
+Returns an <code>iter</code> object wrapping the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:join(sep: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Joins the vector's elements into a string, separated by <code>sep</code>.
+Joins the vector's elements into a string, with each pair of elements separated by <code>sep</code>.
 Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
 </p>
 </dd>

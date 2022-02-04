@@ -403,9 +403,13 @@ Vectors have the following methods:
     If a `callback` function is supplied it will be used to compare pairs of values.
     It should accept two arguments `a` and `b` and return `true` if `a < b`.
 
+[[ `:iter() -> iter` ]]
+
+    Returns an `iter` object wrapping the vector.
+
 [[ `:join(sep: str) -> str` ]]
 
-    Joins the vector's elements into a string, separated by `sep`.
+    Joins the vector's elements into a string, with each pair of elements separated by `sep`.
     Elements are automatically stringified --- this is equivalent to calling `$str()` on each element.
 
 [[ `:last() -> any` ]]
