@@ -1,0 +1,56 @@
+---
+title: Characters
+meta_title: Pyro &mdash; Characters
+---
+
+A character, `char`, is an unsigned 32-bit integer representing a Unicode code point.
+
+[[ `$char(arg: i64) -> char` ]]
+
+    Converts `arg` to a `char`.
+    Panics if the argument is out of range.
+
+Character literals use single quotes:
+
+::: code pyro
+    var c1 = 'a';
+    var c2 = '€';
+    var c3 = '🔥';
+
+A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point.
+
+::: code pyro
+    assert '\x61' == 'a';
+    assert '\u20AC' == '€';
+
+Character literals support all the same backslashed escape sequences as strings.
+
+You can convert a character to a string using the `$str()` function  --- this returns a string containing the UTF-8 encoded representation of the codepoint:
+
+::: code pyro
+    assert $str('a') == "a";
+    assert $str('🔥') == "🔥";
+
+You can convert a character to an integer using the `$i64()` function or an integer to a character using the `$char()` function:
+
+::: code pyro
+    assert $i64('a') == 97;
+    assert $char(97) == 'a';
+
+If you add two characters together using the `+` operator, the result will be a UTF-8 encoded string:
+
+::: code pyro
+    assert 'x' + 'y' == "xy";
+
+Similarly, you can prepend or append a character to a string using the `+` operator:
+
+::: code pyro
+    assert 'x' + "yz" == "xyz";
+    assert "xy" + 'z' == "xyz";
+
+You can multiply a character by an integer `n` to produce a string with `n` UTF-8 encoded copies of the character:
+
+::: code pyro
+    assert 'x' * 3 == "xxx";
+    assert '🔥' * 3 == "🔥🔥🔥";
+

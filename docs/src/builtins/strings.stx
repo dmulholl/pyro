@@ -1,0 +1,251 @@
+---
+title: Strings
+meta_title: Pyro &mdash; Strings
+---
+
+A string, `str`, is an immutable array of bytes.
+
+[[ `$str(arg: any) -> str` ]]
+
+    Stringifies the argument, i.e. returns its default string representation.
+    If the argument has a `:$str()` method, the output of this method will be returned.
+
+Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding --- a string can contain any sequence of byte values including null bytes or invalid UTF-8.
+
+String literals come in two flavours --- regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
+
+Regular string literals use double quotes:
+
+::: code pyro
+    var foo = "a string";
+
+    var bar = "a string
+    with multiple
+    lines";
+
+Regular string literals process all the usual backslashed escapes:
+
+::: table
+    `\\\\` | backslash
+    `\\0` | null byte
+    `\\"` | double quote
+    `\\'` | single quote
+    `\\b` | backspace
+    `\\e` | escape
+    `\\f` | form feed
+    `\\n` | newline
+    `\\r` | carriage return
+    `\\t` | tab
+    `\\v` | vertical tab
+    `\\x##` | 8-bit hex-encoded byte value
+    `\\u####` | 16-bit hex-encoded unicode code point (output as UTF-8)
+    `\\U########` | 32-bit hex-encoded unicode code point (output as UTF-8)
+
+Raw string literals use backticks:
+
+::: code pyro
+    var foo = `a raw string`;
+
+    var bar = `a raw string
+    with multiple
+    lines`;
+
+Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
+
+You can concatenate two strings using the `+` operator:
+
+::: code pyro
+    assert "abc" + "def" == "abcdef";
+
+You can multiply a string by an integer `n` to produce a new string containing `n` copies of the original:
+
+::: code pyro
+    assert "foo" * 3 == "foofoofoo"
+
+Strings have the following methods:
+
+[[ `:byte(index: i64) -> i64` ]]
+
+    Returns the byte value at `index` as an integer in the range `[0, 255]`.
+    Will panic if `index` isn't an integer or is out of range.
+    Indices are zero-based.
+
+[[ `:byte_count() -> i64` ]]
+
+    Returns the number of bytes in the string.
+
+[[ `:bytes() -> iter[i64]` ]]
+
+    Returns an iterator over the string's bytes as `i64` values.
+
+[[ `:char(index: i64) -> char` ]]
+
+    Returns the `char` at `index`, where `index` is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
+    Will panic if `index` isn't an integer or is out of range.
+
+    (This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+    Note that it will panic if it encounters invalid UTF-8 along the way.)
+
+[[ `:char_count() -> i64` ]]
+
+    Returns the number of UTF-8 encoded Unicode code points in the string.
+
+    (This is a potentially expensive method as it needs to traverse the string.
+    Note that it will panic if it encounters invalid UTF-8.)
+
+[[ `:chars() -> iter[char]` ]]
+
+    Returns an iterator over the string's `char` values, i.e. UTF-8 encoded Unicode code points.
+
+[[ `:contains(target: str) -> bool` ]]
+
+    Returns `true` if the string contains the substring `target`.
+
+    (Note that every string contains the empty string `""` as the empty string is a valid substring of every string.)
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of bytes in the string.
+    This method is an alias for `:byte_count()`.
+
+[[ `:ends_with(suffix: str) -> bool` ]]
+
+    Returns `true` if the string ends with the string `suffix`, otherwise `false`.
+
+[[ `:index_of(target: str, start_index: i64) -> i64|err` ]]
+
+    Returns the byte index of the next matching instance of the string `target`.
+    Starts searching at `start_index`.
+    Returns an `err` if `target` is not found.
+
+[[ `:is_ascii() -> bool` ]]
+
+    Returns `true` if the string is empty or contains only byte values in the range `[0, 127]`.
+    (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the string is empty, i.e. if its length is zero.
+
+[[ `:is_utf8() -> bool` ]]
+
+    Returns `true` if the string is empty or contains only valid UTF-8.
+    (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:join(items: iterable) -> str` ]]
+
+    Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified --- this is equivalent to calling `$str()` on each element.
+
+    Returns an empty string if the iterator is empty or exhausted.
+
+[[ `:lines() -> iter[str]` ]]
+
+    Returns an iterator over the string's lines.
+    Recognised line breaks are `\r\n`, `\r`, and `\n`.
+    Strips the line breaks from the returned strings.
+
+[[ `:match(target: str, index: i64) -> bool` ]]
+
+    Returns `true` if the string `target` matches at byte index `index`.
+
+[[ `:replace(old: str, new: str) -> str` ]]
+
+    Returns a new string with all instances of the string `old` replaced by the string `new`.
+
+[[ `:slice(start_index: i64) -> str` <br> `:slice(start_index: i64, length: i64) -> str` ]]
+
+    Copies a slice of the source string and returns it as a new string.
+    The source string is left unchanged.
+    The slice starts at byte index `start_index` and contains `length` bytes.
+
+    If `start_index` is negative, counts backwards from the end of the string --- i.e. a `start_index` of `-1` refers to to the last byte in the string.
+
+    If `length` is omitted, copies to the end of the source string.
+
+    Panics if either argument is out of range.
+
+[[ `:split(sep: str) -> vec[str]` ]]
+
+    Splits the string on instances of the delimiter string `sep`.
+    Returns a vector of strings.
+
+[[ `:split_lines() -> vec[str]` ]]
+
+    Splits the string into lines.
+    Recognised line breaks are `\r\n`, `\r`, and `\n`.
+    Strips the line breaks from the returned strings.
+    Returns a vector of strings.
+
+[[ `:split_on_ascii_ws() -> vec[str]` ]]
+
+    This method splits the string on contiguous sequences of ASCII whitespace characters.
+    Leading and trailing whitespace is ignored.
+    Returns a vector of strings.
+
+[[ `:starts_with(prefix: str) -> bool` ]]
+
+    Returns `true` if the string starts with the string `prefix`, otherwise `false`.
+
+[[ `:strip() -> str` <br> `:strip(bytes: str) -> str` ]]
+
+    When called with no arguments, this method returns the new string formed by stripping leading and trailing ASCII whitespace characters from the string.
+    (In this case it functions as an alias for `:strip_ascii_ws()`.)
+
+    When called with a single string argument, this method returns the new string formed by stripping any leading or trailing bytes that occur in `bytes`.
+    (In this case it functions as an alias for `:strip_bytes()`.)
+
+[[ `:strip_ascii_ws() -> str` ]]
+
+    Returns the new string formed by stripping leading and trailing ASCII whitespace characters.
+
+[[ `:strip_bytes(bytes: str) -> str` ]]
+
+    Returns the new string formed by stripping any leading or trailing bytes that occur in `bytes`.
+
+[[ `:strip_chars(chars: str) -> str` ]]
+
+    Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in `chars`.
+
+[[ `:strip_prefix(prefix: str) -> str` ]]
+
+    Returns a new string with the leading string `prefix` stripped if present.
+    (Only a single instance of `prefix` will be stripped.)
+
+[[ `:strip_prefix_bytes(bytes: str) -> str` ]]
+
+    Returns the new string formed by stripping any leading bytes that occur in `bytes`.
+
+[[ `:strip_prefix_chars(chars: str) -> str` ]]
+
+    Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in `chars`.
+
+[[ `:strip_suffix(suffix: str) -> str` ]]
+
+    Returns a new string with the trailing string `suffix` stripped if present.
+    (Only a single instance of `suffix` will be stripped.)
+
+[[ `:strip_suffix_bytes(bytes: str) -> str` ]]
+
+    Returns the new string formed by stripping any trailing bytes that occur in `bytes`.
+
+[[ `:strip_suffix_chars(chars: str) -> str` ]]
+
+    Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in `chars`.
+
+[[ `:strip_utf8_ws() -> str` ]]
+
+    Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+
+[[ `:to_ascii_lower() -> str` ]]
+
+    Returns a new string with all ASCII uppercase characters converted to lowercase.
+
+[[ `:to_ascii_upper() -> str` ]]
+
+    Returns a new string with all ASCII lowercase characters converted to uppercase.
+
+[[ `:to_hex() -> str` ]]
+
+    Returns a new string containing the hex-escaped byte values from the orginal string ---
+    e.g. `\`foo\`` becomes `\`\x66\x6F\x6F\``.
+    Useful for inspecting and debugging Unicode.

@@ -1,0 +1,47 @@
+---
+title: Sets
+meta_title: Pyro &mdash; Sets
+---
+
+A set is an unordered collection of distinct objects.
+
+[[ `$set() -> set` <br> `$set(arg: iterable) -> set` ]]
+
+    Creates a new `set` object.
+    If `arg` is iterable, initializes the new set by iterating over its values.
+
+Alternatively, you can create a set by draining an iterator, e.g.
+
+::: code pyro
+    var chars = "supercalifragilistic":chars():to_set();
+    assert chars:count() == 12;
+
+Sets are iterable:
+
+::: code pyro
+    for char in "supercalifragilistic":chars():to_set() {
+        echo char;
+    }
+
+Sets have the following methods:
+
+[[ `:add(item: any)` ]]
+
+    Adds an item to the set.
+    This is a null operation if the set already contains a member equal to `item`.
+
+[[ `:contains(item: any) -> bool` ]]
+
+    Returns `true` if the set contains a member equal to `item`.
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of items in the set.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the set is empty.
+
+[[ `:remove(item: any)` ]]
+
+    Removes `item` from the set.

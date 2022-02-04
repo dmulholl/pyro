@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Vectors</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-builtins-vectors node-builtins node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.5.30</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Vectors</h1>
+                
+                <hr>
+            </header>
+            <p>
+A vector, <code>vec</code>, is a dynamic array of values.
+</p>
+<dl>
+<div>
+<dt>
+<code>$vec() -&gt; vec</code> <br> <code>$vec(arg: iterable) -&gt; vec</code> <br> <code>$vec(size: i64, fill_value: any) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>vec</code> object.
+</p>
+<ul>
+<li>
+If called with zero arguments, creates an empty vector.
+</li>
+<li>
+If called with a single iterable argument, fills the new vector by iterating over the argument.
+</li>
+<li>
+If called with two arguments, creates a vector with the specified initial size and fill value.
+</li>
+</ul>
+</dd>
+</div>
+</dl>
+<p>
+Alternatively, you can create a vector using literal syntax:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+</pre>
+<p>
+You can index into a vector to get or set entries:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">vec</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+
+<span class="nx">vec</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="nx">vec</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+</pre>
+<p>
+Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+</p>
+<p>
+Vectors are iterable:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">]</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Vectors have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:append(value: any)</code>
+</dt>
+<dd>
+<p>
+Appends a value to the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:contains(value: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the vector contains an entry equal to <code>value</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:copy() -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Returns a copy of the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of entries in the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:filter(callback: func(any) -&gt; bool) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Returns a new vector created by mapping the function <code>callback</code> to each element of the vector in turn.
+<code>callback</code> should be a callable that takes a single argument (the vector element) and returns <code>true</code> or <code>false</code>;
+if it returns <code>true</code> the corresponding element will be added to the new vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:first() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the first item from the vector without removing it.
+Panics if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:get(index: i64) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:index_of(value: any) -&gt; i64|err</code>
+</dt>
+<dd>
+<p>
+Returns the index of the first occurrence of <code>value</code> in the vector.
+Returns an <code>err</code> if the vector does not contain <code>value</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:insert_at(index: i64, value: any)</code>
+</dt>
+<dd>
+<p>
+Inserts <code>value</code> at the specified index.
+<code>index</code> must be less than or equal to the vector's item count.
+Panics if <code>index</code> is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_sorted() -&gt; bool</code> <br> <code>:is_sorted(callback: func(any, any) -&gt; bool) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the vector is sorted in ascending order.
+</p>
+<p>
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:iter() -&gt; iter</code>
+</dt>
+<dd>
+<p>
+Returns an <code>iter</code> object wrapping the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:join(sep: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Joins the vector's elements into a string, with each pair of elements separated by <code>sep</code>.
+Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
+</p>
+<p>
+Returns an empty string if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:last() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the last item from the vector without removing it.
+Panics if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:map(callback: func(any) -&gt; any) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Returns a new vector created by mapping the function <code>callback</code> to each element of the vector in turn.
+<code>callback</code> should be a callable that takes a single argument (the vector element);
+its return values will form the elements of the new vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:mergesort() -&gt; vec</code> <br> <code>:mergesort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Sorts the vector in-place using a stable implementation of the mergesort algorithm.
+Returns the vector to allow chaining.
+</p>
+<p>
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:quicksort() -&gt; vec</code> <br> <code>:quicksort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Sorts the vector in-place using the quicksort algorithm.
+Returns the vector to allow chaining.
+</p>
+<p>
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:remove_at(index: i64) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Removes and returns the value at the specified index.
+Panics if the index is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:remove_first() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Removes and returns the first item from the vector.
+Panics if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:remove_last() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Removes and returns the last item from the vector.
+Panics if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:reverse() -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Reverses the vector in-place. Returns the vector to enable chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:set(index: i64, value: any)</code>
+</dt>
+<dd>
+<p>
+Sets the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:shuffle() -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Shuffles the vector in-place.
+Uses Fisher-Yates/Durstenfeld shuffling and random numbers from the <code>$std::prng</code> module.
+Returns the vector to enable chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:slice(start_index: i64) -&gt; vec</code> <br> <code>:slice(start_index: i64, length: i64) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Copies a slice of the source vector and returns it as a new vector.
+The source vector is left unchanged.
+</p>
+<p>
+If <code>start_index</code> is negative, counts backwards from the end of the vector &mdash; i.e. a <code>start_index</code> of <code>-1</code> refers to to the last item in the vector.
+</p>
+<p>
+If <code>length</code> is omitted, copies to the end of the source vector.
+</p>
+<p>
+Panics if either argument is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).
+Returns the vector to allow chaining.
+</p>
+<p>
+If a <code>callback</code> function is supplied it will be used to compare pairs of values.
+It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

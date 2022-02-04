@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Byte Buffers</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-builtins-buffers node-builtins node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.5.30</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Byte Buffers</h1>
+                
+                <hr>
+            </header>
+            <p>
+A byte buffer, <code>buf</code>, is a dynamic array of bytes.
+</p>
+<dl>
+<div>
+<dt>
+<code>$buf() -&gt; buf</code> <br> <code>$buf(content: str) -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>buf</code> object.
+</p>
+<ul>
+<li>
+If called with zero arguments, creates a new empty buffer.
+</li>
+<li>
+If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
+</li>
+<li>
+If called with two arguments, creates a new buffer with the specified initial size and fill value, where <code>size</code> is a positive integer and <code>value</code> is an integer value in the range <code>[0, 255]</code>.
+</li>
+</ul>
+</dd>
+</div>
+</dl>
+<p>
+You can index into a buffer to get or set byte values:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+
+<span class="nx">buf</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="nx">buf</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+</pre>
+<p>
+Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+</p>
+<p>
+Buffers have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of bytes in the buffer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:get(index: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
+Will panic if <code>index</code> isn't an integer or is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the buffer is emtpy.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:set(index: i64, byte: i64)</code>
+</dt>
+<dd>
+<p>
+Sets the byte value at <code>index</code> to <code>byte</code> where <code>byte</code> is an integer in the range <code>[0, 255]</code>.
+Will panic if <code>index</code> isn't an integer or is out of range.
+Will panic if <code>byte</code> isn't an integer or is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to_str() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Converts the content of the buffer into a string, leaving a valid but empty buffer object behind.
+Returns the new string.
+</p>
+<p>
+Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the cost of creating multiple temporary strings along the way.
+</p>
+<p>
+Note that calling <code>$str(buf)</code> on a buffer does something different &mdash; it creates a string with a <i>copy</i> of the buffer's content, leaving the buffer itself unchanged.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write(arg: any)</code> <br> <code>:write(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a string to the buffer.
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
+</p>
+<p>
+This method can panic if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write_byte(byte: i64)</code>
+</dt>
+<dd>
+<p>
+Appends <code>byte</code> to the buffer where <code>byte</code> is an integer in the range <code>[0, 255]</code>.
+Will panic if <code>byte</code> is not an integer or is out of range.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

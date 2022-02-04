@@ -1,0 +1,21 @@
+---
+title: Errors
+meta_title: Pyro &mdash; Errors
+---
+
+[1]: @root/builtins/tuples//
+
+The error type, `err`, can be returned by functions to indicate failure.
+
+[[ `$err() -> err` <br> `$err(arg1: any, arg2: any, ...) -> i64` ]]
+
+    Creates a new `err` object.
+    The arguments provide the error's values.
+
+Errors are a specialized variant of [tuples][1] and support all the same methods and operations.
+
+You can use the `$is_err(arg)` function to check if a value is an `err`.
+Alternatively, you can use the error-coalescing operator `!!` to supply a default value for an operation that might fail:
+
+::: code pyro
+    var foo = might_fail() !! "default";

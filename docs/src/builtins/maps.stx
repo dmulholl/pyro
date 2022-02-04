@@ -1,0 +1,83 @@
+---
+title: Hash Maps
+meta_title: Pyro &mdash; Hash Maps
+---
+
+A hash map, `map`, is a collection of key-value pairs.
+Pyro's map type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
+
+[[ `$map() -> map` ]]
+
+    Creates a new `map` object.
+
+Alternatively, you can create a map using literal syntax:
+
+::: code pyro
+    var map = {
+        "foo" = 123,
+        "bar" = 456,
+    };
+
+You can index into a map to get or set entries:
+
+::: code pyro
+    var value = map[key];
+    var value = map:get(key);
+
+    map[key] = value;
+    map:set(key, value);
+
+Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+
+Maps are iterable:
+
+::: code pyro
+    for (key, value) in map:entries() {
+        echo key;
+        echo value;
+    }
+
+The `:entries()` method returns an iterator over key-value tuples which you can unpack in a for-loop as shown.
+Maps also have a `:keys()` method which returns an iterator over the map's keys and a `:values()` method which returns an iterator over the map's values.
+
+Maps have the following methods:
+
+[[ `:contains(key: any) -> bool` ]]
+
+    Returns `true` if the map contains `key`, otherwise `false`.
+
+[[ `:copy() -> map` ]]
+
+    Returns a copy of the map.
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of entries in the map.
+
+[[ `:entries() -> iter[tup]` ]]
+
+    Returns an iterator over `(key, value)` tuples.
+
+[[ `:get(key: any) -> any` ]]
+
+    Returns the value associated with `key` or `err` if `key` was not found.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the map is empty.
+
+[[ `:keys() -> iter` ]]
+
+    Returns an iterator over the map's keys.
+
+[[ `:remove(key: any)` ]]
+
+    Deletes the entry associated with `key` if it exists.
+
+[[ `:set(key: any, value: any)` ]]
+
+    Adds a new entry to the map or updates an existing entry.
+
+[[ `:values() -> iter` ]]
+
+    Returns an iterator over the map's values.

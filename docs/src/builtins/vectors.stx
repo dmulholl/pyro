@@ -1,0 +1,178 @@
+---
+title: Vectors
+meta_title: Pyro &mdash; Vectors
+---
+
+A vector, `vec`, is a dynamic array of values.
+
+[[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
+
+    Creates a new `vec` object.
+
+    * If called with zero arguments, creates an empty vector.
+    * If called with a single iterable argument, fills the new vector by iterating over the argument.
+    * If called with two arguments, creates a vector with the specified initial size and fill value.
+
+Alternatively, you can create a vector using literal syntax:
+
+::: code pyro
+    var vec = ["foo", "bar", "baz"];
+
+You can index into a vector to get or set entries:
+
+::: code pyro
+    var value = vec[index];
+    var value = vec:get(index);
+
+    vec[index] = value;
+    vec:set(index, value);
+
+Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+
+Vectors are iterable:
+
+::: code pyro
+    for item in [123, 456, 789] {
+        echo item;
+    }
+
+Vectors have the following methods:
+
+[[ `:append(value: any)` ]]
+
+    Appends a value to the vector.
+
+[[ `:contains(value: any) -> bool` ]]
+
+    Returns `true` if the vector contains an entry equal to `value`, otherwise `false`.
+
+[[ `:copy() -> vec` ]]
+
+    Returns a copy of the vector.
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of entries in the vector.
+
+[[ `:filter(callback: func(any) -> bool) -> vec` ]]
+
+    Returns a new vector created by mapping the function `callback` to each element of the vector in turn.
+    `callback` should be a callable that takes a single argument (the vector element) and returns `true` or `false`;
+    if it returns `true` the corresponding element will be added to the new vector.
+
+[[ `:first() -> any` ]]
+
+    Returns the first item from the vector without removing it.
+    Panics if the vector is empty.
+
+[[ `:get(index: i64) -> any` ]]
+
+    Returns the value at `index`. Will panic if `index` is out of range or not an integer.
+
+[[ `:index_of(value: any) -> i64|err` ]]
+
+    Returns the index of the first occurrence of `value` in the vector.
+    Returns an `err` if the vector does not contain `value`.
+
+[[ `:insert_at(index: i64, value: any)` ]]
+
+    Inserts `value` at the specified index.
+    `index` must be less than or equal to the vector's item count.
+    Panics if `index` is out of range.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the vector is empty.
+
+[[ `:is_sorted() -> bool` <br> `:is_sorted(callback: func(any, any) -> bool) -> bool` ]]
+
+    Returns `true` if the vector is sorted in ascending order.
+
+    If a `callback` function is supplied it will be used to compare pairs of values.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+
+[[ `:iter() -> iter` ]]
+
+    Returns an `iter` object wrapping the vector.
+
+[[ `:join(sep: str) -> str` ]]
+
+    Joins the vector's elements into a string, with each pair of elements separated by `sep`.
+    Elements are automatically stringified --- this is equivalent to calling `$str()` on each element.
+
+    Returns an empty string if the vector is empty.
+
+[[ `:last() -> any` ]]
+
+    Returns the last item from the vector without removing it.
+    Panics if the vector is empty.
+
+[[ `:map(callback: func(any) -> any) -> vec` ]]
+
+    Returns a new vector created by mapping the function `callback` to each element of the vector in turn.
+    `callback` should be a callable that takes a single argument (the vector element);
+    its return values will form the elements of the new vector.
+
+[[ `:mergesort() -> vec` <br> `:mergesort(callback: func(any, any) -> bool) -> vec` ]]
+
+    Sorts the vector in-place using a stable implementation of the mergesort algorithm.
+    Returns the vector to allow chaining.
+
+    If a `callback` function is supplied it will be used to compare pairs of values.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+
+[[ `:quicksort() -> vec` <br> `:quicksort(callback: func(any, any) -> bool) -> vec` ]]
+
+    Sorts the vector in-place using the quicksort algorithm.
+    Returns the vector to allow chaining.
+
+    If a `callback` function is supplied it will be used to compare pairs of values.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+
+[[ `:remove_at(index: i64) -> any` ]]
+
+    Removes and returns the value at the specified index.
+    Panics if the index is out of range.
+
+[[ `:remove_first() -> any` ]]
+
+    Removes and returns the first item from the vector.
+    Panics if the vector is empty.
+
+[[ `:remove_last() -> any` ]]
+
+    Removes and returns the last item from the vector.
+    Panics if the vector is empty.
+
+[[ `:reverse() -> vec` ]]
+
+    Reverses the vector in-place. Returns the vector to enable chaining.
+
+[[ `:set(index: i64, value: any)` ]]
+
+    Sets the value at `index`. Will panic if `index` is out of range or not an integer.
+
+[[ `:shuffle() -> vec` ]]
+
+    Shuffles the vector in-place.
+    Uses Fisher-Yates/Durstenfeld shuffling and random numbers from the `$std::prng` module.
+    Returns the vector to enable chaining.
+
+[[ `:slice(start_index: i64) -> vec` <br> `:slice(start_index: i64, length: i64) -> vec` ]]
+
+    Copies a slice of the source vector and returns it as a new vector.
+    The source vector is left unchanged.
+
+    If `start_index` is negative, counts backwards from the end of the vector --- i.e. a `start_index` of `-1` refers to to the last item in the vector.
+
+    If `length` is omitted, copies to the end of the source vector.
+
+    Panics if either argument is out of range.
+
+[[ `:sort() -> vec` <br> `:sort(callback: func(any, any) -> bool) -> vec` ]]
+
+    Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).
+    Returns the vector to allow chaining.
+
+    If a `callback` function is supplied it will be used to compare pairs of values.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`.

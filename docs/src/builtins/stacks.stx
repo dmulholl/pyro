@@ -1,0 +1,29 @@
+---
+title: Stacks
+meta_title: Pyro &mdash; Stacks
+---
+
+A stack is a LIFO (last-in-first-out) container type that supports only two operations --- *pushing* and *popping*.
+
+[[ `$stack() -> stack` ]]
+
+    Creates a new `stack` object.
+
+Stacks have the following methods:
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of items in the stack.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the stack is empty.
+
+[[ `:pop() -> any` ]]
+
+    Pops and returns the value on top of the stack.
+    Panics if the stack is empty.
+
+[[ `:push(item: any)` ]]
+
+    Pushes an item onto the stack.

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Sets</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-builtins-sets node-builtins node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.5.30</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Sets</h1>
+                
+                <hr>
+            </header>
+            <p>
+A set is an unordered collection of distinct objects.
+</p>
+<dl>
+<div>
+<dt>
+<code>$set() -&gt; set</code> <br> <code>$set(arg: iterable) -&gt; set</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>set</code> object.
+If <code>arg</code> is iterable, initializes the new set by iterating over its values.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Alternatively, you can create a set by draining an iterator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">chars</span> <span class="p">=</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">chars</span><span class="p">:</span><span class="nx">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">12</span><span class="p">;</span>
+</pre>
+<p>
+Sets are iterable:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">char</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Sets have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:add(item: any)</code>
+</dt>
+<dd>
+<p>
+Adds an item to the set.
+This is a null operation if the set already contains a member equal to <code>item</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:contains(item: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the set contains a member equal to <code>item</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of items in the set.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the set is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:remove(item: any)</code>
+</dt>
+<dd>
+<p>
+Removes <code>item</code> from the set.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

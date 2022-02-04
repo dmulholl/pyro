@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Strings</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-builtins-strings node-builtins node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.5.30</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Strings</h1>
+                
+                <hr>
+            </header>
+            <p>
+A string, <code>str</code>, is an immutable array of bytes.
+</p>
+<dl>
+<div>
+<dt>
+<code>$str(arg: any) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Stringifies the argument, i.e. returns its default string representation.
+If the argument has a <code>:$str()</code> method, the output of this method will be returned.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding &mdash; a string can contain any sequence of byte values including null bytes or invalid UTF-8.
+</p>
+<p>
+String literals come in two flavours &mdash; regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
+</p>
+<p>
+Regular string literals use double quotes:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;a string&quot;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;a string</span>
+<span class="s">with multiple</span>
+<span class="s">lines&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Regular string literals process all the usual backslashed escapes:
+</p>
+<table>
+<tbody>
+<tr>
+<td>
+<code>\\</code>
+</td>
+<td>
+backslash
+</td>
+</tr>
+<tr>
+<td>
+<code>\0</code>
+</td>
+<td>
+null byte
+</td>
+</tr>
+<tr>
+<td>
+<code>\&quot;</code>
+</td>
+<td>
+double quote
+</td>
+</tr>
+<tr>
+<td>
+<code>\&#x27;</code>
+</td>
+<td>
+single quote
+</td>
+</tr>
+<tr>
+<td>
+<code>\b</code>
+</td>
+<td>
+backspace
+</td>
+</tr>
+<tr>
+<td>
+<code>\e</code>
+</td>
+<td>
+escape
+</td>
+</tr>
+<tr>
+<td>
+<code>\f</code>
+</td>
+<td>
+form feed
+</td>
+</tr>
+<tr>
+<td>
+<code>\n</code>
+</td>
+<td>
+newline
+</td>
+</tr>
+<tr>
+<td>
+<code>\r</code>
+</td>
+<td>
+carriage return
+</td>
+</tr>
+<tr>
+<td>
+<code>\t</code>
+</td>
+<td>
+tab
+</td>
+</tr>
+<tr>
+<td>
+<code>\v</code>
+</td>
+<td>
+vertical tab
+</td>
+</tr>
+<tr>
+<td>
+<code>\x##</code>
+</td>
+<td>
+8-bit hex-encoded byte value
+</td>
+</tr>
+<tr>
+<td>
+<code>\u####</code>
+</td>
+<td>
+16-bit hex-encoded unicode code point (output as UTF-8)
+</td>
+</tr>
+<tr>
+<td>
+<code>\U########</code>
+</td>
+<td>
+32-bit hex-encoded unicode code point (output as UTF-8)
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Raw string literals use backticks:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">`a raw string`</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">`a raw string</span>
+<span class="s">with multiple</span>
+<span class="s">lines`</span><span class="p">;</span>
+</pre>
+<p>
+Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
+</p>
+<p>
+You can concatenate two strings using the <code>+</code> operator:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="o">+</span> <span class="s">&quot;def&quot;</span> <span class="o">==</span> <span class="s">&quot;abcdef&quot;</span><span class="p">;</span>
+</pre>
+<p>
+You can multiply a string by an integer <code>n</code> to produce a new string containing <code>n</code> copies of the original:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;foofoofoo&quot;</span>
+</pre>
+<p>
+Strings have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:byte(index: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
+Will panic if <code>index</code> isn't an integer or is out of range.
+Indices are zero-based.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:byte_count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of bytes in the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:bytes() -&gt; iter[i64]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's bytes as <code>i64</code> values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:char(index: i64) -&gt; char</code>
+</dt>
+<dd>
+<p>
+Returns the <code>char</code> at <code>index</code>, where <code>index</code> is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
+Will panic if <code>index</code> isn't an integer or is out of range.
+</p>
+<p>
+(This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+Note that it will panic if it encounters invalid UTF-8 along the way.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:char_count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of UTF-8 encoded Unicode code points in the string.
+</p>
+<p>
+(This is a potentially expensive method as it needs to traverse the string.
+Note that it will panic if it encounters invalid UTF-8.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:chars() -&gt; iter[char]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's <code>char</code> values, i.e. UTF-8 encoded Unicode code points.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:contains(target: str) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string contains the substring <code>target</code>.
+</p>
+<p>
+(Note that every string contains the empty string <code>&quot;&quot;</code> as the empty string is a valid substring of every string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of bytes in the string.
+This method is an alias for <code>:byte_count()</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:ends_with(suffix: str) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string ends with the string <code>suffix</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:index_of(target: str, start_index: i64) -&gt; i64|err</code>
+</dt>
+<dd>
+<p>
+Returns the byte index of the next matching instance of the string <code>target</code>.
+Starts searching at <code>start_index</code>.
+Returns an <code>err</code> if <code>target</code> is not found.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty or contains only byte values in the range <code>[0, 127]</code>.
+(This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty, i.e. if its length is zero.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_utf8() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty or contains only valid UTF-8.
+(This is a potentially expensive method as it needs to traverse the string.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:join(items: iterable) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
+</p>
+<p>
+Returns an empty string if the iterator is empty or exhausted.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:lines() -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's lines.
+Recognised line breaks are <code>\r\n</code>, <code>\r</code>, and <code>\n</code>.
+Strips the line breaks from the returned strings.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:match(target: str, index: i64) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string <code>target</code> matches at byte index <code>index</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:replace(old: str, new: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a new string with all instances of the string <code>old</code> replaced by the string <code>new</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:slice(start_index: i64) -&gt; str</code> <br> <code>:slice(start_index: i64, length: i64) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Copies a slice of the source string and returns it as a new string.
+The source string is left unchanged.
+The slice starts at byte index <code>start_index</code> and contains <code>length</code> bytes.
+</p>
+<p>
+If <code>start_index</code> is negative, counts backwards from the end of the string &mdash; i.e. a <code>start_index</code> of <code>-1</code> refers to to the last byte in the string.
+</p>
+<p>
+If <code>length</code> is omitted, copies to the end of the source string.
+</p>
+<p>
+Panics if either argument is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:split(sep: str) -&gt; vec[str]</code>
+</dt>
+<dd>
+<p>
+Splits the string on instances of the delimiter string <code>sep</code>.
+Returns a vector of strings.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:split_lines() -&gt; vec[str]</code>
+</dt>
+<dd>
+<p>
+Splits the string into lines.
+Recognised line breaks are <code>\r\n</code>, <code>\r</code>, and <code>\n</code>.
+Strips the line breaks from the returned strings.
+Returns a vector of strings.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:split_on_ascii_ws() -&gt; vec[str]</code>
+</dt>
+<dd>
+<p>
+This method splits the string on contiguous sequences of ASCII whitespace characters.
+Leading and trailing whitespace is ignored.
+Returns a vector of strings.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:starts_with(prefix: str) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string starts with the string <code>prefix</code>, otherwise <code>false</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip() -&gt; str</code> <br> <code>:strip(bytes: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+When called with no arguments, this method returns the new string formed by stripping leading and trailing ASCII whitespace characters from the string.
+(In this case it functions as an alias for <code>:strip_ascii_ws()</code>.)
+</p>
+<p>
+When called with a single string argument, this method returns the new string formed by stripping any leading or trailing bytes that occur in <code>bytes</code>.
+(In this case it functions as an alias for <code>:strip_bytes()</code>.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_ascii_ws() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping leading and trailing ASCII whitespace characters.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_bytes(bytes: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any leading or trailing bytes that occur in <code>bytes</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_chars(chars: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in <code>chars</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_prefix(prefix: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a new string with the leading string <code>prefix</code> stripped if present.
+(Only a single instance of <code>prefix</code> will be stripped.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_prefix_bytes(bytes: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any leading bytes that occur in <code>bytes</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_prefix_chars(chars: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in <code>chars</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_suffix(suffix: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a new string with the trailing string <code>suffix</code> stripped if present.
+(Only a single instance of <code>suffix</code> will be stripped.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_suffix_bytes(bytes: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any trailing bytes that occur in <code>bytes</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_suffix_chars(chars: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in <code>chars</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:strip_utf8_ws() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by stripping leading and trailing UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to_ascii_lower() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a new string with all ASCII uppercase characters converted to lowercase.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to_ascii_upper() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a new string with all ASCII lowercase characters converted to uppercase.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to_hex() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a new string containing the hex-escaped byte values from the orginal string &mdash;
+e.g. <code>`foo`</code> becomes <code>`\x66\x6F\x6F`</code>.
+Useful for inspecting and debugging Unicode.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

@@ -1,0 +1,94 @@
+---
+title: Files
+meta_title: Pyro &mdash; Files
+---
+
+A file object, `file`, is a wrapper around a readable or writable byte stream.
+
+[[ `$file(path: str, mode: str) -> file` ]]
+
+    Creates a new `file` object.
+    Opens the underlying file stream using the C function `fopen()`.
+    Panics on failure.
+
+Mode options:
+
+::: table
+
+    `"r"`   | Opens a file for reading. The file must exist.
+    `"w"`   | Creates an empty file for writing. If the file already exists, its content will be erased.
+    `"a"`   | Opens a file for appending. The file will be created if it does not exist.
+    `"r+"`  | Opens a file for both reading and writing. The file must exist.
+    `"w+"`  | Creates an empty file for both reading and writing. If the file already exists, its content will be erased.
+    `"a+"`  | Opens a file for both reading and appending. The file will be created if it does not exist.
+
+Files have the following methods:
+
+[[ `:close()` ]]
+
+    Closes the file stream.
+    You can safely call `close()` on a file multiple times.
+    If the file hasn't been explicitly closed it will be automatically closed by the garbage collector before the file object is destroyed.
+
+[[ `:flush()` ]]
+
+    Flushes the file stream.
+
+[[ `:read() -> buf` ]]
+
+    Reads the content of the file into a new byte buffer, `buf`.
+
+    Returns the new buffer.
+    Returns an empty buffer if the file was empty or if the end of the file had already been reached before the method was called.
+
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the buffer.
+
+[[ `:read_byte() -> i64?` ]]
+
+    Reads the next byte value from the file.
+    Returns the byte value as an integer in the range `[0, 255]`, or `null` if the end of the file had already been reached before the method was called.
+    Panics if an I/O read error occurs.
+
+[[ `:read_bytes(n: i64) -> buf?` ]]
+
+    Attempts to read `n` bytes from the file into a new byte buffer.
+    May read less than `n` bytes if the end of the file is reached first.
+
+    Returns the new byte buffer or `null` if the end of the file had already been reached before the method was called.
+
+    Panics if an I/O read error occurs, if the argument is invalid, or if sufficient memory cannot be allocated for the buffer.
+
+[[ `:read_line() -> str?` ]]
+
+    Reads the next line of input from the file and returns it as a string.
+    Strips the terminating `\\n` or `\\r\\n` if present.
+
+    Returns `null` if the end of the file had already been reached.
+
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+
+[[ `:read_string() -> str` ]]
+
+    Reads the content of the file into a string, `str`.
+
+    Returns the new string.
+    Returns an empty string if the file was empty or if the end of the file had already been reached before the method was called.
+
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+
+[[ `:write(arg: any) -> i64` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+
+    Writes a string or buffer to the file.
+
+    If `arg` is a `buf`, its content will be written to the file directly.
+    Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+
+    Returns the number of bytes written.
+
+    Panics if an I/O write error occurs or if an error occurs while formatting the output string.
+
+[[ `:write_byte(byte: i64)` ]]
+
+    Writes a byte value to the file, where `byte` is an integer in the range `[0, 255]`.
+    Panics if an I/O write error occurs or if the argument is an invalid type or is out of range.

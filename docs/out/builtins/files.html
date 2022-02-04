@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Files</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-builtins-files node-builtins node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.5.30</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Files</h1>
+                
+                <hr>
+            </header>
+            <p>
+A file object, <code>file</code>, is a wrapper around a readable or writable byte stream.
+</p>
+<dl>
+<div>
+<dt>
+<code>$file(path: str, mode: str) -&gt; file</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>file</code> object.
+Opens the underlying file stream using the C function <code>fopen()</code>.
+Panics on failure.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Mode options:
+</p>
+<table>
+<tbody>
+<tr>
+<td>
+<code>&quot;r&quot;</code>
+</td>
+<td>
+Opens a file for reading. The file must exist.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;w&quot;</code>
+</td>
+<td>
+Creates an empty file for writing. If the file already exists, its content will be erased.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;a&quot;</code>
+</td>
+<td>
+Opens a file for appending. The file will be created if it does not exist.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;r+&quot;</code>
+</td>
+<td>
+Opens a file for both reading and writing. The file must exist.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;w+&quot;</code>
+</td>
+<td>
+Creates an empty file for both reading and writing. If the file already exists, its content will be erased.
+</td>
+</tr>
+<tr>
+<td>
+<code>&quot;a+&quot;</code>
+</td>
+<td>
+Opens a file for both reading and appending. The file will be created if it does not exist.
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Files have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:close()</code>
+</dt>
+<dd>
+<p>
+Closes the file stream.
+You can safely call <code>close()</code> on a file multiple times.
+If the file hasn't been explicitly closed it will be automatically closed by the garbage collector before the file object is destroyed.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:flush()</code>
+</dt>
+<dd>
+<p>
+Flushes the file stream.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read() -&gt; buf</code>
+</dt>
+<dd>
+<p>
+Reads the content of the file into a new byte buffer, <code>buf</code>.
+</p>
+<p>
+Returns the new buffer.
+Returns an empty buffer if the file was empty or if the end of the file had already been reached before the method was called.
+</p>
+<p>
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the buffer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_byte() -&gt; i64?</code>
+</dt>
+<dd>
+<p>
+Reads the next byte value from the file.
+Returns the byte value as an integer in the range <code>[0, 255]</code>, or <code>null</code> if the end of the file had already been reached before the method was called.
+Panics if an I/O read error occurs.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_bytes(n: i64) -&gt; buf?</code>
+</dt>
+<dd>
+<p>
+Attempts to read <code>n</code> bytes from the file into a new byte buffer.
+May read less than <code>n</code> bytes if the end of the file is reached first.
+</p>
+<p>
+Returns the new byte buffer or <code>null</code> if the end of the file had already been reached before the method was called.
+</p>
+<p>
+Panics if an I/O read error occurs, if the argument is invalid, or if sufficient memory cannot be allocated for the buffer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_line() -&gt; str?</code>
+</dt>
+<dd>
+<p>
+Reads the next line of input from the file and returns it as a string.
+Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
+</p>
+<p>
+Returns <code>null</code> if the end of the file had already been reached.
+</p>
+<p>
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:read_string() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Reads the content of the file into a string, <code>str</code>.
+</p>
+<p>
+Returns the new string.
+Returns an empty string if the file was empty or if the end of the file had already been reached before the method was called.
+</p>
+<p>
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write(arg: any) -&gt; i64</code> <br> <code>:write(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Writes a string or buffer to the file.
+</p>
+<p>
+If <code>arg</code> is a <code>buf</code>, its content will be written to the file directly.
+Otherwise, calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
+</p>
+<p>
+Returns the number of bytes written.
+</p>
+<p>
+Panics if an I/O write error occurs or if an error occurs while formatting the output string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write_byte(byte: i64)</code>
+</dt>
+<dd>
+<p>
+Writes a byte value to the file, where <code>byte</code> is an integer in the range <code>[0, 255]</code>.
+Panics if an I/O write error occurs or if the argument is an invalid type or is out of range.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

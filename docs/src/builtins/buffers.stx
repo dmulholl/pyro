@@ -1,0 +1,69 @@
+---
+title: Byte Buffers
+meta_title: Pyro &mdash; Byte Buffers
+---
+
+A byte buffer, `buf`, is a dynamic array of bytes.
+
+[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
+
+    Creates a new `buf` object.
+
+    * If called with zero arguments, creates a new empty buffer.
+    * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
+    * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
+
+You can index into a buffer to get or set byte values:
+
+::: code pyro
+    var value = buf[index];
+    var value = buf:get(index);
+
+    buf[index] = value;
+    buf:set(index, value);
+
+Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+
+Buffers have the following methods:
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of bytes in the buffer.
+
+[[ `:get(index: i64) -> i64` ]]
+
+    Returns the byte value at `index` as an integer in the range `[0, 255]`.
+    Will panic if `index` isn't an integer or is out of range.
+
+[[ `:is_empty() -> bool` ]]
+
+    Returns `true` if the buffer is emtpy.
+
+[[ `:set(index: i64, byte: i64)` ]]
+
+    Sets the byte value at `index` to `byte` where `byte` is an integer in the range `[0, 255]`.
+    Will panic if `index` isn't an integer or is out of range.
+    Will panic if `byte` isn't an integer or is out of range.
+
+[[ `:to_str() -> str` ]]
+
+    Converts the content of the buffer into a string, leaving a valid but empty buffer object behind.
+    Returns the new string.
+
+    Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the cost of creating multiple temporary strings along the way.
+
+    Note that calling `$str(buf)` on a buffer does something different --- it creates a string with a *copy* of the buffer's content, leaving the buffer itself unchanged.
+
+[[ `:write(arg: any)` <br> `:write(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    Writes a string to the buffer.
+    Calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+
+    This method can panic if an error occurs while formatting the output string.
+
+[[ `:write_byte(byte: i64)` ]]
+
+    Appends `byte` to the buffer where `byte` is an integer in the range `[0, 255]`.
+    Will panic if `byte` is not an integer or is out of range.
+

@@ -102,7 +102,7 @@ A string, `str`, is an immutable array of bytes.
 
 Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding --- a string can contain any sequence of byte values including null bytes or invalid UTF-8.
 
-You can find a full description of the string type [here](@root/builtins//#strings).
+You can find a full description of the string type [here](@root/builtins/strings//).
 
 
 
@@ -117,7 +117,7 @@ Character literals use single quotes:
     var c2 = '€';
     var c3 = '🔥';
 
-You can find a full description of the character type [here](@root/builtins//#characters).
+You can find a full description of the character type [here](@root/builtins/characters//).
 
 
 

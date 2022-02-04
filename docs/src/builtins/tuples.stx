@@ -1,0 +1,36 @@
+---
+title: Tuples
+meta_title: Pyro &mdash; Tuples
+---
+
+A tuple, `tup`, is an immutable array of values.
+
+[[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
+
+    Creates a new `tup` object.
+    The arguments provide the tuple's values.
+
+You can index into a tuple to get (but not set) entries:
+
+::: code pyro
+    var value = tup[index];
+    var value = tup:get(index);
+
+Indices are zero-based. Indexing is equivalent to using the `:get()` method as shown.
+
+Tuples are iterable:
+
+::: code pyro
+    for item in $tup(123, 456, 789) {
+        echo item;
+    }
+
+Tuples have the following methods:
+
+[[ `:count() -> i64` ]]
+
+    Returns the number of entries in the tuple.
+
+[[ `:get(index: i64) -> any` ]]
+
+    Returns the value at `index`. Will panic if `index` is out of range or not an integer.
