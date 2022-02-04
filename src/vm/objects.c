@@ -2030,6 +2030,60 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 }
 
 
+ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+    pyro_push(vm, MAKE_OBJ(buf));
+
+    bool is_first_item = true;
+
+    while (true) {
+        Value next_value = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return NULL;
+        }
+        if (IS_ERR(next_value)) {
+            break;
+        }
+
+        if (!is_first_item) {
+            if (!ObjBuf_append_bytes(buf, sep_length, (uint8_t*)sep, vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return NULL;
+            }
+        }
+
+        pyro_push(vm, next_value);
+        ObjStr* value_string = pyro_stringify_value(vm, next_value);
+        if (vm->halt_flag) {
+            return NULL;
+        }
+        pyro_pop(vm); // next_value
+
+        pyro_push(vm, MAKE_OBJ(value_string));
+        if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return NULL;
+        }
+        pyro_pop(vm); // value_string
+
+        is_first_item = false;
+    }
+
+    ObjStr* output_string = ObjBuf_to_str(buf, vm);
+    if (!output_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    pyro_pop(vm); // buf
+    return output_string;
+}
+
+
 /* ------ */
 /* Queues */
 /* ------ */

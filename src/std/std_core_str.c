@@ -1155,7 +1155,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
     // Get the iterator's :$next() method.
     Value next_method = pyro_get_method(vm, iterator, vm->str_next);
     if (IS_NULL(next_method)) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator, missing :$next() method.");
         return MAKE_NULL();
     }
     pyro_push(vm, next_method); // protect from GC

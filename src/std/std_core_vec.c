@@ -519,6 +519,29 @@ static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :join(), expected a string.");
+        return MAKE_NULL();
+    }
+    ObjStr* sep = AS_STR(args[0]);
+
+    ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
+    if (!iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+
+    pyro_push(vm, MAKE_OBJ(iter));
+    ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
+    pyro_pop(vm);
+
+    return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
+}
+
+
 void pyro_load_std_core_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
@@ -551,6 +574,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "is_empty", vec_is_empty, 0);
     pyro_define_method(vm, vm->vec_class, "slice", vec_slice, -1);
     pyro_define_method(vm, vm->vec_class, "is_sorted", vec_is_sorted, -1);
+    pyro_define_method(vm, vm->vec_class, "join", vec_join, 1);
 
     // Stack methods.
     pyro_define_method(vm, vm->stack_class, "count", vec_count, 0);

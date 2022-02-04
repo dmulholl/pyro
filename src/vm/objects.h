@@ -450,4 +450,9 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
 // [vm->halt_flag] before relying on the return value.
 Value ObjIter_next(ObjIter* iter, PyroVM* vm);
 
+// Stringifies the elements returned by the iterator and joins them into a string, separated by
+// [sep]. This method can call into Pyro code and can panic or set the exit flag. Check
+// [vm->halt_flag] before relying on the result.
+ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* vm);
+
 #endif

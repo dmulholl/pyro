@@ -142,6 +142,21 @@ static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value iter_join(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :join(), expected a string.");
+        return MAKE_NULL();
+    }
+
+    ObjStr* sep = AS_STR(args[0]);
+    ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
+
+    return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
+}
+
+
 static Value iter_to_set(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = AS_ITER(args[-1]);
 
@@ -357,4 +372,5 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "enum", iter_enum, -1);
     pyro_define_method(vm, vm->iter_class, "skip_first", iter_skip_first, 1);
     pyro_define_method(vm, vm->iter_class, "skip_last", iter_skip_last, 1);
+    pyro_define_method(vm, vm->iter_class, "join", iter_join, 1);
 }

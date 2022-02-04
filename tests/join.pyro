@@ -1,0 +1,34 @@
+def $test_joining_an_iter_wrapper() {
+    var v1 = ["foo", "bar", "baz"];
+    assert $iter(v1):join(", ") == "foo, bar, baz";
+    assert $iter(v1):join("") == "foobarbaz";
+
+    var v2 = ["foo"];
+    assert $iter(v2):join(", ") == "foo";
+    assert $iter(v2):join("") == "foo";
+
+    var v3 = [];
+    assert $iter(v3):join(", ") == "";
+    assert $iter(v3):join("") == "";
+
+    var v4 = [123, 456, 789];
+    assert $iter(v4):join("--") == "123--456--789";
+}
+
+
+def $test_joining_a_vector() {
+    var v1 = ["foo", "bar", "baz"];
+    assert v1:join(", ") == "foo, bar, baz";
+    assert v1:join("") == "foobarbaz";
+
+    var v2 = ["foo"];
+    assert v2:join(", ") == "foo";
+    assert v2:join("") == "foo";
+
+    var v3 = [];
+    assert v3:join(", ") == "";
+    assert v3:join("") == "";
+
+    var v4 = [123, 456, 789];
+    assert v4:join("--") == "123--456--789";
+}
