@@ -3,6 +3,9 @@ title: Iterators
 meta_title: Pyro &mdash; Iterators
 ---
 
+[1]: @root/builtins/iterators//
+
+
 Pyro's `for` loop uses a simple iterator protocol:
 
 ::: code pyro
@@ -99,3 +102,5 @@ All the iterators returned by Pyro's builtin types and functions come pre-wrappe
     for i in $range(10):filter(is_even):map(square) {
         echo i;
     }
+
+You can learn more about iterator wrappers [here][1].
