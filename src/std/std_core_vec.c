@@ -568,13 +568,14 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "remove_first", vec_remove_first, 0);
     pyro_define_method(vm, vm->vec_class, "remove_at", vec_remove_at_index, 1);
     pyro_define_method(vm, vm->vec_class, "insert_at", vec_insert_at_index, 2);
-    pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
     pyro_define_method(vm, vm->vec_class, "first", vec_first, 0);
     pyro_define_method(vm, vm->vec_class, "last", vec_last, 0);
     pyro_define_method(vm, vm->vec_class, "is_empty", vec_is_empty, 0);
     pyro_define_method(vm, vm->vec_class, "slice", vec_slice, -1);
     pyro_define_method(vm, vm->vec_class, "is_sorted", vec_is_sorted, -1);
     pyro_define_method(vm, vm->vec_class, "join", vec_join, 1);
+    pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
+    pyro_define_method(vm, vm->vec_class, "iter", vec_iter, 0);
 
     // Stack methods.
     pyro_define_method(vm, vm->stack_class, "count", vec_count, 0);

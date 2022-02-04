@@ -337,3 +337,13 @@ def $test_is_sorted() {
     assert [1, 2, 3]:is_sorted(callback);
     assert ![1, 3, 2]:is_sorted(callback);
 }
+
+
+def $test_to_iter() {
+    var v1 = [];
+    assert $is_iter(v1:iter());
+
+    var v2 = [123, 456, 789];
+    assert $is_iter(v2:iter());
+    assert v2:iter():to_vec():count() == 3;
+}
