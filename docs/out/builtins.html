@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.28</p>
+                <p class="version">Version 0.5.29</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -932,6 +932,17 @@ It should accept two arguments <code>a</code> and <code>b</code> and return <cod
 </div>
 <div>
 <dt>
+<code>:join(sep: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Joins the vector's elements into a string, separated by <code>sep</code>.
+Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:last() -&gt; any</code>
 </dt>
 <dd>
@@ -1395,6 +1406,17 @@ Output values are two-item tuples containing an integer index and the original i
 <p>
 Returns a new <code>iter</code> instance that filters the output of the source iterator using the <code>callback</code> function.
 <code>callback</code> should be a callable that takes a single argument and returns a <code>bool</code>; input values will be passed through the filter if <code>callback</code> returns <code>true</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:join(sep: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Joins the items returned by the iterator into a string, with each pair of items separated by <code>sep</code>.
+Items are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each item.
 </p>
 </dd>
 </div>
