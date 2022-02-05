@@ -853,6 +853,84 @@ static ObjStr* format_f64(PyroVM* vm, Value value, const char* format_string) {
 }
 
 
+static ObjStr* format_str_obj(PyroVM* vm, ObjStr* string, const char* format_string) {
+    char buffer[16] = {0};
+    size_t buffer_count = 0;
+
+    size_t format_string_length = strlen(format_string);
+    if (format_string_length > 15) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Format string is too long.");
+        return NULL;
+    }
+
+    bool is_right_aligned = true;
+    size_t index = 0;
+
+    if (format_string[0] == '-') {
+        is_right_aligned = false;
+        index++;
+    }
+
+    while (index < format_string_length) {
+        if (isdigit(format_string[index])) {
+            buffer[buffer_count++] = format_string[index++];
+        } else {
+            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid format string '%s'.", format_string);
+            return NULL;
+        }
+    }
+
+    if (buffer_count == 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid format string '%s'.", format_string);
+        return NULL;
+    }
+
+    errno = 0;
+    size_t target_length = (size_t)strtoll(buffer, NULL, 10);
+    if (errno != 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Integer value in format string is out of range.");
+        return NULL;
+    }
+
+    if (string->length >= target_length) {
+        return string;
+    }
+
+    char* array = ALLOCATE_ARRAY(vm, char, target_length + 1);
+    if (!array) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+    size_t array_index = 0;
+
+    size_t padding_length = target_length - string->length;
+    if (is_right_aligned) {
+        while (array_index < padding_length) {
+            array[array_index] = ' ';
+            array_index++;
+        }
+    }
+
+    memcpy(&array[array_index], string->bytes, string->length);
+    array_index += string->length;
+
+    while (array_index < target_length) {
+        array[array_index] = ' ';
+        array_index++;
+    }
+
+    array[array_index] = '\0';
+
+    ObjStr* result = ObjStr_take(array, target_length, vm);
+    if (!result) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return NULL;
+    }
+
+    return result;
+}
+
+
 ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
     if (IS_I64(value)) {
         if (format_string[0] == '%') {
@@ -873,6 +951,10 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
             return pyro_sprintf_to_obj(vm, format_string, value.as.u32);
         }
         return format_char(vm, value, format_string);
+    }
+
+    if (IS_STR(value)) {
+        return format_str_obj(vm, AS_STR(value), format_string);
     }
 
     Value method = pyro_get_method(vm, value, vm->str_fmt);

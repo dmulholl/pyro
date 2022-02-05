@@ -1,0 +1,90 @@
+assert $fmt("{}", true) == "true";
+assert $fmt("{}", 1234) == "1234";
+assert $fmt("{}", 12.3) == "12.3";
+assert $fmt("{}", "foo") == "foo";
+assert $fmt("--{}--", 123) == "--123--";
+
+assert $fmt("{} and {}", 123, 456) == "123 and 456";
+assert $fmt("{} and {}", 123.456, "foobar") == "123.456 and foobar";
+assert $fmt("foo {} bar {} baz", 123, 456) == "foo 123 bar 456 baz";
+
+
+def $test_formatting_f64() {
+    assert $fmt("{.2f}", 1.23456) == "1.23";
+    assert $fmt("{5.2f}", 1.23456) == " 1.23";
+    assert $fmt("{05.2f}", 1.23456) == "01.23";
+}
+
+
+def $test_formatting_decimal_i64() {
+    assert $fmt("{d}", 123) == "123";
+    assert $fmt("{4d}", 123) == " 123";
+    assert $fmt("{04d}", 123) == "0123";
+}
+
+
+def $test_formatting_octal_i64() {
+    assert $fmt("{o}", 123) == "173";
+    assert $fmt("{4o}", 123) == " 173";
+    assert $fmt("{04o}", 123) == "0173";
+}
+
+
+def $test_formatting_lowercase_hex_i64() {
+    assert $fmt("{x}", 123) == "7b";
+    assert $fmt("{4x}", 123) == "  7b";
+    assert $fmt("{04x}", 123) == "007b";
+}
+
+
+def $test_formatting_uppercase_hex_i64() {
+    assert $fmt("{X}", 123) == "7B";
+    assert $fmt("{4X}", 123) == "  7B";
+    assert $fmt("{04X}", 123) == "007B";
+}
+
+
+def $test_formatting_char() {
+    assert $fmt("{d}", 'z') == "122";
+    assert $fmt("{o}", 'z') == "172";
+    assert $fmt("{x}", 'z') == "7a";
+    assert $fmt("{X}", 'z') == "7A";
+    assert $fmt("{04d}", 'z') == "0122";
+    assert $fmt("{04o}", 'z') == "0172";
+    assert $fmt("{04x}", 'z') == "007a";
+    assert $fmt("{04X}", 'z') == "007A";
+}
+
+
+def $test_formatting_string() {
+    assert $fmt("{5}", "foo") == "  foo";
+    assert $fmt("{-5}", "foo") == "foo  ";
+
+    assert $fmt("{5}", "foobar") == "foobar";
+    assert $fmt("{-5}", "foobar") == "foobar";
+
+    assert $fmt("{0}", "foobar") == "foobar";
+    assert $fmt("{-0}", "foobar") == "foobar";
+
+    assert $fmt("{5}", "") == "     ";
+    assert $fmt("{-5}", "") == "     ";
+}
+
+
+class Foo {
+    def $str() {
+        return "<foo>";
+    }
+
+    def $fmt(arg) {
+        return "<" + arg + ">";
+    }
+}
+
+
+def $test_custom_methods() {
+    var foo = Foo();
+    assert $str(foo) == "<foo>";
+    assert $fmt("{}", foo) == "<foo>";
+    assert $fmt("{xyz}", foo) == "<xyz>";
+}
