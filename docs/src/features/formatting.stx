@@ -92,6 +92,20 @@ The set of valid letters for `char` values is:
 
 
 
+### Formatting Strings
+
+You can use `printf`--style formatting specifiers to left- or right-pad string values, e.g.
+
+::: code pyro
+    assert $fmt("{5}", "foo") == "  foo";
+    assert $fmt("{-5}", "foo") == "foo  ";
+
+A leading `-` specifies left-justification.
+
+The decimal number specifies the minimum field width --- longer strings aren't truncated, their full length is interpolated.
+
+
+
 ### Custom Class Example
 
 Here's a sample class with custom `:$str()` and `:$fmt(spec)` methods:

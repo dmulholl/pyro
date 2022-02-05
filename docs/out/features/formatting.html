@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.30</p>
+                <p class="version">Version 0.5.31</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -59,6 +59,9 @@
 </li>
 <li>
 <a href="#formatting-characters">Formatting Characters</a>
+</li>
+<li>
+<a href="#formatting-strings">Formatting Strings</a>
 </li>
 <li>
 <a href="#custom-class-example">Custom Class Example</a>
@@ -200,6 +203,22 @@ The set of valid letters for <code>char</code> values is:
 <code>X</code> for uppercase hexadecimal.
 </li>
 </ul>
+<h3 id="formatting-strings">
+Formatting Strings
+</h3>
+<p>
+You can use <code>printf</code>&ndash;style formatting specifiers to left- or right-pad string values, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{5}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;  foo&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{-5}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo  &quot;</span><span class="p">;</span>
+</pre>
+<p>
+A leading <code>-</code> specifies left-justification.
+</p>
+<p>
+The decimal number specifies the minimum field width &mdash; longer strings aren't truncated, their full length is interpolated.
+</p>
 <h3 id="custom-class-example">
 Custom Class Example
 </h3>
