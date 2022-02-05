@@ -923,6 +923,7 @@ static ObjStr* format_str_obj(PyroVM* vm, ObjStr* string, const char* format_str
 
     ObjStr* result = ObjStr_take(array, target_length, vm);
     if (!result) {
+        FREE_ARRAY(vm, char, array, target_length + 1);
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
