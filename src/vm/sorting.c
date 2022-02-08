@@ -323,6 +323,7 @@ static void mergesort_slice_with_cb(
         return;
     }
 
+    // A classic bug here is to use (low + high) / 2, ignoring the possibility of overflow.
     size_t mid = low + (high - low) / 2;
 
     mergesort_slice_with_cb(vm, array, aux_array, low, mid, callback);
@@ -339,6 +340,7 @@ static void mergesort_slice(PyroVM* vm, Value* array, Value* aux_array, size_t l
         return;
     }
 
+    // A classic bug here is to use (low + high) / 2, ignoring the possibility of overflow.
     size_t mid = low + (high - low) / 2;
 
     mergesort_slice(vm, array, aux_array, low, mid);
