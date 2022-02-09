@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.31</p>
+                <p class="version">Version 0.5.32</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -186,7 +186,7 @@ Stringifies <code>value</code> if <code>value</code> is not already a string.
 </div>
 <div>
 <dt>
-<code>$eprint(arg: any)</code> <br> <code>$eprint(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>$eprint(arg: any) -&gt; i64</code> <br> <code>$eprint(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -198,11 +198,17 @@ Calling this function with a single argument is equivalent to calling <code>$str
 <p>
 Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
 </p>
+<p>
+Returns the number of bytes written to the error stream.
+</p>
+<p>
+This function will panic if a formatting error occurs or if the attempt to write to the error stream fails.
+</p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$eprintln()</code> <br> <code>$eprintln(arg: any)</code> <br> <code>$eprintln(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>$eprintln() -&gt; i64</code> <br> <code>$eprintln(arg: any) -&gt; i64</code> <br> <code>$eprintln(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -614,7 +620,7 @@ Panics with the specified error code and error message.
 </div>
 <div>
 <dt>
-<code>$print(arg: any)</code> <br> <code>$print(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>$print(arg: any) -&gt; i64</code> <br> <code>$print(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -626,11 +632,17 @@ Calling this function with a single argument is equivalent to calling <code>$str
 <p>
 Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
 </p>
+<p>
+Returns the number of bytes written to the output stream.
+</p>
+<p>
+This function will panic if a formatting error occurs or if the attempt to write to the output stream fails.
+</p>
 </dd>
 </div>
 <div>
 <dt>
-<code>$println()</code> <br> <code>$println(arg: any)</code> <br> <code>$println(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>$println() -&gt; i64</code> <br> <code>$println(arg: any) -&gt; i64</code> <br> <code>$println(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
 </dt>
 <dd>
 <p>

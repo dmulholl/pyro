@@ -83,7 +83,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$eprint(arg: any)` <br> `$eprint(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `$eprint(arg: any) -> i64` <br> `$eprint(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
 
     Prints to the standard error stream.
 
@@ -91,9 +91,13 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
+    Returns the number of bytes written to the error stream.
+
+    This function will panic if a formatting error occurs or if the attempt to write to the error stream fails.
 
 
-[[ `$eprintln()` <br> `$eprintln(arg: any)` <br> `$eprintln(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+[[ `$eprintln() -> i64` <br> `$eprintln(arg: any) -> i64` <br> `$eprintln(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
 
     Like `$eprint()` but adds a terminating newline.
 
@@ -344,7 +348,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$print(arg: any)` <br> `$print(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `$print(arg: any) -> i64` <br> `$print(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
 
     Prints to the standard output stream.
 
@@ -352,9 +356,13 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
+    Returns the number of bytes written to the output stream.
+
+    This function will panic if a formatting error occurs or if the attempt to write to the output stream fails.
 
 
-[[ `$println()` <br> `$println(arg: any)` <br> `$println(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+[[ `$println() -> i64` <br> `$println(arg: any) -> i64` <br> `$println(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
 
     Like `$print()` but adds a terminating newline.
 
