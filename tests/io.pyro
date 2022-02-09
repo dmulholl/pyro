@@ -2,16 +2,17 @@ var echo_buf = $buf();
 $std::pyro::set_stdout(echo_buf);
 echo "foo";
 echo "bar";
-assert $str(echo_buf) == "foo\nbar\n";
+echo "baz", "bam";
+assert $str(echo_buf) == "foo\nbar\nbaz bam\n";
 
 var print_buf = $buf();
 $std::pyro::set_stdout(print_buf);
-$print("foo");
-$println("bar");
+assert $print("foo") == 3;
+assert $println("bar") == 4;
 assert $str(print_buf) == "foobar\n";
 
 var eprint_buf = $buf();
 $std::pyro::set_stderr(eprint_buf);
-$eprint("foo");
-$eprintln("bar");
+assert $eprint("foo") == 3;
+assert $eprintln("bar") == 4;
 assert $str(eprint_buf) == "foobar\n";

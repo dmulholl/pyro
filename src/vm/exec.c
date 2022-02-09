@@ -440,21 +440,14 @@ static void run(PyroVM* vm) {
                     if (vm->halt_flag) {
                         return;
                     }
-                    if (!pyro_write_stdout(vm, "%s", string->bytes)) {
-                        pyro_panic(vm, ERR_IO_ERROR, "Unable to write to the standard output stream.");
+                    int64_t n = pyro_write_stdout(vm, i > 1 ? "%s " : "%s\n", string->bytes);
+                    if (n == -1) {
+                        pyro_panic(vm, ERR_OS_ERROR, "Failed to write to the standard output stream.");
+                        break;
+                    } else if (n == -2) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         break;
                     }
-                    if (i > 1) {
-                        if (!pyro_write_stdout(vm, " ")) {
-                            pyro_panic(vm, ERR_IO_ERROR, "Unable to write to the standard output stream.");
-                            break;
-                        }
-                    }
-                }
-
-                if (!pyro_write_stdout(vm, "\n")) {
-                    pyro_panic(vm, ERR_IO_ERROR, "Unable to write to the standard output stream.");
-                    break;
                 }
 
                 vm->stack_top -= arg_count;

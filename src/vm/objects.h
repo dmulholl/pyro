@@ -353,10 +353,10 @@ ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm);
 // Appends a byte value to the buffer as a hex-escaped string: \x##.
 bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 
-// Writes a printf-style formatted string to the buffer. Returns true if the entire string can be
-// written to the buffer. Otherwise writes nothing to the buffer and returns false.
-bool ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...);
-bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+// Writes a printf-style formatted string to the buffer. Returns the number of bytes written if the
+// entire string can be written to the buffer. Otherwise writes nothing to the buffer and returns -1.
+int64_t ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...);
+int64_t ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
 // Writes a printf-style formatted string to the buffer. Returns true if the entire string can be
 // written to the buffer. Otherwise, writes as much as possible of the string to the buffer and

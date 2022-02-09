@@ -1596,16 +1596,16 @@ ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm) {
 }
 
 
-bool ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...) {
+int64_t ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...) {
     va_list args;
     va_start(args, format_string);
-    bool result = ObjBuf_write_v(buf, vm, format_string, args);
+    int64_t result = ObjBuf_write_v(buf, vm, format_string, args);
     va_end(args);
     return result;
 }
 
 
-bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+int64_t ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
     // Determine the length of the string. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
     va_list args_copy;
@@ -1614,11 +1614,11 @@ bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list 
     va_end(args_copy);
 
     if (length == 0) {
-        return true;
+        return 0;
     }
 
     if (length < 0) {
-        return false;
+        return -1;
     }
 
     size_t required_capacity = buf->count + (size_t)length + 1;
@@ -1626,10 +1626,10 @@ bool ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list 
     if (required_capacity <= buf->capacity || ObjBuf_grow(buf, required_capacity, vm)) {
         vsprintf((char*)&buf->bytes[buf->count], format_string, args);
         buf->count += length;
-        return true;
+        return length;
     }
 
-    return false;
+    return -1;
 }
 
 

@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 5
-#define PYRO_VERSION_PATCH 31
+#define PYRO_VERSION_PATCH 32
 #define PYRO_VERSION_LABEL ""
 
 // Utility for converting a macro's value into a string constant.
@@ -112,7 +112,6 @@ typedef enum {
     ERR_VALUE_ERROR,
     ERR_MODULE_NOT_FOUND,
     ERR_SYNTAX_ERROR,
-    ERR_IO_ERROR,
 } PyroErrorCode;
 
 #endif
