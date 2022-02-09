@@ -212,16 +212,26 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
-        if (vm->halt_flag) {
-            return MAKE_NULL();
+        if (IS_BUF(args[0])) {
+            ObjBuf* src_buf = AS_BUF(args[0]);
+            if (!ObjBuf_append_bytes(buf, src_buf->count, src_buf->bytes, vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            return MAKE_I64((int64_t)src_buf->count);
+        } else {
+            ObjStr* string = pyro_stringify_value(vm, args[0]);
+            if (vm->halt_flag) {
+                return MAKE_NULL();
+            }
+            pyro_push(vm, MAKE_OBJ(string));
+            if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            pyro_pop(vm);
+            return MAKE_I64((int64_t)string->length);
         }
-        pyro_push(vm, MAKE_OBJ(string));
-        if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        }
-        pyro_pop(vm);
-        return MAKE_NULL();
     }
 
     if (!IS_STR(args[0])) {
@@ -241,7 +251,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     }
     pyro_pop(vm);
 
-    return MAKE_NULL();
+    return MAKE_I64((int64_t)string->length);
 }
 
 

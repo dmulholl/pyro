@@ -32,44 +32,62 @@ foo[0] = 0x66;
 assert foo[0] == 0x66;
 
 
-var bar = $buf();
-bar:write_be_u16(0xAABB);
-assert bar:count() == 2;
-assert bar[0] == 0xAA;
-assert bar[1] == 0xBB;
+def $test_write_be_u16() {
+    var buf = $buf();
+    buf:write_be_u16(0xAABB);
+    assert buf:count() == 2;
+    assert buf[0] == 0xAA;
+    assert buf[1] == 0xBB;
+}
 
 
-var baz = $buf();
-baz:write_le_u16(0xAABB);
-assert baz:count() == 2;
-assert baz[0] == 0xBB;
-assert baz[1] == 0xAA;
+def $test_write_le_u16() {
+    var buf = $buf();
+    buf:write_le_u16(0xAABB);
+    assert buf:count() == 2;
+    assert buf[0] == 0xBB;
+    assert buf[1] == 0xAA;
+}
 
 
-var fmt1 = $buf();
-fmt1:write(123);
-fmt1:write("foo");
-assert fmt1:count() == 6;
-assert fmt1:to_str() == "123foo";
-assert fmt1:count() == 0;
+def $test_write_with_single_arg() {
+    var buf = $buf();
+    assert buf:write(123) == 3;
+    assert buf:write("foo") == 3;
+    assert buf:count() == 6;
+    assert buf:to_str() == "123foo";
+    assert buf:count() == 0;
+}
 
 
-var fmt2 = $buf();
-fmt2:write("{} and {}", 123, "foo");
-assert fmt2:to_str() == "123 and foo";
-assert fmt2:count() == 0;
+def $test_write_with_multiple_args() {
+    var buf = $buf();
+    assert buf:write("{} and {}", 123, "foo") == 11;
+    assert buf:count() == 11;
+    assert buf:to_str() == "123 and foo";
+    assert buf:count() == 0;
+}
 
 
-var fmt3 = $buf();
-fmt3:write("foo");
-assert fmt3:count() == 3;
-assert $str(fmt3) == "foo";
-assert fmt3:count() == 3;
-assert $str(fmt3) == "foo";
-assert fmt3:count() == 3;
+def $test_write_with_buffer_arg() {
+    var src_buf = $buf("foo");
+    var dst_buf = $buf();
+    assert dst_buf:write(src_buf) == 3;
+    assert dst_buf:count() == 3;
+    assert dst_buf:to_str() == "foo";
+}
 
 
-def $test_buf_with_size_and_fill() {
+def $test_stringification() {
+    var buf = $buf();
+    buf:write("foo");
+    assert buf:count() == 3;
+    assert $str(buf) == "foo";
+    assert buf:count() == 3;
+}
+
+
+def $test_new_buf_with_size_and_fill() {
     var buf1 = $buf(10, 97);
     assert buf1:count() == 10;
     assert buf1[0] == 97;
@@ -81,7 +99,7 @@ def $test_buf_with_size_and_fill() {
 }
 
 
-def $test_buf_from_string() {
+def $test_new_buf_from_string() {
     var b1 = $buf("");
     assert b1:count() == 0;
 
