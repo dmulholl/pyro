@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.32</p>
+                <p class="version">Version 0.5.33</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -155,16 +155,28 @@ Note that calling <code>$str(buf)</code> on a buffer does something different &m
 </div>
 <div>
 <dt>
-<code>:write(arg: any)</code> <br> <code>:write(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>:write(arg: any) -&gt; i64</code> <br> <code>:write(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Writes a string to the buffer.
-Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+Writes the content of a string or buffer to the buffer.
+</p>
+<ul>
+<li>
+If <code>arg</code> is a <code>buf</code>, its content will be written to the buffer directly.
+</li>
+<li>
+Otherwise, calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+</li>
+<li>
 Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
+</li>
+</ul>
+<p>
+Returns the number of bytes written.
 </p>
 <p>
-This method can panic if an error occurs while formatting the output string.
+This method will panic if an error occurs while formatting the string or if memory allocation fails.
 </p>
 </dd>
 </div>

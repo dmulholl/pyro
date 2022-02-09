@@ -80,9 +80,9 @@ Files have the following methods:
 
     Writes a string or buffer to the file.
 
-    If `arg` is a `buf`, its content will be written to the file directly.
-    Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
-    Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+    * If `arg` is a `buf`, its content will be written to the file directly.
+    * Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
 
     Returns the number of bytes written.
 

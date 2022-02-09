@@ -54,13 +54,17 @@ Buffers have the following methods:
 
     Note that calling `$str(buf)` on a buffer does something different --- it creates a string with a *copy* of the buffer's content, leaving the buffer itself unchanged.
 
-[[ `:write(arg: any)` <br> `:write(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `:write(arg: any) -> i64` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
 
-    Writes a string to the buffer.
-    Calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
-    Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+    Writes the content of a string or buffer to the buffer.
 
-    This method can panic if an error occurs while formatting the output string.
+    * If `arg` is a `buf`, its content will be written to the buffer directly.
+    * Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+
+    Returns the number of bytes written.
+
+    This method will panic if an error occurs while formatting the string or if memory allocation fails.
 
 [[ `:write_byte(byte: i64)` ]]
 
