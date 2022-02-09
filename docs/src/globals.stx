@@ -87,9 +87,9 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Prints to the standard error stream.
 
-    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
 
-    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
     Returns the number of bytes written to the error stream.
 
@@ -352,9 +352,9 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Prints to the standard output stream.
 
-    Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
 
-    Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
     Returns the number of bytes written to the output stream.
 

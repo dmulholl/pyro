@@ -192,12 +192,14 @@ Stringifies <code>value</code> if <code>value</code> is not already a string.
 <p>
 Prints to the standard error stream.
 </p>
-<p>
+<ul>
+<li>
 Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
-</p>
-<p>
+</li>
+<li>
 Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
-</p>
+</li>
+</ul>
 <p>
 Returns the number of bytes written to the error stream.
 </p>
@@ -626,12 +628,14 @@ Panics with the specified error code and error message.
 <p>
 Prints to the standard output stream.
 </p>
-<p>
+<ul>
+<li>
 Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
-</p>
-<p>
+</li>
+<li>
 Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
-</p>
+</li>
+</ul>
 <p>
 Returns the number of bytes written to the output stream.
 </p>
