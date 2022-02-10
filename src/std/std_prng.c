@@ -17,8 +17,31 @@ static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_seed(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_mt64_init(vm->mt64, pyro_hash_value(vm, args[0]));
+static Value fn_seed_with_hash(PyroVM* vm, size_t arg_count, Value* args) {
+    pyro_mt64_seed_with_u64(vm->mt64, pyro_hash_value(vm, args[0]));
+    return MAKE_NULL();
+}
+
+
+static Value fn_seed_with_array(PyroVM* vm, size_t arg_count, Value* args) {
+    if (IS_STR(args[0])) {
+        ObjStr* string = AS_STR(args[0]);
+        if (string->length < 8) {
+            pyro_mt64_seed_with_u64(vm->mt64, pyro_hash_value(vm, args[0]));
+        } else {
+            pyro_mt64_seed_with_byte_array(vm->mt64, (uint8_t*)string->bytes, string->length);
+        }
+    } else if (IS_BUF(args[0])) {
+        ObjBuf* buf = AS_BUF(args[0]);
+        if (buf->count < 8) {
+            pyro_mt64_seed_with_u64(vm->mt64, pyro_hash_value(vm, args[0]));
+        } else {
+            pyro_mt64_seed_with_byte_array(vm->mt64, buf->bytes, buf->count);
+        }
+    } else {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::prng::seed_with_array().");
+    }
+
     return MAKE_NULL();
 }
 
@@ -79,7 +102,9 @@ void pyro_load_std_prng(PyroVM* vm) {
     pyro_define_member_fn(vm, mod_prng, "rand_int", fn_rand_int, 1);
     pyro_define_member_fn(vm, mod_prng, "rand_int_in_range", fn_rand_int_in_range, 2);
     pyro_define_member_fn(vm, mod_prng, "rand_float", fn_rand_float, 0);
-    pyro_define_member_fn(vm, mod_prng, "seed", fn_seed, 1);
+    pyro_define_member_fn(vm, mod_prng, "seed", fn_seed_with_hash, 1);
+    pyro_define_member_fn(vm, mod_prng, "seed_with_hash", fn_seed_with_hash, 1);
+    pyro_define_member_fn(vm, mod_prng, "seed_with_array", fn_seed_with_array, 1);
     pyro_define_member_fn(vm, mod_prng, "shuffle", fn_shuffle, 1);
 }
 

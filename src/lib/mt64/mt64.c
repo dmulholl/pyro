@@ -56,8 +56,8 @@ void pyro_mt64_free(MT64* mt) {
 }
 
 
-// Initializes the generator's state vector with a seed value.
-void pyro_mt64_init(MT64* mt, uint64_t seed) {
+// (Re)initializes the generator's state vector using a seed value.
+void pyro_mt64_seed_with_u64(MT64* mt, uint64_t seed) {
     mt->vec[0] = seed;
     for (mt->i = 1; mt->i < N; mt->i++) {
         mt->vec[mt->i] = F * (mt->vec[mt->i-1] ^ (mt->vec[mt->i-1] >> 62)) + mt->i;
@@ -65,10 +65,10 @@ void pyro_mt64_init(MT64* mt, uint64_t seed) {
 }
 
 
-// Intializes the generator's state vector using an array of seed values. The algorithm will use
-// up to the first [N] values from the array.
-void pyro_mt64_init_with_array(MT64* mt, uint64_t array[], size_t array_length) {
-    pyro_mt64_init(mt, UINT64_C(19650218));
+// (Re)intializes the generator's state vector using an array of seed values.
+// Uses up to the first [N] values from the array.
+void pyro_mt64_seed_with_u64_array(MT64* mt, uint64_t array[], size_t array_length) {
+    pyro_mt64_seed_with_u64(mt, UINT64_C(19650218));
 
     size_t i = 0;
     size_t j = 0;
@@ -101,6 +101,14 @@ void pyro_mt64_init_with_array(MT64* mt, uint64_t array[], size_t array_length) 
     }
 
     mt->vec[0] = UINT64_C(1) << 63;
+}
+
+
+// (Re)intializes the generator's state vector using an array of seed values.
+// Uses up to the first [N * 8] values from the array.
+// The array should contain at least 8 bytes.
+void pyro_mt64_seed_with_byte_array(MT64* mt, uint8_t array[], size_t array_length) {
+    pyro_mt64_seed_with_u64_array(mt, (uint64_t*)array, array_length / 8);
 }
 
 
@@ -156,7 +164,7 @@ uint64_t pyro_mt64_gen_u64(MT64* mt) {
         // If the generator hasn't already been initialized, initialize it with a default seed.
         if (mt->i == N + 1) {
             uint64_t seed = gen_auto_seed(mt);
-            pyro_mt64_init(mt, seed);
+            pyro_mt64_seed_with_u64(mt, seed);
         }
 
         for (j = 0; j < N - M; j++) {
@@ -232,7 +240,7 @@ double pyro_mt64_gen_f64c(MT64* mt) {
 // Basic sanity check -- this verifies the 1st and 1000th output values for a known seed.
 bool pyro_mt64_test(void) {
     MT64* mt = pyro_mt64_new();
-    pyro_mt64_init(mt, 5489);
+    pyro_mt64_seed_with_u64(mt, 5489);
 
     for (size_t i = 0; i < 1000; i++) {
         uint64_t num = pyro_mt64_gen_u64(mt);
