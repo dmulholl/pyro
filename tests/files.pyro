@@ -9,11 +9,23 @@ assert $read_file(temp_filename) == "foobar";
 
 var file = $file(temp_filename, "w");
 assert $is_file(file);
+file:close();
+assert $read_file(temp_filename) == "";
+
+var file = $file(temp_filename, "w");
 assert file:write("foo") == 3;
 assert file:write(123) == 3;
 assert file:write("{} and {}", "bar", 456) == 11;
 file:close();
 assert $read_file(temp_filename) == "foo123bar and 456";
+
+var file = $file(temp_filename, "w");
+file:write_byte('a');
+file:write_byte('b');
+file:write_byte('c');
+file:write_byte(100);
+file:close();
+assert $read_file(temp_filename) == "abcd";
 
 $write_file(temp_filename, "foo\r\nbar\nbaz");
 var file = $file(temp_filename, "r");

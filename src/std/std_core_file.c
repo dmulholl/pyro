@@ -310,19 +310,25 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value file_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
+    uint8_t byte;
 
-    if (!IS_I64(args[0])) {
+    if (IS_I64(args[0])) {
+        if (args[0].as.i64 < 0 || args[0].as.i64 > 255) {
+            pyro_panic(vm, ERR_VALUE_ERROR, "Argument to :write_byte() is out of range.");
+            return MAKE_NULL();
+        }
+        byte = (uint8_t)args[0].as.i64;
+    } else if (IS_CHAR(args[0])) {
+        if (args[0].as.u32 > 255) {
+            pyro_panic(vm, ERR_VALUE_ERROR, "Argument to :write_byte() is out of range.");
+            return MAKE_NULL();
+        }
+        byte = (uint8_t)args[0].as.u32;
+    } else {
         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type for :write_byte().");
         return MAKE_NULL();
     }
 
-    int64_t value = args[0].as.i64;
-    if (value < 0 || value > 255) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Argument to :write_byte() is out of range.");
-        return MAKE_NULL();
-    }
-
-    uint8_t byte = (uint8_t)value;
     size_t n = fwrite(&byte, sizeof(uint8_t), 1, file->stream);
     if (n < 1) {
         pyro_panic(vm, ERR_OS_ERROR, "I/O write error.");
