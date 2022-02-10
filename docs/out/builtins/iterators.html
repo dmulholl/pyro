@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.34</p>
+                <p class="version">Version 0.5.35</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -88,6 +88,17 @@ It adds an index to each element in the input, giving us the following output:
 Iterator wrappers have the following methods:
 </p>
 <dl>
+<div>
+<dt>
+<code>:count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of items in the sequence.
+Note that calling this method exhausts the iterator.
+</p>
+</dd>
+</div>
 <div>
 <dt>
 <code>:enum() -&gt; iter[tup[i64, any]]</code> <br> <code>:enum(start_index: i64) -&gt; iter[tup[i64, any]]</code>

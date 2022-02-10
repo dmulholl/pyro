@@ -29,6 +29,11 @@ It adds an index to each element in the input, giving us the following output:
 
 Iterator wrappers have the following methods:
 
+[[ `:count() -> i64` ]]
+
+    Returns the number of items in the sequence.
+    Note that calling this method exhausts the iterator.
+
 [[ `:enum() -> iter[tup[i64, any]]` <br> `:enum(start_index: i64) -> iter[tup[i64, any]]` ]]
 
     Adds an enumeration wrapper to an iterator.

@@ -36,9 +36,11 @@ Files have the following methods:
 
 [[ `:lines() -> iter[str]` ]]
 
-    Returns an iterator over the files's lines.
+    Returns an iterator over the files's lines as strings.
     Recognised line breaks are `\r\n` and `\n`.
     Strips the line breaks from the returned strings.
+
+    If this method is called on an empty file, the iterator will be empty, i.e. will return zero elements.
 
 [[ `:read() -> buf` ]]
 
