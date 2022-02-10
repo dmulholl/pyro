@@ -75,11 +75,11 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Gets or sets environment variables.
 
-    If called with a single argument, returns the value of the environment variable `name` as a string.
-    Returns an `err` if `name` is not defined.
+    * If called with a single argument, returns the value of the environment variable `name` as a string.
+      Returns an `err` if `name` is not defined.
 
-    If called with two arguments, sets the environment variable `name` to `value`.
-    Stringifies `value` if `value` is not already a string.
+    * If called with two arguments, sets the environment variable `name` to `value`.
+      Stringifies `value` if `value` is not already a string.
 
 
 
