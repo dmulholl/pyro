@@ -356,6 +356,24 @@ static Value iter_skip_last(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value iter_count(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+    int64_t count = 0;
+
+    while (true) {
+        Value result = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return MAKE_NULL();
+        } else if (IS_ERR(result)) {
+            break;
+        }
+        count++;
+    }
+
+    return MAKE_I64(count);
+}
+
+
 void pyro_load_std_core_iter(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$iter", fn_iter, 1);
@@ -373,4 +391,5 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "skip_first", iter_skip_first, 1);
     pyro_define_method(vm, vm->iter_class, "skip_last", iter_skip_last, 1);
     pyro_define_method(vm, vm->iter_class, "join", iter_join, 1);
+    pyro_define_method(vm, vm->iter_class, "count", iter_count, 0);
 }
