@@ -7,11 +7,13 @@ var temp_filename = $std::path::join(test_dir, "temp_data.txt");
 assert $write_file(temp_filename, "foobar") == 6;
 assert $read_file(temp_filename) == "foobar";
 
+# Test creating an empty file.
 var file = $file(temp_filename, "w");
 assert $is_file(file);
 file:close();
 assert $read_file(temp_filename) == "";
 
+# Test :write().
 var file = $file(temp_filename, "w");
 assert file:write("foo") == 3;
 assert file:write(123) == 3;
@@ -19,6 +21,7 @@ assert file:write("{} and {}", "bar", 456) == 11;
 file:close();
 assert $read_file(temp_filename) == "foo123bar and 456";
 
+# Test :write_byte().
 var file = $file(temp_filename, "w");
 file:write_byte('a');
 file:write_byte('b');
@@ -27,19 +30,77 @@ file:write_byte(100);
 file:close();
 assert $read_file(temp_filename) == "abcd";
 
+# Test :lines().
 $write_file(temp_filename, "foo\r\nbar\nbaz");
 var file = $file(temp_filename, "r");
 assert file:lines():count() == 3;
 file:close();
 
+# Test :lines() with a trailing line break.
 $write_file(temp_filename, "foo\r\nbar\nbaz\n");
 var file = $file(temp_filename, "r");
 assert file:lines():count() == 3;
 file:close();
 
+# Test :lines() on an empty file.
 $write_file(temp_filename, "");
 var file = $file(temp_filename, "r");
 assert file:lines():count() == 0;
+file:close();
+
+# Test :read().
+$write_file(temp_filename, "foobar");
+var file = $file(temp_filename, "r");
+var buf = file:read();
+assert $is_buf(buf);
+assert buf:to_str() == "foobar";
+file:close();
+
+# Test :read_byte().
+$write_file(temp_filename, "abc");
+var file = $file(temp_filename, "r");
+assert file:read_byte() == 'a';
+assert file:read_byte() == 'b';
+assert file:read_byte() == 'c';
+assert file:read_byte() == null;
+file:close();
+
+# Test :read_bytes().
+$write_file(temp_filename, "abcdef");
+var file = $file(temp_filename, "r");
+var buf = file:read_bytes(3);
+assert buf:to_str() == "abc";
+file:close();
+
+# Test :read_line().
+$write_file(temp_filename, "foo\r\nbar\nbaz");
+var file = $file(temp_filename, "r");
+assert file:read_line() == "foo";
+assert file:read_line() == "bar";
+assert file:read_line() == "baz";
+assert file:read_line() == null;
+file:close();
+
+# Test :read_line() with a trailing line break.
+$write_file(temp_filename, "foo\r\nbar\nbaz\n");
+var file = $file(temp_filename, "r");
+assert file:read_line() == "foo";
+assert file:read_line() == "bar";
+assert file:read_line() == "baz";
+assert file:read_line() == null;
+file:close();
+
+# Test :read_string().
+$write_file(temp_filename, "foo\r\nbar\nbaz");
+var file = $file(temp_filename, "r");
+assert file:read_string() == "foo\r\nbar\nbaz";
+assert file:read_string() == "";
+file:close();
+
+# Test :read_string() on an empty file.
+$write_file(temp_filename, "");
+var file = $file(temp_filename, "r");
+assert file:read_string() == "";
 file:close();
 
 $std::path::rm(temp_filename);
