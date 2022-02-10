@@ -34,6 +34,12 @@ Files have the following methods:
 
     Flushes the file stream.
 
+[[ `:lines() -> iter[str]` ]]
+
+    Returns an iterator over the files's lines.
+    Recognised line breaks are `\r\n` and `\n`.
+    Strips the line breaks from the returned strings.
+
 [[ `:read() -> buf` ]]
 
     Reads the content of the file into a new byte buffer, `buf`.
@@ -61,9 +67,10 @@ Files have the following methods:
 [[ `:read_line() -> str?` ]]
 
     Reads the next line of input from the file and returns it as a string.
-    Strips the terminating `\\n` or `\\r\\n` if present.
+    Recognised line breaks are `\r\n` and `\n`.
+    Strips the line break from the returned string.
 
-    Returns `null` if the end of the file had already been reached.
+    Returns `null` if the end of the file had already been reached before the method was called.
 
     Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
 

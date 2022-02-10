@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.33</p>
+                <p class="version">Version 0.5.34</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -150,6 +150,18 @@ Flushes the file stream.
 </div>
 <div>
 <dt>
+<code>:lines() -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the files's lines.
+Recognised line breaks are <code>\r\n</code> and <code>\n</code>.
+Strips the line breaks from the returned strings.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:read() -&gt; buf</code>
 </dt>
 <dd>
@@ -201,10 +213,11 @@ Panics if an I/O read error occurs, if the argument is invalid, or if sufficient
 <dd>
 <p>
 Reads the next line of input from the file and returns it as a string.
-Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
+Recognised line breaks are <code>\r\n</code> and <code>\n</code>.
+Strips the line break from the returned string.
 </p>
 <p>
-Returns <code>null</code> if the end of the file had already been reached.
+Returns <code>null</code> if the end of the file had already been reached before the method was called.
 </p>
 <p>
 Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
