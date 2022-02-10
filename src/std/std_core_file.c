@@ -245,6 +245,17 @@ static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value file_lines(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+    ObjIter* iter = ObjIter_new((Obj*)file, ITER_FILE_LINES, vm);
+    if (!iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    return MAKE_OBJ(iter);
+}
+
+
 static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
 
@@ -337,4 +348,5 @@ void pyro_load_std_core_file(PyroVM* vm) {
     pyro_define_method(vm, vm->file_class, "read_byte", file_read_byte, 0);
     pyro_define_method(vm, vm->file_class, "write", file_write, -1);
     pyro_define_method(vm, vm->file_class, "write_byte", file_write_byte, 1);
+    pyro_define_method(vm, vm->file_class, "lines", file_lines, 0);
 }

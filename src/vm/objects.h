@@ -414,6 +414,7 @@ bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm);
 
 typedef enum {
     ITER_ENUM,
+    ITER_FILE_LINES,
     ITER_FILTER_FUNC,
     ITER_GENERIC,
     ITER_MAP_ENTRIES,
