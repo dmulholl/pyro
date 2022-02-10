@@ -80,7 +80,7 @@ static Value iter_map(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_MAP_FUNC, vm);
+    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_FUNC_MAP, vm);
     if (!new_iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return MAKE_NULL();
@@ -99,7 +99,7 @@ static Value iter_filter(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_FILTER_FUNC, vm);
+    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_FUNC_FILTER, vm);
     if (!new_iter) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return MAKE_NULL();

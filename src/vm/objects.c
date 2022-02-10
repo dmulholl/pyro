@@ -1879,7 +1879,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return MAKE_OBJ(vm->empty_error);
         }
 
-        case ITER_MAP_FUNC: {
+        case ITER_FUNC_MAP: {
             ObjIter* src_iter = (ObjIter*)iter->source;
             Value next_value = ObjIter_next(src_iter, vm);
             if (IS_ERR(next_value)) {
@@ -1896,7 +1896,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return result;
         }
 
-        case ITER_FILTER_FUNC: {
+        case ITER_FUNC_FILTER: {
             ObjIter* src_iter = (ObjIter*)iter->source;
 
             while (true) {
