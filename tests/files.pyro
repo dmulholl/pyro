@@ -1,9 +1,33 @@
 assert !$is_file(123);
+assert !$is_file("foo");
 
-var stdin = $std::pyro::stdin();
-var stdout = $std::pyro::stdout();
-var stderr = $std::pyro::stderr();
+var test_dir = $std::path::dirname($filepath);
+var temp_filename = $std::path::join(test_dir, "temp_data.txt");
 
-assert $is_file(stdin);
-assert $is_file(stdout);
-assert $is_file(stderr) || $is_null(stderr);
+assert $write_file(temp_filename, "foobar") == 6;
+assert $read_file(temp_filename) == "foobar";
+
+var file = $file(temp_filename, "w");
+assert $is_file(file);
+assert file:write("foo") == 3;
+assert file:write(123) == 3;
+assert file:write("{} and {}", "bar", 456) == 11;
+file:close();
+assert $read_file(temp_filename) == "foo123bar and 456";
+
+$write_file(temp_filename, "foo\r\nbar\nbaz");
+var file = $file(temp_filename, "r");
+assert file:lines():count() == 3;
+file:close();
+
+$write_file(temp_filename, "foo\r\nbar\nbaz\n");
+var file = $file(temp_filename, "r");
+assert file:lines():count() == 3;
+file:close();
+
+$write_file(temp_filename, "");
+var file = $file(temp_filename, "r");
+assert file:lines():count() == 0;
+file:close();
+
+$std::path::rm(temp_filename);
