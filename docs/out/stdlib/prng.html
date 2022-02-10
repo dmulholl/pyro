@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.36</p>
+                <p class="version">Version 0.5.37</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -102,7 +102,32 @@ The arguments can be positive or negative or mixed as long as <code>lower</code>
 </dt>
 <dd>
 <p>
-Seeds the generator using the argument's 64-bit hash.
+Seeds (or re-seeds) the generator using the argument's 64-bit hash value.
+This is an alias for <code>seed_with_hash()</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>seed_with_array(arg: buf|str)</code>
+</dt>
+<dd>
+<p>
+Seeds (or re-seeds) the generator using the content of a string or buffer, treated as an array of bytes.
+Uses up to the first 2,496 bytes of content.
+</p>
+<p>
+If <code>arg</code> contains less than 8 bytes of content, this is equivalent to calling <code>seed_with_hash()</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>seed_with_hash(arg: any)</code>
+</dt>
+<dd>
+<p>
+Seeds (or re-seeds) the generator using the argument's 64-bit hash value.
 </p>
 </dd>
 </div>
