@@ -3,6 +3,11 @@ title: Classes
 meta_title: Pyro &mdash; Classes
 ---
 
+[1]: @root/features/iterators//
+[2]: @root/builtins/maps//
+[3]: @root/builtins/sets//
+
+
 ::: insert toc
 
 
@@ -179,14 +184,18 @@ You can implement the `$special` methods listed below to add support for various
 
 [[ `:$iter() -> iterator` ]]
 
-    Implementing this method makes the type iterable.
+    Implementing this method makes the type *iterable*.
     The method should return an iterator, i.e. an object with a `:$next()` method.
+
+    See the documentation on [iterators][1] for details.
 
 
 [[ `:$next() -> any` ]]
 
-    Implementing this method makes the type an iterator.
+    Implementing this method makes the type an *iterator*.
     The method should return either the next item from a sequence or an `err` if the sequence has been exhausted.
+
+    See the documentation on [iterators][1] for details.
 
 
 [[ `:$op_binary_equals_equals(other: any) -> bool` ]]
@@ -194,7 +203,7 @@ You can implement the `$special` methods listed below to add support for various
     Implementing this method overloads the binary `==` operator for expressions of the form `receiver == other`.
     (The `!=` operator automatically returns the logical inverse of `==` and cannot be separately overloaded.)
 
-    If you overload this operator and you want to use your overloaded type as a key in hash maps or as a member in sets you should also overload the `:$hash()` method to ensure that instances that compare as equal also have the same hash value.
+    If you overload this operator and you want to use your overloaded type as a key in [hash maps][2] or as a member in [sets][3] you should also overload the `:$hash()` method to ensure that instances that compare as equal also have the same hash value.
 
 
 [[ `:$op_binary_greater(other: any) -> bool` ]]

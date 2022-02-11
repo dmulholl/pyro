@@ -293,8 +293,11 @@ Constructor method for initializing new instances.
 </dt>
 <dd>
 <p>
-Implementing this method makes the type iterable.
+Implementing this method makes the type <i>iterable</i>.
 The method should return an iterator, i.e. an object with a <code>:$next()</code> method.
+</p>
+<p>
+See the documentation on <a href="../features/iterators.html">iterators</a> for details.
 </p>
 </dd>
 </div>
@@ -304,8 +307,11 @@ The method should return an iterator, i.e. an object with a <code>:$next()</code
 </dt>
 <dd>
 <p>
-Implementing this method makes the type an iterator.
+Implementing this method makes the type an <i>iterator</i>.
 The method should return either the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
+</p>
+<p>
+See the documentation on <a href="../features/iterators.html">iterators</a> for details.
 </p>
 </dd>
 </div>
@@ -319,7 +325,7 @@ Implementing this method overloads the binary <code>==</code> operator for expre
 (The <code>!=</code> operator automatically returns the logical inverse of <code>==</code> and cannot be separately overloaded.)
 </p>
 <p>
-If you overload this operator and you want to use your overloaded type as a key in hash maps or as a member in sets you should also overload the <code>:$hash()</code> method to ensure that instances that compare as equal also have the same hash value.
+If you overload this operator and you want to use your overloaded type as a key in <a href="../builtins/maps.html">hash maps</a> or as a member in <a href="../builtins/sets.html">sets</a> you should also overload the <code>:$hash()</code> method to ensure that instances that compare as equal also have the same hash value.
 </p>
 </dd>
 </div>
