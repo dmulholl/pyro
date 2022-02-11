@@ -366,6 +366,32 @@ static Value vec_remove_at_index(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_remove_random(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    if (vec->count == 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid call to :remove_random(), vector is empty.");
+        return MAKE_NULL();
+    }
+
+    size_t index = pyro_mt64_gen_int(vm->mt64, vec->count);
+    return ObjVec_remove_at_index(vec, index, vm);
+}
+
+
+static Value vec_random(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+
+    if (vec->count == 0) {
+        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid call to :random(), vector is empty.");
+        return MAKE_NULL();
+    }
+
+    size_t index = pyro_mt64_gen_int(vm->mt64, vec->count);
+    return vec->values[index];
+}
+
+
 static Value vec_insert_at_index(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
@@ -576,6 +602,8 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "join", vec_join, 1);
     pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
     pyro_define_method(vm, vm->vec_class, "iter", vec_iter, 0);
+    pyro_define_method(vm, vm->vec_class, "remove_random", vec_remove_random, 0);
+    pyro_define_method(vm, vm->vec_class, "random", vec_random, 0);
 
     // Stack methods.
     pyro_define_method(vm, vm->stack_class, "count", vec_count, 0);
