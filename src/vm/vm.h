@@ -161,13 +161,14 @@ static inline Value pyro_peek(PyroVM* vm, int distance) {
 }
 
 // Pushes a value onto the stack. Panics if the stack overflows.
-static inline void pyro_push(PyroVM* vm, Value value) {
+static inline bool pyro_push(PyroVM* vm, Value value) {
     if (vm->stack_top == vm->stack_max) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Stack overflow.");
-        return;
+        return false;
     }
     *vm->stack_top = value;
     vm->stack_top++;
+    return true;
 }
 
 // Pops the top value from the stack.
