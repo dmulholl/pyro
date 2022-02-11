@@ -55,10 +55,6 @@ ObjStr* ObjStr_append_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM*
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
 ObjStr* ObjStr_empty(PyroVM* vm);
 
-// Returns a quoted, backslash-escaped string representation of the string's content. Returns NULL
-// if memory could not be allocated for the new string.
-ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm);
-
 /* ---- */
 /* Maps */
 /* ---- */

@@ -107,7 +107,7 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm) {
 
 ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn, ObjModule* module) {
     ObjClosure* closure = ALLOCATE_OBJECT(vm, ObjClosure, OBJ_CLOSURE);
-    if (closure == NULL) {
+    if (!closure) {
         return NULL;
     }
 
@@ -117,18 +117,17 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn, ObjModule* module) {
     closure->upvalue_count = 0;
 
     if (fn->upvalue_count > 0) {
-        pyro_push(vm, MAKE_OBJ(closure));
-        closure->upvalues = ALLOCATE_ARRAY(vm, ObjUpvalue*, fn->upvalue_count);
-        pyro_pop(vm);
-
-        if (closure->upvalues == NULL) {
+        ObjUpvalue** array = ALLOCATE_ARRAY(vm, ObjUpvalue*, fn->upvalue_count);
+        if (!array) {
             return NULL;
         }
 
-        closure->upvalue_count = fn->upvalue_count;
         for (size_t i = 0; i < fn->upvalue_count; i++) {
-            closure->upvalues[i] = NULL;
+            array[i] = NULL;
         }
+
+        closure->upvalues = array;
+        closure->upvalue_count = fn->upvalue_count;
     }
 
     return closure;
@@ -169,11 +168,9 @@ ObjClass* ObjClass_new(PyroVM* vm) {
     class->field_indexes = NULL;
     class->superclass = NULL;
 
-    pyro_push(vm, MAKE_OBJ(class));
     class->methods = ObjMap_new(vm);
     class->field_initializers = ObjVec_new(vm);
     class->field_indexes = ObjMap_new(vm);
-    pyro_pop(vm);
 
     if (!class->methods || !class->field_initializers || !class->field_indexes) {
         return NULL;
@@ -403,11 +400,9 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
     if (!dst) {
         return NULL;
     }
-    pyro_push(vm, MAKE_OBJ(dst));
 
     MapEntry* entry_array = ALLOCATE_ARRAY(vm, MapEntry, src->entry_array_capacity);
     if (!entry_array) {
-        pyro_pop(vm);
         return NULL;
     }
     memcpy(entry_array, src->entry_array, sizeof(MapEntry) * src->entry_array_count);
@@ -415,7 +410,6 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
     int64_t* index_array = ALLOCATE_ARRAY(vm, int64_t, src->index_array_capacity);
     if (!index_array) {
         FREE_ARRAY(vm, MapEntry, entry_array, src->entry_array_capacity);
-        pyro_pop(vm);
         return NULL;
     }
     memcpy(index_array, src->index_array, sizeof(int64_t) * src->index_array_capacity);
@@ -431,7 +425,6 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
     dst->index_array_capacity = src->index_array_capacity;
     dst->index_array_count = src->index_array_count;
 
-    pyro_pop(vm);
     return dst;
 }
 
@@ -592,9 +585,9 @@ static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t 
     string->bytes = bytes;
     string->obj.class = vm->str_class;
 
-    pyro_push(vm, MAKE_OBJ(string));
-    ObjMap_set(vm->strings, MAKE_OBJ(string), MAKE_NULL(), vm);
-    pyro_pop(vm);
+    if (ObjMap_set(vm->strings, MAKE_OBJ(string), MAKE_NULL(), vm) == 0) {
+        return NULL;
+    }
 
     return string;
 }
@@ -849,70 +842,6 @@ ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm)
 }
 
 
-ObjStr* ObjStr_debug_str(ObjStr* str, PyroVM* vm) {
-    ObjBuf* buf = ObjBuf_new(vm);
-    if (!buf) {
-        return NULL;
-    }
-    pyro_push(vm, MAKE_OBJ(buf));
-
-    if (!ObjBuf_append_byte(buf, '"', vm)) {
-        pyro_pop(vm);
-        return NULL;
-    }
-
-    for (size_t i = 0; i < str->length; i++) {
-        bool result;
-        char c = str->bytes[i];
-
-        switch (c) {
-            case '"':
-                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\"", vm);
-                break;
-            case '\\':
-                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
-                break;
-            case '\0':
-                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
-                break;
-            case '\b':
-                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\b", vm);
-                break;
-            case '\n':
-                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\n", vm);
-                break;
-            case '\r':
-                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\r", vm);
-                break;
-            case '\t':
-                result = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
-                break;
-            default:
-                if (c < 32 || c == 127) {
-                    result = ObjBuf_append_hex_escaped_byte(buf, c, vm);
-                } else {
-                    result = ObjBuf_append_byte(buf, c, vm);
-                }
-                break;
-        }
-
-        if (!result) {
-            pyro_pop(vm);
-            return NULL;
-        }
-    }
-
-    if (!ObjBuf_append_byte(buf, '"', vm)) {
-        pyro_pop(vm);
-        return NULL;
-    }
-
-    ObjStr* output_string =  ObjBuf_to_str(buf, vm);
-    pyro_pop(vm);
-    return output_string;
-}
-
-
 /* -------------- */
 /* Pyro Functions */
 /* -------------- */
@@ -1007,14 +936,10 @@ int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
 
     if (fn->constants_count == fn->constants_capacity) {
         size_t new_capacity = GROW_CAPACITY(fn->constants_capacity);
-        pyro_push(vm, value);
         Value* new_array = REALLOCATE_ARRAY(vm, Value, fn->constants, fn->constants_capacity, new_capacity);
-        pyro_pop(vm);
-
         if (!new_array) {
             return -1;
         }
-
         fn->constants_capacity = new_capacity;
         fn->constants = new_array;
     }
@@ -1143,22 +1068,19 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
 
 
 ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int arity) {
-    ObjStr* name_object = STR(name);
-    if (!name_object) {
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
         return NULL;
     }
 
-    pyro_push(vm, MAKE_OBJ(name_object));
     ObjNativeFn* func = ALLOCATE_OBJECT(vm, ObjNativeFn, OBJ_NATIVE_FN);
     if (!func) {
-        pyro_pop(vm);
         return NULL;
     }
-    pyro_pop(vm);
 
     func->fn_ptr = fn_ptr;
     func->arity = arity;
-    func->name = name_object;
+    func->name = name_string;
     return func;
 }
 
@@ -1193,10 +1115,8 @@ ObjModule* ObjModule_new(PyroVM* vm) {
     module->globals = NULL;
     module->submodules = NULL;
 
-    pyro_push(vm, MAKE_OBJ(module));
     module->globals = ObjMap_new(vm);
     module->submodules = ObjMap_new(vm);
-    pyro_pop(vm);
 
     if (!module->globals || !module->submodules) {
         return NULL;
@@ -1245,10 +1165,7 @@ ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
         return vec;
     }
 
-    pyro_push(vm, MAKE_OBJ(vec));
     Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
-    pyro_pop(vm);
-
     if (!value_array) {
         return NULL;
     }
@@ -1270,10 +1187,7 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
         return vec;
     }
 
-    pyro_push(vm, MAKE_OBJ(vec));
     Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
-    pyro_pop(vm);
-
     if (!value_array) {
         return NULL;
     }
@@ -1441,10 +1355,7 @@ ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
         return buf;
     }
 
-    pyro_push(vm, MAKE_OBJ(buf));
     uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
-    pyro_pop(vm);
-
     if (!new_array) {
         return NULL;
     }
@@ -1466,10 +1377,7 @@ ObjBuf* ObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM
         return buf;
     }
 
-    pyro_push(vm, MAKE_OBJ(buf));
     uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
-    pyro_pop(vm);
-
     if (!new_array) {
         return NULL;
     }
@@ -1494,10 +1402,7 @@ ObjBuf* ObjBuf_new_from_string(ObjStr* string, PyroVM* vm) {
 
     size_t capacity = string->length + 1;
 
-    pyro_push(vm, MAKE_OBJ(buf));
     uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity);
-    pyro_pop(vm);
-
     if (!new_array) {
         return NULL;
     }
@@ -1925,10 +1830,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 return next_value;
             }
 
-            pyro_push(vm, next_value);
             ObjTup* tup = ObjTup_new(2, vm);
-            pyro_pop(vm);
-
             if (!tup) {
                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                 return MAKE_OBJ(vm->empty_error);
@@ -2059,7 +1961,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
-    pyro_push(vm, MAKE_OBJ(buf));
+    pyro_push(vm, MAKE_OBJ(buf)); // Protect from GC in case we call into Pyro code.
 
     bool is_first_item = true;
 
@@ -2079,19 +1981,17 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
             }
         }
 
-        pyro_push(vm, next_value);
+        pyro_push(vm, next_value); // Stringification can call into Pyro code and trigger the GC.
         ObjStr* value_string = pyro_stringify_value(vm, next_value);
         if (vm->halt_flag) {
             return NULL;
         }
         pyro_pop(vm); // next_value
 
-        pyro_push(vm, MAKE_OBJ(value_string));
         if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             return NULL;
         }
-        pyro_pop(vm); // value_string
 
         is_first_item = false;
     }
