@@ -7,7 +7,8 @@
 
 
 // Marks an object as reachable. This sets the object's [is_marked] flag and pushes it onto the
-// grey stack.
+// grey stack. This function will hard panic if an attempt to (re)allocate memory for the grey stack
+// fails.
 static void mark_object(PyroVM* vm, Obj* object) {
     if (object == NULL || object->is_marked || vm->panic_flag) {
         return;
@@ -24,18 +25,12 @@ static void mark_object(PyroVM* vm, Obj* object) {
 
     if (vm->grey_count == vm->grey_capacity) {
         size_t new_capacity = GROW_CAPACITY(vm->grey_capacity);
-        void* new_array = realloc(vm->grey_stack, sizeof(Obj*) * new_capacity);
-
+        Obj** new_array = REALLOCATE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity, new_capacity);
         if (!new_array) {
             vm->hard_panic = true;
-            vm->memory_allocation_failed = true;
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory, grey stack allocation failed.");
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory. (Failed to reallocate grey stack.)");
             return;
         }
-
-        vm->bytes_allocated -= vm->grey_capacity;
-        vm->bytes_allocated += new_capacity;
-
         vm->grey_capacity = new_capacity;
         vm->grey_stack = new_array;
     }
