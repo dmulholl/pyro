@@ -173,7 +173,7 @@ This gives the following output:
     108
     111
 
-Alternatively, you can interpret the string as a sequence of UTF-8 encoded characters and iterate over these characters using the `:chars()` method:
+Alternatively, you can treat the string as a sequence of UTF-8 encoded characters and iterate over these characters using the `:chars()` method:
 
 ::: code pyro
     for char in "hello":chars() {
