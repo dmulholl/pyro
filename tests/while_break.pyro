@@ -5,36 +5,36 @@ var foo = "global";
 
     var x = 0;
     while x < 1000 {
-        if x == 99 {
+        if x == 9 {
             break;
         }
 
         var y = 0;
         while y < 1000 {
-            if y == 88 {
+            if y == 8 {
                 break;
             }
 
             var z = 0;
             while z < 1000 {
-                if z == 77 {
+                if z == 7 {
                     break;
                 }
                 assert bar == "local";
                 z += 1;
             }
-            assert z == 77;
+            assert z == 7;
             assert bar == "local";
 
             y += 1;
         }
-        assert y == 88;
+        assert y == 8;
         assert bar == "local";
 
         x += 1;
     }
 
-    assert x == 99;
+    assert x == 9;
     assert bar == "local";
 }
 

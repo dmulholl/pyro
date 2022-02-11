@@ -13,6 +13,7 @@
 #include "imports.h"
 #include "os.h"
 #include "io.h"
+#include "gc.h"
 
 
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
@@ -257,15 +258,38 @@ static void run(PyroVM* vm) {
     size_t frame_count_on_entry = vm->frame_count;
     assert(frame_count_on_entry >= 1);
 
-    #define READ_BYTE()         (*frame->ip++)
-    #define READ_U16()          (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
-    #define READ_CONSTANT()     (frame->closure->fn->constants[READ_U16()])
-    #define READ_STRING()       AS_STR(READ_CONSTANT())
+    // Reads the next byte from the bytecode as a uint8_t value.
+    #define READ_BYTE() (*frame->ip++)
+
+    // Reads the next two bytes from the bytecode as a big-endian uint16_t value.
+    #define READ_BE_U16() (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
+
+    // Reads the next two bytes from the bytecode as an index into the function's constant table.
+    // Returns the constant as a Value.
+    #define READ_CONSTANT() (frame->closure->fn->constants[READ_BE_U16()])
+
+    // Reads the next two bytes from the bytecode as an index into the function's constant table
+    // referencing a string value. Returns the value as an ObjStr*.
+    #define READ_STRING() AS_STR(READ_CONSTANT())
 
     for (;;) {
         if (vm->halt_flag) {
             return;
         }
+
+        #ifdef PYRO_DEBUG_STRESS_GC
+            pyro_collect_garbage(vm);
+            if (vm->halt_flag) {
+                return;
+            }
+        #else
+            if (vm->bytes_allocated > vm->next_gc_threshold) {
+                pyro_collect_garbage(vm);
+                if (vm->halt_flag) {
+                    return;
+                }
+            }
+        #endif
 
         #ifdef PYRO_DEBUG_TRACE_EXECUTION
             pyro_write_stdout(vm, "             ");
@@ -767,13 +791,13 @@ static void run(PyroVM* vm) {
             }
 
             case OP_JUMP: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 frame->ip += offset;
                 break;
             }
 
             case OP_JUMP_IF_ERR: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 if (IS_ERR(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
@@ -781,7 +805,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_JUMP_IF_FALSE: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 if (!pyro_is_truthy(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
@@ -789,7 +813,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_JUMP_IF_NOT_ERR: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 if (!IS_ERR(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
@@ -797,7 +821,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_JUMP_IF_NOT_NULL: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 if (!IS_NULL(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
@@ -805,7 +829,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_JUMP_IF_TRUE: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 if (pyro_is_truthy(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
@@ -885,7 +909,7 @@ static void run(PyroVM* vm) {
                 break;
 
             case OP_JUMP_BACK: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 frame->ip -= offset;
                 break;
             }
@@ -906,7 +930,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MAKE_MAP: {
-                uint16_t entry_count = READ_U16();
+                uint16_t entry_count = READ_BE_U16();
 
                 ObjMap* map = ObjMap_new(vm);
                 if (!map) {
@@ -934,7 +958,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MAKE_VEC: {
-                uint16_t item_count = READ_U16();
+                uint16_t item_count = READ_BE_U16();
 
                 ObjVec* vec = ObjVec_new_with_cap(item_count, vm);
                 if (!vec) {
@@ -1047,7 +1071,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_POP_JUMP_IF_FALSE: {
-                uint16_t offset = READ_U16();
+                uint16_t offset = READ_BE_U16();
                 if (!pyro_is_truthy(pyro_pop(vm))) {
                     frame->ip += offset;
                 }
@@ -1304,7 +1328,7 @@ static void run(PyroVM* vm) {
         }
     }
 
-    #undef READ_U16
+    #undef READ_BE_U16
     #undef READ_STRING
     #undef READ_CONSTANT
     #undef READ_BYTE
