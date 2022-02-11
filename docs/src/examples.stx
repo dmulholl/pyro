@@ -13,6 +13,11 @@ You can `echo` any value to the standard output stream:
 ::: code pyro
     echo "hello world";
 
+The value doesn't have to be a string --- `echo` *stringifies* the value before printing it:
+
+::: code pyro
+    echo 123;
+
 Pyro also has a family of `$print()` functions:
 
 ::: code pyro
