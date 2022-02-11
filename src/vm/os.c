@@ -147,7 +147,6 @@ ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
     }
 
     struct dirent* dp;
-    vm->gc_disallows++;
 
     while ((dp = readdir(dirp)) != NULL) {
         char* name = dp->d_name;
@@ -173,7 +172,6 @@ ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
         }
     }
 
-    vm->gc_disallows--;
     closedir(dirp);
     return vec;
 }

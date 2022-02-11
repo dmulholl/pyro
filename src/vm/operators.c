@@ -42,18 +42,14 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
-                        vm->gc_disallows++;
                         ObjStr* result = ObjStr_concat(AS_STR(a), AS_STR(b), vm);
-                        vm->gc_disallows--;
                         if (!result) {
                             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                             return MAKE_NULL();
                         }
                         return MAKE_OBJ(result);
                     } else if (IS_CHAR(b)) {
-                        vm->gc_disallows++;
                         ObjStr* result = ObjStr_append_codepoint_as_utf8(AS_STR(a), b.as.u32, vm);
-                        vm->gc_disallows--;
                         if (!result) {
                             pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                             return MAKE_NULL();
@@ -93,9 +89,7 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                 }
                 return MAKE_OBJ(result);
             } else if (IS_STR(b)) {
-                vm->gc_disallows++;
                 ObjStr* result = ObjStr_prepend_codepoint_as_utf8(AS_STR(b), a.as.u32, vm);
-                vm->gc_disallows--;
                 if (!result) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     return MAKE_NULL();
@@ -198,9 +192,7 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
         case VAL_OBJ: {
             if (IS_STR(a)) {
                 if (IS_I64(b) && b.as.i64 >= 0) {
-                    vm->gc_disallows++;
                     ObjStr* result = ObjStr_concat_n_copies(AS_STR(a), b.as.i64, vm);
-                    vm->gc_disallows--;
                     if (!result) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return MAKE_NULL();
@@ -1035,11 +1027,9 @@ Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
     switch (AS_OBJ(receiver)->type) {
         case OBJ_MAP: {
             ObjMap* map = AS_MAP(receiver);
-            vm->gc_disallows++;
             if (ObjMap_set(map, key, value, vm) == 0) {
                 pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
             }
-            vm->gc_disallows--;
             return value;
         }
 
