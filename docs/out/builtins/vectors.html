@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.5.37</p>
+                <p class="version">Version 0.6.0-dev</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -306,6 +306,17 @@ It should accept two arguments <code>a</code> and <code>b</code> and return <cod
 </div>
 <div>
 <dt>
+<code>:random() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns a random item from the vector without removing it.
+Panics if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:remove_at(index: i64) -&gt; any</code>
 </dt>
 <dd>
@@ -333,6 +344,17 @@ Panics if the vector is empty.
 <dd>
 <p>
 Removes and returns the last item from the vector.
+Panics if the vector is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:remove_random() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Removes and returns a random item from the vector.
 Panics if the vector is empty.
 </p>
 </dd>
