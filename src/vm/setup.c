@@ -16,8 +16,7 @@ PyroVM* pyro_new_vm() {
         return NULL;
     }
 
-    // Initialize or zero-out all fields before attempting to allocate memory. This needs to be
-    // done before any objects are allocated or the GC will segfault.
+    // Initialize or zero-out all fields before attempting to allocate memory.
     vm->stack_top = vm->stack;
     vm->stack_max = vm->stack + PYRO_STACK_SIZE;
     vm->frame_count = 0;
@@ -84,12 +83,6 @@ PyroVM* pyro_new_vm() {
     vm->stdout_stream = NULL;
     vm->stdin_stream = NULL;
     vm->panic_buffer = NULL;
-
-    // Disable garbage collection until the VM has been fully initialized. This is to avoid the
-    // possibility of the GC triggering and panicking if it fails to allocate memory for the
-    // grey stack. With the GC disabled, we can guarantee that initialization will never panic;
-    // the initializer will simply return NULL if sufficient memory cannot be allocated.
-    vm->gc_disallows++;
 
     // Initialize the PRNG.
     vm->mt64 = pyro_mt64_new();
@@ -194,7 +187,6 @@ PyroVM* pyro_new_vm() {
         return NULL;
     }
 
-    vm->gc_disallows--;
     return vm;
 }
 
@@ -216,153 +208,117 @@ void pyro_free_vm(PyroVM* vm) {
 
 
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
-    ObjStr* name_object = STR(name);
-    if (!name_object) {
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
         return NULL;
     }
-    Value name_value = MAKE_OBJ(name_object);
-    pyro_push(vm, name_value);
 
     ObjModule* module = ObjModule_new(vm);
     if (!module) {
-        pyro_pop(vm); // name_value
-        return NULL;
-    }
-    Value module_value = MAKE_OBJ(module);
-    pyro_push(vm, module_value);
-
-    if (ObjMap_set(vm->modules, name_value, module_value, vm) == 0) {
-        pyro_pop(vm); // module_value
-        pyro_pop(vm); // name_value
         return NULL;
     }
 
-    pyro_pop(vm); // module_value
-    pyro_pop(vm); // name_value
+    if (ObjMap_set(vm->modules, MAKE_OBJ(name_string), MAKE_OBJ(module), vm) == 0) {
+        return NULL;
+    }
+
     return module;
 }
 
 
 ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name) {
-    ObjStr* parent_object = STR(parent);
-    if (!parent_object) {
+    ObjStr* parent_string = STR(parent);
+    if (!parent_string) {
         return NULL;
     }
 
     Value parent_module;
-    if (!ObjMap_get(vm->modules, MAKE_OBJ(parent_object), &parent_module, vm)) {
+    if (!ObjMap_get(vm->modules, MAKE_OBJ(parent_string), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
 
-    ObjStr* name_object = STR(name);
-    if (!name_object) {
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
         return NULL;
     }
-    Value name_value = MAKE_OBJ(name_object);
-    pyro_push(vm, name_value);
+    Value name_value = MAKE_OBJ(name_string);
 
     ObjModule* module_object = ObjModule_new(vm);
     if (!module_object) {
-        pyro_pop(vm); // name_value
         return NULL;
     }
     Value module_value = MAKE_OBJ(module_object);
-    pyro_push(vm, module_value);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
-        pyro_pop(vm); // module_value
-        pyro_pop(vm); // name_value
         return NULL;
     }
 
     if (ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm) == 0) {
-        pyro_pop(vm); // module_value
-        pyro_pop(vm); // name_value
         return NULL;
     }
 
-    pyro_pop(vm); // module_value
-    pyro_pop(vm); // name_value
     return module_object;
 }
 
 
 ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name) {
-    ObjStr* grandparent_object = STR(parent);
-    if (!grandparent_object) {
+    ObjStr* grandparent_string = STR(parent);
+    if (!grandparent_string) {
         return NULL;
     }
 
     Value grandparent_module;
-    if (!ObjMap_get(vm->modules, MAKE_OBJ(grandparent_object), &grandparent_module, vm)) {
+    if (!ObjMap_get(vm->modules, MAKE_OBJ(grandparent_string), &grandparent_module, vm)) {
         assert(false);
         return NULL;
     }
 
-    ObjStr* parent_object = STR(parent);
-    if (!parent_object) {
+    ObjStr* parent_string = STR(parent);
+    if (!parent_string) {
         return NULL;
     }
 
     Value parent_module;
-    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, MAKE_OBJ(parent_object), &parent_module, vm)) {
+    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, MAKE_OBJ(parent_string), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
 
-    ObjStr* name_object = STR(name);
-    if (!name_object) {
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
         return NULL;
     }
-    Value name_value = MAKE_OBJ(name_object);
-    pyro_push(vm, name_value);
+    Value name_value = MAKE_OBJ(name_string);
 
     ObjModule* module_object = ObjModule_new(vm);
     if (!module_object) {
-        pyro_pop(vm); // name_value
         return NULL;
     }
     Value module_value = MAKE_OBJ(module_object);
-    pyro_push(vm, module_value);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
-        pyro_pop(vm); // module_value
-        pyro_pop(vm); // name_value
         return NULL;
     }
 
     if (ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm) == 0) {
-        pyro_pop(vm); // module_value
-        pyro_pop(vm); // name_value
         return NULL;
     }
 
-    pyro_pop(vm); // module_value
-    pyro_pop(vm); // name_value
     return module_object;
 }
 
 
 bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
-    pyro_push(vm, value);
-
-    ObjStr* name_object = STR(name);
-    if (!name_object) {
-        pyro_pop(vm); // value
-        return false;
-    }
-    Value name_value = MAKE_OBJ(name_object);
-    pyro_push(vm, name_value);
-
-    if (ObjMap_set(module->globals, name_value, value, vm) == 0) {
-        pyro_pop(vm); // name_value
-        pyro_pop(vm); // value
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
         return false;
     }
 
-    pyro_pop(vm); // name_value
-    pyro_pop(vm); // value
+    if (ObjMap_set(module->globals, MAKE_OBJ(name_string), value, vm) == 0) {
+        return false;
+    }
+
     return true;
 }
 
@@ -377,52 +333,34 @@ bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, Nati
 
 
 bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity) {
-    ObjStr* name_object = STR(name);
-    if (!name_object) {
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
         return false;
     }
-    Value name_value = MAKE_OBJ(name_object);
-    pyro_push(vm, name_value);
 
     ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
     if (!func_object) {
-        pyro_pop(vm); // name_value
-        return false;
-    }
-    Value func_value = MAKE_OBJ(func_object);
-    pyro_push(vm, func_value);
-
-    if (ObjMap_set(class->methods, name_value, func_value, vm) == 0) {
-        pyro_pop(vm); // func_value
-        pyro_pop(vm); // name_value
         return false;
     }
 
-    pyro_pop(vm); // func_value
-    pyro_pop(vm); // name_value
+    if (ObjMap_set(class->methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+        return false;
+    }
+
     return true;
 }
 
 
 bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
-    pyro_push(vm, value);
-
-    ObjStr* name_object = STR(name);
-    if (!name_object) {
-        pyro_pop(vm); // value
-        return false;
-    }
-    Value name_value = MAKE_OBJ(name_object);
-    pyro_push(vm, name_value);
-
-    if (ObjMap_set(vm->globals, name_value, value, vm) == 0) {
-        pyro_pop(vm); // name_value
-        pyro_pop(vm); // value
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
         return false;
     }
 
-    pyro_pop(vm); // name_value
-    pyro_pop(vm); // value
+    if (ObjMap_set(vm->globals, MAKE_OBJ(name_string), value, vm) == 0) {
+        return false;
+    }
+
     return true;
 }
 
@@ -494,19 +432,15 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
         return false;
     }
 
-    pyro_push(vm, MAKE_OBJ(tup));
-
     for (size_t i = 0; i < arg_count; i++) {
         ObjStr* string = STR(args[i]);
         if (!string) {
-            pyro_pop(vm);
             return false;
         }
         tup->values[i] = MAKE_OBJ(string);
     }
 
     pyro_define_global(vm, "$args", MAKE_OBJ(tup));
-    pyro_pop(vm);
     return true;
 }
 
@@ -515,14 +449,13 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
     if (!path) {
         return false;
     }
+
     ObjStr* string = STR(path);
-    if (string) {
-        pyro_push(vm, MAKE_OBJ(string));
-        bool result = ObjVec_append(vm->import_roots, MAKE_OBJ(string), vm);
-        pyro_pop(vm);
-        return result;
+    if (!string) {
+        return false;
     }
-    return false;
+
+    return ObjVec_append(vm->import_roots, MAKE_OBJ(string), vm);
 }
 
 

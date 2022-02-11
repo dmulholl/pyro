@@ -44,8 +44,8 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args);
 // entry was successfully added, false if memory could not be allocated for the entry.
 bool pyro_add_import_root(PyroVM* vm, const char* path);
 
-// Creates a new VM-level global variable. [value] is protected from garbage collection inside this
-// function. Returns true on success, false if memory could not be allocated.
+// Creates a new VM-level global variable. Returns true on success, false if memory could not be
+// allocated.
 bool pyro_define_global(PyroVM* vm, const char* name, Value value);
 
 // Creates a new VM-level global variable pointing to a native function. Returns true on success,
@@ -53,8 +53,7 @@ bool pyro_define_global(PyroVM* vm, const char* name, Value value);
 bool pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity);
 
 // Adds a new member to [module], i.e. creates a module-level global variable called [name] with
-// initial value [value]. [value] is protected from garbage-collection inside this function. Returns
-// true on success, false if memory could not be allocated.
+// initial value [value]. Returns true on success, false if memory could not be allocated.
 bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value);
 
 // Convenience function for adding a new member to [module] where the value is a native function.
