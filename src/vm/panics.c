@@ -25,6 +25,7 @@ static void print_stack_trace(PyroVM* vm) {
 void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
     if (vm->panic_flag) {
         assert(false);
+        return;
     }
 
     vm->panic_flag = true;
@@ -86,6 +87,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
 void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, const char* format, ...) {
     if (vm->panic_flag) {
         assert(false);
+        return;
     }
 
     vm->panic_flag = true;
