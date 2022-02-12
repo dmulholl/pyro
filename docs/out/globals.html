@@ -614,11 +614,15 @@ Creates a new <code>$map</code> object.
 </div>
 <div>
 <dt>
-<code>$panic(error_code: i64, error_message: str)</code>
+<code>$panic(error_message: str)</code> <br> <code>$panic(error_message: str, error_code: i64)</code>
 </dt>
 <dd>
 <p>
-Panics with the specified error code and error message.
+Raises a panic.
+The default error code is <code>1</code>.
+</p>
+<p>
+If the panic is unhandled, the error message will be printed and the program will exit with the specified error code.
 </p>
 </dd>
 </div>

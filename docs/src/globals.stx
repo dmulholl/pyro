@@ -342,9 +342,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$panic(error_code: i64, error_message: str)` ]]
+[[ `$panic(error_message: str)` <br> `$panic(error_message: str, error_code: i64)` ]]
 
-    Panics with the specified error code and error message.
+    Raises a panic.
+    The default error code is `1`.
+
+    If the panic is unhandled, the error message will be printed and the program will exit with the specified error code.
 
 
 
