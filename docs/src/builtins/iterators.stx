@@ -15,11 +15,11 @@ An iterator wrapper, `iter`, can wrap any [iterator][1] to automatically add sup
 Iterators returned by Pyro builtins come pre-wrapped in `iter` wrappers, e.g. the character iterator returned by a string's `:chars()` method:
 
 ::: code pyro
-    for char in "abcd":chars():enum() {
+    for char in "abcd":chars():enumerate() {
         echo char;
     }
 
-The `:enum()` method is provided by the `iter` wrapper.
+The `:enumerate()` method is provided by the `iter` wrapper.
 It adds an index to each element in the input, giving us the following output:
 
     (0, 'a')
@@ -34,7 +34,7 @@ Iterator wrappers have the following methods:
     Returns the number of items in the sequence.
     Note that calling this method exhausts the iterator.
 
-[[ `:enum() -> iter[tup[i64, any]]` <br> `:enum(start_index: i64) -> iter[tup[i64, any]]` ]]
+[[ `:enumerate() -> iter[tup[i64, any]]` <br> `:enumerate(start_index: i64) -> iter[tup[i64, any]]` ]]
 
     Adds an enumeration wrapper to an iterator.
     Output values are two-item tuples containing an integer index and the original input value.

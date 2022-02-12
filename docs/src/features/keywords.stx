@@ -35,6 +35,7 @@ The following keywords are reserved for future use:
 * `case`
 * `catch`
 * `default`
+* `enum`
 * `let`
 * `match`
 * `pri`
