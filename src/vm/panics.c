@@ -22,10 +22,23 @@ static void print_stack_trace(PyroVM* vm) {
 }
 
 
-void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
+void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) {
+    // It's generally a bad sign if we try to raise a panic when we're already in a panic state --
+    // it means that we haven't properly handled the result of a fallible operation. On the other
+    // hand, sometimes we want the option of running a sequence of fallible operations -- e.g.
+    // pushing multiple values onto the stack -- and only checking once for a panic at the end.
     if (vm->panic_flag) {
-        assert(false);
-        return;
+        #ifdef DEBUG
+            pyro_write_stderr(vm, "DEBUG: redundant panic:\n  ");
+            va_list args;
+            va_start(args, format_string);
+            pyro_write_stderr_v(vm, format_string, args);
+            va_end(args);
+            pyro_write_stderr(vm, "\n");
+            return;
+        #else
+            return;
+        #endif
     }
 
     vm->panic_flag = true;
@@ -36,18 +49,18 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
     // panic buffer so it can be returned by the try expression.
     if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
-        va_start(args, format);
+        va_start(args, format_string);
 
         #ifdef DEBUG
             va_list args_copy;
             va_copy(args_copy, args);
-            pyro_write_stderr(vm, "DEBUG: writing error message to panic buffer:\n  ");
-            pyro_write_stderr_v(vm, format, args_copy);
+            pyro_write_stderr(vm, "DEBUG: writing to panic buffer:\n  ");
+            pyro_write_stderr_v(vm, format_string, args_copy);
             pyro_write_stderr(vm, "\n");
             va_end(args_copy);
         #endif
 
-        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format, args);
+        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format_string, args);
         va_end(args);
         return;
     }
@@ -72,8 +85,8 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
     // Print the error message.
     pyro_write_stderr(vm, "Error: ");
     va_list args;
-    va_start(args, format);
-    pyro_write_stderr_v(vm, format, args);
+    va_start(args, format_string);
+    pyro_write_stderr_v(vm, format_string, args);
     va_end(args);
     pyro_write_stderr(vm, "\n");
 
@@ -84,23 +97,31 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...) {
 }
 
 
-void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, const char* format, ...) {
+void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, const char* format_string, ...) {
     if (vm->panic_flag) {
-        assert(false);
-        return;
+        #ifdef DEBUG
+            pyro_write_stderr(vm, "DEBUG: redundant panic:\n  ");
+            va_list args;
+            va_start(args, format_string);
+            pyro_write_stderr_v(vm, format_string, args);
+            va_end(args);
+            pyro_write_stderr(vm, "\n");
+            return;
+        #else
+            return;
+        #endif
     }
 
     vm->panic_flag = true;
     vm->halt_flag = true;
     vm->status_code = ERR_SYNTAX_ERROR;
 
-    // If we're inside a try expression and the panic is catchable, we don't print anything to the
-    // error stream. We simply store the error message in the panic buffer so it can be returned
-    // by the try expression.
+    // If we're inside a try expression and the panic is catchable, write the error message to the
+    // panic buffer so it can be returned by the try expression.
     if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
-        va_start(args, format);
-        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format, args);
+        va_start(args, format_string);
+        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format_string, args);
         va_end(args);
         return;
     }
@@ -112,8 +133,8 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
         pyro_write_stderr(vm, "%s:%zu\n  Syntax Error: ", source_id, source_line);
     }
     va_list args;
-    va_start(args, format);
-    pyro_write_stderr_v(vm, format, args);
+    va_start(args, format_string);
+    pyro_write_stderr_v(vm, format_string, args);
     va_end(args);
     pyro_write_stderr(vm, "\n");
 
