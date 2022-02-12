@@ -44,6 +44,28 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) 
     vm->panic_flag = true;
     vm->halt_flag = true;
     vm->status_code = error_code;
+    vm->panic_line_number = 0;
+    vm->panic_source_id = vm->empty_string;
+
+    // If we were executing Pyro code when the panic occured, determine the source ID and line
+    // number of the last instruction.
+    ObjStr* source_id = NULL;
+    size_t line_number = 0;
+
+    if (vm->frame_count > 0) {
+        CallFrame* frame = &vm->frames[vm->frame_count - 1];
+        ObjFn* fn = frame->closure->fn;
+        source_id = fn->source_id;
+        line_number = 1;
+
+        if (frame->ip > fn->code) {
+            size_t ip = frame->ip - fn->code - 1;
+            line_number = ObjFn_get_line_number(fn, ip);
+        }
+
+        vm->panic_source_id = fn->source_id;
+        vm->panic_line_number = line_number;
+    }
 
     // If we're inside a try expression and the panic is catchable, write the error message to the
     // panic buffer so it can be returned by the try expression.
@@ -65,20 +87,13 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) 
         return;
     }
 
-    // If we were executing Pyro code when the panic occured, print the source filename and line
+    // If we were executing Pyro code when the panic occured, print the source ID and line
     // number of the last instruction.
     if (vm->frame_count > 0) {
-        CallFrame* frame = &vm->frames[vm->frame_count - 1];
-        ObjFn* fn = frame->closure->fn;
-        size_t line_number = 1;
-        if (frame->ip > fn->code) {
-            size_t ip = frame->ip - fn->code - 1;
-            line_number = ObjFn_get_line_number(fn, ip);
-        }
         if (vm->in_repl) {
             pyro_write_stderr(vm, "line:%zu\n  ", line_number);
         } else {
-            pyro_write_stderr(vm, "%s:%zu\n  ", fn->source_id->bytes, line_number);
+            pyro_write_stderr(vm, "%s:%zu\n  ", source_id->bytes, line_number);
         }
     }
 
@@ -115,6 +130,12 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     vm->panic_flag = true;
     vm->halt_flag = true;
     vm->status_code = ERR_SYNTAX_ERROR;
+    vm->panic_line_number = source_line;
+
+    vm->panic_source_id = STR(source_id);
+    if (!vm->panic_source_id) {
+        vm->panic_source_id = vm->empty_string;
+    }
 
     // If we're inside a try expression and the panic is catchable, write the error message to the
     // panic buffer so it can be returned by the try expression.

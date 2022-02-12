@@ -1259,25 +1259,25 @@ static void run(PyroVM* vm) {
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
-
-                    pyro_push(vm, MAKE_OBJ(err_str));
-                    ObjTup* err_tup = ObjTup_new_err(2, vm);
-                    if (!err_tup) {
-                        vm->hard_panic = true;
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                        return;
-                    }
-                    pyro_pop(vm);
-
-                    err_tup->values[0] = MAKE_I64(error_code);
-                    err_tup->values[1] = MAKE_OBJ(err_str);
-                    pyro_push(vm, MAKE_OBJ(err_tup));
-
                     if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
                         vm->hard_panic = true;
                         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                         return;
                     }
+
+                    ObjTup* err_tup = ObjTup_new_err(4, vm);
+                    if (!err_tup) {
+                        vm->hard_panic = true;
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+
+                    err_tup->values[0] = MAKE_I64(error_code);
+                    err_tup->values[1] = MAKE_OBJ(err_str);
+                    err_tup->values[2] = MAKE_OBJ(vm->panic_source_id);
+                    err_tup->values[3] = MAKE_I64(vm->panic_line_number);
+
+                    pyro_push(vm, MAKE_OBJ(err_tup));
                 }
 
                 assert(vm->stack_top == stashed_stack_top);

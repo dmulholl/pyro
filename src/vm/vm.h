@@ -89,6 +89,8 @@ struct PyroVM {
 
     // Buffer for recording panic messages inside 'try' expressions.
     ObjBuf* panic_buffer;
+    ObjStr* panic_source_id;
+    size_t panic_line_number;
 
     // Interned string pool.
     ObjMap* strings;

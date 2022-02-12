@@ -1,5 +1,9 @@
-var err = try $panic("foo", 123);
+var err = try $panic("foo");
+assert $is_err(err);
+assert err[0] == 1;
+assert err[1] == "foo";
 
+var err = try $panic("bar", 123);
 assert $is_err(err);
 assert err[0] == 123;
-assert err[1] == "foo";
+assert err[1] == "bar";

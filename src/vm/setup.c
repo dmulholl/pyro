@@ -83,6 +83,8 @@ PyroVM* pyro_new_vm() {
     vm->stdout_stream = NULL;
     vm->stdin_stream = NULL;
     vm->panic_buffer = NULL;
+    vm->panic_source_id = NULL;
+    vm->panic_line_number = 0;
 
     // Initialize the PRNG.
     vm->mt64 = pyro_mt64_new();
