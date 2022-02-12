@@ -182,7 +182,9 @@ typedef struct {
     Obj obj;
     size_t upvalue_count;
     ObjStr* name;
-    ObjStr* source;
+
+    // Typically, the name of the file that contained the function.
+    ObjStr* source_id;
 
     // The number of arguments required by the function.
     uint8_t arity;

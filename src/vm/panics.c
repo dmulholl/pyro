@@ -16,7 +16,7 @@ static void print_stack_trace(PyroVM* vm) {
             line_number = ObjFn_get_line_number(fn, ip);
         }
 
-        pyro_write_stderr(vm, "%s:%zu\n", fn->source->bytes, line_number);
+        pyro_write_stderr(vm, "%s:%zu\n", fn->source_id->bytes, line_number);
         pyro_write_stderr(vm, "  [%zu] --> in %s\n", i, fn->name->bytes);
     }
 }
@@ -78,7 +78,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) 
         if (vm->in_repl) {
             pyro_write_stderr(vm, "line:%zu\n  ", line_number);
         } else {
-            pyro_write_stderr(vm, "%s:%zu\n  ", fn->source->bytes, line_number);
+            pyro_write_stderr(vm, "%s:%zu\n  ", fn->source_id->bytes, line_number);
         }
     }
 
@@ -151,7 +151,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
         pyro_write_stderr(
             vm,
             "\n%s:%zu\n  Error: Syntax error.\n",
-            fn->source->bytes,
+            fn->source_id->bytes,
             instruction_line_number
         );
     }

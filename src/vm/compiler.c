@@ -376,8 +376,8 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, 
         return false;
     }
 
-    compiler->fn->source = ObjStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
-    if (!compiler->fn->source) {
+    compiler->fn->source_id = ObjStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
+    if (!compiler->fn->source_id) {
         parser->had_memory_error = true;
         parser->compiler = compiler->enclosing;
         return false;
