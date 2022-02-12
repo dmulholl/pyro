@@ -6,7 +6,7 @@ assert chars[0] == 'a';
 assert chars[1] == 'b';
 assert chars[2] == 'c';
 
-var chars = "abc":chars():enum():to_vec();
+var chars = "abc":chars():enumerate():to_vec();
 assert chars:count() == 3;
 assert chars[0] == $tup(0, 'a');
 assert chars[1] == $tup(1, 'b');

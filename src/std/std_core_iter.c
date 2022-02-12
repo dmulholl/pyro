@@ -189,7 +189,7 @@ static Value iter_to_set(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value iter_enum(PyroVM* vm, size_t arg_count, Value* args) {
+static Value iter_enumerate(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* src_iter = AS_ITER(args[-1]);
 
     ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_ENUM, vm);
@@ -204,11 +204,11 @@ static Value iter_enum(PyroVM* vm, size_t arg_count, Value* args) {
         if (IS_I64(args[0])) {
             new_iter->next_enum = args[0].as.i64;
         } else {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument for :enum(), expected an integer.");
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument for :enumerate(), expected an integer.");
             return MAKE_NULL();
         }
     } else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :enum().");
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :enumerate().");
         return MAKE_NULL();
     }
 
@@ -387,7 +387,7 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "filter", iter_filter, 1);
     pyro_define_method(vm, vm->iter_class, "to_vec", iter_to_vec, 0);
     pyro_define_method(vm, vm->iter_class, "to_set", iter_to_set, 0);
-    pyro_define_method(vm, vm->iter_class, "enum", iter_enum, -1);
+    pyro_define_method(vm, vm->iter_class, "enumerate", iter_enumerate, -1);
     pyro_define_method(vm, vm->iter_class, "skip_first", iter_skip_first, 1);
     pyro_define_method(vm, vm->iter_class, "skip_last", iter_skip_last, 1);
     pyro_define_method(vm, vm->iter_class, "join", iter_join, 1);
