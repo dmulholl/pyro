@@ -340,16 +340,28 @@ static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
-    if (!IS_I64(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected an integer error code.");
+    if (arg_count == 1) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected a string error message.");
+            return MAKE_NULL();
+        }
+        pyro_panic(vm, 1, AS_STR(args[0])->bytes);
+        return MAKE_NULL();
+    } else if (arg_count == 2) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected a string error message.");
+            return MAKE_NULL();
+        }
+        if (!IS_I64(args[1])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected an integer error code.");
+            return MAKE_NULL();
+        }
+        pyro_panic(vm, args[1].as.i64, AS_STR(args[0])->bytes);
+        return MAKE_NULL();
+    } else {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for $panic(), found %d.", arg_count);
         return MAKE_NULL();
     }
-    if (!IS_STR(args[1])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected a string error message.");
-        return MAKE_NULL();
-    }
-    pyro_panic(vm, args[0].as.i64, AS_STR(args[1])->bytes);
-    return MAKE_NULL();
 }
 
 
@@ -855,7 +867,7 @@ void pyro_load_std_core(PyroVM* vm) {
     }
 
     pyro_define_global_fn(vm, "$exit", fn_exit, 1);
-    pyro_define_global_fn(vm, "$panic", fn_panic, 2);
+    pyro_define_global_fn(vm, "$panic", fn_panic, -1);
     pyro_define_global_fn(vm, "$clock", fn_clock, 0);
     pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);

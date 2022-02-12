@@ -1,7 +1,7 @@
 class Foo {
     def $init(arg) {
         if arg == "panic" {
-            $panic(123, "oh no!");
+            $panic("oh no!", 123);
         }
     }
 }

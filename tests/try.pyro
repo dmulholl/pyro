@@ -1,5 +1,5 @@
 def panics() {
-    $panic(123, "oh no!");
+    $panic("oh no!");
 }
 
 
@@ -26,6 +26,8 @@ assert foo == 3;
 
 var foo = try panics();
 assert $is_err(foo);
+assert foo[0] == 1;
+assert foo[1] == "oh no!";
 
 
 var foo = try panics() !! "fallback";
@@ -46,6 +48,8 @@ assert foo == 123;
 
 var foo = try try try panics();
 assert $is_err(foo);
+assert foo[0] == 1;
+assert foo[1] == "oh no!";
 
 
 var foo = try try try panics() !! "fallback";
