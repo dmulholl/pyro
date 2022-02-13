@@ -3,14 +3,14 @@
 
 // [path] can be a script file or a module directory.
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
-    char* realpath = pyro_realpath(path);
-    if (!realpath) {
-        fprintf(stderr, "Error: Unable to resolve path '%s'.\n", path);
+    char* resolved_path = pyro_realpath(path);
+    if (!resolved_path) {
+        fprintf(stderr, "Error: Unable to resolve path '%s' to determine import roots.\n", path);
         exit(1);
     }
 
     // Add the directory containing [path].
-    char* dirpath = pyro_dirname(realpath);
+    char* dirpath = pyro_dirname(resolved_path);
     size_t dirpath_length = strlen(dirpath);
     pyro_add_import_root(vm, dirpath);
 
@@ -27,7 +27,7 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     pyro_add_import_root(vm, array);
 
     free(array);
-    free(realpath);
+    free(resolved_path);
 }
 
 

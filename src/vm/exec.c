@@ -1375,20 +1375,20 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, co
 
 
 void pyro_exec_file_as_main(PyroVM* vm, const char* filepath) {
-    char* realpath = pyro_realpath(filepath);
-    if (!realpath) {
-        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve path '%s'.", filepath);
+    char* resolved_path = pyro_realpath(filepath);
+    if (!resolved_path) {
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve file path '%s'.", filepath);
         return;
     }
 
-    ObjStr* realpath_string = STR(realpath);
-    if (!realpath_string) {
+    ObjStr* resolved_path_as_string = STR(resolved_path);
+    if (!resolved_path_as_string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        free(realpath);
+        free(resolved_path);
         return;
     }
-    pyro_define_member(vm, vm->main_module, "$filepath", MAKE_OBJ(realpath_string));
-    free(realpath);
+    pyro_define_member(vm, vm->main_module, "$filepath", MAKE_OBJ(resolved_path_as_string));
+    free(resolved_path);
 
     FileData fd;
     if (!pyro_read_file(vm, filepath, &fd) || fd.size == 0) {
@@ -1442,20 +1442,20 @@ void pyro_try_compile_file(PyroVM* vm, const char* path) {
 
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* module) {
-    char* realpath = pyro_realpath(filepath);
-    if (!realpath) {
-        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve path '%s'.", filepath);
+    char* resolved_path = pyro_realpath(filepath);
+    if (!resolved_path) {
+        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve module path '%s'.", filepath);
         return;
     }
 
-    ObjStr* realpath_string = STR(realpath);
-    if (!realpath_string) {
+    ObjStr* resolved_path_as_string = STR(resolved_path);
+    if (!resolved_path_as_string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        free(realpath);
+        free(resolved_path);
         return;
     }
-    pyro_define_member(vm, module, "$filepath", MAKE_OBJ(realpath_string));
-    free(realpath);
+    pyro_define_member(vm, module, "$filepath", MAKE_OBJ(resolved_path_as_string));
+    free(resolved_path);
 
     FileData fd;
     if (!pyro_read_file(vm, filepath, &fd) || fd.size == 0) {
