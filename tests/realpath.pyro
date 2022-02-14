@@ -1,0 +1,2 @@
+var realpath = $std::path::realpath($filepath);
+assert $std::path::is_file(realpath);
