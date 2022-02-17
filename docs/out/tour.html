@@ -649,7 +649,6 @@ You can trap a panic using a <code>try</code> expression:
 </pre>
 <p>
 A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>err</code> tuple if it panics.
-(The <code>err</code> tuple will contain two items &mdash; an integer error code and a string error message.)
 </p>
 <p>
 <code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets:

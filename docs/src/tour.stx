@@ -439,7 +439,6 @@ You can trap a panic using a `try` expression:
     var foo = try might_panic();
 
 A `try` expression returns the value of its operand if it evaluates without panicking or an `err` tuple if it panics.
-(The `err` tuple will contain two items --- an integer error code and a string error message.)
 
 `try` is a unary operator with the same precedence as `!` or `-` so you should wrap lower-precedence expressions in brackets:
 

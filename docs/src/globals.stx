@@ -112,7 +112,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 [[ `$exec(code: str) -> map` ]]
 
-    Executes a string as Pyro source code.
+    Executes a string of Pyro source code.
     The code is executed in the context of a new temporary module.
     This temporary module is initially empty.
 
