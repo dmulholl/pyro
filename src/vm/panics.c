@@ -90,11 +90,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) 
     // If we were executing Pyro code when the panic occured, print the source ID and line
     // number of the last instruction.
     if (vm->frame_count > 0) {
-        if (vm->in_repl) {
-            pyro_write_stderr(vm, "line:%zu\n  ", line_number);
-        } else {
-            pyro_write_stderr(vm, "%s:%zu\n  ", source_id->bytes, line_number);
-        }
+        pyro_write_stderr(vm, "%s:%zu\n  ", source_id->bytes, line_number);
     }
 
     // Print the error message.
@@ -148,11 +144,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     }
 
     // Print the syntax error message.
-    if (vm->in_repl) {
-        pyro_write_stderr(vm, "line:%zu\n  Syntax Error: ", source_line);
-    } else {
-        pyro_write_stderr(vm, "%s:%zu\n  Syntax Error: ", source_id, source_line);
-    }
+    pyro_write_stderr(vm, "%s:%zu\n  Syntax Error: ", source_id, source_line);
     va_list args;
     va_start(args, format_string);
     pyro_write_stderr_v(vm, format_string, args);
