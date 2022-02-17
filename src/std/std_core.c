@@ -10,6 +10,7 @@
 #include "../vm/panics.h"
 #include "../vm/os.h"
 #include "../vm/io.h"
+#include "../vm/exec.h"
 
 
 static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
@@ -838,6 +839,28 @@ static Value fn_input(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $exec(), expected a string.");
+        return MAKE_NULL();
+    }
+    ObjStr* code = AS_STR(args[0]);
+
+    ObjModule* module = ObjModule_new(vm);
+    if (!module) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+
+    // Push the module onto the stack to keep it safe from the garbage collector.
+    if (!pyro_push(vm, MAKE_OBJ(module))) { return MAKE_NULL(); }
+    pyro_exec_code_as_module(vm, code->bytes, code->length, "<$exec()>", module);
+    pyro_pop(vm);
+
+    return MAKE_OBJ(module->globals);
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -904,4 +927,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
     pyro_define_global_fn(vm, "$env", fn_env, -1);
     pyro_define_global_fn(vm, "$input", fn_input, 0);
+    pyro_define_global_fn(vm, "$exec", fn_exec, 1);
 }

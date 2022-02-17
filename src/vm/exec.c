@@ -1342,14 +1342,14 @@ static void reset_stack(PyroVM* vm) {
 }
 
 
-void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id) {
     vm->halt_flag = false;
     vm->exit_flag = false;
     vm->panic_flag = false;
     vm->hard_panic = false;
     vm->status_code = 0;
 
-    ObjFn* fn = pyro_compile(vm, src_code, src_len, src_id);
+    ObjFn* fn = pyro_compile(vm, code, code_length, source_id);
     if (vm->halt_flag) {
         return;
     }
@@ -1441,6 +1441,31 @@ void pyro_try_compile_file(PyroVM* vm, const char* path) {
 }
 
 
+void pyro_exec_code_as_module(
+    PyroVM* vm,
+    const char* code,
+    size_t code_length,
+    const char* source_id,
+    ObjModule* module
+) {
+    ObjFn* fn = pyro_compile(vm, code, code_length, source_id);
+    if (vm->halt_flag) {
+        return;
+    }
+
+    ObjClosure* closure = ObjClosure_new(vm, fn, module);
+    if (!closure) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return;
+    }
+
+    pyro_push(vm, MAKE_OBJ(closure));
+    call_value(vm, MAKE_OBJ(closure), 0);
+    run(vm);
+    pyro_pop(vm);
+}
+
+
 void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* module) {
     char* resolved_path = pyro_realpath(filepath);
     if (!resolved_path) {
@@ -1468,9 +1493,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
         return;
     }
 
-    pyro_push(vm, MAKE_OBJ(fn));
     ObjClosure* closure = ObjClosure_new(vm, fn, module);
-    pyro_pop(vm);
     if (!closure) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;

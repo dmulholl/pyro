@@ -109,6 +109,16 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
     The arguments provide the error's values.
 
 
+
+[[ `$exec(code: str) -> map` ]]
+
+    Executes a string as Pyro source code.
+    The code is executed in the context of a new temporary module.
+    This temporary module is initially empty.
+
+    Returns a `map` containing the context module's global variables; i.e. global variables declared in `code`.
+
+
 [[ `$exit(code: i64)` ]]
 
     Instructs the program to exit with the specified exit code.

@@ -4,20 +4,30 @@
 #include "pyro.h"
 #include "values.h"
 
-// Executes a chunk of code in the context of the VM's main module. Outside of string literals the
-// code should be utf-8 encoded. String literals can contain arbitrary binary data including nulls
-// and invalid utf-8. [src_code] is treated as a byte array not a C string so no terminating null
-// is required. [src_len] should be the length in bytes of [src_code]. [src_id] is a null-terminated
-// C string used to identify the code in error messages -- for code loaded from a source file it
-// should be the filepath.
-void pyro_exec_code_as_main(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id);
+// Executes a chunk of source code in the context of the VM's main module.
+// - Outside of string literals, code should be utf-8 encoded.
+// - String literals can contain arbitrary binary data including nulls and invalid utf-8.
+// - [code] is treated as a byte array, not a C string, so no terminating null is required.
+// - [code_length] is the length of [code] in bytes.
+// - [source_id] is a null-terminated C string used to identify the code in error messages -- for
+//   code loaded from a source file it should be the filepath.
+void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id);
 
 // Loads and executes a source file.
 void pyro_exec_file_as_main(PyroVM* vm, const char* filepath);
 
 // If [path] is a source file, loads and executes that file.
-// If [path] is a module directory, loads and executes its self.pyro file.
+// If [path] is a module directory, loads and executes the file [path/self.pyro].
 void pyro_exec_path_as_main(PyroVM* vm, const char* path);
+
+// Executes a chunk of source code in the context of the specified module.
+void pyro_exec_code_as_module(
+    PyroVM* vm,
+    const char* code,
+    size_t code_length,
+    const char* source_id,
+    ObjModule* module
+);
 
 // Executes a file in the context of the specified module.
 void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* module);

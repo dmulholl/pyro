@@ -233,6 +233,21 @@ The arguments provide the error's values.
 </div>
 <div>
 <dt>
+<code>$exec(code: str) -&gt; map</code>
+</dt>
+<dd>
+<p>
+Executes a string as Pyro source code.
+The code is executed in the context of a new temporary module.
+This temporary module is initially empty.
+</p>
+<p>
+Returns a <code>map</code> containing the context module's global variables; i.e. global variables declared in <code>code</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$exit(code: i64)</code>
 </dt>
 <dd>
