@@ -171,7 +171,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
         }
         pyro_write_stderr(
             vm,
-            "\n%s:%zu\n  Error: Syntax error.\n",
+            "\n%s:%zu\n  Error: Failed to compile source code.\n",
             fn->source_id->bytes,
             instruction_line_number
         );

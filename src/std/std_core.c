@@ -854,7 +854,7 @@ static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
 
     // Push the module onto the stack to keep it safe from the garbage collector.
     if (!pyro_push(vm, MAKE_OBJ(module))) { return MAKE_NULL(); }
-    pyro_exec_code_as_module(vm, code->bytes, code->length, "<$exec()>", module);
+    pyro_exec_code_as_module(vm, code->bytes, code->length, "<exec>", module);
     pyro_pop(vm);
 
     return MAKE_OBJ(module->globals);
