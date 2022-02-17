@@ -1,6 +1,6 @@
 # Pyro
 
-[1]: http://www.dmulholl.com/docs/pyro/dev/
+[1]: http://www.dmulholl.com/docs/pyro/main/
 
 Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
 
