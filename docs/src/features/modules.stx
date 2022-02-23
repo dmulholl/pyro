@@ -148,6 +148,13 @@ You can alias the imported members using a comma-separated `as` list, e.g.
 ::: code pyro
     import $std::math::{cos, sin} as foo, bar;
 
+You can import *all* the top-level members from a module using an asterisk, e.g.
+
+::: code pyro
+    import $std::math::{*};
+
+Note that you can only use this `{*}` syntax at global scope in a script or module file --- i.e. you can't use `{*}` inside a block or function.
+
 
 
 ### Import Roots
