@@ -1480,7 +1480,7 @@ static void parse_var_declaration(Parser* parser) {
 
 
 static void parse_import_stmt(Parser* parser) {
-    // We'll use this array if we're explicitly importing named top-level members from the module.
+    // We'll use these arrays if we're explicitly importing named top-level members from the module.
     Token member_names[16];
     uint16_t member_indexes[16];
     int member_count = 0;
@@ -1519,7 +1519,7 @@ static void parse_import_stmt(Parser* parser) {
             if (!consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after member names in import statement.")) return;
             break;
         }
-        consume(parser, TOKEN_IDENTIFIER, "Expected module name in import statement.");
+        if (!consume(parser, TOKEN_IDENTIFIER, "Expected module name in import statement.")) return;
         module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
         emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
         module_name = parser->previous_token;
@@ -1547,7 +1547,7 @@ static void parse_import_stmt(Parser* parser) {
     int alias_count = 0;
     if (match(parser, TOKEN_AS)) {
         do {
-            consume(parser, TOKEN_IDENTIFIER, "Expected alias name in import statement.");
+            if (!consume(parser, TOKEN_IDENTIFIER, "Expected alias name in import statement.")) return;
             module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
             module_name = parser->previous_token;
             member_names[alias_count] = parser->previous_token;
@@ -1555,7 +1555,7 @@ static void parse_import_stmt(Parser* parser) {
             alias_count++;
             if (alias_count > 16) {
                 ERROR_AT_PREVIOUS_TOKEN("Too many alias names in import statement (max: 16).");
-                break;
+                return;
             }
         } while (match(parser, TOKEN_COMMA));
     }
@@ -1608,7 +1608,7 @@ static void parse_if_stmt(Parser* parser) {
     size_t jump_over_then = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
 
     // Emit the bytecode for the 'then' block.
-    consume(parser, TOKEN_LEFT_BRACE, "Expected '{' after condition.");
+    consume(parser, TOKEN_LEFT_BRACE, "Expected '{' after condition in 'if' statement.");
     begin_scope(parser);
     parse_block(parser);
     end_scope(parser);
@@ -1624,7 +1624,7 @@ static void parse_if_stmt(Parser* parser) {
         if (match(parser, TOKEN_IF)) {
             parse_if_stmt(parser);
         } else {
-            consume(parser, TOKEN_LEFT_BRACE, "Expected '{' after else.");
+            consume(parser, TOKEN_LEFT_BRACE, "Expected '{' after 'else'.");
             begin_scope(parser);
             parse_block(parser);
             end_scope(parser);
@@ -2212,8 +2212,3 @@ ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char
     vm->gc_disallows--;
     return fn;
 }
-
-
-// Undefine file-specific macros.
-#undef ERROR_AT_PREVIOUS_TOKEN
-#undef ERROR_AT_NEXT_TOKEN
