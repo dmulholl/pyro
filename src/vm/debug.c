@@ -162,10 +162,12 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BINARY_GREATER", ip);
         case OP_BINARY_GREATER_EQUAL:
             return atomic_instruction(vm, "OP_BINARY_GREATER_EQUAL", ip);
+        case OP_IMPORT_ALL_MEMBERS:
+            return u8_instruction(vm, "OP_IMPORT_ALL_MEMBERS", fn, ip);
         case OP_IMPORT_MODULE:
             return u8_instruction(vm, "OP_IMPORT_MODULE", fn, ip);
-        case OP_IMPORT_MEMBERS:
-            return u8_x2_instruction(vm, "OP_IMPORT_MEMBERS", fn, ip);
+        case OP_IMPORT_NAMED_MEMBERS:
+            return u8_x2_instruction(vm, "OP_IMPORT_NAMED_MEMBERS", fn, ip);
         case OP_INHERIT:
             return atomic_instruction(vm, "OP_INHERIT", ip);
         case OP_INVOKE_METHOD:

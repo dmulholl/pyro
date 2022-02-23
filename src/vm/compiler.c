@@ -1480,33 +1480,46 @@ static void parse_var_declaration(Parser* parser) {
 
 
 static void parse_import_stmt(Parser* parser) {
-    consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
-    uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
-    emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
-
-    Token module_name = parser->previous_token;
+    // We'll use this array if we're explicitly importing named top-level members from the module.
     Token member_names[16];
     uint16_t member_indexes[16];
-    int module_count = 1;
     int member_count = 0;
 
+    // Read the first module name.
+    if (!consume(parser, TOKEN_IDENTIFIER, "Expected a module name after 'import'.")) return;
+    uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
+    emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
+    Token module_name = parser->previous_token;
+    int module_count = 1;
+
+    // Read one ::module or ::{...} chunk per iteration.
     while (match(parser, TOKEN_COLON_COLON)) {
         if (match(parser, TOKEN_LEFT_BRACE)) {
+            if (match(parser, TOKEN_STAR)) {
+                if (!consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after '*' in import statement.")) return;
+                if (!consume(parser, TOKEN_SEMICOLON, "Expected ';' after '{*}' in import statement.")) return;
+                if (parser->compiler->type != TYPE_MODULE || parser->compiler->scope_depth != 0) {
+                    ERROR_AT_PREVIOUS_TOKEN("Can only import {*} at global scope.");
+                    return;
+                }
+                member_count = -1;
+                break;
+            }
             do {
-                consume(parser, TOKEN_IDENTIFIER, "Expected member name.");
+                if (!consume(parser, TOKEN_IDENTIFIER, "Expected member name in import statement.")) return;
                 member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous_token);
                 emit_u8_u16be(parser, OP_LOAD_CONSTANT, member_indexes[member_count]);
                 member_names[member_count] = parser->previous_token;
                 member_count++;
                 if (member_count > 16) {
-                    ERROR_AT_PREVIOUS_TOKEN("Too many member names in import statement.");
-                    break;
+                    ERROR_AT_PREVIOUS_TOKEN("Too many member names in import statement (max: 16).");
+                    return;
                 }
             } while (match(parser, TOKEN_COMMA));
-            consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' in import statement.");
+            if (!consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after member names in import statement.")) return;
             break;
         }
-        consume(parser, TOKEN_IDENTIFIER, "Expected module name.");
+        consume(parser, TOKEN_IDENTIFIER, "Expected module name in import statement.");
         module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
         emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
         module_name = parser->previous_token;
@@ -1514,16 +1527,21 @@ static void parse_import_stmt(Parser* parser) {
     }
 
     if (module_count > 255) {
-        ERROR_AT_PREVIOUS_TOKEN("Too many module names in import statement.");
+        ERROR_AT_PREVIOUS_TOKEN("Too many module names in import statement (max: 255).");
+        return;
     }
 
-    if (member_count > 0) {
-        emit_byte(parser, OP_IMPORT_MEMBERS);
+    if (member_count == -1) {
+        emit_byte(parser, OP_IMPORT_ALL_MEMBERS);
         emit_byte(parser, module_count);
-        emit_byte(parser, member_count);
-    } else {
+        return;
+    } else if (member_count == 0) {
         emit_byte(parser, OP_IMPORT_MODULE);
         emit_byte(parser, module_count);
+    } else {
+        emit_byte(parser, OP_IMPORT_NAMED_MEMBERS);
+        emit_byte(parser, module_count);
+        emit_byte(parser, member_count);
     }
 
     int alias_count = 0;
@@ -1536,7 +1554,7 @@ static void parse_import_stmt(Parser* parser) {
             member_indexes[alias_count] = module_index;
             alias_count++;
             if (alias_count > 16) {
-                ERROR_AT_PREVIOUS_TOKEN("Too many alias names in import statement.");
+                ERROR_AT_PREVIOUS_TOKEN("Too many alias names in import statement (max: 16).");
                 break;
             }
         } while (match(parser, TOKEN_COMMA));
@@ -1544,7 +1562,7 @@ static void parse_import_stmt(Parser* parser) {
 
     if (member_count > 0) {
         if (alias_count > 0 && alias_count != member_count) {
-            ERROR_AT_PREVIOUS_TOKEN("Alias and member numbers do not match.");
+            ERROR_AT_PREVIOUS_TOKEN("Alias and member numbers do not match in import statement.");
             return;
         }
         for (int i = 0; i < member_count; i++) {

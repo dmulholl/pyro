@@ -658,7 +658,55 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_IMPORT_MEMBERS: {
+            case OP_IMPORT_ALL_MEMBERS: {
+                uint8_t module_count = READ_BYTE();
+                Value* args = vm->stack_top - module_count;
+
+                ObjMap* supermod_modules_map = vm->modules;
+                Value module_value;
+
+                for (uint8_t i = 0; i < module_count; i++) {
+                    Value name = args[i];
+
+                    if (ObjMap_get(supermod_modules_map, name, &module_value, vm)) {
+                        supermod_modules_map = AS_MOD(module_value)->submodules;
+                        continue;
+                    }
+
+                    ObjModule* module_object = ObjModule_new(vm);
+                    if (!module_object) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+                    module_value = MAKE_OBJ(module_object);
+
+                    if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return;
+                    }
+
+                    pyro_import_module(vm, i + 1, args, module_object);
+                    if (vm->halt_flag) {
+                        ObjMap_remove(supermod_modules_map, name, vm);
+                        return;
+                    }
+
+                    supermod_modules_map = module_object->submodules;
+                }
+
+                ObjMap* current_module_globals = frame->closure->module->globals;
+                ObjMap* imported_module_globals = AS_MOD(module_value)->globals;
+
+                if (!ObjMap_copy_entries(imported_module_globals, current_module_globals, vm)) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    return;
+                }
+
+                vm->stack_top -= module_count;
+                break;
+            }
+
+            case OP_IMPORT_NAMED_MEMBERS: {
                 uint8_t module_count = READ_BYTE();
                 uint8_t member_count = READ_BYTE();
                 Value* args = vm->stack_top - module_count - member_count;

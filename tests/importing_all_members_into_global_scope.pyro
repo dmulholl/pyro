@@ -1,0 +1,8 @@
+import $std::math::{*};
+
+assert $is_callable(sin);
+assert $is_callable(cos);
+
+assert $is_f64(e);
+assert $is_f64(pi);
+
