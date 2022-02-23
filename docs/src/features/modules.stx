@@ -127,31 +127,31 @@ Submodules can similarly be aliased:
 You can import a top-level member from a module by wrapping its name in braces, e.g.
 
 ::: code pyro
-    import $std::math::{abs};
+    import math::{abs};
 
     assert abs(-1) == 1;
 
 You can alias the imported member using an `import ... as ...` statement, e.g.
 
 ::: code pyro
-    import $std::math::{abs} as foo;
+    import math::{abs} as foo;
 
     assert foo(-1) == 1;
 
 You can import multiple members in a single `import` statement by separating their names with commas, e.g.
 
 ::: code pyro
-    import $std::math::{cos, sin};
+    import math::{cos, sin};
 
 You can alias the imported members using a comma-separated `as` list, e.g.
 
 ::: code pyro
-    import $std::math::{cos, sin} as foo, bar;
+    import math::{cos, sin} as foo, bar;
 
 You can import *all* the top-level members from a module using an asterisk, e.g.
 
 ::: code pyro
-    import $std::math::{*};
+    import math::{*};
 
 Note that you can only use this `{*}` syntax at global scope in a script or module file --- i.e. you can't use `{*}` inside a block or function.
 
