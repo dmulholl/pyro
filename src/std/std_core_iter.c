@@ -67,8 +67,7 @@ static Value iter_iter(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value iter_next(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = AS_ITER(args[-1]);
-    Value result = ObjIter_next(iter, vm);
-    return result;
+    return ObjIter_next(iter, vm);
 }
 
 
@@ -392,4 +391,5 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->iter_class, "skip_last", iter_skip_last, 1);
     pyro_define_method(vm, vm->iter_class, "join", iter_join, 1);
     pyro_define_method(vm, vm->iter_class, "count", iter_count, 0);
+    pyro_define_method(vm, vm->iter_class, "next", iter_next, 0);
 }

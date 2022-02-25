@@ -111,3 +111,12 @@ def $test_to_set() {
     assert set:contains('a');
     assert !set:contains('z');
 }
+
+
+def $test_next() {
+    var iter = $range(3);
+    assert iter:next() == 0;
+    assert iter:next() == 1;
+    assert iter:next() == 2;
+    assert $is_err(iter:next());
+}
