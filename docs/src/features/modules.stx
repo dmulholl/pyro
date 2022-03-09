@@ -153,7 +153,7 @@ You can import *all* the top-level members from a module using an asterisk, e.g.
 ::: code pyro
     import math::{*};
 
-Note that you can only use this `{*}` syntax at global scope in a script or module file --- i.e. you can't use `{*}` inside a block or function.
+Note that you can only use this `{*}` syntax at global scope in a script or module file --- i.e. you can't import `{*}` inside a block or function.
 
 
 
@@ -161,10 +161,9 @@ Note that you can only use this `{*}` syntax at global scope in a script or modu
 
 The global `$roots` vector contains the list of root directories that Pyro checks when attempting to import a module.
 
-When Pyro is executing a script it adds the parent directory containing that script to the `$roots` vector, along with a `modules` directory within that parent directory.
-(This means that the modules required by a script can be located either in the same directory as the script or in a `modules` directory alongside the script.)
+(*) When Pyro is executing a script it adds the parent directory containing that script to the `$roots` vector, along with a `modules` directory within that parent directory. (This means that the modules required by a script can be located either in the same directory as the script or in a `modules` directory alongside the script.)
 
-When Pyro is executing the REPL it adds the current working directory to the `$roots` vector.
+(*) When Pyro is executing the REPL it adds the current working directory to the `$roots` vector.
 
 You can add or remove entries from the `$roots` vector to customize Pyro's default behaviour.
 

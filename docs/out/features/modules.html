@@ -240,7 +240,7 @@ You can import <i>all</i> the top-level members from a module using an asterisk,
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::{</span><span class="o">*</span><span class="p">};</span>
 </pre>
 <p>
-Note that you can only use this <code>{*}</code> syntax at global scope in a script or module file &mdash; i.e. you can't use <code>{*}</code> inside a block or function.
+Note that you can only use this <code>{*}</code> syntax at global scope in a script or module file &mdash; i.e. you can't import <code>{*}</code> inside a block or function.
 </p>
 <h3 id="import-roots">
 Import Roots
@@ -248,13 +248,18 @@ Import Roots
 <p>
 The global <code>$roots</code> vector contains the list of root directories that Pyro checks when attempting to import a module.
 </p>
+<ul>
+<li>
 <p>
-When Pyro is executing a script it adds the parent directory containing that script to the <code>$roots</code> vector, along with a <code>modules</code> directory within that parent directory.
-(This means that the modules required by a script can be located either in the same directory as the script or in a <code>modules</code> directory alongside the script.)
+When Pyro is executing a script it adds the parent directory containing that script to the <code>$roots</code> vector, along with a <code>modules</code> directory within that parent directory. (This means that the modules required by a script can be located either in the same directory as the script or in a <code>modules</code> directory alongside the script.)
 </p>
+</li>
+<li>
 <p>
 When Pyro is executing the REPL it adds the current working directory to the <code>$roots</code> vector.
 </p>
+</li>
+</ul>
 <p>
 You can add or remove entries from the <code>$roots</code> vector to customize Pyro's default behaviour.
 </p>

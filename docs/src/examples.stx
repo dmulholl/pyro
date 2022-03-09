@@ -18,7 +18,10 @@ The value doesn't have to be a string --- `echo` *stringifies* the value before 
 ::: code pyro
     echo 123;
 
-Pyro also has a family of `$print()` functions:
+This is equivalent to calling `$str()` on the value before printing it.
+Note that `echo` automatically adds a newline character to the output.
+
+Pyro also has a family of `$print()`/`$println()` functions:
 
 ::: code pyro
     $println("hello world");
@@ -28,6 +31,8 @@ You can use format strings with these functions to interpolate variables:
 ::: code pyro
     var target = "world";
     $println("hello {}", target);
+
+The only difference between `$print()` and `$println()` is that `$println()` automatically adds a newline character to the output.
 
 
 
@@ -52,7 +57,7 @@ Read a single line from the standard input stream:
 ::: code pyro
     var line = $input();
 
-Read in a loop from the standard input stream:
+Read a sequence of lines in a loop from the standard input stream:
 
 ::: code pyro
     loop {
@@ -66,6 +71,12 @@ Read in a loop from the standard input stream:
         echo "input was: " + line;
     }
 
+The global `$input()` function is provided for simple use-cases. You can also access the standard input stream as a `file`:
+
+::: code pyro
+    var stdin = $std::pyro::stdin();
+    var input = stdin:read_string();
+
 
 
 ### Reading from a file
@@ -75,7 +86,7 @@ Read the content of a file into a string:
 ::: code pyro
     var string = $read_file("input.txt");
 
-This is a convenience function --- a `$file` object provides more fine-grained control:
+This is a convenience function --- a `file` object provides more fine-grained control:
 
 ::: code pyro
     var file = $file("input.txt", "r");
@@ -91,7 +102,7 @@ Write a string to a file:
 ::: code pyro
     $write_file("output.txt", "Content for file...");
 
-This is a convenience function --- a `$file` object provides more fine-grained control:
+This is a convenience function --- a `file` object provides more fine-grained control:
 
 ::: code pyro
     var file = $file("output.txt", "w");

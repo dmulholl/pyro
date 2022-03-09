@@ -119,7 +119,7 @@ Vectors have the following methods:
     Returns the vector to allow chaining.
 
     If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
 
 [[ `:quicksort() -> vec` <br> `:quicksort(callback: func(any, any) -> bool) -> vec` ]]
 
@@ -127,12 +127,14 @@ Vectors have the following methods:
     Returns the vector to allow chaining.
 
     If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
 
 [[ `:random() -> any` ]]
 
     Returns a random item from the vector without removing it.
     Panics if the vector is empty.
+
+    Use `:remove_random()` to remove and return a random item from the vector.
 
 [[ `:remove_at(index: i64) -> any` ]]
 
@@ -153,6 +155,8 @@ Vectors have the following methods:
 
     Removes and returns a random item from the vector.
     Panics if the vector is empty.
+
+    Use `:random()` to return a random item from the vector without removing it.
 
 [[ `:reverse() -> vec` ]]
 
@@ -185,4 +189,4 @@ Vectors have the following methods:
     Returns the vector to allow chaining.
 
     If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
