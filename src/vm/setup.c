@@ -205,8 +205,10 @@ void pyro_free_vm(PyroVM* vm) {
 
     FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity);
 
-    pyro_mt64_free(vm->mt64);
-    vm->bytes_allocated -= pyro_mt64_size();
+    if (vm->mt64) {
+        pyro_mt64_free(vm->mt64);
+        vm->bytes_allocated -= pyro_mt64_size();
+    }
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);
