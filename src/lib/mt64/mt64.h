@@ -16,7 +16,10 @@
 
 typedef struct MT64 MT64;
 
-// Allocates a new generator.
+// Returns the size of an MT64 generator.
+size_t pyro_mt64_size(void);
+
+// Allocates a new generator. Returns NULL if memory allocation fails.
 MT64* pyro_mt64_new(void);
 
 // Frees a generator.

@@ -199,6 +199,7 @@ static void define_field(PyroVM* vm, ObjStr* name) {
     }
 
     if (ObjMap_set(class->field_indexes, MAKE_OBJ(name), MAKE_I64(field_index), vm) == 0) {
+        class->field_initializers->count--;
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
     }

@@ -63,6 +63,9 @@ bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, Nati
 // Adds a new method to the class. Returns true on success, false if memory could not be allocated.
 bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity);
 
+// Adds a new field to the class. Returns true on success, false if memory could not be allocated.
+bool pyro_define_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value);
+
 // Creates a new top-level module. Returns the module or NULL if memory allocation fails.
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name);
 
