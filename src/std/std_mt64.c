@@ -74,7 +74,10 @@ static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 
-
+static void mt64_free_callback(PyroVM* vm, void* pointer) {
+    pyro_mt64_free(pointer);
+    vm->bytes_allocated -= pyro_mt64_size();
+}
 
 
 static Value mt64_init(PyroVM* vm, size_t arg_count, Value* args) {
@@ -86,13 +89,13 @@ static Value mt64_init(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    ObjResourcePointer* resource = ObjResourcePointer_new(mt64, NULL, vm);
+    ObjResourcePointer* resource = ObjResourcePointer_new(mt64, mt64_free_callback, vm);
     if (!resource) {
         pyro_mt64_free(mt64);
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return MAKE_NULL();
     }
-    /* vm->bytes_allocated += pyro_mt64_size(); */
+    vm->bytes_allocated += pyro_mt64_size();
 
     instance->fields[0] = MAKE_OBJ(resource);
     return MAKE_OBJ(instance);
@@ -109,7 +112,6 @@ void pyro_load_std_mt64(PyroVM* vm) {
     /* pyro_define_member_fn(vm, mod_mt64, "rand_int", fn_rand_int, 1); */
     /* pyro_define_member_fn(vm, mod_mt64, "rand_int_in_range", fn_rand_int_in_range, 2); */
     /* pyro_define_member_fn(vm, mod_mt64, "rand_float", fn_rand_float, 0); */
-    /* pyro_define_member_fn(vm, mod_mt64, "seed", fn_seed_with_hash, 1); */
     /* pyro_define_member_fn(vm, mod_mt64, "seed_with_hash", fn_seed_with_hash, 1); */
     /* pyro_define_member_fn(vm, mod_mt64, "seed_with_array", fn_seed_with_array, 1); */
 
