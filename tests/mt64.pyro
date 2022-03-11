@@ -1,0 +1,1 @@
+assert $std::mt64::test();
