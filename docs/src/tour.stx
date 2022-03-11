@@ -233,7 +233,7 @@ You can supply multiple arguments to `echo`, separated by commas.
 
 `echo` prints the stringified values separated by spaces.
 
-Pyro also has a family of `$print()` functions with support for format strings:
+Pyro also has a family of `$print()`/`$println()` functions with support for format strings:
 
 ::: code pyro
     $print("hello pyro");               # "hello pyro"
@@ -244,6 +244,8 @@ Calling the `$print()` function with a single argument is equivalent to calling 
 Calling it with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
 
 See the [string formatting](@root/features/formatting//) documentation for a detailed look at the `$fmt()` function and format strings.
+
+The only difference between `$print()` and `$println()` is that `$println()` automatically adds a newline character to the output.
 
 
 

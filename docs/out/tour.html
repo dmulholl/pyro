@@ -423,7 +423,7 @@ You can supply multiple arguments to <code>echo</code>, separated by commas.
 <code>echo</code> prints the stringified values separated by spaces.
 </p>
 <p>
-Pyro also has a family of <code>$print()</code> functions with support for format strings:
+Pyro also has a family of <code>$print()</code>/<code>$println()</code> functions with support for format strings:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;hello pyro&quot;</span><span class="p">);</span>               <span class="c1"># &quot;hello pyro&quot;</span>
@@ -436,6 +436,9 @@ Calling it with more than one argument is equivalent to calling <code>$fmt()</co
 </p>
 <p>
 See the <a href="features/formatting.html">string formatting</a> documentation for a detailed look at the <code>$fmt()</code> function and format strings.
+</p>
+<p>
+The only difference between <code>$print()</code> and <code>$println()</code> is that <code>$println()</code> automatically adds a newline character to the output.
 </p>
 <h3 id="loops">
 Loops
