@@ -174,19 +174,6 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 }
 
 
-// The method's ObjClosure will be sitting on top of the stack, the ObjClass just below it.
-static void define_method(PyroVM* vm, ObjStr* name) {
-    Value method_value = pyro_peek(vm, 0);
-    ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
-
-    if (ObjMap_set(class->methods, MAKE_OBJ(name), method_value, vm) == 0) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-    }
-
-    pyro_pop(vm);
-}
-
-
 // Pops the receiver and replaces it with the bound method object.
 static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
     Value method;
@@ -1029,7 +1016,21 @@ static void run(PyroVM* vm) {
             }
 
             case OP_DEFINE_METHOD: {
-                define_method(vm, READ_STRING());
+                // The method's ObjClosure will be sitting on top of the stack.
+                Value method = pyro_peek(vm, 0);
+
+                // The class object will be on the stack just below the method.
+                ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
+                ObjStr* name = READ_STRING();
+
+                if (ObjMap_set(class->methods, MAKE_OBJ(name), method, vm) == 0) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    break;
+                }
+
+                // Pop the method but leave the class behind on the stack.
+                pyro_pop(vm);
                 break;
             }
 
