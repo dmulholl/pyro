@@ -250,7 +250,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int 
 struct ObjClass {
     Obj obj;
     ObjMap* methods;
-    ObjVec* field_initializers;
+    ObjVec* field_values;
     ObjMap* field_indexes;
     ObjStr* name;                       // Can be NULL.
     ObjClass* superclass;               // Can be NULL.

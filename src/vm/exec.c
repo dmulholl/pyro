@@ -191,15 +191,15 @@ static void define_method(PyroVM* vm, ObjStr* name) {
 static void define_field(PyroVM* vm, ObjStr* name) {
     Value init_value = pyro_peek(vm, 0);
     ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
-    size_t field_index = class->field_initializers->count;
+    size_t field_index = class->field_values->count;
 
-    if (!ObjVec_append(class->field_initializers, init_value, vm)) {
+    if (!ObjVec_append(class->field_values, init_value, vm)) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
     }
 
     if (ObjMap_set(class->field_indexes, MAKE_OBJ(name), MAKE_I64(field_index), vm) == 0) {
-        class->field_initializers->count--;
+        class->field_values->count--;
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return;
     }
@@ -790,7 +790,7 @@ static void run(PyroVM* vm) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
                 }
-                if (!ObjVec_copy_entries(superclass->field_initializers, subclass->field_initializers, vm)) {
+                if (!ObjVec_copy_entries(superclass->field_values, subclass->field_values, vm)) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
                 }
