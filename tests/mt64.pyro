@@ -1,5 +1,4 @@
 assert $std::mt64::test();
-
 assert $is_class($std::mt64::MT64);
 
 var gen1 = $std::mt64::MT64();
@@ -7,3 +6,46 @@ assert $is_instance(gen1, $std::mt64::MT64);
 
 var gen2 = $std::mt64::MT64();
 assert $is_instance(gen2, $std::mt64::MT64);
+
+gen2:seed_with_hash(123);
+gen2:seed_with_array("foobarbaz");
+
+assert $is_f64(gen2:rand_float());
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+assert gen2:rand_float() >= 0.0 && gen2:rand_float() < 1.0;
+
+assert $is_i64(gen2:rand_int(3));
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+assert gen2:rand_int(3) >= 0 && gen2:rand_int(3) < 3;
+
+assert $is_i64(gen2:rand_int_in_range(-2, 2));
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
+assert gen2:rand_int_in_range(-2, 2) >= -2 && gen2:rand_int_in_range(-2, 2) < 2;
