@@ -454,4 +454,21 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm);
 // [vm->halt_flag] before relying on the result.
 ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* vm);
 
+/* ------------------- */
+/*  Resource Pointers  */
+/* ------------------- */
+
+// This object type is a wrapper for heap-allocated objects not managed by Pyro's garbage collector.
+// The garbage collector will call the callback function before freeing the object.
+
+typedef void (*pyro_free_rp_callback_t)(PyroVM* vm, void* pointer);
+
+typedef struct {
+    Obj obj;
+    void* pointer;
+    pyro_free_rp_callback_t callback;
+} ObjResourcePointer;
+
+ObjResourcePointer* ObjResourcePointer_new(void* pointer, pyro_free_rp_callback_t callback, PyroVM* vm);
+
 #endif

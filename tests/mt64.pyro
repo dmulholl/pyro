@@ -1,1 +1,3 @@
 assert $std::mt64::test();
+
+assert $is_class($std::mt64::MT64);

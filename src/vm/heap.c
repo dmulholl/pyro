@@ -130,6 +130,15 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
+        case OBJ_RESOURCE_POINTER: {
+            ObjResourcePointer* resource = (ObjResourcePointer*)object;
+            if (resource->callback) {
+                resource->callback(vm, resource->pointer);
+            }
+            FREE_OBJECT(vm, ObjResourcePointer, object);
+            break;
+        }
+
         case OBJ_STR: {
             ObjStr* string = (ObjStr*)object;
             ObjMap_remove(vm->strings, MAKE_OBJ(string), vm);

@@ -268,6 +268,9 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_MAP_AS_WEAKREF:
             break;
+
+        case OBJ_RESOURCE_POINTER:
+            break;
     }
 }
 

@@ -2068,3 +2068,20 @@ bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm) {
     queue->count--;
     return true;
 }
+
+
+/* ------------------- */
+/*  Resource Pointers  */
+/* ------------------- */
+
+
+ObjResourcePointer* ObjResourcePointer_new(void* pointer, pyro_free_rp_callback_t callback, PyroVM* vm) {
+    ObjResourcePointer* resource = ALLOCATE_OBJECT(vm, ObjResourcePointer, OBJ_RESOURCE_POINTER);
+    if (!resource) {
+        return NULL;
+    }
+    resource->obj.class = NULL; // TODO: create this class
+    resource->pointer = pointer;
+    resource->callback = callback;
+    return resource;
+}
