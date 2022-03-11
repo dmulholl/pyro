@@ -5,6 +5,8 @@
 #include "../lib/mt64/mt64.h"
 #include "../vm/setup.h"
 #include "../vm/panics.h"
+#include "../vm/io.h"
+#include "../vm/stringify.h"
 
 
 static Value fn_test_mt64(PyroVM* vm, size_t arg_count, Value* args) {
@@ -71,6 +73,20 @@ static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value blah(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjInstance* instance = AS_INSTANCE(args[-1]);
+
+    Value field = instance->fields[0];
+    ObjStr* string = pyro_stringify_value(vm, field);
+
+    pyro_write_stdout(vm, string->bytes);
+    pyro_write_stdout(vm, "\n");
+
+    return MAKE_NULL();
+}
+
+
+
 void pyro_load_std_mt64(PyroVM* vm) {
     ObjModule* mod_mt64 = pyro_define_module_2(vm, "$std", "mt64");
     if (!mod_mt64) {
@@ -92,6 +108,7 @@ void pyro_load_std_mt64(PyroVM* vm) {
     mt64_class->name = STR("MT64");
     pyro_define_member(vm, mod_mt64, "MT64", MAKE_OBJ(mt64_class));
 
-    pyro_define_field(vm, mt64_class, "generator", MAKE_NULL());
+    pyro_define_field(vm, mt64_class, "number", MAKE_I64(123));
+    pyro_define_method(vm, mt64_class, "hello", blah, 0);
 }
 

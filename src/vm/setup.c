@@ -371,7 +371,7 @@ bool pyro_define_field(PyroVM* vm, ObjClass* class, const char* name, Value defa
         return false;
     }
 
-    if (ObjMap_set(class->field_indexes, MAKE_OBJ(name), MAKE_I64(field_index), vm) == 0) {
+    if (ObjMap_set(class->field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
         class->field_values->count--;
         return false;
     }
