@@ -86,12 +86,13 @@ PyroVM* pyro_new_vm() {
     vm->panic_source_id = NULL;
     vm->panic_line_number = 0;
 
-    // Initialize the PRNG.
+    // Initialize the MT64 PRNG.
     vm->mt64 = pyro_mt64_new();
     if (!vm->mt64) {
         pyro_free_vm(vm);
         return NULL;
     }
+    vm->bytes_allocated += pyro_mt64_size();
 
     // We need to initialize these classes before we create any objects.
     vm->map_class = ObjClass_new(vm);
@@ -178,6 +179,7 @@ PyroVM* pyro_new_vm() {
 
     // Load individual standard library modules.
     pyro_load_std_math(vm);
+    pyro_load_std_mt64(vm);
     pyro_load_std_prng(vm);
     pyro_load_std_pyro(vm);
     pyro_load_std_errors(vm);
@@ -202,7 +204,11 @@ void pyro_free_vm(PyroVM* vm) {
     }
 
     FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity);
-    pyro_mt64_free(vm->mt64);
+
+    if (vm->mt64) {
+        pyro_mt64_free(vm->mt64);
+        vm->bytes_allocated -= pyro_mt64_size();
+    }
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);
@@ -346,6 +352,27 @@ bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn 
     }
 
     if (ObjMap_set(class->methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+        return false;
+    }
+
+    return true;
+}
+
+
+bool pyro_define_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
+    size_t field_index = class->field_values->count;
+
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
+        return false;
+    }
+
+    if (!ObjVec_append(class->field_values, default_value, vm)) {
+        return false;
+    }
+
+    if (ObjMap_set(class->field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
+        class->field_values->count--;
         return false;
     }
 

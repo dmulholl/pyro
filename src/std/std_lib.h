@@ -24,6 +24,7 @@ Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args);
 // Standard library modules.
 void pyro_load_std_errors(PyroVM* vm);
 void pyro_load_std_math(PyroVM* vm);
+void pyro_load_std_mt64(PyroVM* vm);
 void pyro_load_std_path(PyroVM* vm);
 void pyro_load_std_prng(PyroVM* vm);
 void pyro_load_std_pyro(PyroVM* vm);

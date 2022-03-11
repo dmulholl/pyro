@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro &mdash; Tuples</title>
+        <title>Pyro Standard Library &mdash; $std::mt64</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-builtins-tuples node-builtins node">
+    <body class="node-stdlib-mt64 node-stdlib node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -46,65 +46,90 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>Tuples</h1>
+                <h1><code>$std::mt64</code></h1>
                 
                 <hr>
             </header>
             <p>
-A tuple, <code>tup</code>, is an immutable array of values.
+This module uses the 64-bit <a href="https://en.wikipedia.org/wiki/Mersenne_Twister">Mersenne Twister</a> algorithm to generate pseudo-random numbers.
 </p>
+<p>
+The output of an <code>MT64</code> generator is completely deterministic and depends only on the initial seed value &mdash; i.e. the sequence of numbers generated will always be identical for a given seed.
+</p>
+<h3 id="classes">
+Classes
+</h3>
 <dl>
 <div>
 <dt>
-<code>$tup() -&gt; tup</code> <br> <code>$tup(arg1: any, arg2: any, ...) -&gt; tup</code>
+<code>MT64()</code> -&gt; <code>MT64</code>
 </dt>
 <dd>
 <p>
-Creates a new <code>tup</code> object.
-The arguments provide the tuple's values.
+Returns a new 64-bit Mersenne Twister object for generating pseudo-random numbers.
+The generator is automatically initialized with a random seed.
 </p>
 </dd>
 </div>
 </dl>
 <p>
-You can index into a tuple to get (but not set) entries:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">tup</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">tup</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
-</pre>
-<p>
-Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> method as shown.
-</p>
-<p>
-Tuples are iterable:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-<p>
-Tuples have the following methods:
+An <code>MT64</code> object supports the following methods:
 </p>
 <dl>
 <div>
 <dt>
-<code>:count() -&gt; i64</code>
+<code>:rand_float() -&gt; f64</code>
 </dt>
 <dd>
 <p>
-Returns the number of entries in the tuple.
+Returns a uniformly-distributed random float from the half-open interval <code>[0, 1)</code> &mdash; i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:get(index: i64) -&gt; any</code>
+<code>:rand_int(n: i64) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
+Returns a uniformly-distributed random integer from the half-open interval <code>[0, n)</code> &mdash; i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:rand_int_in_range(lower: i64, upper: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random integer from the half-open interval <code>[lower, upper)</code> &mdash; i.e. the interval from <code>lower</code> up to but not including <code>upper</code>.
+</p>
+<p>
+The arguments can be positive or negative or mixed as long as <code>lower</code> is less than or equal to <code>upper</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:seed_with_array(arg: buf|str)</code>
+</dt>
+<dd>
+<p>
+Seeds (or re-seeds) the generator using the content of a string or buffer, treated as an array of bytes.
+Uses up to the first 2,496 bytes of content.
+</p>
+<p>
+If <code>arg</code> contains less than 8 bytes of content, this falls back on calling <code>:seed_with_hash()</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:seed_with_hash(arg: any)</code>
+</dt>
+<dd>
+<p>
+Seeds (or re-seeds) the generator using the argument's 64-bit hash value.
 </p>
 </dd>
 </div>

@@ -1,0 +1,46 @@
+---
+title: <code>$std::mt64</code>
+meta_title: Pyro Standard Library &mdash; $std::mt64
+---
+
+[1]: https://en.wikipedia.org/wiki/Mersenne_Twister
+
+This module uses the 64-bit [Mersenne Twister][1] algorithm to generate pseudo-random numbers.
+
+The output of an `MT64` generator is completely deterministic and depends only on the initial seed value --- i.e. the sequence of numbers generated will always be identical for a given seed.
+
+
+
+### Classes
+
+[[ `MT64()` -> `MT64` ]]
+
+    Returns a new 64-bit Mersenne Twister object for generating pseudo-random numbers.
+    The generator is automatically initialized with a random seed.
+
+An `MT64` object supports the following methods:
+
+[[ `:rand_float() -> f64` ]]
+
+    Returns a uniformly-distributed random float from the half-open interval `[0, 1)` --- i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
+
+[[ `:rand_int(n: i64) -> i64` ]]
+
+    Returns a uniformly-distributed random integer from the half-open interval `[0, n)` --- i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
+
+[[ `:rand_int_in_range(lower: i64, upper: i64) -> i64` ]]
+
+    Returns a uniformly-distributed random integer from the half-open interval `[lower, upper)` --- i.e. the interval from `lower` up to but not including `upper`.
+
+    The arguments can be positive or negative or mixed as long as `lower` is less than or equal to `upper`.
+
+[[ `:seed_with_array(arg: buf|str)` ]]
+
+    Seeds (or re-seeds) the generator using the content of a string or buffer, treated as an array of bytes.
+    Uses up to the first 2,496 bytes of content.
+
+    If `arg` contains less than 8 bytes of content, this falls back on calling `:seed_with_hash()`.
+
+[[ `:seed_with_hash(arg: any)` ]]
+
+    Seeds (or re-seeds) the generator using the argument's 64-bit hash value.

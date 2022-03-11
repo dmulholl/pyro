@@ -39,6 +39,12 @@ struct MT64 {
 };
 
 
+// Returns the size of a generator.
+size_t pyro_mt64_size(void) {
+    return sizeof(MT64);
+}
+
+
 // Allocates a new generator.
 MT64* pyro_mt64_new(void) {
     MT64* mt = malloc(sizeof(MT64));

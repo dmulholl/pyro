@@ -174,39 +174,6 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 }
 
 
-// The method's ObjClosure will be sitting on top of the stack, the ObjClass just below it.
-static void define_method(PyroVM* vm, ObjStr* name) {
-    Value method_value = pyro_peek(vm, 0);
-    ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
-
-    if (ObjMap_set(class->methods, MAKE_OBJ(name), method_value, vm) == 0) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-    }
-
-    pyro_pop(vm);
-}
-
-
-// The field's initial value will be sitting on top of the stack, the class object just below it.
-static void define_field(PyroVM* vm, ObjStr* name) {
-    Value init_value = pyro_peek(vm, 0);
-    ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
-    size_t field_index = class->field_initializers->count;
-
-    if (!ObjVec_append(class->field_initializers, init_value, vm)) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return;
-    }
-
-    if (ObjMap_set(class->field_indexes, MAKE_OBJ(name), MAKE_I64(field_index), vm) == 0) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return;
-    }
-
-    pyro_pop(vm);
-}
-
-
 // Pops the receiver and replaces it with the bound method object.
 static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
     Value method;
@@ -493,7 +460,28 @@ static void run(PyroVM* vm) {
             }
 
             case OP_DEFINE_FIELD: {
-                define_field(vm, READ_STRING());
+                // The field's initial value will be sitting on top of the stack.
+                Value initial_value = pyro_peek(vm, 0);
+
+                // The class object will be on the stack just below the initial value.
+                ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
+                ObjStr* field_name = READ_STRING();
+                size_t field_index = class->field_values->count;
+
+                if (!ObjVec_append(class->field_values, initial_value, vm)) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    break;
+                }
+
+                if (ObjMap_set(class->field_indexes, MAKE_OBJ(field_name), MAKE_I64(field_index), vm) == 0) {
+                    class->field_values->count--;
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    break;
+                }
+
+                // Pop the initial value but leave the class object on the stack.
+                pyro_pop(vm);
                 break;
             }
 
@@ -789,7 +777,7 @@ static void run(PyroVM* vm) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
                 }
-                if (!ObjVec_copy_entries(superclass->field_initializers, subclass->field_initializers, vm)) {
+                if (!ObjVec_copy_entries(superclass->field_values, subclass->field_values, vm)) {
                     pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
                     break;
                 }
@@ -1028,7 +1016,21 @@ static void run(PyroVM* vm) {
             }
 
             case OP_DEFINE_METHOD: {
-                define_method(vm, READ_STRING());
+                // The method's ObjClosure will be sitting on top of the stack.
+                Value method = pyro_peek(vm, 0);
+
+                // The class object will be on the stack just below the method.
+                ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
+                ObjStr* name = READ_STRING();
+
+                if (ObjMap_set(class->methods, MAKE_OBJ(name), method, vm) == 0) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    break;
+                }
+
+                // Pop the method but leave the class behind on the stack.
+                pyro_pop(vm);
                 break;
             }
 

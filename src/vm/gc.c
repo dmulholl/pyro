@@ -145,7 +145,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             ObjClass* class = (ObjClass*)object;
             mark_object(vm, (Obj*)class->name);
             mark_object(vm, (Obj*)class->methods);
-            mark_object(vm, (Obj*)class->field_initializers);
+            mark_object(vm, (Obj*)class->field_values);
             mark_object(vm, (Obj*)class->field_indexes);
             mark_object(vm, (Obj*)class->superclass);
             break;
@@ -177,7 +177,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             mark_object(vm, (Obj*)instance->obj.class);
-            int num_fields = instance->obj.class->field_initializers->count;
+            int num_fields = instance->obj.class->field_values->count;
             for (int i = 0; i < num_fields; i++) {
                 mark_value(vm, instance->fields[i]);
             }
@@ -267,6 +267,9 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         }
 
         case OBJ_MAP_AS_WEAKREF:
+            break;
+
+        case OBJ_RESOURCE_POINTER:
             break;
     }
 }

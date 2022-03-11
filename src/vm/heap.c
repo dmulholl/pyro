@@ -88,7 +88,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
-            int num_fields = instance->obj.class->field_initializers->count;
+            int num_fields = instance->obj.class->field_values->count;
             pyro_realloc(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(Value), 0);
             break;
         }
@@ -127,6 +127,15 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
                 pyro_realloc(vm, current_item, sizeof(QueueItem), 0);
             }
             FREE_OBJECT(vm, ObjQueue, object);
+            break;
+        }
+
+        case OBJ_RESOURCE_POINTER: {
+            ObjResourcePointer* resource = (ObjResourcePointer*)object;
+            if (resource->callback) {
+                resource->callback(vm, resource->pointer);
+            }
+            FREE_OBJECT(vm, ObjResourcePointer, object);
             break;
         }
 

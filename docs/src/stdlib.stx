@@ -23,6 +23,7 @@ Alternatively, you can explicitly import the submodule you want to use, e.g.
 
 * [errors](@root/stdlib/errors//)
 * [math](@root/stdlib/math//)
+* [mt64](@root/stdlib/mt64//)
 * [path](@root/stdlib/path//)
 * [prng](@root/stdlib/prng//)
 * [pyro](@root/stdlib/pyro//)
