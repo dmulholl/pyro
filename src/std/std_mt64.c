@@ -79,24 +79,24 @@ static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value mt64_init(PyroVM* vm, size_t arg_count, Value* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
-    instance->fields[0] = MAKE_I64(999);
 
+    MT64* mt64 = pyro_mt64_new();
+    if (!mt64) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+
+    ObjResourcePointer* resource = ObjResourcePointer_new(mt64, NULL, vm);
+    if (!resource) {
+        pyro_mt64_free(mt64);
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    /* vm->bytes_allocated += pyro_mt64_size(); */
+
+    instance->fields[0] = MAKE_OBJ(resource);
     return MAKE_OBJ(instance);
 }
-
-
-static Value blah(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
-
-    Value field = instance->fields[0];
-    ObjStr* string = pyro_stringify_value(vm, field);
-
-    pyro_write_stdout(vm, string->bytes);
-    pyro_write_stdout(vm, "\n");
-
-    return MAKE_NULL();
-}
-
 
 
 void pyro_load_std_mt64(PyroVM* vm) {
@@ -121,6 +121,5 @@ void pyro_load_std_mt64(PyroVM* vm) {
     pyro_define_member(vm, mod_mt64, "MT64", MAKE_OBJ(mt64_class));
 
     pyro_define_field(vm, mt64_class, "generator", MAKE_NULL());
-    pyro_define_method(vm, mt64_class, "hello", blah, 0);
     pyro_define_method(vm, mt64_class, "$init", mt64_init, 0);
 }

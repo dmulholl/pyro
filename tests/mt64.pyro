@@ -1,3 +1,6 @@
 assert $std::mt64::test();
 
 assert $is_class($std::mt64::MT64);
+
+var generator = $std::mt64::MT64();
+assert $is_instance(generator, $std::mt64::MT64);
