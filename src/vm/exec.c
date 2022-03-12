@@ -84,9 +84,9 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 }
                 vm->stack_top[-arg_count - 1] = MAKE_OBJ(instance);
 
-                Value initializer;
-                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_init), &initializer, vm)) {
-                    call_value(vm, initializer, arg_count);
+                Value init_method;
+                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_init), &init_method, vm)) {
+                    call_value(vm, init_method, arg_count);
                 } else if (arg_count != 0) {
                     pyro_panic(
                         vm, ERR_ARGS_ERROR,
