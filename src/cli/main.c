@@ -11,6 +11,7 @@ static const char* HELPTEXT =
     "\n"
     "Options:\n"
     "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
+    "                             (This option can be used multiple times.)\n"
     "  -m, --max-memory <int>     Sets the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"

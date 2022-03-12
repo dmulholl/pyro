@@ -180,10 +180,11 @@ ObjModule* ObjModule_new(PyroVM* vm);
 
 typedef struct {
     Obj obj;
-    size_t upvalue_count;
     ObjStr* name;
+    size_t upvalue_count;
 
-    // Typically, the name of the file that contained the function.
+    // The function's [source_id] is used in error messages to identify the function's source.
+    // Typically, it will be the name of the file that contained the function.
     ObjStr* source_id;
 
     // The number of arguments required by the function.
@@ -231,17 +232,17 @@ size_t ObjFn_get_line_number(ObjFn* fn, size_t ip);
 /* ---------------- */
 
 // Signature definition for Pyro functions and methods natively implemented in C.
-typedef Value (*NativeFn)(PyroVM* vm, size_t arg_count, Value* args);
+typedef Value (*pyro_native_fn_t)(PyroVM* vm, size_t arg_count, Value* args);
 
 // [arity = -1] means that the function accepts a variable number of arguments.
 typedef struct {
     Obj obj;
-    NativeFn fn_ptr;
     ObjStr* name;
+    pyro_native_fn_t fn_ptr;
     int arity;
 } ObjNativeFn;
 
-ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int arity);
+ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* name, int arity);
 
 /* ------- */
 /* Classes */
@@ -249,11 +250,21 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, NativeFn fn_ptr, const char* name, int 
 
 struct ObjClass {
     Obj obj;
+
+    // The class's name, if it has one. Note that this field can be NULL.
+    ObjStr* name;
+
+    // The class's superclass, if it has one. Note that this field can be NULL.
+    ObjClass* superclass;
+
+    // Maps string names to [ObjFn] or [ObjNativeFn] values.
     ObjMap* methods;
+
+    // Stores the default/initial values for fields. Each [ObjInstance] gets a copy of this vector.
     ObjVec* field_values;
+
+    // Maps string names to indexes in the [field_values] vector.
     ObjMap* field_indexes;
-    ObjStr* name;                       // Can be NULL.
-    ObjClass* superclass;               // Can be NULL.
 };
 
 ObjClass* ObjClass_new(PyroVM* vm);

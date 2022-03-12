@@ -50,7 +50,7 @@ bool pyro_define_global(PyroVM* vm, const char* name, Value value);
 
 // Creates a new VM-level global variable pointing to a native function. Returns true on success,
 // false if memory could not be allocated.
-bool pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity);
+bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new member to [module], i.e. creates a module-level global variable called [name] with
 // initial value [value]. Returns true on success, false if memory could not be allocated.
@@ -58,10 +58,10 @@ bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value v
 
 // Convenience function for adding a new member to [module] where the value is a native function.
 // Returns true on success, false if memory could not be allocated.
-bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity);
+bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new method to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity);
+bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new field to the class. Returns true on success, false if memory could not be allocated.
 bool pyro_define_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value);

@@ -331,7 +331,7 @@ bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value v
 }
 
 
-bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, NativeFn fn_ptr, int arity) {
+bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity) {
     ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
     if (!func_object) {
         return false;
@@ -340,7 +340,7 @@ bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, Nati
 }
 
 
-bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, NativeFn fn_ptr, int arity) {
+bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity) {
     ObjStr* name_string = STR(name);
     if (!name_string) {
         return false;
@@ -394,7 +394,7 @@ bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
 }
 
 
-bool pyro_define_global_fn(PyroVM* vm, const char* name, NativeFn fn_ptr, int arity) {
+bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr, int arity) {
     ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
     if (!func_object) {
         return false;
