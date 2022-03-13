@@ -5,7 +5,7 @@
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 6
 #define PYRO_VERSION_PATCH 4
-#define PYRO_VERSION_LABEL "dev"
+#define PYRO_VERSION_LABEL ""
 
 // Utility for converting a macro's value into a string constant.
 #define PYRO_STRINGIFY(macro) PYRO_STRINGIFY_QUOTE(macro)
