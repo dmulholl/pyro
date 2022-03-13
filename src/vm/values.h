@@ -50,7 +50,7 @@ typedef enum {
 } ObjType;
 
 // The VM maintains a linked list of all heap-allocated objects using the [next] pointers.
-// Not ever object has an associated class so [class] can be NULL.
+// Not every object has an associated class so [class] can be NULL.
 struct Obj {
     Obj* next;
     ObjClass* class;
