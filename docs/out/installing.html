@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Installing Pyro</title>
+        <title>Pyro &mdash; Installation Instructions</title>
         <link rel="stylesheet" href="assets/fonts.css">
         <link rel="stylesheet" href="assets/graphite.css">
         <link rel="stylesheet" href="assets/pygments.css">
@@ -61,14 +61,25 @@ First, download the Pyro repository from Github:
 $ git clone https://github.com/dmulholl/pyro.git
 </pre>
 <p>
-<code>cd</code> into the <code>pyro</code> directory and run <code>make install</code>:
+<code>cd</code> into the <code>pyro</code> directory and run <code>make</code> to build the binary, then <code>make install</code> to install it:
 </p>
 <pre>
-$ sudo make install
+$ make
+$ make install
 </pre>
 <p>
-This installs the Pyro binary as <code>/usr/local/bin/pyro</code>.
-(You may need to use <code>sudo</code> to give Make permission to access this folder.)
+This copies the <code>pyro</code> binary to the <code>/usr/local/bin/</code> directory.
+(You may need to run <code>sudo make install</code> to access this directory.)
+</p>
+<p>
+You can now run Pyro like any other installed binary:
+</p>
+<pre>
+$ pyro
+</pre>
+<p>
+Running Pyro without a script argument launches the REPL &mdash; an interactive environment where you can try running Pyro commands directly.
+Type <code>exit</code> or hit <code>Ctrl-D</code> to end the REPL session.
 </p>
         </article>
         
