@@ -31,16 +31,16 @@ FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES}
 # Optimized release build.
 release:: ${OBJ_FILES}
 	@mkdir -p out/release
-	@printf "\e[1;32m  Building\e[0m out/release/pyro\n"
+	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES) -lm -ldl -pthread
-	@printf "\e[1;32m   Version\e[0m " && ./out/release/pyro --version
+	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 # Unoptimized debug build.
 debug:: ${OBJ_FILES}
 	@mkdir -p out/debug
-	@printf "\e[1;32m  Building\e[0m out/debug/pyro\n"
+	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
 	@$(CC) $(CFLAGS) -D DEBUG $(DEBUG_FLAGS) -o out/debug/pyro $(FILES) -lm -ldl -pthread
-	@printf "\e[1;32m   Version\e[0m " && ./out/debug/pyro --version
+	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 # Default debug build. Assertions are checked and the GC is run before every allocation.
 debug1::
@@ -65,13 +65,13 @@ debug5::
 # Runs the standard debug build, then runs the test suite.
 check::
 	@make debug
-	@printf "\e[1;32m   Running\e[0m test suite\n\n"
+	@printf "\e[1;32m Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
 
 install::
-	@make release
-	@printf "\e[1;32mInstalling\e[0m /usr/local/bin/pyro\n"
-	@cp ./out/release/pyro /usr/local/bin/pyro
+	@printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"
+	@if [ -f .out/release/pyro ]; then cp .out/release/pyro /usr/local/bin/pyro; fi
+	@if [ ! -f ./out/release/pyro ]; then printf "\e[1;31m   Error\e[0m the file out/release/pyro does not exist\n"; fi
 
 clean::
 	rm -rf ./out/*
@@ -84,5 +84,5 @@ sqlite:: out/lib/sqlite.o
 
 out/lib/sqlite.o:
 	@mkdir -p out/lib
-	@printf "\e[1;32m  Building\e[0m sqlite\n"
+	@printf "\e[1;32mBuilding\e[0m sqlite\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/sqlite/sqlite3.c -o out/lib/sqlite.o
