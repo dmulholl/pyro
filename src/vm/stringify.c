@@ -795,7 +795,6 @@ static ObjStr* format_char(PyroVM* vm, Value value, const char* format_string) {
 
 static ObjStr* format_f64(PyroVM* vm, Value value, const char* format_string) {
     char buffer[24] = {'%'};
-    size_t buffer_count = 1;
 
     size_t format_string_length = strlen(format_string);
     if (format_string_length > 16) {
@@ -804,7 +803,6 @@ static ObjStr* format_f64(PyroVM* vm, Value value, const char* format_string) {
     }
 
     memcpy(&buffer[1], format_string, format_string_length);
-    buffer_count += format_string_length;
 
     switch (format_string[format_string_length - 1]) {
         case 'a':
