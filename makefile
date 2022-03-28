@@ -69,9 +69,9 @@ check::
 	@./out/debug/pyro test ./tests/*.pyro
 
 install::
-	@printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"
-	@if [ -f .out/release/pyro ]; then cp .out/release/pyro /usr/local/bin/pyro; fi
-	@if [ ! -f ./out/release/pyro ]; then printf "\e[1;31m   Error\e[0m the file out/release/pyro does not exist\n"; fi
+	@if [ ! -f ./out/release/pyro ]; then make release; fi
+	@if [ -f ./out/release/pyro ]; then printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"; fi
+	@if [ -f ./out/release/pyro ]; then cp ./out/release/pyro /usr/local/bin/pyro; fi
 
 clean::
 	rm -rf ./out/*
