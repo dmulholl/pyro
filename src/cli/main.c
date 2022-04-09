@@ -2,7 +2,7 @@
 
 
 static const char* HELPTEXT =
-    "Usage: pyro [file]\n"
+    "Usage: pyro [file|command]\n"
     "\n"
     "  The Pyro programming language.\n"
     "\n"
