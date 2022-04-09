@@ -117,7 +117,9 @@ void pyro_run_repl(ArgParser* parser) {
     // Add the current working directory to the list of import roots.
     pyro_add_import_root(vm, ".");
 
-    printf("Pyro %s -- Type 'exit' to quit.\n", PYRO_VERSION_STRING);
+    char* version = pyro_get_version_string();
+    printf("Pyro %s -- Type 'exit' to quit.\n", version);
+    free(version);
 
     char* code = NULL;
     size_t code_count = 0;

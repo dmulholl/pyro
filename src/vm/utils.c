@@ -323,3 +323,50 @@ bool pyro_parse_string_as_float(const char* string, size_t length, double* value
 
     return true;
 }
+
+char* pyro_get_version_string(void) {
+    char* format_string;
+
+    if (strlen(PYRO_VERSION_LABEL) > 0) {
+        if (strlen(PYRO_VERSION_BUILD) > 0) {
+            format_string = "v%d.%d.%d-%s (%s)";
+        } else {
+            format_string = "v%d.%d.%d-%s";
+        }
+    } else {
+        if (strlen(PYRO_VERSION_BUILD) > 0) {
+            format_string = "v%d.%d.%d %.0s(%s)";
+        } else {
+            format_string = "v%d.%d.%d";
+        }
+    }
+
+    int length = snprintf(
+        NULL,
+        0,
+        format_string,
+        PYRO_VERSION_MAJOR,
+        PYRO_VERSION_MINOR,
+        PYRO_VERSION_PATCH,
+        PYRO_VERSION_LABEL,
+        PYRO_VERSION_BUILD
+    );
+
+    char* version_string = malloc(length + 1);
+    if (!version_string) {
+        return NULL;
+    }
+
+    snprintf(
+        version_string,
+        length + 1,
+        format_string,
+        PYRO_VERSION_MAJOR,
+        PYRO_VERSION_MINOR,
+        PYRO_VERSION_PATCH,
+        PYRO_VERSION_LABEL,
+        PYRO_VERSION_BUILD
+    );
+
+    return version_string;
+}

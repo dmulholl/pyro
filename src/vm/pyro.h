@@ -4,29 +4,17 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 6
-#define PYRO_VERSION_PATCH 4
-#define PYRO_VERSION_LABEL ""
+#define PYRO_VERSION_PATCH 5
 
-// Utility for converting a macro's value into a string constant.
-#define PYRO_STRINGIFY(macro) PYRO_STRINGIFY_QUOTE(macro)
-#define PYRO_STRINGIFY_QUOTE(name) #name
+// Pre-release label, e.g. "alpha1", "beta2", "rc3".
+#ifndef PYRO_VERSION_LABEL
+    #define PYRO_VERSION_LABEL ""
+#endif
 
-// Language version as a string constant.
-#define PYRO_VERSION_STRING \
-    strlen(PYRO_VERSION_LABEL) > 0 ? \
-        PYRO_STRINGIFY(PYRO_VERSION_MAJOR) \
-        "." \
-        PYRO_STRINGIFY(PYRO_VERSION_MINOR) \
-        "." \
-        PYRO_STRINGIFY(PYRO_VERSION_PATCH) \
-        "-" \
-        PYRO_VERSION_LABEL \
-    : \
-        PYRO_STRINGIFY(PYRO_VERSION_MAJOR) \
-        "." \
-        PYRO_STRINGIFY(PYRO_VERSION_MINOR) \
-        "." \
-        PYRO_STRINGIFY(PYRO_VERSION_PATCH)
+// Build label, e.g. "release", "debug".
+#ifndef PYRO_VERSION_BUILD
+    #define PYRO_VERSION_BUILD ""
+#endif
 
 // Selects the hash function for strings.
 #ifndef PYRO_STRING_HASH

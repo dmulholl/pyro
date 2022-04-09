@@ -37,4 +37,8 @@ bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value)
 // false if the string was invalid.
 bool pyro_parse_string_as_float(const char* string, size_t length, double* value);
 
+// Dynamically assembles and returns a version string. The caller should free the string using
+// free().
+char* pyro_get_version_string(void);
+
 #endif

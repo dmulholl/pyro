@@ -4,22 +4,19 @@
 
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -Wno-unused-parameter -Wno-unused-function
 
-DEBUG_1 = -D PYRO_DEBUG_STRESS_GC
+RELEASE_FLAGS = -O3 -D NDEBUG -D PYRO_VERSION_BUILD='"release"'
+DEBUG_FLAGS = -D DEBUG -D PYRO_VERSION_BUILD='"debug"'
 
-DEBUG_2 = $(DEBUG_1) -D PYRO_DEBUG_DUMP_BYTECODE
+DEBUG_LEVEL_1 = -D PYRO_DEBUG_STRESS_GC
+DEBUG_LEVEL_2 = -D PYRO_DEBUG_STRESS_GC -D PYRO_DEBUG_DUMP_BYTECODE
+DEBUG_LEVEL_3 = -D PYRO_DEBUG_STRESS_GC -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION
+DEBUG_LEVEL_4 = -D PYRO_DEBUG_STRESS_GC -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION \
+				-D PYRO_DEBUG_LOG_GC
 
-DEBUG_3 = $(DEBUG_1) -D PYRO_DEBUG_TRACE_EXECUTION
-
-DEBUG_4 = $(DEBUG_1) -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION
-
-DEBUG_5 = $(DEBUG_4) -D PYRO_DEBUG_LOG_GC
-
-DEBUG_FLAGS = ${DEBUG_1}
+DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/vm/*.c src/std/*.c src/cli/*.c
-
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
-
 OBJ_FILES = out/lib/sqlite.o
 
 FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES}
@@ -32,35 +29,31 @@ FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES}
 release:: ${OBJ_FILES}
 	@mkdir -p out/release
 	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -o out/release/pyro $(FILES) -lm -ldl -pthread
+	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 # Unoptimized debug build.
 debug:: ${OBJ_FILES}
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
-	@$(CC) $(CFLAGS) -D DEBUG $(DEBUG_FLAGS) -o out/debug/pyro $(FILES) -lm -ldl -pthread
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
-# Default debug build. Assertions are checked and the GC is run before every allocation.
+# Default debug build. Assertions are checked and the GC is run before every instruction.
 debug1::
-	@make debug DEBUG_FLAGS="${DEBUG_1}"
+	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_1}"
 
 # Debug build. Dumps bytecode.
 debug2::
-	@make debug DEBUG_FLAGS="${DEBUG_2}"
-
-# Debug build. Traces execution.
-debug3::
-	@make debug DEBUG_FLAGS="${DEBUG_3}"
+	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_2}"
 
 # Debug build. Dumps bytecode and traces execution.
-debug4::
-	@make debug DEBUG_FLAGS="${DEBUG_4}"
+debug3::
+	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_3}"
 
 # Debug build. Dumps bytecode, traces execution, and logs the GC.
-debug5::
-	@make debug DEBUG_FLAGS="${DEBUG_5}"
+debug4::
+	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_4}"
 
 # Runs the standard debug build, then runs the test suite.
 check::

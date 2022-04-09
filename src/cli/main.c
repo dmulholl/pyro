@@ -111,8 +111,11 @@ int main(int argc, char* argv[]) {
         exit(2);
     }
 
+    char* version_string = pyro_get_version_string();
+    ap_version(parser, version_string);
+    free(version_string);
+
     ap_helptext(parser, HELPTEXT);
-    ap_version(parser, PYRO_VERSION_STRING);
     ap_str_opt(parser, "max-memory m", NULL);
     ap_str_opt(parser, "import-root i", NULL);
     ap_first_pos_arg_ends_options(parser, true);

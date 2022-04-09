@@ -78,20 +78,25 @@ void pyro_load_std_pyro(PyroVM* vm) {
         return;
     }
 
-    ObjTup* version_tuple = ObjTup_new(3, vm);
+    ObjTup* version_tuple = ObjTup_new(5, vm);
     if (!version_tuple) {
         return;
     }
     version_tuple->values[0] = MAKE_I64(PYRO_VERSION_MAJOR);
     version_tuple->values[1] = MAKE_I64(PYRO_VERSION_MINOR);
     version_tuple->values[2] = MAKE_I64(PYRO_VERSION_PATCH);
-    pyro_define_member(vm, mod_pyro, "version", MAKE_OBJ(version_tuple));
+    version_tuple->values[3] = MAKE_OBJ(STR(PYRO_VERSION_LABEL));
+    version_tuple->values[4] = MAKE_OBJ(STR(PYRO_VERSION_BUILD));
+    pyro_define_member(vm, mod_pyro, "version_tuple", MAKE_OBJ(version_tuple));
 
-    ObjStr* version_string = STR(PYRO_VERSION_STRING);
-    if (!version_string) {
-        return;
+    char* version_c_string = pyro_get_version_string();
+    if (version_c_string) {
+        ObjStr* version_pyro_string = STR(version_c_string);
+        if (!version_pyro_string) {
+            return;
+        }
+        pyro_define_member(vm, mod_pyro, "version_string", MAKE_OBJ(version_pyro_string));
     }
-    pyro_define_member(vm, mod_pyro, "version_string", MAKE_OBJ(version_string));
 
     pyro_define_member_fn(vm, mod_pyro, "memory", fn_memory, 0);
     pyro_define_member_fn(vm, mod_pyro, "gc", fn_memory, 0);
