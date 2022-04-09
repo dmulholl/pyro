@@ -3,6 +3,9 @@ title: <code>$std::pyro</code>
 meta_title: Pyro Standard Library &mdash; $std::pyro
 ---
 
+[1]: https://semver.org
+
+
 A utility module for interacting with the Pyro VM.
 
 
@@ -13,6 +16,11 @@ A utility module for interacting with the Pyro VM.
 [[ `version_tuple: tup[i64, i64, i64, str, str]` ]]
 
     The language version as a tuple containing `(MAJOR, MINIOR, PATCH, LABEL, BUILD)` elements.
+
+    * `MAJOR`, `MINOR`, and `PATCH` are [semver][1] integers.
+    * `LABEL` is an optional string containing a pre-release label, e.g. `alpha1`, `beta2`, `rc3`.
+    * `BUILD` is an optional string containing build information, e.g. `release`, `debug`.
+
 
 [[ `version_string: str` ]]
 
