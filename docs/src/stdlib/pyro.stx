@@ -10,9 +10,9 @@ A utility module for interacting with the Pyro VM.
 ### Constants
 
 
-[[ `version: tup[i64, i64, i64]` ]]
+[[ `version_tuple: tup[i64, i64, i64, str, str]` ]]
 
-    The language version as a three-item tuple containing `(MAJOR, MINIOR, PATCH)` integers.
+    The language version as a tuple containing `(MAJOR, MINIOR, PATCH, LABEL, BUILD)` elements.
 
 [[ `version_string: str` ]]
 

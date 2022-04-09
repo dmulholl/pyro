@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.4</p>
+                <p class="version">Version 0.6.5</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -60,11 +60,11 @@ Constants
 <dl>
 <div>
 <dt>
-<code>version: tup[i64, i64, i64]</code>
+<code>version_tuple: tup[i64, i64, i64, str, str]</code>
 </dt>
 <dd>
 <p>
-The language version as a three-item tuple containing <code>(MAJOR, MINIOR, PATCH)</code> integers.
+The language version as a tuple containing <code>(MAJOR, MINIOR, PATCH, LABEL, BUILD)</code> elements.
 </p>
 </dd>
 </div>

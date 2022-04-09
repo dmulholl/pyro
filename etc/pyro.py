@@ -1,6 +1,10 @@
 # Pygments lexer for the Pyro programming language.
 # v0.3.0
 
+# 1. Add this file to pygments/lexers/
+# 2. cd pygments/formatters && python _mapping.py
+# 3. cd pygments/lexers && python _mapping.py
+
 import re
 
 from pygments.lexer import RegexLexer, words
