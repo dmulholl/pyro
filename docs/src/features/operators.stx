@@ -12,20 +12,20 @@ Operator precedence in the table below goes from high at the top to low at the b
 
 ::: table
 
-    Level            |   Operators                      |   Associativity
-    ---------------------------------------------------------------------
+    Level            |   Operators                                |   Associativity
+    -------------------------------------------------------------------------------
 
-    Call             |   `()` `.` `:` `::`              |   Left
-    Power            |   `**`                           |   Right
-    Unary            |   `!` `+` `-` `~` `try`          |   Right
-    Bitwise          |   `&` `\|` `^` `>>` `<<`         |   Left
-    Multiplication   |   `*` `/` `//` `%`               |   Left
-    Addition         |   `+` `-`                        |   Left
-    Comparison       |   `>` `>=` `<` `<=`              |   Left
-    Equality         |   `==` `!=`                      |   Left
-    Logical          |   `&&` `\|\|` `??` `!!`          |   Left
-    Conditional      |   `? :\|`                        |   None
-    Assignment       |   `=` `+=` `-=`                  |   Right
+    Call             |   `()` `.` `:` `::`                        |   Left
+    Power            |   `**`                                     |   Right
+    Unary            |   `!` `+` `-` `~` `try`                    |   Right
+    Bitwise          |   `&` <code>&#124;</code> `^` `>>` `<<`    |   Left
+    Multiplication   |   `*` `/` `//` `%`                         |   Left
+    Addition         |   `+` `-`                                  |   Left
+    Comparison       |   `>` `>=` `<` `<=`                        |   Left
+    Equality         |   `==` `!=`                                |   Left
+    Logical          |   `&&` <code>&#124;&#124;</code> `??` `!!` |   Left
+    Conditional      |   <code>? :&#124;</code>                   |   None
+    Assignment       |   `=` `+=` `-=`                            |   Right
 
 
 Note that conditional expressions using the ternary operator `? :|` can't be nested. (Checkmate, Satan.)

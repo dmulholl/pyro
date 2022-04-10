@@ -26,20 +26,20 @@ Regular string literals use double quotes:
 Regular string literals process all the usual backslashed escapes:
 
 ::: table
-    `\\\\` | backslash
-    `\\0` | null byte
-    `\\"` | double quote
-    `\\'` | single quote
-    `\\b` | backspace
-    `\\e` | escape
-    `\\f` | form feed
-    `\\n` | newline
-    `\\r` | carriage return
-    `\\t` | tab
-    `\\v` | vertical tab
-    `\\x##` | 8-bit hex-encoded byte value
-    `\\u####` | 16-bit hex-encoded unicode code point (output as UTF-8)
-    `\\U########` | 32-bit hex-encoded unicode code point (output as UTF-8)
+    `\\` | backslash
+    `\0` | null byte
+    `\"` | double quote
+    `\'` | single quote
+    `\b` | backspace
+    `\e` | escape
+    `\f` | form feed
+    `\n` | newline
+    `\r` | carriage return
+    `\t` | tab
+    `\v` | vertical tab
+    `\x##` | 8-bit hex-encoded byte value
+    `\u####` | 16-bit hex-encoded unicode code point (output as UTF-8)
+    `\U########` | 32-bit hex-encoded unicode code point (output as UTF-8)
 
 Raw string literals use backticks:
 
@@ -255,5 +255,5 @@ Strings have the following methods:
 [[ `:to_hex() -> str` ]]
 
     Returns a new string containing the hex-escaped byte values from the orginal string ---
-    e.g. `\`foo\`` becomes `\`\x66\x6F\x6F\``.
+    e.g. ``<code>`foo`</code>`` becomes ``<code>`\x66\x6F\x6F`</code>``.
     Useful for inspecting and debugging Unicode.
