@@ -726,37 +726,6 @@ void ap_free(ArgParser* parser) {
 }
 
 
-void ap_helptext(ArgParser* parser, const char* helptext) {
-    free(parser->helptext);
-    parser->helptext = NULL;
-
-    if (helptext) {
-        parser->helptext = str_dup(helptext);
-        if (!parser->helptext) {
-            parser->had_memory_error = true;
-        }
-    }
-}
-
-
-void ap_version(ArgParser* parser, const char* version) {
-    free(parser->version);
-    parser->version = NULL;
-
-    if (version) {
-        parser->version = str_dup(version);
-        if (!parser->version) {
-            parser->had_memory_error = true;
-        }
-    }
-}
-
-
-void ap_first_pos_arg_ends_options(ArgParser* parser, bool enable) {
-    parser->first_positional_arg_ends_options = enable;
-}
-
-
 static void ap_set_memory_error_flag(ArgParser* parser) {
     parser->had_memory_error = true;
 
@@ -765,6 +734,47 @@ static void ap_set_memory_error_flag(ArgParser* parser) {
         parent->had_memory_error = true;
         parent = parent->parent;
     }
+}
+
+
+void ap_set_helptext(ArgParser* parser, const char* helptext) {
+    free(parser->helptext);
+    parser->helptext = NULL;
+
+    if (helptext) {
+        parser->helptext = str_dup(helptext);
+        if (!parser->helptext) {
+            ap_set_memory_error_flag(parser);
+        }
+    }
+}
+
+
+char* ap_get_helptext(ArgParser* parser) {
+    return parser->helptext;
+}
+
+
+void ap_set_version(ArgParser* parser, const char* version) {
+    free(parser->version);
+    parser->version = NULL;
+
+    if (version) {
+        parser->version = str_dup(version);
+        if (!parser->version) {
+            ap_set_memory_error_flag(parser);
+        }
+    }
+}
+
+
+char* ap_get_version(ArgParser* parser) {
+    return parser->version;
+}
+
+
+void ap_first_pos_arg_ends_options(ArgParser* parser, bool enable) {
+    parser->first_positional_arg_ends_options = enable;
 }
 
 
@@ -1054,12 +1064,6 @@ void ap_enable_help_command(ArgParser* parser, bool enable) {
 }
 
 
-// Deprecated.
-void ap_cmd_help(ArgParser* parser, bool enable) {
-    parser->enable_help_command = enable;
-}
-
-
 /* --------------------------- */
 /* ArgParser: parse arguments. */
 /* --------------------------- */
@@ -1313,4 +1317,24 @@ void ap_print(ArgParser* parser) {
     } else {
         puts("  [none]");
     }
+}
+
+
+/* --------------------- */
+/* Deprecated functions. */
+/* --------------------- */
+
+
+void ap_cmd_help(ArgParser* parser, bool enable) {
+    ap_enable_help_command(parser, enable);
+}
+
+
+void ap_helptext(ArgParser* parser, const char* helptext) {
+    ap_set_helptext(parser, helptext);
+}
+
+
+void ap_version(ArgParser* parser, const char* version) {
+    ap_set_version(parser, version);
 }

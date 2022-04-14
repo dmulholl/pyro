@@ -112,10 +112,10 @@ int main(int argc, char* argv[]) {
     }
 
     char* version_string = pyro_get_version_string();
-    ap_version(parser, version_string);
+    ap_set_version(parser, version_string);
     free(version_string);
 
-    ap_helptext(parser, HELPTEXT);
+    ap_set_helptext(parser, HELPTEXT);
     ap_str_opt(parser, "max-memory m", NULL);
     ap_str_opt(parser, "import-root i", NULL);
     ap_first_pos_arg_ends_options(parser, true);
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
         exit(2);
     }
 
-    ap_helptext(test_cmd_parser, TEST_HELPTEXT);
+    ap_set_helptext(test_cmd_parser, TEST_HELPTEXT);
     ap_callback(test_cmd_parser, pyro_cmd_test);
     ap_flag(test_cmd_parser, "verbose v");
     ap_str_opt(test_cmd_parser, "max-memory m", NULL);
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
         exit(2);
     }
 
-    ap_helptext(time_cmd_parser, TIME_HELPTEXT);
+    ap_set_helptext(time_cmd_parser, TIME_HELPTEXT);
     ap_callback(time_cmd_parser, pyro_cmd_time);
     ap_str_opt(time_cmd_parser, "max-memory m", NULL);
     ap_str_opt(time_cmd_parser, "import-root i", NULL);
@@ -153,7 +153,7 @@ int main(int argc, char* argv[]) {
         exit(2);
     }
 
-    ap_helptext(check_cmd_parser, CHECK_HELPTEXT);
+    ap_set_helptext(check_cmd_parser, CHECK_HELPTEXT);
     ap_callback(check_cmd_parser, pyro_cmd_check);
 
     // Parse the command line arguments.
