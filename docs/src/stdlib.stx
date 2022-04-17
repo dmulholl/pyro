@@ -21,10 +21,30 @@ Alternatively, you can explicitly import the submodule you want to use, e.g.
 
 ### Standard Library Modules
 
-* [errors](@root/stdlib/errors//)
-* [math](@root/stdlib/math//)
-* [mt64](@root/stdlib/mt64//)
-* [path](@root/stdlib/path//)
-* [prng](@root/stdlib/prng//)
-* [pyro](@root/stdlib/pyro//)
-* [sqlite](@root/stdlib/sqlite//)
+[[ [errors](@root/stdlib/errors//) ]]
+
+    Standard error codes.
+
+[[ [math](@root/stdlib/math//) ]]
+
+    Mathematical functions.
+
+[[ [mt64](@root/stdlib/mt64//) ]]
+
+    A library for generating pseudo-random numbers.
+
+[[ [path](@root/stdlib/path//) ]]
+
+    Filepath utilities.
+
+[[ [prng](@root/stdlib/prng//) ]]
+
+    Convenience functions for generating pseudo-random numbers.
+
+[[ [pyro](@root/stdlib/pyro//) ]]
+
+    A utility module for interacting with the Pyro VM.
+
+[[ [sqlite](@root/stdlib/sqlite//) ]]
+
+    The SQLite database engine.
