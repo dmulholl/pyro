@@ -260,8 +260,11 @@ This method should return a string representation of the instance formatted acco
 </dt>
 <dd>
 <p>
-Implementing this method adds support for index-style read access to instances.
+Implementing this method adds support for index-style read access to instances, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+</pre>
 </dd>
 </div>
 <div>
@@ -436,8 +439,11 @@ Implementing this method overloads the unary <code>+</code> operator for express
 </dt>
 <dd>
 <p>
-Implementing this method adds support for index-style write access to instances.
+Implementing this method adds support for index-style write access to instances, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+</pre>
 </dd>
 </div>
 <div>

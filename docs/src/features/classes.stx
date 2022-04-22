@@ -166,7 +166,10 @@ You can implement the `$special` methods listed below to add support for various
 
 [[ `:$get_index(key: any) -> any` ]]
 
-    Implementing this method adds support for index-style read access to instances.
+    Implementing this method adds support for index-style read access to instances, e.g.
+
+    ::: code pyro
+        var value = instance[key];
 
 
 [[ `:$hash() -> i64` ]]
@@ -258,7 +261,10 @@ You can implement the `$special` methods listed below to add support for various
 
 [[ `:$set_index(key: any, value: any)` ]]
 
-    Implementing this method adds support for index-style write access to instances.
+    Implementing this method adds support for index-style write access to instances, e.g.
+
+    ::: code pyro
+        instance[key] = value;
 
 
 [[ `:$str() -> str` ]]
