@@ -1,3 +1,5 @@
+import $std::math;
+
 # Not callable.
 assert !$is_callable(123);
 assert !$is_callable(0.123);
@@ -10,7 +12,7 @@ assert !$is_callable(false);
 assert $is_callable($clock);
 
 # Standard library native function.
-assert $is_callable($std::math::abs);
+assert $is_callable(math::abs);
 
 # Pyro function.
 def foo() {}

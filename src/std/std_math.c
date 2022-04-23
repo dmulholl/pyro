@@ -242,34 +242,30 @@ static Value fn_floor(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-void pyro_load_std_math(PyroVM* vm) {
-    ObjModule* mod_math = pyro_define_module_2(vm, "$std", "math");
-    if (!mod_math) {
-        return;
-    }
+void pyro_load_std_mod_math(PyroVM* vm, ObjModule* module) {
+    pyro_define_member(vm, module, "pi", MAKE_F64(PYRO_PI));
+    pyro_define_member(vm, module, "e", MAKE_F64(PYRO_E));
+    pyro_define_member(vm, module, "nan", MAKE_F64(NAN));
+    pyro_define_member(vm, module, "inf", MAKE_F64(INFINITY));
+    pyro_define_member(vm, module, "i64_max", MAKE_I64(INT64_MAX));
+    pyro_define_member(vm, module, "i64_min", MAKE_I64(INT64_MIN));
 
-    pyro_define_member(vm, mod_math, "pi", MAKE_F64(PYRO_PI));
-    pyro_define_member(vm, mod_math, "e", MAKE_F64(PYRO_E));
-    pyro_define_member(vm, mod_math, "nan", MAKE_F64(NAN));
-    pyro_define_member(vm, mod_math, "inf", MAKE_F64(INFINITY));
-    pyro_define_member(vm, mod_math, "i64_max", MAKE_I64(INT64_MAX));
-    pyro_define_member(vm, mod_math, "i64_min", MAKE_I64(INT64_MIN));
-
-    pyro_define_member_fn(vm, mod_math, "abs", fn_abs, -1);
-    pyro_define_member_fn(vm, mod_math, "acos", fn_acos, 1);
-    pyro_define_member_fn(vm, mod_math, "asin", fn_asin, 1);
-    pyro_define_member_fn(vm, mod_math, "atan", fn_atan, 1);
-    pyro_define_member_fn(vm, mod_math, "cos", fn_cos, 1);
-    pyro_define_member_fn(vm, mod_math, "sin", fn_sin, 1);
-    pyro_define_member_fn(vm, mod_math, "tan", fn_tan, 1);
-    pyro_define_member_fn(vm, mod_math, "ln", fn_ln, 1);
-    pyro_define_member_fn(vm, mod_math, "log", fn_log, 2);
-    pyro_define_member_fn(vm, mod_math, "log10", fn_log10, 1);
-    pyro_define_member_fn(vm, mod_math, "log2", fn_log2, 1);
-    pyro_define_member_fn(vm, mod_math, "atan2", fn_atan2, 2);
-    pyro_define_member_fn(vm, mod_math, "exp", fn_exp, 1);
-    pyro_define_member_fn(vm, mod_math, "sqrt", fn_sqrt, 1);
-    pyro_define_member_fn(vm, mod_math, "cbrt", fn_cbrt, 1);
-    pyro_define_member_fn(vm, mod_math, "ceil", fn_ceil, 1);
-    pyro_define_member_fn(vm, mod_math, "floor", fn_floor, 1);
+    pyro_define_member_fn(vm, module, "abs", fn_abs, -1);
+    pyro_define_member_fn(vm, module, "acos", fn_acos, 1);
+    pyro_define_member_fn(vm, module, "asin", fn_asin, 1);
+    pyro_define_member_fn(vm, module, "atan", fn_atan, 1);
+    pyro_define_member_fn(vm, module, "cos", fn_cos, 1);
+    pyro_define_member_fn(vm, module, "sin", fn_sin, 1);
+    pyro_define_member_fn(vm, module, "tan", fn_tan, 1);
+    pyro_define_member_fn(vm, module, "ln", fn_ln, 1);
+    pyro_define_member_fn(vm, module, "log", fn_log, 2);
+    pyro_define_member_fn(vm, module, "log10", fn_log10, 1);
+    pyro_define_member_fn(vm, module, "log2", fn_log2, 1);
+    pyro_define_member_fn(vm, module, "atan2", fn_atan2, 2);
+    pyro_define_member_fn(vm, module, "exp", fn_exp, 1);
+    pyro_define_member_fn(vm, module, "sqrt", fn_sqrt, 1);
+    pyro_define_member_fn(vm, module, "cbrt", fn_cbrt, 1);
+    pyro_define_member_fn(vm, module, "ceil", fn_ceil, 1);
+    pyro_define_member_fn(vm, module, "floor", fn_floor, 1);
 }
+

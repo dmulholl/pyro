@@ -1,11 +1,14 @@
-assert $is_mod($std);
 assert !$is_mod(123);
 
-assert $is_mod($std::math);
-assert $std::math::abs(-1) == 1;
+import $std;
+assert $is_mod($std);
 
-var math = $std::math;
+import $std::math;
+assert $is_mod(math);
 assert math::abs(-1) == 1;
 
-var abs = $std::math::abs;
-assert abs(-1) == 1;
+var math_mod = math;
+assert math_mod::abs(-1) == 1;
+
+var abs_func = math::abs;
+assert abs_func(-1) == 1;

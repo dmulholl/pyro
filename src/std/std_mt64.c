@@ -119,20 +119,15 @@ static Value mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-void pyro_load_std_mt64(PyroVM* vm) {
-    ObjModule* mt64_module = pyro_define_module_2(vm, "$std", "mt64");
-    if (!mt64_module) {
-        return;
-    }
-
-    pyro_define_member_fn(vm, mt64_module, "test", fn_test, 0);
+void pyro_load_std_mod_mt64(PyroVM* vm, ObjModule* module) {
+    pyro_define_member_fn(vm, module, "test", fn_test, 0);
 
     ObjClass* mt64_class = ObjClass_new(vm);
     if (!mt64_class) {
         return;
     }
     mt64_class->name = STR("MT64");
-    pyro_define_member(vm, mt64_module, "MT64", MAKE_OBJ(mt64_class));
+    pyro_define_member(vm, module, "MT64", MAKE_OBJ(mt64_class));
 
     pyro_define_field(vm, mt64_class, "generator", MAKE_NULL());
 

@@ -1,3 +1,5 @@
+import $std::math;
+
 assert !$is_native_func(123);
 assert !$is_native_func(123.0);
 assert !$is_native_func(null);
@@ -12,4 +14,4 @@ class Foo {}
 assert !$is_native_func(Foo);
 
 assert $is_native_func($clock);
-assert $is_native_func($std::math::abs);
+assert $is_native_func(math::abs);

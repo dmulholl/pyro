@@ -1,0 +1,3 @@
+import $std::errors;
+
+assert errors::ok == 0;

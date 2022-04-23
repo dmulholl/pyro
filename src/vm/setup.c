@@ -177,15 +177,6 @@ PyroVM* pyro_new_vm() {
     pyro_load_std_core_iter(vm);
     pyro_load_std_core_queue(vm);
 
-    // Load individual standard library modules.
-    pyro_load_std_math(vm);
-    pyro_load_std_mt64(vm);
-    pyro_load_std_prng(vm);
-    pyro_load_std_pyro(vm);
-    pyro_load_std_errors(vm);
-    pyro_load_std_path(vm);
-    pyro_load_std_sqlite(vm);
-
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
         return NULL;
@@ -262,10 +253,6 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
         return NULL;
     }
 
-    if (ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm) == 0) {
-        return NULL;
-    }
-
     return module_object;
 }
 
@@ -306,10 +293,6 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     Value module_value = MAKE_OBJ(module_object);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
-        return NULL;
-    }
-
-    if (ObjMap_set(AS_MOD(parent_module)->globals, name_value, module_value, vm) == 0) {
         return NULL;
     }
 

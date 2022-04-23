@@ -37,14 +37,8 @@ static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-void pyro_load_std_prng(PyroVM* vm) {
-    ObjModule* mod_prng = pyro_define_module_2(vm, "$std", "prng");
-    if (!mod_prng) {
-        return;
-    }
-
-    pyro_define_member_fn(vm, mod_prng, "rand_int", fn_rand_int, 1);
-    pyro_define_member_fn(vm, mod_prng, "rand_int_in_range", fn_rand_int_in_range, 2);
-    pyro_define_member_fn(vm, mod_prng, "rand_float", fn_rand_float, 0);
+void pyro_load_std_mod_prng(PyroVM* vm, ObjModule* module) {
+    pyro_define_member_fn(vm, module, "rand_int", fn_rand_int, 1);
+    pyro_define_member_fn(vm, module, "rand_int_in_range", fn_rand_int_in_range, 2);
+    pyro_define_member_fn(vm, module, "rand_float", fn_rand_float, 0);
 }
-

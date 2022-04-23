@@ -1,3 +1,6 @@
+import $std::prng;
+
+
 def $test_sequential_integers() {
     var vec = $range(1000):to_vec();
     vec:mergesort();
@@ -23,7 +26,7 @@ def $test_random_integers_with_duplicates() {
     var vec = $vec();
 
     for i in $range(1000) {
-        vec:append($std::prng::rand_int(10));
+        vec:append(prng::rand_int(10));
     }
 
     vec:mergesort();

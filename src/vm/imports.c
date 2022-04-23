@@ -4,9 +4,49 @@
 #include "heap.h"
 #include "panics.h"
 #include "os.h"
+#include "../std/std_lib.h"
+
+
+static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) {
+    bool found_module = false;
+
+    if (strcmp(name->bytes, "math") == 0) {
+        pyro_load_std_mod_math(vm, module);
+        found_module = true;
+    } else if (strcmp(name->bytes, "mt64") == 0) {
+        pyro_load_std_mod_mt64(vm, module);
+        found_module = true;
+    } else if (strcmp(name->bytes, "prng") == 0) {
+        pyro_load_std_mod_prng(vm, module);
+        found_module = true;
+    } else if (strcmp(name->bytes, "pyro") == 0) {
+        pyro_load_std_mod_pyro(vm, module);
+        found_module = true;
+    } else if (strcmp(name->bytes, "errors") == 0) {
+        pyro_load_std_mod_errors(vm, module);
+        found_module = true;
+    } else if (strcmp(name->bytes, "sqlite") == 0) {
+        pyro_load_std_mod_sqlite(vm, module);
+        found_module = true;
+    } else if (strcmp(name->bytes, "path") == 0) {
+        pyro_load_std_mod_path(vm, module);
+        found_module = true;
+    }
+
+    if (!found_module) {
+        pyro_panic(vm, ERR_MODULE_NOT_FOUND, "Invalid standard library module '%s'.", name->bytes);
+    } else if (vm->memory_allocation_failed) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+    }
+}
 
 
 void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
+    if (arg_count == 2 && strcmp(AS_STR(args[0])->bytes, "$std") == 0) {
+        try_load_stdlib_module(vm, AS_STR(args[1]), module);
+        return;
+    }
+
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
 

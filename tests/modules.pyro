@@ -5,8 +5,6 @@ assert !$is_mod(foobar);
 # Importing standard library modules.
 import $std;
 assert $is_mod($std);
-assert $is_f64($std::math::pi);
-assert $std::math::abs(-1) == 1;
 
 import $std::math;
 assert $is_mod(math);

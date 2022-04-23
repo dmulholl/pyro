@@ -1,3 +1,5 @@
+import $std::math;
+
 assert !$is_method(123);
 assert !$is_method(123.0);
 assert !$is_method(null);
@@ -5,7 +7,7 @@ assert !$is_method(true);
 assert !$is_method(false);
 assert !$is_method("foo");
 assert !$is_method($clock);
-assert !$is_method($std::math::abs);
+assert !$is_method(math::abs);
 
 def foo() {}
 assert !$is_method(foo);
