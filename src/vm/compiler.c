@@ -1983,6 +1983,10 @@ static void parse_field_declaration(Parser* parser) {
         consume(parser, TOKEN_IDENTIFIER, "Expected field name.");
         uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
+        if (match(parser, TOKEN_COLON)) {
+            parse_type(parser);
+        }
+
         if (match(parser, TOKEN_EQUAL)) {
             parse_expression(parser, true, true);
         } else {
