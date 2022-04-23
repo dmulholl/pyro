@@ -1,12 +1,12 @@
-#include "std_lib.h"
+#include "../std_lib.h"
 
-#include "../vm/vm.h"
-#include "../vm/utils.h"
-#include "../vm/heap.h"
-#include "../vm/utf8.h"
-#include "../vm/setup.h"
-#include "../vm/stringify.h"
-#include "../vm/panics.h"
+#include "../../vm/vm.h"
+#include "../../vm/utils.h"
+#include "../../vm/heap.h"
+#include "../../vm/utf8.h"
+#include "../../vm/setup.h"
+#include "../../vm/stringify.h"
+#include "../../vm/panics.h"
 
 
 static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {

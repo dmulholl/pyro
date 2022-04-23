@@ -1,8 +1,8 @@
-#include "std_lib.h"
+#include "../std_lib.h"
 
-#include "../vm/vm.h"
-#include "../vm/values.h"
-#include "../vm/setup.h"
+#include "../../vm/vm.h"
+#include "../../vm/values.h"
+#include "../../vm/setup.h"
 
 
 void pyro_load_std_mod_errors(PyroVM* vm, ObjModule* module) {

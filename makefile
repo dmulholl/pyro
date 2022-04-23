@@ -15,7 +15,7 @@ DEBUG_LEVEL_4 = -D PYRO_DEBUG_STRESS_GC -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBU
 
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
-SRC_FILES = src/vm/*.c src/std/*.c src/cli/*.c
+SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
 OBJ_FILES = out/lib/sqlite.o
 

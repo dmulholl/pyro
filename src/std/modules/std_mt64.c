@@ -1,12 +1,12 @@
-#include "std_lib.h"
+#include "../std_lib.h"
 
-#include "../vm/values.h"
-#include "../vm/vm.h"
-#include "../lib/mt64/mt64.h"
-#include "../vm/setup.h"
-#include "../vm/panics.h"
-#include "../vm/io.h"
-#include "../vm/stringify.h"
+#include "../../vm/values.h"
+#include "../../vm/vm.h"
+#include "../../lib/mt64/mt64.h"
+#include "../../vm/setup.h"
+#include "../../vm/panics.h"
+#include "../../vm/io.h"
+#include "../../vm/stringify.h"
 
 
 static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
