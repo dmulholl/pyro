@@ -17,9 +17,9 @@ DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
-OBJ_FILES = out/lib/sqlite.o
+OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o
 
-FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES}
+FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES} -lm -ldl -pthread
 
 # --------------- #
 #  Phony Targets  #
@@ -29,14 +29,14 @@ FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES}
 release:: ${OBJ_FILES}
 	@mkdir -p out/release
 	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
-	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(FILES) -lm -ldl -pthread
+	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 # Unoptimized debug build.
 debug:: ${OBJ_FILES}
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(FILES) -lm -ldl -pthread
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 # Default debug build. Assertions are checked and the GC is run before every instruction.
@@ -68,14 +68,21 @@ install::
 
 clean::
 	rm -rf ./out/*
+	rm -f ./src/std/pyro/*.c
+
+sqlite:: out/lib/sqlite.o
 
 # ----------- #
 #  Libraries  #
 # ----------- #
 
-sqlite:: out/lib/sqlite.o
-
 out/lib/sqlite.o:
 	@mkdir -p out/lib
 	@printf "\e[1;32mBuilding\e[0m sqlite\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/sqlite/sqlite3.c -o out/lib/sqlite.o
+
+out/lib/lib_args.o: src/std/pyro/lib_args.pyro
+	@mkdir -p out/lib
+	@printf "\e[1;32mBuilding\e[0m \$$std::args\n"
+	@cd src/std/pyro; xxd -i lib_args.pyro > lib_args.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_args.c -o out/lib/lib_args.o
