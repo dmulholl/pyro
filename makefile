@@ -26,51 +26,51 @@ FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES} -lm -ldl -pthread
 # --------------- #
 
 # Optimized release build.
-release:: ${OBJ_FILES}
+release: ${OBJ_FILES}
 	@mkdir -p out/release
 	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 # Unoptimized debug build.
-debug:: ${OBJ_FILES}
+debug: ${OBJ_FILES}
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 # Default debug build. Assertions are checked and the GC is run before every instruction.
-debug1::
+debug1:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_1}"
 
 # Debug build. Dumps bytecode.
-debug2::
+debug2:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_2}"
 
 # Debug build. Dumps bytecode and traces execution.
-debug3::
+debug3:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_3}"
 
 # Debug build. Dumps bytecode, traces execution, and logs the GC.
-debug4::
+debug4:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_4}"
 
 # Runs the standard debug build, then runs the test suite.
-check::
+check:
 	@make debug
 	@printf "\e[1;32m Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
 
-install::
+install:
 	@if [ ! -f ./out/release/pyro ]; then make release; fi
 	@if [ -f ./out/release/pyro ]; then printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"; fi
 	@if [ -f ./out/release/pyro ]; then cp ./out/release/pyro /usr/local/bin/pyro; fi
 
-clean::
+clean:
 	rm -rf ./out/*
 	rm -f ./src/std/pyro/*.c
 
-sqlite:: out/lib/sqlite.o
+sqlite: out/lib/sqlite.o
 
 # ----------- #
 #  Libraries  #
@@ -83,6 +83,6 @@ out/lib/sqlite.o:
 
 out/lib/lib_args.o: src/std/pyro/lib_args.pyro
 	@mkdir -p out/lib
-	@printf "\e[1;32mBuilding\e[0m \$$std::args\n"
+	@printf "\e[1;32mBuilding\e[0m \$$std:args\n"
 	@cd src/std/pyro; xxd -i lib_args.pyro > lib_args.c
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_args.c -o out/lib/lib_args.o
