@@ -1,3 +1,374 @@
-def hello(name) {
-    echo "hello " + name;
+class Option {
+    var parser: fn?(str) -> any;
+    var fallback: any;
+    var values: vec[any];
+
+    def $init() {
+        self.values = $vec();
+    }
+
+    def fallback(value: any) -> Option {
+        self.fallback = value;
+        return self;
+    }
+
+    def parser(func: fn(str) -> any) -> Option {
+        self.parser = func;
+        return self;
+    }
+
+    def try_append_value(value: str) -> bool {
+        if self.parser {
+            var parsed_value = try self.parser(value);
+            if $is_err(parsed_value) {
+                return false;
+            } else {
+                self.values:append(parsed_value);
+                return true;
+            }
+        }
+        self.values:append(value);
+        return true;
+    }
+
+    def count() -> i64 {
+        return self.values:count();
+    }
+
+    def value() -> any {
+        if self.values:count() > 0 {
+            return self.values:last();
+        } else {
+            return self.fallback;
+        }
+    }
+
+    def values() -> vec {
+        return self.values;
+    }
+}
+
+
+class Flag {
+    var count: i64 = 0;
+
+    def count() -> i64 {
+        return self.count;
+    }
+}
+
+
+class ArgStream {
+    var args: vec[str];
+    var index: i64 = 0;
+
+    def $init(args: vec[str]) {
+        self.args = args;
+    }
+
+    def next() -> str {
+        self.index += 1;
+        return self.args[self.index - 1];
+    }
+
+    def has_next() -> bool {
+        return self.index < self.args:count();
+    }
+}
+
+
+class ArgParser {
+    var helptext: str?;
+    var version: str?;
+    var callback: fn?(str, ArgParser);
+    var enable_help_command: bool = false;
+
+    var args: vec[str];
+    var command_name: str?;
+    var command_parser: ArgParser?;
+
+    var options: map[str, Option];
+    var flags: map[str, Flag];
+    var commands: map[str, ArgParser];
+
+    def $init() {
+        self.options = $map();
+        self.flags = $map();
+        self.commands = $map();
+        self.args = $vec();
+    }
+
+    # ---------------- #
+    #  Setup methods.  #
+    # ---------------- #
+
+    def flag(name: str) -> Flag {
+        var flag = Flag();
+        for alias in name:split() {
+            self.flags[alias] = flag;
+        }
+        return flag;
+    }
+
+    def option(name: str) -> Option {
+        var option = Option();
+        for alias in name:split() {
+            self.options[alias] = option;
+        }
+        return option;
+    }
+
+    def command(name: str) -> ArgParser {
+        self.enable_help_command = true;
+        var cmd_parser = ArgParser();
+        for alias in name:split() {
+            self.commands[alias] = cmd_parser;
+        }
+        return cmd_parser;
+    }
+
+    # --------------------- #
+    #  Inspection methods.  #
+    # --------------------- #
+
+    def count(name: str) -> i64 {
+        if self.flags:contains(name) {
+            return self.flags[name]:count();
+        } else if self.options:contains(name) {
+            return self.options[name]:count();
+        } else {
+            var msg = $fmt("'{}' is not a registered flag or option name.", name);
+            $panic(msg);
+        }
+    }
+
+    def found(name: str) -> bool {
+        return self:count(name) > 0;
+    }
+
+    def value(name: str) -> any {
+        if self.options:contains(name) {
+            return self.options[name]:value();
+        } else {
+            var msg = $fmt("'{}' is not a registered option name.", name);
+            $panic(msg);
+        }
+    }
+
+    def values(name: str) -> any {
+        if self.options:contains(name) {
+            return self.options[name]:values();
+        } else {
+            var msg = $fmt("'{}' is not a registered option name.", name);
+            $panic(msg);
+        }
+    }
+
+    # -------------------- #
+    #  Parsing machinery.  #
+    # -------------------- #
+
+    def parse() {
+        if $args:count() > 1 {
+            var vec = $iter($args):skip_first(1):to_vec();
+            var stream = ArgStream(vec);
+            self:parse_stream(stream);
+        }
+    }
+
+    def parse_vec(vec: vec[str]) {
+        var stream = ArgStream(vec);
+        self:parse_stream(stream);
+    }
+
+    def parse_stream(stream: ArgStream) {
+        var is_first_arg = true;
+
+        while (stream:has_next()) {
+            var arg = stream:next();
+
+            if arg == "--" {
+                while (stream:has_next()) {
+                    self.args:append(stream:next());
+                }
+            }
+
+            else if arg:starts_with("--") {
+                if arg:contains("=") {
+                    self:handle_equals_option(arg:slice(2));
+                } else {
+                    self:handle_long_option(arg:slice(2), stream);
+                }
+            }
+
+            else if arg:starts_with("-") {
+                if arg == "-" || (arg:byte(1) >= '0' && arg:byte(1) <= '9') {
+                    self.args:append(arg);
+                } else if arg:contains("=") {
+                    self:handle_equals_option(arg:slice(1), stream);
+                } else {
+                    self:handle_short_option(arg:slice(1), stream);
+                }
+            }
+
+            else if is_first_arg && self.commands:contains(arg) {
+                self.command_name = arg;
+                self.command_parser = self.commands[arg];
+                self.command_parser:parse_stream(stream);
+                if self.command_parser.callback {
+                    self.command_parser.callback(arg, self.command_parser);
+                }
+            }
+
+            else if is_first_arg && self.enable_help_command && arg == "help" {
+                if stream:has_next() {
+                    var name = stream:next();
+                    if self.commands:contains(name) {
+                        self.commands[name]:exit_with_help();
+                    } else {
+                        $eprintln("Error: '{}' is not a recognised command.", name);
+                        $exit(1);
+                    }
+                } else {
+                    $eprintln("Error: missing argument for the help command.");
+                    $exit(1);
+                }
+            }
+
+            else {
+                self.args:append(arg);
+            }
+
+            is_first_arg = false;
+        }
+    }
+
+    # Parse an option of the form --name=value or -n=value.
+    def handle_equals_option(arg: str) {
+        var index = arg:index_of("=");
+        var name = arg:slice(0, index);
+        var value = arg:slice(index + 1);
+
+        if self.options:contains(name) {
+            if !self.options[name]:try_append_value(value) {
+                $eprintln("Error: invalid option value '{}'.", value);
+                $exit(1);
+            }
+        } else {
+            $eprintln("Error: '{}' is not a recognised option name.", name);
+            $exit(1);
+        }
+    }
+
+    # Parse a long-form option, i.e. an option beginning with a double dash.
+    def handle_long_option(arg: str, stream: ArgStream) {
+        if self.flags:contains(arg) {
+            self.flags[arg].count += 1;
+        } else if self.options:contains(arg) {
+            if stream:has_next() {
+                var value = stream:next();
+                if !self.options[arg]:try_append_value(value) {
+                    $eprintln("Error: invalid option value '{}'.", value);
+                    $exit(1);
+                }
+            } else {
+                $eprintln("Error: option --{} requires an argument.", arg);
+                $exit(1);
+            }
+        } else if arg == "help" && self.helptext {
+            self:exit_with_help();
+        } else if arg == "version" && self.version {
+            self:exit_with_version();
+        } else {
+            $eprintln("Error: --{} is not a recognised flag or option name.", arg);
+            $exit(1);
+        }
+    }
+
+    # Parse a short-form option, i.e. an option beginning with a single dash.
+    def handle_short_option(arg: str, stream: ArgStream) {
+        for char in arg:bytes():map($char):map($str) {
+            if self.flags:contains(char) {
+                self.flags[char].count += 1;
+            } else if self.options:contains(char) {
+                if stream:has_next() {
+                    var value = stream:next();
+                    if !self.options[char]:try_append_value(value) {
+                        $eprintln("Error: invalid option value '{}'.", value);
+                        $exit(1);
+                    }
+                } else if arg:byte_count() > 1 {
+                    $eprintln("Error: option '{}' in -{} requires an argument.", char, arg);
+                    $exit(1);
+                } else {
+                    $eprintln("Error: option -{} requires an argument.", char);
+                    $exit(1);
+                }
+            } else if char == "h" && self.helptext {
+                self:exit_with_help();
+            } else if char == "v" && self.version {
+                self:exit_with_version();
+            } else if arg:byte_count() > 1 {
+                $eprintln("Error: '{}' in -{} is not a recognised flag or option name.", char, arg);
+                $exit(1);
+            } else {
+                $eprintln("Error: -{} is not a recognised flag or option name.", arg);
+                $exit(1);
+            }
+        }
+    }
+
+    # ------------ #
+    #  Utilities.  #
+    # ------------ #
+
+    def exit_with_help() {
+        if self.helptext {
+            $println(self.helptext:strip());
+        }
+        $exit(0);
+    }
+
+    def exit_with_version() {
+        if self.version {
+            $println(self.version:strip());
+        }
+        $exit(0);
+    }
+
+    def print() {
+        $println("Flags:");
+        if self.flags:count() > 0 {
+            for (name, flag) in self.flags:entries() {
+                $println("  {}: {}", name, flag:count());
+            }
+        } else {
+            $println(" [none]");
+        }
+
+        $println("\nOptions:");
+        if self.options:count() > 0 {
+            for (name, option) in self.options:entries() {
+                $println("  {}: ({}) {}", name, $debug(option.fallback), option.values);
+            }
+        } else {
+            $println(" [none]");
+        }
+
+        $println("\nArguments:");
+        if self.args:count() > 0 {
+            for arg in self.args {
+                $println("  {}", arg);
+            }
+        } else {
+            $println("  [none]");
+        }
+
+        $println("\nCommand:");
+        if self.command_name {
+            $println("  {}", self.command_name);
+        } else {
+            $println("  [none]");
+        }
+    }
 }

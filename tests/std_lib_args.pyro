@@ -1,0 +1,21 @@
+import $std::args;
+
+var parser = args::ArgParser();
+parser.helptext = "Usage: app...";
+parser.version = "1.0";
+
+parser:flag("foo f");
+parser:option("bar b"):fallback("default");
+parser:option("baz z"):fallback("default"):parser($str);
+
+var cmd_parser = parser:command("boo");
+cmd_parser.helptext = "Usage: app boo...";
+
+cmd_parser:flag("foo f");
+cmd_parser:option("bar b"):fallback("default");
+cmd_parser:option("baz z"):fallback("default"):parser($str);
+
+parser:parse();
+
+
+

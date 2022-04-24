@@ -166,10 +166,12 @@ Strings have the following methods:
 
     Panics if either argument is out of range.
 
-[[ `:split(sep: str) -> vec[str]` ]]
+[[ `:split()` <br> `:split(sep: str) -> vec[str]` ]]
 
     Splits the string on instances of the delimiter string `sep`.
     Returns a vector of strings.
+
+    If no argument is specified, this method acts as an alias for `:split_on_ascii_ws()`.
 
     If this method is called on an empty string, it will return a vector containing a single empty string.
 

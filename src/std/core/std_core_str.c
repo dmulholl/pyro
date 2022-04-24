@@ -840,72 +840,6 @@ static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjStr* str = AS_STR(args[-1]);
-
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :split().");
-        return MAKE_NULL();
-    }
-    ObjStr* sep = AS_STR(args[0]);
-
-    ObjVec* vec = ObjVec_new(vm);
-    if (!vec) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return MAKE_NULL();
-    }
-    pyro_push(vm, MAKE_OBJ(vec));
-
-    if (str->length < sep->length || sep->length == 0) {
-        if (!ObjVec_append(vec, MAKE_OBJ(str), vm)) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-            return MAKE_NULL();
-        }
-        pyro_pop(vm);
-        return MAKE_OBJ(vec);
-    }
-
-    size_t start = 0;
-    size_t current = 0;
-    size_t last_possible_match_index = str->length - sep->length;
-
-    while (current <= last_possible_match_index) {
-        if (memcmp(&str->bytes[current], sep->bytes, sep->length) == 0) {
-            ObjStr* new_string = ObjStr_copy_raw(&str->bytes[start], current - start, vm);
-            if (!new_string) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                return MAKE_NULL();
-            }
-            pyro_push(vm, MAKE_OBJ(new_string));
-            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-                return MAKE_NULL();
-            }
-            pyro_pop(vm);
-            current += sep->length;
-            start = current;
-        } else {
-            current++;
-        }
-    }
-
-    ObjStr* new_string = ObjStr_copy_raw(&str->bytes[start], str->length - start, vm);
-    if (!new_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return MAKE_NULL();
-    }
-    pyro_push(vm, MAKE_OBJ(new_string));
-    if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
-        return MAKE_NULL();
-    }
-    pyro_pop(vm);
-
-    pyro_pop(vm); // pop the vector
-    return MAKE_OBJ(vec);
-}
-
-
 static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
 
@@ -962,6 +896,79 @@ static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     ObjStr* new_string = ObjStr_copy_raw(start, current - start, vm);
+    if (!new_string) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    pyro_push(vm, MAKE_OBJ(new_string));
+    if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    pyro_pop(vm);
+
+    pyro_pop(vm); // pop the vector
+    return MAKE_OBJ(vec);
+}
+
+
+static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        return str_split_on_ascii_ws(vm, arg_count, args);
+    } else if (arg_count > 1) {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :split(), found %i.", arg_count);
+        return MAKE_NULL();
+    }
+
+    ObjStr* str = AS_STR(args[-1]);
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :split(), expected a string.");
+        return MAKE_NULL();
+    }
+    ObjStr* sep = AS_STR(args[0]);
+
+    ObjVec* vec = ObjVec_new(vm);
+    if (!vec) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    pyro_push(vm, MAKE_OBJ(vec));
+
+    if (str->length < sep->length || sep->length == 0) {
+        if (!ObjVec_append(vec, MAKE_OBJ(str), vm)) {
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            return MAKE_NULL();
+        }
+        pyro_pop(vm);
+        return MAKE_OBJ(vec);
+    }
+
+    size_t start = 0;
+    size_t current = 0;
+    size_t last_possible_match_index = str->length - sep->length;
+
+    while (current <= last_possible_match_index) {
+        if (memcmp(&str->bytes[current], sep->bytes, sep->length) == 0) {
+            ObjStr* new_string = ObjStr_copy_raw(&str->bytes[start], current - start, vm);
+            if (!new_string) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            pyro_push(vm, MAKE_OBJ(new_string));
+            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                return MAKE_NULL();
+            }
+            pyro_pop(vm);
+            current += sep->length;
+            start = current;
+        } else {
+            current++;
+        }
+    }
+
+    ObjStr* new_string = ObjStr_copy_raw(&str->bytes[start], str->length - start, vm);
     if (!new_string) {
         pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return MAKE_NULL();
@@ -1252,7 +1259,7 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "replace", str_replace, 2);
     pyro_define_method(vm, vm->str_class, "index_of", str_index_of, 2);
     pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
-    pyro_define_method(vm, vm->str_class, "split", str_split, 1);
+    pyro_define_method(vm, vm->str_class, "split", str_split, -1);
     pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
     pyro_define_method(vm, vm->str_class, "split_lines", str_split_lines, 0);
     pyro_define_method(vm, vm->str_class, "to_hex", str_to_hex, 0);

@@ -323,6 +323,16 @@ def $test_split() {
     var v9 = "abc":split("");
     assert v9:count() == 1;
     assert v9[0] == "abc";
+
+    var v10 = "foo bar":split();
+    assert v10:count() == 2;
+    assert v10[0] == "foo";
+    assert v10[1] == "bar";
+
+    var v11 = "  foo  bar  ":split();
+    assert v11:count() == 2;
+    assert v11[0] == "foo";
+    assert v11[1] == "bar";
 }
 
 
