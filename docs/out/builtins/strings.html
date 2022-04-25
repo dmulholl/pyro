@@ -62,6 +62,9 @@
 <a href="#iterating">Iterating</a>
 </li>
 <li>
+<a href="#indexing">Indexing</a>
+</li>
+<li>
 <a href="#methods">Methods</a>
 </li>
 </ul>
@@ -299,6 +302,20 @@ You can iterate over the string's <code>char</code> values, i.e. UTF-8 encoded U
 <span class="sc">&#39;o&#39;</span>
 <span class="sc">&#39;o&#39;</span>
 </pre>
+<h3 id="indexing">
+Indexing
+</h3>
+<p>
+You can index into a string to get (but not set) individual byte values. Each byte value is returned as a single-byte string, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;f&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;o&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;o&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Use the <code>:byte()</code> method to access individual byte values as integers or the <code>:char()</code> method to access individual UTF-8 encoded code points.
+</p>
 <h3 id="methods">
 Methods
 </h3>
@@ -340,7 +357,6 @@ Returns an iterator over the string's individual byte values, returning each val
 <dd>
 <p>
 Returns the <code>char</code> at <code>index</code>, where <code>index</code> is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
-Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 <p>
 This is a potentially expensive method as it needs to seek forward from the beginning of the string.

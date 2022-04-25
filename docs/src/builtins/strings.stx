@@ -112,6 +112,19 @@ A string is an immutable sequence of bytes. You can iterate over this sequence i
 
 
 
+### Indexing
+
+You can index into a string to get (but not set) individual byte values. Each byte value is returned as a single-byte string, e.g.
+
+::: code pyro
+    assert "foo"[0] == "f";
+    assert "foo"[1] == "o";
+    assert "foo"[2] == "o";
+
+Use the `:byte()` method to access individual byte values as integers or the `:char()` method to access individual UTF-8 encoded code points.
+
+
+
 ### Methods
 
 [[ `:byte(index: i64) -> i64` ]]
@@ -129,7 +142,6 @@ A string is an immutable sequence of bytes. You can iterate over this sequence i
 [[ `:char(index: i64) -> char` ]]
 
     Returns the `char` at `index`, where `index` is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
-    Will panic if `index` isn't an integer or is out of range.
 
     This is a potentially expensive method as it needs to seek forward from the beginning of the string.
 
