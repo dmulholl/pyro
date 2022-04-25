@@ -287,7 +287,7 @@ class ArgParser {
 
     # Parse a short-form option, i.e. an option beginning with a single dash.
     def handle_short_option(arg: str, stream: ArgStream) {
-        for char in arg:bytes():map($char):map($str) {
+        for char in arg {
             if self.flags:contains(char) {
                 self.flags[char].count += 1;
             } else if self.options:contains(char) {
