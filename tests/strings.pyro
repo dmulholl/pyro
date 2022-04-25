@@ -583,3 +583,11 @@ def $test_iterating_over_lines() {
     assert v9[5] == "";
     assert v9[6] == "";
 }
+
+
+def $test_indexing_into_string() {
+    assert "abc"[0] == "a";
+    assert "abc"[1] == "b";
+    assert "abc"[2] == "c";
+    assert $is_err(try "abc"[3]);
+}

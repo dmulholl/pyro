@@ -975,6 +975,25 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
             return MAKE_OBJ(vm->empty_error);
         }
 
+        case OBJ_STR: {
+            ObjStr* str = AS_STR(receiver);
+            if (IS_I64(key)) {
+                int64_t index = key.as.i64;
+                if (index >= 0 && (size_t)index < str->length) {
+                    ObjStr* new_str = ObjStr_copy_raw(&str->bytes[index], 1, vm);
+                    if (!new_str) {
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        return MAKE_NULL();
+                    }
+                    return MAKE_OBJ(new_str);
+                }
+                pyro_panic(vm, ERR_VALUE_ERROR, "Index is out of range.");
+                return MAKE_NULL();
+            }
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+            return MAKE_NULL();
+        }
+
         case OBJ_VEC: {
             ObjVec* vec = AS_VEC(receiver);
             if (IS_I64(key)) {
