@@ -3,6 +3,10 @@ title: Strings
 meta_title: Pyro &mdash; Strings
 ---
 
+::: insert toc
+::: hr
+
+
 A string, `str`, is an immutable array of bytes.
 
 [[ `$str(arg: any) -> str` ]]
@@ -11,6 +15,10 @@ A string, `str`, is an immutable array of bytes.
     If the argument has a `:$str()` method, the output of this method will be returned.
 
 Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding --- a string can contain any sequence of byte values including null bytes or invalid UTF-8.
+
+
+
+### String Literals
 
 String literals come in two flavours --- regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
 
@@ -52,6 +60,10 @@ Raw string literals use backticks:
 
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
 
+
+
+### Concatenating
+
 You can concatenate two strings using the `+` operator:
 
 ::: code pyro
@@ -62,13 +74,49 @@ You can multiply a string by an integer `n` to produce a new string containing `
 ::: code pyro
     assert "foo" * 3 == "foofoofoo"
 
-Strings have the following methods:
+
+
+### Iterating
+
+A string is an immutable sequence of bytes. You can iterate over this sequence in three different ways.
+
+(1) You can iterate over a string directly. This iterates over the individual byte values, returning each value as a single-byte string, e.g.
+
+::: code pyro
+    >>> for byte in "foo" {
+    ...     echo $debug(byte);
+    ... }
+    "f"
+    "o"
+    "o"
+
+(2) You can iterate over the string's byte values as integers using the `:bytes()` method, e.g.
+
+::: code pyro
+    >>> for byte in "foo":bytes() {
+    ...     echo $debug(byte);
+    ... }
+    102
+    111
+    111
+
+(3) You can iterate over the string's `char` values, i.e. UTF-8 encoded Unicode code points, using the `:chars()` method, e.g.
+
+::: code pyro
+    >>> for char in "foo":chars() {
+    ...     echo $debug(char);
+    ... }
+    'f'
+    'o'
+    'o'
+
+
+
+### Methods
 
 [[ `:byte(index: i64) -> i64` ]]
 
     Returns the byte value at `index` as an integer in the range `[0, 255]`.
-    Will panic if `index` isn't an integer or is out of range.
-    Indices are zero-based.
 
 [[ `:byte_count() -> i64` ]]
 
@@ -76,26 +124,30 @@ Strings have the following methods:
 
 [[ `:bytes() -> iter[i64]` ]]
 
-    Returns an iterator over the string's bytes as `i64` values.
+    Returns an iterator over the string's individual byte values, returning each value as an integer.
 
 [[ `:char(index: i64) -> char` ]]
 
     Returns the `char` at `index`, where `index` is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
     Will panic if `index` isn't an integer or is out of range.
 
-    (This is a potentially expensive method as it needs to seek forward from the beginning of the string.
-    Note that it will panic if it encounters invalid UTF-8 along the way.)
+    This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+
+    Note that it will panic if it encounters invalid UTF-8 along the way.
 
 [[ `:char_count() -> i64` ]]
 
     Returns the number of UTF-8 encoded Unicode code points in the string.
 
-    (This is a potentially expensive method as it needs to traverse the string.
-    Note that it will panic if it encounters invalid UTF-8.)
+    This is a potentially expensive method as it needs to traverse the string.
+
+    Note that it will panic if it encounters invalid UTF-8.
 
 [[ `:chars() -> iter[char]` ]]
 
     Returns an iterator over the string's `char` values, i.e. UTF-8 encoded Unicode code points.
+
+    This method will panic if the string contains invalid UTF-8.
 
 [[ `:contains(target: str) -> bool` ]]
 
@@ -132,6 +184,10 @@ Strings have the following methods:
     Returns `true` if the string is empty or contains only valid UTF-8.
     (This is a potentially expensive method as it needs to traverse the string.)
 
+[[ `:iter() -> iter[str]` ]]
+
+    Returns an iterator over the string's individual byte values, returning each value as a single-byte string.
+
 [[ `:join(items: iterable) -> str` ]]
 
     Creates a new string by joining the stringified elements of the iterable argument using the receiver string as the separator. Elements are automatically stringified --- this is equivalent to calling `$str()` on each element.
@@ -166,7 +222,7 @@ Strings have the following methods:
 
     Panics if either argument is out of range.
 
-[[ `:split()` <br> `:split(sep: str) -> vec[str]` ]]
+[[ `:split() -> vec[str]` <br> `:split(sep: str) -> vec[str]` ]]
 
     Splits the string on instances of the delimiter string `sep`.
     Returns a vector of strings.

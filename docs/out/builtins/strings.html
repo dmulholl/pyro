@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.5</p>
+                <p class="version">Version 0.6.6</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -51,7 +51,22 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#string-literals">String Literals</a>
+</li>
+<li>
+<a href="#concatenating">Concatenating</a>
+</li>
+<li>
+<a href="#iterating">Iterating</a>
+</li>
+<li>
+<a href="#methods">Methods</a>
+</li>
+</ul>
+<hr>
+<p>
 A string, <code>str</code>, is an immutable array of bytes.
 </p>
 <dl>
@@ -70,6 +85,9 @@ If the argument has a <code>:$str()</code> method, the output of this method wil
 <p>
 Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding &mdash; a string can contain any sequence of byte values including null bytes or invalid UTF-8.
 </p>
+<h3 id="string-literals">
+String Literals
+</h3>
 <p>
 String literals come in two flavours &mdash; regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
 </p>
@@ -215,6 +233,9 @@ Raw string literals use backticks:
 <p>
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
 </p>
+<h3 id="concatenating">
+Concatenating
+</h3>
 <p>
 You can concatenate two strings using the <code>+</code> operator:
 </p>
@@ -227,9 +248,60 @@ You can multiply a string by an integer <code>n</code> to produce a new string c
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="s">&quot;foo&quot;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;foofoofoo&quot;</span>
 </pre>
+<h3 id="iterating">
+Iterating
+</h3>
 <p>
-Strings have the following methods:
+A string is an immutable sequence of bytes. You can iterate over this sequence in three different ways.
 </p>
+<ol>
+<li>
+<p>
+You can iterate over a string directly. This iterates over the individual byte values, returning each value as a single-byte string, e.g.
+</p>
+</li>
+</ol>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">byte</span> <span class="k">in</span> <span class="s">&quot;foo&quot;</span> <span class="p">{</span>
+<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">byte</span><span class="p">);</span>
+<span class="cp">...</span> <span class="p">}</span>
+<span class="s">&quot;f&quot;</span>
+<span class="s">&quot;o&quot;</span>
+<span class="s">&quot;o&quot;</span>
+</pre>
+<ol start="2">
+<li>
+<p>
+You can iterate over the string's byte values as integers using the <code>:bytes()</code> method, e.g.
+</p>
+</li>
+</ol>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">byte</span> <span class="k">in</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">bytes</span><span class="p">()</span> <span class="p">{</span>
+<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">byte</span><span class="p">);</span>
+<span class="cp">...</span> <span class="p">}</span>
+<span class="mi">102</span>
+<span class="mi">111</span>
+<span class="mi">111</span>
+</pre>
+<ol start="3">
+<li>
+<p>
+You can iterate over the string's <code>char</code> values, i.e. UTF-8 encoded Unicode code points, using the <code>:chars()</code> method, e.g.
+</p>
+</li>
+</ol>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">()</span> <span class="p">{</span>
+<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">char</span><span class="p">);</span>
+<span class="cp">...</span> <span class="p">}</span>
+<span class="sc">&#39;f&#39;</span>
+<span class="sc">&#39;o&#39;</span>
+<span class="sc">&#39;o&#39;</span>
+</pre>
+<h3 id="methods">
+Methods
+</h3>
 <dl>
 <div>
 <dt>
@@ -238,8 +310,6 @@ Strings have the following methods:
 <dd>
 <p>
 Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
-Will panic if <code>index</code> isn't an integer or is out of range.
-Indices are zero-based.
 </p>
 </dd>
 </div>
@@ -259,7 +329,7 @@ Returns the number of bytes in the string.
 </dt>
 <dd>
 <p>
-Returns an iterator over the string's bytes as <code>i64</code> values.
+Returns an iterator over the string's individual byte values, returning each value as an integer.
 </p>
 </dd>
 </div>
@@ -273,8 +343,10 @@ Returns the <code>char</code> at <code>index</code>, where <code>index</code> is
 Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
 <p>
-(This is a potentially expensive method as it needs to seek forward from the beginning of the string.
-Note that it will panic if it encounters invalid UTF-8 along the way.)
+This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+</p>
+<p>
+Note that it will panic if it encounters invalid UTF-8 along the way.
 </p>
 </dd>
 </div>
@@ -287,8 +359,10 @@ Note that it will panic if it encounters invalid UTF-8 along the way.)
 Returns the number of UTF-8 encoded Unicode code points in the string.
 </p>
 <p>
-(This is a potentially expensive method as it needs to traverse the string.
-Note that it will panic if it encounters invalid UTF-8.)
+This is a potentially expensive method as it needs to traverse the string.
+</p>
+<p>
+Note that it will panic if it encounters invalid UTF-8.
 </p>
 </dd>
 </div>
@@ -299,6 +373,9 @@ Note that it will panic if it encounters invalid UTF-8.)
 <dd>
 <p>
 Returns an iterator over the string's <code>char</code> values, i.e. UTF-8 encoded Unicode code points.
+</p>
+<p>
+This method will panic if the string contains invalid UTF-8.
 </p>
 </dd>
 </div>
@@ -382,6 +459,16 @@ Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 </div>
 <div>
 <dt>
+<code>:iter() -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's individual byte values, returning each value as a single-byte string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:join(items: iterable) -&gt; str</code>
 </dt>
 <dd>
@@ -451,12 +538,15 @@ Panics if either argument is out of range.
 </div>
 <div>
 <dt>
-<code>:split(sep: str) -&gt; vec[str]</code>
+<code>:split() -&gt; vec[str]</code> <br> <code>:split(sep: str) -&gt; vec[str]</code>
 </dt>
 <dd>
 <p>
 Splits the string on instances of the delimiter string <code>sep</code>.
 Returns a vector of strings.
+</p>
+<p>
+If no argument is specified, this method acts as an alias for <code>:split_on_ascii_ws()</code>.
 </p>
 <p>
 If this method is called on an empty string, it will return a vector containing a single empty string.
