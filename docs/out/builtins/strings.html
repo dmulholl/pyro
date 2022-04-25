@@ -431,12 +431,12 @@ Returns <code>true</code> if the string ends with the string <code>suffix</code>
 </div>
 <div>
 <dt>
-<code>:index_of(target: str, start_index: i64) -&gt; i64|err</code>
+<code>:index_of(target: str) -&gt; i64|err</code> <br> <code>:index_of(target: str, start_index: i64) -&gt; i64|err</code>
 </dt>
 <dd>
 <p>
 Returns the byte index of the next matching instance of the string <code>target</code>.
-Starts searching at <code>start_index</code>.
+Starts searching at <code>start_index</code>, which defaults to 0 if not specified.
 Returns an <code>err</code> if <code>target</code> is not found.
 </p>
 </dd>

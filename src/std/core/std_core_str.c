@@ -795,17 +795,29 @@ static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
 static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
 
+    if (arg_count == 0 || arg_count > 2) {
+        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for :index_of(), found %zu.", arg_count);
+        return MAKE_NULL();
+    }
+
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :index_of().");
+        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid target argument to :index_of(), expected a string.");
         return MAKE_NULL();
     }
     ObjStr* target = AS_STR(args[0]);
 
-    if (!IS_I64(args[1]) || args[1].as.i64 < 0) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :index_of().");
-        return MAKE_NULL();
+    size_t index = 0;
+    if (arg_count == 2) {
+        if (!IS_I64(args[1])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid start_index argument to :index_of(), expected an integer.");
+            return MAKE_NULL();
+        }
+        if (args[1].as.i64 < 0 || (size_t)args[1].as.i64 > str->length) {
+            pyro_panic(vm, ERR_ARGS_ERROR, "Invalid start_index argument to :index_of(), value is out of range.");
+            return MAKE_NULL();
+        }
+        index = (size_t)args[1].as.i64;
     }
-    size_t index = (size_t)args[1].as.i64;
 
     if (index + target->length > str->length) {
         return MAKE_OBJ(vm->empty_error);
@@ -1270,7 +1282,7 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "strip_utf8_ws", str_strip_utf8_ws, 0);
     pyro_define_method(vm, vm->str_class, "match", str_match, 2);
     pyro_define_method(vm, vm->str_class, "replace", str_replace, 2);
-    pyro_define_method(vm, vm->str_class, "index_of", str_index_of, 2);
+    pyro_define_method(vm, vm->str_class, "index_of", str_index_of, -1);
     pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
     pyro_define_method(vm, vm->str_class, "split", str_split, -1);
     pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);

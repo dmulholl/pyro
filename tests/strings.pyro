@@ -259,6 +259,9 @@ def $test_index_of() {
 
     assert $is_err(str:index_of("xxx", 0));
     assert $is_err(str:index_of("foo", 1));
+
+    assert str:index_of("foo") == 0;
+    assert str:index_of("bar") == 3;
 }
 
 
