@@ -432,6 +432,7 @@ typedef enum {
     ITER_MAP_VALUES,
     ITER_QUEUE,
     ITER_RANGE,
+    ITER_STR,
     ITER_STR_BYTES,
     ITER_STR_CHARS,
     ITER_STR_LINES,

@@ -31,6 +31,17 @@ static Value str_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_iter(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    ObjIter* iter = ObjIter_new((Obj*)str, ITER_STR, vm);
+    if (!iter) {
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        return MAKE_NULL();
+    }
+    return MAKE_OBJ(iter);
+}
+
+
 static Value str_byte_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     return MAKE_I64(str->length);
@@ -1232,6 +1243,8 @@ void pyro_load_std_core_str(PyroVM* vm) {
     // Methdods.
     pyro_define_method(vm, vm->str_class, "is_utf8", str_is_utf8, 0);
     pyro_define_method(vm, vm->str_class, "is_ascii", str_is_ascii, 0);
+    pyro_define_method(vm, vm->str_class, "iter", str_iter, 0);
+    pyro_define_method(vm, vm->str_class, "$iter", str_iter, 0);
     pyro_define_method(vm, vm->str_class, "byte", str_byte, 1);
     pyro_define_method(vm, vm->str_class, "bytes", str_bytes, 0);
     pyro_define_method(vm, vm->str_class, "byte_count", str_byte_count, 0);

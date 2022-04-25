@@ -1709,6 +1709,20 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return MAKE_OBJ(vm->empty_error);
         }
 
+        case ITER_STR: {
+            ObjStr* str = (ObjStr*)iter->source;
+            if (iter->next_index < str->length) {
+                ObjStr* new_str = ObjStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
+                if (!new_str) {
+                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    return MAKE_OBJ(vm->empty_error);
+                }
+                iter->next_index++;
+                return MAKE_OBJ(new_str);
+            }
+            return MAKE_OBJ(vm->empty_error);
+        }
+
         case ITER_STR_BYTES: {
             ObjStr* str = (ObjStr*)iter->source;
             if (iter->next_index < str->length) {

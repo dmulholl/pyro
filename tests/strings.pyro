@@ -411,6 +411,22 @@ def $test_multiplication_by_int() {
 }
 
 
+def $test_iterating_over_string_directly() {
+    var result = "";
+    for char in "abc" {
+        assert $is_str(char);
+        result += char;
+    }
+    assert result == "abc";
+
+    var chars = "abc":iter():to_vec();
+    assert chars:count() == 3;
+    assert chars[0] == "a";
+    assert chars[1] == "b";
+    assert chars[2] == "c";
+}
+
+
 def $test_iterating_over_bytes() {
     var bytes = "abc":bytes():to_vec();
     assert bytes:count() == 3;
