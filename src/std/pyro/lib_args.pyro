@@ -339,7 +339,7 @@ class ArgParser {
     def print() {
         $println("Flags:");
         if self.flags:count() > 0 {
-            for (name, flag) in self.flags:entries() {
+            for (name, flag) in self.flags {
                 $println("  {}: {}", name, flag:count());
             }
         } else {
@@ -348,7 +348,7 @@ class ArgParser {
 
         $println("\nOptions:");
         if self.options:count() > 0 {
-            for (name, option) in self.options:entries() {
+            for (name, option) in self.options {
                 $println("  {}: ({}) {}", name, $debug(option.fallback), option.values);
             }
         } else {
