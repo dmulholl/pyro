@@ -19,41 +19,41 @@ static ObjStr* make_debug_string_for_string(PyroVM* vm, ObjStr* input_string) {
     }
 
     for (size_t i = 0; i < input_string->length; i++) {
-        bool okay;
+        bool ok;
         char c = input_string->bytes[i];
 
         switch (c) {
             case '"':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\"", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\"", vm);
                 break;
             case '\\':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
                 break;
             case '\0':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
                 break;
             case '\b':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\b", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\b", vm);
                 break;
             case '\n':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\n", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\n", vm);
                 break;
             case '\r':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\r", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\r", vm);
                 break;
             case '\t':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
                 break;
             default:
                 if (c < 32 || c == 127) {
-                    okay = ObjBuf_append_hex_escaped_byte(buf, c, vm);
+                    ok = ObjBuf_append_hex_escaped_byte(buf, c, vm);
                 } else {
-                    okay = ObjBuf_append_byte(buf, c, vm);
+                    ok = ObjBuf_append_byte(buf, c, vm);
                 }
                 break;
         }
 
-        if (!okay) {
+        if (!ok) {
             return NULL;
         }
     }
@@ -80,44 +80,44 @@ static ObjStr* make_debug_string_for_char(PyroVM* vm, Value value) {
         return NULL;
     }
 
-    bool okay;
+    bool ok;
 
     if (count == 1) {
         switch (utf8_buffer[0]) {
             case '\'':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\'", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\'", vm);
                 break;
             case '\\':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
                 break;
             case '\0':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
                 break;
             case '\b':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\b", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\b", vm);
                 break;
             case '\n':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\n", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\n", vm);
                 break;
             case '\r':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\r", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\r", vm);
                 break;
             case '\t':
-                okay = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
+                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\t", vm);
                 break;
             default:
                 if (utf8_buffer[0] < 32 || utf8_buffer[0] == 127) {
-                    okay = ObjBuf_append_hex_escaped_byte(buf, utf8_buffer[0], vm);
+                    ok = ObjBuf_append_hex_escaped_byte(buf, utf8_buffer[0], vm);
                 } else {
-                    okay = ObjBuf_append_byte(buf, utf8_buffer[0], vm);
+                    ok = ObjBuf_append_byte(buf, utf8_buffer[0], vm);
                 }
                 break;
         }
     } else {
-        okay = ObjBuf_append_bytes(buf, count, utf8_buffer, vm);
+        ok = ObjBuf_append_bytes(buf, count, utf8_buffer, vm);
     }
 
-    if (!okay) {
+    if (!ok) {
         return NULL;
     }
 
