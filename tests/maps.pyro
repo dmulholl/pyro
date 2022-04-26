@@ -137,11 +137,19 @@ def $test_iterating_over_entries() {
         "ghi" = 789,
     };
 
-    var entries = map:entries():to_vec();
+    var entries = map:iter():to_vec();
     assert entries:count() == 3;
     assert entries[0] == $tup("abc", 123);
     assert entries[1] == $tup("def", 456);
     assert entries[2] == $tup("ghi", 789);
+
+    for entry in map {
+        assert $is_tup(entry);
+        var (key, value) = entry;
+        assert key == "abc" || key == "def" || key == "ghi";
+        assert value == 123 || value == 456 || value == 789;
+        assert map[key] == value;
+    }
 }
 
 

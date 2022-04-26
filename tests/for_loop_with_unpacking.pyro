@@ -55,6 +55,6 @@ var map = {
     "4" = 4,
 };
 
-for (key, value) in map:entries() {
+for (key, value) in map {
     assert key == $str(value);
 }

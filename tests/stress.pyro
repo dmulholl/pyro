@@ -148,7 +148,7 @@ def benchmark() {
     sort_vec:sort();
 
     # Iterating over a map.
-    for (key, value) in map:entries() {
+    for (key, value) in map {
         map[key] = value;
     }
 }
