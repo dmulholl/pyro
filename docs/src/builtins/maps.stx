@@ -3,20 +3,33 @@ title: Hash Maps
 meta_title: Pyro &mdash; Hash Maps
 ---
 
+::: insert toc
+::: hr
+
+
 A hash map, `map`, is a collection of key-value pairs.
-Pyro's map type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
 
 [[ `$map() -> map` ]]
 
     Creates a new `map` object.
 
-Alternatively, you can create a map using literal syntax:
+Pyro's map type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
+
+
+
+### Map Literals
+
+You can create a map using literal syntax:
 
 ::: code pyro
     var map = {
         "foo" = 123,
         "bar" = 456,
     };
+
+
+
+### Indexing
 
 You can index into a map to get or set entries:
 
@@ -29,18 +42,39 @@ You can index into a map to get or set entries:
 
 Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
-Maps are iterable:
+If the map doesn't contain an entry corresponding to the key, the expression `map[key]` will return an `err`.
+
+
+
+### Iterating
+
+You can iterate over a map in three different ways.
+
+1. Iterating over a map directly returns key-value tuples which you can unpack in a for-loop as shown below:
 
 ::: code pyro
-    for (key, value) in map:entries() {
+    for (key, value) in map {
         echo key;
         echo value;
     }
 
-The `:entries()` method returns an iterator over key-value tuples which you can unpack in a for-loop as shown.
-Maps also have a `:keys()` method which returns an iterator over the map's keys and a `:values()` method which returns an iterator over the map's values.
+2. The `:keys()` method returns an iterator over the map's keys:
 
-Maps have the following methods:
+::: code pyro
+    for key in map:keys() {
+        echo key;
+    }
+
+(3) The `:values()` method returns an iterator over the map's values:
+
+::: code pyro
+    for value in map:values() {
+        echo value;
+    }
+
+
+
+### Methods
 
 [[ `:contains(key: any) -> bool` ]]
 
@@ -54,17 +88,17 @@ Maps have the following methods:
 
     Returns the number of entries in the map.
 
-[[ `:entries() -> iter[tup]` ]]
-
-    Returns an iterator over `(key, value)` tuples.
-
 [[ `:get(key: any) -> any` ]]
 
-    Returns the value associated with `key` or `err` if `key` was not found.
+    Returns the value associated with `key` or an `err` if `key` was not found.
 
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the map is empty.
+
+[[ `:iter() -> iter[tup]` ]]
+
+    Returns an iterator over `(key, value)` tuples.
 
 [[ `:keys() -> iter` ]]
 
