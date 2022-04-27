@@ -138,8 +138,7 @@ class ArgParser {
         } else if self.options:contains(name) {
             return self.options[name]:count();
         } else {
-            var msg = $fmt("'{}' is not a registered flag or option name.", name);
-            $panic(msg);
+            $panic("count(): '{}' is not a registered flag or option name", name);
         }
     }
 
@@ -151,8 +150,7 @@ class ArgParser {
         if self.options:contains(name) {
             return self.options[name]:value();
         } else {
-            var msg = $fmt("'{}' is not a registered option name.", name);
-            $panic(msg);
+            $panic("value(): '{}' is not a registered option name", name);
         }
     }
 
@@ -160,8 +158,7 @@ class ArgParser {
         if self.options:contains(name) {
             return self.options[name]:values();
         } else {
-            var msg = $fmt("'{}' is not a registered option name.", name);
-            $panic(msg);
+            $panic("values(): '{}' is not a registered option name", name);
         }
     }
 
@@ -169,17 +166,23 @@ class ArgParser {
     #  Parsing machinery.  #
     # -------------------- #
 
-    def parse() {
+    def parse() -> err? {
         if $args:count() > 1 {
             var vec = $iter($args):skip_first(1):to_vec();
-            var stream = ArgStream(vec);
-            self:parse_stream(stream);
+            return self:parse_vec(vec);
         }
     }
 
-    def parse_vec(vec: vec[str]) {
+    def parse_vec(vec: vec[str]) -> err? {
         var stream = ArgStream(vec);
-        self:parse_stream(stream);
+        var result = try self:parse_stream(stream);
+        if $is_err(result) {
+            if self.exit_on_error {
+                self:exit_with_error(result[0]);
+            } else {
+                return $err(result[0]);
+            }
+        }
     }
 
     def parse_stream(stream: ArgStream) {
@@ -227,12 +230,10 @@ class ArgParser {
                     if self.commands:contains(name) {
                         self.commands[name]:exit_with_help();
                     } else {
-                        $eprintln("Error: '{}' is not a recognised command.", name);
-                        $exit(1);
+                        $panic("'{}' is not a recognised command", name);
                     }
                 } else {
-                    $eprintln("Error: missing argument for the help command.");
-                    $exit(1);
+                    $panic("expected an argument for the help command");
                 }
             }
 
@@ -252,12 +253,10 @@ class ArgParser {
 
         if self.options:contains(name) {
             if !self.options[name]:try_append_value(value) {
-                $eprintln("Error: invalid option value '{}'.", value);
-                $exit(1);
+                $panic("invalid option value '{}'", value);
             }
         } else {
-            $eprintln("Error: '{}' is not a recognised option name.", name);
-            $exit(1);
+            $panic("'{}' is not a recognised option name", name);
         }
     }
 
@@ -269,20 +268,17 @@ class ArgParser {
             if stream:has_next() {
                 var value = stream:next();
                 if !self.options[arg]:try_append_value(value) {
-                    $eprintln("Error: invalid option value '{}'.", value);
-                    $exit(1);
+                    $panic("invalid option value '{}'", value);
                 }
             } else {
-                $eprintln("Error: option --{} requires an argument.", arg);
-                $exit(1);
+                $panic("option --{} requires an argument", arg);
             }
         } else if arg == "help" && self.helptext {
             self:exit_with_help();
         } else if arg == "version" && self.version {
             self:exit_with_version();
         } else {
-            $eprintln("Error: --{} is not a recognised flag or option name.", arg);
-            $exit(1);
+            $panic("--{} is not a recognised flag or option name", arg);
         }
     }
 
@@ -295,26 +291,21 @@ class ArgParser {
                 if stream:has_next() {
                     var value = stream:next();
                     if !self.options[char]:try_append_value(value) {
-                        $eprintln("Error: invalid option value '{}'.", value);
-                        $exit(1);
+                        $panic("invalid option value '{}'", value);
                     }
                 } else if arg:byte_count() > 1 {
-                    $eprintln("Error: option '{}' in -{} requires an argument.", char, arg);
-                    $exit(1);
+                    $panic("option '{}' in -{} requires an argument", char, arg);
                 } else {
-                    $eprintln("Error: option -{} requires an argument.", char);
-                    $exit(1);
+                    $panic("option -{} requires an argument", char);
                 }
             } else if char == "h" && self.helptext {
                 self:exit_with_help();
             } else if char == "v" && self.version {
                 self:exit_with_version();
             } else if arg:byte_count() > 1 {
-                $eprintln("Error: '{}' in -{} is not a recognised flag or option name.", char, arg);
-                $exit(1);
+                $panic("'{}' in -{} is not a recognised flag or option name", char, arg);
             } else {
-                $eprintln("Error: -{} is not a recognised flag or option name.", arg);
-                $exit(1);
+                $panic("-{} is not a recognised flag or option name", arg);
             }
         }
     }
@@ -335,6 +326,11 @@ class ArgParser {
             $println(self.version:strip());
         }
         $exit(0);
+    }
+
+    def exit_with_error(message: str) {
+        $eprintln("Error: {}.", message);
+        $exit(1);
     }
 
     def print() {
