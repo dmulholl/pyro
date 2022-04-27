@@ -13,7 +13,7 @@ A hash map, `map`, is a collection of key-value pairs.
 
     Creates a new `map` object.
 
-Pyro's map type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
+Pyro's `map` type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
 
 
 
@@ -42,7 +42,7 @@ You can index into a map to get or set entries:
 
 Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
-If the map doesn't contain an entry corresponding to the key, the expression `map[key]` will return an `err`.
+If the map doesn't contain an entry corresponding to `key`, the expression `map[key]` will return an `err`.
 
 
 

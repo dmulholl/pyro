@@ -3,6 +3,9 @@ title: Vectors
 meta_title: Pyro &mdash; Vectors
 ---
 
+::: insert toc
+::: hr
+
 A vector, `vec`, is a dynamic array of values.
 
 [[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
@@ -13,10 +16,18 @@ A vector, `vec`, is a dynamic array of values.
     * If called with a single iterable argument, fills the new vector by iterating over the argument.
     * If called with two arguments, creates a vector with the specified initial size and fill value.
 
-Alternatively, you can create a vector using literal syntax:
+
+
+### Vector Literals
+
+You can create a vector using literal syntax:
 
 ::: code pyro
     var vec = ["foo", "bar", "baz"];
+
+
+
+### Indexing
 
 You can index into a vector to get or set entries:
 
@@ -29,6 +40,10 @@ You can index into a vector to get or set entries:
 
 Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
+
+
+### Iterating
+
 Vectors are iterable:
 
 ::: code pyro
@@ -36,7 +51,9 @@ Vectors are iterable:
         echo item;
     }
 
-Vectors have the following methods:
+
+
+### Methods
 
 [[ `:append(value: any)` ]]
 
@@ -121,6 +138,8 @@ Vectors have the following methods:
     If a `callback` function is supplied it will be used to compare pairs of values.
     It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
 
+    Use `:sort()` if you don't care about the underlying sorting algorithm.
+
 [[ `:quicksort() -> vec` <br> `:quicksort(callback: func(any, any) -> bool) -> vec` ]]
 
     Sorts the vector in-place using the quicksort algorithm.
@@ -128,6 +147,8 @@ Vectors have the following methods:
 
     If a `callback` function is supplied it will be used to compare pairs of values.
     It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
+
+    Use `:sort()` if you don't care about the underlying sorting algorithm.
 
 [[ `:random() -> any` ]]
 

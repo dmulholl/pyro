@@ -3,7 +3,6 @@ title: Builtin Types
 meta_title: Pyro &mdash; Builtin Types
 ---
 
-You can find detailed descriptions of all of Pyro's builtin types in the pages below.
 Builtin types are part of the language itself --- you don't need to import any libraries to use them.
 
 * [Byte Buffers](@root/builtins/buffers//)
