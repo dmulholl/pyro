@@ -352,12 +352,15 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$panic(error_message: str)` <br> `$panic(error_message: str, error_code: i64)` ]]
+[[ `$panic(error_message: any)` <br> `$panic(format_string: str, arg1: any, arg2: any, ...)` ]]
 
-    Raises a panic.
-    The default error code is `1`.
+    Panics with the specified error message.
 
-    If the panic is unhandled, the error message will be printed and the program will exit with the specified error code.
+    * If called with a single argument and `error_message` isn't already a string, it will be automatically stringified.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first.
+
+    If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
 
 
 

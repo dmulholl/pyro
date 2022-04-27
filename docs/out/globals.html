@@ -630,15 +630,22 @@ Creates a new <code>$map</code> object.
 </div>
 <div>
 <dt>
-<code>$panic(error_message: str)</code> <br> <code>$panic(error_message: str, error_code: i64)</code>
+<code>$panic(error_message: any)</code> <br> <code>$panic(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
-Raises a panic.
-The default error code is <code>1</code>.
+Panics with the specified error message.
 </p>
+<ul>
+<li>
+If called with a single argument and <code>error_message</code> isn't already a string, it will be automatically stringified.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first.
+</li>
+</ul>
 <p>
-If the panic is unhandled, the error message will be printed and the program will exit with the specified error code.
+If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
 </p>
 </dd>
 </div>
