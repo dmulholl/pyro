@@ -1,7 +1,7 @@
 class Foo {
     def $init(arg) {
         if arg == "panic" {
-            $panic("oh no!", 123);
+            $panic("oh no!");
         }
     }
 }
@@ -11,5 +11,4 @@ assert !$is_err(foo1);
 
 var foo2 = try Foo("panic");
 assert $is_err(foo2);
-assert foo2[0] == 123;
-assert foo2[1] == "oh no!";
+assert foo2[0] == "oh no!";

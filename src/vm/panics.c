@@ -99,7 +99,11 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) 
     va_start(args, format_string);
     pyro_write_stderr_v(vm, format_string, args);
     va_end(args);
-    pyro_write_stderr(vm, "\n");
+    if (strlen(format_string) > 0 && format_string[strlen(format_string) - 1] != '.') {
+        pyro_write_stderr(vm, ".\n");
+    } else {
+        pyro_write_stderr(vm, "\n");
+    }
 
     // Print a stack trace if the panic occurred inside a Pyro function.
     if (vm->frame_count > 1) {
@@ -149,7 +153,11 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     va_start(args, format_string);
     pyro_write_stderr_v(vm, format_string, args);
     va_end(args);
-    pyro_write_stderr(vm, "\n");
+    if (strlen(format_string) > 0 && format_string[strlen(format_string) - 1] != '.') {
+        pyro_write_stderr(vm, ".\n");
+    } else {
+        pyro_write_stderr(vm, "\n");
+    }
 
     // If we were executing Pyro code when the error occured, print the source filename and line
     // number of the last instruction.
@@ -163,7 +171,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
         }
         pyro_write_stderr(
             vm,
-            "\n%s:%zu\n  Error: Failed to compile source code.\n",
+            "\n%s:%zu\n  Error: failed to compile Pyro source code.\n",
             fn->source_id->bytes,
             instruction_line_number
         );

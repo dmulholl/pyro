@@ -82,6 +82,7 @@ class ArgParser {
     var version: str?;
     var callback: fn?(str, ArgParser);
     var enable_help_command: bool = false;
+    var exit_on_error: bool = true;
 
     var args: vec[str];
     var command_name: str?;

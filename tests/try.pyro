@@ -1,4 +1,4 @@
-def panics() {
+def calls_panic() {
     $panic("oh no!");
 }
 
@@ -24,13 +24,13 @@ var foo = try (1 + 2);
 assert foo == 3;
 
 
-var foo = try panics();
+var foo = try calls_panic();
 assert $is_err(foo);
-assert foo[0] == 1;
-assert foo[1] == "oh no!";
+assert foo:count() == 3;
+assert foo[0] == "oh no!";
 
 
-var foo = try panics() !! "fallback";
+var foo = try calls_panic() !! "fallback";
 assert foo == "fallback";
 
 
@@ -46,11 +46,10 @@ var foo = try try try 123;
 assert foo == 123;
 
 
-var foo = try try try panics();
+var foo = try try try calls_panic();
 assert $is_err(foo);
-assert foo[0] == 1;
-assert foo[1] == "oh no!";
+assert foo[0] == "oh no!";
 
 
-var foo = try try try panics() !! "fallback";
+var foo = try try try calls_panic() !! "fallback";
 assert foo == "fallback";

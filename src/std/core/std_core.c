@@ -330,7 +330,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $exit(), expected an integer.");
+        pyro_panic(vm, ERR_TYPE_ERROR, "$exit(): invalid argument [code], expected an integer");
         return MAKE_NULL();
     }
     vm->exit_flag = true;
@@ -341,26 +341,26 @@ static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
-    if (arg_count == 1) {
-        if (!IS_STR(args[0])) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected a string error message.");
-            return MAKE_NULL();
-        }
-        pyro_panic(vm, 1, AS_STR(args[0])->bytes);
+    if (arg_count == 0) {
+        pyro_panic(vm, ERR_ARGS_ERROR, "$panic(): expected 1 or more arguments, found 0");
         return MAKE_NULL();
-    } else if (arg_count == 2) {
-        if (!IS_STR(args[0])) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected a string error message.");
+    } else if (arg_count == 1) {
+        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        if (!IS_I64(args[1])) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $panic(), expected an integer error code.");
-            return MAKE_NULL();
-        }
-        pyro_panic(vm, args[1].as.i64, AS_STR(args[0])->bytes);
+        pyro_panic(vm, 1, string->bytes);
         return MAKE_NULL();
     } else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for $panic(), found %d.", arg_count);
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, ERR_TYPE_ERROR, "$panic(): invalid argument [format_string], expected a string");
+            return MAKE_NULL();
+        }
+        Value formatted = fn_fmt(vm, arg_count, args);
+        if (vm->halt_flag) {
+            return MAKE_NULL();
+        }
+        pyro_panic(vm, 1, AS_STR(formatted)->bytes);
         return MAKE_NULL();
     }
 }
@@ -777,7 +777,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
     // Note: getenv() is part of the C standard library.
     if (arg_count == 1) {
         if (!IS_STR(args[0])) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid 'name' argument to $env(), expected a string.");
+            pyro_panic(vm, ERR_TYPE_ERROR, "$env(): invalid argument [name], expected a string");
             return MAKE_NULL();
         }
 
@@ -789,7 +789,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
 
         ObjStr* string = STR(value);
         if (!string) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, ERR_OUT_OF_MEMORY, "$env(): out of memory");
             return MAKE_NULL();
         }
 
@@ -799,7 +799,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
     // Note: setenv() is a POSIX function, not part of the C standard library.
     if (arg_count == 2) {
         if (!IS_STR(args[0])) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid 'name' argument to $env(), expected a string.");
+            pyro_panic(vm, ERR_TYPE_ERROR, "$env(): invalid argument [name], expected a string");
             return MAKE_NULL();
         }
 
@@ -810,14 +810,14 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (!pyro_setenv(name->bytes, value->bytes)) {
-            pyro_panic(vm, ERR_OS_ERROR, "Failed to set environment variable '%s'.", name->bytes);
+            pyro_panic(vm, ERR_OS_ERROR, "$env(): failed to set environment variable '%s'", name->bytes);
             return MAKE_NULL();
         }
 
         return MAKE_NULL();
     }
 
-    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for $env(), found %zu.", arg_count);
+    pyro_panic(vm, ERR_ARGS_ERROR, "$env(): expected 1 or 2 arguments, found %zu", arg_count);
     return MAKE_NULL();
 }
 

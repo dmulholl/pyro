@@ -1291,8 +1291,6 @@ static void run(PyroVM* vm) {
                 }
 
                 if (vm->panic_flag) {
-                    int64_t error_code = vm->status_code;
-
                     // Reset the VM.
                     vm->panic_flag = false;
                     vm->halt_flag = false;
@@ -1306,26 +1304,25 @@ static void run(PyroVM* vm) {
                     ObjStr* err_str = ObjBuf_to_str(vm->panic_buffer, vm);
                     if (!err_str) {
                         vm->hard_panic = true;
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "out of memory");
                         return;
                     }
                     if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
                         vm->hard_panic = true;
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "out of memory");
                         return;
                     }
 
-                    ObjTup* err_tup = ObjTup_new_err(4, vm);
+                    ObjTup* err_tup = ObjTup_new_err(3, vm);
                     if (!err_tup) {
                         vm->hard_panic = true;
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "out of memory");
                         return;
                     }
 
-                    err_tup->values[0] = MAKE_I64(error_code);
-                    err_tup->values[1] = MAKE_OBJ(err_str);
-                    err_tup->values[2] = MAKE_OBJ(vm->panic_source_id);
-                    err_tup->values[3] = MAKE_I64(vm->panic_line_number);
+                    err_tup->values[0] = MAKE_OBJ(err_str);
+                    err_tup->values[1] = MAKE_OBJ(vm->panic_source_id);
+                    err_tup->values[2] = MAKE_I64(vm->panic_line_number);
 
                     pyro_push(vm, MAKE_OBJ(err_tup));
                 }
