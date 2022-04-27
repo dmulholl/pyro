@@ -1294,7 +1294,7 @@ static void run(PyroVM* vm) {
                     // Reset the VM.
                     vm->panic_flag = false;
                     vm->halt_flag = false;
-                    vm->status_code = 0;
+                    vm->exit_code = 0;
                     vm->memory_allocation_failed = false;
                     vm->stack_top = stashed_stack_top - 1;
                     close_upvalues(vm, stashed_stack_top);
@@ -1394,7 +1394,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
     vm->exit_flag = false;
     vm->panic_flag = false;
     vm->hard_panic = false;
-    vm->status_code = 0;
+    vm->exit_code = 0;
 
     ObjFn* fn = pyro_compile(vm, code, code_length, source_id);
     if (vm->halt_flag) {
@@ -1597,7 +1597,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 vm->exit_flag = false;
                 vm->panic_flag = false;
                 vm->hard_panic = false;
-                vm->status_code = 0;
+                vm->exit_code = 0;
 
                 pyro_push(vm, entry->value);
                 call_value(vm, entry->value, 0);
@@ -1610,7 +1610,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 assert(vm->stack_top == vm->stack);
 
                 if (vm->exit_flag) {
-                    pyro_write_stdout(vm, " · \x1B[1;31mEXIT\x1B[0m (%d) %s\n", vm->status_code, name->bytes);
+                    pyro_write_stdout(vm, " · \x1B[1;31mEXIT\x1B[0m (%d) %s\n", vm->exit_code, name->bytes);
                     tests_failed += 1;
                     break;
                 }

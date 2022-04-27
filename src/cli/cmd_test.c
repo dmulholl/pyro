@@ -41,7 +41,7 @@ void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
         pyro_exec_path_as_main(vm, path);
 
         if (pyro_get_exit_flag(vm)) {
-            printf(" · \x1B[1;31mEXIT\x1B[0m (%" PRId64 ")\n\n", pyro_get_status_code(vm));
+            printf(" · \x1B[1;31mEXIT\x1B[0m (%" PRId64 ")\n\n", pyro_get_exit_code(vm));
             files_failed += 1;
             pyro_free_vm(vm);
             continue;

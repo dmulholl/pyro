@@ -31,8 +31,8 @@ struct PyroVM {
     ObjClass* set_class;
     ObjClass* queue_class;
 
-    // Exit signal, set by the $exit() function.
-    bool exit_flag;
+    // Halt signal, true if [exit_flag] or [panic_flag] is set.
+    bool halt_flag;
 
     // Signals that a panic has occurred.
     bool panic_flag;
@@ -40,12 +40,12 @@ struct PyroVM {
     // Signals that the panic is unrecoverable, i.e. cannot be caught by a try expression.
     bool hard_panic;
 
-    // Halt signal, true if [exit_flag] or [panic_flag] is set.
-    bool halt_flag;
+    // Exit signal, set by the $exit() function.
+    bool exit_flag;
 
-    // Status code, defaults to zero. If the $exit() function is called, this will be set to the
-    // specified exit code. If a panic is raised, this will be set to the error code.
-    int64_t status_code;
+    // Exit code, defaults to zero. If the $exit() function is called, this will be set to the
+    // specified exit code. If a panic is raised, this will be set to a non-zero value.
+    int64_t exit_code;
 
     // Counts the number of nested 'try' expressions.
     size_t try_depth;

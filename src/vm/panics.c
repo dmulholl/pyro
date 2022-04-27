@@ -43,7 +43,7 @@ void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) 
 
     vm->panic_flag = true;
     vm->halt_flag = true;
-    vm->status_code = error_code;
+    vm->exit_code = 1;
     vm->panic_line_number = 0;
     vm->panic_source_id = vm->empty_string;
 
@@ -129,7 +129,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
 
     vm->panic_flag = true;
     vm->halt_flag = true;
-    vm->status_code = ERR_SYNTAX_ERROR;
+    vm->exit_code = 1;
     vm->panic_line_number = source_line;
 
     vm->panic_source_id = STR(source_id);

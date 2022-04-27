@@ -2173,7 +2173,7 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
 
     FnCompiler compiler;
     if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, basename_syntoken(src_id))) {
-        vm->status_code = ERR_OUT_OF_MEMORY;
+        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
         return NULL;
     }
 
@@ -2210,6 +2210,7 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
 
 
 // This wrappper disables the garbage collector during compilation.
+// TODO: this wrapper isn't needed any more.
 ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     vm->gc_disallows++;
     ObjFn* fn = compile(vm, src_code, src_len, src_id);

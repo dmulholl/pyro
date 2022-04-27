@@ -6,7 +6,7 @@
 // This function triggers a panic. It:
 // - Sets vm->panic_flag to true.
 // - Sets vm->halt_flag to true.
-// - Sets vm->status_code to [error_code].
+// - Sets vm->exit_code to a non-zero value.
 // - Prints the error message.
 void pyro_panic(PyroVM* vm, int64_t error_code, const char* format, ...);
 

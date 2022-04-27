@@ -26,11 +26,11 @@ PyroVM* pyro_new_vm() {
     vm->grey_stack = NULL;
     vm->bytes_allocated = sizeof(PyroVM);
     vm->next_gc_threshold = PYRO_INIT_GC_THRESHOLD;
-    vm->exit_flag = false;
+    vm->halt_flag = false;
     vm->panic_flag = false;
     vm->hard_panic = false;
-    vm->halt_flag = false;
-    vm->status_code = 0;
+    vm->exit_flag = false;
+    vm->exit_code = 0;
     vm->try_depth = 0;
     vm->objects = NULL;
     vm->map_class = NULL;
@@ -386,8 +386,8 @@ bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr
 }
 
 
-int64_t pyro_get_status_code(PyroVM* vm) {
-    return vm->status_code;
+int64_t pyro_get_exit_code(PyroVM* vm) {
+    return vm->exit_code;
 }
 
 

@@ -36,13 +36,13 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         pyro_exec_path_as_main(vm, path);
         if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
             pyro_free_vm(vm);
-            exit(pyro_get_status_code(vm));
+            exit(pyro_get_exit_code(vm));
         }
 
         pyro_run_time_funcs(vm, iterations);
         if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
             pyro_free_vm(vm);
-            exit(pyro_get_status_code(vm));
+            exit(pyro_get_exit_code(vm));
         }
 
         pyro_free_vm(vm);

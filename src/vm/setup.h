@@ -22,8 +22,8 @@ bool pyro_set_stdout(PyroVM* vm, FILE* stream);
 // Sets the maximum memory allocation for the VM in bytes.
 void pyro_set_max_memory(PyroVM* vm, size_t bytes);
 
-// Returns the VM's status code.
-int64_t pyro_get_status_code(PyroVM* vm);
+// Returns the VM's exit code.
+int64_t pyro_get_exit_code(PyroVM* vm);
 
 // Returns the VM's exit flag.
 bool pyro_get_exit_flag(PyroVM* vm);

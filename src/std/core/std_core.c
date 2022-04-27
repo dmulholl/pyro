@@ -333,9 +333,9 @@ static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, ERR_TYPE_ERROR, "$exit(): invalid argument [code], expected an integer");
         return MAKE_NULL();
     }
-    vm->exit_flag = true;
     vm->halt_flag = true;
-    vm->status_code = args[0].as.i64;
+    vm->exit_flag = true;
+    vm->exit_code = args[0].as.i64;
     return MAKE_NULL();
 }
 

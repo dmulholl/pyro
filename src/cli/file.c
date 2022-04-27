@@ -28,14 +28,14 @@ void pyro_run_file(ArgParser* parser) {
     pyro_exec_path_as_main(vm, path);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         pyro_free_vm(vm);
-        exit(pyro_get_status_code(vm));
+        exit(pyro_get_exit_code(vm));
     }
 
     // Execute the $main() function if it exists.
     pyro_run_main_func(vm);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         pyro_free_vm(vm);
-        exit(pyro_get_status_code(vm));
+        exit(pyro_get_exit_code(vm));
     }
 
     pyro_free_vm(vm);
