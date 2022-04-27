@@ -6,12 +6,6 @@ meta_title: The Pyro Standard Library
 The standard library is a collection of modules written in C and built into the Pyro binary.
 
 All standard library modules are submodules of the root module `$std`.
-This root module is imported automatically so you can access its submodules without using an explicit `import` statement, e.g.
-
-::: code pyro
-    echo $std::math::pi;
-
-Alternatively, you can explicitly import the submodule you want to use, e.g.
 
 ::: code pyro
     import $std::math;
@@ -20,10 +14,6 @@ Alternatively, you can explicitly import the submodule you want to use, e.g.
 
 
 ### Standard Library Modules
-
-[[ [errors](@root/stdlib/errors//) ]]
-
-    Standard error codes.
 
 [[ [math](@root/stdlib/math//) ]]
 

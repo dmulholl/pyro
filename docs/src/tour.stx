@@ -459,14 +459,9 @@ You can raise a panic from your own code by calling the `$panic()` function with
 ::: code pyro
     $panic("oh no!");
 
-The default error code is `1` but you can specify a custom value:
+If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
 
-::: code pyro
-    $panic("oh no!", 42);
-
-If the panic is unhandled, the error message will be printed and the program will exit with the specified error code.
-
-If the panic is trapped by a `try` expression, the error code and error message will be returned as an `err`.
+If the panic is trapped by a `try` expression, the error message will be returned as the first item in the `err` tuple.
 
 
 
