@@ -3,12 +3,20 @@ title: Tuples
 meta_title: Pyro &mdash; Tuples
 ---
 
+::: insert toc
+::: hr
+
+
 A tuple, `tup`, is an immutable array of values.
 
 [[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
 
     Creates a new `tup` object.
     The arguments provide the tuple's values.
+
+
+
+### Indexing
 
 You can index into a tuple to get (but not set) entries:
 
@@ -18,6 +26,10 @@ You can index into a tuple to get (but not set) entries:
 
 Indices are zero-based. Indexing is equivalent to using the `:get()` method as shown.
 
+
+
+### Iterating
+
 Tuples are iterable:
 
 ::: code pyro
@@ -25,7 +37,9 @@ Tuples are iterable:
         echo item;
     }
 
-Tuples have the following methods:
+
+
+### Methods
 
 [[ `:count() -> i64` ]]
 
@@ -34,3 +48,13 @@ Tuples have the following methods:
 [[ `:get(index: i64) -> any` ]]
 
     Returns the value at `index`. Will panic if `index` is out of range or not an integer.
+
+[[ `:slice(start_index: i64) -> vec` <br> `:slice(start_index: i64, length: i64) -> tup` ]]
+
+    Copies a slice of the source tuple and returns it as a new tuple.
+
+    If `start_index` is negative, counts backwards from the end of the tuple --- i.e. a `start_index` of `-1` refers to to the last item in the tuple.
+
+    If `length` is omitted, copies to the end of the source tuple.
+
+    Panics if either argument is out of range.
