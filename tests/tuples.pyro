@@ -101,6 +101,7 @@ def $test_iterating_over_tuple() {
 
 def $test_iter_method() {
     assert $is_iter($tup():iter());
+    assert $is_iter($tup(123, 456):iter());
 
     var sum = 0;
     for value in $tup(1, 2, 3):iter() {
