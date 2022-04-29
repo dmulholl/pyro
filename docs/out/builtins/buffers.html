@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.8</p>
+                <p class="version">Version 0.6.9</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -127,7 +127,7 @@ Returns <code>true</code> if the buffer is emtpy.
 </div>
 <div>
 <dt>
-<code>:set(index: i64, byte: i64)</code>
+<code>:set(index: i64, byte: i64|char)</code>
 </dt>
 <dd>
 <p>
@@ -183,7 +183,7 @@ This method will panic if an error occurs while formatting the string or if memo
 </div>
 <div>
 <dt>
-<code>:write_byte(byte: i64)</code>
+<code>:write_byte(byte: i64|char)</code>
 </dt>
 <dd>
 <p>
