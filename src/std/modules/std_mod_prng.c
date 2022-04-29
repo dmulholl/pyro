@@ -14,7 +14,7 @@ static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
-        pyro_panic(vm, "$std::prng::rand_int(): invalid argument [n], expected a positive integer");
+        pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
         return MAKE_NULL();
     }
     return MAKE_I64(pyro_mt64_gen_int(vm->mt64, (uint64_t)args[0].as.i64));
@@ -23,12 +23,12 @@ static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0])) {
-        pyro_panic(vm, "$std::prng::rand_int_in_range(): invalid argument [lower], expected an integer");
+        pyro_panic(vm, "rand_int_in_range(): invalid argument [lower], expected an integer");
         return MAKE_NULL();
     }
 
     if (!IS_I64(args[1])) {
-        pyro_panic(vm, "$std::prng::rand_int_in_range(): invalid argument [upper], expected an integer");
+        pyro_panic(vm, "rand_int_in_range(): invalid argument [upper], expected an integer");
         return MAKE_NULL();
     }
 
