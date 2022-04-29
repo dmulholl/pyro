@@ -56,6 +56,61 @@ static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjTup* tup = AS_TUP(args[-1]);
+
+    if (!(arg_count == 1 || arg_count == 2)) {
+        pyro_panic(vm, "slice(): expected 1 or 2 arguments, found %zu", arg_count);
+        return MAKE_NULL();
+    }
+
+    if (!IS_I64(args[0])) {
+        pyro_panic(vm, "slice(): invalid argument [start_index], expected an integer");
+        return MAKE_NULL();
+    }
+
+    size_t start_index;
+    if (args[0].as.i64 >= 0 && (size_t)args[0].as.i64 <= tup->count) {
+        start_index = (size_t)args[0].as.i64;
+    } else if (args[0].as.i64 < 0 && (size_t)(args[0].as.i64 * -1) <= tup->count) {
+        start_index = (size_t)((int64_t)tup->count + args[0].as.i64);
+    } else {
+        pyro_panic(vm, "slice(): invalid argument [start_index], integer (%d) is out of range", args[0].as.i64);
+        return MAKE_NULL();
+    }
+
+    size_t length = tup->count - start_index;
+    if (arg_count == 2) {
+        if (!IS_I64(args[1])) {
+            pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
+            return MAKE_NULL();
+        }
+        if (args[1].as.i64 < 0) {
+            pyro_panic(vm, "slice(): invalid argument [length], expected a positive integer");
+            return MAKE_NULL();
+        }
+        if (start_index + (size_t)args[1].as.i64 > tup->count) {
+            pyro_panic(vm, "slice(): invalid argument [length], integer (%d) is out of range", args[1].as.i64);
+            return MAKE_NULL();
+        }
+        length = (size_t)args[1].as.i64;
+    }
+
+    ObjTup* new_tup = ObjTup_new(length, vm);
+    if (!new_tup) {
+        pyro_panic(vm, "slice(): out of memory");
+        return MAKE_NULL();
+    }
+
+    if (length == 0) {
+        return MAKE_OBJ(new_tup);
+    }
+
+    memcpy(new_tup->values, &tup->values[start_index], sizeof(Value) * length);
+    return MAKE_OBJ(new_tup);
+}
+
+
 static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         return MAKE_OBJ(vm->empty_error);
@@ -84,6 +139,7 @@ void pyro_load_std_core_tup(PyroVM* vm) {
 
     // Methods.
     pyro_define_method(vm, vm->tup_class, "count", tup_count, 0);
+    pyro_define_method(vm, vm->tup_class, "slice", tup_slice, -1);
     pyro_define_method(vm, vm->tup_class, "get", tup_get, 1);
     pyro_define_method(vm, vm->tup_class, "$iter", tup_iter, 0);
 }

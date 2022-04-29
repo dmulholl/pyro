@@ -57,3 +57,36 @@ def $test_tuple_comparisons() {
     assert $tup(1, 2, 3) >= $tup(1, 2, 2);
     assert $tup(1, 2, 3) >= $tup(1, 2);
 }
+
+def $test_slice() {
+    var tup = $tup("foo", "bar", "baz");
+
+    assert tup:slice(0) == $tup("foo", "bar", "baz");
+    assert tup:slice(1) == $tup("bar", "baz");
+    assert tup:slice(2) == $tup("baz");
+    assert tup:slice(3) == $tup();
+    assert $is_err(try tup:slice(4));
+
+    assert tup:slice(-1) == $tup("baz");
+    assert tup:slice(-2) == $tup("bar", "baz");
+    assert tup:slice(-3) == $tup("foo", "bar", "baz");
+    assert $is_err(try tup:slice(-4));
+
+    assert tup:slice(0, 0) == $tup();
+    assert tup:slice(0, 1) == $tup("foo");
+    assert tup:slice(0, 2) == $tup("foo", "bar");
+    assert tup:slice(0, 3) == $tup("foo", "bar", "baz");
+    assert $is_err(try tup:slice(0, 4));
+
+    assert tup:slice(1, 2) == $tup("bar", "baz");
+    assert tup:slice(2, 1) == $tup("baz");
+    assert tup:slice(3, 0) == $tup();
+    assert $is_err(try tup:slice(4, 0));
+    assert $is_err(try tup:slice(4, 1));
+
+    assert tup:slice(-1, 1) == $tup("baz");
+    assert tup:slice(-2, 2) == $tup("bar", "baz");
+    assert tup:slice(-3, 3) == $tup("foo", "bar", "baz");
+    assert $is_err(try tup:slice(-4, 0));
+    assert $is_err(try tup:slice(-4, 1));
+}
