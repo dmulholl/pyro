@@ -9,7 +9,7 @@
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
     FILE* file = fopen(path, "rb");
     if (file == NULL) {
-        pyro_panic(vm, ERR_OS_ERROR, "Unable to open file '%s'.", path);
+        pyro_panic(vm, "unable to open file '%s'", path);
         return false;
     }
 
@@ -28,13 +28,13 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
 
     char* file_data = ALLOCATE_ARRAY(vm, char, file_size);
     if (file_data == NULL) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Insufficient memory to read file '%s'.", path);
+        pyro_panic(vm, "insufficient memory to read file '%s'", path);
         return false;
     }
 
     size_t bytes_read = fread(file_data, sizeof(char), file_size, file);
     if (bytes_read < file_size) {
-        pyro_panic(vm, ERR_OS_ERROR, "I/O Read Error. Unable to read file '%s'.", path);
+        pyro_panic(vm, "I/O read error: unable to read file '%s'", path);
         FREE_ARRAY(vm, char, file_data, file_size);
         return false;
     }

@@ -65,7 +65,7 @@ static void insertion_sort_slice_with_cb(PyroVM* vm, Value* array, size_t low, s
             }
 
             if (!IS_BOOL(item_j_is_less_than_previous)) {
-                pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
+                pyro_panic(vm, "comparison function must return a boolean");
                 return;
             }
 
@@ -105,7 +105,7 @@ static size_t partition_slice_with_cb(PyroVM* vm, Value* array, size_t low, size
         }
 
         if (!IS_BOOL(item_j_is_less_than_pivot)) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
+            pyro_panic(vm, "comparison function must return a boolean");
             return 0;
         }
 
@@ -293,7 +293,7 @@ static void merge_with_cb(
         }
 
         if (!IS_BOOL(item_j_is_less_than_item_i)) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
+            pyro_panic(vm, "comparison function must return a boolean");
             return;
         }
 
@@ -356,7 +356,7 @@ void pyro_mergesort_with_callback(PyroVM* vm, Value* values, size_t count, Value
 
     Value* aux_array = ALLOCATE_ARRAY(vm, Value, count);
     if (!aux_array) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return;
     }
 
@@ -372,7 +372,7 @@ void pyro_mergesort(PyroVM* vm, Value* values, size_t count) {
 
     Value* aux_array = ALLOCATE_ARRAY(vm, Value, count);
     if (!aux_array) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return;
     }
 
@@ -428,7 +428,7 @@ bool pyro_is_sorted_with_callback(PyroVM* vm, Value* values, size_t count, Value
         }
 
         if (!IS_BOOL(b_is_less_than_a)) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Comparison function must return a boolean.");
+            pyro_panic(vm, "comparison function must return a boolean");
             return false;
         }
 

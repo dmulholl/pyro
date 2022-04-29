@@ -136,13 +136,13 @@ char* pyro_getcwd(void) {
 ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
     ObjVec* vec = ObjVec_new(vm);
     if (!vec) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
     DIR* dirp = opendir(path);
     if (!dirp) {
-        pyro_panic(vm, ERR_OS_ERROR, "Unable to open directory '%s'.", path);
+        pyro_panic(vm, "unable to open directory '%s'", path);
         return NULL;
     }
 
@@ -162,12 +162,12 @@ ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
 
         ObjStr* string = ObjStr_copy_raw(name, length, vm);
         if (!string) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
             break;
         }
 
         if (!ObjVec_append(vec, MAKE_OBJ(string), vm)) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
             break;
         }
     }
@@ -180,7 +180,7 @@ ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
 bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out) {
     FILE* file = popen(cmd, "r");
     if (!file) {
-        pyro_panic(vm, ERR_OS_ERROR, "Failed to run comand.");
+        pyro_panic(vm, "failed to run comand");
         return false;
     }
 
@@ -193,7 +193,7 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out) {
             size_t new_capacity = GROW_CAPACITY(capacity);
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "out of memory");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
                 pclose(file);
                 return false;
@@ -208,7 +208,7 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out) {
 
         if (bytes_read < max_bytes) {
             if (ferror(file)) {
-                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
+                pyro_panic(vm, "I/O read error");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
                 pclose(file);
                 return false;
@@ -227,7 +227,7 @@ bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out) {
 
     ObjStr* output = ObjStr_take((char*)array, count, vm);
     if (!output) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         FREE_ARRAY(vm, uint8_t, array, capacity);
         return false;
     }

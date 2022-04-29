@@ -22,7 +22,7 @@ static void print_stack_trace(PyroVM* vm) {
 }
 
 
-void pyro_panic(PyroVM* vm, int64_t error_code, const char* format_string, ...) {
+void pyro_panic(PyroVM* vm, const char* format_string, ...) {
     // It's generally a bad sign if we try to raise a panic when we're already in a panic state --
     // it means that we haven't properly handled the result of a fallible operation. On the other
     // hand, sometimes we want the option of running a sequence of fallible operations -- e.g.

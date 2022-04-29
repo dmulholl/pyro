@@ -28,7 +28,7 @@ static void mark_object(PyroVM* vm, Obj* object) {
         Obj** new_array = REALLOCATE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity, new_capacity);
         if (!new_array) {
             vm->hard_panic = true;
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory. (Failed to reallocate grey stack.)");
+            pyro_panic(vm, "out of memory: failed to reallocate grey stack");
             return;
         }
         vm->grey_capacity = new_capacity;

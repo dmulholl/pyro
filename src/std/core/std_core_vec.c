@@ -16,7 +16,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         ObjVec* vec = ObjVec_new(vm);
         if (!vec) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "$vec(): out of memory");
             return MAKE_NULL();
         }
         return MAKE_OBJ(vec);
@@ -26,7 +26,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         // Does the object have an :$iter() method?
         Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
         if (IS_NULL(iter_method)) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Argument to $vec() is not iterable.");
+            pyro_panic(vm, "$vec(): invalid argument [arg], expected an iterable object");
             return MAKE_NULL();
         }
 
@@ -41,14 +41,14 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         // Get the iterator's :$next() method.
         Value next_method = pyro_get_method(vm, iterator, vm->str_next);
         if (IS_NULL(next_method)) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid iterator -- no :$next() method.");
+            pyro_panic(vm, "$vec(): invalid argument [arg], iterator has no :$next() method");
             return MAKE_NULL();
         }
         pyro_push(vm, next_method); // protect from GC
 
         ObjVec* vec = ObjVec_new(vm);
         if (!vec) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "$vec(): out of memory");
             return MAKE_NULL();
         }
         pyro_push(vm, MAKE_OBJ(vec)); // protect from GC
@@ -64,7 +64,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
             }
             pyro_push(vm, next_value); // protect from GC
             if (!ObjVec_append(vec, next_value, vm)) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "$vec(): out of memory");
                 return MAKE_NULL();
             }
             pyro_pop(vm); // next_value
@@ -80,18 +80,18 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
             ObjVec* vec = ObjVec_new_with_cap_and_fill((size_t)args[0].as.i64, args[1], vm);
             if (!vec) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "$vec(): out of memory");
                 return MAKE_NULL();
             }
             return MAKE_OBJ(vec);
         } else {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid size argument for $vec().");
+            pyro_panic(vm, "$vec(): invalid argument [size], expected a positive integer");
             return MAKE_NULL();
         }
     }
 
     else {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 2 arguments to $vec(), found %i.", arg_count);
+        pyro_panic(vm, "$vec(): expected 0 or 2 arguments, found %zu", arg_count);
         return MAKE_NULL();
     }
 }
@@ -111,7 +111,7 @@ static Value vec_count(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_append(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (!ObjVec_append(vec, args[0], vm)) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "append(): out of memory");
     }
     return MAKE_NULL();
 }
@@ -124,10 +124,10 @@ static Value vec_get(PyroVM* vm, size_t arg_count, Value* args) {
         if (index >= 0 && (size_t)index < vec->count) {
             return vec->values[index];
         }
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        pyro_panic(vm, "get(): invalid argument [index], out of range");
         return MAKE_NULL();
     }
-    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+    pyro_panic(vm, "get(): invalid argument [index], expected an integer");
     return MAKE_NULL();
 }
 
@@ -140,10 +140,10 @@ static Value vec_set(PyroVM* vm, size_t arg_count, Value* args) {
             vec->values[index] = args[1];
             return args[1];
         }
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        pyro_panic(vm, "set(): invalid argument [index], out of range");
         return MAKE_NULL();
     }
-    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+    pyro_panic(vm, "set(): invalid argument [index], expected an integer");
     return MAKE_NULL();
 }
 
@@ -183,7 +183,7 @@ static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_OBJ(vec);
     }
 
-    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :sort(), found %d.", arg_count);
+    pyro_panic(vm, "sort(): expected 0 or 1 arguments, found %zu", arg_count);
     return MAKE_NULL();
 }
 
@@ -201,7 +201,7 @@ static Value vec_mergesort(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_OBJ(vec);
     }
 
-    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :mergesort(), found %d.", arg_count);
+    pyro_panic(vm, "mergesort(): expected 0 or 1 arguments, found %zu", arg_count);
     return MAKE_NULL();
 }
 
@@ -219,7 +219,7 @@ static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_OBJ(vec);
     }
 
-    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :quicksort(), found %d.", arg_count);
+    pyro_panic(vm, "quicksort(): expected 0 or 1 arguments, found %zu", arg_count);
     return MAKE_NULL();
 }
 
@@ -235,7 +235,7 @@ static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     ObjVec* copy = ObjVec_copy(vec, vm);
     if (!copy) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "copy(): out of memory");
         return MAKE_NULL();
     }
     return MAKE_OBJ(vec);
@@ -273,7 +273,7 @@ static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjVec* new_vec = ObjVec_new_with_cap(vec->count, vm);
     if (!vec) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "map(): out of memory");
         return MAKE_NULL();
     }
     pyro_push(vm, MAKE_OBJ(new_vec));
@@ -299,7 +299,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjVec* new_vec = ObjVec_new(vm);
     if (!vec) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "filter(): out of memory");
         return MAKE_NULL();
     }
     pyro_push(vm, MAKE_OBJ(new_vec));
@@ -313,7 +313,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
         }
         if (pyro_is_truthy(result)) {
             if (!ObjVec_append(new_vec, vec->values[i], vm)) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "filter(): out of memory");
                 return MAKE_NULL();
             }
         }
@@ -329,7 +329,7 @@ static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
     if (!iter) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "iter(): out of memory");
         return MAKE_NULL();
     }
 
@@ -353,12 +353,12 @@ static Value vec_remove_at_index(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (!IS_I64(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+        pyro_panic(vm, "remove_at_index(): invalid argument [index], expected an integer");
         return MAKE_NULL();
     }
 
     if (args[0].as.i64 < 0) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        pyro_panic(vm, "remove_at_index(): invalid argument [index], out of range");
         return MAKE_NULL();
     }
 
@@ -370,7 +370,7 @@ static Value vec_remove_random(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (vec->count == 0) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid call to :remove_random(), vector is empty.");
+        pyro_panic(vm, "remove_random(): vector is empty");
         return MAKE_NULL();
     }
 
@@ -383,7 +383,7 @@ static Value vec_random(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (vec->count == 0) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid call to :random(), vector is empty.");
+        pyro_panic(vm, "random(): vector is empty");
         return MAKE_NULL();
     }
 
@@ -396,12 +396,12 @@ static Value vec_insert_at_index(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (!IS_I64(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index type, expected an integer.");
+        pyro_panic(vm, "insert_at_index(): invalid argument [index], expected an integer");
         return MAKE_NULL();
     }
 
-    if (args[0].as.i64 < 0) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+    if (args[0].as.i64 < 0 || (size_t)args[0].as.i64 > vec->count) {
+        pyro_panic(vm, "insert_at_index(): invalid argument [index], out of range");
         return MAKE_NULL();
     }
 
@@ -415,7 +415,7 @@ static Value vec_first(PyroVM* vm, size_t arg_count, Value* args) {
     if (vec->count > 0) {
         return vec->values[0];
     }
-    pyro_panic(vm, ERR_VALUE_ERROR, "Vector is empty.");
+    pyro_panic(vm, "first(): vector is empty");
     return MAKE_NULL();
 }
 
@@ -425,7 +425,7 @@ static Value vec_last(PyroVM* vm, size_t arg_count, Value* args) {
     if (vec->count > 0) {
         return vec->values[vec->count - 1];
     }
-    pyro_panic(vm, ERR_VALUE_ERROR, "Vector is empty.");
+    pyro_panic(vm, "last(): vector is empty");
     return MAKE_NULL();
 }
 
@@ -439,7 +439,7 @@ static Value vec_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_stack(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = ObjVec_new_as_stack(vm);
     if (!vec) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "$stack(): out of memory");
         return MAKE_NULL();
     }
     return MAKE_OBJ(vec);
@@ -454,7 +454,7 @@ static Value fn_is_stack(PyroVM* vm, size_t arg_count, Value* args) {
 static Value stack_pop(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (vec->count == 0) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Cannot pop empty stack.");
+        pyro_panic(vm, "pop(): stack is empty");
         return MAKE_NULL();
     }
     vec->count--;
@@ -466,12 +466,12 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (!(arg_count == 1 || arg_count == 2)) {
-        pyro_panic(vm, ERR_ARGS_ERROR, "Expected 1 or 2 arguments for :slice(), found %i.", arg_count);
+        pyro_panic(vm, "slice(): expected 1 or 2 arguments, found %zu", arg_count);
         return MAKE_NULL();
     }
 
     if (!IS_I64(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, start_index must be an integer.");
+        pyro_panic(vm, "slice(): invalid argument [start_index], expected an integer");
         return MAKE_NULL();
     }
 
@@ -481,22 +481,22 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     } else if (args[0].as.i64 < 0 && (size_t)(args[0].as.i64 * -1) <= vec->count) {
         start_index = (size_t)((int64_t)vec->count + args[0].as.i64);
     } else {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, start_index is out of range.");
+        pyro_panic(vm, "slice(): invalid argument [start_index], integer (%d) is out of range", args[0].as.i64);
         return MAKE_NULL();
     }
 
     size_t length = vec->count - start_index;
     if (arg_count == 2) {
         if (!IS_I64(args[1])) {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument type, length must be an integer.");
+            pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
             return MAKE_NULL();
         }
         if (args[1].as.i64 < 0) {
-            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length cannot be negative.");
+            pyro_panic(vm, "slice(): invalid argument [length], expected a positive integer");
             return MAKE_NULL();
         }
         if (start_index + (size_t)args[1].as.i64 > vec->count) {
-            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid argument value, length is out of range.");
+            pyro_panic(vm, "slice(): invalid argument [length], integer (%d) is out of range", args[1].as.i64);
             return MAKE_NULL();
         }
         length = (size_t)args[1].as.i64;
@@ -504,7 +504,7 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjVec* new_vec = ObjVec_new(vm);
     if (!new_vec) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "slice(): out of memory");
         return MAKE_NULL();
     }
 
@@ -515,7 +515,7 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_push(vm, MAKE_OBJ(new_vec));
     Value* new_array = ALLOCATE_ARRAY(vm, Value, length);
     if (!new_array) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "slice(): out of memory");
         return MAKE_NULL();
     }
     pyro_pop(vm); // new_vec
@@ -540,7 +540,7 @@ static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_BOOL(pyro_is_sorted_with_callback(vm, vec->values, vec->count, args[0]));
     }
 
-    pyro_panic(vm, ERR_ARGS_ERROR, "Expected 0 or 1 arguments for :is_sorted(), found %d.", arg_count);
+    pyro_panic(vm, "is_sorted(): expected 0 or 1 arguments, found %zu", arg_count);
     return MAKE_NULL();
 }
 
@@ -549,14 +549,14 @@ static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :join(), expected a string.");
+        pyro_panic(vm, "join(): invalid argument [sep], expected a string");
         return MAKE_NULL();
     }
     ObjStr* sep = AS_STR(args[0]);
 
     ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
     if (!iter) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "join(): out of memory");
         return MAKE_NULL();
     }
 

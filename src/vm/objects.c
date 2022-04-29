@@ -1242,7 +1242,7 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 
 Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Cannot remove last item from empty vector.");
+        pyro_panic(vm, "cannot remove last item from empty vector");
         return MAKE_NULL();
     }
     vec->count--;
@@ -1252,7 +1252,7 @@ Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
 
 Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Cannot remove first item from empty vector.");
+        pyro_panic(vm, "cannot remove first item from empty vector");
         return MAKE_NULL();
     }
 
@@ -1272,7 +1272,7 @@ Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
 
 Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
     if (index >= vec->count) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        pyro_panic(vm, "index is out of range");
         return MAKE_NULL();
     }
 
@@ -1298,13 +1298,13 @@ Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
 
 void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) {
     if (index > vec->count) {
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        pyro_panic(vm, "index is out of range");
         return;
     }
 
     if (index == vec->count) {
         if (!ObjVec_append(vec, value, vm)) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
         }
         return;
     }
@@ -1313,7 +1313,7 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) 
         size_t new_capacity = GROW_CAPACITY(vec->capacity);
         Value* new_array = REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
             return;
         }
         vec->capacity = new_capacity;
@@ -1596,7 +1596,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 FREE_ARRAY(vm, uint8_t, array, capacity);
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "out of memory");
                 return NULL;
             }
             capacity = new_capacity;
@@ -1608,7 +1608,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
         if (c == EOF) {
             if (ferror(file->stream)) {
                 FREE_ARRAY(vm, uint8_t, array, capacity);
-                pyro_panic(vm, ERR_OS_ERROR, "I/O read error.");
+                pyro_panic(vm, "I/O read error");
                 return NULL;
             }
             break;
@@ -1647,7 +1647,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
     ObjStr* string = ObjStr_take((char*)array, count, vm);
     if (!string) {
         FREE_ARRAY(vm, uint8_t, array, capacity);
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
@@ -1714,7 +1714,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             if (iter->next_index < str->length) {
                 ObjStr* new_str = ObjStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
                 if (!new_str) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     return MAKE_OBJ(vm->empty_error);
                 }
                 iter->next_index++;
@@ -1744,8 +1744,9 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                     return MAKE_CHAR(cp.value);
                 }
                 pyro_panic(
-                    vm, ERR_VALUE_ERROR,
-                    "String contains invalid utf-8 at byte index %zu.", iter->next_index
+                    vm,
+                    "String contains invalid utf-8 at byte index %zu",
+                    iter->next_index
                 );
             }
             return MAKE_OBJ(vm->empty_error);
@@ -1788,7 +1789,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
                 ObjTup* tup = ObjTup_new(2, vm);
                 if (!tup) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     return MAKE_OBJ(vm->empty_error);
                 }
 
@@ -1847,7 +1848,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
             ObjTup* tup = ObjTup_new(2, vm);
             if (!tup) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "out of memory");
                 return MAKE_OBJ(vm->empty_error);
             }
 
@@ -1928,7 +1929,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
             ObjStr* next_line = ObjStr_copy_raw(line_start, line_end - line_start, vm);
             if (!next_line) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "out of memory");
                 return MAKE_OBJ(vm->empty_error);
             }
 
@@ -1973,7 +1974,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* vm) {
     ObjBuf* buf = ObjBuf_new(vm);
     if (!buf) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
     pyro_push(vm, MAKE_OBJ(buf)); // Protect from GC in case we call into Pyro code.
@@ -1991,7 +1992,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
 
         if (!is_first_item) {
             if (!ObjBuf_append_bytes(buf, sep_length, (uint8_t*)sep, vm)) {
-                pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                pyro_panic(vm, "out of memory");
                 return NULL;
             }
         }
@@ -2004,7 +2005,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
         pyro_pop(vm); // next_value
 
         if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
             return NULL;
         }
 
@@ -2013,7 +2014,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
 
     ObjStr* output_string = ObjBuf_to_str(buf, vm);
     if (!output_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 

@@ -22,9 +22,6 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
     } else if (strcmp(name->bytes, "pyro") == 0) {
         pyro_load_std_mod_pyro(vm, module);
         found_module = true;
-    } else if (strcmp(name->bytes, "errors") == 0) {
-        pyro_load_std_mod_errors(vm, module);
-        found_module = true;
     } else if (strcmp(name->bytes, "sqlite") == 0) {
         pyro_load_std_mod_sqlite(vm, module);
         found_module = true;
@@ -40,9 +37,9 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
     }
 
     if (!found_module) {
-        pyro_panic(vm, ERR_MODULE_NOT_FOUND, "Invalid standard library module '%s'.", name->bytes);
+        pyro_panic(vm, "invalid standard library module '%s'", name->bytes);
     } else if (vm->memory_allocation_failed) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
     }
 }
 
@@ -57,7 +54,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
 
         if (base->length == 0) {
-            pyro_panic(vm, ERR_VALUE_ERROR, "Invalid import root (empty string).");
+            pyro_panic(vm, "invalid import root (empty string)");
             return;
         }
 
@@ -74,7 +71,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
 
         char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
         if (!path) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
             return;
         }
 
@@ -128,7 +125,8 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
     }
 
     pyro_panic(
-        vm, ERR_MODULE_NOT_FOUND,
-        "Unable to locate module '%s'.", AS_STR(args[arg_count - 1])->bytes
+        vm,
+        "unable to locate module '%s'",
+        AS_STR(args[arg_count - 1])->bytes
     );
 }

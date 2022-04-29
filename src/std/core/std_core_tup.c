@@ -12,7 +12,7 @@
 static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = ObjTup_new(arg_count, vm);
     if (tup == NULL) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "$tup(): out of memory");
         return MAKE_NULL();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
@@ -38,10 +38,10 @@ static Value tup_get(PyroVM* vm, size_t arg_count, Value* args) {
         if (index >= 0 && (size_t)index < tup->count) {
             return tup->values[index];
         }
-        pyro_panic(vm, ERR_VALUE_ERROR, "Index out of range.");
+        pyro_panic(vm, "get(): invalid argument [index], integer is out of range");
         return MAKE_NULL();
     }
-    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid index, must be an integer.");
+    pyro_panic(vm, "get(): invalid argument [index], expected an integer");
     return MAKE_NULL();
 }
 
@@ -62,7 +62,7 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     }
     ObjTup* tup = ObjTup_new_err(arg_count, vm);
     if (!tup) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "$err(): out of memory");
         return MAKE_NULL();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);

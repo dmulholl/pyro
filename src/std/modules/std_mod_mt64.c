@@ -25,14 +25,14 @@ static Value mt64_init(PyroVM* vm, size_t arg_count, Value* args) {
 
     MT64* mt64 = pyro_mt64_new();
     if (!mt64) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "$std::mt64::MT64:$init(): out of memory");
         return MAKE_NULL();
     }
 
     ObjResourcePointer* resource = ObjResourcePointer_new(mt64, mt64_free_callback, vm);
     if (!resource) {
         pyro_mt64_free(mt64);
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "$std::mt64::MT64:$init(): out of memory");
         return MAKE_NULL();
     }
     vm->bytes_allocated += pyro_mt64_size();
@@ -71,7 +71,7 @@ static Value mt64_seed_with_array(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_mt64_seed_with_byte_array(mt64, buf->bytes, buf->count);
         }
     } else {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::mt64::seed_with_array().");
+        pyro_panic(vm, "$std::mt64::MT64:seed_with_array(): invalid argument, expected a string or buffer");
     }
 
     return MAKE_NULL();
@@ -91,7 +91,7 @@ static Value mt64_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
     MT64* mt64 = (MT64*)resource->pointer;
 
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::mt64::rand_int().");
+        pyro_panic(vm, "$std::mt64::MT64:rand_int(): invalid argument, expected a positive integer");
         return MAKE_NULL();
     }
 
@@ -105,7 +105,7 @@ static Value mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
     MT64* mt64 = (MT64*)resource->pointer;
 
     if (!IS_I64(args[0]) || !IS_I64(args[1])) {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to $std::mt64::rand_int_in_range().");
+        pyro_panic(vm, "$std::mt64::MT64:rand_int_in_range(): invalid argument, expected an integer");
         return MAKE_NULL();
     }
 

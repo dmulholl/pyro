@@ -19,18 +19,18 @@
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
     if (arg_count != closure->fn->arity) {
         pyro_panic(
-            vm, ERR_ARGS_ERROR,
-            "Expected %d argument%s for %s(), found %d.",
+            vm,
+            "%s(): expected %zu argument%s, found %zu",
+            closure->fn->name->bytes,
             closure->fn->arity,
             closure->fn->arity == 1 ? "" : "s",
-            closure->fn->name->bytes,
             arg_count
         );
         return;
     }
 
     if (vm->frame_count == PYRO_MAX_CALL_FRAMES) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Max call depth exceeded.");
+        pyro_panic(vm, "max call depth exceeded");
         return;
     }
 
@@ -49,11 +49,11 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
         return;
     }
     pyro_panic(
-        vm, ERR_ARGS_ERROR,
-        "Expected %d argument%s for %s(), found %d.",
+        vm,
+        "%s(): expected %zu argument%s, found %zu",
+        fn->name->bytes,
         fn->arity,
         fn->arity == 1 ? "" : "s",
-        fn->name->bytes,
         arg_count
     );
 }
@@ -79,7 +79,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 ObjClass* class = AS_CLASS(callee);
                 ObjInstance* instance = ObjInstance_new(vm, class);
                 if (!instance) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     return;
                 }
                 vm->stack_top[-arg_count - 1] = MAKE_OBJ(instance);
@@ -89,8 +89,10 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                     call_value(vm, init_method, arg_count);
                 } else if (arg_count != 0) {
                     pyro_panic(
-                        vm, ERR_ARGS_ERROR,
-                        "Expected 0 arguments for initializer, found %d.", arg_count
+                        vm,
+                        "%s(): expected 0 arguments for initializer, found %zu",
+                        class->name->bytes,
+                        arg_count
                     );
                 }
 
@@ -114,7 +116,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_call), &call_method, vm)) {
                     call_value(vm, call_method, arg_count);
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Object is not callable.");
+                    pyro_panic(vm, "object is not callable");
                 }
 
                 return;
@@ -124,7 +126,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 break;
         }
     }
-    pyro_panic(vm, ERR_TYPE_ERROR, "Object is not callable.");
+    pyro_panic(vm, "object is not callable");
 }
 
 
@@ -146,7 +148,7 @@ static ObjUpvalue* capture_upvalue(PyroVM* vm, Value* local) {
     // No match so create a new upvalue object.
     ObjUpvalue* new_upvalue = ObjUpvalue_new(vm, local);
     if (!new_upvalue) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
@@ -178,13 +180,13 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
     Value method;
     if (!ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
-        pyro_panic(vm, ERR_NAME_ERROR, "Invalid method name '%s'.", method_name->bytes);
+        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
         return;
     }
 
     ObjBoundMethod* bound = ObjBoundMethod_new(vm, pyro_peek(vm, 0), AS_OBJ(method));
     if (!bound) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return;
     }
 
@@ -196,7 +198,7 @@ static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
 static void invoke_method_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
     Value method;
     if (!ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
-        pyro_panic(vm, ERR_NAME_ERROR, "Invalid method name '%s'.", method_name->bytes);
+        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
         return;
     }
 
@@ -215,7 +217,7 @@ static void invoke_method(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
     if (class) {
         invoke_method_from_class(vm, class, method_name, arg_count);
     } else {
-        pyro_panic(vm, ERR_TYPE_ERROR, "Invalid method call '%s'.", method_name->bytes);
+        pyro_panic(vm, "invalid method call '%s'", method_name->bytes);
     }
 }
 
@@ -286,7 +288,7 @@ static void run(PyroVM* vm) {
             case OP_ASSERT: {
                 Value test_expr = pyro_pop(vm);
                 if (!pyro_is_truthy(test_expr)) {
-                    pyro_panic(vm, ERR_ASSERTION_FAILED, "Assertion failed.");
+                    pyro_panic(vm, "assertion failed");
                 }
                 break;
             }
@@ -297,7 +299,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, MAKE_I64(a.as.i64 & b.as.i64));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '&' must both be integers.");
+                    pyro_panic(vm, "operands to '&' must both be integers");
                 }
                 break;
             }
@@ -308,7 +310,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, MAKE_I64(a.as.i64 | b.as.i64));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '|' must both be integers.");
+                    pyro_panic(vm, "operands to '|' must both be integers");
                 }
                 break;
             }
@@ -318,7 +320,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(operand)) {
                     pyro_push(vm, MAKE_I64(~operand.as.i64));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Bitwise '~' requires an integer operand.");
+                    pyro_panic(vm, "bitwise '~' requires an integer operand");
                 }
                 break;
             }
@@ -329,7 +331,7 @@ static void run(PyroVM* vm) {
                 if (IS_I64(a) && IS_I64(b)) {
                     pyro_push(vm, MAKE_I64(a.as.i64 ^ b.as.i64));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '^' must both be integers.");
+                    pyro_panic(vm, "operands to '^' must both be integers");
                 }
                 break;
             }
@@ -348,7 +350,7 @@ static void run(PyroVM* vm) {
                     class->name = READ_STRING();
                     pyro_push(vm, MAKE_OBJ(class));
                 } else {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                 }
                 break;
             }
@@ -364,7 +366,7 @@ static void run(PyroVM* vm) {
                 ObjModule* module = frame->closure->module;
                 ObjClosure* closure = ObjClosure_new(vm, fn, module);
                 if (!closure) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
@@ -387,7 +389,7 @@ static void run(PyroVM* vm) {
                 Value name = READ_CONSTANT();
                 ObjMap* globals = frame->closure->module->globals;
                 if (ObjMap_set(globals, name, pyro_peek(vm, 0), vm) == 0) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                 }
                 pyro_pop(vm);
                 break;
@@ -400,7 +402,7 @@ static void run(PyroVM* vm) {
                 for (uint8_t i = 0; i < count; i++) {
                     Value name = READ_CONSTANT();
                     if (ObjMap_set(globals, name, pyro_peek(vm, count - 1 - i), vm) == 0) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         break;
                     }
                 }
@@ -433,10 +435,10 @@ static void run(PyroVM* vm) {
                     }
                     int64_t n = pyro_write_stdout(vm, i > 1 ? "%s " : "%s\n", string->bytes);
                     if (n == -1) {
-                        pyro_panic(vm, ERR_OS_ERROR, "Failed to write to the standard output stream.");
+                        pyro_panic(vm, "echo: failed to write to the standard output stream");
                         break;
                     } else if (n == -2) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         break;
                     }
                 }
@@ -470,13 +472,13 @@ static void run(PyroVM* vm) {
                 size_t field_index = class->field_values->count;
 
                 if (!ObjVec_append(class->field_values, initial_value, vm)) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
                 if (ObjMap_set(class->field_indexes, MAKE_OBJ(field_name), MAKE_I64(field_index), vm) == 0) {
                     class->field_values->count--;
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
@@ -489,7 +491,7 @@ static void run(PyroVM* vm) {
                 Value field_name = READ_CONSTANT();
 
                 if (!IS_INSTANCE(pyro_peek(vm, 0))) {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid field access '%s'.", AS_STR(field_name)->bytes);
+                    pyro_panic(vm, "invalid field access '%s'", AS_STR(field_name)->bytes);
                     break;
                 }
 
@@ -502,7 +504,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, ERR_NAME_ERROR, "Invalid field name '%s'.", AS_STR(field_name)->bytes);
+                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
                 break;
             }
 
@@ -513,7 +515,7 @@ static void run(PyroVM* vm) {
                 Value value;
                 if (!ObjMap_get(globals, name, &value, vm)) {
                     if (!ObjMap_get(vm->globals, name, &value, vm)) {
-                        pyro_panic(vm, ERR_NAME_ERROR, "Undefined variable '%s'.", AS_STR(name)->bytes);
+                        pyro_panic(vm, "undefined variable '%s'", AS_STR(name)->bytes);
                         break;
                     }
                 }
@@ -539,8 +541,8 @@ static void run(PyroVM* vm) {
                 Value member_name = READ_CONSTANT();
 
                 if (!IS_MOD(pyro_peek(vm, 0))) {
-                    pyro_panic(vm, ERR_TYPE_ERROR,
-                        "Invalid member access '%s', receiver is not a module.",
+                    pyro_panic(vm,
+                        "invalid member access '%s', receiver is not a module",
                         AS_STR(member_name)->bytes
                     );
                     break;
@@ -554,7 +556,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, ERR_NAME_ERROR, "Invalid member name '%s'.", AS_STR(member_name)->bytes);
+                pyro_panic(vm, "invalid member name '%s'", AS_STR(member_name)->bytes);
                 break;
             }
 
@@ -566,7 +568,7 @@ static void run(PyroVM* vm) {
                 if (class) {
                     bind_method(vm, class, method_name);
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid method access '%s'.", method_name->bytes);
+                    pyro_panic(vm, "invalid method access '%s'", method_name->bytes);
                 }
 
                 break;
@@ -620,14 +622,14 @@ static void run(PyroVM* vm) {
 
                     ObjModule* module_object = ObjModule_new(vm);
                     if (!module_object) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
                     module_value = MAKE_OBJ(module_object);
 
                     pyro_push(vm, module_value);
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
                     pyro_pop(vm); // module_value
@@ -663,13 +665,13 @@ static void run(PyroVM* vm) {
 
                     ObjModule* module_object = ObjModule_new(vm);
                     if (!module_object) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
                     module_value = MAKE_OBJ(module_object);
 
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
 
@@ -686,7 +688,7 @@ static void run(PyroVM* vm) {
                 ObjMap* imported_module_globals = AS_MOD(module_value)->globals;
 
                 if (!ObjMap_copy_entries(imported_module_globals, current_module_globals, vm)) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     return;
                 }
 
@@ -712,14 +714,14 @@ static void run(PyroVM* vm) {
 
                     ObjModule* module_object = ObjModule_new(vm);
                     if (!module_object) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
                     module_value = MAKE_OBJ(module_object);
 
                     pyro_push(vm, module_value);
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
                     pyro_pop(vm); // module_value
@@ -740,8 +742,8 @@ static void run(PyroVM* vm) {
                     Value member;
                     if (!ObjMap_get(module_globals, name, &member, vm)) {
                         pyro_panic(
-                            vm, ERR_NAME_ERROR,
-                            "Member '%s' not found in module.", AS_STR(name)->bytes
+                            vm,
+                            "member '%s' not found in module", AS_STR(name)->bytes
                         );
                         return;
                     }
@@ -754,7 +756,7 @@ static void run(PyroVM* vm) {
 
             case OP_INHERIT: {
                 if (!IS_CLASS(pyro_peek(vm, 1))) {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Invalid superclass value (not a class).");
+                    pyro_panic(vm, "invalid superclass value (not a class)");
                     break;
                 }
 
@@ -762,7 +764,7 @@ static void run(PyroVM* vm) {
                 ObjClass* subclass = AS_CLASS(pyro_peek(vm, 0));
 
                 if (superclass == subclass) {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "A class cannot inherit from itself.");
+                    pyro_panic(vm, "a class cannot inherit from itself");
                     break;
                 }
 
@@ -770,15 +772,15 @@ static void run(PyroVM* vm) {
                 // and field initializers to the subclass. This means that there's no extra
                 // runtime work involved in looking up inherited methods or fields.
                 if (!ObjMap_copy_entries(superclass->methods, subclass->methods, vm)) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
                 if (!ObjMap_copy_entries(superclass->field_indexes, subclass->field_indexes, vm)) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
                 if (!ObjVec_copy_entries(superclass->field_values, subclass->field_values, vm)) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
@@ -809,7 +811,7 @@ static void run(PyroVM* vm) {
                     invoke_method(vm, vm->str_iter, 0);
                     frame = &vm->frames[vm->frame_count - 1];
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Object is not iterable.");
+                    pyro_panic(vm, "object is not iterable");
                 }
                 break;
             }
@@ -957,10 +959,10 @@ static void run(PyroVM* vm) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, MAKE_I64(a.as.i64 << b.as.i64));
                     } else {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Right operand to '<<' cannot be negative.");
+                        pyro_panic(vm, "right operand to '<<' cannot be negative");
                     }
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '<<' must both be integers.");
+                    pyro_panic(vm, "operands to '<<' must both be integers");
                 }
                 break;
             }
@@ -970,7 +972,7 @@ static void run(PyroVM* vm) {
 
                 ObjMap* map = ObjMap_new(vm);
                 if (!map) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
@@ -983,7 +985,7 @@ static void run(PyroVM* vm) {
                 // The entries are stored on the stack as [..][key][value][..] pairs.
                 for (Value* slot = vm->stack_top - entry_count * 2 - 1; slot < vm->stack_top - 1; slot += 2) {
                     if (ObjMap_set(map, slot[0], slot[1], vm) == 0) {
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                        pyro_panic(vm, "out of memory");
                         break;
                     }
                 }
@@ -998,7 +1000,7 @@ static void run(PyroVM* vm) {
 
                 ObjVec* vec = ObjVec_new_with_cap(item_count, vm);
                 if (!vec) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
@@ -1025,7 +1027,7 @@ static void run(PyroVM* vm) {
                 ObjStr* name = READ_STRING();
 
                 if (ObjMap_set(class->methods, MAKE_OBJ(name), method, vm) == 0) {
-                    pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
@@ -1040,30 +1042,30 @@ static void run(PyroVM* vm) {
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
+                        pyro_panic(vm, "modulo by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_I64(a.as.i64 % b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
+                        pyro_panic(vm, "modulo by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_F64(fmod(a.as.f64, b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
+                        pyro_panic(vm, "modulo by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_F64(fmod((double)a.as.i64, b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Modulo by zero.");
+                        pyro_panic(vm, "modulo by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_F64(fmod(a.as.f64, (double)b.as.i64)));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '%%' must both be numbers.");
+                    pyro_panic(vm, "operands to '%%' must both be numbers");
                 }
 
                 break;
@@ -1141,7 +1143,7 @@ static void run(PyroVM* vm) {
                 } else if (IS_F64(a) && IS_I64(b)) {
                     pyro_push(vm, MAKE_F64(pow(a.as.f64, (double)b.as.i64)));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '^' must both be numbers.");
+                    pyro_panic(vm, "operands to '^' must both be numbers");
                 }
 
                 break;
@@ -1170,10 +1172,10 @@ static void run(PyroVM* vm) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, MAKE_I64(a.as.i64 >> b.as.i64));
                     } else {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Right operand to '>>' cannot be negative.");
+                        pyro_panic(vm, "right operand to '>>' cannot be negative");
                     }
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '>>' must both be integers.");
+                    pyro_panic(vm, "operands to '>>' must both be integers");
                 }
                 break;
             }
@@ -1181,8 +1183,8 @@ static void run(PyroVM* vm) {
             case OP_SET_FIELD: {
                 if (!IS_INSTANCE(pyro_peek(vm, 1))) {
                     pyro_panic(
-                        vm, ERR_TYPE_ERROR,
-                        "Invalid field access '.', receiver does not have fields."
+                        vm,
+                        "invalid field access '.', receiver does not have fields"
                     );
                     break;
                 }
@@ -1199,7 +1201,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, ERR_NAME_ERROR, "Invalid field name '%s'.", AS_STR(field_name)->bytes);
+                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
                 break;
             }
 
@@ -1208,7 +1210,7 @@ static void run(PyroVM* vm) {
                 ObjMap* globals = frame->closure->module->globals;
                 if (!ObjMap_update_entry(globals, name, pyro_peek(vm, 0), vm)) {
                     if (!ObjMap_update_entry(vm->globals, name, pyro_peek(vm, 0), vm)) {
-                        pyro_panic(vm, ERR_NAME_ERROR, "Undefined variable '%s'.", AS_STR(name)->bytes);
+                        pyro_panic(vm, "undefined variable '%s'", AS_STR(name)->bytes);
                     }
                 }
                 break;
@@ -1247,30 +1249,30 @@ static void run(PyroVM* vm) {
 
                 if (IS_I64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        pyro_panic(vm, "division by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_I64(a.as.i64 / b.as.i64));
                 } else if (IS_F64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        pyro_panic(vm, "division by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_F64(trunc(a.as.f64 / b.as.f64)));
                 } else if (IS_I64(a) && IS_F64(b)) {
                     if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        pyro_panic(vm, "division by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_F64(trunc((double)a.as.i64 / b.as.f64)));
                 } else if (IS_F64(a) && IS_I64(b)) {
                     if (b.as.i64 == 0) {
-                        pyro_panic(vm, ERR_VALUE_ERROR, "Division by zero.");
+                        pyro_panic(vm, "division by zero");
                         break;
                     }
                     pyro_push(vm, MAKE_F64(trunc(a.as.f64 / (double)b.as.i64)));
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Operands to '//' must both be numbers.");
+                    pyro_panic(vm, "operands to '//' must both be numbers");
                 }
 
                 break;
@@ -1304,19 +1306,19 @@ static void run(PyroVM* vm) {
                     ObjStr* err_str = ObjBuf_to_str(vm->panic_buffer, vm);
                     if (!err_str) {
                         vm->hard_panic = true;
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "out of memory");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
                     if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
                         vm->hard_panic = true;
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "out of memory");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
 
                     ObjTup* err_tup = ObjTup_new_err(3, vm);
                     if (!err_tup) {
                         vm->hard_panic = true;
-                        pyro_panic(vm, ERR_OUT_OF_MEMORY, "out of memory");
+                        pyro_panic(vm, "out of memory");
                         return;
                     }
 
@@ -1340,8 +1342,8 @@ static void run(PyroVM* vm) {
                     ObjTup* tup = AS_TUP(value);
                     if (tup->count < count) {
                         pyro_panic(
-                            vm, ERR_VALUE_ERROR,
-                            "Tuple has %d value(s), requires %d for unpacking.", tup->count, count
+                            vm,
+                            "tuple has %zu value(s), requires %zu for unpacking", tup->count, count
                         );
                     } else {
                         for (size_t i = 0; i < count; i++) {
@@ -1352,8 +1354,9 @@ static void run(PyroVM* vm) {
                     ObjVec* vec = AS_VEC(value);
                     if (vec->count < count) {
                         pyro_panic(
-                            vm, ERR_VALUE_ERROR,
-                            "Vector has %d value(s), requires %d for unpacking.", vec->count, count
+                            vm,
+                            "vector has %zu value(s), requires %zu for unpacking",
+                            vec->count, count
                         );
                     } else {
                         for (size_t i = 0; i < count; i++) {
@@ -1361,7 +1364,7 @@ static void run(PyroVM* vm) {
                         }
                     }
                 } else {
-                    pyro_panic(vm, ERR_TYPE_ERROR, "Value is not unpackable.");
+                    pyro_panic(vm, "value is not unpackable");
                 }
 
                 break;
@@ -1370,7 +1373,7 @@ static void run(PyroVM* vm) {
             default:
                 assert(false);
                 vm->hard_panic = true;
-                pyro_panic(vm, ERR_ERROR, "Invalid opcode.");
+                pyro_panic(vm, "invalid opcode");
                 break;
         }
     }
@@ -1405,7 +1408,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
     ObjClosure* closure = ObjClosure_new(vm, fn, vm->main_module);
     pyro_pop(vm);
     if (!closure) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return;
     }
 
@@ -1424,13 +1427,13 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
 void pyro_exec_file_as_main(PyroVM* vm, const char* filepath) {
     char* resolved_path = pyro_realpath(filepath);
     if (!resolved_path) {
-        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve file path '%s'.", filepath);
+        pyro_panic(vm, "unable to resolve file path '%s'", filepath);
         return;
     }
 
     ObjStr* resolved_path_as_string = STR(resolved_path);
     if (!resolved_path_as_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         free(resolved_path);
         return;
     }
@@ -1457,7 +1460,7 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
         size_t path_length = strlen(path);
         char* filepath = malloc(path_length + strlen("/self.pyro") + 1);
         if (!filepath) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
             return;
         }
         memcpy(filepath, path, path_length);
@@ -1467,14 +1470,14 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
         if (pyro_is_file(filepath)) {
             pyro_exec_file_as_main(vm, filepath);
         } else {
-            pyro_panic(vm, ERR_ERROR, "Module requires 'self.pyro' file to be executable.");
+            pyro_panic(vm, "module requires 'self.pyro' file to be executable");
         }
 
         free(filepath);
         return;
     }
 
-    pyro_panic(vm, ERR_ERROR, "Invalid path '%s'.", path);
+    pyro_panic(vm, "invalid path '%s'", path);
 }
 
 
@@ -1502,7 +1505,7 @@ void pyro_exec_code_as_module(
 
     ObjClosure* closure = ObjClosure_new(vm, fn, module);
     if (!closure) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return;
     }
 
@@ -1516,13 +1519,13 @@ void pyro_exec_code_as_module(
 void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* module) {
     char* resolved_path = pyro_realpath(filepath);
     if (!resolved_path) {
-        pyro_panic(vm, ERR_OS_ERROR, "Unable to resolve module path '%s'.", filepath);
+        pyro_panic(vm, "unable to resolve module path '%s'", filepath);
         return;
     }
 
     ObjStr* resolved_path_as_string = STR(resolved_path);
     if (!resolved_path_as_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         free(resolved_path);
         return;
     }
@@ -1542,7 +1545,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
 
     ObjClosure* closure = ObjClosure_new(vm, fn, module);
     if (!closure) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return;
     }
 
@@ -1556,7 +1559,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
 void pyro_run_main_func(PyroVM* vm) {
     ObjStr* main_string = STR("$main");
     if (!main_string) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return;
     }
 
@@ -1569,10 +1572,10 @@ void pyro_run_main_func(PyroVM* vm) {
                 run(vm);
                 pyro_pop(vm);
             } else {
-                pyro_panic(vm, ERR_ARGS_ERROR, "Invalid $main(), must take 0 arguments.");
+                pyro_panic(vm, "invalid $main(), must take 0 arguments");
             }
         } else {
-            pyro_panic(vm, ERR_TYPE_ERROR, "Invalid $main, must be a function.");
+            pyro_panic(vm, "invalid $main, must be a function");
         }
     }
 }

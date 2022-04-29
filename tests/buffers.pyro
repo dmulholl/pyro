@@ -32,22 +32,22 @@ foo[0] = 0x66;
 assert foo[0] == 0x66;
 
 
-def $test_write_be_u16() {
-    var buf = $buf();
-    buf:write_be_u16(0xAABB);
-    assert buf:count() == 2;
-    assert buf[0] == 0xAA;
-    assert buf[1] == 0xBB;
-}
+# def $test_write_be_u16() {
+#     var buf = $buf();
+#     buf:write_be_u16(0xAABB);
+#     assert buf:count() == 2;
+#     assert buf[0] == 0xAA;
+#     assert buf[1] == 0xBB;
+# }
 
 
-def $test_write_le_u16() {
-    var buf = $buf();
-    buf:write_le_u16(0xAABB);
-    assert buf:count() == 2;
-    assert buf[0] == 0xBB;
-    assert buf[1] == 0xAA;
-}
+# def $test_write_le_u16() {
+#     var buf = $buf();
+#     buf:write_le_u16(0xAABB);
+#     assert buf:count() == 2;
+#     assert buf[0] == 0xBB;
+#     assert buf[1] == 0xAA;
+# }
 
 
 def $test_write_with_single_arg() {

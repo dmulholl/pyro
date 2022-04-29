@@ -2173,7 +2173,7 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
 
     FnCompiler compiler;
     if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, basename_syntoken(src_id))) {
-        pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
@@ -2191,7 +2191,7 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
             return NULL;
         }
         if (parser.had_memory_error) {
-            pyro_panic(vm, ERR_OUT_OF_MEMORY, "Out of memory.");
+            pyro_panic(vm, "out of memory");
             return NULL;
         }
     }
