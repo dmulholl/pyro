@@ -49,6 +49,10 @@ Tuples are iterable:
 
     Returns the value at `index`. Will panic if `index` is out of range or not an integer.
 
+[[ `:iter() -> iter` ]]
+
+    Returns an `iter` object wrapping the tuple.
+
 [[ `:slice(start_index: i64) -> vec` <br> `:slice(start_index: i64, length: i64) -> tup` ]]
 
     Copies a slice of the source tuple and returns it as a new tuple.

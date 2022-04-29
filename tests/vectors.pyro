@@ -339,11 +339,23 @@ def $test_is_sorted() {
 }
 
 
-def $test_to_iter() {
+def $test_iter_method() {
     var v1 = [];
     assert $is_iter(v1:iter());
 
     var v2 = [123, 456, 789];
     assert $is_iter(v2:iter());
     assert v2:iter():to_vec():count() == 3;
+
+    var sum1 = 0;
+    for value in [1, 2, 3] {
+        sum1 += value;
+    }
+    assert sum1 == 6;
+
+    var sum2 = 0;
+    for value in [1, 2, 3]:iter() {
+        sum2 += value;
+    }
+    assert sum2 == 6;
 }
