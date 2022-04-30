@@ -197,3 +197,49 @@ def $test_unrecognised_short() {
 
 # Test positional arguments.
 
+def $test_positional_args_empty() {
+    var parser = args::ArgParser();
+    parser:parse_vec([]);
+    assert parser.args:count() == 0;
+}
+
+def $test_positional_args() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec(["foo", "--opt", "value1", "bar", "-o", "value2", "baz"]);
+    assert parser.args:count() == 3;
+    assert parser.args[0] == "foo";
+    assert parser.args[1] == "bar";
+    assert parser.args[2] == "baz";
+}
+
+def $test_option_parsing_switch() {
+    var parser = args::ArgParser();
+    parser:parse_vec(["foo", "--", "--bar", "-b"]);
+    assert parser.args:count() == 3;
+}
+
+# Commands.
+
+def $test_command() {
+    var parser = args::ArgParser();
+
+    var cmd_parser = parser:command("cmd");
+    cmd_parser:flag("foo f");
+    cmd_parser:option("opt o");
+
+    parser:parse_vec([
+        "cmd",
+        "--foo",
+        "--opt", "value1",
+        "arg1", "arg2",
+    ]);
+
+    assert parser.command_name == "cmd";
+    assert parser.command_parser == cmd_parser;
+    assert cmd_parser:found("foo");
+    assert cmd_parser:value("opt") == "value1";
+    assert cmd_parser.args:count() == 2;
+    assert cmd_parser.args[0] == "arg1";
+    assert cmd_parser.args[1] == "arg2";
+}
