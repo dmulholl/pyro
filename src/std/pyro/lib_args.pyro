@@ -1,14 +1,42 @@
+class ArgStream {
+    var args: vec|tup;
+    var index: i64 = 0;
+
+    def $init(args: vec|tup) {
+        self.args = args;
+    }
+
+    def next() -> str {
+        self.index += 1;
+        return self.args[self.index - 1];
+    }
+
+    def has_next() -> bool {
+        return self.index < self.args:count();
+    }
+}
+
+
+class Flag {
+    var count: i64 = 0;
+
+    def count() -> i64 {
+        return self.count;
+    }
+}
+
+
 class Option {
     var parser: fn?(str) -> any;
-    var fallback: any;
+    var default: any;
     var values: vec[any];
 
     def $init() {
         self.values = $vec();
     }
 
-    def fallback(value: any) -> Option {
-        self.fallback = value;
+    def default(value: any) -> Option {
+        self.default = value;
         return self;
     }
 
@@ -39,40 +67,12 @@ class Option {
         if self.values:count() > 0 {
             return self.values:last();
         } else {
-            return self.fallback;
+            return self.default;
         }
     }
 
     def values() -> vec {
         return self.values;
-    }
-}
-
-
-class Flag {
-    var count: i64 = 0;
-
-    def count() -> i64 {
-        return self.count;
-    }
-}
-
-
-class ArgStream {
-    var args: vec|tup;
-    var index: i64 = 0;
-
-    def $init(args: vec|tup) {
-        self.args = args;
-    }
-
-    def next() -> str {
-        self.index += 1;
-        return self.args[self.index - 1];
-    }
-
-    def has_next() -> bool {
-        return self.index < self.args:count();
     }
 }
 
@@ -346,7 +346,7 @@ class ArgParser {
         $println("\nOptions:");
         if self.options:count() > 0 {
             for (name, option) in self.options {
-                $println("  {}: ({}) {}", name, $debug(option.fallback), option.values);
+                $println("  {}: ({}) {}", name, $debug(option.default), option.values);
             }
         } else {
             $println(" [none]");

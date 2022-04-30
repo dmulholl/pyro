@@ -8,6 +8,8 @@ def $test_flag_empty() {
     parser:parse_args([]);
     assert parser:found("foo") == false;
     assert parser:count("foo") == 0;
+    assert parser:found("f") == false;
+    assert parser:count("f") == 0;
 }
 
 def $test_flag_missing() {
@@ -16,6 +18,8 @@ def $test_flag_missing() {
     parser:parse_args(["bar", "baz"]);
     assert parser:found("foo") == false;
     assert parser:count("foo") == 0;
+    assert parser:found("f") == false;
+    assert parser:count("f") == 0;
 }
 
 def $test_flag_long() {
@@ -24,6 +28,8 @@ def $test_flag_long() {
     parser:parse_args(["--foo"]);
     assert parser:found("foo") == true;
     assert parser:count("foo") == 1;
+    assert parser:found("f") == true;
+    assert parser:count("f") == 1;
 }
 
 def $test_flag_short() {
@@ -32,6 +38,8 @@ def $test_flag_short() {
     parser:parse_args(["-f"]);
     assert parser:found("foo") == true;
     assert parser:count("foo") == 1;
+    assert parser:found("f") == true;
+    assert parser:count("f") == 1;
 }
 
 def $test_flag_multiple() {
@@ -40,6 +48,8 @@ def $test_flag_multiple() {
     parser:parse_args(["-fff",  "--foo"]);
     assert parser:found("foo") == true;
     assert parser:count("foo") == 4;
+    assert parser:found("f") == true;
+    assert parser:count("f") == 4;
 }
 
 # Test options.
@@ -50,6 +60,10 @@ def $test_option_empty() {
     parser:parse_args([]);
     assert parser:found("opt") == false;
     assert parser:count("opt") == 0;
+    assert parser:value("opt") == null;
+    assert parser:found("o") == false;
+    assert parser:count("o") == 0;
+    assert parser:value("o") == null;
 }
 
 def $test_option_missing() {
@@ -58,8 +72,10 @@ def $test_option_missing() {
     parser:parse_args(["bar", "baz"]);
     assert parser:found("opt") == false;
     assert parser:count("opt") == 0;
+    assert parser:value("opt") == null;
     assert parser:found("o") == false;
     assert parser:count("o") == 0;
+    assert parser:value("o") == null;
 }
 
 def $test_option_long() {
@@ -119,11 +135,14 @@ def $test_option_multiple() {
 
 def $test_option_with_default_value() {
     var parser = args::ArgParser();
-    parser:option("opt o"):fallback("defvalue");
+    parser:option("opt o"):default("value");
     parser:parse_args([]);
     assert parser:found("opt") == false;
     assert parser:count("opt") == 0;
-    assert parser:value("opt") == "defvalue";
+    assert parser:value("opt") == "value";
+    assert parser:found("o") == false;
+    assert parser:count("o") == 0;
+    assert parser:value("o") == "value";
 }
 
 def $test_option_with_integer_value() {
@@ -133,6 +152,9 @@ def $test_option_with_integer_value() {
     assert parser:found("opt") == true;
     assert parser:count("opt") == 1;
     assert parser:value("opt") == 123;
+    assert parser:found("o") == true;
+    assert parser:count("o") == 1;
+    assert parser:value("o") == 123;
 }
 
 def $test_option_with_negative_integer_value() {
@@ -146,11 +168,14 @@ def $test_option_with_negative_integer_value() {
 
 def $test_option_with_integer_default_value() {
     var parser = args::ArgParser();
-    parser:option("opt o"):fallback(123);
+    parser:option("opt o"):default(123);
     parser:parse_args([]);
     assert parser:found("opt") == false;
     assert parser:count("opt") == 0;
     assert parser:value("opt") == 123;
+    assert parser:found("o") == false;
+    assert parser:count("o") == 0;
+    assert parser:value("o") == 123;
 }
 
 def $test_option_with_invalid_value() {
