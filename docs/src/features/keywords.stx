@@ -44,4 +44,5 @@ The following keywords are reserved for future use:
 * `run`
 * `static`
 * `switch`
+* `typedef`
 * `with`

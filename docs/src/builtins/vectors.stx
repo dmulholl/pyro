@@ -71,7 +71,7 @@ Vectors are iterable:
 
     Returns the number of entries in the vector.
 
-[[ `:filter(callback: func(any) -> bool) -> vec` ]]
+[[ `:filter(callback: fn(any) -> bool) -> vec` ]]
 
     Returns a new vector created by mapping the function `callback` to each element of the vector in turn.
     `callback` should be a callable that takes a single argument (the vector element) and returns `true` or `false`;
@@ -101,7 +101,7 @@ Vectors are iterable:
 
     Returns `true` if the vector is empty.
 
-[[ `:is_sorted() -> bool` <br> `:is_sorted(callback: func(any, any) -> bool) -> bool` ]]
+[[ `:is_sorted() -> bool` <br> `:is_sorted(callback: fn(any, any) -> bool) -> bool` ]]
 
     Returns `true` if the vector is sorted in ascending order.
 
@@ -124,13 +124,13 @@ Vectors are iterable:
     Returns the last item from the vector without removing it.
     Panics if the vector is empty.
 
-[[ `:map(callback: func(any) -> any) -> vec` ]]
+[[ `:map(callback: fn(any) -> any) -> vec` ]]
 
     Returns a new vector created by mapping the function `callback` to each element of the vector in turn.
     `callback` should be a callable that takes a single argument (the vector element);
     its return values will form the elements of the new vector.
 
-[[ `:mergesort() -> vec` <br> `:mergesort(callback: func(any, any) -> bool) -> vec` ]]
+[[ `:mergesort() -> vec` <br> `:mergesort(callback: fn(any, any) -> bool) -> vec` ]]
 
     Sorts the vector in-place using a stable implementation of the mergesort algorithm.
     Returns the vector to allow chaining.
@@ -140,7 +140,7 @@ Vectors are iterable:
 
     Use `:sort()` if you don't care about the underlying sorting algorithm.
 
-[[ `:quicksort() -> vec` <br> `:quicksort(callback: func(any, any) -> bool) -> vec` ]]
+[[ `:quicksort() -> vec` <br> `:quicksort(callback: fn(any, any) -> bool) -> vec` ]]
 
     Sorts the vector in-place using the quicksort algorithm.
     Returns the vector to allow chaining.
@@ -204,7 +204,7 @@ Vectors are iterable:
 
     Panics if either argument is out of range.
 
-[[ `:sort() -> vec` <br> `:sort(callback: func(any, any) -> bool) -> vec` ]]
+[[ `:sort() -> vec` <br> `:sort(callback: fn(any, any) -> bool) -> vec` ]]
 
     Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).
     Returns the vector to allow chaining.
