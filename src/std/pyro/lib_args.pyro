@@ -168,7 +168,7 @@ class ArgParser {
 
     def parse() -> err? {
         if $args:count() > 1 {
-            var vec = $iter($args):skip_first(1):to_vec();
+            var vec = $args:iter():skip_first(1):to_vec();
             return self:parse_vec(vec);
         }
     }
@@ -209,7 +209,7 @@ class ArgParser {
                 if arg == "-" || (arg:byte(1) >= '0' && arg:byte(1) <= '9') {
                     self.args:append(arg);
                 } else if arg:contains("=") {
-                    self:handle_equals_option(arg:slice(1), stream);
+                    self:handle_equals_option(arg:slice(1));
                 } else {
                     self:handle_short_option(arg:slice(1), stream);
                 }

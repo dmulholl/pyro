@@ -1,21 +1,199 @@
 import $std::args;
 
-var parser = args::ArgParser();
-parser.helptext = "Usage: app...";
-parser.version = "1.0";
+# Test flags.
 
-parser:flag("foo f");
-parser:option("bar b"):fallback("default");
-parser:option("baz z"):fallback("default"):parser($str);
+def $test_flag_empty() {
+    var parser = args::ArgParser();
+    parser:flag("foo f");
+    parser:parse_vec([]);
+    assert parser:found("foo") == false;
+    assert parser:count("foo") == 0;
+}
 
-var cmd_parser = parser:command("boo");
-cmd_parser.helptext = "Usage: app boo...";
+def $test_flag_missing() {
+    var parser = args::ArgParser();
+    parser:flag("foo f");
+    parser:parse_vec(["bar", "baz"]);
+    assert parser:found("foo") == false;
+    assert parser:count("foo") == 0;
+}
 
-cmd_parser:flag("foo f");
-cmd_parser:option("bar b"):fallback("default");
-cmd_parser:option("baz z"):fallback("default"):parser($str);
+def $test_flag_long() {
+    var parser = args::ArgParser();
+    parser:flag("foo f");
+    parser:parse_vec(["--foo"]);
+    assert parser:found("foo") == true;
+    assert parser:count("foo") == 1;
+}
 
-parser:parse();
+def $test_flag_short() {
+    var parser = args::ArgParser();
+    parser:flag("foo f");
+    parser:parse_vec(["-f"]);
+    assert parser:found("foo") == true;
+    assert parser:count("foo") == 1;
+}
 
+def $test_flag_multiple() {
+    var parser = args::ArgParser();
+    parser:flag("foo f");
+    parser:parse_vec(["-fff",  "--foo"]);
+    assert parser:found("foo") == true;
+    assert parser:count("foo") == 4;
+}
 
+# Test options.
+
+def $test_option_empty() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec([]);
+    assert parser:found("opt") == false;
+    assert parser:count("opt") == 0;
+}
+
+def $test_option_missing() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec(["bar", "baz"]);
+    assert parser:found("opt") == false;
+    assert parser:count("opt") == 0;
+    assert parser:found("o") == false;
+    assert parser:count("o") == 0;
+}
+
+def $test_option_long() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec(["--opt", "blah"]);
+    assert parser:found("opt") == true;
+    assert parser:count("opt") == 1;
+    assert parser:value("opt") == "blah";
+    assert parser:found("o") == true;
+    assert parser:count("o") == 1;
+    assert parser:value("o") == "blah";
+}
+
+def $test_option_short() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec(["-o", "blah"]);
+    assert parser:found("opt") == true;
+    assert parser:count("opt") == 1;
+    assert parser:value("opt") == "blah";
+    assert parser:found("o") == true;
+    assert parser:count("o") == 1;
+    assert parser:value("o") == "blah";
+}
+
+def $test_option_long_equals() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec(["--opt=blah"]);
+    assert parser:found("opt") == true;
+    assert parser:count("opt") == 1;
+    assert parser:value("opt") == "blah";
+}
+
+def $test_option_short_equals() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec(["-o=blah"]);
+    assert parser:found("opt") == true;
+    assert parser:count("opt") == 1;
+    assert parser:value("opt") == "blah";
+}
+
+def $test_option_multiple() {
+    var parser = args::ArgParser();
+    parser:option("opt o");
+    parser:parse_vec(["--opt=foo", "--opt", "bar", "-o", "baz"]);
+    assert parser:found("opt") == true;
+    assert parser:count("opt") == 3;
+    assert parser:value("opt") == "baz";
+    assert parser:values("opt"):count() == 3;
+    assert parser:values("opt")[0] == "foo";
+    assert parser:values("opt")[1] == "bar";
+    assert parser:values("opt")[2] == "baz";
+}
+
+def $test_option_with_default_value() {
+    var parser = args::ArgParser();
+    parser:option("opt o"):fallback("defvalue");
+    parser:parse_vec([]);
+    assert parser:found("opt") == false;
+    assert parser:count("opt") == 0;
+    assert parser:value("opt") == "defvalue";
+}
+
+def $test_option_with_integer_value() {
+    var parser = args::ArgParser();
+    parser:option("opt o"):parser($i64);
+    parser:parse_vec(["--opt", "123"]);
+    assert parser:found("opt") == true;
+    assert parser:count("opt") == 1;
+    assert parser:value("opt") == 123;
+}
+
+def $test_option_with_negative_integer_value() {
+    var parser = args::ArgParser();
+    parser:option("opt o"):parser($i64);
+    parser:parse_vec(["--opt", "-123"]);
+    assert parser:found("opt") == true;
+    assert parser:count("opt") == 1;
+    assert parser:value("opt") == -123;
+}
+
+def $test_option_with_integer_default_value() {
+    var parser = args::ArgParser();
+    parser:option("opt o"):fallback(123);
+    parser:parse_vec([]);
+    assert parser:found("opt") == false;
+    assert parser:count("opt") == 0;
+    assert parser:value("opt") == 123;
+}
+
+def $test_option_with_invalid_value() {
+    var parser = args::ArgParser();
+    parser.exit_on_error = false;
+    parser:option("opt o"):parser($i64);
+    assert $is_err(try parser:parse_vec(["--opt", "xxx"]));
+}
+
+def $test_option_with_missing_value() {
+    var parser = args::ArgParser();
+    parser.exit_on_error = false;
+    parser:option("opt o"):parser($i64);
+    assert $is_err(try parser:parse_vec(["--opt"]));
+}
+
+def $test_option_with_multiple_integers() {
+    var parser = args::ArgParser();
+    parser:flag("foo f");
+    parser:option("opt o"):parser($i64);
+    parser:parse_vec(["--opt", "123", "-o", "456", "-fo", "789"]);
+    assert parser:found("foo");
+    assert parser:count("foo") == 1;
+    assert parser:found("opt");
+    assert parser:count("opt") == 3;
+    assert parser:values("opt")[0] == 123;
+    assert parser:values("opt")[1] == 456;
+    assert parser:values("opt")[2] == 789;
+}
+
+# Test unrecognised flags/options.
+
+def $test_unrecognised_long() {
+    var parser = args::ArgParser();
+    parser.exit_on_error = false;
+    assert $is_err(try parser:parse_vec(["--opt", "xxx"]));
+}
+
+def $test_unrecognised_short() {
+    var parser = args::ArgParser();
+    parser.exit_on_error = false;
+    assert $is_err(try parser:parse_vec(["-o", "xxx"]));
+}
+
+# Test positional arguments.
 
