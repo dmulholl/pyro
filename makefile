@@ -25,50 +25,56 @@ FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES} -lm -ldl -pthread
 #  Phony Targets  #
 # --------------- #
 
-# Optimized release build.
+release: ## Builds the release binary.
 release: ${OBJ_FILES}
 	@mkdir -p out/release
 	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
-# Unoptimized debug build.
+debug: ## Builds the debug binary.
 debug: ${OBJ_FILES}
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
-# Default debug build. Assertions are checked and the GC is run before every instruction.
+debug1: ## Checks assertions, stresses GC.
 debug1:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_1}"
 
-# Debug build. Dumps bytecode.
+debug2: ## Dumps bytecode.
 debug2:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_2}"
 
-# Debug build. Dumps bytecode and traces execution.
+debug3: ## Traces execution.
 debug3:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_3}"
 
-# Debug build. Dumps bytecode, traces execution, and logs the GC.
+debug4: ## Logs GC.
 debug4:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_4}"
 
-# Runs the standard debug build, then runs the test suite.
+check: ## Builds the debug binary, then runs the test suite.
 check:
 	@make debug
 	@printf "\e[1;32m Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
 
+install: ## Builds and installs the release binary.
 install:
 	@if [ ! -f ./out/release/pyro ]; then make release; fi
 	@if [ -f ./out/release/pyro ]; then printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"; fi
 	@if [ -f ./out/release/pyro ]; then cp ./out/release/pyro /usr/local/bin/pyro; fi
 
+clean: ## Deletes all build artifacts.
 clean:
 	rm -rf ./out/*
 	rm -f ./src/std/pyro/*.c
+
+help:
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
+	{printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 sqlite: out/lib/sqlite.o
 
