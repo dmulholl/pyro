@@ -59,10 +59,10 @@ class Flag {
 
 
 class ArgStream {
-    var args: vec[str];
+    var args: vec|tup;
     var index: i64 = 0;
 
-    def $init(args: vec[str]) {
+    def $init(args: vec|tup) {
         self.args = args;
     }
 
@@ -168,13 +168,13 @@ class ArgParser {
 
     def parse() -> err? {
         if $args:count() > 1 {
-            var vec = $args:iter():skip_first(1):to_vec();
-            return self:parse_vec(vec);
+            var args = $args:slice(1);
+            return self:parse_args(args);
         }
     }
 
-    def parse_vec(vec: vec[str]) -> err? {
-        var stream = ArgStream(vec);
+    def parse_args(args: vec[str]|tup[str]) -> err? {
+        var stream = ArgStream(args);
         var result = try self:parse_stream(stream);
         if $is_err(result) {
             if self.exit_on_error {
