@@ -238,7 +238,7 @@ static uint16_t add_value_to_constant_table(Parser* parser, Value value) {
         parser->had_memory_error = true;
         return 0;
     } else if (index > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("Too many constants in function.");
+        ERROR_AT_PREVIOUS_TOKEN("too many constants in function");
         return 0;
     }
     return (uint16_t)index;
@@ -422,7 +422,7 @@ static int resolve_local(Parser* parser, FnCompiler* compiler, Token* name) {
             if (local->is_initialized) {
                 return i;
             }
-            ERROR_AT_PREVIOUS_TOKEN("Can't read a local variable in its own initializer.");
+            ERROR_AT_PREVIOUS_TOKEN("can't read a local variable in its own initializer");
         }
     }
     return -1;
@@ -444,7 +444,7 @@ static int add_upvalue(Parser* parser, FnCompiler* compiler, uint8_t index, bool
     }
 
     if (upvalue_count == 256) {
-        ERROR_AT_PREVIOUS_TOKEN("Too many closure variables in function (max: 256).");
+        ERROR_AT_PREVIOUS_TOKEN("too many closure variables in function (max: 256)");
         return 0;
     }
 
@@ -486,7 +486,7 @@ static int resolve_upvalue(Parser* parser, FnCompiler* compiler, Token* name) {
 
 static void add_local(Parser* parser, Token name) {
     if (parser->compiler->local_count == 256) {
-        ERROR_AT_PREVIOUS_TOKEN("Too many local variables in scope (max 256).");
+        ERROR_AT_PREVIOUS_TOKEN("too many local variables in scope (max 256)");
         return;
     }
     Local* local = &parser->compiler->locals[parser->compiler->local_count++];
@@ -555,7 +555,7 @@ static void declare_variable(Parser* parser, Token name) {
             break;
         }
         if (lexemes_are_equal(&name, &local->name)) {
-            ERROR_AT_PREVIOUS_TOKEN("A variable with this name already exists in this scope.");
+            ERROR_AT_PREVIOUS_TOKEN("a variable with this name already exists in this scope");
         }
     }
 
@@ -628,7 +628,7 @@ static void patch_jump(Parser* parser, size_t index) {
 
     size_t jump = parser->compiler->fn->code_count - index - 2;
     if (jump > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("Too much code to jump over.");
+        ERROR_AT_PREVIOUS_TOKEN("too much code to jump over");
         return;
     }
 
@@ -648,12 +648,12 @@ static uint8_t parse_argument_list(Parser* parser) {
         do {
             parse_expression(parser, false, true);
             if (arg_count == 255) {
-                ERROR_AT_PREVIOUS_TOKEN("Too many arguments (max: 255).");
+                ERROR_AT_PREVIOUS_TOKEN("too many arguments (max: 255)");
             }
             arg_count++;
         } while (match(parser, TOKEN_COMMA));
     }
-    consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after arguments.");
+    consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after arguments");
     return arg_count;
 }
 
@@ -707,21 +707,21 @@ static int64_t parse_hex_literal(Parser* parser) {
             continue;
         }
         if (count == 16) {
-            ERROR_AT_PREVIOUS_TOKEN("Too many digits in hex literal (max: 16).");
+            ERROR_AT_PREVIOUS_TOKEN("too many digits in hex literal (max: 16)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid hex literal (zero digits).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid hex literal (zero digits)");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 16);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid hex literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid hex literal (out of range)");
     }
 
     return value;
@@ -737,21 +737,21 @@ static int64_t parse_binary_literal(Parser* parser) {
             continue;
         }
         if (count == 64) {
-            ERROR_AT_PREVIOUS_TOKEN("Too many digits in binary literal (max: 64).");
+            ERROR_AT_PREVIOUS_TOKEN("too many digits in binary literal (max: 64)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid binary literal (zero digits).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid binary literal (zero digits)");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 2);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid binary literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid binary literal (out of range)");
     }
 
     return value;
@@ -767,21 +767,21 @@ static int64_t parse_octal_literal(Parser* parser) {
             continue;
         }
         if (count == 22) {
-            ERROR_AT_PREVIOUS_TOKEN("Too many digits in octal literal (max: 22).");
+            ERROR_AT_PREVIOUS_TOKEN("too many digits in octal literal (max: 22)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid octal literal (zero digits).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid octal literal (zero digits)");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 8);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid octal literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid octal literal (out of range)");
     }
 
     return value;
@@ -797,7 +797,7 @@ static int64_t parse_int_literal(Parser* parser) {
             continue;
         }
         if (count == 20) {
-            ERROR_AT_PREVIOUS_TOKEN("Too many digits in integer literal (max: 20).");
+            ERROR_AT_PREVIOUS_TOKEN("too many digits in integer literal (max: 20)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
@@ -807,7 +807,7 @@ static int64_t parse_int_literal(Parser* parser) {
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 10);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid integer literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid integer literal (out of range)");
     }
 
     return value;
@@ -829,7 +829,7 @@ static double parse_float_literal(Parser* parser) {
             continue;
         }
         if (count == 24) {
-            ERROR_AT_PREVIOUS_TOKEN("Too many digits in floating-point literal (max: 24).");
+            ERROR_AT_PREVIOUS_TOKEN("too many digits in floating-point literal (max: 24)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
@@ -839,7 +839,7 @@ static double parse_float_literal(Parser* parser) {
     errno = 0;
     double value = strtod(buffer, NULL);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid floating-point literal (out of range).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid floating-point literal (out of range)");
     }
 
     return value;
@@ -852,7 +852,7 @@ static uint32_t parse_char_literal(Parser* parser) {
 
     // The longest valid character literal is a unicode escape sequence of the form: '\UXXXXXXXX'.
     if (length == 0 || length > 10) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid character literal.");
+        ERROR_AT_PREVIOUS_TOKEN("invalid character literal");
         return 0;
     }
 
@@ -861,12 +861,12 @@ static uint32_t parse_char_literal(Parser* parser) {
 
     Utf8CodePoint cp;
     if (!pyro_read_utf8_codepoint((uint8_t*)buffer, count, &cp)) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid character literal (not utf-8).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid character literal (not utf-8)");
         return 0;
     }
 
     if (cp.length != count) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid character literal (too many bytes).");
+        ERROR_AT_PREVIOUS_TOKEN("invalid character literal (too many bytes)");
         return 0;
     }
 
@@ -881,11 +881,11 @@ static void parse_map_literal(Parser* parser) {
             break;
         }
         parse_expression(parser, false, true);
-        consume(parser, TOKEN_EQUAL, "Expected '=' after key.");
+        consume(parser, TOKEN_EQUAL, "expected '=' after key");
         parse_expression(parser, false, true);
         count++;
     } while (match(parser, TOKEN_COMMA));
-    consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after map literal.");
+    consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after map literal");
     emit_byte(parser, OP_MAKE_MAP);
     emit_u16be(parser, count);
 }
@@ -900,7 +900,7 @@ static void parse_vec_literal(Parser* parser) {
         parse_expression(parser, false, true);
         count++;
     } while (match(parser, TOKEN_COMMA));
-    consume(parser, TOKEN_RIGHT_BRACKET, "Expected ']' after vector literal.");
+    consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' after vector literal");
     emit_byte(parser, OP_MAKE_VEC);
     emit_u16be(parser, count);
 }
@@ -971,7 +971,7 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
 
     else if (match(parser, TOKEN_LEFT_PAREN)) {
         parse_expression(parser, can_assign_in_parens, can_assign_in_parens);
-        consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after expression.");
+        consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after expression");
     }
 
     else if (match(parser, TOKEN_STRING)) {
@@ -999,21 +999,21 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
 
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
-            ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'self' outside a method declaration.");
+            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a method declaration");
         }
         emit_load_named_variable(parser, parser->previous_token);
     }
 
     else if (match(parser, TOKEN_SUPER)) {
         if (parser->class_compiler == NULL) {
-            ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'super' outside a class.");
+            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' outside a class");
             return;
         } else if (!parser->class_compiler->has_superclass) {
-            ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'super' in a class with no superclass.");
+            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a class with no superclass");
         }
 
-        consume(parser, TOKEN_COLON, "Expected ':' after 'super'.");
-        consume(parser, TOKEN_IDENTIFIER, "Expected superclass method name.");
+        consume(parser, TOKEN_COLON, "expected ':' after 'super'");
+        consume(parser, TOKEN_IDENTIFIER, "expected superclass method name");
 
         uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
         emit_load_named_variable(parser, syntoken("self"));    // load the instance
@@ -1045,7 +1045,7 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
 
     else {
         ERROR_AT_NEXT_TOKEN(
-            "Unexpected token '%.*s'. Expected an expression.",
+            "unexpected token '%.*s', expected an expression",
             parser->next_token.length,
             parser->next_token.start
         );
@@ -1063,7 +1063,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
 
         else if (match(parser, TOKEN_LEFT_BRACKET)) {
             parse_expression(parser, true, true);
-            consume(parser, TOKEN_RIGHT_BRACKET, "Expected ']' after index.");
+            consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' after index");
             if (can_assign && match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_SET_INDEX);
@@ -1085,7 +1085,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         }
 
         else if (match(parser, TOKEN_DOT)) {
-            consume(parser, TOKEN_IDENTIFIER, "Expected a field name after '.'.");
+            consume(parser, TOKEN_IDENTIFIER, "expected a field name after '.'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (can_assign && match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
@@ -1108,7 +1108,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         }
 
         else if (match(parser, TOKEN_COLON)) {
-            consume(parser, TOKEN_IDENTIFIER, "Expected a method name after ':'.");
+            consume(parser, TOKEN_IDENTIFIER, "expected a method name after ':'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (match(parser, TOKEN_LEFT_PAREN)) {
                 uint8_t arg_count = parse_argument_list(parser);
@@ -1120,7 +1120,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         }
 
         else if (match(parser, TOKEN_COLON_COLON)) {
-            consume(parser, TOKEN_IDENTIFIER, "Expected a module name after '::'.");
+            consume(parser, TOKEN_IDENTIFIER, "expected a module name after '::'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             emit_u8_u16be(parser, OP_GET_MEMBER, index);
         }
@@ -1323,7 +1323,7 @@ static void parse_conditional_expr(Parser* parser, bool can_assign, bool can_ass
         emit_byte(parser, OP_POP);
         parse_logical_expr(parser, false, can_assign_in_parens);
         size_t jump_to_end = emit_jump(parser, OP_JUMP);
-        consume(parser, TOKEN_COLON_BAR, "Expected ':|' after condition.");
+        consume(parser, TOKEN_COLON_BAR, "expected ':|' after condition");
         patch_jump(parser, jump_to_false_branch);
         emit_byte(parser, OP_POP);
         parse_logical_expr(parser, false, can_assign_in_parens);
@@ -1336,7 +1336,7 @@ static void parse_assignment_expr(Parser* parser, bool can_assign, bool can_assi
     parse_conditional_expr(parser, can_assign, can_assign_in_parens);
 
     if (can_assign && match_assignment_token(parser)) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid assignment target.");
+        ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
     }
 }
 
@@ -1354,7 +1354,7 @@ static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in
 static void parse_single_type(Parser* parser) {
     // Parse a sequence of identifiers: foo::bar::baz.
     do {
-        consume(parser, TOKEN_IDENTIFIER, "Expected identifier in type declaration.");
+        consume(parser, TOKEN_IDENTIFIER, "expected identifier in type declaration");
     } while (match(parser, TOKEN_COLON_COLON));
 
     // Parse an optional nullable marker: '?'.
@@ -1365,7 +1365,7 @@ static void parse_single_type(Parser* parser) {
         do {
             parse_type(parser);
         } while (match(parser, TOKEN_COMMA));
-        consume(parser, TOKEN_RIGHT_BRACKET, "Expected ']' in type declaration.");
+        consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' in type declaration");
     }
 
     // Check for a callable type declaration: (type, ...).
@@ -1374,7 +1374,7 @@ static void parse_single_type(Parser* parser) {
             do {
                 parse_type(parser);
             } while (match(parser, TOKEN_COMMA));
-            consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' in type declaration.");
+            consume(parser, TOKEN_RIGHT_PAREN, "expected ')' in type declaration");
         }
     }
 
@@ -1405,9 +1405,9 @@ static void parse_echo_stmt(Parser* parser) {
         count++;
     }
     if (count > 255) {
-        ERROR_AT_PREVIOUS_TOKEN("Too many arguments for 'echo' (max: 255).");
+        ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'echo' (max: 255)");
     }
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after expression.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
     emit_u8_u8(parser, OP_ECHO, count);
 }
 
@@ -1416,19 +1416,19 @@ static void parse_assert_stmt(Parser* parser) {
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "Assignment is not allowed in 'assert' statements. "
-            "(Wrap the assignment in parentheses to enable it.)"
+            "assignment is not allowed in 'assert' statements "
+            "(wrap the assignment in parentheses to enable it)"
         );
         return;
     }
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after expression.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
     emit_byte(parser, OP_ASSERT);
 }
 
 
 static void parse_expression_stmt(Parser* parser) {
     parse_expression(parser, true, true);
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after expression.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
     emit_byte(parser, OP_POP);
 }
 
@@ -1438,18 +1438,18 @@ static void parse_unpacking_declaration(Parser* parser) {
     size_t count = 0;
 
     do {
-        uint16_t index = consume_variable_name(parser, "Expected variable name.");
+        uint16_t index = consume_variable_name(parser, "expected variable name");
         indexes[count++] = index;
         if (count > 16) {
-            ERROR_AT_PREVIOUS_TOKEN("Too many variable names in list (max: 16).");
+            ERROR_AT_PREVIOUS_TOKEN("too many variable names in list (max: 16)");
         }
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
     } while (match(parser, TOKEN_COMMA));
 
-    consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after variable names.");
-    consume(parser, TOKEN_EQUAL, "Expected '=' after variable list.");
+    consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after variable names");
+    consume(parser, TOKEN_EQUAL, "expected '=' after variable list");
 
     parse_expression(parser, true, true);
     emit_u8_u8(parser, OP_UNPACK, count);
@@ -1463,7 +1463,7 @@ static void parse_var_declaration(Parser* parser) {
         if (match(parser, TOKEN_LEFT_PAREN)) {
             parse_unpacking_declaration(parser);
         } else {
-            uint16_t index = consume_variable_name(parser, "Expected variable name.");
+            uint16_t index = consume_variable_name(parser, "expected variable name");
             if (match(parser, TOKEN_COLON)) {
                 parse_type(parser);
             }
@@ -1475,7 +1475,7 @@ static void parse_var_declaration(Parser* parser) {
             define_variable(parser, index);
         }
     } while (match(parser, TOKEN_COMMA));
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after variable declaration.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after variable declaration");
 }
 
 
@@ -1486,7 +1486,7 @@ static void parse_import_stmt(Parser* parser) {
     int member_count = 0;
 
     // Read the first module name.
-    if (!consume(parser, TOKEN_IDENTIFIER, "Expected a module name after 'import'.")) return;
+    if (!consume(parser, TOKEN_IDENTIFIER, "expected a module name after 'import'")) return;
     uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
     emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
     Token module_name = parser->previous_token;
@@ -1496,30 +1496,30 @@ static void parse_import_stmt(Parser* parser) {
     while (match(parser, TOKEN_COLON_COLON)) {
         if (match(parser, TOKEN_LEFT_BRACE)) {
             if (match(parser, TOKEN_STAR)) {
-                if (!consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after '*' in import statement.")) return;
-                if (!consume(parser, TOKEN_SEMICOLON, "Expected ';' after '{*}' in import statement.")) return;
+                if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after '*' in import statement")) return;
+                if (!consume(parser, TOKEN_SEMICOLON, "expected ';' after '{*}' in import statement")) return;
                 if (parser->compiler->type != TYPE_MODULE || parser->compiler->scope_depth != 0) {
-                    ERROR_AT_PREVIOUS_TOKEN("Can only import {*} at global scope.");
+                    ERROR_AT_PREVIOUS_TOKEN("can only import {*} at global scope");
                     return;
                 }
                 member_count = -1;
                 break;
             }
             do {
-                if (!consume(parser, TOKEN_IDENTIFIER, "Expected member name in import statement.")) return;
+                if (!consume(parser, TOKEN_IDENTIFIER, "expected member name in import statement")) return;
                 member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous_token);
                 emit_u8_u16be(parser, OP_LOAD_CONSTANT, member_indexes[member_count]);
                 member_names[member_count] = parser->previous_token;
                 member_count++;
                 if (member_count > 16) {
-                    ERROR_AT_PREVIOUS_TOKEN("Too many member names in import statement (max: 16).");
+                    ERROR_AT_PREVIOUS_TOKEN("too many member names in import statement (max: 16)");
                     return;
                 }
             } while (match(parser, TOKEN_COMMA));
-            if (!consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after member names in import statement.")) return;
+            if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after member names in import statement")) return;
             break;
         }
-        if (!consume(parser, TOKEN_IDENTIFIER, "Expected module name in import statement.")) return;
+        if (!consume(parser, TOKEN_IDENTIFIER, "expected module name in import statement")) return;
         module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
         emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
         module_name = parser->previous_token;
@@ -1527,7 +1527,7 @@ static void parse_import_stmt(Parser* parser) {
     }
 
     if (module_count > 255) {
-        ERROR_AT_PREVIOUS_TOKEN("Too many module names in import statement (max: 255).");
+        ERROR_AT_PREVIOUS_TOKEN("too many module names in import statement (max: 255)");
         return;
     }
 
@@ -1547,14 +1547,14 @@ static void parse_import_stmt(Parser* parser) {
     int alias_count = 0;
     if (match(parser, TOKEN_AS)) {
         do {
-            if (!consume(parser, TOKEN_IDENTIFIER, "Expected alias name in import statement.")) return;
+            if (!consume(parser, TOKEN_IDENTIFIER, "expected alias name in import statement")) return;
             module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
             module_name = parser->previous_token;
             member_names[alias_count] = parser->previous_token;
             member_indexes[alias_count] = module_index;
             alias_count++;
             if (alias_count > 16) {
-                ERROR_AT_PREVIOUS_TOKEN("Too many alias names in import statement (max: 16).");
+                ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement (max: 16)");
                 return;
             }
         } while (match(parser, TOKEN_COMMA));
@@ -1562,7 +1562,7 @@ static void parse_import_stmt(Parser* parser) {
 
     if (member_count > 0) {
         if (alias_count > 0 && alias_count != member_count) {
-            ERROR_AT_PREVIOUS_TOKEN("Alias and member numbers do not match in import statement.");
+            ERROR_AT_PREVIOUS_TOKEN("alias and member numbers do not match in import statement");
             return;
         }
         for (int i = 0; i < member_count; i++) {
@@ -1571,14 +1571,14 @@ static void parse_import_stmt(Parser* parser) {
         define_variables(parser, member_indexes, member_count);
     } else {
         if (alias_count > 1) {
-            ERROR_AT_PREVIOUS_TOKEN("Too many alias names in import statement.");
+            ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement");
             return;
         }
         declare_variable(parser, module_name);
         define_variable(parser, module_index);
     }
 
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after import statement.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after import statement");
 }
 
 
@@ -1589,7 +1589,7 @@ static void parse_block(Parser* parser) {
             break;
         }
     }
-    consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after block.");
+    consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after block");
 }
 
 
@@ -1598,8 +1598,8 @@ static void parse_if_stmt(Parser* parser) {
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "Assignment is not allowed in the condition expression of an 'if' statement. "
-            "(Wrap the assignment in parentheses to enable it.)"
+            "assignment is not allowed in the condition expression of an 'if' statement "
+            "(wrap the assignment in parentheses to enable it)"
         );
         return;
     }
@@ -1608,7 +1608,7 @@ static void parse_if_stmt(Parser* parser) {
     size_t jump_over_then = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
 
     // Emit the bytecode for the 'then' block.
-    consume(parser, TOKEN_LEFT_BRACE, "Expected '{' after condition in 'if' statement.");
+    consume(parser, TOKEN_LEFT_BRACE, "expected '{' after condition in 'if' statement");
     begin_scope(parser);
     parse_block(parser);
     end_scope(parser);
@@ -1624,7 +1624,7 @@ static void parse_if_stmt(Parser* parser) {
         if (match(parser, TOKEN_IF)) {
             parse_if_stmt(parser);
         } else {
-            consume(parser, TOKEN_LEFT_BRACE, "Expected '{' after 'else'.");
+            consume(parser, TOKEN_LEFT_BRACE, "expected '{' after 'else'");
             begin_scope(parser);
             parse_block(parser);
             end_scope(parser);
@@ -1642,7 +1642,7 @@ static void emit_loop(Parser* parser, size_t start_index) {
 
     size_t offset = parser->compiler->fn->code_count - start_index + 2;
     if (offset > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("Loop body is too large.");
+        ERROR_AT_PREVIOUS_TOKEN("loop body is too large");
     }
 
     emit_byte(parser, (offset >> 8) & 0xff);
@@ -1662,24 +1662,24 @@ static void parse_for_in_stmt(Parser* parser) {
 
     if (match(parser, TOKEN_LEFT_PAREN)) {
         do {
-            consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
+            consume(parser, TOKEN_IDENTIFIER, "expected loop variable name");
             loop_variables[variable_count++] = parser->previous_token;
             if (variable_count > 8) {
-                ERROR_AT_PREVIOUS_TOKEN("Too many variable names to unpack (max: 8).");
+                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: 8)");
             }
         } while (match(parser, TOKEN_COMMA));
-        consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after variable names.");
+        consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after variable names");
     } else {
-        consume(parser, TOKEN_IDENTIFIER, "Expected loop variable name.");
+        consume(parser, TOKEN_IDENTIFIER, "expected loop variable name");
         loop_variables[0] = parser->previous_token;
         variable_count++;
     }
 
-    consume(parser, TOKEN_IN, "Expected keyword 'in'.");
+    consume(parser, TOKEN_IN, "expected keyword 'in'");
 
     // This is the object we'll be iterating over.
     parse_expression(parser, true, true);
-    consume(parser, TOKEN_LEFT_BRACE, "Expected '{' before the loop body.");
+    consume(parser, TOKEN_LEFT_BRACE, "expected '{' before the loop body");
 
     // Replace the object on top of the stack with the result of calling :$iter() on it.
     emit_byte(parser, OP_GET_ITERATOR_OBJECT);
@@ -1764,7 +1764,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     if (!match(parser, TOKEN_SEMICOLON)) {
         loop_has_condition = true;
         parse_expression(parser, false, true);
-        consume(parser, TOKEN_SEMICOLON, "Expected ';' after loop condition.");
+        consume(parser, TOKEN_SEMICOLON, "expected ';' after loop condition");
         exit_jump_index = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
     }
 
@@ -1775,7 +1775,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         size_t increment_index = parser->compiler->fn->code_count;
         parse_expression(parser, true, true);
         emit_byte(parser, OP_POP);
-        consume(parser, TOKEN_LEFT_BRACE, "Expected '{' before loop body.");
+        consume(parser, TOKEN_LEFT_BRACE, "expected '{' before loop body");
 
         emit_loop(parser, loop.start_index);
         loop.start_index = increment_index;
@@ -1862,15 +1862,15 @@ static void parse_while_stmt(Parser* parser) {
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "Assignment is not allowed in the condition expression of a 'while' statement. "
-            "(Wrap the assignment in parentheses to enable it.)"
+            "assignment is not allowed in the condition expression of a 'while' statement "
+            "(wrap the assignment in parentheses to enable it)"
         );
         return;
     }
     size_t exit_jump_index = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
 
     // Emit the bytecode for the block.
-    consume(parser, TOKEN_LEFT_BRACE, "Expected '{' before loop body.");
+    consume(parser, TOKEN_LEFT_BRACE, "expected '{' before loop body");
     begin_scope(parser);
     parse_block(parser);
     end_scope(parser);
@@ -1909,30 +1909,30 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     begin_scope(parser);
 
     // Compile the parameter list.
-    consume(parser, TOKEN_LEFT_PAREN, "Expected '(' before function parameters.");
+    consume(parser, TOKEN_LEFT_PAREN, "expected '(' before function parameters");
     if (!check(parser, TOKEN_RIGHT_PAREN)) {
         do {
             if (compiler.fn->arity == 255) {
-                ERROR_AT_NEXT_TOKEN("Too many parameters (max: 255).");
+                ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
             }
             compiler.fn->arity++;
-            uint16_t index = consume_variable_name(parser, "Expected parameter name.");
+            uint16_t index = consume_variable_name(parser, "expected parameter name");
             if (match(parser, TOKEN_COLON)) {
                 parse_type(parser);
             }
             define_variable(parser, index);
         } while (match(parser, TOKEN_COMMA));
     }
-    consume(parser, TOKEN_RIGHT_PAREN, "Expected ')' after function parameters.");
+    consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after function parameters");
 
     // Check the arity for known method names.
     if (type == TYPE_METHOD) {
         if (strcmp(compiler.fn->name->bytes, "$fmt") == 0 && compiler.fn->arity != 1) {
-            ERROR_AT_PREVIOUS_TOKEN("Invalid method definition, $fmt() takes 1 argument.");
+            ERROR_AT_PREVIOUS_TOKEN("invalid method definition, $fmt() takes 1 argument");
             return;
         }
         if (strcmp(compiler.fn->name->bytes, "$str") == 0 && compiler.fn->arity != 0) {
-            ERROR_AT_PREVIOUS_TOKEN("Invalid method definition, $str() takes no arguments.");
+            ERROR_AT_PREVIOUS_TOKEN("invalid method definition, $str() takes no arguments");
             return;
         }
     }
@@ -1942,7 +1942,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     }
 
     // Compile the body.
-    consume(parser, TOKEN_LEFT_BRACE, "Expected '{' before function body.");
+    consume(parser, TOKEN_LEFT_BRACE, "expected '{' before function body");
     parse_block(parser);
 
     // Create the function object.
@@ -1957,7 +1957,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
 
 static void parse_function_declaration(Parser* parser) {
-    uint16_t index = consume_variable_name(parser, "Expected function name.");
+    uint16_t index = consume_variable_name(parser, "expected function name");
     mark_initialized(parser);
     parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
     define_variable(parser, index);
@@ -1965,7 +1965,7 @@ static void parse_function_declaration(Parser* parser) {
 
 
 static void parse_method_declaration(Parser* parser) {
-    consume(parser, TOKEN_IDENTIFIER, "Expected method name.");
+    consume(parser, TOKEN_IDENTIFIER, "expected method name");
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
     FnType type = TYPE_METHOD;
@@ -1980,7 +1980,7 @@ static void parse_method_declaration(Parser* parser) {
 
 static void parse_field_declaration(Parser* parser) {
     do {
-        consume(parser, TOKEN_IDENTIFIER, "Expected field name.");
+        consume(parser, TOKEN_IDENTIFIER, "expected field name");
         uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
         if (match(parser, TOKEN_COLON)) {
@@ -1995,12 +1995,12 @@ static void parse_field_declaration(Parser* parser) {
 
         emit_u8_u16be(parser, OP_DEFINE_FIELD, index);
     } while (match(parser, TOKEN_COMMA));
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after field declaration.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after field declaration");
 }
 
 
 static void parse_class_declaration(Parser* parser) {
-    consume(parser, TOKEN_IDENTIFIER, "Expected class name.");
+    consume(parser, TOKEN_IDENTIFIER, "expected class name");
     Token class_name = parser->previous_token;
 
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
@@ -2017,7 +2017,7 @@ static void parse_class_declaration(Parser* parser) {
     parser->class_compiler = &class_compiler;
 
     if (match(parser, TOKEN_LESS)) {
-        consume(parser, TOKEN_IDENTIFIER, "Expected superclass name.");
+        consume(parser, TOKEN_IDENTIFIER, "expected superclass name");
         emit_load_named_variable(parser, parser->previous_token);
 
         // We declare 'super' as a local variable in a new lexical scope wrapping the method
@@ -2034,7 +2034,7 @@ static void parse_class_declaration(Parser* parser) {
     // Load the class object back onto the top of the stack.
     emit_load_named_variable(parser, class_name);
 
-    consume(parser, TOKEN_LEFT_BRACE, "Expected '{' before class body.");
+    consume(parser, TOKEN_LEFT_BRACE, "expected '{' before class body");
     while (true) {
         if (match(parser, TOKEN_DEF)) {
             parse_method_declaration(parser);
@@ -2044,7 +2044,7 @@ static void parse_class_declaration(Parser* parser) {
             break;
         }
     }
-    consume(parser, TOKEN_RIGHT_BRACE, "Expected '}' after class body.");
+    consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after class body");
     emit_byte(parser, OP_POP); // pop the class object
 
     if (class_compiler.has_superclass) {
@@ -2058,17 +2058,17 @@ static void parse_class_declaration(Parser* parser) {
 
 static void parse_return_stmt(Parser* parser) {
     if (parser->compiler->type == TYPE_MODULE) {
-        ERROR_AT_PREVIOUS_TOKEN("Can't return from top-level code.");
+        ERROR_AT_PREVIOUS_TOKEN("can't return from top-level code");
     }
 
     if (match(parser, TOKEN_SEMICOLON)) {
         emit_naked_return(parser);
     } else {
         if (parser->compiler->type == TYPE_INIT_METHOD) {
-            ERROR_AT_PREVIOUS_TOKEN("Can't return a value from an initializer.");
+            ERROR_AT_PREVIOUS_TOKEN("can't return a value from an initializer");
         }
         parse_expression(parser, true, true);
-        consume(parser, TOKEN_SEMICOLON, "Expected ';' after return value.");
+        consume(parser, TOKEN_SEMICOLON, "expected ';' after return value");
         emit_byte(parser, OP_RETURN);
     }
 }
@@ -2076,26 +2076,26 @@ static void parse_return_stmt(Parser* parser) {
 
 static void parse_break_stmt(Parser* parser) {
     if (parser->compiler->loop_compiler == NULL) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'break' outside a loop.");
+        ERROR_AT_PREVIOUS_TOKEN("invalid use of 'break' outside a loop");
         return;
     }
     parser->compiler->loop_compiler->had_break = true;
 
     discard_locals(parser, parser->compiler->loop_compiler->start_depth + 1);
     emit_jump(parser, OP_BREAK);
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after 'break'.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after 'break'");
 }
 
 
 static void parse_continue_stmt(Parser* parser) {
     if (parser->compiler->loop_compiler == NULL) {
-        ERROR_AT_PREVIOUS_TOKEN("Invalid use of 'continue' outside a loop.");
+        ERROR_AT_PREVIOUS_TOKEN("invalid use of 'continue' outside a loop");
         return;
     }
 
     discard_locals(parser, parser->compiler->loop_compiler->start_depth + 1);
     emit_loop(parser, parser->compiler->loop_compiler->start_index);
-    consume(parser, TOKEN_SEMICOLON, "Expected ';' after 'continue'.");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after 'continue'");
 }
 
 
