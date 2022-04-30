@@ -57,14 +57,14 @@ Annotations for builtin types are as follows:
 
 The annotations below describe interfaces rather than specific types:
 
-* `func`
-* `func(type1, type2, ...) -> type`
+* `fn`
+* `fn(type1, type2, ...) -> type`
 * `iterable`
 * `iterable[type]`
 * `iterator`
 * `iterator[type]`
 
-A `func` value is callable;
+A `fn` value is callable;
 an `iterable` value has an `:$iter()` method that returns an iterator;
 an `iterator` value has a `:$next()` method that returns the next item from a sequence.
 
@@ -131,34 +131,34 @@ You can indicate that a type is nullable --- i.e. can be either the specified ty
 
 ### Callable Values
 
-You can indicate that a value is callable --- i.e. that the value is a function, method, or class object --- using the `func` type, e.g.
+You can indicate that a value is callable --- i.e. that the value is a function, method, or class object --- using the `fn` type, e.g.
 
 ::: code pyro
-    var foo: func;
+    var foo: fn;
 
 You can optionally specify the callable's return type, e.g.
 
 ::: code pyro
-    var foo: func -> bool;
+    var foo: fn -> bool;
 
 You can optionally specify the callable's parameter types, e.g.
 
 ::: code pyro
-    var foo: func();
-    var bar: func() -> bool;
-    var baz: func(i64, str);
-    var bam: func(i64, str) -> bool;
+    var foo: fn();
+    var bar: fn() -> bool;
+    var baz: fn(i64, str);
+    var bam: fn(i64, str) -> bool;
 
 * `foo` is a callable that takes no parameters.
 * `bar` is a callable that takes no parameters and returns a `bool`.
 * `baz` is a callable that takes `i64` and `str` parameters.
 * `bam` is a callable that takes `i64` and `str` parameters and returns a `bool`.
 
-The `func` type is nullable, e.g.
+The `fn` type is nullable, e.g.
 
 ::: code pyro
-    var foo: func?;
-    var bar: func?(i64) -> bool;
+    var foo: fn?;
+    var bar: fn?(i64) -> bool;
 
 * `foo` is either a callable or `null`.
 * `bar` is either a callable that takes takes an `i64` parameter and returns a `bool` or `null`.

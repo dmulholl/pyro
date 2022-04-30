@@ -34,10 +34,10 @@ The following keywords are reserved for future use:
 * `await`
 * `case`
 * `catch`
-* `default`
 * `enum`
 * `let`
 * `match`
+* `or`
 * `pri`
 * `pub`
 * `reimport`

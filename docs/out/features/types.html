@@ -175,10 +175,10 @@ The annotations below describe interfaces rather than specific types:
 </p>
 <ul>
 <li>
-<code>func</code>
+<code>fn</code>
 </li>
 <li>
-<code>func(type1, type2, ...) -&gt; type</code>
+<code>fn(type1, type2, ...) -&gt; type</code>
 </li>
 <li>
 <code>iterable</code>
@@ -194,7 +194,7 @@ The annotations below describe interfaces rather than specific types:
 </li>
 </ul>
 <p>
-A <code>func</code> value is callable;
+A <code>fn</code> value is callable;
 an <code>iterable</code> value has an <code>:$iter()</code> method that returns an iterator;
 an <code>iterator</code> value has a <code>:$next()</code> method that returns the next item from a sequence.
 </p>
@@ -274,25 +274,25 @@ You can indicate that a type is nullable &mdash; i.e. can be either the specifie
 Callable Values
 </h3>
 <p>
-You can indicate that a value is callable &mdash; i.e. that the value is a function, method, or class object &mdash; using the <code>func</code> type, e.g.
+You can indicate that a value is callable &mdash; i.e. that the value is a function, method, or class object &mdash; using the <code>fn</code> type, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">fn</span><span class="p">;</span>
 </pre>
 <p>
 You can optionally specify the callable's return type, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">fn</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
 </pre>
 <p>
 You can optionally specify the callable's parameter types, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">func</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">func</span><span class="p">(</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">bam</span><span class="p">:</span> <span class="nx">func</span><span class="p">(</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">fn</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">fn</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bam</span><span class="p">:</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
 </pre>
 <ul>
 <li>
@@ -309,11 +309,11 @@ You can optionally specify the callable's parameter types, e.g.
 </li>
 </ul>
 <p>
-The <code>func</code> type is nullable, e.g.
+The <code>fn</code> type is nullable, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">func</span><span class="o">?</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">func</span><span class="o">?</span><span class="p">(</span><span class="nx">i64</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">fn</span><span class="o">?</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">fn</span><span class="o">?</span><span class="p">(</span><span class="nx">i64</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
 </pre>
 <ul>
 <li>
