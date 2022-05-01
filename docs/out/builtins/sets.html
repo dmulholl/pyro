@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.10</p>
+                <p class="version">Version 0.6.11</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -51,7 +51,19 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#iterating">Iterating</a>
+</li>
+<li>
+<a href="#containment">Containment</a>
+</li>
+<li>
+<a href="#methods">Methods</a>
+</li>
+</ul>
+<hr>
+<p>
 A set is an unordered collection of distinct objects.
 </p>
 <dl>
@@ -71,9 +83,12 @@ If <code>arg</code> is iterable, initializes the new set by iterating over its v
 Alternatively, you can create a set by draining an iterator, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">chars</span> <span class="p">=</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">();</span>
-<span class="k">assert</span> <span class="nx">chars</span><span class="p">:</span><span class="nx">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">12</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">set</span><span class="p">:</span><span class="nx">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">12</span><span class="p">;</span>
 </pre>
+<h3 id="iterating">
+Iterating
+</h3>
 <p>
 Sets are iterable:
 </p>
@@ -82,9 +97,22 @@ Sets are iterable:
     <span class="k">echo</span> <span class="nx">char</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
+<h3 id="containment">
+Containment
+</h3>
 <p>
-Sets have the following methods:
+You can check if a set contains an item using the <code>in</code> operator:
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="sc">&#39;x&#39;</span> <span class="k">in</span> <span class="nx">set</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;found&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<h3 id="methods">
+Methods
+</h3>
 <dl>
 <div>
 <dt>

@@ -149,10 +149,16 @@ is equivalent to calling the object's `$set_index(key, value)` method.
 You can implement the `$special` methods listed below to add support for various language features to your types:
 
 
-[[ `:$call()` ]]
+[[ `:$call(arg1: any, arg2: any, ...) -> any` ]]
 
     Implementing this method makes instances of the type callable.
+    (When an instance is called, the call will be handled by this method.)
 
+
+[[ `:$contains(item: any) -> bool` ]]
+
+    Implementing this method adds support for the `in` operator.
+    The method should return `true` if the receiver contains `item`, otherwise `false`.
 
 [[ `:$debug() -> str` ]]
 
@@ -180,7 +186,7 @@ You can implement the `$special` methods listed below to add support for various
     Hash values are used for looking up entries in the builtin `map` and `set` types.
 
 
-[[ `:$init()` ]]
+[[ `:$init(arg1: any, arg2: any, ...)` ]]
 
     Constructor method for initializing new instances.
 

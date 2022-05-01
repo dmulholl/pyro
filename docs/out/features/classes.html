@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.10</p>
+                <p class="version">Version 0.6.11</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -226,11 +226,23 @@ You can implement the <code>$special</code> methods listed below to add support 
 <dl>
 <div>
 <dt>
-<code>:$call()</code>
+<code>:$call(arg1: any, arg2: any, ...) -&gt; any</code>
 </dt>
 <dd>
 <p>
 Implementing this method makes instances of the type callable.
+(When an instance is called, the call will be handled by this method.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$contains(item: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method adds support for the <code>in</code> operator.
+The method should return <code>true</code> if the receiver contains <code>item</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
@@ -283,7 +295,7 @@ Hash values are used for looking up entries in the builtin <code>map</code> and 
 </div>
 <div>
 <dt>
-<code>:$init()</code>
+<code>:$init(arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>

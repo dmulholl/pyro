@@ -74,6 +74,22 @@ You can iterate over a map in three different ways.
 
 
 
+### Containment
+
+You can check if a map contains a key using the `in` operator:
+
+::: code pyro
+    var map = {
+        "foo" = 123,
+        "bar" = 456,
+    };
+
+    if "foo" in map {
+        echo "found";
+    }
+
+
+
 ### Methods
 
 [[ `:contains(key: any) -> bool` ]]

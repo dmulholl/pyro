@@ -39,11 +39,26 @@ Tuples are iterable:
 
 
 
+### Containment
+
+You can check if a tuple contains an item using the `in` operator:
+
+::: code pyro
+    if 123 in $tup(123, 456, 789) {
+        echo "found";
+    }
+
+
+
 ### Methods
+
+[[ `:contains(value: any) -> bool` ]]
+
+    Returns `true` if the tuple contains an item equal to `value`, otherwise `false`.
 
 [[ `:count() -> i64` ]]
 
-    Returns the number of entries in the tuple.
+    Returns the number of items in the tuple.
 
 [[ `:get(index: i64) -> any` ]]
 
@@ -53,7 +68,7 @@ Tuples are iterable:
 
     Returns an `iter` object wrapping the tuple.
 
-[[ `:slice(start_index: i64) -> vec` <br> `:slice(start_index: i64, length: i64) -> tup` ]]
+[[ `:slice(start_index: i64) -> tup` <br> `:slice(start_index: i64, length: i64) -> tup` ]]
 
     Copies a slice of the source tuple and returns it as a new tuple.
 

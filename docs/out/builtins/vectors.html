@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.10</p>
+                <p class="version">Version 0.6.11</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -60,6 +60,9 @@
 </li>
 <li>
 <a href="#iterating">Iterating</a>
+</li>
+<li>
+<a href="#containment">Containment</a>
 </li>
 <li>
 <a href="#methods">Methods</a>
@@ -124,8 +127,19 @@ Iterating
 Vectors are iterable:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">]</span> <span class="p">{</span>
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">]</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<h3 id="containment">
+Containment
+</h3>
+<p>
+You can check if a vector contains an item using the <code>in</code> operator:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">if</span> <span class="s">&quot;foo&quot;</span> <span class="k">in</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">]</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;found&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <h3 id="methods">
@@ -148,7 +162,7 @@ Appends a value to the vector.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the vector contains an entry equal to <code>value</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the vector contains an item equal to <code>value</code>, otherwise <code>false</code>.
 </p>
 </dd>
 </div>
@@ -174,7 +188,7 @@ Returns the number of entries in the vector.
 </div>
 <div>
 <dt>
-<code>:filter(callback: func(any) -&gt; bool) -&gt; vec</code>
+<code>:filter(callback: fn(any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -240,7 +254,7 @@ Returns <code>true</code> if the vector is empty.
 </div>
 <div>
 <dt>
-<code>:is_sorted() -&gt; bool</code> <br> <code>:is_sorted(callback: func(any, any) -&gt; bool) -&gt; bool</code>
+<code>:is_sorted() -&gt; bool</code> <br> <code>:is_sorted(callback: fn(any, any) -&gt; bool) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -289,7 +303,7 @@ Panics if the vector is empty.
 </div>
 <div>
 <dt>
-<code>:map(callback: func(any) -&gt; any) -&gt; vec</code>
+<code>:map(callback: fn(any) -&gt; any) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -301,7 +315,7 @@ its return values will form the elements of the new vector.
 </div>
 <div>
 <dt>
-<code>:mergesort() -&gt; vec</code> <br> <code>:mergesort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+<code>:mergesort() -&gt; vec</code> <br> <code>:mergesort(callback: fn(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -319,7 +333,7 @@ Use <code>:sort()</code> if you don't care about the underlying sorting algorith
 </div>
 <div>
 <dt>
-<code>:quicksort() -&gt; vec</code> <br> <code>:quicksort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+<code>:quicksort() -&gt; vec</code> <br> <code>:quicksort(callback: fn(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -450,7 +464,7 @@ Panics if either argument is out of range.
 </div>
 <div>
 <dt>
-<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: func(any, any) -&gt; bool) -&gt; vec</code>
+<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: fn(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>

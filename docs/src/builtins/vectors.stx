@@ -47,8 +47,18 @@ Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()
 Vectors are iterable:
 
 ::: code pyro
-    for item in [123, 456, 789] {
+    for item in ["foo", "bar", "baz"] {
         echo item;
+    }
+
+
+### Containment
+
+You can check if a vector contains an item using the `in` operator:
+
+::: code pyro
+    if "foo" in ["foo", "bar", "baz"] {
+        echo "found";
     }
 
 
@@ -61,7 +71,7 @@ Vectors are iterable:
 
 [[ `:contains(value: any) -> bool` ]]
 
-    Returns `true` if the vector contains an entry equal to `value`, otherwise `false`.
+    Returns `true` if the vector contains an item equal to `value`, otherwise `false`.
 
 [[ `:copy() -> vec` ]]
 
