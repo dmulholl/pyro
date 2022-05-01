@@ -549,7 +549,7 @@ static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_shell_short(PyroVM* vm, size_t arg_count, Value* args) {
+static Value fn_shell_shortcut(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* out_str;
     ObjStr* err_str;
     int exit_code;
@@ -947,7 +947,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
     pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);
     pyro_define_global_fn(vm, "$shell", fn_shell, -1);
-    pyro_define_global_fn(vm, "$", fn_shell_short, 1);
+    pyro_define_global_fn(vm, "$", fn_shell_shortcut, 1);
     pyro_define_global_fn(vm, "$debug", fn_debug, 1);
     pyro_define_global_fn(vm, "$read_file", fn_read_file, 1);
     pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);

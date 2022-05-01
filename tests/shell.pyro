@@ -7,4 +7,3 @@ assert $shell("cat", buf) == $tup(0, "barfoo", "");
 
 assert $("echo foobar") == "foobar\n";
 assert $("FOO=bar bash -c 'echo $FOO'") == "bar\n";
-
