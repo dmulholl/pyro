@@ -549,31 +549,84 @@ static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
+static Value fn_shell_short(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* out_str;
+    ObjStr* err_str;
+    int exit_code;
+
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
+        pyro_panic(vm, "$(): invalid argument [cmd], expected a string");
         return MAKE_NULL();
     }
 
-    ShellCmdResult result;
-    if (!pyro_run_shell_cmd(vm, AS_STR(args[0])->bytes, &result)) {
-        // We've already panicked.
+    if (!pyro_exec_shell_cmd(vm, AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
         return MAKE_NULL();
     }
 
-    Value output_string = MAKE_OBJ(result.output);
-    Value exit_code = MAKE_I64(result.exit_code);
+    return MAKE_OBJ(out_str);
+}
 
-    pyro_push(vm, output_string);
-    ObjTup* tup = ObjTup_new(2, vm);
-    pyro_pop(vm);
+
+static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* out_str;
+    ObjStr* err_str;
+    int exit_code;
+
+    if (arg_count == 1) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
+            return MAKE_NULL();
+        }
+        if (!pyro_exec_shell_cmd(vm, AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
+            return MAKE_NULL();
+        }
+    } else if (arg_count == 2) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
+            return MAKE_NULL();
+        }
+        if (IS_STR(args[1])) {
+            if (!pyro_exec_shell_cmd(
+                vm,
+                AS_STR(args[0])->bytes,
+                (uint8_t*)AS_STR(args[1])->bytes,
+                AS_STR(args[1])->length,
+                &out_str,
+                &err_str,
+                &exit_code
+            )) {
+                return MAKE_NULL();
+            }
+        } else if (IS_BUF(args[1])) {
+            if (!pyro_exec_shell_cmd(
+                vm,
+                AS_STR(args[0])->bytes,
+                AS_BUF(args[1])->bytes,
+                AS_BUF(args[1])->count,
+                &out_str,
+                &err_str,
+                &exit_code
+            )) {
+                return MAKE_NULL();
+            }
+        } else {
+            pyro_panic(vm, "$shell(): invalid argument [input], expected a string or buffer");
+            return MAKE_NULL();
+        }
+    } else {
+        pyro_panic(vm, "$shell(): expected 1 or 2 arguments, found %zu", arg_count);
+        return MAKE_NULL();
+    }
+
+    ObjTup* tup = ObjTup_new(3, vm);
     if (!tup) {
         pyro_panic(vm, "$shell(): out of memory");
         return MAKE_NULL();
     }
 
-    tup->values[0] = exit_code;
-    tup->values[1] = output_string;
+    tup->values[0] = MAKE_I64(exit_code);
+    tup->values[1] = MAKE_OBJ(out_str);
+    tup->values[2] = MAKE_OBJ(err_str);
 
     return MAKE_OBJ(tup);
 }
@@ -893,7 +946,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
     pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
     pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);
-    pyro_define_global_fn(vm, "$shell", fn_shell, 1);
+    pyro_define_global_fn(vm, "$shell", fn_shell, -1);
+    pyro_define_global_fn(vm, "$", fn_shell_short, 1);
     pyro_define_global_fn(vm, "$debug", fn_debug, 1);
     pyro_define_global_fn(vm, "$read_file", fn_read_file, 1);
     pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);

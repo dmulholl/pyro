@@ -49,15 +49,6 @@ char* pyro_getcwd(void);
 // allocation or I/O read error.
 ObjVec* pyro_listdir(PyroVM* vm, const char* path);
 
-typedef struct {
-    ObjStr* output;
-    int exit_code;
-} ShellCmdResult;
-
-// Runs a shell command. Returns true if the attempt to run the command was successful. Panics and
-// returns false if there was a memory-allocation or I/O read error.
-bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out);
-
 // Wrapper for POSIX realpath(). Returns NULL on failure, a freshly allocated string on success.
 // If the return value is non-NULL, the caller should free it using free().
 char* pyro_realpath(const char* path);
@@ -71,5 +62,21 @@ bool pyro_setenv(const char* name, const char* value);
 
 // Wrapper for POSIX chdir(). Returns true on success, false on failure.
 bool pyro_cd(const char* path);
+
+// Executes [cmd] as a shell command, where [cmd] is a null-terminated string.
+// - If [input_length > 0], writes [input] to the command's standard input.
+// - Returns the command's stdout output as [output].
+// - Returns the command's stderr output as [error].
+// - Returns the command's exit code as [exit_code].
+// Returns true on success, panics and returns false on failure.
+bool pyro_exec_shell_cmd(
+    PyroVM* vm,
+    const char* cmd,
+    const uint8_t* input,
+    size_t input_length,
+    ObjStr** output,
+    ObjStr** error,
+    int* exit_code
+);
 
 #endif

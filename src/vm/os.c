@@ -18,10 +18,13 @@
 // POSIX: nftw()
 #include <ftw.h>
 
-// POSIX: getcwd(), chdir().
+// POSIX: getcwd(), chdir(), fork(), exec(), dup2(), read(), write()
 #include <unistd.h>
 
-// POSIX: opendir() closedir()
+// POSIX: waitpid()
+#include <sys/wait.h>
+
+// POSIX: opendir(), closedir()
 #include <dirent.h>
 
 // POSIX: strdup()
@@ -177,70 +180,6 @@ ObjVec* pyro_listdir(PyroVM* vm, const char* path) {
 }
 
 
-bool pyro_run_shell_cmd(PyroVM* vm, const char* cmd, ShellCmdResult* out) {
-    FILE* file = popen(cmd, "r");
-    if (!file) {
-        pyro_panic(vm, "failed to run comand");
-        return false;
-    }
-
-    size_t count = 0;
-    size_t capacity = 0;
-    uint8_t* array = NULL;
-
-    while (true) {
-        if (count + 1 >= capacity) {
-            size_t new_capacity = GROW_CAPACITY(capacity);
-            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
-            if (!new_array) {
-                pyro_panic(vm, "out of memory");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
-                pclose(file);
-                return false;
-            }
-            capacity = new_capacity;
-            array = new_array;
-        }
-
-        size_t max_bytes = capacity - count - 1;
-        size_t bytes_read = fread(&array[count], sizeof(uint8_t), max_bytes, file);
-        count += bytes_read;
-
-        if (bytes_read < max_bytes) {
-            if (ferror(file)) {
-                pyro_panic(vm, "I/O read error");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
-                pclose(file);
-                return false;
-            }
-            break; // EOF
-        }
-    }
-
-    int exit_code = pclose(file);
-
-    if (capacity > count + 1) {
-        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
-        capacity = count + 1;
-    }
-    array[count] = '\0';
-
-    ObjStr* output = ObjStr_take((char*)array, count, vm);
-    if (!output) {
-        pyro_panic(vm, "out of memory");
-        FREE_ARRAY(vm, uint8_t, array, capacity);
-        return false;
-    }
-
-    *out = (ShellCmdResult) {
-        .output = output,
-        .exit_code = exit_code
-    };
-
-    return true;
-}
-
-
 char* pyro_realpath(const char* path) {
     errno = 0;
     char* array = malloc(PATH_MAX);
@@ -278,4 +217,190 @@ bool pyro_setenv(const char* name, const char* value) {
 
 bool pyro_cd(const char* path) {
     return chdir(path) == 0;
+}
+
+
+// - Returns true on success.
+// - Returns false if an I/O error occurs.
+static bool write_to_fd(int fd, const uint8_t* buf, size_t length) {
+    size_t index = 0;
+
+    while (index < length) {
+        size_t num_bytes_to_write = length - index;
+        ssize_t n = write(fd, &buf[index], num_bytes_to_write);
+        if (n < 0) {
+            return false;
+        }
+        index += n;
+    }
+
+    return true;
+}
+
+
+// - Returns 0 on success.
+// - Returns 1 if memory allocation fails.
+// - Returns 2 if an I/O error occurs.
+static int read_from_fd(PyroVM* vm, int fd, ObjBuf** output) {
+    ObjBuf* out_buf = ObjBuf_new(vm);
+    if (!out_buf) {
+        return 1;
+    }
+
+    uint8_t in_buf[256];
+
+    while (true) {
+        ssize_t n = read(fd, in_buf, 256);
+        if (n == 0) {
+            break;
+        } else if (n > 0) {
+            if (!ObjBuf_append_bytes(out_buf, n, in_buf, vm)) {
+                return 1;
+            }
+        } else {
+            return 2;
+        }
+    }
+
+    *output = out_buf;
+    return 0;
+}
+
+
+bool pyro_exec_shell_cmd(
+    PyroVM* vm,
+    const char* cmd,
+    const uint8_t* input,
+    size_t input_length,
+    ObjStr** output,
+    ObjStr** error,
+    int* exit_code
+) {
+    int child_stdin_pipe[2];
+    if (pipe(child_stdin_pipe) == -1) {
+        pyro_panic(vm, "pyro_exec_shell_cmd(): unable to create child's stdin pipe");
+        return false;
+    }
+
+    int child_stdout_pipe[2];
+    if (pipe(child_stdout_pipe) == -1) {
+        pyro_panic(vm, "pyro_exec_shell_cmd(): unable to create child's stdout pipe");
+        close(child_stdin_pipe[0]);
+        close(child_stdin_pipe[1]);
+        return false;
+    }
+
+    int child_stderr_pipe[2];
+    if (pipe(child_stderr_pipe) == -1) {
+        pyro_panic(vm, "pyro_exec_shell_cmd(): unable to create child's stderr pipe");
+        close(child_stdin_pipe[0]);
+        close(child_stdin_pipe[1]);
+        close(child_stdout_pipe[0]);
+        close(child_stdout_pipe[1]);
+        return false;
+    }
+
+    pid_t child_pid = fork();
+
+    // If child_pid == 0, we're in the child.
+    if (child_pid == 0) {
+        close(child_stdin_pipe[1]); // close the write end of the input pipe
+        dup2(child_stdin_pipe[0], STDIN_FILENO);
+        close(child_stdin_pipe[0]);
+
+        close(child_stdout_pipe[0]); // close the read end of the output pipe
+        dup2(child_stdout_pipe[1], STDOUT_FILENO);
+        close(child_stdout_pipe[1]);
+
+        close(child_stderr_pipe[0]); // close the read end of the error pipe
+        dup2(child_stderr_pipe[1], STDERR_FILENO);
+        close(child_stderr_pipe[1]);
+
+        execl("/bin/sh", "sh", "-c", cmd, (char*)NULL);
+        perror("pyro_exec_shell_cmd(): returned from execl() in child");
+        exit(1);
+    }
+
+    // If child_pid > 0, we're in the parent.
+    else if (child_pid > 0) {
+        close(child_stdin_pipe[0]);  // close the read end of the input pipe
+        close(child_stdout_pipe[1]); // close the write end of the output pipe
+        close(child_stderr_pipe[1]); // close the write end of the error pipe
+
+        // Write the input string to the child's stdin pipe.
+        if (input_length > 0) {
+            if (!write_to_fd(child_stdin_pipe[1], input, input_length)) {
+                pyro_panic(vm, "pyro_exec_shell_cmd(): I/O error while writing to child's stdin pipe");
+                close(child_stdin_pipe[1]);
+                close(child_stdout_pipe[0]);
+                close(child_stderr_pipe[0]);
+                return false;
+            }
+        }
+        close(child_stdin_pipe[1]);
+
+        // Read the child's stdout pipe.
+        ObjBuf* out_buf;
+        int out_result = read_from_fd(vm, child_stdout_pipe[0], &out_buf);
+        if (out_result == 1) {
+            pyro_panic(vm, "pyro_exec_shell_cmd(): ran out of memory while reading from child's stdout pipe");
+            close(child_stdout_pipe[0]);
+            close(child_stderr_pipe[0]);
+            return false;
+        } else if (out_result == 2) {
+            pyro_panic(vm, "pyro_exec_shell_cmd(): I/O error while reading from child's stdout pipe");
+            close(child_stdout_pipe[0]);
+            close(child_stderr_pipe[0]);
+            return false;
+        }
+        close(child_stdout_pipe[0]);
+
+        // Read the child's stderr pipe.
+        ObjBuf* err_buf;
+        int err_result = read_from_fd(vm, child_stderr_pipe[0], &err_buf);
+        if (err_result == 1) {
+            pyro_panic(vm, "pyro_exec_shell_cmd(): ran out of memory while reading from child's stderr pipe");
+            close(child_stderr_pipe[0]);
+            return false;
+        } else if (err_result == 2) {
+            pyro_panic(vm, "pyro_exec_shell_cmd(): I/O error while reading from child's stderr pipe");
+            close(child_stderr_pipe[0]);
+            return false;
+        }
+        close(child_stderr_pipe[0]);
+
+        int status;
+        do {
+            waitpid(child_pid, &status, WUNTRACED);
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+
+        ObjStr* out_str = ObjBuf_to_str(out_buf, vm);
+        if (!out_str) {
+            pyro_panic(vm, "pyro_exec_shell_cmd(): out of memory");
+            return false;
+        }
+
+        ObjStr* err_str = ObjBuf_to_str(err_buf, vm);
+        if (!err_str) {
+            pyro_panic(vm, "pyro_exec_shell_cmd(): out of memory");
+            return false;
+        }
+
+        *output = out_str;
+        *error = err_str;
+        *exit_code = status;
+        return true;
+    }
+
+    // If child_pid < 0, the attempt to fork() failed.
+    else {
+        pyro_panic(vm, "pyro_exec_shell_cmd(): fork() failed");
+        close(child_stdin_pipe[0]);
+        close(child_stdin_pipe[1]);
+        close(child_stdout_pipe[0]);
+        close(child_stdout_pipe[1]);
+        close(child_stderr_pipe[0]);
+        close(child_stderr_pipe[1]);
+        return false;
+    }
 }

@@ -29,7 +29,7 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
         pyro_load_std_mod_path(vm, module);
         found_module = true;
     } else if (strcmp(name->bytes, "args") == 0) {
-        pyro_exec_code_as_module(vm, (char*)lib_args_pyro, lib_args_pyro_len, "lib_args.pyro", module);
+        pyro_exec_code_as_module(vm, (char*)lib_args_pyro, lib_args_pyro_len, "$std::args", module);
         if (vm->halt_flag) {
             return;
         }

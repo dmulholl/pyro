@@ -1,1 +1,10 @@
-assert $shell("FOO=bar bash -c 'echo $FOO'") == $tup(0, "bar\n");
+assert $shell("echo foobar") == $tup(0, "foobar\n", "");
+assert $shell("FOO=bar bash -c 'echo $FOO'") == $tup(0, "bar\n", "");
+assert $shell("cat", "foobar") == $tup(0, "foobar", "");
+
+var buf = $buf("barfoo");
+assert $shell("cat", buf) == $tup(0, "barfoo", "");
+
+assert $("echo foobar") == "foobar\n";
+assert $("FOO=bar bash -c 'echo $FOO'") == "bar\n";
+
