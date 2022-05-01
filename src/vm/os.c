@@ -247,10 +247,10 @@ static int read_from_fd(PyroVM* vm, int fd, ObjBuf** output) {
         return 1;
     }
 
-    uint8_t in_buf[256];
+    uint8_t in_buf[1024];
 
     while (true) {
-        ssize_t n = read(fd, in_buf, 256);
+        ssize_t n = read(fd, in_buf, 1024);
         if (n == 0) {
             break;
         } else if (n > 0) {
