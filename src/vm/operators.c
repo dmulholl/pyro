@@ -315,6 +315,28 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
 }
 
 
+// Returns true if [a] is in [b].
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_op_in(PyroVM* vm, Value a, Value b) {
+    Value method = pyro_get_method(vm, b, vm->str_contains);
+
+    if (!IS_NULL(method)) {
+        pyro_push(vm, b);
+        pyro_push(vm, a);
+        Value result = pyro_call_method(vm, method, 1);
+        if (vm->halt_flag) {
+            return false;
+        }
+        return pyro_is_truthy(result);
+    } else {
+        pyro_panic(vm, "invalid operand to 'in', object has no :$contains() method");
+        return false;
+    }
+
+    return false;
+}
+
+
 /* ----------------- */
 /*  Unary Operators  */
 /* ----------------- */

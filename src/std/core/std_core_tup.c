@@ -7,6 +7,7 @@
 #include "../../vm/utf8.h"
 #include "../../vm/setup.h"
 #include "../../vm/panics.h"
+#include "../../vm/operators.h"
 
 
 static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
@@ -111,6 +112,19 @@ static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value tup_contains(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjTup* tup = AS_TUP(args[-1]);
+
+    for (size_t i = 0; i < tup->count; i++) {
+        if (pyro_op_compare_eq(vm, tup->values[i], args[0])) {
+            return MAKE_BOOL(true);
+        }
+    }
+
+    return MAKE_BOOL(false);
+}
+
+
 static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         return MAKE_OBJ(vm->empty_error);
@@ -143,4 +157,6 @@ void pyro_load_std_core_tup(PyroVM* vm) {
     pyro_define_method(vm, vm->tup_class, "get", tup_get, 1);
     pyro_define_method(vm, vm->tup_class, "$iter", tup_iter, 0);
     pyro_define_method(vm, vm->tup_class, "iter", tup_iter, 0);
+    pyro_define_method(vm, vm->tup_class, "contains", tup_contains, 1);
+    pyro_define_method(vm, vm->tup_class, "$contains", tup_contains, 1);
 }

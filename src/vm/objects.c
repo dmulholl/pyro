@@ -952,43 +952,33 @@ int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
 size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
     switch (fn->code[ip]) {
         case OP_ASSERT:
+        case OP_BINARY_AMP:
+        case OP_BINARY_BANG_EQUAL:
+        case OP_BINARY_BAR:
+        case OP_BINARY_CARET:
+        case OP_BINARY_EQUAL_EQUAL:
+        case OP_BINARY_GREATER:
+        case OP_BINARY_GREATER_EQUAL:
+        case OP_BINARY_GREATER_GREATER:
+        case OP_BINARY_IN:
+        case OP_BINARY_LESS:
+        case OP_BINARY_LESS_EQUAL:
+        case OP_BINARY_LESS_LESS:
+        case OP_BINARY_MINUS:
+        case OP_BINARY_PERCENT:
         case OP_BINARY_PLUS:
+        case OP_BINARY_SLASH:
+        case OP_BINARY_SLASH_SLASH:
+        case OP_BINARY_STAR:
+        case OP_BINARY_STAR_STAR:
         case OP_CLOSE_UPVALUE:
         case OP_DUP:
         case OP_DUP_2:
-        case OP_BINARY_EQUAL_EQUAL:
-        case OP_BINARY_SLASH:
-        case OP_BINARY_GREATER:
-        case OP_BINARY_GREATER_EQUAL:
-        case OP_INHERIT:
-        case OP_GET_ITERATOR_OBJECT:
-        case OP_GET_ITERATOR_NEXT_VALUE:
-        case OP_BINARY_LESS:
-        case OP_BINARY_LESS_EQUAL:
-        case OP_LOAD_FALSE:
-        case OP_LOAD_NULL:
-        case OP_LOAD_TRUE:
-        case OP_BINARY_STAR:
-        case OP_UNARY_MINUS:
-        case OP_UNARY_PLUS:
-        case OP_UNARY_BANG:
-        case OP_BINARY_BANG_EQUAL:
-        case OP_POP:
-        case OP_POP_ECHO_IN_REPL:
-        case OP_RETURN:
-        case OP_BINARY_MINUS:
-        case OP_BINARY_SLASH_SLASH:
-        case OP_TRY:
         case OP_GET_INDEX:
-        case OP_SET_INDEX:
-        case OP_BINARY_STAR_STAR:
-        case OP_BINARY_PERCENT:
-        case OP_UNARY_TILDE:
-        case OP_BINARY_CARET:
-        case OP_BINARY_AMP:
-        case OP_BINARY_BAR:
-        case OP_BINARY_LESS_LESS:
-        case OP_BINARY_GREATER_GREATER:
+        case OP_GET_ITERATOR_NEXT_VALUE:
+        case OP_GET_ITERATOR_OBJECT:
+        case OP_INHERIT:
+        case OP_LOAD_FALSE:
         case OP_LOAD_I64_0:
         case OP_LOAD_I64_1:
         case OP_LOAD_I64_2:
@@ -999,6 +989,17 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_LOAD_I64_7:
         case OP_LOAD_I64_8:
         case OP_LOAD_I64_9:
+        case OP_LOAD_NULL:
+        case OP_LOAD_TRUE:
+        case OP_POP:
+        case OP_POP_ECHO_IN_REPL:
+        case OP_RETURN:
+        case OP_SET_INDEX:
+        case OP_TRY:
+        case OP_UNARY_BANG:
+        case OP_UNARY_MINUS:
+        case OP_UNARY_PLUS:
+        case OP_UNARY_TILDE:
             return 0;
 
         case OP_CALL:
@@ -1013,26 +1014,26 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 1;
 
         case OP_BREAK:
-        case OP_MAKE_CLASS:
-        case OP_DEFINE_GLOBAL:
         case OP_DEFINE_FIELD:
+        case OP_DEFINE_GLOBAL:
+        case OP_DEFINE_METHOD:
         case OP_GET_FIELD:
         case OP_GET_GLOBAL:
         case OP_GET_MEMBER:
         case OP_GET_METHOD:
         case OP_GET_SUPER_METHOD:
+        case OP_IMPORT_NAMED_MEMBERS:
         case OP_JUMP:
+        case OP_JUMP_BACK:
         case OP_JUMP_IF_ERR:
         case OP_JUMP_IF_FALSE:
         case OP_JUMP_IF_NOT_ERR:
         case OP_JUMP_IF_NOT_NULL:
         case OP_JUMP_IF_TRUE:
         case OP_LOAD_CONSTANT:
-        case OP_JUMP_BACK:
+        case OP_MAKE_CLASS:
         case OP_MAKE_MAP:
         case OP_MAKE_VEC:
-        case OP_DEFINE_METHOD:
-        case OP_IMPORT_NAMED_MEMBERS:
         case OP_POP_JUMP_IF_FALSE:
         case OP_SET_FIELD:
         case OP_SET_GLOBAL:

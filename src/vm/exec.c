@@ -888,6 +888,13 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_BINARY_IN: {
+                Value b = pyro_pop(vm);
+                Value a = pyro_pop(vm);
+                pyro_push(vm, MAKE_BOOL(pyro_op_in(vm, a, b)));
+                break;
+            }
+
             case OP_LOAD_CONSTANT: {
                 Value constant = READ_CONSTANT();
                 pyro_push(vm, constant);

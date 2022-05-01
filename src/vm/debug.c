@@ -87,6 +87,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_UNARY_TILDE", ip);
         case OP_BINARY_BAR:
             return atomic_instruction(vm, "OP_BINARY_BAR", ip);
+        case OP_BINARY_IN:
+            return atomic_instruction(vm, "OP_BINARY_IN", ip);
         case OP_BINARY_CARET:
             return atomic_instruction(vm, "OP_BINARY_CARET", ip);
         case OP_CALL:

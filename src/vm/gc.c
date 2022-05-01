@@ -95,6 +95,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_op_unary_minus);
     mark_object(vm, (Obj*)vm->str_hash);
     mark_object(vm, (Obj*)vm->str_call);
+    mark_object(vm, (Obj*)vm->str_contains);
 
     // Other object fields.
     mark_object(vm, (Obj*)vm->globals);

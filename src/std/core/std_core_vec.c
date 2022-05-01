@@ -586,6 +586,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->vec_class, "quicksort", vec_quicksort, -1);
     pyro_define_method(vm, vm->vec_class, "shuffle", vec_shuffle, 0);
     pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
+    pyro_define_method(vm, vm->vec_class, "$contains", vec_contains, 1);
     pyro_define_method(vm, vm->vec_class, "index_of", vec_index_of, 1);
     pyro_define_method(vm, vm->vec_class, "map", vec_map, 1);
     pyro_define_method(vm, vm->vec_class, "filter", vec_filter, 1);

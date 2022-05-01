@@ -247,3 +247,37 @@ def $test_stress_allocation_and_deletion() {
     assert vec[548] == 1997;
     assert vec[549] == 1999;
 }
+
+
+def $test_contains() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+        "ghi" = 789,
+    };
+
+    assert map:contains("abc");
+    assert map:contains("def");
+    assert map:contains("ghi");
+    assert !map:contains("jkl");
+    assert !map:contains(123);
+}
+
+
+def $test_in() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+        "ghi" = 789,
+    };
+
+    assert "abc" in map;
+    assert "def" in map;
+    assert "ghi" in map;
+
+    assert "jkl" in map == false;
+    assert false == "jkl" in map;
+    assert !("jkl" in map);
+
+    assert 123 in map == false;
+}

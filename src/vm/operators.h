@@ -56,4 +56,8 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key);
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value);
 
+// Returns true if [a] is in [b].
+// This function can call into Pyro code and can set the panic or exit flags.
+bool pyro_op_in(PyroVM* vm, Value a, Value b);
+
 #endif

@@ -1261,6 +1261,9 @@ static void parse_comparative_expr(Parser* parser, bool can_assign, bool can_ass
         } else if (match(parser, TOKEN_LESS_EQUAL)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
             emit_byte(parser, OP_BINARY_LESS_EQUAL);
+        } else if (match(parser, TOKEN_IN)) {
+            parse_additive_expr(parser, false, can_assign_in_parens);
+            emit_byte(parser, OP_BINARY_IN);
         } else {
             break;
         }

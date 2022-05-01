@@ -109,3 +109,21 @@ def $test_iter_method() {
     }
     assert sum == 6;
 }
+
+def $test_contains() {
+    var tup = $tup(123, 456, 789);
+    assert tup:contains(123);
+    assert tup:contains(789);
+    assert !tup:contains(0);
+    assert !tup:contains("foo");
+}
+
+def $test_in() {
+    var tup = $tup(123, 456, 789);
+    assert 123 in tup;
+    assert 456 in tup;
+    assert 789 in tup;
+    assert "abc" in tup == false;
+    assert false == "abc" in tup;
+    assert !("abc" in tup);
+}

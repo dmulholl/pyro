@@ -39,3 +39,29 @@ def $test_make_set_from_iterable() {
     assert bar:count() == 3;
     assert bar:contains('a');
 }
+
+
+def $test_contains() {
+    var set = $set(["abc", "def", "ghi"]);
+
+    assert set:contains("abc");
+    assert set:contains("def");
+    assert set:contains("ghi");
+    assert !set:contains("jkl");
+    assert !set:contains(123);
+}
+
+
+def $test_in() {
+    var set = $set(["abc", "def", "ghi"]);
+
+    assert "abc" in set;
+    assert "def" in set;
+    assert "ghi" in set;
+
+    assert "jkl" in set == false;
+    assert false == "jkl" in set;
+    assert !("jkl" in set);
+
+    assert 123 in set == false;
+}

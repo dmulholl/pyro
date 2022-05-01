@@ -69,6 +69,7 @@ PyroVM* pyro_new_vm() {
     vm->str_op_binary_slash = NULL;
     vm->str_op_unary_plus = NULL;
     vm->str_op_unary_minus = NULL;
+    vm->str_contains = NULL;
     vm->str_hash = NULL;
     vm->str_call = NULL;
     vm->max_bytes = SIZE_MAX;
@@ -145,6 +146,7 @@ PyroVM* pyro_new_vm() {
     vm->str_op_unary_minus = STR("$op_unary_minus");
     vm->str_hash = STR("$hash");
     vm->str_call = STR("$call");
+    vm->str_contains = STR("$contains");
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
