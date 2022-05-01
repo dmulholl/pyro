@@ -36,6 +36,25 @@ The only difference between `$print()` and `$println()` is that `$println()` aut
 
 
 
+### Run a shell command
+
+The `$()` function runs a shell command and returns its output as a string, e.g.
+
+::: code pyro
+    var output = $("pwd");
+
+The `$shell()` function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string:
+
+::: code pyro
+    var (exit_code, output, error_output) = $shell("pwd");
+
+You can provide an input string to `$shell()` which will be written to the command's `stdin`:
+
+::: code pyro
+    assert $shell("cat", "foo bar") == $tup(0, "foo bar", "");
+
+
+
 ### Fibonacci numbers
 
 Calculate the n-th Fibonacci number:
@@ -111,16 +130,6 @@ This is a convenience function --- a `file` object provides more fine-grained co
 
 
 
-### Run a shell command
-
-The `$shell()` function takes a string arugment specifying the command to run.
-It returns a two-item tuple containing the exit code as an integer and the output as a string:
-
-::: code pyro
-    var (code, output) = $shell("pwd");
-
-
-
 ### Guessing game
 
 The classic guess-a-random-number game:
@@ -167,51 +176,14 @@ The classic interview question:
 
 
 
-### Iterating over a string
-
-A string is a sequence of bytes. You can iterate over these individual byte values using the `:bytes()` method:
-
-::: code pyro
-    for byte in "hello":bytes() {
-        echo byte;
-    }
-
-This gives the following output:
-
-    104
-    101
-    108
-    108
-    111
-
-Alternatively, you can treat the string as a sequence of UTF-8 encoded characters and iterate over these characters using the `:chars()` method:
-
-::: code pyro
-    for char in "hello":chars() {
-        echo char;
-    }
-
-This gives the following output:
-
-    h
-    e
-    l
-    l
-    o
-
-
-
 ### Iterating over a range
 
 The `$range()` function returns an iterator over a range of integers:
 
 ::: code pyro
-    for i in $range(5) {
-        echo i;
-    }
-
-This gives the following output:
-
+    >>> for i in $range(5) {
+    ...     echo i;
+    ... }
     0
     1
     2

@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.11</p>
+                <p class="version">Version 0.6.12</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -56,6 +56,9 @@
 <a href="#hello-world">Hello world</a>
 </li>
 <li>
+<a href="#run-a-shell-command">Run a shell command</a>
+</li>
+<li>
 <a href="#fibonacci-numbers">Fibonacci numbers</a>
 </li>
 <li>
@@ -68,16 +71,10 @@
 <a href="#writing-to-a-file">Writing to a file</a>
 </li>
 <li>
-<a href="#run-a-shell-command">Run a shell command</a>
-</li>
-<li>
 <a href="#guessing-game">Guessing game</a>
 </li>
 <li>
 <a href="#fizzbuzz">FizzBuzz</a>
-</li>
-<li>
-<a href="#iterating-over-a-string">Iterating over a string</a>
 </li>
 <li>
 <a href="#iterating-over-a-range">Iterating over a range</a>
@@ -118,6 +115,27 @@ You can use format strings with these functions to interpolate variables:
 <p>
 The only difference between <code>$print()</code> and <code>$println()</code> is that <code>$println()</code> automatically adds a newline character to the output.
 </p>
+<h3 id="run-a-shell-command">
+Run a shell command
+</h3>
+<p>
+The <code>$()</code> function runs a shell command and returns its output as a string, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">output</span> <span class="p">=</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
+</pre>
+<p>
+The <code>$shell()</code> function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="p">(</span><span class="nx">exit_code</span><span class="p">,</span> <span class="nx">output</span><span class="p">,</span> <span class="nx">error_output</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
+</pre>
+<p>
+You can provide an input string to <code>$shell()</code> which will be written to the command's <code>stdin</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;cat&quot;</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+</pre>
 <h3 id="fibonacci-numbers">
 Fibonacci numbers
 </h3>
@@ -197,16 +215,6 @@ This is a convenience function &mdash; a <code>file</code> object provides more 
 <span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;Content for file...&quot;</span><span class="p">);</span>
 <span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
 </pre>
-<h3 id="run-a-shell-command">
-Run a shell command
-</h3>
-<p>
-The <code>$shell()</code> function takes a string arugment specifying the command to run.
-It returns a two-item tuple containing the exit code as an integer and the output as a string:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">output</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
-</pre>
 <h3 id="guessing-game">
 Guessing game
 </h3>
@@ -253,45 +261,6 @@ The classic interview question:
     <span class="p">}</span>
 <span class="p">}</span>
 </pre>
-<h3 id="iterating-over-a-string">
-Iterating over a string
-</h3>
-<p>
-A string is a sequence of bytes. You can iterate over these individual byte values using the <code>:bytes()</code> method:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">byte</span> <span class="k">in</span> <span class="s">&quot;hello&quot;</span><span class="p">:</span><span class="nx">bytes</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">byte</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-<p>
-This gives the following output:
-</p>
-<pre>
-104
-101
-108
-108
-111
-</pre>
-<p>
-Alternatively, you can treat the string as a sequence of UTF-8 encoded characters and iterate over these characters using the <code>:chars()</code> method:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;hello&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">char</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-<p>
-This gives the following output:
-</p>
-<pre>
-h
-e
-l
-l
-o
-</pre>
 <h3 id="iterating-over-a-range">
 Iterating over a range
 </h3>
@@ -299,19 +268,14 @@ Iterating over a range
 The <code>$range()</code> function returns an iterator over a range of integers:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-<p>
-This gives the following output:
-</p>
-<pre>
-0
-1
-2
-3
-4
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+<span class="cp">...</span> <span class="p">}</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">4</span>
 </pre>
         </article>
         

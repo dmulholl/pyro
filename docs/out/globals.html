@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.11</p>
+                <p class="version">Version 0.6.12</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -102,6 +102,19 @@ A vector of strings containing the root directory paths that Pyro checks when at
 Global Functions
 </h3>
 <dl>
+<div>
+<dt>
+<code>$(cmd: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Runs a shell command and returns its output as a string.
+</p>
+<p>
+This is a convenience shortcut for the <code>$shell()</code> function which provides more control over input and output.
+</p>
+</dd>
+</div>
 <div>
 <dt>
 <code>$bool(arg: any) -&gt; bool</code>
@@ -730,11 +743,17 @@ If <code>arg</code> is iterable, initializes the new set by iterating over its v
 </div>
 <div>
 <dt>
-<code>$shell(cmd: str) -&gt; tup[i64, str]</code>
+<code>$shell(cmd: str) -&gt; tup[i64, str, str]</code> <br> <code>$shell(cmd: str, input: str|buf) -&gt; tup[i64, str, str]</code>
 </dt>
 <dd>
 <p>
-Runs a shell command and returns a two-item tuple containing its exit code and output.
+Runs a shell command.
+</p>
+<p>
+Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
+</p>
+<p>
+If <code>input</code> is specified, its content will be written to the command's <code>stdin</code>.
 </p>
 </dd>
 </div>

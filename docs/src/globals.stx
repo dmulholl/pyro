@@ -33,6 +33,14 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 ### Global Functions
 
 
+[[ `$(cmd: str) -> str` ]]
+
+    Runs a shell command and returns its output as a string.
+
+    This is a convenience shortcut for the `$shell()` function which provides more control over input and output.
+
+
+
 [[ `$bool(arg: any) -> bool` ]]
 
     Converts `arg` to a `$bool`.
@@ -412,9 +420,13 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$shell(cmd: str) -> tup[i64, str]` ]]
+[[ `$shell(cmd: str) -> tup[i64, str, str]` <br> `$shell(cmd: str, input: str|buf) -> tup[i64, str, str]` ]]
 
-    Runs a shell command and returns a two-item tuple containing its exit code and output.
+    Runs a shell command.
+
+    Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
+
+    If `input` is specified, its content will be written to the command's `stdin`.
 
 
 

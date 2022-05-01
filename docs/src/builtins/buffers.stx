@@ -3,6 +3,10 @@ title: Byte Buffers
 meta_title: Pyro &mdash; Byte Buffers
 ---
 
+::: insert toc
+::: hr
+
+
 A byte buffer, `buf`, is a dynamic array of bytes.
 
 [[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
@@ -12,6 +16,10 @@ A byte buffer, `buf`, is a dynamic array of bytes.
     * If called with zero arguments, creates a new empty buffer.
     * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
     * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
+
+
+
+### Indexing
 
 You can index into a buffer to get or set byte values:
 
@@ -24,7 +32,9 @@ You can index into a buffer to get or set byte values:
 
 Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
 
-Buffers have the following methods:
+
+
+### Methods
 
 [[ `:count() -> i64` ]]
 
@@ -37,7 +47,7 @@ Buffers have the following methods:
 
 [[ `:is_empty() -> bool` ]]
 
-    Returns `true` if the buffer is emtpy.
+    Returns `true` if the buffer is empty.
 
 [[ `:set(index: i64, byte: i64|char)` ]]
 

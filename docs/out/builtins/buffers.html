@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.11</p>
+                <p class="version">Version 0.6.12</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -51,7 +51,16 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#indexing">Indexing</a>
+</li>
+<li>
+<a href="#methods">Methods</a>
+</li>
+</ul>
+<hr>
+<p>
 A byte buffer, <code>buf</code>, is a dynamic array of bytes.
 </p>
 <dl>
@@ -77,6 +86,9 @@ If called with two arguments, creates a new buffer with the specified initial si
 </dd>
 </div>
 </dl>
+<h3 id="indexing">
+Indexing
+</h3>
 <p>
 You can index into a buffer to get or set byte values:
 </p>
@@ -90,9 +102,9 @@ You can index into a buffer to get or set byte values:
 <p>
 Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
 </p>
-<p>
-Buffers have the following methods:
-</p>
+<h3 id="methods">
+Methods
+</h3>
 <dl>
 <div>
 <dt>
@@ -121,7 +133,7 @@ Will panic if <code>index</code> isn't an integer or is out of range.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the buffer is emtpy.
+Returns <code>true</code> if the buffer is empty.
 </p>
 </dd>
 </div>
