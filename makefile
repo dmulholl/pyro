@@ -40,39 +40,32 @@ debug: ${OBJ_FILES}
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 debug1: ## Checks assertions, stresses GC.
-debug1:
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_1}"
 
-debug2: ## Dumps bytecode.
-debug2:
+debug2: ## As debug1, also dumps bytecode.
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_2}"
 
-debug3: ## Traces execution.
-debug3:
+debug3: ## As debug2, also traces execution.
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_3}"
 
-debug4: ## Logs GC.
-debug4:
+debug4: ## As debug3, also logs GC.
 	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_4}"
 
 check: ## Builds the debug binary, then runs the test suite.
-check:
 	@make debug
 	@printf "\e[1;32m Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
 
 install: ## Builds and installs the release binary.
-install:
 	@if [ ! -f ./out/release/pyro ]; then make release; fi
 	@if [ -f ./out/release/pyro ]; then printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"; fi
 	@if [ -f ./out/release/pyro ]; then cp ./out/release/pyro /usr/local/bin/pyro; fi
 
 clean: ## Deletes all build artifacts.
-clean:
 	rm -rf ./out/*
 	rm -f ./src/std/pyro/*.c
 
-help:
+help: ## Prints available commands.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
 	{printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
