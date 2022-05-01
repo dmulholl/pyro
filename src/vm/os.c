@@ -305,15 +305,15 @@ bool pyro_exec_shell_cmd(
     // If child_pid == 0, we're in the child.
     if (child_pid == 0) {
         close(child_stdin_pipe[1]); // close the write end of the input pipe
-        dup2(child_stdin_pipe[0], STDIN_FILENO);
+        while ((dup2(child_stdin_pipe[0], STDIN_FILENO) == -1) && (errno == EINTR)) {}
         close(child_stdin_pipe[0]);
 
         close(child_stdout_pipe[0]); // close the read end of the output pipe
-        dup2(child_stdout_pipe[1], STDOUT_FILENO);
+        while ((dup2(child_stdout_pipe[1], STDOUT_FILENO) == -1) && (errno == EINTR)) {}
         close(child_stdout_pipe[1]);
 
         close(child_stderr_pipe[0]); // close the read end of the error pipe
-        dup2(child_stderr_pipe[1], STDERR_FILENO);
+        while ((dup2(child_stderr_pipe[1], STDERR_FILENO) == -1) && (errno == EINTR)) {}
         close(child_stderr_pipe[1]);
 
         execl("/bin/sh", "sh", "-c", cmd, (char*)NULL);
