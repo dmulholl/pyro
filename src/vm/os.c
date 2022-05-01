@@ -227,11 +227,15 @@ static bool write_to_fd(int fd, const uint8_t* buf, size_t length) {
 
     while (index < length) {
         size_t num_bytes_to_write = length - index;
-        ssize_t n = write(fd, &buf[index], num_bytes_to_write);
-        if (n < 0) {
-            return false;
+        ssize_t count = write(fd, &buf[index], num_bytes_to_write);
+        if (count < 0) {
+            if (errno == EINTR) {
+                continue;
+            } else {
+                return false;
+            }
         }
-        index += n;
+        index += count;
     }
 
     return true;
@@ -250,15 +254,19 @@ static int read_from_fd(PyroVM* vm, int fd, ObjBuf** output) {
     uint8_t in_buf[1024];
 
     while (true) {
-        ssize_t n = read(fd, in_buf, 1024);
-        if (n == 0) {
+        ssize_t count = read(fd, in_buf, 1024);
+        if (count < 0) {
+            if (errno == EINTR) {
+                continue;
+            } else {
+                return 2;
+            }
+        } else if (count == 0) {
             break;
-        } else if (n > 0) {
-            if (!ObjBuf_append_bytes(out_buf, n, in_buf, vm)) {
+        } else {
+            if (!ObjBuf_append_bytes(out_buf, count, in_buf, vm)) {
                 return 1;
             }
-        } else {
-            return 2;
         }
     }
 
