@@ -17,7 +17,7 @@ DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
-OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o
+OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o
 
 FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES} -lm -ldl -pthread
 
@@ -89,3 +89,9 @@ out/lib/lib_email.o: src/std/pyro/lib_email.pyro
 	@printf "\e[1;32mBuilding\e[0m \$$std:email\n"
 	@cd src/std/pyro; xxd -i lib_email.pyro > lib_email.c
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_email.c -o out/lib/lib_email.o
+
+out/lib/lib_html.o: src/std/pyro/lib_html.pyro
+	@mkdir -p out/lib
+	@printf "\e[1;32mBuilding\e[0m \$$std:html\n"
+	@cd src/std/pyro; xxd -i lib_html.pyro > lib_html.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_html.c -o out/lib/lib_html.o

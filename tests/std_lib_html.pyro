@@ -1,0 +1,19 @@
+import $std::html;
+
+def $test_esc_html() {
+    assert html::esc_html("<") == "&lt;";
+    assert html::esc_html(">") == "&gt;";
+    assert html::esc_html("&") == "&amp;";
+    assert html::esc_html("&amp;") == "&amp;amp;";
+    assert html::esc_html("&<&>&") == "&amp;&lt;&amp;&gt;&amp;";
+}
+
+def $test_esc_html_attr() {
+    assert html::esc_html_attr("<") == "&lt;";
+    assert html::esc_html_attr(">") == "&gt;";
+    assert html::esc_html_attr("&") == "&amp;";
+    assert html::esc_html_attr("&amp;") == "&amp;amp;";
+    assert html::esc_html_attr("&<&>&") == "&amp;&lt;&amp;&gt;&amp;";
+    assert html::esc_html_attr(`"`) == "&quot;";
+    assert html::esc_html_attr(`'`) == "&apos;";
+}
