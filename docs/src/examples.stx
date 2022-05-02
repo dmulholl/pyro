@@ -189,3 +189,15 @@ The `$range()` function returns an iterator over a range of integers:
     2
     3
     4
+
+You can specify `start`, `stop`, and `step` arguments:
+
+::: code pyro
+    >>> for i in $range(5, 15, 2) {
+    ...     echo i;
+    ... }
+    5
+    7
+    9
+    11
+    13

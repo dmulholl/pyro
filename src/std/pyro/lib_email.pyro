@@ -54,21 +54,21 @@ class Email {
     def make_msg() -> buf|err {
         var msg = $buf();
 
-        if self.to_addr {
+        if $is_str(self.to_addr) && !self.to_addr:is_empty() {
             var value = self.to_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
             msg:write("To: {}\r\n", value);
         } else {
             return $err("invalid email: missing 'to' address");
         }
 
-        if self.from_addr {
+        if $is_str(self.from_addr) && !self.from_addr:is_empty() {
             var value = self.from_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
             msg:write("From: {}\r\n", value);
         } else {
             return $err("invalid email: missing 'from' address");
         }
 
-        if self.subject {
+        if $is_str(self.subject) && !self.subject:is_empty() {
             var value = self.subject:strip():replace("\r", "\\r"):replace("\n", "\\n");
             msg:write("Subject: {}\r\n", value);
         } else {
