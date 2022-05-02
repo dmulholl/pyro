@@ -34,6 +34,12 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
             return;
         }
         found_module = true;
+    } else if (strcmp(name->bytes, "email") == 0) {
+        pyro_exec_code_as_module(vm, (char*)lib_email_pyro, lib_email_pyro_len, "$std::email", module);
+        if (vm->halt_flag) {
+            return;
+        }
+        found_module = true;
     }
 
     if (!found_module) {

@@ -17,7 +17,7 @@ DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
-OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o
+OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o
 
 FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES} -lm -ldl -pthread
 
@@ -69,8 +69,6 @@ help: ## Prints available commands.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
 	{printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-sqlite: out/lib/sqlite.o
-
 # ----------- #
 #  Libraries  #
 # ----------- #
@@ -85,3 +83,9 @@ out/lib/lib_args.o: src/std/pyro/lib_args.pyro
 	@printf "\e[1;32mBuilding\e[0m \$$std:args\n"
 	@cd src/std/pyro; xxd -i lib_args.pyro > lib_args.c
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_args.c -o out/lib/lib_args.o
+
+out/lib/lib_email.o: src/std/pyro/lib_email.pyro
+	@mkdir -p out/lib
+	@printf "\e[1;32mBuilding\e[0m \$$std:email\n"
+	@cd src/std/pyro; xxd -i lib_email.pyro > lib_email.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_email.c -o out/lib/lib_email.o

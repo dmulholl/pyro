@@ -1,0 +1,87 @@
+class Email {
+    var headers: vec[str];
+    var to_addr: str;
+    var from_addr: str;
+    var subject: str;
+    var body: buf;
+
+    def $init() {
+        self.headers = $vec();
+        self.body = $buf();
+    }
+
+    def to(email_addr: str) {
+        self.to_addr = email_addr;
+    }
+
+    def from(email_addr: str) {
+        self.from_addr = email_addr;
+    }
+
+    def subject(value: str) {
+        self.subject = value;
+    }
+
+    def add_header(header: str) {
+        self.headers.append(header);
+    }
+
+    def write(msg: str) {
+        self.body:write(msg);
+    }
+
+    def print() {
+        $println(self:make_msg());
+    }
+
+    def send() -> err? {
+        var msg = self:make_msg();
+        if $is_err(msg) {
+            return msg;
+        }
+
+        var result = try $shell("sendmail -i -t", msg);
+        if $is_err(result) {
+            return $err(result[0]);
+        }
+
+        var (exit_code, _, error_output) = result;
+        if exit_code != 0 {
+            return $err(error_output);
+        }
+    }
+
+    def make_msg() -> buf|err {
+        var msg = $buf();
+
+        if self.to_addr {
+            var value = self.to_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
+            msg:write("To: {}\r\n", value);
+        } else {
+            return $err("invalid email: missing 'to' address");
+        }
+
+        if self.from_addr {
+            var value = self.from_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
+            msg:write("From: {}\r\n", value);
+        } else {
+            return $err("invalid email: missing 'from' address");
+        }
+
+        if self.subject {
+            var value = self.subject:strip():replace("\r", "\\r"):replace("\n", "\\n");
+            msg:write("Subject: {}\r\n", value);
+        } else {
+            return $err("invalid email: missing 'subject' field");
+        }
+
+        for header in self.headers {
+            msg:write("{}\r\n", header:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+        }
+
+        msg:write("\r\n");
+        msg:write($str(self.body):strip());
+
+        return msg;
+    }
+}
