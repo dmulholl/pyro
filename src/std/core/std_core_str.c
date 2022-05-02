@@ -98,6 +98,51 @@ static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    for (size_t i = 0; i < str->length; i++) {
+        switch (str->bytes[i]) {
+            case ' ':
+            case '\t':
+            case '\r':
+            case '\n':
+            case '\v':
+            case '\f':
+                break;
+            default:
+                return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
+
+
+static Value str_is_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+
+    size_t byte_index = 0;
+    Utf8CodePoint cp;
+
+    while (byte_index < str->length) {
+        uint8_t* src = (uint8_t*)&str->bytes[byte_index];
+        size_t src_len = str->length - byte_index;
+
+        if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
+            byte_index += cp.length;
+            if (!pyro_is_unicode_whitespace(cp.value)) {
+                return MAKE_BOOL(false);
+            }
+        } else {
+            return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
+
+
 static Value str_chars(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)str, ITER_STR_CHARS, vm);
@@ -1291,4 +1336,7 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->str_class, "slice", str_slice, -1);
     pyro_define_method(vm, vm->str_class, "join", str_join, 1);
     pyro_define_method(vm, vm->str_class, "lines", str_lines, 0);
+    pyro_define_method(vm, vm->str_class, "is_utf8_ws", str_is_utf8_ws, 0);
+    pyro_define_method(vm, vm->str_class, "is_ascii_ws", str_is_ascii_ws, 0);
+    pyro_define_method(vm, vm->str_class, "is_ws", str_is_ascii_ws, 0);
 }

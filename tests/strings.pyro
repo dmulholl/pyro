@@ -594,3 +594,39 @@ def $test_indexing_into_string() {
     assert "abc"[2] == "c";
     assert $is_err(try "abc"[3]);
 }
+
+
+def $test_is_ascii_ws() {
+    assert "":is_ascii_ws();
+    assert " ":is_ascii_ws();
+    assert " \t\r\n\v\f ":is_ascii_ws();
+
+    assert !"a":is_ascii_ws();
+    assert !"abc":is_ascii_ws();
+    assert !"abc def":is_ascii_ws();
+}
+
+
+def $test_is_ws() {
+    assert "":is_ws();
+    assert " ":is_ws();
+    assert " \t\r\n\v\f ":is_ws();
+
+    assert !"a":is_ws();
+    assert !"abc":is_ws();
+    assert !"abc def":is_ws();
+}
+
+
+def $test_is_utf8_ws() {
+    assert "":is_utf8_ws();
+    assert " ":is_utf8_ws();
+    assert " \t\r\n\v\f ":is_utf8_ws();
+
+    assert !"a":is_utf8_ws();
+    assert !"abc":is_utf8_ws();
+    assert !"abc def":is_utf8_ws();
+
+    assert " \u0020\u0085\u00A0\u1680 ":is_utf8_ws();
+    assert !"🔥":is_utf8_ws();
+}

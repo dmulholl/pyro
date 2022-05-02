@@ -20,6 +20,10 @@ class ArgStream {
 class Flag {
     var count: i64 = 0;
 
+    def found() -> bool {
+        return self.count > 0;
+    }
+
     def count() -> i64 {
         return self.count;
     }
@@ -57,6 +61,10 @@ class Option {
         }
         self.values:append(value);
         return true;
+    }
+
+    def found() -> bool {
+        return self.count > 0;
     }
 
     def count() -> i64 {
@@ -133,9 +141,9 @@ class ArgParser {
     # --------------------- #
 
     def count(name: str) -> i64 {
-        if self.flags:contains(name) {
+        if name in self.flags {
             return self.flags[name]:count();
-        } else if self.options:contains(name) {
+        } else if name in self.options {
             return self.options[name]:count();
         } else {
             $panic("count(): '{}' is not a registered flag or option name", name);
@@ -147,7 +155,7 @@ class ArgParser {
     }
 
     def value(name: str) -> any {
-        if self.options:contains(name) {
+        if name in self.options {
             return self.options[name]:value();
         } else {
             $panic("value(): '{}' is not a registered option name", name);
@@ -155,7 +163,7 @@ class ArgParser {
     }
 
     def values(name: str) -> any {
-        if self.options:contains(name) {
+        if name in self.options {
             return self.options[name]:values();
         } else {
             $panic("values(): '{}' is not a registered option name", name);

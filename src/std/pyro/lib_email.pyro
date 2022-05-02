@@ -10,28 +10,34 @@ class Email {
         self.body = $buf();
     }
 
-    def to(email_addr: str) {
+    def to(email_addr: str) -> Email {
         self.to_addr = email_addr;
+        return self;
     }
 
-    def from(email_addr: str) {
+    def from(email_addr: str) -> Email {
         self.from_addr = email_addr;
+        return self;
     }
 
-    def subject(value: str) {
+    def subject(value: str) -> Email {
         self.subject = value;
+        return self;
     }
 
-    def add_header(header: str) {
+    def add_header(header: str) -> Email {
         self.headers.append(header);
+        return self;
     }
 
-    def write(msg: str) {
-        self.body:write(msg);
+    def write(text: str) -> Email {
+        self.body:write(text);
+        return self;
     }
 
-    def print() {
+    def print() -> Email {
         $println(self:make_msg());
+        return self;
     }
 
     def send() -> err? {
@@ -54,21 +60,21 @@ class Email {
     def make_msg() -> buf|err {
         var msg = $buf();
 
-        if $is_str(self.to_addr) && !self.to_addr:is_empty() {
+        if $is_str(self.to_addr) && !self.to_addr:is_ws() {
             var value = self.to_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
             msg:write("To: {}\r\n", value);
         } else {
             return $err("invalid email: missing 'to' address");
         }
 
-        if $is_str(self.from_addr) && !self.from_addr:is_empty() {
+        if $is_str(self.from_addr) && !self.from_addr:is_ws() {
             var value = self.from_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
             msg:write("From: {}\r\n", value);
         } else {
             return $err("invalid email: missing 'from' address");
         }
 
-        if $is_str(self.subject) && !self.subject:is_empty() {
+        if $is_str(self.subject) && !self.subject:is_ws() {
             var value = self.subject:strip():replace("\r", "\\r"):replace("\n", "\\n");
             msg:write("Subject: {}\r\n", value);
         } else {
