@@ -17,37 +17,37 @@ SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
 OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o
 
-FILES = $(SRC_FILES) $(LIB_FILES) ${OBJ_FILES} -lm -ldl -pthread
+FILES = $(SRC_FILES) $(LIB_FILES) $(OBJ_FILES) -lm -ldl -pthread
 
 # --------------- #
 #  Phony Targets  #
 # --------------- #
 
 release: ## Builds the release binary.
-release: ${OBJ_FILES}
+release: $(OBJ_FILES)
 	@mkdir -p out/release
 	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 debug: ## Builds the debug binary.
-debug: ${OBJ_FILES}
+debug: $(OBJ_FILES)
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(FILES)
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 debug1: ## Checks assertions, stresses GC.
-	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_1}"
+	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_1)"
 
 debug2: ## As debug1, also dumps bytecode.
-	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_2}"
+	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_2)"
 
 debug3: ## As debug2, also traces execution.
-	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_3}"
+	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_3)"
 
 debug4: ## As debug3, also logs GC.
-	@make debug DEBUG_LEVEL="${DEBUG_LEVEL_4}"
+	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_4)"
 
 check: ## Builds the debug binary, then runs the test suite.
 	@make debug
