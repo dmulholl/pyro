@@ -16,12 +16,9 @@ Pyro supports optional type annotations for variable, function, and method decla
         return text.byte_count() > 100;
     }
 
-Pyro doesn't (currently) do anything with these type annotations, apart from verifying their syntax.
-The language is dynamically typed and is intended to remain so, but you can use type annotations to document your code's intended interface.[^1]
+Pyro doesn't currently do anything with these type annotations, apart from verifying their syntax, but they're useful for documenting your code's intended interface.
 
-::: footnote 1
-    Future versions of Pyro may offer optional type checking or automatic documentation generation using declared variable types.
-    Currently, the compiler simply verifies that type declarations are syntactically correct, then discards them.
+Future versions of Pyro may support optional type-checking or automatic documentation generation using type annotations.
 
 
 
@@ -55,7 +52,7 @@ Annotations for builtin types are as follows:
 * `vec`
 * `vec[type]`
 
-The annotations below describe interfaces rather than specific types:
+The annotations below describe interfaces rather than concrete types:
 
 * `fn`
 * `fn(type1, type2, ...) -> type`
@@ -177,9 +174,3 @@ Here, `foo` is an instance of the class `UserType`. Type names can include a mod
     var bar: mod1::mod2::UserType;
 
 Here, `bar` is an instance of the class `UserType` defined in the module `mod1::mod2`.
-
-
-
-### Notes
-
-::: insert footnotes

@@ -1,0 +1,27 @@
+---
+title: <code>$std::html</code>
+meta_title: Pyro Standard Library &mdash; $std::html
+---
+
+This module contains utility functions for working with HTML.
+
+
+### Functions
+
+
+[[ `esc_html(text: str) -> str` ]]
+
+    Returns the new string formed by replacing HTML syntax characters in `text` with their corresponding character entities.
+
+    Escapes the characters `<`, `>`, and `&`.
+
+    The returned string can be safely used inside HTML tags.
+
+
+[[ `esc_html_attr(text: str) -> str` ]]
+
+    Returns the new string formed by replacing HTML syntax characters in `text` with their corresponding character entities.
+
+    Escapes the characters `<`, `>`, `&`, `"`, and `'`.
+
+    The returned string can be safely using inside HTML attributes.

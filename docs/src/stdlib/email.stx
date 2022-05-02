@@ -1,0 +1,89 @@
+---
+title: <code>$std::email</code>
+meta_title: Pyro Standard Library &mdash; $std::email
+---
+
+A utility module for sending email. Uses the system's `sendmail` command.
+
+
+
+### Example
+
+::: code pyro
+    import $std::email;
+
+    # Create a new email.
+    var mail = email::Email();
+
+    # Set the email's recipient, sender, and subject.
+    mail:to("johndoe@example.com");
+    mail:from("sender@example.com");
+    mail:subject("Important Subject");
+
+    # Optional: add additional headers.
+    mail:add_header("Content-Type: text/plain; charset=utf-8");
+
+    # Write the email's content to its `body` buffer.
+    mail:write("This is the email's content.");
+
+    # Send the email.
+    var result = mail:send();
+    if $is_err(result) {
+        echo result;
+    }
+
+
+
+### Classes
+
+[[ `Email()` ]]
+
+    Creates a new `Email` object.
+
+    You need to set the email's `to`, `from`, and `subject` headers before sending it.
+
+`Email` objects have the following methods:
+
+[[ `:add_header(header: str) -> Email` ]]
+
+    Adds a header to the email.
+
+    Returns `self` to allow chaining.
+
+[[ `:from(email_addr: str) -> Email` ]]
+
+    Sets the value of the email's `From:` header.
+
+    Returns `self` to allow chaining.
+
+[[ `:print() -> Email` ]]
+
+    Prints the email's raw text to the standard output stream.
+
+    Returns `self` to allow chaining.
+
+[[ `:send() -> err?` ]]
+
+    Sends the email.
+
+    Returns an `err` if the attempt to send the email fails.
+
+[[ `:subject(text: str) -> Email` ]]
+
+    Sets the value of the email's `Subject:` header.
+
+    Returns `self` to allow chaining.
+
+[[ `:to(email_addr: str) -> Email` ]]
+
+    Sets the value of the email's `To:` header.
+
+    Returns `self` to allow chaining.
+
+[[ `:write(text: str) -> Email` ]]
+
+    Appends `text` to the email's `body` buffer.
+
+    Returns `self` to allow chaining.
+
+    You can call this method multiple times to keep appending content to the email.

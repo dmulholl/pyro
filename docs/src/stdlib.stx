@@ -15,6 +15,14 @@ All standard library modules are submodules of the root module `$std`.
 
 ### Standard Library Modules
 
+[[ [email](@root/stdlib/email//) ]]
+
+    A utility module for sending email.
+
+[[ [html](@root/stdlib/html//) ]]
+
+    Utility functions for working with HTML.
+
 [[ [math](@root/stdlib/math//) ]]
 
     Mathematical functions.

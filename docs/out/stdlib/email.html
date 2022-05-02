@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Standard Library &mdash; $std::email</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-stdlib-email node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.6.15</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1><code>$std::email</code></h1>
+                
+                <hr>
+            </header>
+            <p>
+A utility module for sending email. Uses the system's <code>sendmail</code> command.
+</p>
+<h3 id="example">
+Example
+</h3>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">email</span><span class="p">;</span>
+
+<span class="c1"># Create a new email.</span>
+<span class="kd">var</span> <span class="nx">mail</span> <span class="p">=</span> <span class="nx">email</span><span class="p">::</span><span class="nx">Email</span><span class="p">();</span>
+
+<span class="c1"># Set the email&#39;s recipient, sender, and subject.</span>
+<span class="nx">mail</span><span class="p">:</span><span class="nx">to</span><span class="p">(</span><span class="s">&quot;johndoe@example.com&quot;</span><span class="p">);</span>
+<span class="nx">mail</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;sender@example.com&quot;</span><span class="p">);</span>
+<span class="nx">mail</span><span class="p">:</span><span class="nx">subject</span><span class="p">(</span><span class="s">&quot;Important Subject&quot;</span><span class="p">);</span>
+
+<span class="c1"># Optional: add additional headers.</span>
+<span class="nx">mail</span><span class="p">:</span><span class="nx">add_header</span><span class="p">(</span><span class="s">&quot;Content-Type: text/plain; charset=utf-8&quot;</span><span class="p">);</span>
+
+<span class="c1"># Write the email&#39;s content to its `body` buffer.</span>
+<span class="nx">mail</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;This is the email&#39;s content.&quot;</span><span class="p">);</span>
+
+<span class="c1"># Send the email.</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">mail</span><span class="p">:</span><span class="nx">send</span><span class="p">();</span>
+<span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<h3 id="classes">
+Classes
+</h3>
+<dl>
+<div>
+<dt>
+<code>Email()</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>Email</code> object.
+</p>
+<p>
+You need to set the email's <code>to</code>, <code>from</code>, and <code>subject</code> headers before sending it.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+<code>Email</code> objects have the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:add_header(header: str) -&gt; Email</code>
+</dt>
+<dd>
+<p>
+Adds a header to the email.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:from(email_addr: str) -&gt; Email</code>
+</dt>
+<dd>
+<p>
+Sets the value of the email's <code>From:</code> header.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:print() -&gt; Email</code>
+</dt>
+<dd>
+<p>
+Prints the email's raw text to the standard output stream.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:send() -&gt; err?</code>
+</dt>
+<dd>
+<p>
+Sends the email.
+</p>
+<p>
+Returns an <code>err</code> if the attempt to send the email fails.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:subject(text: str) -&gt; Email</code>
+</dt>
+<dd>
+<p>
+Sets the value of the email's <code>Subject:</code> header.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:to(email_addr: str) -&gt; Email</code>
+</dt>
+<dd>
+<p>
+Sets the value of the email's <code>To:</code> header.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write(text: str) -&gt; Email</code>
+</dt>
+<dd>
+<p>
+Appends <code>text</code> to the email's <code>body</code> buffer.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+<p>
+You can call this method multiple times to keep appending content to the email.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

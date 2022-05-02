@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.12</p>
+                <p class="version">Version 0.6.15</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -276,6 +276,19 @@ The <code>$range()</code> function returns an iterator over a range of integers:
 <span class="mi">2</span>
 <span class="mi">3</span>
 <span class="mi">4</span>
+</pre>
+<p>
+You can specify <code>start</code>, <code>stop</code>, and <code>step</code> arguments:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
+<span class="cp">...</span> <span class="p">}</span>
+<span class="mi">5</span>
+<span class="mi">7</span>
+<span class="mi">9</span>
+<span class="mi">11</span>
+<span class="mi">13</span>
 </pre>
         </article>
         

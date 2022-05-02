@@ -187,6 +187,10 @@ Use the `:byte()` method to access individual byte values as integers or the `:c
     Returns `true` if the string is empty or contains only byte values in the range `[0, 127]`.
     (This is a potentially expensive method as it needs to traverse the string.)
 
+[[ `:is_ascii_ws() -> bool` ]]
+
+    Returns `true` if the string is empty or contains only ASCII whitespace characters.
+
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the string is empty, i.e. if its length is zero.
@@ -195,6 +199,16 @@ Use the `:byte()` method to access individual byte values as integers or the `:c
 
     Returns `true` if the string is empty or contains only valid UTF-8.
     (This is a potentially expensive method as it needs to traverse the string.)
+
+[[ `:is_utf8_ws() -> bool` ]]
+
+    Returns `true` if the string is empty or contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+
+[[ `:is_ws() -> bool` ]]
+
+    Returns `true` if the string is empty or contains only ASCII whitespace characters.
+
+    This method is an alias for `:is_ascii_ws()`.
 
 [[ `:iter() -> iter[str]` ]]
 
