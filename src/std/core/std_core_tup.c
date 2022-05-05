@@ -152,11 +152,11 @@ void pyro_load_std_core_tup(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_err", fn_is_err, 1);
 
     // Methods.
-    pyro_define_method(vm, vm->tup_class, "count", tup_count, 0);
-    pyro_define_method(vm, vm->tup_class, "slice", tup_slice, -1);
-    pyro_define_method(vm, vm->tup_class, "get", tup_get, 1);
-    pyro_define_method(vm, vm->tup_class, "$iter", tup_iter, 0);
-    pyro_define_method(vm, vm->tup_class, "iter", tup_iter, 0);
-    pyro_define_method(vm, vm->tup_class, "contains", tup_contains, 1);
-    pyro_define_method(vm, vm->tup_class, "$contains", tup_contains, 1);
+    pyro_define_method(vm, vm->class_tup, "count", tup_count, 0);
+    pyro_define_method(vm, vm->class_tup, "slice", tup_slice, -1);
+    pyro_define_method(vm, vm->class_tup, "get", tup_get, 1);
+    pyro_define_method(vm, vm->class_tup, "$iter", tup_iter, 0);
+    pyro_define_method(vm, vm->class_tup, "iter", tup_iter, 0);
+    pyro_define_method(vm, vm->class_tup, "contains", tup_contains, 1);
+    pyro_define_method(vm, vm->class_tup, "$contains", tup_contains, 1);
 }

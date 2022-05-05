@@ -85,7 +85,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 vm->stack_top[-arg_count - 1] = MAKE_OBJ(instance);
 
                 Value init_method;
-                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_init), &init_method, vm)) {
+                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_dollar_init), &init_method, vm)) {
                     call_value(vm, init_method, arg_count);
                 } else if (arg_count != 0) {
                     pyro_panic(
@@ -113,7 +113,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 ObjClass* class = AS_OBJ(callee)->class;
 
                 Value call_method;
-                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_call), &call_method, vm)) {
+                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_dollar_call), &call_method, vm)) {
                     call_value(vm, call_method, arg_count);
                 } else {
                     pyro_panic(vm, "object is not callable");
@@ -807,8 +807,8 @@ static void run(PyroVM* vm) {
             }
 
             case OP_GET_ITERATOR_OBJECT: {
-                if (pyro_has_method(vm, pyro_peek(vm, 0), vm->str_iter)) {
-                    invoke_method(vm, vm->str_iter, 0);
+                if (pyro_has_method(vm, pyro_peek(vm, 0), vm->str_dollar_iter)) {
+                    invoke_method(vm, vm->str_dollar_iter, 0);
                     frame = &vm->frames[vm->frame_count - 1];
                 } else {
                     pyro_panic(vm, "object is not iterable");
@@ -822,7 +822,7 @@ static void run(PyroVM* vm) {
                     pyro_push(vm, next_value);
                 } else {
                     pyro_push(vm, pyro_peek(vm, 0));
-                    invoke_method(vm, vm->str_next, 0);
+                    invoke_method(vm, vm->str_dollar_next, 0);
                     frame = &vm->frames[vm->frame_count - 1];
                 }
                 break;

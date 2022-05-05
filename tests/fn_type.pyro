@@ -1,0 +1,46 @@
+assert $type(true) == "bool";
+assert $type(false) == "bool";
+assert $type(null) == "null";
+assert $type(123) == "i64";
+assert $type(123.0) == "f64";
+assert $type('a') == "char";
+
+
+assert $type($buf()) == "buf";
+assert $type([]:iter()) == "iter";
+assert $type({}) == "map";
+assert $type($set()) == "set";
+assert $type([]) == "vec";
+assert $type($stack()) == "stack";
+assert $type($queue()) == "queue";
+assert $type("foo") == "str";
+assert $type($tup()) == "tup";
+assert $type($err()) == "err";
+
+
+import $std::pyro;
+assert $type(pyro) == "module";
+assert $type(pyro::stdin()) == "file";
+
+
+def func() {
+    return "hello";
+}
+
+assert $type(func) == "fn";
+assert $type($print) == "fn";
+
+
+class Foo {
+    def test_method() {
+        return "foo";
+    }
+}
+
+assert $type(Foo) == "class";
+
+var instance = Foo();
+assert $type(instance) == "Foo";
+
+var the_method = Foo():test_method;
+assert $type(the_method) == "method";

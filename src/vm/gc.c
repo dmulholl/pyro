@@ -57,31 +57,31 @@ static void mark_roots(PyroVM* vm) {
     }
 
     // Classes for builtin types.
-    mark_object(vm, (Obj*)vm->map_class);
-    mark_object(vm, (Obj*)vm->str_class);
-    mark_object(vm, (Obj*)vm->tup_class);
-    mark_object(vm, (Obj*)vm->vec_class);
-    mark_object(vm, (Obj*)vm->buf_class);
-    mark_object(vm, (Obj*)vm->file_class);
-    mark_object(vm, (Obj*)vm->iter_class);
-    mark_object(vm, (Obj*)vm->stack_class);
-    mark_object(vm, (Obj*)vm->set_class);
-    mark_object(vm, (Obj*)vm->queue_class);
+    mark_object(vm, (Obj*)vm->class_map);
+    mark_object(vm, (Obj*)vm->class_str);
+    mark_object(vm, (Obj*)vm->class_tup);
+    mark_object(vm, (Obj*)vm->class_vec);
+    mark_object(vm, (Obj*)vm->class_buf);
+    mark_object(vm, (Obj*)vm->class_file);
+    mark_object(vm, (Obj*)vm->class_iter);
+    mark_object(vm, (Obj*)vm->class_stack);
+    mark_object(vm, (Obj*)vm->class_set);
+    mark_object(vm, (Obj*)vm->class_queue);
 
     // The VM's pool of canned objects.
     mark_object(vm, (Obj*)vm->empty_error);
     mark_object(vm, (Obj*)vm->empty_string);
-    mark_object(vm, (Obj*)vm->str_init);
-    mark_object(vm, (Obj*)vm->str_str);
+    mark_object(vm, (Obj*)vm->str_dollar_init);
+    mark_object(vm, (Obj*)vm->str_dollar_str);
     mark_object(vm, (Obj*)vm->str_true);
     mark_object(vm, (Obj*)vm->str_false);
     mark_object(vm, (Obj*)vm->str_null);
-    mark_object(vm, (Obj*)vm->str_fmt);
-    mark_object(vm, (Obj*)vm->str_iter);
-    mark_object(vm, (Obj*)vm->str_next);
-    mark_object(vm, (Obj*)vm->str_get_index);
-    mark_object(vm, (Obj*)vm->str_set_index);
-    mark_object(vm, (Obj*)vm->str_debug);
+    mark_object(vm, (Obj*)vm->str_dollar_fmt);
+    mark_object(vm, (Obj*)vm->str_dollar_iter);
+    mark_object(vm, (Obj*)vm->str_dollar_next);
+    mark_object(vm, (Obj*)vm->str_dollar_get_index);
+    mark_object(vm, (Obj*)vm->str_dollar_set_index);
+    mark_object(vm, (Obj*)vm->str_dollar_debug);
     mark_object(vm, (Obj*)vm->str_op_binary_equals_equals);
     mark_object(vm, (Obj*)vm->str_op_binary_less);
     mark_object(vm, (Obj*)vm->str_op_binary_less_equals);
@@ -93,9 +93,29 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_op_binary_slash);
     mark_object(vm, (Obj*)vm->str_op_unary_plus);
     mark_object(vm, (Obj*)vm->str_op_unary_minus);
-    mark_object(vm, (Obj*)vm->str_hash);
-    mark_object(vm, (Obj*)vm->str_call);
-    mark_object(vm, (Obj*)vm->str_contains);
+    mark_object(vm, (Obj*)vm->str_dollar_hash);
+    mark_object(vm, (Obj*)vm->str_dollar_call);
+    mark_object(vm, (Obj*)vm->str_dollar_contains);
+    mark_object(vm, (Obj*)vm->str_bool);
+    mark_object(vm, (Obj*)vm->str_i64);
+    mark_object(vm, (Obj*)vm->str_f64);
+    mark_object(vm, (Obj*)vm->str_char);
+    mark_object(vm, (Obj*)vm->str_method);
+    mark_object(vm, (Obj*)vm->str_buf);
+    mark_object(vm, (Obj*)vm->str_class);
+    mark_object(vm, (Obj*)vm->str_fn);
+    mark_object(vm, (Obj*)vm->str_instance);
+    mark_object(vm, (Obj*)vm->str_file);
+    mark_object(vm, (Obj*)vm->str_iter);
+    mark_object(vm, (Obj*)vm->str_map);
+    mark_object(vm, (Obj*)vm->str_set);
+    mark_object(vm, (Obj*)vm->str_vec);
+    mark_object(vm, (Obj*)vm->str_stack);
+    mark_object(vm, (Obj*)vm->str_queue);
+    mark_object(vm, (Obj*)vm->str_str);
+    mark_object(vm, (Obj*)vm->str_module);
+    mark_object(vm, (Obj*)vm->str_tup);
+    mark_object(vm, (Obj*)vm->str_err);
 
     // Other object fields.
     mark_object(vm, (Obj*)vm->globals);

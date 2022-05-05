@@ -15,7 +15,8 @@ DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
-OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o
+OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o \
+			out/lib/lib_cgi.o
 
 FILES = $(SRC_FILES) $(LIB_FILES) $(OBJ_FILES) -lm -ldl -pthread
 
@@ -93,3 +94,9 @@ out/lib/lib_html.o: src/std/pyro/lib_html.pyro
 	@printf "\e[1;32mBuilding\e[0m \$$std:html\n"
 	@cd src/std/pyro; xxd -i lib_html.pyro > lib_html.c
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_html.c -o out/lib/lib_html.o
+
+out/lib/lib_cgi.o: src/std/pyro/lib_cgi.pyro
+	@mkdir -p out/lib
+	@printf "\e[1;32mBuilding\e[0m \$$std:cgi\n"
+	@cd src/std/pyro; xxd -i lib_cgi.pyro > lib_cgi.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_cgi.c -o out/lib/lib_cgi.o

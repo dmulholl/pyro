@@ -21,7 +21,7 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // If the argument is an iterator, wrap it in an ObjIter instance.
-    if (IS_OBJ(args[0]) && pyro_has_method(vm, args[0], vm->str_next)) {
+    if (IS_OBJ(args[0]) && pyro_has_method(vm, args[0], vm->str_dollar_next)) {
         ObjIter* iter = ObjIter_new(AS_OBJ(args[0]), ITER_GENERIC, vm);
         if (!iter) {
             pyro_panic(vm, "$iter(): out of memory");
@@ -31,7 +31,7 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // If the argument is iterable, call its :iter() method.
-    Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
+    Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
     if (!IS_NULL(iter_method)) {
         pyro_push(vm, args[0]);
         Value result = pyro_call_method(vm, iter_method, 0);
@@ -43,7 +43,7 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
             return result;
         }
 
-        if (IS_OBJ(result) && pyro_has_method(vm, result, vm->str_next)) {
+        if (IS_OBJ(result) && pyro_has_method(vm, result, vm->str_dollar_next)) {
             pyro_push(vm, result);
             ObjIter* iter = ObjIter_new(AS_OBJ(result), ITER_GENERIC, vm);
             if (!iter) {
@@ -399,16 +399,16 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_global_fn(vm, "$range", fn_range, -1);
 
     // Methods.
-    pyro_define_method(vm, vm->iter_class, "$iter", iter_iter, 0);
-    pyro_define_method(vm, vm->iter_class, "$next", iter_next, 0);
-    pyro_define_method(vm, vm->iter_class, "map", iter_map, 1);
-    pyro_define_method(vm, vm->iter_class, "filter", iter_filter, 1);
-    pyro_define_method(vm, vm->iter_class, "to_vec", iter_to_vec, 0);
-    pyro_define_method(vm, vm->iter_class, "to_set", iter_to_set, 0);
-    pyro_define_method(vm, vm->iter_class, "enumerate", iter_enumerate, -1);
-    pyro_define_method(vm, vm->iter_class, "skip_first", iter_skip_first, 1);
-    pyro_define_method(vm, vm->iter_class, "skip_last", iter_skip_last, 1);
-    pyro_define_method(vm, vm->iter_class, "join", iter_join, 1);
-    pyro_define_method(vm, vm->iter_class, "count", iter_count, 0);
-    pyro_define_method(vm, vm->iter_class, "next", iter_next, 0);
+    pyro_define_method(vm, vm->class_iter, "$iter", iter_iter, 0);
+    pyro_define_method(vm, vm->class_iter, "$next", iter_next, 0);
+    pyro_define_method(vm, vm->class_iter, "map", iter_map, 1);
+    pyro_define_method(vm, vm->class_iter, "filter", iter_filter, 1);
+    pyro_define_method(vm, vm->class_iter, "to_vec", iter_to_vec, 0);
+    pyro_define_method(vm, vm->class_iter, "to_set", iter_to_set, 0);
+    pyro_define_method(vm, vm->class_iter, "enumerate", iter_enumerate, -1);
+    pyro_define_method(vm, vm->class_iter, "skip_first", iter_skip_first, 1);
+    pyro_define_method(vm, vm->class_iter, "skip_last", iter_skip_last, 1);
+    pyro_define_method(vm, vm->class_iter, "join", iter_join, 1);
+    pyro_define_method(vm, vm->class_iter, "count", iter_count, 0);
+    pyro_define_method(vm, vm->class_iter, "next", iter_next, 0);
 }

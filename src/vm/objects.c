@@ -59,7 +59,7 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
         return NULL;
     }
 
-    tup->obj.class = vm->tup_class;
+    tup->obj.class = vm->class_tup;
     tup->count = count;
     for (size_t i = 0; i < count; i++) {
         tup->values[i] = MAKE_NULL();
@@ -369,7 +369,7 @@ ObjMap* ObjMap_new(PyroVM* vm) {
     map->index_array_capacity = 0;
     map->index_array_count = 0;
     map->max_load_threshold = 0;
-    map->obj.class = vm->map_class;
+    map->obj.class = vm->class_map;
     return map;
 }
 
@@ -380,7 +380,7 @@ ObjMap* ObjMap_new_as_set(PyroVM* vm) {
         return NULL;
     }
     map->obj.type = OBJ_MAP_AS_SET;
-    map->obj.class = vm->set_class;
+    map->obj.class = vm->class_set;
     return map;
 }
 
@@ -583,7 +583,7 @@ static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t 
     string->length = length;
     string->hash = hash;
     string->bytes = bytes;
-    string->obj.class = vm->str_class;
+    string->obj.class = vm->class_str;
 
     if (ObjMap_set(vm->strings, MAKE_OBJ(string), MAKE_NULL(), vm) == 0) {
         return NULL;
@@ -1141,7 +1141,7 @@ ObjVec* ObjVec_new(PyroVM* vm) {
     vec->count = 0;
     vec->capacity = 0;
     vec->values = NULL;
-    vec->obj.class = vm->vec_class;
+    vec->obj.class = vm->class_vec;
     return vec;
 }
 
@@ -1152,7 +1152,7 @@ ObjVec* ObjVec_new_as_stack(PyroVM* vm) {
         return NULL;
     }
     stack->obj.type = OBJ_VEC_AS_STACK;
-    stack->obj.class = vm->stack_class;
+    stack->obj.class = vm->class_stack;
     return stack;
 }
 
@@ -1342,7 +1342,7 @@ ObjBuf* ObjBuf_new(PyroVM* vm) {
     buf->count = 0;
     buf->capacity = 0;
     buf->bytes = NULL;
-    buf->obj.class = vm->buf_class;
+    buf->obj.class = vm->class_buf;
     return buf;
 }
 
@@ -1581,7 +1581,7 @@ ObjFile* ObjFile_new(PyroVM* vm, FILE* stream) {
         return NULL;
     }
     file->stream = stream;
-    file->obj.class = vm->file_class;
+    file->obj.class = vm->class_file;
     return file;
 }
 
@@ -1666,7 +1666,7 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
     if (!iter) {
         return NULL;
     }
-    iter->obj.class = vm->iter_class;
+    iter->obj.class = vm->class_iter;
     iter->source = source;
     iter->iter_type = iter_type;
     iter->next_index = 0;
@@ -1861,7 +1861,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
         }
 
         case ITER_GENERIC: {
-            Value next_method = pyro_get_method(vm, MAKE_OBJ(iter->source), vm->str_next);
+            Value next_method = pyro_get_method(vm, MAKE_OBJ(iter->source), vm->str_dollar_next);
             pyro_push(vm, MAKE_OBJ(iter->source));
             Value result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
@@ -2034,7 +2034,7 @@ ObjQueue* ObjQueue_new(PyroVM* vm) {
     if (!queue) {
         return NULL;
     }
-    queue->obj.class = vm->queue_class;
+    queue->obj.class = vm->class_queue;
     queue->head = NULL;
     queue->tail = NULL;
     queue->count = 0;

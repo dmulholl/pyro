@@ -257,6 +257,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
+[[ `$is_instance(object, class_object) -> bool` ]]
+
+    Returns `true` if `object` is an instance of the specified class or of a subclass of the specified class.
+
+
+
 [[ `$is_iter(arg: any) -> bool` ]]
 
     Returns `true` if the argument is an `iter`.
@@ -275,12 +281,6 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$is_instance(object, class_object) -> bool` ]]
-
-    Returns `true` if `object` is an instance of the specified class or of a subclass of the specified class.
-
-
-
 [[ `$is_map(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a `map`.
@@ -293,7 +293,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$is_mod(arg: any) -> bool` ]]
+[[ `$is_module(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a module.
 

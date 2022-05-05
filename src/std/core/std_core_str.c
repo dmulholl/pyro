@@ -1213,7 +1213,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     // Does the argument have an :$iter() method?
-    Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
+    Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
     if (IS_NULL(iter_method)) {
         pyro_panic(vm, "join(): invalid argument [items], expected an iterable object");
         return MAKE_NULL();
@@ -1228,7 +1228,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_push(vm, iterator); // protect from GC
 
     // Get the iterator's :$next() method.
-    Value next_method = pyro_get_method(vm, iterator, vm->str_next);
+    Value next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
     if (IS_NULL(next_method)) {
         pyro_panic(vm, "join(): invalid argument [items], iterator has no :$next() method");
         return MAKE_NULL();
@@ -1298,45 +1298,45 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_str", fn_is_str, 1);
 
     // Methdods.
-    pyro_define_method(vm, vm->str_class, "is_utf8", str_is_utf8, 0);
-    pyro_define_method(vm, vm->str_class, "is_ascii", str_is_ascii, 0);
-    pyro_define_method(vm, vm->str_class, "iter", str_iter, 0);
-    pyro_define_method(vm, vm->str_class, "$iter", str_iter, 0);
-    pyro_define_method(vm, vm->str_class, "byte", str_byte, 1);
-    pyro_define_method(vm, vm->str_class, "bytes", str_bytes, 0);
-    pyro_define_method(vm, vm->str_class, "byte_count", str_byte_count, 0);
-    pyro_define_method(vm, vm->str_class, "count", str_byte_count, 0);
-    pyro_define_method(vm, vm->str_class, "is_empty", str_is_empty, 0);
-    pyro_define_method(vm, vm->str_class, "char", str_char, 1);
-    pyro_define_method(vm, vm->str_class, "chars", str_chars, 0);
-    pyro_define_method(vm, vm->str_class, "char_count", str_char_count, 0);
-    pyro_define_method(vm, vm->str_class, "to_ascii_upper", str_to_ascii_upper, 0);
-    pyro_define_method(vm, vm->str_class, "to_ascii_lower", str_to_ascii_lower, 0);
-    pyro_define_method(vm, vm->str_class, "starts_with", str_starts_with, 1);
-    pyro_define_method(vm, vm->str_class, "ends_with", str_ends_with, 1);
-    pyro_define_method(vm, vm->str_class, "strip_prefix", str_strip_prefix, 1);
-    pyro_define_method(vm, vm->str_class, "strip_suffix", str_strip_suffix, 1);
-    pyro_define_method(vm, vm->str_class, "strip_prefix_bytes", str_strip_prefix_bytes, 1);
-    pyro_define_method(vm, vm->str_class, "strip_suffix_bytes", str_strip_suffix_bytes, 1);
-    pyro_define_method(vm, vm->str_class, "strip_bytes", str_strip_bytes, 1);
-    pyro_define_method(vm, vm->str_class, "strip_chars", str_strip_chars, 1);
-    pyro_define_method(vm, vm->str_class, "strip_prefix_chars", str_strip_prefix_chars, 1);
-    pyro_define_method(vm, vm->str_class, "strip_suffix_chars", str_strip_suffix_chars, 1);
-    pyro_define_method(vm, vm->str_class, "strip", str_strip, -1);
-    pyro_define_method(vm, vm->str_class, "strip_ascii_ws", str_strip_ascii_ws, 0);
-    pyro_define_method(vm, vm->str_class, "strip_utf8_ws", str_strip_utf8_ws, 0);
-    pyro_define_method(vm, vm->str_class, "match", str_match, 2);
-    pyro_define_method(vm, vm->str_class, "replace", str_replace, 2);
-    pyro_define_method(vm, vm->str_class, "index_of", str_index_of, -1);
-    pyro_define_method(vm, vm->str_class, "contains", str_contains, 1);
-    pyro_define_method(vm, vm->str_class, "split", str_split, -1);
-    pyro_define_method(vm, vm->str_class, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
-    pyro_define_method(vm, vm->str_class, "split_lines", str_split_lines, 0);
-    pyro_define_method(vm, vm->str_class, "to_hex", str_to_hex, 0);
-    pyro_define_method(vm, vm->str_class, "slice", str_slice, -1);
-    pyro_define_method(vm, vm->str_class, "join", str_join, 1);
-    pyro_define_method(vm, vm->str_class, "lines", str_lines, 0);
-    pyro_define_method(vm, vm->str_class, "is_utf8_ws", str_is_utf8_ws, 0);
-    pyro_define_method(vm, vm->str_class, "is_ascii_ws", str_is_ascii_ws, 0);
-    pyro_define_method(vm, vm->str_class, "is_ws", str_is_ascii_ws, 0);
+    pyro_define_method(vm, vm->class_str, "is_utf8", str_is_utf8, 0);
+    pyro_define_method(vm, vm->class_str, "is_ascii", str_is_ascii, 0);
+    pyro_define_method(vm, vm->class_str, "iter", str_iter, 0);
+    pyro_define_method(vm, vm->class_str, "$iter", str_iter, 0);
+    pyro_define_method(vm, vm->class_str, "byte", str_byte, 1);
+    pyro_define_method(vm, vm->class_str, "bytes", str_bytes, 0);
+    pyro_define_method(vm, vm->class_str, "byte_count", str_byte_count, 0);
+    pyro_define_method(vm, vm->class_str, "count", str_byte_count, 0);
+    pyro_define_method(vm, vm->class_str, "is_empty", str_is_empty, 0);
+    pyro_define_method(vm, vm->class_str, "char", str_char, 1);
+    pyro_define_method(vm, vm->class_str, "chars", str_chars, 0);
+    pyro_define_method(vm, vm->class_str, "char_count", str_char_count, 0);
+    pyro_define_method(vm, vm->class_str, "to_ascii_upper", str_to_ascii_upper, 0);
+    pyro_define_method(vm, vm->class_str, "to_ascii_lower", str_to_ascii_lower, 0);
+    pyro_define_method(vm, vm->class_str, "starts_with", str_starts_with, 1);
+    pyro_define_method(vm, vm->class_str, "ends_with", str_ends_with, 1);
+    pyro_define_method(vm, vm->class_str, "strip_prefix", str_strip_prefix, 1);
+    pyro_define_method(vm, vm->class_str, "strip_suffix", str_strip_suffix, 1);
+    pyro_define_method(vm, vm->class_str, "strip_prefix_bytes", str_strip_prefix_bytes, 1);
+    pyro_define_method(vm, vm->class_str, "strip_suffix_bytes", str_strip_suffix_bytes, 1);
+    pyro_define_method(vm, vm->class_str, "strip_bytes", str_strip_bytes, 1);
+    pyro_define_method(vm, vm->class_str, "strip_chars", str_strip_chars, 1);
+    pyro_define_method(vm, vm->class_str, "strip_prefix_chars", str_strip_prefix_chars, 1);
+    pyro_define_method(vm, vm->class_str, "strip_suffix_chars", str_strip_suffix_chars, 1);
+    pyro_define_method(vm, vm->class_str, "strip", str_strip, -1);
+    pyro_define_method(vm, vm->class_str, "strip_ascii_ws", str_strip_ascii_ws, 0);
+    pyro_define_method(vm, vm->class_str, "strip_utf8_ws", str_strip_utf8_ws, 0);
+    pyro_define_method(vm, vm->class_str, "match", str_match, 2);
+    pyro_define_method(vm, vm->class_str, "replace", str_replace, 2);
+    pyro_define_method(vm, vm->class_str, "index_of", str_index_of, -1);
+    pyro_define_method(vm, vm->class_str, "contains", str_contains, 1);
+    pyro_define_method(vm, vm->class_str, "split", str_split, -1);
+    pyro_define_method(vm, vm->class_str, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
+    pyro_define_method(vm, vm->class_str, "split_lines", str_split_lines, 0);
+    pyro_define_method(vm, vm->class_str, "to_hex", str_to_hex, 0);
+    pyro_define_method(vm, vm->class_str, "slice", str_slice, -1);
+    pyro_define_method(vm, vm->class_str, "join", str_join, 1);
+    pyro_define_method(vm, vm->class_str, "lines", str_lines, 0);
+    pyro_define_method(vm, vm->class_str, "is_utf8_ws", str_is_utf8_ws, 0);
+    pyro_define_method(vm, vm->class_str, "is_ascii_ws", str_is_ascii_ws, 0);
+    pyro_define_method(vm, vm->class_str, "is_ws", str_is_ascii_ws, 0);
 }

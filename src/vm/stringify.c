@@ -424,7 +424,7 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
-    Value method = pyro_get_method(vm, MAKE_OBJ(object), vm->str_str);
+    Value method = pyro_get_method(vm, MAKE_OBJ(object), vm->str_dollar_str);
     if (!IS_NULL(method)) {
         pyro_push(vm, MAKE_OBJ(object));
         Value result = pyro_call_method(vm, method, 0);
@@ -683,7 +683,7 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
 
 
 ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
-    Value method = pyro_get_method(vm, value, vm->str_debug);
+    Value method = pyro_get_method(vm, value, vm->str_dollar_debug);
     if (!IS_NULL(method)) {
         pyro_push(vm, value);
         Value result = pyro_call_method(vm, method, 0);
@@ -927,7 +927,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
         return format_str_obj(vm, AS_STR(value), format_string);
     }
 
-    Value method = pyro_get_method(vm, value, vm->str_fmt);
+    Value method = pyro_get_method(vm, value, vm->str_dollar_fmt);
     if (!IS_NULL(method)) {
         ObjStr* format_string_object = STR(format_string);
         if (!format_string_object) {

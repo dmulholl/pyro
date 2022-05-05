@@ -1,0 +1,59 @@
+
+def request() -> Request {
+    var req = Request();
+    return req;
+}
+
+
+class Request {
+
+}
+
+
+class Response {
+    var headers: vec[str];
+    var body: buf;
+
+    def $init() {
+        self.headers = $vec();
+        self.body = $buf();
+    }
+
+    def add_header(header: str) -> Response {
+        self.headers.append(header);
+        return self;
+    }
+
+    def write(text: str) -> Response {
+        self.body:write(text);
+        return self;
+    }
+
+    def print() -> Response {
+        $println(self:make_msg());
+        return self;
+    }
+
+    def send() -> err? {
+        var response = self:make_response();
+        if $is_err(response) {
+            return response;
+        }
+
+        $println(response);
+        $exit(0);
+    }
+
+    def make_response() -> buf|err {
+        var response = $buf();
+
+        for header in self.headers {
+            response:write("{}\r\n", header:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+        }
+
+        response:write("\r\n");
+        response:write($str(self.body):strip());
+
+        return response;
+    }
+}

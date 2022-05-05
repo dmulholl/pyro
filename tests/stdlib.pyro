@@ -1,10 +1,10 @@
-assert !$is_mod(123);
+assert !$is_module(123);
 
 import $std;
-assert $is_mod($std);
+assert $is_module($std);
 
 import $std::math;
-assert $is_mod(math);
+assert $is_module(math);
 assert math::abs(-1) == 1;
 
 var math_mod = math;

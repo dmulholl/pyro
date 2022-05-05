@@ -104,7 +104,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                 case OBJ_TUP_AS_ERR:
                     return ObjTup_hash(vm, AS_TUP(value));
                 case OBJ_INSTANCE: {
-                    Value method = pyro_get_method(vm, value, vm->str_hash);
+                    Value method = pyro_get_method(vm, value, vm->str_dollar_hash);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, value);
                         Value result = pyro_call_method(vm, method, 0);

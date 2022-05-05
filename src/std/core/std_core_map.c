@@ -129,7 +129,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // Does the object have an :$iter() method?
-    Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
+    Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
     if (IS_NULL(iter_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], argument is not iterable");
         return MAKE_NULL();
@@ -144,7 +144,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_push(vm, iterator); // protect from GC
 
     // Get the iterator's :$next() method.
-    Value next_method = pyro_get_method(vm, iterator, vm->str_next);
+    Value next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
     if (IS_NULL(next_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], :$iter() returns an object with no :$next() method");
         return MAKE_NULL();
@@ -204,25 +204,25 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_set", fn_is_set, 1);
 
     // Map methods.
-    pyro_define_method(vm, vm->map_class, "count", map_count, 0);
-    pyro_define_method(vm, vm->map_class, "get", map_get, 1);
-    pyro_define_method(vm, vm->map_class, "set", map_set, 2);
-    pyro_define_method(vm, vm->map_class, "remove", map_remove, 1);
-    pyro_define_method(vm, vm->map_class, "contains", map_contains, 1);
-    pyro_define_method(vm, vm->map_class, "$contains", map_contains, 1);
-    pyro_define_method(vm, vm->map_class, "copy", map_copy, 0);
-    pyro_define_method(vm, vm->map_class, "keys", map_keys, 0);
-    pyro_define_method(vm, vm->map_class, "values", map_values, 0);
-    pyro_define_method(vm, vm->map_class, "$iter", map_iter, 0);
-    pyro_define_method(vm, vm->map_class, "iter", map_iter, 0);
-    pyro_define_method(vm, vm->map_class, "is_empty", map_is_empty, 0);
+    pyro_define_method(vm, vm->class_map, "count", map_count, 0);
+    pyro_define_method(vm, vm->class_map, "get", map_get, 1);
+    pyro_define_method(vm, vm->class_map, "set", map_set, 2);
+    pyro_define_method(vm, vm->class_map, "remove", map_remove, 1);
+    pyro_define_method(vm, vm->class_map, "contains", map_contains, 1);
+    pyro_define_method(vm, vm->class_map, "$contains", map_contains, 1);
+    pyro_define_method(vm, vm->class_map, "copy", map_copy, 0);
+    pyro_define_method(vm, vm->class_map, "keys", map_keys, 0);
+    pyro_define_method(vm, vm->class_map, "values", map_values, 0);
+    pyro_define_method(vm, vm->class_map, "$iter", map_iter, 0);
+    pyro_define_method(vm, vm->class_map, "iter", map_iter, 0);
+    pyro_define_method(vm, vm->class_map, "is_empty", map_is_empty, 0);
 
     // Set methods.
-    pyro_define_method(vm, vm->set_class, "is_empty", map_is_empty, 0);
-    pyro_define_method(vm, vm->set_class, "count", map_count, 0);
-    pyro_define_method(vm, vm->set_class, "remove", map_remove, 1);
-    pyro_define_method(vm, vm->set_class, "contains", map_contains, 1);
-    pyro_define_method(vm, vm->set_class, "$contains", map_contains, 1);
-    pyro_define_method(vm, vm->set_class, "add", set_add, 1);
-    pyro_define_method(vm, vm->set_class, "$iter", map_keys, 0);
+    pyro_define_method(vm, vm->class_set, "is_empty", map_is_empty, 0);
+    pyro_define_method(vm, vm->class_set, "count", map_count, 0);
+    pyro_define_method(vm, vm->class_set, "remove", map_remove, 1);
+    pyro_define_method(vm, vm->class_set, "contains", map_contains, 1);
+    pyro_define_method(vm, vm->class_set, "$contains", map_contains, 1);
+    pyro_define_method(vm, vm->class_set, "add", set_add, 1);
+    pyro_define_method(vm, vm->class_set, "$iter", map_keys, 0);
 }

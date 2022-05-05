@@ -20,16 +20,16 @@ typedef struct {
 
 struct PyroVM {
     // Class objects for builtin types.
-    ObjClass* str_class;
-    ObjClass* map_class;
-    ObjClass* tup_class;
-    ObjClass* vec_class;
-    ObjClass* buf_class;
-    ObjClass* file_class;
-    ObjClass* iter_class;
-    ObjClass* stack_class;
-    ObjClass* set_class;
-    ObjClass* queue_class;
+    ObjClass* class_str;
+    ObjClass* class_map;
+    ObjClass* class_tup;
+    ObjClass* class_vec;
+    ObjClass* class_buf;
+    ObjClass* class_file;
+    ObjClass* class_iter;
+    ObjClass* class_stack;
+    ObjClass* class_set;
+    ObjClass* class_queue;
 
     // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;
@@ -104,17 +104,17 @@ struct PyroVM {
     // Canned objects.
     ObjTup* empty_error;
     ObjStr* empty_string;
-    ObjStr* str_init;
-    ObjStr* str_str;
+    ObjStr* str_dollar_init;
+    ObjStr* str_dollar_str;
     ObjStr* str_true;
     ObjStr* str_false;
     ObjStr* str_null;
-    ObjStr* str_fmt;
-    ObjStr* str_iter;
-    ObjStr* str_next;
-    ObjStr* str_get_index;
-    ObjStr* str_set_index;
-    ObjStr* str_debug;
+    ObjStr* str_dollar_fmt;
+    ObjStr* str_dollar_iter;
+    ObjStr* str_dollar_next;
+    ObjStr* str_dollar_get_index;
+    ObjStr* str_dollar_set_index;
+    ObjStr* str_dollar_debug;
     ObjStr* str_op_binary_equals_equals;
     ObjStr* str_op_binary_less;
     ObjStr* str_op_binary_less_equals;
@@ -124,11 +124,31 @@ struct PyroVM {
     ObjStr* str_op_binary_minus;
     ObjStr* str_op_binary_star;
     ObjStr* str_op_binary_slash;
-    ObjStr* str_hash;
-    ObjStr* str_call;
+    ObjStr* str_dollar_hash;
+    ObjStr* str_dollar_call;
     ObjStr* str_op_unary_plus;
     ObjStr* str_op_unary_minus;
-    ObjStr* str_contains;
+    ObjStr* str_dollar_contains;
+    ObjStr* str_bool;
+    ObjStr* str_i64;
+    ObjStr* str_f64;
+    ObjStr* str_char;
+    ObjStr* str_method;
+    ObjStr* str_buf;
+    ObjStr* str_class;
+    ObjStr* str_fn;
+    ObjStr* str_instance;
+    ObjStr* str_file;
+    ObjStr* str_iter;
+    ObjStr* str_map;
+    ObjStr* str_set;
+    ObjStr* str_vec;
+    ObjStr* str_stack;
+    ObjStr* str_queue;
+    ObjStr* str_str;
+    ObjStr* str_module;
+    ObjStr* str_tup;
+    ObjStr* str_err;
 
     // The grey stack used by the garbage collector.
     size_t grey_count;

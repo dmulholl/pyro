@@ -318,7 +318,7 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
 // Returns true if [a] is in [b].
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_in(PyroVM* vm, Value a, Value b) {
-    Value method = pyro_get_method(vm, b, vm->str_contains);
+    Value method = pyro_get_method(vm, b, vm->str_dollar_contains);
 
     if (!IS_NULL(method)) {
         pyro_push(vm, b);
@@ -1046,7 +1046,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, receiver, vm->str_get_index);
+            Value method = pyro_get_method(vm, receiver, vm->str_dollar_get_index);
             if (!IS_NULL(method)) {
                 pyro_push(vm, receiver);
                 pyro_push(vm, key);
@@ -1090,7 +1090,7 @@ Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, receiver, vm->str_set_index);
+            Value method = pyro_get_method(vm, receiver, vm->str_dollar_set_index);
             if (!IS_NULL(method)) {
                 pyro_push(vm, receiver);
                 pyro_push(vm, key);

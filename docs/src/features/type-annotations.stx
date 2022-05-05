@@ -30,6 +30,7 @@ Annotations for builtin types are as follows:
 * `bool`
 * `buf`
 * `char`
+* `class`
 * `err`
 * `err[type1, type2, ...]`
 * `f64`
@@ -39,6 +40,7 @@ Annotations for builtin types are as follows:
 * `iter[type]`
 * `map`
 * `map[key_type, value_type]`
+* `module`
 * `null`
 * `queue`
 * `queue[type]`

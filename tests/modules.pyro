@@ -1,18 +1,18 @@
 # Not a module.
 var foobar;
-assert !$is_mod(foobar);
+assert !$is_module(foobar);
 
 # Importing standard library modules.
 import $std;
-assert $is_mod($std);
+assert $is_module($std);
 
 import $std::math;
-assert $is_mod(math);
+assert $is_module(math);
 assert $is_f64(math::pi);
 assert math::abs(-1) == 1;
 
 import $std::math as alias;
-assert $is_mod(alias);
+assert $is_module(alias);
 assert $is_f64(alias::pi);
 assert alias::abs(-1) == 1;
 
@@ -28,7 +28,7 @@ assert get_mod_name() == "imports";
 
 # ./lib1.pyro
 import lib1;
-assert $is_mod(lib1);
+assert $is_module(lib1);
 assert lib1::pi == 3.14;
 assert lib1::add(1, 2) == 3;
 assert lib1::mod_name == "lib1";
@@ -39,7 +39,7 @@ assert func1() == "lib1";
 
 # ./lib2/self.pyro
 import lib2;
-assert $is_mod(lib2);
+assert $is_module(lib2);
 assert lib2::pi == 3.14;
 assert lib2::add(1, 2) == 3;
 assert lib2::mod_name == "lib2";
@@ -50,7 +50,7 @@ assert func2() == "lib2";
 
 # ./lib2/child1.pyro
 import lib2::child1;
-assert $is_mod(child1);
+assert $is_module(child1);
 assert child1::pi == 3.14;
 assert child1::add(1, 2) == 3;
 assert child1::mod_name == "lib2::child1";
@@ -61,11 +61,11 @@ assert func3() == "lib2::child1";
 
 # ./lib3/
 import lib3;
-assert $is_mod(lib3);
+assert $is_module(lib3);
 
 # ./lib3/child1.pyro
 import lib3::child1;
-assert $is_mod(child1);
+assert $is_module(child1);
 assert child1::pi == 3.14;
 assert child1::add(1, 2) == 3;
 assert child1::mod_name == "lib3::child1";

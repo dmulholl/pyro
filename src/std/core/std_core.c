@@ -366,7 +366,7 @@ static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_mod(PyroVM* vm, size_t arg_count, Value* args) {
+static Value fn_is_module(PyroVM* vm, size_t arg_count, Value* args) {
     return MAKE_BOOL(IS_MOD(args[0]));
 }
 
@@ -780,7 +780,7 @@ static Value fn_is_callable(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_BOOL(true);
     } else if (IS_BOUND_METHOD(args[0])) {
         return MAKE_BOOL(true);
-    } else if (IS_INSTANCE(args[0]) && pyro_has_method(vm, args[0], vm->str_call)) {
+    } else if (IS_INSTANCE(args[0]) && pyro_has_method(vm, args[0], vm->str_dollar_call)) {
         return MAKE_BOOL(true);
     }
     return MAKE_BOOL(false);
@@ -820,12 +820,12 @@ static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_iterable(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(pyro_has_method(vm, args[0], vm->str_iter));
+    return MAKE_BOOL(pyro_has_method(vm, args[0], vm->str_dollar_iter));
 }
 
 
 static Value fn_is_iterator(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(pyro_has_method(vm, args[0], vm->str_next));
+    return MAKE_BOOL(pyro_has_method(vm, args[0], vm->str_dollar_next));
 }
 
 
@@ -917,6 +917,69 @@ static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
+    switch (args[0].type) {
+        case VAL_BOOL:
+            return MAKE_OBJ(vm->str_bool);
+        case VAL_NULL:
+            return MAKE_OBJ(vm->str_null);
+        case VAL_I64:
+            return MAKE_OBJ(vm->str_i64);
+        case VAL_F64:
+            return MAKE_OBJ(vm->str_f64);
+        case VAL_CHAR:
+            return MAKE_OBJ(vm->str_char);
+        case VAL_OBJ: {
+            switch (AS_OBJ(args[0])->type) {
+                case OBJ_BOUND_METHOD:
+                    return MAKE_OBJ(vm->str_method);
+                case OBJ_BUF:
+                    return MAKE_OBJ(vm->str_buf);
+                case OBJ_CLASS:
+                    return MAKE_OBJ(vm->str_class);
+                case OBJ_INSTANCE: {
+                    ObjStr* class_name = AS_OBJ(args[0])->class->name;
+                    if (class_name) {
+                        return MAKE_OBJ(class_name);
+                    }
+                    return MAKE_OBJ(vm->str_instance);
+                }
+                case OBJ_CLOSURE:
+                case OBJ_FN:
+                case OBJ_NATIVE_FN:
+                    return MAKE_OBJ(vm->str_fn);
+                case OBJ_FILE:
+                    return MAKE_OBJ(vm->str_file);
+                case OBJ_ITER:
+                    return MAKE_OBJ(vm->str_iter);
+                case OBJ_MAP:
+                    return MAKE_OBJ(vm->str_map);
+                case OBJ_MAP_AS_SET:
+                    return MAKE_OBJ(vm->str_set);
+                case OBJ_VEC:
+                    return MAKE_OBJ(vm->str_vec);
+                case OBJ_VEC_AS_STACK:
+                    return MAKE_OBJ(vm->str_stack);
+                case OBJ_QUEUE:
+                    return MAKE_OBJ(vm->str_queue);
+                case OBJ_STR:
+                    return MAKE_OBJ(vm->str_str);
+                case OBJ_MODULE:
+                    return MAKE_OBJ(vm->str_module);
+                case OBJ_TUP:
+                    return MAKE_OBJ(vm->str_tup);
+                case OBJ_TUP_AS_ERR:
+                    return MAKE_OBJ(vm->str_err);
+                default:
+                    return MAKE_OBJ(vm->empty_string);
+            }
+        }
+        default:
+            return MAKE_OBJ(vm->empty_string);
+    }
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -939,7 +1002,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$exit", fn_exit, 1);
     pyro_define_global_fn(vm, "$panic", fn_panic, -1);
     pyro_define_global_fn(vm, "$clock", fn_clock, 0);
-    pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
+    pyro_define_global_fn(vm, "$is_module", fn_is_module, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
     pyro_define_global_fn(vm, "$is_inf", fn_is_inf, 1);
     pyro_define_global_fn(vm, "$is_null", fn_is_null, 1);
@@ -976,4 +1039,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$env", fn_env, -1);
     pyro_define_global_fn(vm, "$input", fn_input, 0);
     pyro_define_global_fn(vm, "$exec", fn_exec, 1);
+    pyro_define_global_fn(vm, "$type", fn_type, 1);
 }

@@ -24,7 +24,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
     else if (arg_count == 1) {
         // Does the object have an :$iter() method?
-        Value iter_method = pyro_get_method(vm, args[0], vm->str_iter);
+        Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
         if (IS_NULL(iter_method)) {
             pyro_panic(vm, "$vec(): invalid argument [arg], expected an iterable object");
             return MAKE_NULL();
@@ -39,7 +39,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_push(vm, iterator); // protect from GC
 
         // Get the iterator's :$next() method.
-        Value next_method = pyro_get_method(vm, iterator, vm->str_next);
+        Value next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
         if (IS_NULL(next_method)) {
             pyro_panic(vm, "$vec(): invalid argument [arg], iterator has no :$next() method");
             return MAKE_NULL();
@@ -576,40 +576,40 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_stack", fn_is_stack, 1);
 
     // Vector methods.
-    pyro_define_method(vm, vm->vec_class, "count", vec_count, 0);
-    pyro_define_method(vm, vm->vec_class, "append", vec_append, 1);
-    pyro_define_method(vm, vm->vec_class, "get", vec_get, 1);
-    pyro_define_method(vm, vm->vec_class, "set", vec_set, 2);
-    pyro_define_method(vm, vm->vec_class, "reverse", vec_reverse, 0);
-    pyro_define_method(vm, vm->vec_class, "sort", vec_sort, -1);
-    pyro_define_method(vm, vm->vec_class, "mergesort", vec_mergesort, -1);
-    pyro_define_method(vm, vm->vec_class, "quicksort", vec_quicksort, -1);
-    pyro_define_method(vm, vm->vec_class, "shuffle", vec_shuffle, 0);
-    pyro_define_method(vm, vm->vec_class, "contains", vec_contains, 1);
-    pyro_define_method(vm, vm->vec_class, "$contains", vec_contains, 1);
-    pyro_define_method(vm, vm->vec_class, "index_of", vec_index_of, 1);
-    pyro_define_method(vm, vm->vec_class, "map", vec_map, 1);
-    pyro_define_method(vm, vm->vec_class, "filter", vec_filter, 1);
-    pyro_define_method(vm, vm->vec_class, "copy", vec_copy, 0);
-    pyro_define_method(vm, vm->vec_class, "remove_last", vec_remove_last, 0);
-    pyro_define_method(vm, vm->vec_class, "remove_first", vec_remove_first, 0);
-    pyro_define_method(vm, vm->vec_class, "remove_at", vec_remove_at_index, 1);
-    pyro_define_method(vm, vm->vec_class, "insert_at", vec_insert_at_index, 2);
-    pyro_define_method(vm, vm->vec_class, "first", vec_first, 0);
-    pyro_define_method(vm, vm->vec_class, "last", vec_last, 0);
-    pyro_define_method(vm, vm->vec_class, "is_empty", vec_is_empty, 0);
-    pyro_define_method(vm, vm->vec_class, "slice", vec_slice, -1);
-    pyro_define_method(vm, vm->vec_class, "is_sorted", vec_is_sorted, -1);
-    pyro_define_method(vm, vm->vec_class, "join", vec_join, 1);
-    pyro_define_method(vm, vm->vec_class, "$iter", vec_iter, 0);
-    pyro_define_method(vm, vm->vec_class, "iter", vec_iter, 0);
-    pyro_define_method(vm, vm->vec_class, "remove_random", vec_remove_random, 0);
-    pyro_define_method(vm, vm->vec_class, "random", vec_random, 0);
+    pyro_define_method(vm, vm->class_vec, "count", vec_count, 0);
+    pyro_define_method(vm, vm->class_vec, "append", vec_append, 1);
+    pyro_define_method(vm, vm->class_vec, "get", vec_get, 1);
+    pyro_define_method(vm, vm->class_vec, "set", vec_set, 2);
+    pyro_define_method(vm, vm->class_vec, "reverse", vec_reverse, 0);
+    pyro_define_method(vm, vm->class_vec, "sort", vec_sort, -1);
+    pyro_define_method(vm, vm->class_vec, "mergesort", vec_mergesort, -1);
+    pyro_define_method(vm, vm->class_vec, "quicksort", vec_quicksort, -1);
+    pyro_define_method(vm, vm->class_vec, "shuffle", vec_shuffle, 0);
+    pyro_define_method(vm, vm->class_vec, "contains", vec_contains, 1);
+    pyro_define_method(vm, vm->class_vec, "$contains", vec_contains, 1);
+    pyro_define_method(vm, vm->class_vec, "index_of", vec_index_of, 1);
+    pyro_define_method(vm, vm->class_vec, "map", vec_map, 1);
+    pyro_define_method(vm, vm->class_vec, "filter", vec_filter, 1);
+    pyro_define_method(vm, vm->class_vec, "copy", vec_copy, 0);
+    pyro_define_method(vm, vm->class_vec, "remove_last", vec_remove_last, 0);
+    pyro_define_method(vm, vm->class_vec, "remove_first", vec_remove_first, 0);
+    pyro_define_method(vm, vm->class_vec, "remove_at", vec_remove_at_index, 1);
+    pyro_define_method(vm, vm->class_vec, "insert_at", vec_insert_at_index, 2);
+    pyro_define_method(vm, vm->class_vec, "first", vec_first, 0);
+    pyro_define_method(vm, vm->class_vec, "last", vec_last, 0);
+    pyro_define_method(vm, vm->class_vec, "is_empty", vec_is_empty, 0);
+    pyro_define_method(vm, vm->class_vec, "slice", vec_slice, -1);
+    pyro_define_method(vm, vm->class_vec, "is_sorted", vec_is_sorted, -1);
+    pyro_define_method(vm, vm->class_vec, "join", vec_join, 1);
+    pyro_define_method(vm, vm->class_vec, "$iter", vec_iter, 0);
+    pyro_define_method(vm, vm->class_vec, "iter", vec_iter, 0);
+    pyro_define_method(vm, vm->class_vec, "remove_random", vec_remove_random, 0);
+    pyro_define_method(vm, vm->class_vec, "random", vec_random, 0);
 
     // Stack methods.
-    pyro_define_method(vm, vm->stack_class, "count", vec_count, 0);
-    pyro_define_method(vm, vm->stack_class, "is_empty", vec_is_empty, 0);
-    pyro_define_method(vm, vm->stack_class, "push", vec_append, 1);
-    pyro_define_method(vm, vm->stack_class, "pop", stack_pop, 0);
-    pyro_define_method(vm, vm->stack_class, "$iter", vec_iter, 0);
+    pyro_define_method(vm, vm->class_stack, "count", vec_count, 0);
+    pyro_define_method(vm, vm->class_stack, "is_empty", vec_is_empty, 0);
+    pyro_define_method(vm, vm->class_stack, "push", vec_append, 1);
+    pyro_define_method(vm, vm->class_stack, "pop", stack_pop, 0);
+    pyro_define_method(vm, vm->class_stack, "$iter", vec_iter, 0);
 }
