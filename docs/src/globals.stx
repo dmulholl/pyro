@@ -73,9 +73,10 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 [[ `$debug(arg: any) -> str` ]]
 
     Returns a string representing `arg` suitable for use in debugging.
-    If `arg` has a `:$debug()` method, the output of this method will be returned.
-    Otherwise, if `arg` has a `:$str()` method, the output of this method will be returned.
-    Otherwise, the default string for `arg` will be returned.
+
+    * If `arg` has a `:$debug()` method, the output of this method will be returned.
+    * Otherwise, if `arg` has a `:$str()` method, the output of this method will be returned.
+    * Otherwise, the default string for `arg` will be returned.
 
 
 
@@ -460,6 +461,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
     Creates a new `tup` object.
     The arguments provide the tuple's values.
+
+
+
+[[ `$type(arg: any) -> str` ]]
+
+    Returns the type of `arg` as a string.
 
 
 

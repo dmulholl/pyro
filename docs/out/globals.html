@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.15</p>
+                <p class="version">Version 0.6.16</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -174,10 +174,18 @@ This function is a wrapper around the C standard library's <code>clock()</code> 
 <dd>
 <p>
 Returns a string representing <code>arg</code> suitable for use in debugging.
-If <code>arg</code> has a <code>:$debug()</code> method, the output of this method will be returned.
-Otherwise, if <code>arg</code> has a <code>:$str()</code> method, the output of this method will be returned.
-Otherwise, the default string for <code>arg</code> will be returned.
 </p>
+<ul>
+<li>
+If <code>arg</code> has a <code>:$debug()</code> method, the output of this method will be returned.
+</li>
+<li>
+Otherwise, if <code>arg</code> has a <code>:$str()</code> method, the output of this method will be returned.
+</li>
+<li>
+Otherwise, the default string for <code>arg</code> will be returned.
+</li>
+</ul>
 </dd>
 </div>
 <div>
@@ -472,6 +480,16 @@ Returns <code>true</code> if the argument is floating-point infinity (positive o
 </div>
 <div>
 <dt>
+<code>$is_instance(object, class_object) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>object</code> is an instance of the specified class or of a subclass of the specified class.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$is_iter(arg: any) -&gt; bool</code>
 </dt>
 <dd>
@@ -502,16 +520,6 @@ Returns <code>true</code> if the argument is an iterator, i.e. has a <code>:$nex
 </div>
 <div>
 <dt>
-<code>$is_instance(object, class_object) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if <code>object</code> is an instance of the specified class or of a subclass of the specified class.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>$is_map(arg: any) -&gt; bool</code>
 </dt>
 <dd>
@@ -532,7 +540,7 @@ Returns <code>true</code> if the argument is a method.
 </div>
 <div>
 <dt>
-<code>$is_mod(arg: any) -&gt; bool</code>
+<code>$is_module(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -804,6 +812,16 @@ If the argument has a <code>:$str()</code> method, the output of this method wil
 <p>
 Creates a new <code>tup</code> object.
 The arguments provide the tuple's values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$type(arg: any) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the type of <code>arg</code> as a string.
 </p>
 </dd>
 </div>
