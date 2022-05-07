@@ -34,3 +34,8 @@ assert cgi::url_decode("%21%25%21") == "!%!";
 
 assert cgi::url_decode("foo") == "foo";
 assert cgi::url_decode("%21foo%21") == "!foo!";
+
+var input = "foo !#$%&'()*+,/:;=?@[] bar";
+var encoded = cgi::url_encode(input);
+var decoded = cgi::url_decode(encoded);
+assert input == decoded;
