@@ -110,7 +110,7 @@ class Response {
     def send() {
         var response = self:make_response();
         $println(response);
-        # $exit(0);
+        $exit(0);
     }
 
     def make_response() -> buf {
