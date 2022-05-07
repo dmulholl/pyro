@@ -26,7 +26,7 @@ class Email {
     }
 
     def add_header(header: str) -> Email {
-        self.headers.append(header);
+        self.headers:append(header);
         return self;
     }
 
@@ -36,12 +36,12 @@ class Email {
     }
 
     def print() -> Email {
-        $println(self:make_msg());
+        $println(self:make_message());
         return self;
     }
 
     def send() -> err? {
-        var msg = self:make_msg();
+        var msg = self:make_message();
         if $is_err(msg) {
             return msg;
         }
@@ -57,7 +57,7 @@ class Email {
         }
     }
 
-    def make_msg() -> buf|err {
+    def make_message() -> buf|err {
         var msg = $buf();
 
         if $is_str(self.to_addr) && !self.to_addr:is_ws() {

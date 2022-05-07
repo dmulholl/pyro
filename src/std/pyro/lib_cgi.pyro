@@ -97,7 +97,7 @@ class Response {
     }
 
     def add_header(header: str) -> Response {
-        self.headers.append(header);
+        self.headers:append(header);
         return self;
     }
 
@@ -107,18 +107,18 @@ class Response {
     }
 
     def print() -> Response {
-        var response = self:_make_response();
+        var response = self:make_response();
         $println(response);
         return self;
     }
 
     def send() {
-        var response = self:_make_response();
+        var response = self:make_response();
         $println(response);
         $exit(0);
     }
 
-    def _make_response() -> buf {
+    def make_response() -> buf {
         var response = $buf();
 
         for header in self.headers {
