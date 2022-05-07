@@ -121,14 +121,26 @@ class Response {
         return self;
     }
 
-    def temporary_redirect(url: str) -> Response {
+    def redirect_301(url: str) -> Response {
+        self:add_header("Status: 301 Moved Permanently");
+        self:add_header("Location: " + url);
+        return self;
+    }
+
+    def redirect_302(url: str) -> Response {
         self:add_header("Status: 302 Found");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def permanent_redirect(url: str) -> Response {
-        self:add_header("Status: 301 Moved Permanently");
+    def redirect_303(url: str) -> Response {
+        self:add_header("Status: 303 See Other");
+        self:add_header("Location: " + url);
+        return self;
+    }
+
+    def redirect_307(url: str) -> Response {
+        self:add_header("Status: 307 Temporary Redirect");
         self:add_header("Location: " + url);
         return self;
     }
