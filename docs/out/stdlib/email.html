@@ -124,6 +124,18 @@ Returns <code>self</code> to allow chaining.
 Sets the value of the email's <code>From:</code> header.
 </p>
 <p>
+The argument can be a bare email address, e.g.
+</p>
+<pre>
+mail:from("johndoe@example.com");
+</pre>
+<p>
+Alternatively, the argument can combine a name and an email address, e.g.
+</p>
+<pre>
+mail:from("John Doe &lt;johndoe@example.com&gt;");
+</pre>
+<p>
 Returns <code>self</code> to allow chaining.
 </p>
 </dd>

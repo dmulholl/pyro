@@ -121,6 +121,18 @@ class Response {
         return self;
     }
 
+    def temporary_redirect(url: str) -> Response {
+        self:add_header("Status: 302 Found");
+        self:add_header("Location: " + url);
+        return self;
+    }
+
+    def permanent_redirect(url: str) -> Response {
+        self:add_header("Status: 301 Moved Permanently");
+        self:add_header("Location: " + url);
+        return self;
+    }
+
     def write(text: str) -> Response {
         self.body:write(text);
         return self;
