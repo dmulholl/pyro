@@ -65,6 +65,9 @@
 <a href="#indexing">Indexing</a>
 </li>
 <li>
+<a href="#containment">Containment</a>
+</li>
+<li>
 <a href="#methods">Methods</a>
 </li>
 </ul>
@@ -316,6 +319,21 @@ You can index into a string to get (but not set) individual byte values. Each by
 <p>
 Use the <code>:byte()</code> method to access individual byte values as integers or the <code>:char()</code> method to access individual UTF-8 encoded code points.
 </p>
+<h3 id="containment">
+Containment
+</h3>
+<p>
+You can check if a string contains a substring using the <code>in</code> operator:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span> <span class="k">in</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+</pre>
+<p>
+You can also use the <code>in</code> operator to check if a string contains a <code>char</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="sc">&#39;b&#39;</span> <span class="k">in</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+</pre>
 <h3 id="methods">
 Methods
 </h3>
@@ -397,11 +415,11 @@ This method will panic if the string contains invalid UTF-8.
 </div>
 <div>
 <dt>
-<code>:contains(target: str) -&gt; bool</code>
+<code>:contains(target: str|char) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string contains the substring <code>target</code>.
+Returns <code>true</code> if the string contains the substring or character <code>target</code>.
 </p>
 <p>
 (Note that every string contains the empty string <code>&quot;&quot;</code> as the empty string is a valid substring of every string.)

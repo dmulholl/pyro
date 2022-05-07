@@ -265,7 +265,7 @@ def $test_index_of() {
 }
 
 
-def $test_contains() {
+def $test_contains_substring() {
     var str = "foobar";
     assert str:contains("foobar");
     assert str:contains("foo");
@@ -277,6 +277,25 @@ def $test_contains() {
     # Following Python's reasoning that the empty string is a valid substring of every string.
     assert "foobar":contains("");
     assert "":contains("");
+}
+
+
+def $test_contains_char() {
+    assert !"":contains('a');
+    assert !"foo":contains('a');
+    assert "foo":contains('o');
+    assert "foo🔥bar":contains('a');
+    assert "foo🔥bar":contains('🔥');
+}
+
+
+def $test_in() {
+    assert "foo" in "foobar";
+    assert "oba" in "foobar";
+    assert !("foo" in "moobar");
+
+    assert 'o' in "foobar";
+    assert '🔥' in "foo🔥bar";
 }
 
 

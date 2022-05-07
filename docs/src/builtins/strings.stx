@@ -125,6 +125,21 @@ Use the `:byte()` method to access individual byte values as integers or the `:c
 
 
 
+### Containment
+
+You can check if a string contains a substring using the `in` operator:
+
+::: code pyro
+    assert "foo" in "foobar";
+
+You can also use the `in` operator to check if a string contains a `char`:
+
+::: code pyro
+    assert 'b' in "foobar";
+
+
+
+
 ### Methods
 
 [[ `:byte(index: i64) -> i64` ]]
@@ -161,9 +176,9 @@ Use the `:byte()` method to access individual byte values as integers or the `:c
 
     This method will panic if the string contains invalid UTF-8.
 
-[[ `:contains(target: str) -> bool` ]]
+[[ `:contains(target: str|char) -> bool` ]]
 
-    Returns `true` if the string contains the substring `target`.
+    Returns `true` if the string contains the substring or character `target`.
 
     (Note that every string contains the empty string `""` as the empty string is a valid substring of every string.)
 

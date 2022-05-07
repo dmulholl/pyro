@@ -884,21 +884,30 @@ static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
 static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "contains(): invalid argument [target], expected a string");
+    char* target;
+    size_t target_length;
+    uint8_t codepoint_buffer[4];
+
+    if (IS_STR(args[0])) {
+        target = AS_STR(args[0])->bytes;
+        target_length = AS_STR(args[0])->length;
+    } else if (IS_CHAR(args[0])) {
+        target = (char*)codepoint_buffer;
+        target_length = pyro_write_utf8_codepoint(args[0].as.u32, codepoint_buffer);
+    } else {
+        pyro_panic(vm, "contains(): invalid argument [target], expected a string or char");
         return MAKE_NULL();
     }
-    ObjStr* target = AS_STR(args[0]);
 
-    if (str->length < target->length) {
+    if (str->length < target_length) {
         return MAKE_BOOL(false);
     }
 
     size_t index = 0;
-    size_t last_possible_match_index = str->length - target->length;
+    size_t last_possible_match_index = str->length - target_length;
 
     while (index <= last_possible_match_index) {
-        if (memcmp(&str->bytes[index], target->bytes, target->length) == 0) {
+        if (memcmp(&str->bytes[index], target, target_length) == 0) {
             return MAKE_BOOL(true);
         }
         index++;
@@ -1329,6 +1338,7 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->class_str, "replace", str_replace, 2);
     pyro_define_method(vm, vm->class_str, "index_of", str_index_of, -1);
     pyro_define_method(vm, vm->class_str, "contains", str_contains, 1);
+    pyro_define_method(vm, vm->class_str, "$contains", str_contains, 1);
     pyro_define_method(vm, vm->class_str, "split", str_split, -1);
     pyro_define_method(vm, vm->class_str, "split_on_ascii_ws", str_split_on_ascii_ws, 0);
     pyro_define_method(vm, vm->class_str, "split_lines", str_split_lines, 0);
