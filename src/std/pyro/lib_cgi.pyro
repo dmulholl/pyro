@@ -1,3 +1,6 @@
+import $std::pyro;
+
+
 var url_reserved_chars = " !#$%&'()*+,/:;=?@[]":bytes():to_set();
 
 
@@ -60,11 +63,11 @@ class Request {
         }
 
         if $env("REQUEST_METHOD") in $tup("POST", "PUT") {
-            self.body = pyro:stdin():read_string();
+            self.body = pyro::stdin():read_string();
             if $env("CONTENT_TYPE") == "application/x-www-form-urlencoded" {
                 self:_unpack(self.body);
             } else if $env("CONTENT_TYPE") == "multipart/form-data" {
-                # Not implemented yet.
+                # Not implemented.
             }
         }
     }
