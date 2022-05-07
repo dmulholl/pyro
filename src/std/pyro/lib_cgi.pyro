@@ -69,13 +69,35 @@ class Request {
         }
     }
 
+    def found(key: string) -> bool {
+        return key in self.data;
+    }
+
+    def value(key: str) -> str|err {
+        var values = self.data[key];
+        if $is_err(values) {
+            return $err();
+        }
+        return values:last();
+    }
+
+    def values(key: str) -> vec[str]|err {
+        return self.data[key];
+    }
+
     def _unpack(input: str) {
         for element in input:split("&") {
             if element:contains("=") {
                 var parts = element:split("=");
                 var key = url_decode(parts[0]);
                 var value = url_decode(parts[1]);
-                self.data[key] = value;
+
+                var values = self.data[key];
+                if $is_err(values) {
+                    self.data[key] = [value];
+                } else {
+                    values:append(value);
+                }
             }
         }
     }
