@@ -68,9 +68,12 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case OBJ_FILE: {
             ObjFile* file = (ObjFile*)object;
             if (file->stream) {
-                if (file->stream != stdout && file->stream != stdin && file->stream != stderr) {
+                if (file->stream == stdin) {
+                   // Nothing to do.
+                } else if (file->stream == stdout || file->stream == stderr) {
+                    fflush(file->stream);
+                } else {
                     fclose(file->stream);
-                    file->stream = NULL;
                 }
             }
             FREE_OBJECT(vm, ObjFile, object);
