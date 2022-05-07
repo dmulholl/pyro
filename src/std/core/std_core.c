@@ -399,8 +399,8 @@ static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
 
         case VAL_OBJ: {
             if (IS_STR(args[0])) {
-                double value;
                 ObjStr* string = AS_STR(args[0]);
+                double value;
                 if (pyro_parse_string_as_float(string->bytes, string->length, &value)) {
                     return MAKE_F64(value);
                 }
@@ -443,8 +443,8 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
 
         case VAL_OBJ: {
             if (IS_STR(args[0])) {
-                int64_t value;
                 ObjStr* string = AS_STR(args[0]);
+                int64_t value;
                 if (pyro_parse_string_as_int(string->bytes, string->length, &value)) {
                     return MAKE_I64(value);
                 }
