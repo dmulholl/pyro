@@ -1,12 +1,89 @@
+var url_reserved_chars = " !#$%&'()*+,/:;=?@[]":bytes():to_set();
+
+
+def url_encode(input: str) -> str {
+    var buf = $buf();
+
+    for byte in input:bytes() {
+        if byte in url_reserved_chars {
+            buf:write("%{02X}", byte);
+        } else {
+            buf:write_byte(byte);
+        }
+    }
+
+    return buf:to_str();
+}
+
+
+def url_decode(input: str) -> str|err {
+    var index = 0;
+    var count = input:count();
+    var buf = $buf();
+
+    while index < count {
+        var char = input[index];
+        if char == "+" {
+            buf:write(" ");
+            index += 1;
+        } else if char == "%" {
+            if count - index >= 3 {
+                var value = try $i64("0x" + input:slice(index + 1, 2));
+                if $is_err(value) {
+                    return $err();
+                }
+                buf:write_byte(value);
+                index += 3;
+            } else {
+                return $err();
+            }
+        } else {
+            buf:write(char);
+            index += 1;
+        }
+    }
+
+    return buf:to_str();
+}
+
 
 def request() -> Request {
-    var req = Request();
-    return req;
+    return Request();
 }
 
 
 class Request {
+    var body: str;
+    var data: map[str, str];
 
+    def $init() {
+        self.data = $map();
+
+        var query_string = $env("QUERY_STRING");
+        if $is_str(query_string) {
+            self:_unpack(query_string);
+        }
+
+        if $env("REQUEST_METHOD") in $tup("POST", "PUT") {
+            self.body = pyro:stdin():read_string();
+            if $env("CONTENT_TYPE") == "application/x-www-form-urlencoded" {
+                self:_unpack(self.body);
+            } else if $env("CONTENT_TYPE") == "multipart/form-data" {
+                # Not implemented yet.
+            }
+        }
+    }
+
+    def _unpack(input: str) {
+        for element in input:split("&") {
+            if element:contains("=") {
+                var parts = element:split("=");
+                var key = url_decode(parts[0]);
+                var value = url_decode(parts[1]);
+                self.data[key] = value;
+            }
+        }
+    }
 }
 
 
@@ -30,25 +107,23 @@ class Response {
     }
 
     def print() -> Response {
-        $println(self:make_msg());
+        var response = self:_make_response();
+        $println(response);
         return self;
     }
 
-    def send() -> err? {
-        var response = self:make_response();
-        if $is_err(response) {
-            return response;
-        }
-
+    def send() {
+        var response = self:_make_response();
         $println(response);
         $exit(0);
     }
 
-    def make_response() -> buf|err {
+    def _make_response() -> buf {
         var response = $buf();
 
         for header in self.headers {
-            response:write("{}\r\n", header:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+            var header_string = header:strip():replace("\r", "\\r"):replace("\n", "\\n");
+            response:write("{}\r\n", header_string);
         }
 
         response:write("\r\n");
