@@ -644,15 +644,16 @@ static void patch_jump(Parser* parser, size_t index) {
 
 static uint8_t parse_argument_list(Parser* parser) {
     uint8_t arg_count = 0;
-    if (!check(parser, TOKEN_RIGHT_PAREN)) {
-        do {
-            parse_expression(parser, false, true);
-            if (arg_count == 255) {
-                ERROR_AT_PREVIOUS_TOKEN("too many arguments (max: 255)");
-            }
-            arg_count++;
-        } while (match(parser, TOKEN_COMMA));
-    }
+    do {
+        if (check(parser, TOKEN_RIGHT_PAREN)) {
+            break;
+        }
+        parse_expression(parser, false, true);
+        if (arg_count == 255) {
+            ERROR_AT_PREVIOUS_TOKEN("too many arguments (max: 255)");
+        }
+        arg_count++;
+    } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after arguments");
     return arg_count;
 }
@@ -1913,19 +1914,20 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
     // Compile the parameter list.
     consume(parser, TOKEN_LEFT_PAREN, "expected '(' before function parameters");
-    if (!check(parser, TOKEN_RIGHT_PAREN)) {
-        do {
-            if (compiler.fn->arity == 255) {
-                ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
-            }
-            compiler.fn->arity++;
-            uint16_t index = consume_variable_name(parser, "expected parameter name");
-            if (match(parser, TOKEN_COLON)) {
-                parse_type(parser);
-            }
-            define_variable(parser, index);
-        } while (match(parser, TOKEN_COMMA));
-    }
+    do {
+        if (check(parser, TOKEN_RIGHT_PAREN)) {
+            break;
+        }
+        if (compiler.fn->arity == 255) {
+            ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
+        }
+        compiler.fn->arity++;
+        uint16_t index = consume_variable_name(parser, "expected parameter name");
+        if (match(parser, TOKEN_COLON)) {
+            parse_type(parser);
+        }
+        define_variable(parser, index);
+    } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after function parameters");
 
     // Check the arity for known method names.

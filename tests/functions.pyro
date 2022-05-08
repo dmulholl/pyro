@@ -1,0 +1,26 @@
+def empty_function() {
+}
+
+assert empty_function() == null;
+
+
+def no_explicit_return() {
+    var foo = "bar";
+}
+
+assert no_explicit_return() == null;
+
+
+def add(a, b, c) {
+    return a + b + c;
+}
+
+assert add(1, 2, 3) == 6;
+assert add(1, 2, 3,) == 6;
+
+
+def takes_one_arg(arg) {
+}
+
+assert $is_err(try takes_one_arg());
+assert $is_err(try takes_one_arg("foo", "bar"));
