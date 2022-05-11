@@ -712,6 +712,11 @@ The Main Function
 When you run a script file Pyro first executes the script then looks for a function called <code>$main()</code>.
 If it finds a <code>$main()</code> function it runs it automatically.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;hello from $main()&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
 <p>
 Note that the <code>$main()</code> function won't be run if you import the same file as a module.
 </p>
@@ -737,7 +742,7 @@ Similarly, you can unpack the loop variable of a <code>for</code> loop:
     <span class="s">&quot;bar&quot;</span> <span class="p">=</span> <span class="mi">456</span><span class="p">,</span>
 <span class="p">};</span>
 
-<span class="k">for</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="k">in</span> <span class="nx">map</span><span class="p">:</span><span class="nx">entries</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">for</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="k">in</span> <span class="nx">map</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">key</span><span class="p">;</span>
     <span class="k">echo</span> <span class="nx">value</span><span class="p">;</span>
 <span class="p">}</span>

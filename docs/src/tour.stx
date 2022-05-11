@@ -492,6 +492,11 @@ Modules are a big enough topic to deserve a page of their own which you can find
 When you run a script file Pyro first executes the script then looks for a function called `$main()`.
 If it finds a `$main()` function it runs it automatically.
 
+::: code pyro
+    def $main() {
+        echo "hello from $main()";
+    }
+
 Note that the `$main()` function won't be run if you import the same file as a module.
 
 
@@ -515,7 +520,7 @@ Similarly, you can unpack the loop variable of a `for` loop:
         "bar" = 456,
     };
 
-    for (key, value) in map:entries() {
+    for (key, value) in map {
         echo key;
         echo value;
     }
