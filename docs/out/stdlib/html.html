@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.27</p>
+                <p class="version">Version 0.6.29</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -60,6 +60,22 @@ Functions
 <dl>
 <div>
 <dt>
+<code>esc_attr(text: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string formed by replacing HTML syntax characters in <code>text</code> with their corresponding character entities.
+</p>
+<p>
+Escapes the characters <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>, and <code>&#x27;</code>.
+</p>
+<p>
+The returned string can be safely using inside HTML attributes.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>esc_html(text: str) -&gt; str</code>
 </dt>
 <dd>
@@ -71,22 +87,6 @@ Escapes the characters <code>&lt;</code>, <code>&gt;</code>, and <code>&amp;</co
 </p>
 <p>
 The returned string can be safely used inside HTML tags.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>esc_html_attr(text: str) -&gt; str</code>
-</dt>
-<dd>
-<p>
-Returns the new string formed by replacing HTML syntax characters in <code>text</code> with their corresponding character entities.
-</p>
-<p>
-Escapes the characters <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>, and <code>&#x27;</code>.
-</p>
-<p>
-The returned string can be safely using inside HTML attributes.
 </p>
 </dd>
 </div>
