@@ -1356,6 +1356,11 @@ static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in
 
 
 static void parse_single_type(Parser* parser) {
+    // Check for the word "null".
+    if (match(parser, TOKEN_NULL)) {
+        return;
+    }
+
     // Parse a sequence of identifiers: foo::bar::baz.
     do {
         consume(parser, TOKEN_IDENTIFIER, "expected identifier in type declaration");
