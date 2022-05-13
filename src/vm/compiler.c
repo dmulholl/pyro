@@ -1435,6 +1435,15 @@ static void parse_assert_stmt(Parser* parser) {
 }
 
 
+static void parse_typedef_stmt(Parser* parser) {
+    if (!consume(parser, TOKEN_IDENTIFIER, "expected type name after 'typedef'")) {
+        return;
+    }
+    parse_type(parser);
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after typedef statement");
+}
+
+
 static void parse_expression_stmt(Parser* parser) {
     parse_expression(parser, true, true);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
@@ -2148,6 +2157,8 @@ static void parse_statement(Parser* parser) {
         parse_continue_stmt(parser);
     } else if (match(parser, TOKEN_IMPORT)) {
         parse_import_stmt(parser);
+    } else if (match(parser, TOKEN_TYPEDEF)) {
+        parse_typedef_stmt(parser);
     } else {
         parse_expression_stmt(parser);
         parser->num_expression_statements++;

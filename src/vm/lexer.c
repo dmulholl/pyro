@@ -216,6 +216,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
         case 't':
             if (check_keyword(lexer, "true")) return TOKEN_TRUE;
             if (check_keyword(lexer, "try")) return TOKEN_TRY;
+            if (check_keyword(lexer, "typedef")) return TOKEN_TYPEDEF;
             break;
 
         case 'v':
