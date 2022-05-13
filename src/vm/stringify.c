@@ -26,9 +26,6 @@ static ObjStr* make_debug_string_for_string(PyroVM* vm, ObjStr* input_string) {
             case '"':
                 ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\"", vm);
                 break;
-            case '\\':
-                ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\\\", vm);
-                break;
             case '\0':
                 ok = ObjBuf_append_bytes(buf, 2, (uint8_t*)"\\0", vm);
                 break;

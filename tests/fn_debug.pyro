@@ -1,0 +1,37 @@
+assert $debug(null) == `null`;
+assert $debug(true) == `true`;
+assert $debug(false) == `false`;
+
+assert $debug(123) == `123`;
+assert $debug(123.456) == `123.456`;
+
+assert $debug("foo") == `"foo"`;
+assert $debug("\n") == `"\n"`;
+assert $debug("foo\r\n\tbar") == `"foo\r\n\tbar"`;
+assert $debug("\x0A") == `"\n"`;
+assert $debug("\x01") == `"\x01"`;
+
+assert $debug('a') == `'a'`;
+assert $debug('\x0A') == `'\n'`;
+assert $debug('\x01') == `'\x01'`;
+
+assert $debug(`\n`) == `"\n"`;
+assert $debug(`\r\n\t`) == `"\r\n\t"`;
+assert $debug(`\x0A`) == `"\x0A"`;
+assert $debug(`\x01`) == `"\x01"`;
+assert $debug(`foo \n bar`) == `"foo \n bar"`;
+
+var vec = [123, 456.789];
+assert $debug(vec) == `[123, 456.789]`;
+
+var map = {"foo" = 123, "bar" = 456.789};
+assert $debug(map) == `{"foo" = 123, "bar" = 456.789}`;
+
+class Foo {
+    def $debug() {
+        return "[foo]";
+    }
+}
+
+var foo = Foo();
+assert $debug(foo) == "[foo]";
