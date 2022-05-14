@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>API &mdash; $std::args</title>
+        <link rel="stylesheet" href="../../assets/fonts.css">
+        <link rel="stylesheet" href="../../assets/graphite.css">
+        <link rel="stylesheet" href="../../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-stdlib-args-api node-stdlib-args node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.6.30</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../../index.html">Home</a></li>
+<li><a href="../../quickstart.html">Quickstart</a></li>
+<li><a href="../../installing.html">Install</a></li>
+<li><a href="../../tour.html">Language Tour</a></li>
+<li><a href="../../features.html">Features</a></li>
+<li><a href="../../builtins.html">Builtin Types</a></li>
+<li><a href="../../globals.html">Globals</a></li>
+<li><a href="../../stdlib.html">Standard Library</a></li>
+<li><a href="../../examples.html">Examples</a></li>
+<li><a href="../../roadmap.html">Roadmap</a></li>
+<li><a href="../../faq.html">FAQ</a></li>
+<li><a href="../../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>API Reference</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#setup">Setup</a>
+</li>
+<li>
+<a href="#registering-flags-and-options">Registering Flags and Options</a>
+</li>
+<li>
+<a href="#parsing">Parsing</a>
+</li>
+<li>
+<a href="#retrieving-flag-and-option-values">Retrieving Flag and Option Values</a>
+</li>
+<li>
+<a href="#positional-arguments">Positional Arguments</a>
+</li>
+<li>
+<a href="#commands">Commands</a>
+</li>
+</ul>
+<h3 id="setup">
+Setup
+</h3>
+<dl>
+<div>
+<dt>
+<code>ArgParser()</code>
+</dt>
+<dd>
+<p>
+Creates a new argument parser.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+You can customize an <code>ArgParser</code> by specifying values for the fields below:
+</p>
+<dl>
+<div>
+<dt>
+<code>.helptext: str?</code>
+</dt>
+<dd>
+<p>
+Specifying a <code>helptext</code> string for a parser activates an automatic <code>--help</code> flag;
+also a <code>-h</code> shortcut unless registered by another option.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>.version: str?</code>
+</dt>
+<dd>
+<p>
+Specifying a <code>version</code> string for a parser activates an automatic <code>--version</code> flag;
+also a <code>-v</code> shortcut unless registered by another option.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>.callback: fn?(str, ArgpParser)</code>
+</dt>
+<dd>
+<p>
+Sets the callback function for a command parser.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>.enable_help_command: bool</code>
+</dt>
+<dd>
+<p>
+This boolean switch toggles support for an automatic <code>help</code> command that prints subcommand helptext. The value defaults to <code>false</code> but gets toggled automatically to <code>true</code> whenever a command is registered. You can use this switch to disable the feature if required.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>.exit_on_error: bool</code>
+</dt>
+<dd>
+<p>
+If this boolean switch is <code>true</code> (the default), the parser will cause the program to exit with an error message and a non-zero status code if the user supplies invalid command line arguments.
+</p>
+<p>
+If this switch is set to <code>false</code>, the <code>:parse()</code> method will return an <code>err</code> instead of exiting.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="registering-flags-and-options">
+Registering Flags and Options
+</h3>
+<p>
+You can register flags and options on an <code>ArgParser</code> using the methods below:
+</p>
+<dl>
+<div>
+<dt>
+<code>:flag(name: str) -&gt; Flag</code>
+</dt>
+<dd>
+<p>
+Registers a new flag. The <code>name</code> parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:option(name: str) -&gt; Option</code>
+</dt>
+<dd>
+<p>
+Registers a new option. The <code>name</code> parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+</p>
+<p>
+You can chain a call to the option's <code>:default()</code> method to set a default value for the option:
+</p>
+<dl>
+<div>
+<dt>
+<code>:default(value: any) -&gt; Option</code>
+</dt>
+<dd>
+<p>
+Sets the option's default value.
+</p>
+<p>
+If you don't set a default value for an option, its default value will be <code>null</code>.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Options are string-valued by default but you can specify a parser callback using the option's <code>:parser()</code> method:
+</p>
+<dl>
+<div>
+<dt>
+<code>:parser(callback: fn(str) -&gt; any) -&gt; Option</code>
+</dt>
+<dd>
+<p>
+Sets the option's parser callback.
+</p>
+<p>
+A parser callback should accept a single string argument (the option's value).
+It should return the parsed value.
+It can panic or return an <code>err</code> to indicate failure.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+You can specify the builtin function <code>$i64</code> to parse an option's value as an integer or the builtin function <code>$f64</code> to parse an option's value as a float.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="parsing">
+Parsing
+</h3>
+<p>
+Call the <code>:parse()</code> method on the root <code>ArgParser</code> instance to parse the program's command line arguments:
+</p>
+<dl>
+<div>
+<dt>
+<code>:parse() -&gt; err?</code>
+</dt>
+<dd>
+<p>
+Parses the program's command line arguments.
+</p>
+<ul>
+<li>
+If <code>.exit_on_error</code> is <code>true</code>, exits with an error message for the user if the command line arguments are invalid.
+</li>
+<li>
+If <code>.exit_on_error</code> is <code>false</code>, returns an <code>err</code> if the command line arguments are invalid.
+</li>
+</ul>
+<p>
+You only need to call this method on the root <code>ArgParser</code> instance; arguments for commands will be parsed automatically.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="retrieving-flag-and-option-values">
+Retrieving Flag and Option Values
+</h3>
+<p>
+You can use any of a flag or option's registered aliases or shortcuts as the <code>name</code> parameter in the calls below.
+</p>
+<dl>
+<div>
+<dt>
+<code>:count(name) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of times the specified flag or option was found.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:found(name) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the specified flag or option was found, <code>false</code> if not.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:value(name) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the value of the specified option.
+Returns the option's default value if the option was not found.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:values(name) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Returns the specified option's list of values.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="positional-arguments">
+Positional Arguments
+</h3>
+<p>
+Positional arguments are appended to the parser's <code>.args</code> vector.
+</p>
+<dl>
+<div>
+<dt>
+<code>.args: vec[str]</code>
+</dt>
+<dd>
+<p>
+Stores positonal arguments as a <code>vec</code> of strings.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="commands">
+Commands
+</h3>
+<p>
+You can register a command on an <code>ArgParser</code> using the method below:
+</p>
+<dl>
+<div>
+<dt>
+<code>:command(name: str) -&gt; ArgParser</code>
+</dt>
+<dd>
+<p>
+Registers a new command on an <code>ArgParser</code> instance.
+The <code>name</code> parameter accepts an unlimited number of space-separated aliases for the command.
+Returns the command's <code>ArgParser</code> instance which can be used to register the command's help text, flags, options, and callback function.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+If the command is found and it has a <code>callback</code> function, the function will be called with the command's name and <code>ArgParser</code> instance as arguments.
+</p>
+<p>
+The following <code>ArgParser</code> fields can also be used for processing commands:
+</p>
+<dl>
+<div>
+<dt>
+<code>.command_name: str?</code>
+</dt>
+<dd>
+<p>
+Stores the command name if a command was found.
+If no command was found, this field will have the value <code>null</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>.command_parser: ArgParser?</code>
+</dt>
+<dd>
+<p>
+Stores the command parser if a command was found.
+If no command was found, this field will have the value <code>null</code>.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+Note that these fields are set on the command's parent <code>ArgParser</code> instance.
+</p>
+        </article>
+        
+    </body>
+</html>

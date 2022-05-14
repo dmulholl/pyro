@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Examples &mdash; $std::args</title>
+        <link rel="stylesheet" href="../../assets/fonts.css">
+        <link rel="stylesheet" href="../../assets/graphite.css">
+        <link rel="stylesheet" href="../../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-stdlib-args-examples node-stdlib-args node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.6.30</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../../index.html">Home</a></li>
+<li><a href="../../quickstart.html">Quickstart</a></li>
+<li><a href="../../installing.html">Install</a></li>
+<li><a href="../../tour.html">Language Tour</a></li>
+<li><a href="../../features.html">Features</a></li>
+<li><a href="../../builtins.html">Builtin Types</a></li>
+<li><a href="../../globals.html">Globals</a></li>
+<li><a href="../../stdlib.html">Standard Library</a></li>
+<li><a href="../../examples.html">Examples</a></li>
+<li><a href="../../roadmap.html">Roadmap</a></li>
+<li><a href="../../faq.html">FAQ</a></li>
+<li><a href="../../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Examples</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#simple-parser">Simple Parser</a>
+</li>
+<li>
+<a href="#command-parser">Command Parser</a>
+</li>
+</ul>
+<h3 id="simple-parser">
+Simple Parser
+</h3>
+<p>
+Here's an example of a simple argument parser:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">args</span><span class="p">;</span>
+
+<span class="c1"># Initialize a new argument parser.</span>
+<span class="kd">var</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">();</span>
+<span class="nx">parser</span><span class="p">.</span><span class="nx">helptext</span> <span class="p">=</span> <span class="s">&quot;Usage: foo...&quot;</span><span class="p">;</span>
+<span class="nx">parser</span><span class="p">.</span><span class="nx">version</span> <span class="p">=</span> <span class="s">&quot;1.0&quot;</span><span class="p">;</span>
+
+<span class="c1"># Register a flag.</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">flag</span><span class="p">(</span><span class="s">&quot;flag f&quot;</span><span class="p">);</span>
+
+<span class="c1"># Register a string-valued option.</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">option</span><span class="p">(</span><span class="s">&quot;name n&quot;</span><span class="p">);</span>
+
+<span class="c1"># Register an integer-valued option and set its</span>
+<span class="c1"># default value to 0.</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">option</span><span class="p">(</span><span class="s">&quot;count c&quot;</span><span class="p">):</span><span class="nx">default</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span><span class="nx">parser</span><span class="p">(</span><span class="nx">$i64</span><span class="p">);</span>
+
+<span class="c1"># Parse the command line arguments.</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span>
+
+<span class="c1"># Dump the parser to stdout.</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">print</span><span class="p">();</span>
+</pre>
+<h3 id="command-parser">
+Command Parser
+</h3>
+<p>
+Here's an example of an argument parser that registers a command:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">args</span><span class="p">;</span>
+
+<span class="c1"># Callback function for the &#39;boo&#39; command.</span>
+<span class="kd">def</span> <span class="nx">cmd_boo</span><span class="p">(</span><span class="nx">cmd_name</span><span class="p">,</span> <span class="nx">cmd_parser</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;---&quot;</span><span class="p">;</span>
+    <span class="nx">cmd_parser</span><span class="p">:</span><span class="nx">print</span><span class="p">();</span>
+    <span class="k">echo</span> <span class="s">&quot;---&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1"># Initialize a new argument parser.</span>
+<span class="kd">var</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">();</span>
+<span class="nx">parser</span><span class="p">.</span><span class="nx">helptext</span> <span class="p">=</span> <span class="s">&quot;Usage: foo...&quot;</span><span class="p">;</span>
+<span class="nx">parser</span><span class="p">.</span><span class="nx">version</span> <span class="p">=</span> <span class="s">&quot;1.0&quot;</span><span class="p">;</span>
+
+<span class="c1"># Register a command &#39;boo&#39;.</span>
+<span class="kd">var</span> <span class="nx">cmd_parser</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">command</span><span class="p">(</span><span class="s">&quot;boo&quot;</span><span class="p">);</span>
+<span class="nx">cmd_parser</span><span class="p">.</span><span class="nx">helptext</span> <span class="p">=</span> <span class="s">&quot;Usage: foo boo...&quot;</span><span class="p">;</span>
+
+<span class="c1"># We can register flags and options on the command.</span>
+<span class="nx">cmd_parser</span><span class="p">:</span><span class="nx">flag</span><span class="p">(</span><span class="s">&quot;flag f&quot;</span><span class="p">);</span>
+<span class="nx">cmd_parser</span><span class="p">:</span><span class="nx">option</span><span class="p">(</span><span class="s">&quot;opt o&quot;</span><span class="p">);</span>
+
+<span class="c1"># If the command is found, its callback will be called.</span>
+<span class="nx">cmd_parser</span><span class="p">.</span><span class="nx">callback</span> <span class="p">=</span> <span class="nx">cmd_boo</span><span class="p">;</span>
+
+<span class="c1"># Parse the command line arguments.</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span>
+
+<span class="c1"># Dump the parser to stdout.</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">print</span><span class="p">();</span>
+</pre>
+        </article>
+        
+    </body>
+</html>

@@ -1,0 +1,26 @@
+---
+title: <code>$std::args</code>
+meta_title: Pyro Standard Library &mdash; $std::args
+---
+
+A library for parsing command line arguments.
+
+* [Quickstart](@root/stdlib/args/quickstart//)
+* [API Reference](@root/stdlib/args/api//)
+* [Command Line Interface](@root/stdlib/args/cli//)
+* [Examples](@root/stdlib/args/examples//)
+
+This library supports:
+
+* Long-form boolean flags with single-character shortcuts: `--flag`, `-f`.
+
+* Long-form string, integer, and floating-point options with
+  single-character shortcuts: `--option <arg>`, `-o <arg>`.
+
+* Condensed short-form options: `-abc <arg> <arg>`.
+
+* Automatic `--help` and `--version` flags.
+
+* Support for multivalued options.
+
+* Support for git-style command interfaces with arbitrarily-nested commands.

@@ -1,0 +1,149 @@
+---
+title: API Reference
+meta_title: API &mdash; $std::args
+---
+
+::: insert toc
+
+
+### Setup
+
+[[ `ArgParser()` ]]
+
+    Creates a new argument parser.
+
+You can customize an `ArgParser` by specifying values for the fields below:
+
+[[ `.helptext: str?` ]]
+
+    Specifying a `helptext` string for a parser activates an automatic `--help` flag;
+    also a `-h` shortcut unless registered by another option.
+
+[[ `.version: str?` ]]
+
+    Specifying a `version` string for a parser activates an automatic `--version` flag;
+    also a `-v` shortcut unless registered by another option.
+
+[[ `.callback: fn?(str, ArgpParser)` ]]
+
+    Sets the callback function for a command parser.
+
+[[ `.enable_help_command: bool` ]]
+
+    This boolean switch toggles support for an automatic `help` command that prints subcommand helptext. The value defaults to `false` but gets toggled automatically to `true` whenever a command is registered. You can use this switch to disable the feature if required.
+
+[[ `.exit_on_error: bool` ]]
+
+    If this boolean switch is `true` (the default), the parser will cause the program to exit with an error message and a non-zero status code if the user supplies invalid command line arguments.
+
+    If this switch is set to `false`, the `:parse()` method will return an `err` instead of exiting.
+
+
+
+### Registering Flags and Options
+
+You can register flags and options on an `ArgParser` using the methods below:
+
+[[ `:flag(name: str) -> Flag` ]]
+
+    Registers a new flag. The `name` parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+
+[[ `:option(name: str) -> Option` ]]
+
+    Registers a new option. The `name` parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+
+    You can chain a call to the option's `:default()` method to set a default value for the option:
+
+    [[ `:default(value: any) -> Option` ]]
+
+        Sets the option's default value.
+
+        If you don't set a default value for an option, its default value will be `null`.
+
+    Options are string-valued by default but you can specify a parser callback using the option's `:parser()` method:
+
+    [[ `:parser(callback: fn(str) -> any) -> Option` ]]
+
+        Sets the option's parser callback.
+
+        A parser callback should accept a single string argument (the option's value).
+        It should return the parsed value.
+        It can panic or return an `err` to indicate failure.
+
+    You can specify the builtin function `$i64` to parse an option's value as an integer or the builtin function `$f64` to parse an option's value as a float.
+
+
+
+### Parsing
+
+Call the `:parse()` method on the root `ArgParser` instance to parse the program's command line arguments:
+
+[[ `:parse() -> err?` ]]
+
+    Parses the program's command line arguments.
+
+    * If `.exit_on_error` is `true`, exits with an error message for the user if the command line arguments are invalid.
+    * If `.exit_on_error` is `false`, returns an `err` if the command line arguments are invalid.
+
+    You only need to call this method on the root `ArgParser` instance; arguments for commands will be parsed automatically.
+
+
+
+### Retrieving Flag and Option Values
+
+You can use any of a flag or option's registered aliases or shortcuts as the `name` parameter in the calls below.
+
+[[  `:count(name) -> i64`  ]]
+
+    Returns the number of times the specified flag or option was found.
+
+[[  `:found(name) -> bool`  ]]
+
+    Returns `true` if the specified flag or option was found, `false` if not.
+
+[[  `:value(name) -> any`  ]]
+
+    Returns the value of the specified option.
+    Returns the option's default value if the option was not found.
+
+[[  `:values(name) -> vec`  ]]
+
+    Returns the specified option's list of values.
+
+
+
+### Positional Arguments
+
+Positional arguments are appended to the parser's `.args` vector.
+
+[[ `.args: vec[str]` ]]
+
+    Stores positonal arguments as a `vec` of strings.
+
+
+
+### Commands
+
+You can register a command on an `ArgParser` using the method below:
+
+[[ `:command(name: str) -> ArgParser` ]]
+
+    Registers a new command on an `ArgParser` instance.
+    The `name` parameter accepts an unlimited number of space-separated aliases for the command.
+    Returns the command's `ArgParser` instance which can be used to register the command's help text, flags, options, and callback function.
+
+If the command is found and it has a `callback` function, the function will be called with the command's name and `ArgParser` instance as arguments.
+
+The following `ArgParser` fields can also be used for processing commands:
+
+[[ `.command_name: str?` ]]
+
+    Stores the command name if a command was found.
+    If no command was found, this field will have the value `null`.
+
+[[ `.command_parser: ArgParser?` ]]
+
+    Stores the command parser if a command was found.
+    If no command was found, this field will have the value `null`.
+
+Note that these fields are set on the command's parent `ArgParser` instance.

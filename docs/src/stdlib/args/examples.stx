@@ -1,0 +1,76 @@
+---
+title: Examples
+meta_title: Examples &mdash; $std::args
+---
+
+::: insert toc
+
+
+### Simple Parser
+
+Here's an example of a simple argument parser:
+
+::: code pyro
+    import $std::args;
+
+    # Initialize a new argument parser.
+    var parser = args::ArgParser();
+    parser.helptext = "Usage: foo...";
+    parser.version = "1.0";
+
+    # Register a flag.
+    parser:flag("flag f");
+
+    # Register a string-valued option.
+    parser:option("name n");
+
+    # Register an integer-valued option and set its
+    # default value to 0.
+    parser:option("count c"):default(0):parser($i64);
+
+    # Parse the command line arguments.
+    parser:parse();
+
+    # Dump the parser to stdout.
+    parser:print();
+
+
+
+### Command Parser
+
+Here's an example of an argument parser that registers a command:
+
+::: code pyro
+    import $std::args;
+
+    # Callback function for the 'boo' command.
+    def cmd_boo(cmd_name, cmd_parser) {
+        echo "---";
+        cmd_parser:print();
+        echo "---";
+    }
+
+    # Initialize a new argument parser.
+    var parser = args::ArgParser();
+    parser.helptext = "Usage: foo...";
+    parser.version = "1.0";
+
+    # Register a command 'boo'.
+    var cmd_parser = parser:command("boo");
+    cmd_parser.helptext = "Usage: foo boo...";
+
+    # We can register flags and options on the command.
+    cmd_parser:flag("flag f");
+    cmd_parser:option("opt o");
+
+    # If the command is found, its callback will be called.
+    cmd_parser.callback = cmd_boo;
+
+    # Parse the command line arguments.
+    parser:parse();
+
+    # Dump the parser to stdout.
+    parser:print();
+
+
+
