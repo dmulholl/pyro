@@ -14,6 +14,10 @@ All standard library modules are submodules of the root module `$std`.
 
 ### Standard Library Modules
 
+[[ [args](@root/stdlib/args//) ]]
+
+    A library for parsing command line arguments.
+
 [[ [email](@root/stdlib/email//) ]]
 
     A utility module for sending email.
