@@ -8,63 +8,81 @@
 
 
 static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) {
-    bool found_module = false;
-
     if (strcmp(name->bytes, "math") == 0) {
         pyro_load_std_mod_math(vm, module);
-        found_module = true;
-    } else if (strcmp(name->bytes, "mt64") == 0) {
-        pyro_load_std_mod_mt64(vm, module);
-        found_module = true;
-    } else if (strcmp(name->bytes, "prng") == 0) {
-        pyro_load_std_mod_prng(vm, module);
-        found_module = true;
-    } else if (strcmp(name->bytes, "pyro") == 0) {
-        pyro_load_std_mod_pyro(vm, module);
-        found_module = true;
-    } else if (strcmp(name->bytes, "sqlite") == 0) {
-        pyro_load_std_mod_sqlite(vm, module);
-        found_module = true;
-    } else if (strcmp(name->bytes, "path") == 0) {
-        pyro_load_std_mod_path(vm, module);
-        found_module = true;
-    } else if (strcmp(name->bytes, "args") == 0) {
-        pyro_exec_code_as_module(vm, (char*)lib_args_pyro, lib_args_pyro_len, "$std::args", module);
-        if (vm->halt_flag) {
-            return;
+        if (vm->memory_allocation_failed) {
+            pyro_panic(vm, "out of memory");
         }
-        found_module = true;
-    } else if (strcmp(name->bytes, "email") == 0) {
-        pyro_exec_code_as_module(vm, (char*)lib_email_pyro, lib_email_pyro_len, "$std::email", module);
-        if (vm->halt_flag) {
-            return;
-        }
-        found_module = true;
-    } else if (strcmp(name->bytes, "html") == 0) {
-        pyro_exec_code_as_module(vm, (char*)lib_html_pyro, lib_html_pyro_len, "$std::html", module);
-        if (vm->halt_flag) {
-            return;
-        }
-        found_module = true;
-    } else if (strcmp(name->bytes, "cgi") == 0) {
-        pyro_exec_code_as_module(vm, (char*)lib_cgi_pyro, lib_cgi_pyro_len, "$std::cgi", module);
-        if (vm->halt_flag) {
-            return;
-        }
-        found_module = true;
-    } else if (strcmp(name->bytes, "json") == 0) {
-        pyro_exec_code_as_module(vm, (char*)lib_json_pyro, lib_json_pyro_len, "$std::json", module);
-        if (vm->halt_flag) {
-            return;
-        }
-        found_module = true;
+        return;
     }
 
-    if (!found_module) {
-        pyro_panic(vm, "invalid standard library module '%s'", name->bytes);
-    } else if (vm->memory_allocation_failed) {
-        pyro_panic(vm, "out of memory");
+    if (strcmp(name->bytes, "mt64") == 0) {
+        pyro_load_std_mod_mt64(vm, module);
+        if (vm->memory_allocation_failed) {
+            pyro_panic(vm, "out of memory");
+        }
+        return;
     }
+
+
+    if (strcmp(name->bytes, "prng") == 0) {
+        pyro_load_std_mod_prng(vm, module);
+        if (vm->memory_allocation_failed) {
+            pyro_panic(vm, "out of memory");
+        }
+        return;
+    }
+
+    if (strcmp(name->bytes, "pyro") == 0) {
+        pyro_load_std_mod_pyro(vm, module);
+        if (vm->memory_allocation_failed) {
+            pyro_panic(vm, "out of memory");
+        }
+        return;
+    }
+
+    if (strcmp(name->bytes, "sqlite") == 0) {
+        pyro_load_std_mod_sqlite(vm, module);
+        if (vm->memory_allocation_failed) {
+            pyro_panic(vm, "out of memory");
+        }
+        return;
+    }
+
+    if (strcmp(name->bytes, "path") == 0) {
+        pyro_load_std_mod_path(vm, module);
+        if (vm->memory_allocation_failed) {
+            pyro_panic(vm, "out of memory");
+        }
+        return;
+    }
+
+    if (strcmp(name->bytes, "args") == 0) {
+        pyro_exec_code_as_module(vm, (char*)lib_args_pyro, lib_args_pyro_len, "$std::args", module);
+        return;
+    }
+
+    if (strcmp(name->bytes, "email") == 0) {
+        pyro_exec_code_as_module(vm, (char*)lib_email_pyro, lib_email_pyro_len, "$std::email", module);
+        return;
+    }
+
+    if (strcmp(name->bytes, "html") == 0) {
+        pyro_exec_code_as_module(vm, (char*)lib_html_pyro, lib_html_pyro_len, "$std::html", module);
+        return;
+    }
+
+    if (strcmp(name->bytes, "cgi") == 0) {
+        pyro_exec_code_as_module(vm, (char*)lib_cgi_pyro, lib_cgi_pyro_len, "$std::cgi", module);
+        return;
+    }
+
+    if (strcmp(name->bytes, "json") == 0) {
+        pyro_exec_code_as_module(vm, (char*)lib_json_pyro, lib_json_pyro_len, "$std::json", module);
+        return;
+    }
+
+    pyro_panic(vm, "no module in standard library named '%s'", name->bytes);
 }
 
 
