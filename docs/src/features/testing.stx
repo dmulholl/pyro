@@ -19,6 +19,14 @@ Pyro has builtin support for unit tests using the `test` command:
       -h, --help           Print this help text and exit.
       -v, --verbose        Show error output.
 
+
+You can specify multiple files to test, e.g.
+
+    $ pyro test tests/*.pyro
+
+
+### Test Functions
+
 For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose names begin with `$test_`. A test function passes if it executes without panicking.
 
 You can use an `assert` statement to make a test function panic if the test fails, e.g.
@@ -28,6 +36,20 @@ You can use an `assert` statement to make a test function panic if the test fail
           assert 1 + 2 == 3;
       }
 
+The syntax is:
+
+    assert <expression>;
+
 An `assert` statement passes if its operand expression evaluates as truthy or fails if it evaluates as falsey.
 
 Note that test functions take no arguments.
+
+
+### Module-Level Tests
+
+You don't need to use test functions for simple tests --- you can put `assert` statements at global-scope in a file, e.g.
+
+::: code pyro
+    assert "foo" + "bar" == "foobar";
+
+The `test` command will register the file as failing if any of the `assert` statements fail.

@@ -70,6 +70,15 @@ Flags:
   -v, --verbose        Show error output.
 </pre>
 <p>
+You can specify multiple files to test, e.g.
+</p>
+<pre>
+$ pyro test tests/*.pyro
+</pre>
+<h3 id="test-functions">
+Test Functions
+</h3>
+<p>
 For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose names begin with <code>$test_</code>. A test function passes if it executes without panicking.
 </p>
 <p>
@@ -81,10 +90,28 @@ You can use an <code>assert</code> statement to make a test function panic if th
 <span class="p">}</span>
 </pre>
 <p>
+The syntax is:
+</p>
+<pre>
+assert &lt;expression&gt;;
+</pre>
+<p>
 An <code>assert</code> statement passes if its operand expression evaluates as truthy or fails if it evaluates as falsey.
 </p>
 <p>
 Note that test functions take no arguments.
+</p>
+<h3 id="module-level-tests">
+Module-Level Tests
+</h3>
+<p>
+You don't need to use test functions for simple tests &mdash; you can put <code>assert</code> statements at global-scope in a file, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span> <span class="o">+</span> <span class="s">&quot;bar&quot;</span> <span class="o">==</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The <code>test</code> command will register the file as failing if any of the <code>assert</code> statements fail.
 </p>
         </article>
         
