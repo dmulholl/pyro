@@ -1,5 +1,5 @@
 # Pygments lexer for the Pyro programming language.
-# v0.3.0
+# v0.3.1
 
 # 1. Add this file to pygments/lexers/
 # 2. cd pygments/formatters && python _mapping.py
@@ -27,7 +27,7 @@ class PyroLexer(RegexLexer):
             (r'(>>>|[.]{3})', Comment.Preproc),
 
             (r'(import|as)\b', Keyword.Namespace),
-            (r'(var|def|class)\b', Keyword.Declaration),
+            (r'(var|def|class|typedef)\b', Keyword.Declaration),
 
             (words((
                 'if', 'else', 'for', 'in', 'loop', 'while',
