@@ -10,14 +10,14 @@ This module contains utility functions for working with JSON.
 
 [[ `from_json(arg: str) -> map|vec|str|i64|f64|bool|null` ]]
 
-    Unmarshalls the JSON string `arg`.
+    Unmarshalls the input JSON string.
 
-    Supports trailing commas and comments beginning with `//`.
+    Supports input with trailing commas and comments beginning with `//`.
 
 
 [[ `to_json(arg: map|vec|tup|str|i64|f64|bool|null) -> str` ]]
 
-    Marshalls `arg` to JSON, returning the result as a string.
+    Marshalls the Pyro value `arg` to JSON, returning the result as a string.
 
     The set of valid input values is:
 
@@ -29,3 +29,5 @@ This module contains utility functions for working with JSON.
     * `str`
     * A `vec` or `tup` of valid values.
     * A `map` with string keys and valid values.
+
+    Note that this function does not check for cycles in the input, e.g. a `vec` that contains itself.

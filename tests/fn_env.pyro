@@ -1,0 +1,2 @@
+$env("PYRO_TEST_VAR", "foo bar");
+assert $env("PYRO_TEST_VAR") == "foo bar";
