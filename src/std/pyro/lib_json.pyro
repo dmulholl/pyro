@@ -1,0 +1,508 @@
+# ------------------ #
+#  Marshall to JSON  #
+# ------------------ #
+
+
+def marshall_map(arg: map) -> str {
+    var buf = $buf();
+    var keys = arg:keys():to_vec();
+    var count = keys:count();
+
+    buf:write("{");
+
+    loop var i = 0; i < count; i += 1 {
+        if i > 0 {
+            buf:write(", ");
+        }
+
+        var key = keys[i];
+        if !$is_str(key) {
+            $panic(
+                "invalid key type in map, expected a string: type: {}, value: {}",
+                $type(key),
+                $debug(key)
+            );
+        }
+
+        var value = arg[key];
+        buf:write("{}: {}", marshall(key), marshall(value));
+    }
+
+    buf:write("}");
+    return buf:to_str();
+}
+
+
+def marshall_vec_or_tup(arg: vec|tup) -> str {
+    var buf = $buf();
+    var count = arg:count();
+
+    buf:write("[");
+
+    loop var i = 0; i < count; i += 1 {
+        if i > 0 {
+            buf:write(", ");
+        }
+        buf:write(marshall(arg[i]));
+    }
+
+    buf:write("]");
+    return buf:to_str();
+}
+
+
+def marshall_str(arg: str) -> str {
+    return $debug(arg);
+}
+
+
+def marshall(arg: map|vec|str|i64|f64|bool|null) -> str {
+    if $is_map(arg) {
+        return marshall_map(arg);
+    } else if $is_vec(arg) || $is_tup(arg) {
+        return marshall_vec_or_tup(arg);
+    } else if $is_str(arg) {
+        return marshall_str(arg);
+    } else if $is_i64(arg) {
+        return $str(arg);
+    } else if $is_f64(arg) {
+        return $str(arg);
+    } else if $is_bool(arg) {
+        return arg ? "true" :| "false";
+    } else if $is_null(arg) {
+        return "null";
+    } else {
+        $panic("invalid input: type: {}, value: {}", $type(arg), $debug(arg));
+    }
+}
+
+
+def to_json(arg: map|vec|str|i64|f64|bool|null) -> str {
+    var result = try marshall(arg);
+    if $is_err(result) {
+        $panic("to_json(): {}", result[0]);
+    }
+    return result;
+}
+
+
+# ---------------------- #
+#  Unmarshall from JSON  #
+# ---------------------- #
+
+
+# Token: $tup(token_type, start_index, length).
+typedef Token tup[str, i64, i64];
+
+
+class Lexer {
+    var input: str;
+    var count: i64;
+    var index: i64;
+
+    def $init(input: str) {
+        self.input = input;
+        self.count = input:count();
+        self.index = 0;
+    }
+
+    def next() -> Token {
+        while self.index < self.count && self.input[self.index]:is_ws() {
+            self.index += 1;
+        }
+
+        if self.index < self.count && self.input:match("//", self.index) {
+            while self.index < self.count {
+                self.index += 1;
+                if self.input[self.index - 1] == "\n" {
+                    break;
+                }
+            }
+            while self.index < self.count && self.input[self.index]:is_ws() {
+                self.index += 1;
+            }
+        }
+
+        if self.index >= self.count {
+            return $tup("EOF", self.index, 0);
+        }
+
+        if self.input:match("null", self.index) {
+            var token = $tup("NULL", self.index, 4);
+            self.index += 4;
+            return token;
+        }
+
+        if self.input:match("true", self.index) {
+            var token = $tup("TRUE", self.index, 4);
+            self.index += 4;
+            return token;
+        }
+
+        if self.input:match("false", self.index) {
+            var token = $tup("FALSE", self.index, 5);
+            self.index += 5;
+            return token;
+        }
+
+        if self.input:match("[", self.index) {
+            var token = $tup("LEFT_BRACKET", self.index, 1);
+            self.index += 1;
+            return token;
+        }
+
+        if self.input:match("]", self.index) {
+            var token = $tup("RIGHT_BRACKET", self.index, 1);
+            self.index += 1;
+            return token;
+        }
+
+        if self.input:match("{", self.index) {
+            var token = $tup("LEFT_BRACE", self.index, 1);
+            self.index += 1;
+            return token;
+        }
+
+        if self.input:match("}", self.index) {
+            var token = $tup("RIGHT_BRACE", self.index, 1);
+            self.index += 1;
+            return token;
+        }
+
+        if self.input:match("-", self.index) {
+            var token = $tup("MINUS", self.index, 1);
+            self.index += 1;
+            return token;
+        }
+
+        if self.input:match(",", self.index) {
+            var token = $tup("COMMA", self.index, 1);
+            self.index += 1;
+            return token;
+        }
+
+        if self.input:match(":", self.index) {
+            var token = $tup("COLON", self.index, 1);
+            self.index += 1;
+            return token;
+        }
+
+        if self.input:match("\"", self.index) {
+            return self:read_string();
+        }
+
+        if self.input:byte(self.index) >= '0' && self.input:byte(self.index) <= '9' {
+            return self:read_number();
+        }
+
+        var next_byte = self.input:byte(self.index);
+        var next_char = self.input[self.index];
+
+        if next_byte == '\'' {
+            $panic("unexpected character ' at byte index: {}", self.index);
+        } else if next_byte >= 32 && next_byte <= 123 {
+            $panic("unexpected character '{}' at byte index: {}", next_char, self.index);
+        } else {
+            $panic("unexpected byte value '{}' at byte index: {}", next_char:to_hex(), self.index);
+        }
+    }
+
+    def read_string() -> Token {
+        self.index += 1;
+        var start_index = self.index;
+
+        while self.index < self.count {
+            if self.input:match("\\", self.index) {
+                self.index += 2;
+            } else if self.input:match("\"", self.index) {
+                break;
+            } else {
+                self.index += 1;
+            }
+        }
+
+        if self.index >= self.count {
+            $panic("unterminated string: opened at byte index: {}", start_index - 1);
+        }
+
+        var byte_count = self.index - start_index;
+        self.index += 1;
+
+        return $tup("STRING", start_index, byte_count);
+    }
+
+    def read_number() -> Token {
+        var start_index = self.index;
+        self.index += 1;
+
+        while self.index < self.count {
+            var next = self.input:byte(self.index);
+            if next >= '0' && next <= '9' {
+                self.index += 1;
+                continue;
+            }
+            if next == '.' || next == 'e' || next == '+' || next == '-' {
+                self.index += 1;
+                continue;
+            }
+            break;
+        }
+
+        var byte_count = self.index - start_index;
+        return $tup("NUMBER", start_index, byte_count);
+    }
+}
+
+
+class Parser {
+    var input: str;
+    var lexer: Lexer;
+    var next_token: Token;
+
+    def $init(input: str) {
+        self.input = input;
+        self.lexer = Lexer(input);
+        self.next_token = self.lexer:next();
+    }
+
+    def next() -> Token {
+        var result = self.next_token;
+        self.next_token = self.lexer:next();
+        return result;
+    }
+
+    def check(token_type) -> bool {
+        return self.next_token[0] == token_type;
+    }
+
+    def match(token_type) -> bool {
+        if self.next_token[0] == token_type {
+            self:next();
+            return true;
+        }
+        return false;
+    }
+
+    def parse() -> map|vec|str|i64|f64|bool|null {
+        var value = self:parse_value();
+
+        var (token_type, start_index, length) = self:next();
+        if token_type != "EOF" {
+            $panic(
+                "trailing content at byte index: {}",
+                start_index,
+            );
+        }
+
+        return value;
+    }
+
+    def parse_value() -> map|vec|str|i64|f64|bool|null {
+        var (token_type, start_index, length) = self:next();
+
+        if token_type == "EOF" {
+            $panic("expected a JSON value, found end of input");
+        }
+
+        if token_type == "NULL" {
+            return null;
+        }
+
+        if token_type == "TRUE" {
+            return true;
+        }
+
+        if token_type == "FALSE" {
+            return false;
+        }
+
+        if token_type == "LEFT_BRACKET" {
+            return self:parse_array();
+        }
+
+        if token_type == "LEFT_BRACE" {
+            return self:parse_object();
+        }
+
+        if token_type == "NUMBER" {
+            return self:parse_number(start_index, length);
+        }
+
+        if token_type == "STRING" {
+            return self:parse_string(start_index, length);
+        }
+
+        if token_type == "MINUS" {
+            var (next_type, next_start_index, next_length) = self:next();
+            if next_type == "NUMBER" {
+                return self:parse_number(next_start_index, next_length) * -1;
+            } else if next_type == "EOF" {
+                $panic("expected a number after '-', found end of input");
+            } else {
+                $panic("expected a number after '-'");
+            }
+        }
+
+        var token_text = self.input:slice(start_index, length);
+        $panic("unexpected token '{}', expected a JSON value", token_text);
+    }
+
+    def parse_array() -> vec {
+        var vec = $vec();
+
+        while !self:check("RIGHT_BRACKET") {
+            var value = self:parse_value();
+            vec:append(value);
+            if !self:match("COMMA") {
+                break;
+            }
+        }
+
+        if !self:match("RIGHT_BRACKET") {
+            $panic("expected ']' after array");
+        }
+
+        return vec;
+    }
+
+    def parse_object() -> map {
+        var map = $map();
+
+        while !self:check("RIGHT_BRACE") {
+            var key = self:parse_value();
+            if !$is_str(key) {
+                $panic(
+                    "invalid key type, expected a string: type: {}, value: {} ",
+                    $type(key),
+                    $debug(key)
+                );
+            }
+
+            if !self:match("COLON") {
+                $panic("expected ':' after key");
+            }
+
+            var value = self:parse_value();
+            map[key] = value;
+
+            if !self:match("COMMA") {
+                break;
+            }
+        }
+
+        if !self:match("RIGHT_BRACE") {
+            $panic("expected '}' after object");
+        }
+
+        return map;
+    }
+
+    def parse_number(start_index: i64, length: i64) -> i64|f64 {
+        var literal = self.input:slice(start_index, length);
+        if "." in literal || 'e' in literal {
+            var result = try $f64(literal);
+            if $is_err(result) {
+                $panic("invalid number: unable to parse '{}' as f64", literal);
+            }
+            return result;
+        } else {
+            var result = try $i64(literal);
+            if $is_err(result) {
+                $panic("invalid number: unable to parse '{}' as i64", literal);
+            }
+            return result;
+        }
+    }
+
+    def parse_string(start_index: i64, length: i64) -> str {
+        var index = start_index;
+        var end = start_index + length;
+        var buf = $buf();
+
+        while index < end {
+            if self.input:match(`\"`, index) {
+                buf:write(`"`);
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\\`, index) {
+                buf:write(`\`);
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\/`, index) {
+                buf:write(`/`);
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\b`, index) {
+                buf:write("\b");
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\f`, index) {
+                buf:write("\f");
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\n`, index) {
+                buf:write("\n");
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\r`, index) {
+                buf:write("\r");
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\t`, index) {
+                buf:write("\t");
+                index +=2;
+                continue;
+            }
+
+            if self.input:match(`\u`, index) {
+                if end - index < 6 {
+                    $panic(`invalid unicode escape sequence, requires 4 hex digits`);
+                } else {
+                    var hex_digits_as_str = self.input:slice(index + 2, 4);
+                    var int_value = $i64("0x" + hex_digits_as_str);
+                    var char = $char(int_value);
+                    buf:write($str(char));
+                    index += 6;
+                }
+                continue;
+            }
+
+            buf:write_byte(self.input:byte(index));
+            index += 1;
+        }
+
+        return buf:to_str();
+    }
+}
+
+
+def from_json(arg: str) -> map|vec|str|i64|f64|bool|null {
+    if !$is_str(arg) {
+        $panic("from_json(): invalid argument, expected a string: found {}", $type(arg));
+    }
+
+    if arg:count() == 0 {
+        $panic("from_json(): invalid argument, empty string");
+    }
+
+    var result = try Parser(arg):parse();
+    if $is_err(result) {
+        $panic("from_json(): {}", result[0]);
+    }
+
+    return result;
+}

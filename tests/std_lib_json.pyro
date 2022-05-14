@@ -1,0 +1,133 @@
+import $std::json::{to_json};
+import $std::json::{from_json};
+
+
+# ------------------ #
+#  Marshall to JSON  #
+# ------------------ #
+
+
+assert to_json(null) == `null`;
+assert to_json(true) == `true`;
+assert to_json(false) == `false`;
+
+assert to_json(123) == `123`;
+assert to_json(123.456) == `123.456`;
+assert to_json(1) == `1`;
+assert to_json(-1) == `-1`;
+assert to_json(1.0) == `1.0`;
+assert to_json(-1.0) == `-1.0`;
+
+assert to_json(``) == `""`;
+assert to_json(`foo bar`) == `"foo bar"`;
+assert to_json(`foo \n bar`) == `"foo \n bar"`;
+assert to_json(`foo \t\r\n bar`) == `"foo \t\r\n bar"`;
+
+var v0 = [];
+var v1 = [1, 2.3, 4];
+var v2 = ["abc", "def", "ghi"];
+var v3 = [v1, v2];
+
+assert to_json(v0) == `[]`;
+assert to_json(v1) == `[1, 2.3, 4]`;
+assert to_json(v2) == `["abc", "def", "ghi"]`;
+assert to_json(v3) == `[[1, 2.3, 4], ["abc", "def", "ghi"]]`;
+
+var m0 = {};
+var m1 = {"foo" = 123, "bar" = 456};
+var m2 = {"foo" = v0, "bar" = v1, "baz" = v2};
+var m3 = {"foo" = m0, "bar" = m1, "baz" = m2};
+
+assert to_json(m0) == `{}`;
+assert to_json(m1) == `{"foo": 123, "bar": 456}`;
+assert to_json(m2) == `{"foo": [], "bar": [1, 2.3, 4], "baz": ["abc", "def", "ghi"]}`;
+assert to_json(m3) == `{"foo": {}, "bar": {"foo": 123, "bar": 456}, "baz": {"foo": [], "bar": [1, 2.3, 4], "baz": ["abc", "def", "ghi"]}}`;
+
+
+# ---------------------- #
+#  Unmarshall from JSON  #
+# ---------------------- #
+
+
+assert from_json(`null`) == null;
+assert from_json(`true`) == true;
+assert from_json(`false`) == false ;
+
+assert from_json(`-1`) == -1 ;
+assert from_json(`0`) == 0 ;
+assert from_json(`1`) == 1 ;
+assert from_json(`123`) == 123 ;
+
+assert from_json(`-1.0`) == -1.0 ;
+assert from_json(`0.0`) == 0.0 ;
+assert from_json(`1.0`) == 1.0 ;
+assert from_json(`456.789`) == 456.789 ;
+assert from_json(`1e3`) == 1000.0;
+assert from_json(`1e6`) == 1000000.0;
+assert from_json(`1e-3`) == 0.001;
+
+assert from_json(`"foo bar"`) == `foo bar`;
+assert from_json(`"foo \n bar"`) == "foo \n bar";
+assert from_json(`"foo \r\n\t bar"`) == "foo \r\n\t bar";
+
+assert $debug(from_json(`"foo bar"`)) == `"foo bar"`;
+assert $debug(from_json(`"foo \n bar"`)) == `"foo \n bar"`;
+assert $debug(from_json(`"foo \r\n\t bar"`)) == `"foo \r\n\t bar"`;
+
+assert from_json(`"\u20AC"`) == "€";
+
+var input = `[]`;
+var output = from_json(input);
+assert $is_vec(output);
+assert output:is_empty();
+
+var input = `[123, 456.789, "foo"]`;
+var output = from_json(input);
+assert $is_vec(output);
+assert output[0] == 123;
+assert output[1] == 456.789;
+assert output[2] == "foo";
+
+var input = `[123, 456.789, "foo", [1, 2, 3]]`;
+var output = from_json(input);
+assert $is_vec(output);
+assert output[0] == 123;
+assert output[1] == 456.789;
+assert output[2] == "foo";
+assert $is_vec(output[3]);
+assert output[3][0] == 1;
+assert output[3][1] == 2;
+assert output[3][2] == 3;
+
+var input = `{}`;
+var output = from_json(input);
+assert $is_map(output);
+assert output:is_empty();
+
+var input = `{"foo": 123, "bar": 456}`;
+var output = from_json(input);
+assert $is_map(output);
+assert output["foo"] ==  123;
+assert output["bar"] ==  456;
+
+var input = `{"foo": [1, 2, 3], "bar": [4, 5, 6]}`;
+var output = from_json(input);
+assert $is_map(output);
+assert $is_vec(output["foo"]);
+assert $is_vec(output["bar"]);
+
+var input = `[{"foo": 123, "bar": 456}, {"bam": 789, "baz": 987}]`;
+var output = from_json(input);
+assert $is_vec(output);
+assert output[0]["foo"] == 123;
+assert output[1]["baz"] == 987;
+
+assert $is_err(try from_json(``));
+assert $is_err(try from_json(`foo`));
+assert $is_err(try from_json(`&`));
+assert $is_err(try from_json("\x01"));
+assert $is_err(try from_json(`123.456.789`));
+assert $is_err(try from_json(`"`));
+assert $is_err(try from_json(`"foo`));
+assert $is_err(try from_json(`'foo'`));
+assert $is_err(try from_json(`123 456`));

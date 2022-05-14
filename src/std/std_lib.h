@@ -36,7 +36,9 @@ extern unsigned char lib_email_pyro[];
 extern unsigned int lib_email_pyro_len;
 extern unsigned char lib_html_pyro[];
 extern unsigned int lib_html_pyro_len;
-
 extern unsigned char lib_cgi_pyro[];
 extern unsigned int lib_cgi_pyro_len;
+extern unsigned char lib_json_pyro[];
+extern unsigned int lib_json_pyro_len;
+
 #endif

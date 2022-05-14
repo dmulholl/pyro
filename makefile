@@ -16,7 +16,7 @@ DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
 LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
 OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o \
-			out/lib/lib_cgi.o
+			out/lib/lib_cgi.o out/lib/lib_json.o
 
 FILES = $(SRC_FILES) $(LIB_FILES) $(OBJ_FILES) -lm -ldl -pthread
 
@@ -100,3 +100,9 @@ out/lib/lib_cgi.o: src/std/pyro/lib_cgi.pyro
 	@printf "\e[1;32mBuilding\e[0m \$$std:cgi\n"
 	@cd src/std/pyro; xxd -i lib_cgi.pyro > lib_cgi.c
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_cgi.c -o out/lib/lib_cgi.o
+
+out/lib/lib_json.o: src/std/pyro/lib_json.pyro
+	@mkdir -p out/lib
+	@printf "\e[1;32mBuilding\e[0m \$$std:json\n"
+	@cd src/std/pyro; xxd -i lib_json.pyro > lib_json.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_json.c -o out/lib/lib_json.o
