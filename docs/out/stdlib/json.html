@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Standard Library &mdash; $std::pyro</title>
+        <title>Pyro Standard Library &mdash; $std::json</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-stdlib-pyro node-stdlib node">
+    <body class="node-stdlib-json node-stdlib node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -47,134 +47,67 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1><code>$std::pyro</code></h1>
+                <h1><code>$std::json</code></h1>
                 
                 <hr>
             </header>
             <p>
-A utility module for interacting with the Pyro VM.
+This module contains utility functions for working with JSON.
 </p>
-<h3 id="constants">
-Constants
-</h3>
-<dl>
-<div>
-<dt>
-<code>version_tuple: tup[i64, i64, i64, str, str]</code>
-</dt>
-<dd>
-<p>
-The language version as a tuple containing <code>(MAJOR, MINIOR, PATCH, LABEL, BUILD)</code> elements.
-</p>
-<ul>
-<li>
-<code>MAJOR</code>, <code>MINOR</code>, and <code>PATCH</code> are <a href="https://semver.org">semver</a> integers.
-</li>
-<li>
-<code>LABEL</code> is a string containing a pre-release label, e.g. <code>alpha1</code>, <code>beta2</code>, <code>rc3</code>. May be an empty string.
-</li>
-<li>
-<code>BUILD</code> is a string containing build information, e.g. <code>release</code>, <code>debug</code>. May be an empty string.
-</li>
-</ul>
-</dd>
-</div>
-<div>
-<dt>
-<code>version_string: str</code>
-</dt>
-<dd>
-<p>
-The language version as a string.
-</p>
-</dd>
-</div>
-</dl>
 <h3 id="functions">
 Functions
 </h3>
 <dl>
 <div>
 <dt>
-<code>gc()</code>
+<code>from_json(arg: str) -&gt; map|vec|str|i64|f64|bool|null</code>
 </dt>
 <dd>
 <p>
-Runs the garbage collector.
+Unmarshalls the JSON string <code>arg</code>.
+</p>
+<p>
+Supports trailing commas and comments beginning with <code>//</code>.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>memory() -&gt; i64</code>
+<code>to_json(arg: map|vec|tup|str|i64|f64|bool|null) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the VM's current memory allocation in bytes.
+Marshalls <code>arg</code> to JSON, returning the result as a string.
 </p>
-</dd>
-</div>
-<div>
-<dt>
-<code>set_stderr(arg: buf|file)</code>
-</dt>
-<dd>
 <p>
-Sets the standard error stream to <code>arg</code>.
+The set of valid input values is:
 </p>
-</dd>
-</div>
-<div>
-<dt>
-<code>set_stdin(arg: file)</code>
-</dt>
-<dd>
-<p>
-Sets the standard input stream to <code>arg</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>set_stdout(arg: buf|file)</code>
-</dt>
-<dd>
-<p>
-Sets the standard output stream to <code>arg</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>stderr() -&gt; buf|file</code>
-</dt>
-<dd>
-<p>
-Returns the object representing the standard error stream.
-By default, this is a <code>file</code> object wrapping <code>stderr</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>stdin() -&gt; file</code>
-</dt>
-<dd>
-<p>
-Returns the <code>file</code> object representing the standard input stream.
-By default, this is a <code>file</code> object wrapping <code>stdin</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>stdout() -&gt; buf|file</code>
-</dt>
-<dd>
-<p>
-Returns the object representing the standard output stream.
-By default, this is a <code>file</code> object wrapping <code>stdout</code>.
-</p>
+<ul>
+<li>
+<code>null</code>
+</li>
+<li>
+<code>true</code>
+</li>
+<li>
+<code>false</code>
+</li>
+<li>
+<code>i64</code>
+</li>
+<li>
+<code>f64</code>
+</li>
+<li>
+<code>str</code>
+</li>
+<li>
+A <code>vec</code> or <code>tup</code> of valid values.
+</li>
+<li>
+A <code>map</code> with string keys and valid values.
+</li>
+</ul>
 </dd>
 </div>
 </dl>

@@ -22,6 +22,10 @@ All standard library modules are submodules of the root module `$std`.
 
     Utility functions for working with HTML.
 
+[[ [json](@root/stdlib/json//) ]]
+
+    Utility functions for working with JSON.
+
 [[ [math](@root/stdlib/math//) ]]
 
     Mathematical functions.

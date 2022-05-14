@@ -1,0 +1,31 @@
+---
+title: <code>$std::json</code>
+meta_title: Pyro Standard Library &mdash; $std::json
+---
+
+This module contains utility functions for working with JSON.
+
+
+### Functions
+
+[[ `from_json(arg: str) -> map|vec|str|i64|f64|bool|null` ]]
+
+    Unmarshalls the JSON string `arg`.
+
+    Supports trailing commas and comments beginning with `//`.
+
+
+[[ `to_json(arg: map|vec|tup|str|i64|f64|bool|null) -> str` ]]
+
+    Marshalls `arg` to JSON, returning the result as a string.
+
+    The set of valid input values is:
+
+    * `null`
+    * `true`
+    * `false`
+    * `i64`
+    * `f64`
+    * `str`
+    * A `vec` or `tup` of valid values.
+    * A `map` with string keys and valid values.

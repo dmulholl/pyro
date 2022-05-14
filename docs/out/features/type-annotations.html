@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.29</p>
+                <p class="version">Version 0.6.30</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -66,6 +66,9 @@
 </li>
 <li>
 <a href="#type-names">Type Names</a>
+</li>
+<li>
+<a href="#type-aliases">Type Aliases</a>
 </li>
 </ul>
 <hr>
@@ -346,6 +349,19 @@ var bar: mod1::mod2::UserType;
 <p>
 Here, <code>bar</code> is an instance of the class <code>UserType</code> defined in the module <code>mod1::mod2</code>.
 </p>
+<h3 id="type-aliases">
+Type Aliases
+</h3>
+<p>
+You can define an alias for a type using a <code>typedef</code> statement, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">typedef</span> <span class="nx">Token</span> <span class="nx">tup</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">,</span> <span class="nx">bool</span><span class="p">];</span>
+
+<span class="kd">def</span> <span class="nx">makes_token</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">Token</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">$tup</span><span class="p">(</span><span class="s">&quot;FOO&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
         </article>
         
     </body>

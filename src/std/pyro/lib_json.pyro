@@ -56,7 +56,7 @@ def marshall_str(arg: str) -> str {
 }
 
 
-def marshall(arg: map|vec|str|i64|f64|bool|null) -> str {
+def marshall(arg: map|vec|tup|str|i64|f64|bool|null) -> str {
     if $is_map(arg) {
         return marshall_map(arg);
     } else if $is_vec(arg) || $is_tup(arg) {
@@ -77,7 +77,7 @@ def marshall(arg: map|vec|str|i64|f64|bool|null) -> str {
 }
 
 
-def to_json(arg: map|vec|str|i64|f64|bool|null) -> str {
+def to_json(arg: map|vec|tup|str|i64|f64|bool|null) -> str {
     var result = try marshall(arg);
     if $is_err(result) {
         $panic("to_json(): {}", result[0]);

@@ -68,7 +68,7 @@ A utility module for sending email. Uses the system's `sendmail` command.
 
 [[ `:print() -> Email` ]]
 
-    Prints the email's raw text to the standard output stream.
+    Prints the email's raw text.
 
     Returns `self` to allow chaining.
 
