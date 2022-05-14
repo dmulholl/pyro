@@ -25,6 +25,7 @@ The following keywords are reserved by the language and cannot be used as identi
 * `super`
 * `true`
 * `try`
+* `typedef`
 * `var`
 * `while`
 
@@ -44,5 +45,4 @@ The following keywords are reserved for future use:
 * `run`
 * `static`
 * `switch`
-* `typedef`
 * `with`

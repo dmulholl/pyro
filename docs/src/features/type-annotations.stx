@@ -176,3 +176,16 @@ Here, `foo` is an instance of the class `UserType`. Type names can include a mod
     var bar: mod1::mod2::UserType;
 
 Here, `bar` is an instance of the class `UserType` defined in the module `mod1::mod2`.
+
+
+
+### Type Aliases
+
+You can define an alias for a type using a `typedef` statement, e.g.
+
+::: code pyro
+    typedef Token tup[str, i64, bool];
+
+    def makes_token() -> Token {
+        return $tup("FOO", 123, true);
+    }
