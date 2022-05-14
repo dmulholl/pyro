@@ -57,22 +57,29 @@ class Request {
     def $init() {
         self.data = $map();
 
-        var query_string = $env("QUERY_STRING");
-        if $is_str(query_string) {
-            self:_unpack(query_string);
-        }
-
         if $env("REQUEST_METHOD") in $tup("POST", "PUT") {
-            self.body = pyro::stdin():read_string();
             if $env("CONTENT_TYPE") == "application/x-www-form-urlencoded" {
-                self:_unpack(self.body);
+                self:_unpack(self:body());
             } else if $env("CONTENT_TYPE") == "multipart/form-data" {
                 # Not implemented.
             }
         }
+
+        var query_string = $env("QUERY_STRING");
+        if $is_str(query_string) {
+            self:_unpack(query_string);
+        }
     }
 
-    def found(key: string) -> bool {
+    def body() -> str {
+        if $is_str(self.body) {
+            return self.body;
+        }
+        self.body = pyro::stdin():read_string();
+        return self.body;
+    }
+
+    def found(key: str) -> bool {
         return key in self.data;
     }
 
@@ -147,12 +154,6 @@ class Response {
 
     def write(text: str) -> Response {
         self.body:write(text);
-        return self;
-    }
-
-    def print() -> Response {
-        var response = self:make_response();
-        $println(response);
         return self;
     }
 
