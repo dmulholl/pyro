@@ -1,0 +1,30 @@
+# Methods implemented in Pyro.
+class Foo {
+    var number = 0;
+
+    def get_number() {
+        return self.number;
+    }
+}
+
+var foo = Foo();
+assert foo:get_number() == 0;
+
+foo.number = 1;
+assert foo:get_number() == 1;
+
+var method = foo:get_number;
+assert $is_method(method);
+assert method() == 1;
+
+foo.number = 2;
+assert method() == 2;
+
+
+# Methods implemented in C.
+var string = "foobar";
+assert string:count() == 6;
+
+var native_method = string:count;
+assert $is_method(native_method);
+assert native_method() == 6;
