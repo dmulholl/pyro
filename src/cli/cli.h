@@ -18,5 +18,6 @@ void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser);
 void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser);
 void pyro_cli_add_command_line_import_roots(PyroVM* vm, ArgParser* parser);
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path);
+char* pyro_cli_sprintf(const char* format_string, ...);
 
 #endif

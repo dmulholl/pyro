@@ -90,3 +90,30 @@ void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
 
     pyro_set_max_memory(vm, value * multiplier);
 }
+
+
+char* pyro_cli_sprintf(const char* format_string, ...) {
+    va_list args;
+
+    // Figure out how much memory we need to allocate. [length] will be the output string length,
+    // not counting the terminating null, so we'll need to allocate [length + 1] bytes.
+    va_start(args, format_string);
+    int length = vsnprintf(NULL, 0, format_string, args);
+    va_end(args);
+
+    // If [length] is negative, an encoding error occurred.
+    if (length < 0) {
+        return NULL;
+    }
+
+    char* array = malloc(length + 1);
+    if (!array) {
+        return NULL;
+    }
+
+    va_start(args, format_string);
+    vsprintf(array, format_string, args);
+    va_end(args);
+
+    return array;
+}

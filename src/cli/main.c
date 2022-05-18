@@ -2,16 +2,21 @@
 
 
 static const char* HELPTEXT =
-    "Usage: pyro [file|command]\n"
+    "Pyro %s\n"
     "\n"
     "  The Pyro programming language.\n"
+    "\n"
+    "Usage:\n"
+    "  pyro [file]\n"
+    "  pyro <command>\n"
+    "  pyro help <command>\n"
     "\n"
     "Arguments:\n"
     "  [file]                     Script to run. Opens the REPL if omitted.\n"
     "\n"
     "Options:\n"
     "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
-    "                             (This option can be used multiple times.)\n"
+    "                             (This option can be specified multiple times.)\n"
     "  -m, --max-memory <int>     Sets the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
@@ -108,14 +113,26 @@ int main(int argc, char* argv[]) {
     ArgParser* parser = ap_new();
     if (!parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(2);
+        exit(1);
     }
 
     char* version_string = pyro_get_version_string();
-    ap_set_version(parser, version_string);
-    free(version_string);
+    if (!version_string) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(1);
+    }
 
-    ap_set_helptext(parser, HELPTEXT);
+    char* helptext_string = pyro_cli_sprintf(HELPTEXT, version_string);
+    if (!helptext_string) {
+        fprintf(stderr, "Error: Out of memory.\n");
+        exit(1);
+    }
+
+    ap_set_version(parser, version_string);
+    ap_set_helptext(parser, helptext_string);
+    free(version_string);
+    free(helptext_string);
+
     ap_str_opt(parser, "max-memory m", NULL);
     ap_str_opt(parser, "import-root i", NULL);
     ap_first_pos_arg_ends_options(parser, true);
@@ -124,7 +141,7 @@ int main(int argc, char* argv[]) {
     ArgParser* test_cmd_parser = ap_cmd(parser, "test");
     if (!test_cmd_parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(2);
+        exit(1);
     }
 
     ap_set_helptext(test_cmd_parser, TEST_HELPTEXT);
@@ -137,7 +154,7 @@ int main(int argc, char* argv[]) {
     ArgParser* time_cmd_parser = ap_cmd(parser, "time");
     if (!time_cmd_parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(2);
+        exit(1);
     }
 
     ap_set_helptext(time_cmd_parser, TIME_HELPTEXT);
@@ -150,7 +167,7 @@ int main(int argc, char* argv[]) {
     ArgParser* check_cmd_parser = ap_cmd(parser, "check");
     if (!check_cmd_parser) {
         fprintf(stderr, "Error: Out of memory.\n");
-        exit(2);
+        exit(1);
     }
 
     ap_set_helptext(check_cmd_parser, CHECK_HELPTEXT);
