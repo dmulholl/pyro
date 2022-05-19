@@ -12,13 +12,14 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         exit(1);
     }
 
+    size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
     double start_time = clock();
 
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_arg(cmd_parser, i);
         printf("## Benchmarking: %s\n", path);
 
-        PyroVM* vm = pyro_new_vm();
+        PyroVM* vm = pyro_new_vm(stack_size);
         if (!vm) {
             fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
             exit(2);

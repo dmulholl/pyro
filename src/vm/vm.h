@@ -68,9 +68,10 @@ struct PyroVM {
     size_t frame_count;
 
     // The value stack.
-    Value stack[PYRO_STACK_SIZE];
+    Value* stack;
     Value* stack_top;
     Value* stack_max;
+    size_t stack_size;
 
     // 64-bit Mersenne Twister PRNG.
     MT64* mt64;

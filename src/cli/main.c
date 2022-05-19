@@ -19,6 +19,8 @@ static const char* HELPTEXT =
     "                             (This option can be specified multiple times.)\n"
     "  -m, --max-memory <int>     Sets the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
+    "  -s, --stack-size <int>     Sets the stack size in bytes.\n"
+    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
     "  -h, --help                 Print this help text and exit.\n"
@@ -60,6 +62,8 @@ static const char* TEST_HELPTEXT =
     "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
     "  -m, --max-memory <int>     Sets the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
+    "  -s, --stack-size <int>     Sets the stack size in bytes.\n"
+    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
     "  -h, --help                 Print this help text and exit.\n"
@@ -88,6 +92,8 @@ static const char* TIME_HELPTEXT =
     "  -m, --max-memory <int>     Sets the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "  -n, --num-runs <int>       Number of times to run each function.\n"
+    "  -s, --stack-size <int>     Sets the stack size in bytes.\n"
+    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
     "  -h, --help                 Print this help text and exit."
@@ -134,6 +140,7 @@ int main(int argc, char* argv[]) {
     free(helptext_string);
 
     ap_str_opt(parser, "max-memory m", NULL);
+    ap_str_opt(parser, "stack-size s", NULL);
     ap_str_opt(parser, "import-root i", NULL);
     ap_first_pos_arg_ends_options(parser, true);
 
@@ -148,6 +155,8 @@ int main(int argc, char* argv[]) {
     ap_callback(test_cmd_parser, pyro_cmd_test);
     ap_flag(test_cmd_parser, "verbose v");
     ap_str_opt(test_cmd_parser, "max-memory m", NULL);
+    ap_str_opt(test_cmd_parser, "stack-size s", NULL);
+    ap_str_opt(parser, "import-root i", NULL);
     ap_str_opt(test_cmd_parser, "import-root i", NULL);
 
     // Register the parser for the 'time' comand.
@@ -160,6 +169,7 @@ int main(int argc, char* argv[]) {
     ap_set_helptext(time_cmd_parser, TIME_HELPTEXT);
     ap_callback(time_cmd_parser, pyro_cmd_time);
     ap_str_opt(time_cmd_parser, "max-memory m", NULL);
+    ap_str_opt(time_cmd_parser, "stack-size s", NULL);
     ap_str_opt(time_cmd_parser, "import-root i", NULL);
     ap_int_opt(time_cmd_parser, "num-runs n", 10);
 
@@ -172,6 +182,8 @@ int main(int argc, char* argv[]) {
 
     ap_set_helptext(check_cmd_parser, CHECK_HELPTEXT);
     ap_callback(check_cmd_parser, pyro_cmd_check);
+    ap_str_opt(check_cmd_parser, "max-memory m", NULL);
+    ap_str_opt(check_cmd_parser, "stack-size s", NULL);
 
     // Parse the command line arguments.
     if (!ap_parse(parser, argc, argv)) {

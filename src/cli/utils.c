@@ -45,25 +45,13 @@ void pyro_cli_add_command_line_import_roots(PyroVM* vm, ArgParser* parser) {
 }
 
 
-void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
-    if (!ap_found(parser, "max-memory")) {
-        return;
-    }
-
+static int64_t parse_memory_size(const char* arg) {
     const size_t buf_len = 24;
     char buf[24];
 
-    char* arg = ap_str_value(parser, "max-memory");
     size_t arg_len = strlen(arg);
-
-    if (arg_len == 0) {
-        fprintf(stderr, "Error: --max-memory argument is invalid.\n");
-        exit(1);
-    }
-
-    if (arg_len + 1 > buf_len) {
-        fprintf(stderr, "Error: --max-memory argument is too long.\n");
-        exit(1);
+    if (arg_len == 0 || arg_len + 1 > buf_len) {
+        return -1;
     }
 
     memcpy(buf, arg, arg_len + 1);
@@ -84,11 +72,40 @@ void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
     errno = 0;
     int64_t value = strtoll(buf, NULL, 10);
     if (errno != 0 || value <= 0) {
-        fprintf(stderr, "Error: --max-memory argument is invalid.\n");
+        return -1;
+    }
+
+    return value * multiplier;
+}
+
+
+void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
+    if (!ap_found(parser, "max-memory")) {
+        return;
+    }
+
+    int64_t size = parse_memory_size(ap_str_value(parser, "max-memory"));
+    if (size <= 0) {
+        fprintf(stderr, "Error: invalid argument for --max-memory option.\n");
         exit(1);
     }
 
-    pyro_set_max_memory(vm, value * multiplier);
+    pyro_set_max_memory(vm, size);
+}
+
+
+size_t pyro_cli_get_stack_size(ArgParser* parser) {
+    if (!ap_found(parser, "stack-size")) {
+        return 1024 * 1024;
+    }
+
+    int64_t size = parse_memory_size(ap_str_value(parser, "stack-size"));
+    if (size <= 0) {
+        fprintf(stderr, "Error: invalid argument for --stack-size option.\n");
+        exit(1);
+    }
+
+    return (size_t)size;
 }
 
 

@@ -26,19 +26,14 @@
     #define PYRO_MAX_HASHMAP_LOAD 0.5
 #endif
 
-// Max number of values on the stack. Each value is 16 bytes so the default size is 256KB.
-#ifndef PYRO_STACK_SIZE
-    #define PYRO_STACK_SIZE (1024 * 16)
-#endif
-
 // Max number of call frames.
 #ifndef PYRO_MAX_CALL_FRAMES
     #define PYRO_MAX_CALL_FRAMES 1024
 #endif
 
-// Initial garbage collection threshold in bytes. Defaults to 1MB.
+// Initial garbage collection threshold in bytes. Defaults to 4MB.
 #ifndef PYRO_INIT_GC_THRESHOLD
-    #define PYRO_INIT_GC_THRESHOLD (1024 * 1024)
+    #define PYRO_INIT_GC_THRESHOLD (1024 * 1024 * 4)
 #endif
 
 // This value determines the interval between garbage collections. After each garbage collection

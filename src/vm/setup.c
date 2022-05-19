@@ -10,21 +10,30 @@
 #include "../lib/mt64/mt64.h"
 
 
-PyroVM* pyro_new_vm() {
+PyroVM* pyro_new_vm(size_t stack_size) {
     PyroVM* vm = malloc(sizeof(PyroVM));
     if (!vm) {
         return NULL;
     }
 
+    Value* stack = malloc(stack_size);
+    if (!stack) {
+        free(vm);
+        return NULL;
+    }
+
+    vm->stack = stack;
+    vm->stack_top = stack;
+    vm->stack_max = stack + (stack_size/sizeof(Value));
+    vm->stack_size = stack_size;
+
     // Initialize or zero-out all fields before attempting to allocate memory.
-    vm->stack_top = vm->stack;
-    vm->stack_max = vm->stack + PYRO_STACK_SIZE;
     vm->frame_count = 0;
     vm->open_upvalues = NULL;
     vm->grey_count = 0;
     vm->grey_capacity = 0;
     vm->grey_stack = NULL;
-    vm->bytes_allocated = sizeof(PyroVM);
+    vm->bytes_allocated = sizeof(PyroVM) + stack_size;
     vm->next_gc_threshold = PYRO_INIT_GC_THRESHOLD;
     vm->halt_flag = false;
     vm->panic_flag = false;
@@ -241,6 +250,9 @@ void pyro_free_vm(PyroVM* vm) {
         pyro_mt64_free(vm->mt64);
         vm->bytes_allocated -= pyro_mt64_size();
     }
+
+    free(vm->stack);
+    vm->bytes_allocated -= vm->stack_size;
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);

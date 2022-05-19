@@ -99,7 +99,9 @@ static int count_brackets(const char* code, size_t code_count) {
 
 
 void pyro_run_repl(ArgParser* parser) {
-    PyroVM* vm = pyro_new_vm();
+    size_t stack_size = pyro_cli_get_stack_size(parser);
+
+    PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {
         fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
         exit(1);

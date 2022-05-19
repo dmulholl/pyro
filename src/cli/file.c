@@ -3,14 +3,15 @@
 
 void pyro_run_file(ArgParser* parser) {
     char* path = ap_arg(parser, 0);
+    size_t stack_size = pyro_cli_get_stack_size(parser);
 
-    PyroVM* vm = pyro_new_vm();
+    PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {
         fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
-        exit(2);
+        exit(1);
     }
 
-    // Set the VM"s max memory allocation.
+    // Set the VM's maximum memory allocation.
     pyro_cli_set_max_memory(vm, parser);
 
     // Add any import roots supplied on the command line.
