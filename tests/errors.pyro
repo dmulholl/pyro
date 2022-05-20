@@ -4,11 +4,15 @@ var foo = $err();
 assert $is_err(foo) == true;
 assert $str(foo) == "";
 assert $debug(foo) == `<err "">`;
+assert foo == foo;
+assert foo != $err();
 
 var bar = $err("bar");
 assert $is_err(bar) == true;
 assert $str(bar) == "bar";
 assert $debug(bar) == `<err "bar">`;
+assert bar == bar;
+assert bar != $err("bar");
 
 var baz = $err("{} and {}", 123, 456);
 assert $is_err(baz) == true;
