@@ -66,6 +66,18 @@ static Value err_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value err_message(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjErr* err = AS_ERR(args[-1]);
+    return MAKE_OBJ(err->message);
+}
+
+
+static Value err_details(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjErr* err = AS_ERR(args[-1]);
+    return MAKE_OBJ(err->details);
+}
+
+
 void pyro_load_std_core_err(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$err", fn_err, -1);
@@ -74,4 +86,6 @@ void pyro_load_std_core_err(PyroVM* vm) {
     // Methods.
     pyro_define_method(vm, vm->class_err, "$get_index", err_get, 1);
     pyro_define_method(vm, vm->class_err, "$set_index", err_set, 2);
+    pyro_define_method(vm, vm->class_err, "message", err_message, 0);
+    pyro_define_method(vm, vm->class_err, "details", err_details, 0);
 }

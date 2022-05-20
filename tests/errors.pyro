@@ -6,6 +6,9 @@ assert $str(foo) == "";
 assert $debug(foo) == `<err "">`;
 assert foo == foo;
 assert foo != $err();
+assert $is_str(foo:message());
+assert foo:message() == "";
+assert $is_map(foo:details());
 
 var bar = $err("bar");
 assert $is_err(bar) == true;
@@ -13,11 +16,15 @@ assert $str(bar) == "bar";
 assert $debug(bar) == `<err "bar">`;
 assert bar == bar;
 assert bar != $err("bar");
+assert bar:message() == "bar";
+assert $is_map(bar:details());
 
 var baz = $err("{} and {}", 123, 456);
 assert $is_err(baz) == true;
 assert $str(baz) == "123 and 456";
 assert $debug(baz) == `<err "123 and 456">`;
+assert baz:message() == "123 and 456";
+assert $is_map(baz:details());
 
 var bam = $err("error message: {}", 123);
 assert $is_err(bam) == true;
@@ -27,3 +34,6 @@ bam["detail1"] = 456;
 bam["detail2"] = "789";
 assert bam["detail1"] == 456;
 assert bam["detail2"] == "789";
+assert bam:message() == "error message: 123";
+assert bam:details()["detail1"] == 456;
+assert bam:details()["detail2"] == "789";
