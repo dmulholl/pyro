@@ -30,6 +30,7 @@ struct PyroVM {
     ObjClass* class_stack;
     ObjClass* class_set;
     ObjClass* class_queue;
+    ObjClass* class_err;
 
     // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;
@@ -103,8 +104,8 @@ struct PyroVM {
     Obj* objects;
 
     // Canned objects.
-    ObjTup* empty_error;
     ObjStr* empty_string;
+    ObjErr* empty_error;
     ObjStr* str_dollar_init;
     ObjStr* str_dollar_str;
     ObjStr* str_true;

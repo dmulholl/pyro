@@ -30,6 +30,7 @@ typedef enum {
     OBJ_BUF,
     OBJ_CLASS,
     OBJ_CLOSURE,
+    OBJ_ERR,
     OBJ_FILE,
     OBJ_FN,
     OBJ_INSTANCE,
@@ -43,7 +44,6 @@ typedef enum {
     OBJ_RESOURCE_POINTER,
     OBJ_STR,
     OBJ_TUP,
-    OBJ_TUP_AS_ERR,
     OBJ_UPVALUE,
     OBJ_VEC,
     OBJ_VEC_AS_STACK,
@@ -88,7 +88,6 @@ struct Obj {
 #define IS_TUP(value)               pyro_is_obj_of_type(value, OBJ_TUP)
 #define IS_MOD(value)               pyro_is_obj_of_type(value, OBJ_MODULE)
 #define IS_VEC(value)               pyro_is_obj_of_type(value, OBJ_VEC)
-#define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_TUP_AS_ERR)
 #define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
 #define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
 #define IS_ITER(value)              pyro_is_obj_of_type(value, OBJ_ITER)
@@ -96,6 +95,7 @@ struct Obj {
 #define IS_SET(value)               pyro_is_obj_of_type(value, OBJ_MAP_AS_SET)
 #define IS_QUEUE(value)             pyro_is_obj_of_type(value, OBJ_QUEUE)
 #define IS_RESOURSE_POINTER(value)  pyro_is_obj_of_type(value, OBJ_RESOURCE_POINTER)
+#define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
 
 // Macros for extracting object pointers from Value instances.
 #define AS_OBJ(value)               ((value).as.obj)
@@ -115,6 +115,7 @@ struct Obj {
 #define AS_ITER(value)              ((ObjIter*)AS_OBJ(value))
 #define AS_QUEUE(value)             ((ObjQueue*)AS_OBJ(value))
 #define AS_RESOURCE_POINTER(value)  ((ObjResourcePointer*)AS_OBJ(value))
+#define AS_ERR(value)               ((ObjErr*)AS_OBJ(value))
 
 // Macro for creating a string object by copying a C string.
 #define STR(c_string)               ObjStr_copy_raw(c_string, strlen(c_string), vm)

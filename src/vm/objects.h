@@ -332,7 +332,6 @@ typedef struct {
 } ObjTup;
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm);
-ObjTup* ObjTup_new_err(size_t count, PyroVM* vm);
 uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup);
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm);
 
@@ -482,5 +481,17 @@ typedef struct {
 } ObjResourcePointer;
 
 ObjResourcePointer* ObjResourcePointer_new(void* pointer, pyro_free_rp_callback_t callback, PyroVM* vm);
+
+/* -------- */
+/*  Errors  */
+/* -------- */
+
+typedef struct {
+    Obj obj;
+    ObjStr* message;
+    ObjMap* details;
+} ObjErr;
+
+ObjErr* ObjErr_new(PyroVM* vm);
 
 #endif

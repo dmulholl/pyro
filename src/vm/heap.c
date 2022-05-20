@@ -150,7 +150,6 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);
@@ -167,6 +166,11 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             ObjVec* vec = (ObjVec*)object;
             FREE_ARRAY(vm, Value, vec->values, vec->capacity);
             FREE_OBJECT(vm, ObjVec, object);
+            break;
+        }
+
+        case OBJ_ERR: {
+            FREE_OBJECT(vm, ObjErr, object);
             break;
         }
     }

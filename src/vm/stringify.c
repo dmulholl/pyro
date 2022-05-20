@@ -135,13 +135,6 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
     }
     pyro_push(vm, MAKE_OBJ(buf)); // Protect from GC in case we call into Pyro code.
 
-    if (((Obj*)tup)->type == OBJ_TUP_AS_ERR) {
-        if (!ObjBuf_append_bytes(buf, 3, (uint8_t*)"err", vm)) {
-            pyro_panic(vm, "out of memory");
-            return NULL;
-        }
-    }
-
     if (!ObjBuf_append_byte(buf, '(', vm)) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -472,7 +465,6 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return string;
         }
 
-        case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             return stringify_tuple(vm, tup);
@@ -520,6 +512,11 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return pyro_sprintf_to_obj(vm, "<instance>");
         }
 
+        case OBJ_ERR: {
+            ObjErr* err = (ObjErr*)object;
+            return err->message;
+        }
+
         default:
             return pyro_sprintf_to_obj(vm, "<object>");
     }
@@ -532,7 +529,6 @@ char* pyro_stringify_object_type(ObjType type) {
         case OBJ_BUF: return "<buf>";
         case OBJ_CLASS: return "<class>";
         case OBJ_CLOSURE: return "<closure>";
-        case OBJ_TUP_AS_ERR: return "<err>";
         case OBJ_FILE: return "<file>";
         case OBJ_FN: return "<fn>";
         case OBJ_INSTANCE: return "<instance>";
@@ -548,6 +544,7 @@ char* pyro_stringify_object_type(ObjType type) {
         case OBJ_VEC_AS_STACK: return "<stack>";
         case OBJ_ITER: return "<iter>";
         case OBJ_QUEUE: return "<queue>";
+        case OBJ_ERR: return "<err>";
         default: assert(false); return "<unknown>";
     }
 }
@@ -710,6 +707,15 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
             return NULL;
         }
         return string;
+    }
+
+    if (IS_ERR(value)) {
+        ObjErr* err = AS_ERR(value);
+        ObjStr* debug_message = make_debug_string_for_string(vm, err->message);
+        if (!debug_message) {
+            return NULL;
+        }
+        return pyro_sprintf_to_obj(vm, "<err %s>", debug_message->bytes);
     }
 
     return pyro_stringify_value(vm, value);

@@ -1322,18 +1322,18 @@ static void run(PyroVM* vm) {
                         return;
                     }
 
-                    ObjTup* err_tup = ObjTup_new_err(3, vm);
-                    if (!err_tup) {
+                    ObjErr* err = ObjErr_new(vm);
+                    if (!err) {
                         vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
                         return;
                     }
 
-                    err_tup->values[0] = MAKE_OBJ(err_str);
-                    err_tup->values[1] = MAKE_OBJ(vm->panic_source_id);
-                    err_tup->values[2] = MAKE_I64(vm->panic_line_number);
+                    err->message = err_str;
+                    /* err_tup->values[1] = MAKE_OBJ(vm->panic_source_id); */
+                    /* err_tup->values[2] = MAKE_I64(vm->panic_line_number); */
 
-                    pyro_push(vm, MAKE_OBJ(err_tup));
+                    pyro_push(vm, MAKE_OBJ(err));
                 }
 
                 assert(vm->stack_top == stashed_stack_top);

@@ -67,6 +67,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->class_stack);
     mark_object(vm, (Obj*)vm->class_set);
     mark_object(vm, (Obj*)vm->class_queue);
+    mark_object(vm, (Obj*)vm->class_err);
 
     // The VM's pool of canned objects.
     mark_object(vm, (Obj*)vm->empty_error);
@@ -263,7 +264,6 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_STR:
             break;
 
-        case OBJ_TUP_AS_ERR:
         case OBJ_TUP: {
             ObjTup* tup = (ObjTup*)object;
             for (size_t i = 0; i < tup->count; i++) {
@@ -289,6 +289,13 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_MAP_AS_WEAKREF:
             break;
+
+        case OBJ_ERR: {
+            ObjErr* err = (ObjErr*)object;
+            mark_object(vm, (Obj*)err->message);
+            mark_object(vm, (Obj*)err->details);
+            break;
+        }
 
         case OBJ_RESOURCE_POINTER:
             break;

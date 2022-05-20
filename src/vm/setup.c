@@ -114,6 +114,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_module = NULL;
     vm->str_tup = NULL;
     vm->str_err = NULL;
+    vm->class_err = NULL;
 
     // Initialize the MT64 PRNG.
     vm->mt64 = pyro_mt64_new();
@@ -134,6 +135,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->class_stack = ObjClass_new(vm);
     vm->class_set = ObjClass_new(vm);
     vm->class_queue = ObjClass_new(vm);
+    vm->class_err = ObjClass_new(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -148,8 +150,8 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     }
 
     // Canned objects, mostly static strings.
-    vm->empty_error = ObjTup_new_err(0, vm);
     vm->empty_string = ObjStr_empty(vm);
+    vm->empty_error = ObjErr_new(vm);
     vm->str_dollar_init = STR("$init");
     vm->str_dollar_str = STR("$str");
     vm->str_true = STR("true");
@@ -226,6 +228,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     pyro_load_std_core_file(vm);
     pyro_load_std_core_iter(vm);
     pyro_load_std_core_queue(vm);
+    pyro_load_std_core_err(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

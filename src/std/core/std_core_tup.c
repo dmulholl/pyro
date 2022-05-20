@@ -125,31 +125,10 @@ static Value tup_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
-    if (arg_count == 0) {
-        return MAKE_OBJ(vm->empty_error);
-    }
-    ObjTup* tup = ObjTup_new_err(arg_count, vm);
-    if (!tup) {
-        pyro_panic(vm, "$err(): out of memory");
-        return MAKE_NULL();
-    }
-    memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
-    return MAKE_OBJ(tup);
-}
-
-
-static Value fn_is_err(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_ERR(args[0]));
-}
-
-
 void pyro_load_std_core_tup(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$tup", fn_tup, -1);
     pyro_define_global_fn(vm, "$is_tup", fn_is_tup, 1);
-    pyro_define_global_fn(vm, "$err", fn_err, -1);
-    pyro_define_global_fn(vm, "$is_err", fn_is_err, 1);
 
     // Methods.
     pyro_define_method(vm, vm->class_tup, "count", tup_count, 0);

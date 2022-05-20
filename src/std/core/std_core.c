@@ -968,7 +968,7 @@ static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
                     return MAKE_OBJ(vm->str_module);
                 case OBJ_TUP:
                     return MAKE_OBJ(vm->str_tup);
-                case OBJ_TUP_AS_ERR:
+                case OBJ_ERR:
                     return MAKE_OBJ(vm->str_err);
                 default:
                     return MAKE_OBJ(vm->empty_string);

@@ -68,16 +68,6 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
 }
 
 
-ObjTup* ObjTup_new_err(size_t count, PyroVM* vm) {
-    ObjTup* tup = ObjTup_new(count, vm);
-    if (!tup) {
-        return NULL;
-    }
-    tup->obj.type = OBJ_TUP_AS_ERR;
-    return tup;
-}
-
-
 uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup) {
     uint64_t hash = 0;
     for (size_t i = 0; i < tup->count; i++) {
@@ -2100,4 +2090,27 @@ ObjResourcePointer* ObjResourcePointer_new(void* pointer, pyro_free_rp_callback_
     resource->pointer = pointer;
     resource->callback = callback;
     return resource;
+}
+
+
+/* -------- */
+/*  Errors  */
+/* -------- */
+
+
+ObjErr* ObjErr_new(PyroVM* vm) {
+    ObjErr* err = ALLOCATE_OBJECT(vm, ObjErr, OBJ_ERR);
+    if (!err) {
+        return NULL;
+    }
+
+    err->obj.class = vm->class_err;
+    err->message = vm->empty_string;
+
+    err->details = ObjMap_new(vm);
+    if (!err->details) {
+        return NULL;
+    }
+
+    return err;
 }

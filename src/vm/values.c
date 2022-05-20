@@ -15,7 +15,7 @@ bool pyro_is_truthy(Value value) {
         case VAL_NULL:
             return false;
         case VAL_OBJ:
-            return value.as.obj->type != OBJ_TUP_AS_ERR;
+            return value.as.obj->type != OBJ_ERR;
         default:
             return true;
     }
@@ -100,8 +100,6 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                 case OBJ_STR:
                     return AS_STR(value)->hash;
                 case OBJ_TUP:
-                    return ObjTup_hash(vm, AS_TUP(value));
-                case OBJ_TUP_AS_ERR:
                     return ObjTup_hash(vm, AS_TUP(value));
                 case OBJ_INSTANCE: {
                     Value method = pyro_get_method(vm, value, vm->str_dollar_hash);
@@ -194,7 +192,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_TUP_AS_ERR:
+        case OBJ_ERR:
             pyro_write_stdout(vm, "<err>");
             break;
 
