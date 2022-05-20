@@ -2,14 +2,24 @@ assert $is_err("foobar") == false;
 
 var foo = $err();
 assert $is_err(foo) == true;
-assert foo:count() == 0;
-assert $str(foo) == `err()`;
+assert $str(foo) == "";
+assert $debug(foo) == `<err "">`;
 
-var bar = $err(123, "bar");
+var bar = $err("bar");
 assert $is_err(bar) == true;
-assert bar:count() == 2;
-assert bar:get(0) == 123;
-assert bar:get(1) == "bar";
-assert bar[0] == 123;
-assert bar[1] == "bar";
-assert $str(bar) == `err(123, "bar")`;
+assert $str(bar) == "bar";
+assert $debug(bar) == `<err "bar">`;
+
+var baz = $err("{} and {}", 123, 456);
+assert $is_err(baz) == true;
+assert $str(baz) == "123 and 456";
+assert $debug(baz) == `<err "123 and 456">`;
+
+var bam = $err("error message: {}", 123);
+assert $is_err(bam) == true;
+assert $str(bam) == "error message: 123";
+assert $debug(bam) == `<err "error message: 123">`;
+bam["detail1"] = 456;
+bam["detail2"] = "789";
+assert bam["detail1"] == 456;
+assert bam["detail2"] == "789";

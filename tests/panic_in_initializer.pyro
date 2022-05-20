@@ -11,4 +11,5 @@ assert !$is_err(foo1);
 
 var foo2 = try Foo("panic");
 assert $is_err(foo2);
-assert foo2[0] == "oh no!";
+assert $str(foo2) == "oh no!";
+assert $debug(foo2) == `<err "oh no!">`;

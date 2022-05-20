@@ -26,8 +26,8 @@ assert foo == 3;
 
 var foo = try calls_panic();
 assert $is_err(foo);
-assert foo:count() == 3;
-assert foo[0] == "oh no!";
+assert $str(foo) == "oh no!";
+assert $debug(foo) == `<err "oh no!">`;
 
 
 var foo = try calls_panic() !! "fallback";
@@ -48,7 +48,8 @@ assert foo == 123;
 
 var foo = try try try calls_panic();
 assert $is_err(foo);
-assert foo[0] == "oh no!";
+assert $str(foo) == "oh no!";
+assert $debug(foo) == `<err "oh no!">`;
 
 
 var foo = try try try calls_panic() !! "fallback";

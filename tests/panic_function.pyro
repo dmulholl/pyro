@@ -1,9 +1,0 @@
-var err = try $panic("foo");
-assert $is_err(err);
-assert err:count() == 3;
-assert err[0] == "foo";
-
-var err = try $panic("bar {}", 123);
-assert $is_err(err);
-assert err:count() == 3;
-assert err[0] == "bar 123";

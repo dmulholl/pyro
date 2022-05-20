@@ -44,10 +44,3 @@ def $test_partially_unpacking_a_tuple() {
     assert foo == 123;
     assert bar == 456;
 }
-
-
-def $test_unpacking_an_error() {
-    var (foo, bar) = $err(123, 456);
-    assert foo == 123;
-    assert bar == 456;
-}

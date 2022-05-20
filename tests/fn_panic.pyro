@@ -1,0 +1,7 @@
+var result1 = try $panic("foo");
+assert $is_err(result1);
+assert $str(result1) == "foo";
+
+var result2 = try $panic("bar {}", 123);
+assert $is_err(result2);
+assert $str(result2) == "bar 123";
