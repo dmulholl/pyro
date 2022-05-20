@@ -67,7 +67,10 @@ Functions
 Unmarshalls the input JSON string.
 </p>
 <p>
-Supports input with trailing commas and comments beginning with <code>//</code>.
+A JSON object is unmarshalled as a <code>map</code>, a JSON array is unmarshalled as a <code>vec</code>.
+</p>
+<p>
+Supports JSON input with trailing commas and comments beginning with <code>//</code>.
 </p>
 </dd>
 </div>
@@ -102,10 +105,10 @@ The set of valid input values is:
 <code>str</code>
 </li>
 <li>
-A <code>vec</code> or <code>tup</code> of valid values.
+A <code>vec</code> or <code>tup</code> containing valid values.
 </li>
 <li>
-A <code>map</code> with string keys and valid values.
+A <code>map</code> containing string keys and valid values.
 </li>
 </ul>
 <p>

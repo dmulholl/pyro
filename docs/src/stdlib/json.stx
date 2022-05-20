@@ -12,7 +12,9 @@ This module contains utility functions for working with JSON.
 
     Unmarshalls the input JSON string.
 
-    Supports input with trailing commas and comments beginning with `//`.
+    A JSON object is unmarshalled as a `map`, a JSON array is unmarshalled as a `vec`.
+
+    Supports JSON input with trailing commas and comments beginning with `//`.
 
 
 [[ `to_json(arg: map|vec|tup|str|i64|f64|bool|null) -> str` ]]
@@ -27,7 +29,7 @@ This module contains utility functions for working with JSON.
     * `i64`
     * `f64`
     * `str`
-    * A `vec` or `tup` of valid values.
-    * A `map` with string keys and valid values.
+    * A `vec` or `tup` containing valid values.
+    * A `map` containing string keys and valid values.
 
     Note that this function does not check for cycles in the input, e.g. a `vec` that contains itself.
