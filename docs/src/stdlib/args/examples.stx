@@ -26,7 +26,7 @@ Here's an example of a simple argument parser:
 
     # Register an integer-valued option and set its
     # default value to 0.
-    parser:option("count c"):default(0):parser($i64);
+    parser:option("count c"):parser($i64):default(0);
 
     # Parse the command line arguments.
     parser:parse();

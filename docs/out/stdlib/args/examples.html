@@ -81,7 +81,7 @@ Here's an example of a simple argument parser:
 
 <span class="c1"># Register an integer-valued option and set its</span>
 <span class="c1"># default value to 0.</span>
-<span class="nx">parser</span><span class="p">:</span><span class="nx">option</span><span class="p">(</span><span class="s">&quot;count c&quot;</span><span class="p">):</span><span class="nx">default</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span><span class="nx">parser</span><span class="p">(</span><span class="nx">$i64</span><span class="p">);</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">option</span><span class="p">(</span><span class="s">&quot;count c&quot;</span><span class="p">):</span><span class="nx">parser</span><span class="p">(</span><span class="nx">$i64</span><span class="p">):</span><span class="nx">default</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 
 <span class="c1"># Parse the command line arguments.</span>
 <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span>
