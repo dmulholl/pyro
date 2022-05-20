@@ -15,7 +15,7 @@ This module contains utility functions for working with HTML.
 
     Escapes the characters `<`, `>`, `&`, `"`, and `'`.
 
-    The returned string can be safely using inside HTML attributes.
+    The returned string can be safely used inside HTML attributes.
 
 
 [[ `esc_html(text: str) -> str` ]]
