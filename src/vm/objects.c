@@ -1493,16 +1493,16 @@ ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm) {
 }
 
 
-int64_t ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...) {
+int64_t ObjBuf_write_f(ObjBuf* buf, PyroVM* vm, const char* format_string, ...) {
     va_list args;
     va_start(args, format_string);
-    int64_t result = ObjBuf_write_v(buf, vm, format_string, args);
+    int64_t result = ObjBuf_write_fv(buf, vm, format_string, args);
     va_end(args);
     return result;
 }
 
 
-int64_t ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+int64_t ObjBuf_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
     // Determine the length of the string. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
     va_list args_copy;
@@ -1530,7 +1530,7 @@ int64_t ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_li
 }
 
 
-bool ObjBuf_best_effort_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+bool ObjBuf_best_effort_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
     // Determine the length of the string. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
     va_list args_copy;

@@ -363,13 +363,13 @@ bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 
 // Writes a printf-style formatted string to the buffer. Returns the number of bytes written if the
 // entire string can be written to the buffer. Otherwise writes nothing to the buffer and returns -1.
-int64_t ObjBuf_write(ObjBuf* buf, PyroVM* vm, const char* format_string, ...);
-int64_t ObjBuf_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+int64_t ObjBuf_write_f(ObjBuf* buf, PyroVM* vm, const char* format_string, ...);
+int64_t ObjBuf_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
 // Writes a printf-style formatted string to the buffer. Returns true if the entire string can be
 // written to the buffer. Otherwise, writes as much as possible of the string to the buffer and
 // return false.
-bool ObjBuf_best_effort_write_v(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+bool ObjBuf_best_effort_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
 // Attempts to grow the buffer to *at least* the required capacity. Returns true on success, false
 // if memory allocation failed. In this case the buffer is unchanged.

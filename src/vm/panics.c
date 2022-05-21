@@ -4,7 +4,7 @@
 
 
 static void print_stack_trace(PyroVM* vm) {
-    pyro_write_stderr(vm, "\nTraceback (most recent function call first):\n\n");
+    pyro_stderr_write(vm, "\nTraceback (most recent function call first):\n\n");
 
     for (size_t i = vm->frame_count; i > 0; i--) {
         CallFrame* frame = &vm->frames[i - 1];
@@ -16,8 +16,8 @@ static void print_stack_trace(PyroVM* vm) {
             line_number = ObjFn_get_line_number(fn, ip);
         }
 
-        pyro_write_stderr(vm, "%s:%zu\n", fn->source_id->bytes, line_number);
-        pyro_write_stderr(vm, "  [%zu] --> in %s\n", i, fn->name->bytes);
+        pyro_stderr_write_f(vm, "%s:%zu\n", fn->source_id->bytes, line_number);
+        pyro_stderr_write_f(vm, "  [%zu] --> in %s\n", i, fn->name->bytes);
     }
 }
 
@@ -29,12 +29,12 @@ void pyro_panic(PyroVM* vm, const char* format_string, ...) {
     // pushing multiple values onto the stack -- and only checking once for a panic at the end.
     if (vm->panic_flag) {
         #ifdef DEBUG
-            pyro_write_stderr(vm, "DEBUG: redundant panic:\n  ");
+            pyro_stderr_write(vm, "DEBUG: redundant panic:\n  ");
             va_list args;
             va_start(args, format_string);
-            pyro_write_stderr_v(vm, format_string, args);
+            pyro_stderr_write_fv(vm, format_string, args);
             va_end(args);
-            pyro_write_stderr(vm, "\n");
+            pyro_stderr_write(vm, "\n");
             return;
         #else
             return;
@@ -76,13 +76,13 @@ void pyro_panic(PyroVM* vm, const char* format_string, ...) {
         #ifdef DEBUG
             va_list args_copy;
             va_copy(args_copy, args);
-            pyro_write_stderr(vm, "DEBUG: writing to panic buffer:\n  ");
-            pyro_write_stderr_v(vm, format_string, args_copy);
-            pyro_write_stderr(vm, "\n");
+            pyro_stderr_write(vm, "DEBUG: writing to panic buffer:\n  ");
+            pyro_stderr_write_fv(vm, format_string, args_copy);
+            pyro_stderr_write(vm, "\n");
             va_end(args_copy);
         #endif
 
-        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format_string, args);
+        ObjBuf_best_effort_write_fv(vm->panic_buffer, vm, format_string, args);
         va_end(args);
         return;
     }
@@ -90,19 +90,19 @@ void pyro_panic(PyroVM* vm, const char* format_string, ...) {
     // If we were executing Pyro code when the panic occured, print the source ID and line
     // number of the last instruction.
     if (vm->frame_count > 0) {
-        pyro_write_stderr(vm, "%s:%zu\n  ", source_id->bytes, line_number);
+        pyro_stderr_write_f(vm, "%s:%zu\n  ", source_id->bytes, line_number);
     }
 
     // Print the error message.
-    pyro_write_stderr(vm, "Error: ");
+    pyro_stderr_write(vm, "Error: ");
     va_list args;
     va_start(args, format_string);
-    pyro_write_stderr_v(vm, format_string, args);
+    pyro_stderr_write_fv(vm, format_string, args);
     va_end(args);
     if (strlen(format_string) > 0 && format_string[strlen(format_string) - 1] != '.') {
-        pyro_write_stderr(vm, ".\n");
+        pyro_stderr_write(vm, ".\n");
     } else {
-        pyro_write_stderr(vm, "\n");
+        pyro_stderr_write(vm, "\n");
     }
 
     // Print a stack trace if the panic occurred inside a Pyro function.
@@ -115,12 +115,12 @@ void pyro_panic(PyroVM* vm, const char* format_string, ...) {
 void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, const char* format_string, ...) {
     if (vm->panic_flag) {
         #ifdef DEBUG
-            pyro_write_stderr(vm, "DEBUG: redundant panic:\n  ");
+            pyro_stderr_write(vm, "DEBUG: redundant panic:\n  ");
             va_list args;
             va_start(args, format_string);
-            pyro_write_stderr_v(vm, format_string, args);
+            pyro_stderr_write_fv(vm, format_string, args);
             va_end(args);
-            pyro_write_stderr(vm, "\n");
+            pyro_stderr_write(vm, "\n");
             return;
         #else
             return;
@@ -142,21 +142,21 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     if (vm->try_depth > 0 && !vm->hard_panic) {
         va_list args;
         va_start(args, format_string);
-        ObjBuf_best_effort_write_v(vm->panic_buffer, vm, format_string, args);
+        ObjBuf_best_effort_write_fv(vm->panic_buffer, vm, format_string, args);
         va_end(args);
         return;
     }
 
     // Print the syntax error message.
-    pyro_write_stderr(vm, "%s:%zu\n  Syntax Error: ", source_id, source_line);
+    pyro_stderr_write_f(vm, "%s:%zu\n  Syntax Error: ", source_id, source_line);
     va_list args;
     va_start(args, format_string);
-    pyro_write_stderr_v(vm, format_string, args);
+    pyro_stderr_write_fv(vm, format_string, args);
     va_end(args);
     if (strlen(format_string) > 0 && format_string[strlen(format_string) - 1] != '.') {
-        pyro_write_stderr(vm, ".\n");
+        pyro_stderr_write(vm, ".\n");
     } else {
-        pyro_write_stderr(vm, "\n");
+        pyro_stderr_write(vm, "\n");
     }
 
     // If we were executing Pyro code when the error occured, print the source filename and line
@@ -169,7 +169,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
             size_t ip = frame->ip - fn->code - 1;
             instruction_line_number = ObjFn_get_line_number(fn, ip);
         }
-        pyro_write_stderr(
+        pyro_stderr_write_f(
             vm,
             "\n%s:%zu\n  Error: failed to compile Pyro source code.\n",
             fn->source_id->bytes,

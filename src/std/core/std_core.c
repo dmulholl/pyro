@@ -149,7 +149,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        int64_t result = pyro_write_stderr(vm, "%s", string->bytes);
+        int64_t result = pyro_stderr_write_s(vm, string);
         if (result == -1) {
             pyro_panic(vm, "$eprint(): unable to write to the standard error stream");
             return MAKE_NULL();
@@ -170,7 +170,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    int64_t result = pyro_write_stderr(vm, "%s", AS_STR(formatted)->bytes);
+    int64_t result = pyro_stderr_write_s(vm, AS_STR(formatted));
     if (result == -1) {
         pyro_panic(vm, "$eprint(): unable to write to the standard error stream");
         return MAKE_NULL();
@@ -184,7 +184,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        int64_t result = pyro_write_stderr(vm, "\n");
+        int64_t result = pyro_stderr_write_n(vm, "\n", 1);
         if (result == -1) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
             return MAKE_NULL();
@@ -200,15 +200,23 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        int64_t result = pyro_write_stderr(vm, "%s\n", string->bytes);
-        if (result == -1) {
+        int64_t result1 = pyro_stderr_write_s(vm, string);
+        if (result1 == -1) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
             return MAKE_NULL();
-        } else if (result == -2) {
+        } else if (result1 == -2) {
             pyro_panic(vm, "$eprintln(): out of memory");
             return MAKE_NULL();
         }
-        return MAKE_I64(result);
+        int64_t result2 = pyro_stderr_write_n(vm, "\n", 1);
+        if (result2 == -1) {
+            pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
+            return MAKE_NULL();
+        } else if (result2 == -2) {
+            pyro_panic(vm, "$eprintln(): out of memory");
+            return MAKE_NULL();
+        }
+        return MAKE_I64(result1 + result2);
     }
 
     if (!IS_STR(args[0])) {
@@ -221,15 +229,23 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    int64_t result = pyro_write_stderr(vm, "%s\n", AS_STR(formatted)->bytes);
-    if (result == -1) {
+    int64_t result1 = pyro_stderr_write_s(vm, AS_STR(formatted));
+    if (result1 == -1) {
         pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
         return MAKE_NULL();
-    } else if (result == -2) {
+    } else if (result1 == -2) {
         pyro_panic(vm, "$eprintln(): out of memory");
         return MAKE_NULL();
     }
-    return MAKE_I64(result);
+    int64_t result2 = pyro_stderr_write_n(vm, "\n", 1);
+    if (result2 == -1) {
+        pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
+        return MAKE_NULL();
+    } else if (result2 == -2) {
+        pyro_panic(vm, "$eprintln(): out of memory");
+        return MAKE_NULL();
+    }
+    return MAKE_I64(result1 + result2);
 }
 
 
@@ -244,7 +260,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        int64_t result = pyro_write_stdout(vm, "%s", string->bytes);
+        int64_t result = pyro_stdout_write_s(vm, string);
         if (result == -1) {
             pyro_panic(vm, "$print(): unable to write to the standard output stream");
             return MAKE_NULL();
@@ -265,7 +281,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    int64_t result = pyro_write_stdout(vm, "%s", AS_STR(formatted)->bytes);
+    int64_t result = pyro_stdout_write_s(vm, AS_STR(formatted));
     if (result == -1) {
         pyro_panic(vm, "$print(): unable to write to the standard output stream");
         return MAKE_NULL();
@@ -279,7 +295,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        int64_t result = pyro_write_stdout(vm, "\n");
+        int64_t result = pyro_stdout_write_n(vm, "\n", 1);
         if (result == -1) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
             return MAKE_NULL();
@@ -295,15 +311,23 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        int64_t result = pyro_write_stdout(vm, "%s\n", string->bytes);
-        if (result == -1) {
+        int64_t result1 = pyro_stdout_write_s(vm, string);
+        if (result1 == -1) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
             return MAKE_NULL();
-        } else if (result == -2) {
+        } else if (result1 == -2) {
             pyro_panic(vm, "$println(): out of memory");
             return MAKE_NULL();
         }
-        return MAKE_I64(result);
+        int64_t result2 = pyro_stdout_write_n(vm, "\n", 1);
+        if (result2 == -1) {
+            pyro_panic(vm, "$println(): unable to write to the standard output stream");
+            return MAKE_NULL();
+        } else if (result2 == -2) {
+            pyro_panic(vm, "$println(): out of memory");
+            return MAKE_NULL();
+        }
+        return MAKE_I64(result1 + result2);
     }
 
     if (!IS_STR(args[0])) {
@@ -316,15 +340,23 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    int64_t result = pyro_write_stdout(vm, "%s\n", AS_STR(formatted)->bytes);
-    if (result == -1) {
+    int64_t result1 = pyro_stdout_write_s(vm, AS_STR(formatted));
+    if (result1 == -1) {
         pyro_panic(vm, "$println(): unable to write to the standard output stream");
         return MAKE_NULL();
-    } else if (result == -2) {
+    } else if (result1 == -2) {
         pyro_panic(vm, "$println(): out of memory");
         return MAKE_NULL();
     }
-    return MAKE_I64(result);
+    int64_t result2 = pyro_stdout_write_n(vm, "\n", 1);
+    if (result2 == -1) {
+        pyro_panic(vm, "$println(): unable to write to the standard output stream");
+        return MAKE_NULL();
+    } else if (result2 == -2) {
+        pyro_panic(vm, "$println(): out of memory");
+        return MAKE_NULL();
+    }
+    return MAKE_I64(result1 + result2);
 }
 
 
