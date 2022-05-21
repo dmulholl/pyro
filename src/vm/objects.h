@@ -18,7 +18,7 @@ struct ObjStr {
 // Creates a new string object by copying [length] bytes from [src], ignoring backslashed escapes.
 // If [length] is 0, [src] can be NULL. Returns NULL if the attempt to allocate memory for the
 // string object fails.
-ObjStr* ObjStr_copy_raw(const char* source, size_t length, PyroVM* vm);
+ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm);
 
 // Creates a new string object by copying [length] bytes from [src], processing backslashed escapes.
 // If [length] is 0, [src] can be NULL. Returns NULL if the attempt to allocate memory for the
@@ -54,6 +54,10 @@ ObjStr* ObjStr_append_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM*
 
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
 ObjStr* ObjStr_empty(PyroVM* vm);
+
+// Returns a string with '%' symbols in the input escaped as '%%'.
+// Returns NULL if memory cannot be allocated for the new string.
+ObjStr* ObjStr_esc_percents(const char* src, size_t length, PyroVM* vm);
 
 /* ---- */
 /* Maps */

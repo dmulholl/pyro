@@ -832,6 +832,28 @@ ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm)
 }
 
 
+ObjStr* ObjStr_esc_percents(const char* src, size_t length, PyroVM* vm) {
+    ObjBuf* buf = ObjBuf_new_with_cap(length, vm);
+    if (!buf) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        if (src[i] == '%') {
+            if (!ObjBuf_append_bytes(buf, 2, (uint8_t*)"%%", vm)) {
+                return NULL;
+            }
+        } else {
+            if (!ObjBuf_append_byte(buf, src[i], vm)) {
+                return NULL;
+            }
+        }
+    }
+
+    return ObjBuf_to_str(buf, vm);
+}
+
+
 /* -------------- */
 /* Pyro Functions */
 /* -------------- */

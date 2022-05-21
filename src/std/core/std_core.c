@@ -376,25 +376,43 @@ static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         pyro_panic(vm, "$panic(): expected 1 or more arguments, found 0");
         return MAKE_NULL();
-    } else if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
+    }
+
+    if (arg_count == 1) {
+        ObjStr* panic_message = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return MAKE_NULL();
         }
-        pyro_panic(vm, string->bytes);
-        return MAKE_NULL();
-    } else {
-        if (!IS_STR(args[0])) {
-            pyro_panic(vm, "$panic(): invalid argument [format_string], expected a string");
+
+        ObjStr* escaped_panic_message = ObjStr_esc_percents(panic_message->bytes, panic_message->length, vm);
+        if (!escaped_panic_message) {
+            pyro_panic(vm, "$panic(): out of memory");
             return MAKE_NULL();
         }
-        Value formatted = fn_fmt(vm, arg_count, args);
-        if (vm->halt_flag) {
-            return MAKE_NULL();
-        }
-        pyro_panic(vm, AS_STR(formatted)->bytes);
+
+        pyro_panic(vm, escaped_panic_message->bytes);
         return MAKE_NULL();
     }
+
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "$panic(): invalid argument [format_string], expected a string");
+        return MAKE_NULL();
+    }
+
+    Value formatted = fn_fmt(vm, arg_count, args);
+    if (vm->halt_flag) {
+        return MAKE_NULL();
+    }
+    ObjStr* panic_message = AS_STR(formatted);
+
+    ObjStr* escaped_panic_message = ObjStr_esc_percents(panic_message->bytes, panic_message->length, vm);
+    if (!escaped_panic_message) {
+        pyro_panic(vm, "$panic(): out of memory");
+        return MAKE_NULL();
+    }
+
+    pyro_panic(vm, escaped_panic_message->bytes);
+    return MAKE_NULL();
 }
 
 
