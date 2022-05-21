@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.32</p>
+                <p class="version">Version 0.7.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -110,7 +110,8 @@ Stringifying an error returns its message:
 Error Details
 </h3>
 <p>
-An error object contains a <code>details</code> map which you can index into directly on the <code>err</code> object:
+Every error object contains a <code>details</code> map which you can use to store arbitrary data about the error.
+You can index into this <code>details</code> map directly on the <code>err</code> object itself, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;disaster strikes&quot;</span><span class="p">);</span>

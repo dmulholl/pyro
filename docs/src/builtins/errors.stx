@@ -39,7 +39,8 @@ Stringifying an error returns its message:
 
 ### Error Details
 
-An error object contains a `details` map which you can index into directly on the `err` object:
+Every error object contains a `details` map which you can use to store arbitrary data about the error.
+You can index into this `details` map directly on the `err` object itself, e.g.
 
 ::: code pyro
     var err = $err("disaster strikes");
