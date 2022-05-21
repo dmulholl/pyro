@@ -186,9 +186,9 @@ class ArgParser {
         var result = try self:parse_stream(stream);
         if $is_err(result) {
             if self.exit_on_error {
-                self:exit_with_error(result[0]);
+                self:exit_with_error(result);
             } else {
-                return $err(result[0]);
+                return $err(result);
             }
         }
     }
@@ -336,7 +336,7 @@ class ArgParser {
         $exit(0);
     }
 
-    def exit_with_error(message: str) {
+    def exit_with_error(message: any) {
         $eprintln("Error: {}.", message);
         $exit(1);
     }

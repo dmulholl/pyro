@@ -48,7 +48,7 @@ class Email {
 
         var result = try $shell("sendmail -i -t", msg);
         if $is_err(result) {
-            return $err(result[0]);
+            return $err(result);
         }
 
         var (exit_code, _, error_output) = result;
