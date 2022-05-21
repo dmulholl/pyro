@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.30</p>
+                <p class="version">Version 0.6.32</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -623,11 +623,9 @@ Errors
 </h3>
 <p>
 Pyro has a dedicated error type, <code>err</code>, which a function can return to indicate failure.
-An <code>err</code> is a specialized kind of tuple under the hood so it supports all the same methods and operators as a <code>tup</code>.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">);</span>
 </pre>
 <p>
 You can check if a value is an <code>err</code> using the <code>$is_err(arg)</code> function.
@@ -652,7 +650,7 @@ You can trap a panic using a <code>try</code> expression:
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
 </pre>
 <p>
-A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>err</code> tuple if it panics.
+A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>err</code> if it panics.
 </p>
 <p>
 <code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets:
@@ -676,9 +674,6 @@ You can raise a panic from your own code by calling the <code>$panic()</code> fu
 </pre>
 <p>
 If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
-</p>
-<p>
-If the panic is trapped by a <code>try</code> expression, the error message will be returned as the first item in the <code>err</code> tuple.
 </p>
 <h3 id="modules">
 Modules

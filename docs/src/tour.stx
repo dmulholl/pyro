@@ -415,11 +415,9 @@ Classes are a big enough topic to deserve a page of their own which you can find
 ### Errors
 
 Pyro has a dedicated error type, `err`, which a function can return to indicate failure.
-An `err` is a specialized kind of tuple under the hood so it supports all the same methods and operators as a `tup`.
 
 ::: code pyro
-    var foo = $err();
-    var bar = $err("oops!", 123);
+    var foo = $err("oops!");
 
 You can check if a value is an `err` using the `$is_err(arg)` function.
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`:
@@ -440,7 +438,7 @@ You can trap a panic using a `try` expression:
 ::: code pyro
     var foo = try might_panic();
 
-A `try` expression returns the value of its operand if it evaluates without panicking or an `err` tuple if it panics.
+A `try` expression returns the value of its operand if it evaluates without panicking or an `err` if it panics.
 
 `try` is a unary operator with the same precedence as `!` or `-` so you should wrap lower-precedence expressions in brackets:
 
@@ -460,8 +458,6 @@ You can raise a panic from your own code by calling the `$panic()` function with
     $panic("oh no!");
 
 If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
-
-If the panic is trapped by a `try` expression, the error message will be returned as the first item in the `err` tuple.
 
 
 

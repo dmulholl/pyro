@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.30</p>
+                <p class="version">Version 0.6.32</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -244,13 +244,23 @@ Like <code>$eprint()</code> but adds a terminating newline.
 </div>
 <div>
 <dt>
-<code>$err() -&gt; err</code> <br> <code>$err(arg1: any, arg2: any, ...) -&gt; err</code>
+<code>$err() -&gt; err</code> <br> <code>$err(message: any) -&gt; err</code> <br> <code>$err(format_string: str, arg1: any, arg2: any, ...) -&gt; err</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>err</code> object.
-The arguments provide the error's values.
 </p>
+<ul>
+<li>
+If called with no arguments, returns an error with an empty message string.
+</li>
+<li>
+If called with a single argument, stringifies that argument and uses the result as the message string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first.
+</li>
+</ul>
 </dd>
 </div>
 <div>

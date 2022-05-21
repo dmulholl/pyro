@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.6.30</p>
+                <p class="version">Version 0.6.32</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -51,32 +51,98 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#error-messages">Error Messages</a>
+</li>
+<li>
+<a href="#error-details">Error Details</a>
+</li>
+<li>
+<a href="#methods">Methods</a>
+</li>
+</ul>
+<hr>
+<p>
 The error type, <code>err</code>, can be returned by functions to indicate failure.
 </p>
 <dl>
 <div>
 <dt>
-<code>$err() -&gt; err</code> <br> <code>$err(arg1: any, arg2: any, ...) -&gt; i64</code>
+<code>$err() -&gt; err</code> <br> <code>$err(message: any) -&gt; err</code> <br> <code>$err(format_string: str, arg1: any, arg2: any, ...) -&gt; err</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>err</code> object.
-The arguments provide the error's values.
 </p>
+<ul>
+<li>
+If called with no arguments, returns an error with an empty message string.
+</li>
+<li>
+If called with a single argument, stringifies that argument and uses the result as the message string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first.
+</li>
+</ul>
 </dd>
 </div>
 </dl>
 <p>
-Errors are a specialized variant of <a href="../builtins/tuples.html">tuples</a> and support all the same methods and operations.
-</p>
-<p>
 You can use the <code>$is_err(arg)</code> function to check if a value is an <code>err</code>.
-Alternatively, you can use the error-coalescing operator <code>!!</code> to supply a default value for an operation that might fail:
+Alternatively, you can use the error-coalescing operator <code>!!</code> to supply a default value for an operation that might return an error:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
+<h3 id="error-messages">
+Error Messages
+</h3>
+<p>
+Stringifying an error returns its message:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;oh no!&quot;</span><span class="p">;</span>
+</pre>
+<h3 id="error-details">
+Error Details
+</h3>
+<p>
+An error object contains a <code>details</code> map which you can index into directly on the <code>err</code> object:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;disaster strikes&quot;</span><span class="p">);</span>
+<span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">code</span> <span class="p">=</span> <span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">];</span>
+</pre>
+<h3 id="methods">
+Methods
+</h3>
+<dl>
+<div>
+<dt>
+<code>:details() -&gt; map</code>
+</dt>
+<dd>
+<p>
+Returns the error's <code>details</code> map.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:message() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the error's <code>message</code> string.
+</p>
+</dd>
+</div>
+</dl>
         </article>
         
     </body>

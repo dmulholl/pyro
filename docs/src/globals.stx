@@ -112,10 +112,15 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$err() -> err` <br> `$err(arg1: any, arg2: any, ...) -> err` ]]
+[[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, arg1: any, arg2: any, ...) -> err` ]]
 
     Creates a new `err` object.
-    The arguments provide the error's values.
+
+    * If called with no arguments, returns an error with an empty message string.
+
+    * If called with a single argument, stringifies that argument and uses the result as the message string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first.
 
 
 
