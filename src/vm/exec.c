@@ -1330,8 +1330,26 @@ static void run(PyroVM* vm) {
                     }
 
                     err->message = err_str;
-                    /* err_tup->values[1] = MAKE_OBJ(vm->panic_source_id); */
-                    /* err_tup->values[2] = MAKE_I64(vm->panic_line_number); */
+
+                    if (vm->panic_source_id) {
+                        ObjStr* source_key = STR("source");
+                        ObjStr* line_key = STR("line_number");
+                        if (!source_key || !line_key) {
+                            vm->hard_panic = true;
+                            pyro_panic(vm, "out of memory");
+                            return;
+                        }
+                        if (ObjMap_set(err->details, MAKE_OBJ(source_key), MAKE_OBJ(vm->panic_source_id), vm) == 0) {
+                            vm->hard_panic = true;
+                            pyro_panic(vm, "out of memory");
+                            return;
+                        }
+                        if (ObjMap_set(err->details, MAKE_OBJ(line_key), MAKE_I64(vm->panic_line_number), vm) == 0) {
+                            vm->hard_panic = true;
+                            pyro_panic(vm, "out of memory");
+                            return;
+                        }
+                    }
 
                     pyro_push(vm, MAKE_OBJ(err));
                 }
