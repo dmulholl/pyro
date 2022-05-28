@@ -1,26 +1,42 @@
 def empty_function() {
 }
-
 assert empty_function() == null;
 
 
 def no_explicit_return() {
     var foo = "bar";
 }
-
 assert no_explicit_return() == null;
 
 
 def add(a, b, c) {
     return a + b + c;
 }
-
 assert add(1, 2, 3) == 6;
 assert add(1, 2, 3,) == 6;
 
 
 def takes_one_arg(arg) {
 }
-
 assert $is_err(try takes_one_arg());
 assert $is_err(try takes_one_arg("foo", "bar"));
+
+
+def vfunc1(*vargs) {
+    assert $is_tup(vargs);
+    return vargs:count();
+}
+assert vfunc1() == 0;
+assert vfunc1("foo") == 1;
+assert vfunc1("foo", "bar") == 2;
+assert vfunc1("foo", "bar", "baz") == 3;
+
+
+def vfunc2(arg1, arg2, *vargs) {
+    assert $is_tup(vargs);
+    return vargs:count();
+}
+assert vfunc2("foo", "bar") == 0;
+assert vfunc2("foo", "bar", "baz") == 1;
+assert vfunc2("foo", "bar", "baz", "bam") == 2;
+assert vfunc2("foo", "bar", "baz", "bam", "bop") == 3;

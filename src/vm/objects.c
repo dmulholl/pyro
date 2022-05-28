@@ -866,6 +866,7 @@ ObjFn* ObjFn_new(PyroVM* vm) {
     }
 
     fn->arity = 0;
+    fn->is_variadic = false;
     fn->upvalue_count = 0;
     fn->name = NULL;
     fn->source_id = NULL;

@@ -16,28 +16,59 @@
 #include "gc.h"
 
 
+// The [closure] object and [arg_count] arguments are sitting on top of the stack.
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
-    if (arg_count != closure->fn->arity) {
-        pyro_panic(
-            vm,
+    if (vm->frame_count == PYRO_MAX_CALL_FRAMES) {
+        pyro_panic(vm, "max call depth exceeded");
+        return;
+    }
+
+    CallFrame* new_frame = &vm->frames[vm->frame_count++];
+    new_frame->closure = closure;
+    new_frame->ip = closure->fn->code;
+    new_frame->fp = vm->stack_top - arg_count - 1;
+
+    if (closure->fn->is_variadic) {
+        size_t num_required_args = closure->fn->arity - 1;
+        if (arg_count >= num_required_args) {
+            size_t num_variadic_args = arg_count - num_required_args;
+            if (num_variadic_args == 0) {
+                ObjTup* tup = ObjTup_new(0, vm);
+                if (!tup) {
+                    pyro_panic(vm, "out of memory");
+                    return;
+                }
+                if (!pyro_push(vm, MAKE_OBJ(tup))) {
+                    return;
+                }
+            } else {
+                ObjTup* tup = ObjTup_new(num_variadic_args, vm);
+                if (!tup) {
+                    pyro_panic(vm, "out of memory");
+                    return;
+                }
+                memcpy(tup->values, vm->stack_top - num_variadic_args, sizeof(Value) * num_variadic_args);
+                *(vm->stack_top - num_variadic_args) = MAKE_OBJ(tup);
+                vm->stack_top -= (num_variadic_args - 1);
+            }
+        } else {
+            pyro_panic(vm,
+                "%s(): expected at least %zu argument%s, found %zu",
+                closure->fn->name->bytes,
+                num_required_args,
+                num_required_args == 1 ? "" : "s",
+                arg_count
+            );
+        }
+    } else if (arg_count != closure->fn->arity) {
+        pyro_panic(vm,
             "%s(): expected %zu argument%s, found %zu",
             closure->fn->name->bytes,
             closure->fn->arity,
             closure->fn->arity == 1 ? "" : "s",
             arg_count
         );
-        return;
     }
-
-    if (vm->frame_count == PYRO_MAX_CALL_FRAMES) {
-        pyro_panic(vm, "max call depth exceeded");
-        return;
-    }
-
-    CallFrame* frame = &vm->frames[vm->frame_count++];
-    frame->closure = closure;
-    frame->ip = closure->fn->code;
-    frame->fp = vm->stack_top - arg_count - 1;
 }
 
 
@@ -48,8 +79,7 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
         pyro_push(vm, result);
         return;
     }
-    pyro_panic(
-        vm,
+    pyro_panic(vm,
         "%s(): expected %zu argument%s, found %zu",
         fn->name->bytes,
         fn->arity,
@@ -88,8 +118,7 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_dollar_init), &init_method, vm)) {
                     call_value(vm, init_method, arg_count);
                 } else if (arg_count != 0) {
-                    pyro_panic(
-                        vm,
+                    pyro_panic(vm,
                         "%s(): expected 0 arguments for initializer, found %zu",
                         class->name->bytes,
                         arg_count

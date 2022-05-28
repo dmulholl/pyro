@@ -194,6 +194,9 @@ typedef struct {
     // The number of arguments required by the function.
     uint8_t arity;
 
+    // True if the function is variadic.
+    bool is_variadic;
+
     // The function's bytecode, stored as a dynamic array of bytes.
     uint8_t* code;
     size_t code_count;

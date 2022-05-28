@@ -1935,12 +1935,18 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
         if (compiler.fn->arity == 255) {
             ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
         }
-        compiler.fn->arity++;
+        if (compiler.fn->is_variadic) {
+            ERROR_AT_NEXT_TOKEN("variadic parameter must be final parameter");
+        }
+        if (match(parser, TOKEN_STAR)) {
+            compiler.fn->is_variadic = true;
+        }
         uint16_t index = consume_variable_name(parser, "expected parameter name");
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
         define_variable(parser, index);
+        compiler.fn->arity++;
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after function parameters");
 
@@ -1966,7 +1972,12 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
     // Create the function object.
     ObjFn* fn = end_fn_compiler(parser);
-    emit_u8_u16be(parser, OP_MAKE_CLOSURE, add_value_to_constant_table(parser, MAKE_OBJ(fn)));
+
+    // Add the function to the current function's constant table.
+    uint16_t index = add_value_to_constant_table(parser, MAKE_OBJ(fn));
+
+    // Emit the bytecode to load the function onto the stack as an ObjClosure.
+    emit_u8_u16be(parser, OP_MAKE_CLOSURE, index);
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
