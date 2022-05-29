@@ -72,6 +72,7 @@ static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
 }
 
 
+// The [fn] object and [arg_count] arguments are sitting on top of the stack.
 static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
     if (fn->arity == arg_count || fn->arity == -1) {
         Value result = fn->fn_ptr(vm, arg_count, vm->stack_top - arg_count);
@@ -89,6 +90,7 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
 }
 
 
+// The [callee] value and [arg_count] arguments are sitting on top of the stack.
 static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
     if (IS_OBJ(callee)) {
         switch(AS_OBJ(callee)->type) {
@@ -159,6 +161,33 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
 }
 
 
+// The receiver value and [arg_count] arguments are sitting on top of the stack.
+static void call_method_by_name_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
+    Value method;
+    if (!ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
+        pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
+        return;
+    }
+    if (IS_NATIVE_FN(method)) {
+        call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
+    } else {
+        call_closure(vm, AS_CLOSURE(method), arg_count);
+    }
+}
+
+
+// The receiver value and [arg_count] arguments are sitting on top of the stack.
+static void call_method_by_name(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
+    Value receiver = pyro_peek(vm, arg_count);
+    ObjClass* class = pyro_get_class(receiver);
+    if (class) {
+        call_method_by_name_from_class(vm, class, method_name, arg_count);
+    } else {
+        pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
+    }
+}
+
+
 static ObjUpvalue* capture_upvalue(PyroVM* vm, Value* local) {
     // Before creating a new upvalue object, look for an existing one in the list of open upvalues.
     ObjUpvalue* prev_upvalue = NULL;
@@ -221,33 +250,6 @@ static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
 
     pyro_pop(vm);
     pyro_push(vm, MAKE_OBJ(bound));
-}
-
-
-static void invoke_method_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
-    Value method;
-    if (!ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
-        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-        return;
-    }
-
-    if (IS_NATIVE_FN(method)) {
-        call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
-    } else {
-        call_closure(vm, AS_CLOSURE(method), arg_count);
-    }
-}
-
-
-static void invoke_method(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
-    Value receiver = pyro_peek(vm, arg_count);
-    ObjClass* class = pyro_get_class(receiver);
-
-    if (class) {
-        invoke_method_from_class(vm, class, method_name, arg_count);
-    } else {
-        pyro_panic(vm, "invalid method call '%s'", method_name->bytes);
-    }
 }
 
 
@@ -821,7 +823,7 @@ static void run(PyroVM* vm) {
             case OP_INVOKE_METHOD: {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
-                invoke_method(vm, method_name, arg_count);
+                call_method_by_name(vm, method_name, arg_count);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
@@ -830,14 +832,14 @@ static void run(PyroVM* vm) {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
-                invoke_method_from_class(vm, superclass, method_name, arg_count);
+                call_method_by_name_from_class(vm, superclass, method_name, arg_count);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
             case OP_GET_ITERATOR_OBJECT: {
                 if (pyro_has_method(vm, pyro_peek(vm, 0), vm->str_dollar_iter)) {
-                    invoke_method(vm, vm->str_dollar_iter, 0);
+                    call_method_by_name(vm, vm->str_dollar_iter, 0);
                     frame = &vm->frames[vm->frame_count - 1];
                 } else {
                     pyro_panic(vm, "object is not iterable");
@@ -851,7 +853,7 @@ static void run(PyroVM* vm) {
                     pyro_push(vm, next_value);
                 } else {
                     pyro_push(vm, pyro_peek(vm, 0));
-                    invoke_method(vm, vm->str_dollar_next, 0);
+                    call_method_by_name(vm, vm->str_dollar_next, 0);
                     frame = &vm->frames[vm->frame_count - 1];
                 }
                 break;
