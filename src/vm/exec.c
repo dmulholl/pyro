@@ -234,22 +234,22 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 }
 
 
-// Pops the receiver and replaces it with the bound method object.
+// The receiver is sitting on top of the stack. This pops the receiver and replaces it with the
+// bound method object.
 static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
     Value method;
     if (!ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
-        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+        pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
         return;
     }
 
-    ObjBoundMethod* bound = ObjBoundMethod_new(vm, pyro_peek(vm, 0), AS_OBJ(method));
-    if (!bound) {
+    ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, pyro_peek(vm, 0), AS_OBJ(method));
+    if (!bound_method) {
         pyro_panic(vm, "out of memory");
         return;
     }
 
-    pyro_pop(vm);
-    pyro_push(vm, MAKE_OBJ(bound));
+    vm->stack_top[-1] = MAKE_OBJ(bound_method);
 }
 
 
@@ -522,7 +522,7 @@ static void run(PyroVM* vm) {
                 Value field_name = READ_CONSTANT();
 
                 if (!IS_INSTANCE(pyro_peek(vm, 0))) {
-                    pyro_panic(vm, "invalid field access '%s'", AS_STR(field_name)->bytes);
+                    pyro_panic(vm, "receiver has no field '%s'", AS_STR(field_name)->bytes);
                     break;
                 }
 
@@ -535,7 +535,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                pyro_panic(vm, "receiver has no field '%s'", AS_STR(field_name)->bytes);
                 break;
             }
 
@@ -587,7 +587,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "invalid member name '%s'", AS_STR(member_name)->bytes);
+                pyro_panic(vm, "module has no member '%s'", AS_STR(member_name)->bytes);
                 break;
             }
 
@@ -599,7 +599,7 @@ static void run(PyroVM* vm) {
                 if (class) {
                     bind_method(vm, class, method_name);
                 } else {
-                    pyro_panic(vm, "invalid method access '%s'", method_name->bytes);
+                    pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
                 }
 
                 break;
