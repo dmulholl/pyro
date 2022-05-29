@@ -76,8 +76,8 @@ static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
 static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
     if (fn->arity == arg_count || fn->arity == -1) {
         Value result = fn->fn_ptr(vm, arg_count, vm->stack_top - arg_count);
-        vm->stack_top -= (arg_count + 1);
-        pyro_push(vm, result);
+        *(vm->stack_top - arg_count - 1) = result;
+        vm->stack_top -= arg_count;
         return;
     }
     pyro_panic(vm,
