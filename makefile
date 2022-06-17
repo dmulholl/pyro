@@ -14,9 +14,10 @@ DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
-LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/bestline/*.c
-OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o \
-			out/lib/lib_cgi.o out/lib/lib_json.o
+LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c
+OBJ_FILES = out/lib/sqlite.o out/lib/bestline.o \
+			out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o out/lib/lib_cgi.o \
+			out/lib/lib_json.o
 
 FILES = $(SRC_FILES) $(LIB_FILES) $(OBJ_FILES) -lm -ldl -pthread
 
@@ -72,10 +73,15 @@ help: ## Prints available commands.
 #  Libraries  #
 # ----------- #
 
-out/lib/sqlite.o:
+out/lib/sqlite.o: src/lib/sqlite/sqlite3.c src/lib/sqlite/sqlite3.h
 	@mkdir -p out/lib
 	@printf "\e[1;32mBuilding\e[0m sqlite\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/sqlite/sqlite3.c -o out/lib/sqlite.o
+
+out/lib/bestline.o: src/lib/bestline/bestline.c src/lib/bestline/bestline.h
+	@mkdir -p out/lib
+	@printf "\e[1;32mBuilding\e[0m bestline\n"
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/bestline/bestline.c -o out/lib/bestline.o
 
 out/lib/lib_args.o: src/std/pyro/lib_args.pyro
 	@mkdir -p out/lib
