@@ -14,7 +14,7 @@ DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
-LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/linenoise/*.c
+LIB_FILES = src/lib/mt64/*.c src/lib/args/*.c src/lib/bestline/*.c
 OBJ_FILES = out/lib/sqlite.o out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o \
 			out/lib/lib_cgi.o out/lib/lib_json.o
 

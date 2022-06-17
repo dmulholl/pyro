@@ -1,5 +1,5 @@
 #include "cli.h"
-#include "../lib/linenoise/linenoise.h"
+#include "../lib/bestline/bestline.h"
 
 
 // Returns true if [code] contains an open quote.
@@ -52,7 +52,7 @@ static bool has_open_quote(const char* code, size_t code_count) {
 
 
 // Returns the number of opening brackets minus the number of closing brackets.
-static int count_brackets(const char* code, size_t code_count) {
+static int count_open_brackets(const char* code, size_t code_count) {
     int bracket_count = 0;
     size_t index = 0;
 
@@ -110,7 +110,7 @@ void pyro_run_repl(ArgParser* parser) {
     // Turn on automatic printing of expression statement values.
     pyro_set_repl_flag(vm, true);
 
-    // Set the VM"s max memory allocation.
+    // Set the VM's max memory allocation.
     pyro_cli_set_max_memory(vm, parser);
 
     // Add any import roots supplied on the command line.
@@ -129,15 +129,22 @@ void pyro_run_repl(ArgParser* parser) {
     for (;;) {
         char* line;
         if (code) {
-            line = linenoise("... ");
+            line = bestline("··· ");
         } else {
-            line = linenoise(">>> ");
+            line = bestline(">>> ");
         }
 
-        if (!line || strcmp(line, "exit") == 0) {
+        if (!line) {
+            printf("\n");
             break;
         }
-        linenoiseHistoryAdd(line);
+
+        if (strcmp(line, "exit") == 0) {
+            free(line);
+            break;
+        }
+
+        bestlineHistoryAdd(line);
 
         code = realloc(code, code_count + strlen(line) + 1);
         if (!code) {
@@ -151,7 +158,7 @@ void pyro_run_repl(ArgParser* parser) {
 
         // If the code contains unclosed quotes or more opening brackets than closing brackets,
         // read and append another line of input.
-        if (has_open_quote(code, code_count) || count_brackets(code, code_count) > 0) {
+        if (has_open_quote(code, code_count) || count_open_brackets(code, code_count) > 0) {
             continue;
         }
 
