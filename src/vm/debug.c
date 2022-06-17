@@ -172,10 +172,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u8_x2_instruction(vm, "OP_IMPORT_NAMED_MEMBERS", fn, ip);
         case OP_INHERIT:
             return atomic_instruction(vm, "OP_INHERIT", ip);
-        case OP_INVOKE_METHOD:
-            return invoke_instruction(vm, "OP_INVOKE_METHOD", fn, ip);
-        case OP_INVOKE_SUPER_METHOD:
-            return invoke_instruction(vm, "OP_INVOKE_SUPER_METHOD", fn, ip);
+        case OP_CALL_METHOD:
+            return invoke_instruction(vm, "OP_CALL_METHOD", fn, ip);
+        case OP_CALL_SUPER_METHOD:
+            return invoke_instruction(vm, "OP_CALL_SUPER_METHOD", fn, ip);
         case OP_GET_ITERATOR_OBJECT:
             return atomic_instruction(vm, "OP_GET_ITERATOR_OBJECT", ip);
         case OP_GET_ITERATOR_NEXT_VALUE:

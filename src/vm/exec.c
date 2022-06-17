@@ -820,7 +820,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_INVOKE_METHOD: {
+            case OP_CALL_METHOD: {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
                 call_method_by_name(vm, method_name, arg_count);
@@ -828,7 +828,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_INVOKE_SUPER_METHOD: {
+            case OP_CALL_SUPER_METHOD: {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));

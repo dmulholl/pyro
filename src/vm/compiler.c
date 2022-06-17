@@ -1022,7 +1022,7 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
         if (match(parser, TOKEN_LEFT_PAREN)) {
             uint8_t arg_count = parse_argument_list(parser);
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
-            emit_byte(parser, OP_INVOKE_SUPER_METHOD);
+            emit_byte(parser, OP_CALL_SUPER_METHOD);
             emit_u16be(parser, index);
             emit_byte(parser, arg_count);
         } else {
@@ -1113,7 +1113,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (match(parser, TOKEN_LEFT_PAREN)) {
                 uint8_t arg_count = parse_argument_list(parser);
-                emit_u8_u16be(parser, OP_INVOKE_METHOD, index);
+                emit_u8_u16be(parser, OP_CALL_METHOD, index);
                 emit_byte(parser, arg_count);
             } else {
                 emit_u8_u16be(parser, OP_GET_METHOD, index);
