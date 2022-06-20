@@ -1016,6 +1016,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 0;
 
         case OP_CALL:
+        case OP_CALL_UNPACK_LAST_ARG:
         case OP_ECHO:
         case OP_GET_LOCAL:
         case OP_GET_UPVALUE:
@@ -1053,7 +1054,9 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 2;
 
         case OP_CALL_METHOD:
+        case OP_CALL_METHOD_UNPACK_LAST_ARG:
         case OP_CALL_SUPER_METHOD:
+        case OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG:
             return 3;
 
         // 2 bytes for the constant index, plus two for each upvalue.

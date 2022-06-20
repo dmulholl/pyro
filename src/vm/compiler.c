@@ -642,11 +642,19 @@ static void patch_jump(Parser* parser, size_t index) {
 /* ------------------ */
 
 
-static uint8_t parse_argument_list(Parser* parser) {
+static uint8_t parse_argument_list(Parser* parser, bool* unpack_last_argument) {
     uint8_t arg_count = 0;
+    bool unpack = false;
+
     do {
         if (check(parser, TOKEN_RIGHT_PAREN)) {
             break;
+        }
+        if (unpack) {
+            ERROR_AT_NEXT_TOKEN("unpacked argument must be last argument");
+        }
+        if (match(parser, TOKEN_STAR)) {
+            unpack = true;
         }
         parse_expression(parser, false, true);
         if (arg_count == 255) {
@@ -654,7 +662,9 @@ static uint8_t parse_argument_list(Parser* parser) {
         }
         arg_count++;
     } while (match(parser, TOKEN_COMMA));
+
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after arguments");
+    *unpack_last_argument = unpack;
     return arg_count;
 }
 
@@ -1020,9 +1030,14 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
         emit_load_named_variable(parser, syntoken("self"));    // load the instance
 
         if (match(parser, TOKEN_LEFT_PAREN)) {
-            uint8_t arg_count = parse_argument_list(parser);
+            bool unpack_last_argument;
+            uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
-            emit_byte(parser, OP_CALL_SUPER_METHOD);
+            if (unpack_last_argument) {
+                emit_byte(parser, OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG);
+            } else {
+                emit_byte(parser, OP_CALL_SUPER_METHOD);
+            }
             emit_u16be(parser, index);
             emit_byte(parser, arg_count);
         } else {
@@ -1058,8 +1073,13 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
     parse_primary_expr(parser, can_assign, can_assign_in_parens);
     while (true) {
         if (match(parser, TOKEN_LEFT_PAREN)) {
-            uint8_t arg_count = parse_argument_list(parser);
-            emit_u8_u8(parser, OP_CALL, arg_count);
+            bool unpack_last_argument;
+            uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
+            if (unpack_last_argument) {
+                emit_u8_u8(parser, OP_CALL_UNPACK_LAST_ARG, arg_count);
+            } else {
+                emit_u8_u8(parser, OP_CALL, arg_count);
+            }
         }
 
         else if (match(parser, TOKEN_LEFT_BRACKET)) {
@@ -1112,9 +1132,15 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             consume(parser, TOKEN_IDENTIFIER, "expected a method name after ':'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (match(parser, TOKEN_LEFT_PAREN)) {
-                uint8_t arg_count = parse_argument_list(parser);
-                emit_u8_u16be(parser, OP_CALL_METHOD, index);
-                emit_byte(parser, arg_count);
+                bool unpack_last_argument;
+                uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
+                if (unpack_last_argument) {
+                    emit_u8_u16be(parser, OP_CALL_METHOD_UNPACK_LAST_ARG, index);
+                    emit_byte(parser, arg_count);
+                } else {
+                    emit_u8_u16be(parser, OP_CALL_METHOD, index);
+                    emit_byte(parser, arg_count);
+                }
             } else {
                 emit_u8_u16be(parser, OP_GET_METHOD, index);
             }

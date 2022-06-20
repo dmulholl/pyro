@@ -22,21 +22,23 @@ assert $is_err(try takes_one_arg());
 assert $is_err(try takes_one_arg("foo", "bar"));
 
 
-def vfunc1(*vargs) {
+def variadic_func_1(*vargs) {
     assert $is_tup(vargs);
     return vargs:count();
 }
-assert vfunc1() == 0;
-assert vfunc1("foo") == 1;
-assert vfunc1("foo", "bar") == 2;
-assert vfunc1("foo", "bar", "baz") == 3;
+assert variadic_func_1() == 0;
+assert variadic_func_1("foo") == 1;
+assert variadic_func_1("foo", "bar") == 2;
+assert variadic_func_1("foo", "bar", "baz") == 3;
+assert variadic_func_1(*["foo", "bar", "baz"]) == 3;
 
 
-def vfunc2(arg1, arg2, *vargs) {
+def variadic_func_2(arg1, arg2, *vargs) {
     assert $is_tup(vargs);
     return vargs:count();
 }
-assert vfunc2("foo", "bar") == 0;
-assert vfunc2("foo", "bar", "baz") == 1;
-assert vfunc2("foo", "bar", "baz", "bam") == 2;
-assert vfunc2("foo", "bar", "baz", "bam", "bop") == 3;
+assert variadic_func_2("foo", "bar") == 0;
+assert variadic_func_2("foo", "bar", "baz") == 1;
+assert variadic_func_2("foo", "bar", "baz", "bam") == 2;
+assert variadic_func_2("foo", "bar", "baz", "bam", "bop") == 3;
+assert variadic_func_2(*["foo", "bar", "baz", "bam", "bop"]) == 3;

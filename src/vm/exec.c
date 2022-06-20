@@ -375,6 +375,43 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_CALL_UNPACK_LAST_ARG: {
+                uint8_t arg_count = READ_BYTE();
+                Value callee = pyro_peek(vm, arg_count);
+                Value last_arg = pyro_pop(vm);
+                arg_count--;
+
+                Value* values;
+                size_t value_count;
+
+                if (IS_TUP(last_arg)) {
+                    values = AS_TUP(last_arg)->values;
+                    value_count = AS_TUP(last_arg)->count;
+                } else if (IS_VEC(last_arg)) {
+                    values = AS_VEC(last_arg)->values;
+                    value_count = AS_VEC(last_arg)->count;
+                } else {
+                    pyro_panic(vm, "can only unpack a vector or tuple");
+                    break;
+                }
+
+                size_t total_args = (size_t)arg_count + value_count;
+                if (total_args > 255) {
+                    pyro_panic(vm, "too many arguments to unpack");
+                    break;
+                }
+
+                for (size_t i = 0; i < value_count; i++) {
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
+                }
+
+                call_value(vm, callee, total_args);
+                frame = &vm->frames[vm->frame_count - 1];
+                break;
+            }
+
             case OP_MAKE_CLASS: {
                 ObjClass* class = ObjClass_new(vm);
                 if (class) {
@@ -828,11 +865,86 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_CALL_SUPER_METHOD: {
+            case OP_CALL_METHOD_UNPACK_LAST_ARG: {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
+                Value last_arg = pyro_pop(vm);
+                arg_count--;
+
+                Value* values;
+                size_t value_count;
+
+                if (IS_TUP(last_arg)) {
+                    values = AS_TUP(last_arg)->values;
+                    value_count = AS_TUP(last_arg)->count;
+                } else if (IS_VEC(last_arg)) {
+                    values = AS_VEC(last_arg)->values;
+                    value_count = AS_VEC(last_arg)->count;
+                } else {
+                    pyro_panic(vm, "can only unpack a vector or tuple");
+                    break;
+                }
+
+                size_t total_args = (size_t)arg_count + value_count;
+                if (total_args > 255) {
+                    pyro_panic(vm, "too many arguments to unpack");
+                    break;
+                }
+
+                for (size_t i = 0; i < value_count; i++) {
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
+                }
+
+                call_method_by_name(vm, method_name, total_args);
+                frame = &vm->frames[vm->frame_count - 1];
+                break;
+            }
+
+            case OP_CALL_SUPER_METHOD: {
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
+                ObjStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
                 call_method_by_name_from_class(vm, superclass, method_name, arg_count);
+                frame = &vm->frames[vm->frame_count - 1];
+                break;
+            }
+
+            case OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG: {
+                ObjClass* superclass = AS_CLASS(pyro_pop(vm));
+                ObjStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                Value last_arg = pyro_pop(vm);
+                arg_count--;
+
+                Value* values;
+                size_t value_count;
+
+                if (IS_TUP(last_arg)) {
+                    values = AS_TUP(last_arg)->values;
+                    value_count = AS_TUP(last_arg)->count;
+                } else if (IS_VEC(last_arg)) {
+                    values = AS_VEC(last_arg)->values;
+                    value_count = AS_VEC(last_arg)->count;
+                } else {
+                    pyro_panic(vm, "can only unpack a vector or tuple");
+                    break;
+                }
+
+                size_t total_args = (size_t)arg_count + value_count;
+                if (total_args > 255) {
+                    pyro_panic(vm, "too many arguments to unpack");
+                    break;
+                }
+
+                for (size_t i = 0; i < value_count; i++) {
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
+                }
+
+                call_method_by_name_from_class(vm, superclass, method_name, total_args);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }

@@ -93,6 +93,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BINARY_CARET", ip);
         case OP_CALL:
             return u8_instruction(vm, "OP_CALL", fn, ip);
+        case OP_CALL_UNPACK_LAST_ARG:
+            return u8_instruction(vm, "OP_CALL_UNPACK_LAST_ARG", fn, ip);
         case OP_MAKE_CLASS:
             return constant_instruction(vm, "OP_MAKE_CLASS", fn, ip);
         case OP_CLOSE_UPVALUE:
@@ -174,8 +176,12 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_INHERIT", ip);
         case OP_CALL_METHOD:
             return invoke_instruction(vm, "OP_CALL_METHOD", fn, ip);
+        case OP_CALL_METHOD_UNPACK_LAST_ARG:
+            return invoke_instruction(vm, "OP_CALL_METHOD_UNPACK_LAST_ARG", fn, ip);
         case OP_CALL_SUPER_METHOD:
             return invoke_instruction(vm, "OP_CALL_SUPER_METHOD", fn, ip);
+        case OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG:
+            return invoke_instruction(vm, "OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG", fn, ip);
         case OP_GET_ITERATOR_OBJECT:
             return atomic_instruction(vm, "OP_GET_ITERATOR_OBJECT", ip);
         case OP_GET_ITERATOR_NEXT_VALUE:
