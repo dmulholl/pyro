@@ -1,0 +1,35 @@
+def func(*args) {
+    return args;
+}
+
+assert func(*[1, 2, 3]) == $tup(1, 2, 3);
+assert func(1, 2, *[3, 4, 5]) == $tup(1, 2, 3, 4, 5);
+
+assert func(*[]) == $tup();
+assert func(1, 2, *[]) == $tup(1, 2);
+
+
+class Foo {
+    def method(*args) {
+        return args;
+    }
+}
+
+assert Foo():method(*[1, 2, 3]) == $tup(1, 2, 3);
+assert Foo():method(1, 2, *[3, 4, 5]) == $tup(1, 2, 3, 4, 5);
+
+assert Foo():method(*[]) == $tup();
+assert Foo():method(1, 2, *[]) == $tup(1, 2);
+
+
+class Bar < Foo {
+    def method(*args) {
+        return super:method(*args);
+    }
+}
+
+assert Bar():method(*[1, 2, 3]) == $tup(1, 2, 3);
+assert Bar():method(1, 2, *[3, 4, 5]) == $tup(1, 2, 3, 4, 5);
+
+assert Bar():method(*[]) == $tup();
+assert Bar():method(1, 2, *[]) == $tup(1, 2);
