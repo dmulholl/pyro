@@ -5,6 +5,7 @@ meta_title: Pyro &mdash; Language Features
 
 ### Language Features
 
+* [Functions](@root/features/functions//)
 * [Classes](@root/features/classes//)
 * [Modules](@root/features/modules//)
 * [Operators](@root/features/operators//)

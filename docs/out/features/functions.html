@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Functions</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-features-functions node-features node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.7.4</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Functions</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#function-definitions">Function Definitions</a>
+</li>
+<li>
+<a href="#functions-as-values">Functions as Values</a>
+</li>
+<li>
+<a href="#anonymous-functions">Anonymous Functions</a>
+</li>
+<li>
+<a href="#closures">Closures</a>
+</li>
+<li>
+<a href="#variadic-functions">Variadic Functions</a>
+</li>
+<li>
+<a href="#unpacking-arguments">Unpacking Arguments</a>
+</li>
+</ul>
+<h3 id="function-definitions">
+Function Definitions
+</h3>
+<p>
+Function definitions look like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+</pre>
+<p>
+If you don't explicitly return a value from a function, its return value is <code>null</code>.
+</p>
+<h3 id="functions-as-values">
+Functions as Values
+</h3>
+<p>
+Functions are first-class citizens in Pyro, meaning you can assign them to variables and pass them around just like any other value.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">add</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span><span class="p">;</span>
+</pre>
+<h3 id="anonymous-functions">
+Anonymous Functions
+</h3>
+<p>
+You can declare and use functions anonymously:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">add</span> <span class="p">=</span> <span class="kd">def</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span><span class="p">;</span>
+</pre>
+<h3 id="closures">
+Closures
+</h3>
+<p>
+An inner function declared inside an outer function can capture the outer function's local variables, including its parameters:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">make_adder</span><span class="p">(</span><span class="nx">increment</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">def</span> <span class="nx">adder</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">num</span> <span class="o">+</span> <span class="nx">increment</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">adder</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">adds_one</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">adds_one</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">adds_one</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">adds_two</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+</pre>
+<h3 id="variadic-functions">
+Variadic Functions
+</h3>
+<p>
+A variadic function is a function that accepts a variable number of arguments.
+</p>
+<p>
+To define a variadic function in Pyro, prefix its final parameter with a <code>*</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">vfunc</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="o">*</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">args</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">vfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">vfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">vfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</pre>
+<p>
+The variadic arguments are available inside the function as a tuple.
+</p>
+<h3 id="unpacking-arguments">
+Unpacking Arguments
+</h3>
+<p>
+When calling a function, you can 'unpack' the final argument using a <code>*</code> if it's a tuple or vector, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="o">*</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">sum</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="nx">arg</span> <span class="k">in</span> <span class="nx">args</span> <span class="p">{</span>
+        <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">arg</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">sum</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">numbers</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="o">*</span><span class="nx">numbers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="nx">numbers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span><span class="p">;</span>
+</pre>
+        </article>
+        
+    </body>
+</html>

@@ -1,0 +1,107 @@
+---
+title: Functions
+meta_title: Pyro &mdash; Functions
+---
+
+::: insert toc
+
+
+### Function Definitions
+
+Function definitions look like this:
+
+::: code pyro
+    def add(a, b) {
+        return a + b;
+    }
+
+    assert add(1, 2) == 3;
+
+If you don't explicitly return a value from a function, its return value is `null`.
+
+
+
+### Functions as Values
+
+Functions are first-class citizens in Pyro, meaning you can assign them to variables and pass them around just like any other value.
+
+::: code pyro
+    def add(a, b) {
+        return a + b;
+    }
+
+    var foo = add;
+    assert foo(3, 4) == 7;
+
+
+
+### Anonymous Functions
+
+You can declare and use functions anonymously:
+
+::: code pyro
+    var add = def(a, b) {
+        return a + b;
+    };
+
+    assert add(5, 6) == 11;
+
+
+
+### Closures
+
+An inner function declared inside an outer function can capture the outer function's local variables, including its parameters:
+
+::: code pyro
+    def make_adder(increment) {
+        def adder(num) {
+            return num + increment;
+        }
+        return adder;
+    }
+
+    var adds_one = make_adder(1);
+    assert adds_one(0) == 1;
+    assert adds_one(1) == 2;
+
+    var adds_two = make_adder(2);
+    assert adds_two(0) == 2;
+    assert adds_two(1) == 3;
+
+
+
+### Variadic Functions
+
+A variadic function is a function that accepts a variable number of arguments.
+
+To define a variadic function in Pyro, prefix its final parameter with a `*`, e.g.
+
+::: code pyro
+    def vfunc(arg1, arg2, *args) {
+        return args;
+    }
+
+    assert vfunc(1, 2) == $tup();
+    assert vfunc(1, 2, 3) == $tup(3);
+    assert vfunc(1, 2, 3, 4) == $tup(3, 4);
+
+The variadic arguments are available inside the function as a tuple.
+
+
+
+### Unpacking Arguments
+
+When calling a function, you can 'unpack' the final argument using a `*` if it's a tuple or vector, e.g.
+
+::: code pyro
+    def add(*args) {
+        var sum = 0;
+        for arg in args {
+            sum += arg;
+        }
+        return sum;
+    }
+
+    var numbers = [1, 2, 3];
+    assert add(*numbers) == 6;
+    assert add(1, 2, *numbers) == 9;
