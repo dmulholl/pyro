@@ -90,9 +90,12 @@ A utility module for sending email. Uses the system's `sendmail` command.
 
     Returns `self` to allow chaining.
 
-[[ `:write(text: str) -> Email` ]]
+[[ `:write(arg: any) -> Email` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> Email ]]
 
-    Appends `text` to the email's `body` buffer.
+    Writes to the email's `body` buffer.
+
+    * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
 
     Returns `self` to allow chaining.
 

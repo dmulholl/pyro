@@ -30,13 +30,18 @@ class Email {
         return self;
     }
 
-    def write(text: str) -> Email {
-        self.body:write(text);
+    def write(*args) -> Email {
+        self.body:write(*args);
         return self;
     }
 
     def print() -> Email {
-        $println(self:make_message());
+        var msg = self:make_message();
+        if $is_err(msg) {
+            $println("<instance Email: {}>", msg);
+        } else {
+            $println(msg);
+        }
         return self;
     }
 
