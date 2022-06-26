@@ -104,7 +104,7 @@ Use a `Logger` instance to customize the output format and destination.
 
     * By default, a `Logger` logs to the standard error stream.
     * The default logging level is `INFO`.
-    * The default timestamp format is `\[%Y-%m-%d %H:%M:%S]`.
+    * The default timestamp format is `"\[%Y-%m-%d %H:%M:%S]"`.
 
 `Logger` instances support the following methods:
 
