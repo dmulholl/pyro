@@ -57,6 +57,14 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
         return;
     }
 
+    if (strcmp(name->bytes, "log") == 0) {
+        pyro_load_std_mod_log(vm, module);
+        if (vm->memory_allocation_failed) {
+            pyro_panic(vm, "out of memory");
+        }
+        return;
+    }
+
     if (strcmp(name->bytes, "args") == 0) {
         pyro_exec_code_as_module(vm, (char*)lib_args_pyro, lib_args_pyro_len, "$std::args", module);
         return;
