@@ -44,7 +44,7 @@ static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_set_stdout(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_FILE(args[0]) && !IS_BUF(args[0])) {
-        pyro_panic(vm, "set_stdout(): invalid argument [arg], expected a file or buffer");
+        pyro_panic(vm, "set_stdout(): invalid argument [arg], expected a file");
         return MAKE_NULL();
     }
     vm->stdout_stream = AS_OBJ(args[0]);
@@ -54,7 +54,7 @@ static Value fn_set_stdout(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_set_stderr(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_FILE(args[0]) && !IS_BUF(args[0])) {
-        pyro_panic(vm, "set_stderr(): invalid argument [arg], expected a file or buffer");
+        pyro_panic(vm, "set_stderr(): invalid argument [arg], expected a file");
         return MAKE_NULL();
     }
     vm->stderr_stream = AS_OBJ(args[0]);

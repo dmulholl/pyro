@@ -41,7 +41,7 @@ A utility module for interacting with the Pyro VM.
     Returns the VM's current memory allocation in bytes.
 
 
-[[ `set_stderr(arg: buf|file)` ]]
+[[ `set_stderr(arg: file)` ]]
 
     Sets the standard error stream to `arg`.
 
@@ -51,12 +51,12 @@ A utility module for interacting with the Pyro VM.
     Sets the standard input stream to `arg`.
 
 
-[[ `set_stdout(arg: buf|file)` ]]
+[[ `set_stdout(arg: file)` ]]
 
     Sets the standard output stream to `arg`.
 
 
-[[ `stderr() -> buf|file` ]]
+[[ `stderr() -> file` ]]
 
     Returns the object representing the standard error stream.
     By default, this is a `file` object wrapping `stderr`.
@@ -68,7 +68,7 @@ A utility module for interacting with the Pyro VM.
     By default, this is a `file` object wrapping `stdin`.
 
 
-[[ `stdout() -> buf|file` ]]
+[[ `stdout() -> file` ]]
 
     Returns the object representing the standard output stream.
     By default, this is a `file` object wrapping `stdout`.
