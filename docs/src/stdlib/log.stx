@@ -1,0 +1,176 @@
+---
+title: <code>$std::log</code>
+meta_title: Pyro Standard Library &mdash; $std::log
+---
+
+::: insert toc
+::: hr
+
+
+A simple logging library. Logging levels are, in order:
+
+* `DEBUG`
+* `INFO`
+* `WARN`
+* `ERROR`
+* `FATAL`
+
+A set of convenience functions are available for logging to the standard error stream.
+Use a `Logger` instance to customize the output format and destination.
+
+
+
+### Constants
+
+
+[[ `DEBUG: i64` ]]
+
+    Log-level `DEBUG`.
+
+[[ `INFO: i64` ]]
+
+    Log-level `INFO`.
+
+[[ `WARN: i64` ]]
+
+    Log-level `WARN`.
+
+[[ `ERROR: i64` ]]
+
+    Log-level `ERROR`.
+
+[[ `FATAL: i64` ]]
+
+    Log-level `FATAL`.
+
+
+
+### Functions
+
+
+[[ `debug(arg: any)` <br> `debug(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    A convenience function for writing a `DEBUG` log message to the standard error stream.
+
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `info(arg: any)` <br> `info(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    A convenience function for writing an `INFO` log message to the standard error stream.
+
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `warn(arg: any)` <br> `warn(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    A convenience function for writing a `WARN` log message to the standard error stream.
+
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `error(arg: any)` <br> `error(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    A convenience function for writing an `ERROR` log message to the standard error stream.
+
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `fatal(arg: any)` <br> `fatal(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    A convenience function for writing a `FATAL` log message to the standard error stream.
+
+    This will cause the program to exit with a non-zero status code.
+
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+
+### Classes
+
+[[ `Logger() -> Logger` ]]
+
+    Initializes a new `Logger` instance.
+
+    * By default, a `Logger` logs to the standard error stream.
+    * The default logging level is `INFO`.
+    * The default timestamp format is `\[%Y-%m-%d %H:%M:%S]`.
+
+`Logger` instances support the following methods:
+
+
+[[ `:debug(arg: any)` <br> `:debug(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    Writes a `DEBUG` level log message to the logger's output file.
+
+    * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `:info(arg: any)` <br> `:info(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    Writes a `INFO` level log message to the logger's output file.
+
+    * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `:warn(arg: any)` <br> `:warn(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    Writes a `WARN` level log message to the logger's output file.
+
+    * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `:error(arg: any)` <br> `:error(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    Writes a `ERROR` level log message to the logger's output file.
+
+    * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `:fatal(arg: any)` <br> `:fatal(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    Writes a `FATAL` level log message to the logger's output file.
+
+    This will cause the program to exit with a non-zero status code.
+
+    * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
+
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
+
+
+[[ `:level(log_level: i64)` ]]
+
+    Sets the logger's logging level.
+    The default logging level is `INFO`.
+
+
+[[ `:timestamp(format_string: str)` ]]
+
+    Sets the logger's timestamp format string.
+    The default format string is `"\[%Y-%m-%d %H:%M:%S]"`.
+
+    The format string can include any format specifiers supported by the C standard library's `strftime()` function.
+
+
+[[ `:file(output_file: file)` ]]
+
+    Sets the logger's output file.
+    The default output file is the standard error stream.

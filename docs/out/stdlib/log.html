@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Standard Library &mdash; $std::log</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-stdlib-log node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.7.4</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../globals.html">Globals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1><code>$std::log</code></h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#constants">Constants</a>
+</li>
+<li>
+<a href="#functions">Functions</a>
+</li>
+<li>
+<a href="#classes">Classes</a>
+</li>
+</ul>
+<hr>
+<p>
+A simple logging library. Logging levels are, in order:
+</p>
+<ul>
+<li>
+<code>DEBUG</code>
+</li>
+<li>
+<code>INFO</code>
+</li>
+<li>
+<code>WARN</code>
+</li>
+<li>
+<code>ERROR</code>
+</li>
+<li>
+<code>FATAL</code>
+</li>
+</ul>
+<p>
+A set of convenience functions are available for logging to the standard error stream.
+Use a <code>Logger</code> instance to customize the output format and destination.
+</p>
+<h3 id="constants">
+Constants
+</h3>
+<dl>
+<div>
+<dt>
+<code>DEBUG: i64</code>
+</dt>
+<dd>
+<p>
+Log-level <code>DEBUG</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>INFO: i64</code>
+</dt>
+<dd>
+<p>
+Log-level <code>INFO</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>WARN: i64</code>
+</dt>
+<dd>
+<p>
+Log-level <code>WARN</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>ERROR: i64</code>
+</dt>
+<dd>
+<p>
+Log-level <code>ERROR</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>FATAL: i64</code>
+</dt>
+<dd>
+<p>
+Log-level <code>FATAL</code>.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="functions">
+Functions
+</h3>
+<dl>
+<div>
+<dt>
+<code>debug(arg: any)</code> <br> <code>debug(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+A convenience function for writing a <code>DEBUG</code> log message to the standard error stream.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>info(arg: any)</code> <br> <code>info(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+A convenience function for writing an <code>INFO</code> log message to the standard error stream.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>warn(arg: any)</code> <br> <code>warn(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+A convenience function for writing a <code>WARN</code> log message to the standard error stream.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>error(arg: any)</code> <br> <code>error(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+A convenience function for writing an <code>ERROR</code> log message to the standard error stream.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>fatal(arg: any)</code> <br> <code>fatal(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+A convenience function for writing a <code>FATAL</code> log message to the standard error stream.
+</p>
+<p>
+This will cause the program to exit with a non-zero status code.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+</dl>
+<h3 id="classes">
+Classes
+</h3>
+<dl>
+<div>
+<dt>
+<code>Logger() -&gt; Logger</code>
+</dt>
+<dd>
+<p>
+Initializes a new <code>Logger</code> instance.
+</p>
+<ul>
+<li>
+By default, a <code>Logger</code> logs to the standard error stream.
+</li>
+<li>
+The default logging level is <code>INFO</code>.
+</li>
+<li>
+The default timestamp format is <code>[%Y-%m-%d %H:%M:%S]</code>.
+</li>
+</ul>
+</dd>
+</div>
+</dl>
+<p>
+<code>Logger</code> instances support the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:debug(arg: any)</code> <br> <code>:debug(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a <code>DEBUG</code> level log message to the logger's output file.
+</p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:info(arg: any)</code> <br> <code>:info(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a <code>INFO</code> level log message to the logger's output file.
+</p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:warn(arg: any)</code> <br> <code>:warn(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a <code>WARN</code> level log message to the logger's output file.
+</p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:error(arg: any)</code> <br> <code>:error(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a <code>ERROR</code> level log message to the logger's output file.
+</p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:fatal(arg: any)</code> <br> <code>:fatal(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Writes a <code>FATAL</code> level log message to the logger's output file.
+</p>
+<p>
+This will cause the program to exit with a non-zero status code.
+</p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:level(log_level: i64)</code>
+</dt>
+<dd>
+<p>
+Sets the logger's logging level.
+The default logging level is <code>INFO</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:timestamp(format_string: str)</code>
+</dt>
+<dd>
+<p>
+Sets the logger's timestamp format string.
+The default format string is <code>&quot;[%Y-%m-%d %H:%M:%S]&quot;</code>.
+</p>
+<p>
+The format string can include any format specifiers supported by the C standard library's <code>strftime()</code> function.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:file(output_file: file)</code>
+</dt>
+<dd>
+<p>
+Sets the logger's output file.
+The default output file is the standard error stream.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

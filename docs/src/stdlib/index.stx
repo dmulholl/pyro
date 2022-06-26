@@ -30,6 +30,10 @@ All standard library modules are submodules of the root module `$std`.
 
     Utility functions for working with JSON.
 
+[[ [log](@root/stdlib/log//) ]]
+
+    A simple logging library.
+
 [[ [math](@root/stdlib/math//) ]]
 
     Mathematical functions.

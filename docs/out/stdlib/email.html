@@ -194,12 +194,20 @@ Returns <code>self</code> to allow chaining.
 </div>
 <div>
 <dt>
-<code>:write(text: str) -&gt; Email</code>
+<code>:write(arg: any) -&gt; Email</code> <br> `:write(format_string: str, arg1: any, arg2: any, ...) -&gt; Email
 </dt>
 <dd>
 <p>
-Appends <code>text</code> to the email's <code>body</code> buffer.
+Writes to the email's <code>body</code> buffer.
 </p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
+</li>
+</ul>
 <p>
 Returns <code>self</code> to allow chaining.
 </p>
