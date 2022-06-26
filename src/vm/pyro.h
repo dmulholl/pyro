@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 7
-#define PYRO_VERSION_PATCH 4
+#define PYRO_VERSION_PATCH 5
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
