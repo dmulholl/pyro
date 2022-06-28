@@ -8,11 +8,11 @@
 #include "../../vm/io.h"
 
 
-#define PYRO_STD_LOG_LEVEL_DEBUG 2
-#define PYRO_STD_LOG_LEVEL_INFO 4
-#define PYRO_STD_LOG_LEVEL_WARN 8
-#define PYRO_STD_LOG_LEVEL_ERROR 16
-#define PYRO_STD_LOG_LEVEL_FATAL 32
+#define PYRO_STD_LOG_LEVEL_DEBUG 10
+#define PYRO_STD_LOG_LEVEL_INFO 20
+#define PYRO_STD_LOG_LEVEL_WARN 30
+#define PYRO_STD_LOG_LEVEL_ERROR 40
+#define PYRO_STD_LOG_LEVEL_FATAL 50
 
 
 static void pyro_log(
