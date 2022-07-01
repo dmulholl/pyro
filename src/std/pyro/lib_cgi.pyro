@@ -51,23 +51,30 @@ def url_decode(input: str) -> str|err {
 
 
 class Request {
+    # Public.
+    var method: str;
+    var content_type: str;
+
+    # Private.
     var body: str;
     var data: map[str, str];
 
     def $init() {
+        self.method = $env("REQUEST_METHOD");
+        self.content_type = $env("CONTENT_TYPE");
         self.data = $map();
 
-        if $env("REQUEST_METHOD") in $tup("POST", "PUT") {
-            if $env("CONTENT_TYPE") == "application/x-www-form-urlencoded" {
-                self:_unpack(self:body());
-            } else if $env("CONTENT_TYPE") == "multipart/form-data" {
+        if self.method in $tup("POST", "PUT") {
+            if self.content_type == "application/x-www-form-urlencoded" {
+                self:unpack_url_encoded_string(self:body());
+            } else if self.content_type == "multipart/form-data" {
                 # Not implemented.
             }
         }
 
         var query_string = $env("QUERY_STRING");
         if $is_str(query_string) {
-            self:_unpack(query_string);
+            self:unpack_url_encoded_string(query_string);
         }
     }
 
@@ -95,7 +102,7 @@ class Request {
         return self.data[key];
     }
 
-    def _unpack(input: str) {
+    def unpack_url_encoded_string(input: str) {
         for element in input:split("&") {
             if element:contains("=") {
                 var parts = element:split("=");
