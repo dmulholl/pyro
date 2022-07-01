@@ -2,7 +2,7 @@
 #  Variables  #
 # ----------- #
 
-CFLAGS = -Wall -Wextra --std=c11 --pedantic -Wno-unused-parameter -Wno-unused-function
+CFLAGS = -Wall -Wextra --std=c11 --pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-result
 
 RELEASE_FLAGS = -O3 -D NDEBUG -D PYRO_VERSION_BUILD='"release"'
 DEBUG_FLAGS = -D DEBUG -D PYRO_VERSION_BUILD='"debug"'
