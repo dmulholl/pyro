@@ -159,8 +159,8 @@ class Response {
         return self;
     }
 
-    def write(text: str) -> Response {
-        self.body:write(text);
+    def write(*args) -> Response {
+        self.body:write(*args);
         return self;
     }
 
