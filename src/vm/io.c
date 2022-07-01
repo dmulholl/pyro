@@ -25,7 +25,7 @@ static int64_t pyro_write_n(PyroVM* vm, Obj* destination, const char* string, si
         case OBJ_BUF: {
             ObjBuf* buf = (ObjBuf*)destination;
             bool result = ObjBuf_append_bytes(buf, count, (uint8_t*)string, vm);
-            return result ? count : -2;
+            return result ? (int64_t)count : -2;
         }
 
         default: {
