@@ -24,7 +24,7 @@ You can customize an `ArgParser` by specifying values for the fields below:
     Specifying a `version` string for a parser activates an automatic `--version` flag;
     also a `-v` shortcut unless registered by another option.
 
-[[ `.callback: fn?(str, ArgParser)` ]]
+[[ `.callback: call?(str, ArgParser)` ]]
 
     Sets the callback function for a command parser.
 
@@ -62,7 +62,7 @@ You can register flags and options on an `ArgParser` using the methods below:
 
     Options are string-valued by default but you can specify a parser callback using the option's `:parser()` method:
 
-    [[ `:parser(callback: fn(str) -> any) -> Option` ]]
+    [[ `:parser(callback: call(str) -> any) -> Option` ]]
 
         Sets the option's parser callback.
 

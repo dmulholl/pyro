@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.5</p>
+                <p class="version">Version 0.7.8</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -188,7 +188,7 @@ Returns the number of entries in the vector.
 </div>
 <div>
 <dt>
-<code>:filter(callback: fn(any) -&gt; bool) -&gt; vec</code>
+<code>:filter(callback: call(any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -254,7 +254,7 @@ Returns <code>true</code> if the vector is empty.
 </div>
 <div>
 <dt>
-<code>:is_sorted() -&gt; bool</code> <br> <code>:is_sorted(callback: fn(any, any) -&gt; bool) -&gt; bool</code>
+<code>:is_sorted() -&gt; bool</code> <br> <code>:is_sorted(callback: call(any, any) -&gt; bool) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -303,7 +303,7 @@ Panics if the vector is empty.
 </div>
 <div>
 <dt>
-<code>:map(callback: fn(any) -&gt; any) -&gt; vec</code>
+<code>:map(callback: call(any) -&gt; any) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -315,7 +315,7 @@ its return values will form the elements of the new vector.
 </div>
 <div>
 <dt>
-<code>:mergesort() -&gt; vec</code> <br> <code>:mergesort(callback: fn(any, any) -&gt; bool) -&gt; vec</code>
+<code>:mergesort() -&gt; vec</code> <br> <code>:mergesort(callback: call(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -333,7 +333,7 @@ Use <code>:sort()</code> if you don't care about the underlying sorting algorith
 </div>
 <div>
 <dt>
-<code>:quicksort() -&gt; vec</code> <br> <code>:quicksort(callback: fn(any, any) -&gt; bool) -&gt; vec</code>
+<code>:quicksort() -&gt; vec</code> <br> <code>:quicksort(callback: call(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>
@@ -464,7 +464,7 @@ Panics if either argument is out of range.
 </div>
 <div>
 <dt>
-<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: fn(any, any) -&gt; bool) -&gt; vec</code>
+<code>:sort() -&gt; vec</code> <br> <code>:sort(callback: call(any, any) -&gt; bool) -&gt; vec</code>
 </dt>
 <dd>
 <p>

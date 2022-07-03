@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.5</p>
+                <p class="version">Version 0.7.8</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -114,7 +114,7 @@ also a <code>-v</code> shortcut unless registered by another option.
 </div>
 <div>
 <dt>
-<code>.callback: fn?(str, ArgParser)</code>
+<code>.callback: call?(str, ArgParser)</code>
 </dt>
 <dd>
 <p>
@@ -195,7 +195,7 @@ Options are string-valued by default but you can specify a parser callback using
 <dl>
 <div>
 <dt>
-<code>:parser(callback: fn(str) -&gt; any) -&gt; Option</code>
+<code>:parser(callback: call(str) -&gt; any) -&gt; Option</code>
 </dt>
 <dd>
 <p>
