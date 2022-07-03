@@ -90,7 +90,7 @@ A utility module for sending email. Uses the system's `sendmail` command.
 
     Returns `self` to allow chaining.
 
-[[ `:write(arg: any) -> Email` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> Email ]]
+[[ `:write(arg: any) -> Email` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> Email` ]]
 
     Writes to the email's `body` buffer.
 
