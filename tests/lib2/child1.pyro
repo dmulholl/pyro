@@ -1,4 +1,4 @@
-var pi = 3.14;
+var PI = 3.14;
 
 var mod_name = "lib2::child1";
 

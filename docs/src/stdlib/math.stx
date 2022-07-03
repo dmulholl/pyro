@@ -10,34 +10,34 @@ This module provides a Pyro interface to the C standard library's mathematical f
 ### Constants
 
 
-[[ `e: f64` ]]
+[[ `E: f64` ]]
 
     Euler's constant.
 
 
-[[ `i64_max: i64` ]]
+[[ `I64_MAX: i64` ]]
 
     The maximum allowable value of an `i64`,
     i.e. `(2^63) - 1`.
 
 
-[[ `i64_min: i64` ]]
+[[ `I64_MIN: i64` ]]
 
     The minimum allowable value of an `i64`,
     i.e. `-(2^63)`.
 
 
-[[ `inf: f64` ]]
+[[ `INF: f64` ]]
 
     Floating-point positive infinity.
 
 
-[[ `nan: f64` ]]
+[[ `NAN: f64` ]]
 
     Floating-point NaN (Not-A-Number).
 
 
-[[ `pi: f64` ]]
+[[ `PI: f64` ]]
 
     The constant π.
 

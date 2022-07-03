@@ -243,12 +243,12 @@ static Value fn_floor(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 void pyro_load_std_mod_math(PyroVM* vm, ObjModule* module) {
-    pyro_define_member(vm, module, "pi", MAKE_F64(PYRO_PI));
-    pyro_define_member(vm, module, "e", MAKE_F64(PYRO_E));
-    pyro_define_member(vm, module, "nan", MAKE_F64(NAN));
-    pyro_define_member(vm, module, "inf", MAKE_F64(INFINITY));
-    pyro_define_member(vm, module, "i64_max", MAKE_I64(INT64_MAX));
-    pyro_define_member(vm, module, "i64_min", MAKE_I64(INT64_MIN));
+    pyro_define_member(vm, module, "PI", MAKE_F64(PYRO_PI));
+    pyro_define_member(vm, module, "E", MAKE_F64(PYRO_E));
+    pyro_define_member(vm, module, "NAN", MAKE_F64(NAN));
+    pyro_define_member(vm, module, "INF", MAKE_F64(INFINITY));
+    pyro_define_member(vm, module, "I64_MAX", MAKE_I64(INT64_MAX));
+    pyro_define_member(vm, module, "I64_MIN", MAKE_I64(INT64_MIN));
 
     pyro_define_member_fn(vm, module, "abs", fn_abs, -1);
     pyro_define_member_fn(vm, module, "acos", fn_acos, 1);
