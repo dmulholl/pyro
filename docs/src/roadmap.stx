@@ -16,8 +16,6 @@ A regex library, a built-in SQLite implementation, and a networking library are 
 
 (*) Static fields and methods on classes.
 
-(*) Support for variadic functions.
-
 (*) Support for default values for function parameters.
 
 
@@ -59,6 +57,6 @@ Or:
 ::: code pyro
     var foo = 123;
     var bar = 456.789
-    echo "${foo:|%04i} and ${bar:|%.2f}"; # "0123 and 456.79"
+    echo "${foo;%04i} and ${bar;%.2f}"; # "0123 and 456.79"
 
 Interpolation syntax will be backwards-compatible with the existing string-formatting syntax.

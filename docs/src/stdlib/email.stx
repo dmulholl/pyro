@@ -56,12 +56,12 @@ A utility module for sending email. Uses the system's `sendmail` command.
 
     The argument can be a bare email address, e.g.
 
-    ::: code
+    ::: code pyro
         mail:from("johndoe@example.com");
 
     Alternatively, the argument can combine a name and an email address, e.g.
 
-    ::: code
+    ::: code pyro
         mail:from("John Doe <johndoe@example.com>");
 
     Returns `self` to allow chaining.
