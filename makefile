@@ -13,10 +13,10 @@ DEBUG_LEVEL_3 = $(DEBUG_LEVEL_2) -D PYRO_DEBUG_TRACE_EXECUTION
 DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
-SRC_FILES = src/vm/*.c src/std/core/*.c src/std/modules/*.c src/cli/*.c
+SRC_FILES = src/cli/*.c src/vm/*.c src/std/core/*.c src/std/c_mods/*.c
 OBJ_FILES = out/lib/sqlite.o out/lib/bestline.o out/lib/args.o out/lib/mt64.o \
-			out/lib/lib_args.o out/lib/lib_email.o out/lib/lib_html.o out/lib/lib_cgi.o \
-			out/lib/lib_json.o
+			out/lib/std_mod_args.o out/lib/std_mod_email.o out/lib/std_mod_html.o out/lib/std_mod_cgi.o \
+			out/lib/std_mod_json.o
 
 INPUT = $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 
@@ -62,7 +62,7 @@ install: ## Builds and installs the release binary.
 
 clean: ## Deletes all build artifacts.
 	rm -rf ./out/*
-	rm -f ./src/std/pyro/*.c
+	rm -f ./src/std/pyro_mods/*.c
 
 help: ## Prints available commands.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
@@ -99,32 +99,32 @@ out/lib/mt64.o: src/lib/mt64/mt64.c src/lib/mt64/mt64.h
 # These are Pyro standard library modules written in Pyro. We use `xxd` to compile the source
 # code into byte-arrays in C source file format, then embed them directly into the Pyro binary.
 
-out/lib/lib_args.o: src/std/pyro/lib_args.pyro
+out/lib/std_mod_args.o: src/std/pyro_mods/std_mod_args.pyro
 	@mkdir -p out/lib
 	@printf "\e[1;32mBuilding\e[0m \$$std:args\n"
-	@cd src/std/pyro; xxd -i lib_args.pyro > lib_args.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_args.c -o out/lib/lib_args.o
+	@cd src/std/pyro_mods; xxd -i std_mod_args.pyro > std_mod_args.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_args.c -o out/lib/std_mod_args.o
 
-out/lib/lib_email.o: src/std/pyro/lib_email.pyro
+out/lib/std_mod_email.o: src/std/pyro_mods/std_mod_email.pyro
 	@mkdir -p out/lib
 	@printf "\e[1;32mBuilding\e[0m \$$std:email\n"
-	@cd src/std/pyro; xxd -i lib_email.pyro > lib_email.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_email.c -o out/lib/lib_email.o
+	@cd src/std/pyro_mods; xxd -i std_mod_email.pyro > std_mod_email.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_email.c -o out/lib/std_mod_email.o
 
-out/lib/lib_html.o: src/std/pyro/lib_html.pyro
+out/lib/std_mod_html.o: src/std/pyro_mods/std_mod_html.pyro
 	@mkdir -p out/lib
 	@printf "\e[1;32mBuilding\e[0m \$$std:html\n"
-	@cd src/std/pyro; xxd -i lib_html.pyro > lib_html.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_html.c -o out/lib/lib_html.o
+	@cd src/std/pyro_mods; xxd -i std_mod_html.pyro > std_mod_html.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_html.c -o out/lib/std_mod_html.o
 
-out/lib/lib_cgi.o: src/std/pyro/lib_cgi.pyro
+out/lib/std_mod_cgi.o: src/std/pyro_mods/std_mod_cgi.pyro
 	@mkdir -p out/lib
 	@printf "\e[1;32mBuilding\e[0m \$$std:cgi\n"
-	@cd src/std/pyro; xxd -i lib_cgi.pyro > lib_cgi.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_cgi.c -o out/lib/lib_cgi.o
+	@cd src/std/pyro_mods; xxd -i std_mod_cgi.pyro > std_mod_cgi.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_cgi.c -o out/lib/std_mod_cgi.o
 
-out/lib/lib_json.o: src/std/pyro/lib_json.pyro
+out/lib/std_mod_json.o: src/std/pyro_mods/std_mod_json.pyro
 	@mkdir -p out/lib
 	@printf "\e[1;32mBuilding\e[0m \$$std:json\n"
-	@cd src/std/pyro; xxd -i lib_json.pyro > lib_json.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro/lib_json.c -o out/lib/lib_json.o
+	@cd src/std/pyro_mods; xxd -i std_mod_json.pyro > std_mod_json.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_json.c -o out/lib/std_mod_json.o

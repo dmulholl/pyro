@@ -1,5 +1,5 @@
-#ifndef pyro_std_lib_h
-#define pyro_std_lib_h
+#ifndef pyro_std_std_mod_h
+#define pyro_std_std_mod_h
 
 #include "../vm/pyro.h"
 #include "../vm/values.h"
@@ -32,15 +32,15 @@ void pyro_load_std_mod_sqlite(PyroVM* vm, ObjModule* module);
 void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module);
 
 // Embedded source code for modules written in Pyro.
-extern unsigned char lib_args_pyro[];
-extern unsigned int lib_args_pyro_len;
-extern unsigned char lib_email_pyro[];
-extern unsigned int lib_email_pyro_len;
-extern unsigned char lib_html_pyro[];
-extern unsigned int lib_html_pyro_len;
-extern unsigned char lib_cgi_pyro[];
-extern unsigned int lib_cgi_pyro_len;
-extern unsigned char lib_json_pyro[];
-extern unsigned int lib_json_pyro_len;
+extern unsigned char std_mod_args_pyro[];
+extern unsigned int std_mod_args_pyro_len;
+extern unsigned char std_mod_email_pyro[];
+extern unsigned int std_mod_email_pyro_len;
+extern unsigned char std_mod_html_pyro[];
+extern unsigned int std_mod_html_pyro_len;
+extern unsigned char std_mod_cgi_pyro[];
+extern unsigned int std_mod_cgi_pyro_len;
+extern unsigned char std_mod_json_pyro[];
+extern unsigned int std_mod_json_pyro_len;
 
 #endif
