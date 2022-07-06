@@ -1,5 +1,5 @@
-#ifndef pyro_std_std_mod_h
-#define pyro_std_std_mod_h
+#ifndef pyro_std_lib_h
+#define pyro_std_lib_h
 
 #include "../vm/pyro.h"
 #include "../vm/values.h"
