@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.8</p>
+                <p class="version">Version 0.7.10</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -265,16 +265,15 @@ Calling this function with more than one argument is equivalent to calling <code
 </div>
 <div>
 <dt>
-<code>$exec(code: str) -&gt; map</code>
+<code>$exec(code: str) -&gt; mod</code>
 </dt>
 <dd>
 <p>
 Executes a string of Pyro source code.
-The code is executed in the context of a new temporary module.
-This temporary module is initially empty.
+The code is executed in the context of a new empty module.
 </p>
 <p>
-Returns a <code>map</code> containing the context module's global variables; i.e. global variables declared in <code>code</code>.
+Returns the new module.
 </p>
 </dd>
 </div>
@@ -550,7 +549,7 @@ Returns <code>true</code> if the argument is a method.
 </div>
 <div>
 <dt>
-<code>$is_module(arg: any) -&gt; bool</code>
+<code>$is_mod(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
