@@ -57,6 +57,6 @@ Or:
 ::: code pyro
     var foo = 123;
     var bar = 456.789
-    echo "${foo;%04i} and ${bar;%.2f}"; # "0123 and 456.79"
+    echo "${foo;04i} and ${bar;.2f}"; # "0123 and 456.79"
 
 Interpolation syntax will be backwards-compatible with the existing string-formatting syntax.
