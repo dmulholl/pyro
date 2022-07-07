@@ -43,7 +43,7 @@ Getting concurrency right is a tough challenge and not one I'm in a rush to tack
 String interpolation for double-quoted strings is planned but not yet implemented. The syntax will be:
 
 ::: code pyro
-    echo "string with ${expr:|fmt_spec} interpolations";
+    echo "string with ${expr;fmt_spec} interpolations";
 
 For example:
 
