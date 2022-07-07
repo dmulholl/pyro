@@ -124,13 +124,12 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$exec(code: str) -> map` ]]
+[[ `$exec(code: str) -> mod` ]]
 
     Executes a string of Pyro source code.
-    The code is executed in the context of a new temporary module.
-    This temporary module is initially empty.
+    The code is executed in the context of a new empty module.
 
-    Returns a `map` containing the context module's global variables; i.e. global variables declared in `code`.
+    Returns the new module.
 
 
 [[ `$exit(code: i64)` ]]
@@ -299,7 +298,7 @@ All globals live in the `$pecial` namespace so they won't interfere with your ow
 
 
 
-[[ `$is_module(arg: any) -> bool` ]]
+[[ `$is_mod(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a module.
 

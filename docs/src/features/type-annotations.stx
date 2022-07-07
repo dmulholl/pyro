@@ -40,7 +40,7 @@ Annotations for builtin types are as follows:
 * `iter[type]`
 * `map`
 * `map[key_type, value_type]`
-* `module`
+* `mod`
 * `null`
 * `queue`
 * `queue[type]`

@@ -416,7 +416,7 @@ static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_module(PyroVM* vm, size_t arg_count, Value* args) {
+static Value fn_is_mod(PyroVM* vm, size_t arg_count, Value* args) {
     return MAKE_BOOL(IS_MOD(args[0]));
 }
 
@@ -963,7 +963,7 @@ static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_exec_code_as_module(vm, code->bytes, code->length, "<exec>", module);
     pyro_pop(vm);
 
-    return MAKE_OBJ(module->globals);
+    return MAKE_OBJ(module);
 }
 
 
@@ -1052,7 +1052,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$exit", fn_exit, 1);
     pyro_define_global_fn(vm, "$panic", fn_panic, -1);
     pyro_define_global_fn(vm, "$clock", fn_clock, 0);
-    pyro_define_global_fn(vm, "$is_module", fn_is_module, 1);
+    pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
     pyro_define_global_fn(vm, "$is_inf", fn_is_inf, 1);
     pyro_define_global_fn(vm, "$is_null", fn_is_null, 1);

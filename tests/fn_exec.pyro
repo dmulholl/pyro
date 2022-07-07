@@ -1,0 +1,21 @@
+var mod = $exec("");
+assert $is_mod(mod);
+
+var mod = $exec("var foo = 1 + 2 + 3;");
+assert $is_mod(mod);
+assert mod::foo == 6;
+
+var mod = $exec("var foo, bar; foo = $str(123); bar = 'a' + 'b';");
+assert $is_mod(mod);
+assert mod::foo == "123";
+assert mod::bar == "ab";
+
+var code = `
+def add(x, y) {
+    return x + y;
+}
+`;
+
+var mod = $exec(code);
+assert $is_mod(mod);
+assert mod::add(1, 2) == 3;
