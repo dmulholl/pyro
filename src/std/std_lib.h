@@ -18,6 +18,7 @@ void pyro_load_std_core_range(PyroVM* vm);
 void pyro_load_std_core_iter(PyroVM* vm);
 void pyro_load_std_core_queue(PyroVM* vm);
 void pyro_load_std_core_err(PyroVM* vm);
+void pyro_load_std_core_mod(PyroVM* vm);
 
 // The format function is defined in std_core.c but used by a number of builtin types.
 Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args);

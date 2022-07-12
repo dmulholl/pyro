@@ -1130,13 +1130,17 @@ ObjModule* ObjModule_new(PyroVM* vm) {
         return NULL;
     }
 
+    module->obj.class = vm->class_module;
     module->globals = NULL;
     module->submodules = NULL;
 
     module->globals = ObjMap_new(vm);
-    module->submodules = ObjMap_new(vm);
+    if (!module->globals) {
+        return NULL;
+    }
 
-    if (!module->globals || !module->submodules) {
+    module->submodules = ObjMap_new(vm);
+    if (!module->submodules) {
         return NULL;
     }
 

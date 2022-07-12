@@ -82,3 +82,12 @@ lib2::test_importing_child();
 import lib2::child1;
 child1::test_importing_parent();
 child1::test_importing_sibling();
+
+# Test methods defined on the module object itself.
+import $std::math;
+assert $is_mod(math);
+assert "abs" in math;
+assert math:contains("abs");
+assert $is_callable(math:get("abs"));
+assert $is_map(math:globals());
+assert "abs" in math:globals();

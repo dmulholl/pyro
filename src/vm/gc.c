@@ -68,6 +68,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->class_set);
     mark_object(vm, (Obj*)vm->class_queue);
     mark_object(vm, (Obj*)vm->class_err);
+    mark_object(vm, (Obj*)vm->class_module);
 
     // The VM's pool of canned objects.
     mark_object(vm, (Obj*)vm->empty_error);
