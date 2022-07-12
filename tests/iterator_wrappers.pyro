@@ -120,3 +120,11 @@ def $test_next() {
     assert iter:next() == 2;
     assert $is_err(iter:next());
 }
+
+
+def $test_join() {
+    assert $range(3):join() == "012";
+    assert $range(3):join(",") == "0,1,2";
+    assert $is_err(try $range(3):join(123));
+    assert $is_err(try $range(3):join(",", 123));
+}

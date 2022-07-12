@@ -144,15 +144,23 @@ static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
 static Value iter_join(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = AS_ITER(args[-1]);
 
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "join(): invalid argument [sep], expected a string");
-        return MAKE_NULL();
+    if (arg_count == 0) {
+        ObjStr* result = ObjIter_join(iter, "", 0, vm);
+        return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
     }
 
-    ObjStr* sep = AS_STR(args[0]);
-    ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
+    if (arg_count == 1) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, "join(): invalid argument [sep], expected a string");
+            return MAKE_NULL();
+        }
+        ObjStr* sep = AS_STR(args[0]);
+        ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
+        return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
+    }
 
-    return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
+    pyro_panic(vm, "join(): expected 0 or 1 arguments, found %zu", arg_count);
+    return MAKE_NULL();
 }
 
 
@@ -408,7 +416,7 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->class_iter, "enumerate", iter_enumerate, -1);
     pyro_define_method(vm, vm->class_iter, "skip_first", iter_skip_first, 1);
     pyro_define_method(vm, vm->class_iter, "skip_last", iter_skip_last, 1);
-    pyro_define_method(vm, vm->class_iter, "join", iter_join, 1);
+    pyro_define_method(vm, vm->class_iter, "join", iter_join, -1);
     pyro_define_method(vm, vm->class_iter, "count", iter_count, 0);
     pyro_define_method(vm, vm->class_iter, "next", iter_next, 0);
 }
