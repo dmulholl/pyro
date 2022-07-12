@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Standard Library &mdash; $std::mt64</title>
+        <title>Pyro &mdash; Modules</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-stdlib-mt64 node-stdlib node">
+    <body class="node-builtins-modules node-builtins node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -47,90 +47,58 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1><code>$std::mt64</code></h1>
+                <h1>Modules</h1>
                 
                 <hr>
             </header>
             <p>
-This module uses the 64-bit <a href="https://en.wikipedia.org/wiki/Mersenne_Twister">Mersenne Twister</a> algorithm to generate pseudo-random numbers.
+A module object is created when you import a Pyro source file using an <code>import</code> statement, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">math</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$is_mod</span><span class="p">(</span><span class="nx">math</span><span class="p">);</span>
+</pre>
 <p>
-The output of an <code>MT64</code> generator is completely deterministic and depends only on the initial seed value &mdash; i.e. the sequence of numbers generated will always be identical for a given seed.
+A module object can also be created by executing a string of source code using the <code>$exec()</code> function, e.g.
 </p>
-<h3 id="classes">
-Classes
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">&quot;var foo = 1 + 2;&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$is_mod</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
+</pre>
+<h3 id="methods">
+Methods
 </h3>
 <dl>
 <div>
 <dt>
-<code>MT64()</code> -&gt; <code>MT64</code>
+<code>:contains(member: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns a new 64-bit Mersenne Twister object for generating pseudo-random numbers.
-The generator is automatically initialized with a random seed.
+Returns <code>true</code> if the module contains a global variable named <code>member</code>, otherwise <code>false</code>.
 </p>
-</dd>
-</div>
-</dl>
 <p>
-An <code>MT64</code> object supports the following methods:
-</p>
-<dl>
-<div>
-<dt>
-<code>:rand_float() -&gt; f64</code>
-</dt>
-<dd>
-<p>
-Returns a uniformly-distributed random float from the half-open interval <code>[0, 1)</code> &mdash; i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
+(You can also test for containment using the <code>in</code> keyword.)
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:rand_int(n: i64) -&gt; i64</code>
+<code>:get(member: str) -&gt; any</code>
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random integer from the half-open interval <code>[0, n)</code> &mdash; i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
+Returns the value of the global variable <code>member</code>, or an <code>err</code> if <code>member</code> is not defined.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:rand_int_in_range(lower: i64, upper: i64) -&gt; i64</code>
+<code>:globals() -&gt; map[str, any]</code>
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random integer from the half-open interval <code>[lower, upper)</code> &mdash; i.e. the interval from <code>lower</code> up to but not including <code>upper</code>.
-</p>
-<p>
-The arguments can be positive or negative or mixed as long as <code>lower</code> is less than or equal to <code>upper</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:seed_with_array(arg: buf|str)</code>
-</dt>
-<dd>
-<p>
-Seeds (or re-seeds) the generator using the content of a string or buffer, treated as an array of bytes.
-Uses up to the first 2,496 bytes of content.
-</p>
-<p>
-If <code>arg</code> contains less than 8 bytes of content, this falls back on calling <code>:seed_with_hash()</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:seed_with_hash(arg: any)</code>
-</dt>
-<dd>
-<p>
-Seeds (or re-seeds) the generator using the argument's 64-bit hash value.
+Returns a map containing copies of the module's global variables, indexed by name.
 </p>
 </dd>
 </div>

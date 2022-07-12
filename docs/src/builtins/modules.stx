@@ -1,0 +1,34 @@
+---
+title: Modules
+meta_title: Pyro &mdash; Modules
+---
+
+A module object is created when you import a Pyro source file using an `import` statement, e.g.
+
+::: code pyro
+    import $std::math;
+    assert $is_mod(math);
+
+A module object can also be created by executing a string of source code using the `$exec()` function, e.g.
+
+::: code pyro
+    var mod = $exec("var foo = 1 + 2;");
+    assert $is_mod(mod);
+
+
+
+### Methods
+
+[[ `:contains(member: str) -> bool` ]]
+
+    Returns `true` if the module contains a global variable named `member`, otherwise `false`.
+
+    (You can also test for containment using the `in` keyword.)
+
+[[ `:get(member: str) -> any` ]]
+
+    Returns the value of the global variable `member`, or an `err` if `member` is not defined.
+
+[[ `:globals() -> map[str, any]` ]]
+
+    Returns a map containing copies of the module's global variables, indexed by name.

@@ -11,6 +11,7 @@ Builtin types are part of the language itself --- you don't need to import any l
 * [Hash Maps](@root/builtins/maps//)
 * [Files](@root/builtins/files//)
 * [Iterator Wrappers](@root/builtins/iterators//)
+* [Modules](@root/builtins/modules//)
 * [Queues](@root/builtins/queues//)
 * [Sets](@root/builtins/sets//)
 * [Stacks](@root/builtins/stacks//)
