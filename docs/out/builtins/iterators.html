@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.10</p>
+                <p class="version">Version 0.7.11</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -114,22 +114,32 @@ Output values are two-item tuples containing an integer index and the original i
 </div>
 <div>
 <dt>
-<code>:filter(callback: func(any) -&gt; bool) -&gt; iter</code>
+<code>:filter(callback: call(any) -&gt; bool) -&gt; iter</code>
 </dt>
 <dd>
 <p>
 Returns a new <code>iter</code> instance that filters the output of the source iterator using the <code>callback</code> function.
-<code>callback</code> should be a callable that takes a single argument and returns a <code>bool</code>; input values will be passed through the filter if <code>callback</code> returns <code>true</code>.
 </p>
+<ul>
+<li>
+<code>callback</code> should be a callable that takes a single argument and returns a <code>bool</code>.
+</li>
+<li>
+Input values will be passed through the filter if <code>callback</code> returns <code>true</code>.
+</li>
+</ul>
 </dd>
 </div>
 <div>
 <dt>
-<code>:join(sep: str) -&gt; str</code>
+<code>:join() -&gt; str</code> <br> <code>:join(sep: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
 Joins the items returned by the iterator into a string, with each pair of items separated by <code>sep</code>.
+(The separator defaults to an empty string if not specified.)
+</p>
+<p>
 Items are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each item.
 </p>
 <p>
@@ -139,13 +149,20 @@ Returns an empty string if the iterator is empty or exhausted.
 </div>
 <div>
 <dt>
-<code>:map(callback: func(any) -&gt; any) -&gt; iter</code>
+<code>:map(callback: call(any) -&gt; any) -&gt; iter</code>
 </dt>
 <dd>
 <p>
 Returns a new <code>iter</code> instance mapping the function <code>callback</code> to the output of the source iterator.
-<code>callback</code> should be a callable that takes a single argument; its return values will form the output of the new iterator.
 </p>
+<ul>
+<li>
+<code>callback</code> should be a callable that takes a single argument.
+</li>
+<li>
+The return values will form the output of the new iterator.
+</li>
+</ul>
 </dd>
 </div>
 <div>

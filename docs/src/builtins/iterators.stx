@@ -40,22 +40,28 @@ Iterator wrappers have the following methods:
     Output values are two-item tuples containing an integer index and the original input value.
     `start_index` defaults to zero if not specified.
 
-[[ `:filter(callback: func(any) -> bool) -> iter` ]]
+[[ `:filter(callback: call(any) -> bool) -> iter` ]]
 
     Returns a new `iter` instance that filters the output of the source iterator using the `callback` function.
-    `callback` should be a callable that takes a single argument and returns a `bool`; input values will be passed through the filter if `callback` returns `true`.
 
-[[ `:join(sep: str) -> str` ]]
+    * `callback` should be a callable that takes a single argument and returns a `bool`.
+    * Input values will be passed through the filter if `callback` returns `true`.
+
+[[ `:join() -> str` <br> `:join(sep: str) -> str` ]]
 
     Joins the items returned by the iterator into a string, with each pair of items separated by `sep`.
+    (The separator defaults to an empty string if not specified.)
+
     Items are automatically stringified --- this is equivalent to calling `$str()` on each item.
 
     Returns an empty string if the iterator is empty or exhausted.
 
-[[ `:map(callback: func(any) -> any) -> iter` ]]
+[[ `:map(callback: call(any) -> any) -> iter` ]]
 
     Returns a new `iter` instance mapping the function `callback` to the output of the source iterator.
-    `callback` should be a callable that takes a single argument; its return values will form the output of the new iterator.
+
+    * `callback` should be a callable that takes a single argument.
+    * The return values will form the output of the new iterator.
 
 [[ `:next() -> any` ]]
 

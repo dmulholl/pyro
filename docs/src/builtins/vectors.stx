@@ -116,7 +116,7 @@ You can check if a vector contains an item using the `in` operator:
     Returns `true` if the vector is sorted in ascending order.
 
     If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`.
+    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
 
 [[ `:iter() -> iter` ]]
 
