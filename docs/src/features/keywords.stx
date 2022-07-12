@@ -43,6 +43,7 @@ The following keywords are reserved for future use:
 * `pub`
 * `reimport`
 * `run`
+* `select`
 * `static`
 * `switch`
 * `with`
