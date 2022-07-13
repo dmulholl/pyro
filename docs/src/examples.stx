@@ -46,7 +46,7 @@ The `$()` function runs a shell command and returns its output as a string, e.g.
 The `$shell()` function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string:
 
 ::: code pyro
-    var (exit_code, output, error_output) = $shell("pwd");
+    var (exit_code, std_output, err_output) = $shell("pwd");
 
 You can provide an input string to `$shell()` which will be written to the command's `stdin`:
 

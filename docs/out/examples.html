@@ -128,7 +128,7 @@ The <code>$()</code> function runs a shell command and returns its output as a s
 The <code>$shell()</code> function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">exit_code</span><span class="p">,</span> <span class="nx">output</span><span class="p">,</span> <span class="nx">error_output</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="p">(</span><span class="nx">exit_code</span><span class="p">,</span> <span class="nx">std_output</span><span class="p">,</span> <span class="nx">err_output</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
 </pre>
 <p>
 You can provide an input string to <code>$shell()</code> which will be written to the command's <code>stdin</code>:
