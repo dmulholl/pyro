@@ -65,6 +65,12 @@ A module object can also be created by executing a string of source code using t
 <span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">&quot;var foo = 1 + 2;&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">$is_mod</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">contains</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">globals</span> <span class="p">=</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">globals</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">globals</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <h3 id="methods">
 Methods
@@ -72,11 +78,11 @@ Methods
 <dl>
 <div>
 <dt>
-<code>:contains(member: str) -&gt; bool</code>
+<code>:contains(name: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the module contains a global variable named <code>member</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the module contains a global variable named <code>name</code>, otherwise <code>false</code>.
 </p>
 <p>
 (You can also test for containment using the <code>in</code> keyword.)
@@ -85,11 +91,11 @@ Returns <code>true</code> if the module contains a global variable named <code>m
 </div>
 <div>
 <dt>
-<code>:get(member: str) -&gt; any</code>
+<code>:get(name: str) -&gt; any</code>
 </dt>
 <dd>
 <p>
-Returns the value of the global variable <code>member</code>, or an <code>err</code> if <code>member</code> is not defined.
+Returns the value of the global variable <code>name</code>, or an <code>err</code> if <code>name</code> is not defined.
 </p>
 </dd>
 </div>
