@@ -14,6 +14,7 @@ A module object can also be created by executing a string of source code using t
 ::: code pyro
     var mod = $exec("var foo = 1 + 2;");
     assert $is_mod(mod);
+    assert mod::foo == 3;
 
 
 

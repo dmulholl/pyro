@@ -64,6 +64,7 @@ A module object can also be created by executing a string of source code using t
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">&quot;var foo = 1 + 2;&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">$is_mod</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <h3 id="methods">
 Methods
