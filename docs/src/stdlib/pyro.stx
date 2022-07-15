@@ -17,9 +17,9 @@ A utility module for interacting with the Pyro VM.
 
     The language version as a tuple containing `(MAJOR, MINIOR, PATCH, LABEL, BUILD)` elements.
 
-    * `MAJOR`, `MINOR`, and `PATCH` are [semver][1] integers.
-    * `LABEL` is a string containing a pre-release label, e.g. `alpha1`, `beta2`, `rc3`. May be an empty string.
-    * `BUILD` is a string containing build information, e.g. `release`, `debug`. May be an empty string.
+    * `MAJOR`, `MINOR`, and `PATCH` are [semantic versioning][1] integers.
+    * `LABEL` is a string containing a pre-release label, e.g. `"alpha1"`, `"beta2"`, `"rc3"`. May be an empty string.
+    * `BUILD` is a string containing build information, e.g. `"release"`, `"debug"`. May be an empty string.
 
 
 [[ `version_string: str` ]]
