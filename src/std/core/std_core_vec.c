@@ -548,23 +548,33 @@ static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "join(): invalid argument [sep], expected a string");
-        return MAKE_NULL();
-    }
-    ObjStr* sep = AS_STR(args[0]);
-
     ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
     if (!iter) {
         pyro_panic(vm, "join(): out of memory");
         return MAKE_NULL();
     }
 
-    pyro_push(vm, MAKE_OBJ(iter));
-    ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
-    pyro_pop(vm);
+    if (arg_count == 0) {
+        pyro_push(vm, MAKE_OBJ(iter));
+        ObjStr* result = ObjIter_join(iter, "", 0, vm);
+        pyro_pop(vm);
+        return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
+    }
 
-    return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
+    if (arg_count == 1) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, "join(): invalid argument [sep], expected a string");
+            return MAKE_NULL();
+        }
+        ObjStr* sep = AS_STR(args[0]);
+        pyro_push(vm, MAKE_OBJ(iter));
+        ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
+        pyro_pop(vm);
+        return vm->halt_flag ? MAKE_NULL() : MAKE_OBJ(result);
+    }
+
+    pyro_panic(vm, "join(): expected 0 or 1 arguments, found %zu", arg_count);
+    return MAKE_NULL();
 }
 
 
@@ -600,7 +610,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->class_vec, "is_empty", vec_is_empty, 0);
     pyro_define_method(vm, vm->class_vec, "slice", vec_slice, -1);
     pyro_define_method(vm, vm->class_vec, "is_sorted", vec_is_sorted, -1);
-    pyro_define_method(vm, vm->class_vec, "join", vec_join, 1);
+    pyro_define_method(vm, vm->class_vec, "join", vec_join, -1);
     pyro_define_method(vm, vm->class_vec, "$iter", vec_iter, 0);
     pyro_define_method(vm, vm->class_vec, "iter", vec_iter, 0);
     pyro_define_method(vm, vm->class_vec, "remove_random", vec_remove_random, 0);

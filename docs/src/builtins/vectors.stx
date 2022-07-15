@@ -122,9 +122,11 @@ You can check if a vector contains an item using the `in` operator:
 
     Returns an `iter` object wrapping the vector.
 
-[[ `:join(sep: str) -> str` ]]
+[[ `:join() -> str` <br> `:join(sep: str) -> str` ]]
 
     Joins the vector's elements into a string, with each pair of elements separated by `sep`.
+    (The separator defaults to an empty string if not specified.)
+
     Elements are automatically stringified --- this is equivalent to calling `$str()` on each element.
 
     Returns an empty string if the vector is empty.

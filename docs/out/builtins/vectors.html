@@ -278,11 +278,14 @@ Returns an <code>iter</code> object wrapping the vector.
 </div>
 <div>
 <dt>
-<code>:join(sep: str) -&gt; str</code>
+<code>:join() -&gt; str</code> <br> <code>:join(sep: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
 Joins the vector's elements into a string, with each pair of elements separated by <code>sep</code>.
+(The separator defaults to an empty string if not specified.)
+</p>
+<p>
 Elements are automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on each element.
 </p>
 <p>

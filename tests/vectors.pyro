@@ -370,3 +370,12 @@ def $test_iter_method() {
     }
     assert sum2 == 6;
 }
+
+
+def $test_join() {
+    assert []:join() == "";
+    assert []:join(",") == "";
+    assert [1, 2, 3]:join() == "123";
+    assert [1, 2, 3]:join("") == "123";
+    assert [1, 2, 3]:join(",") == "1,2,3";
+}
