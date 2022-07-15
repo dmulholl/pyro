@@ -3,7 +3,7 @@ title: Stacks
 meta_title: Pyro &mdash; Stacks
 ---
 
-A stack is a LIFO (last-in-first-out) container type that supports only two operations --- *pushing* and *popping*.
+A stack object, `stack`, is a LIFO (last-in-first-out) container type that supports only two operations --- *pushing* and *popping*.
 
 [[ `$stack() -> stack` ]]
 

@@ -3,7 +3,7 @@ title: Queues
 meta_title: Pyro &mdash; Queues
 ---
 
-A queue is a FIFO (first-in-first-out) container type that supports only two operations --- *enqueueing* and *dequeueing*.
+A queue object, `queue`, is a FIFO (first-in-first-out) container type that supports only two operations --- *enqueueing* and *dequeueing*.
 
 [[ `$queue() -> queue` ]]
 

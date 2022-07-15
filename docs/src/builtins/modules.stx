@@ -3,7 +3,7 @@ title: Modules
 meta_title: Pyro &mdash; Modules
 ---
 
-A module object is created when you import a Pyro source file using an `import` statement, e.g.
+A module object, `mod`, is created when you import a Pyro source file using an `import` statement, e.g.
 
 ::: code pyro
     import $std::math;
