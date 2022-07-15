@@ -134,8 +134,8 @@ Functions
 Returns the absolute value of <code>x</code>. The output type is the same as the input type.
 </p>
 <p>
-Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an <code>i64</code>.
-If you provide a <code>i64_min</code> argument, its value will be returned as a fallback in this case.
+Note that the absolute value of <code>I64_MIN</code> (i.e. the most negative integer) is undefined as the result cannot be represented as an <code>i64</code>.
+If you provide an optional <code>i64_min</code> argument, its value will be returned as a fallback in this case.
 Otherwise, the return value will be whatever integer is returned by the underlying C implementation &mdash; typically a negative value.
 </p>
 </dd>

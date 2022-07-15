@@ -58,7 +58,7 @@ A utility module for interacting with the Pyro VM.
 
 [[ `stderr() -> file` ]]
 
-    Returns the object representing the standard error stream.
+    Returns the `file` object representing the standard error stream.
     By default, this is a `file` object wrapping `stderr`.
 
 
@@ -70,5 +70,5 @@ A utility module for interacting with the Pyro VM.
 
 [[ `stdout() -> file` ]]
 
-    Returns the object representing the standard output stream.
+    Returns the `file` object representing the standard output stream.
     By default, this is a `file` object wrapping `stdout`.

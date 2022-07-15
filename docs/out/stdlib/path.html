@@ -175,6 +175,9 @@ Returns the canonicalized absolute path, resolving all symbolic links.
 All the components of <code>path</code> must exist.
 Equivalent to POSIX <code>realpath()</code>.
 </p>
+<p>
+Panics if <code>path</code> cannot be resolved.
+</p>
 </dd>
 </div>
 <div>
@@ -184,9 +187,15 @@ Equivalent to POSIX <code>realpath()</code>.
 <dd>
 <p>
 Deletes the symlink, file, or directory at <code>path</code>.
-If <code>path</code> is a symlink, the link itself will be deleted, not its target.
-If <code>path</code> is a directory, the directory and all its content will be deleted.
 </p>
+<ul>
+<li>
+If <code>path</code> is a symlink, the link itself will be deleted, not its target.
+</li>
+<li>
+If <code>path</code> is a directory, the directory and all its content will be deleted.
+</li>
+</ul>
 </dd>
 </div>
 </dl>

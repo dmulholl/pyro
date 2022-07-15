@@ -50,8 +50,8 @@ This module provides a Pyro interface to the C standard library's mathematical f
 
     Returns the absolute value of `x`. The output type is the same as the input type.
 
-    Note that the absolute value of the most negative integer is undefined as the result cannot be represented as an `i64`.
-    If you provide a `i64_min` argument, its value will be returned as a fallback in this case.
+    Note that the absolute value of `I64_MIN` (i.e. the most negative integer) is undefined as the result cannot be represented as an `i64`.
+    If you provide an optional `i64_min` argument, its value will be returned as a fallback in this case.
     Otherwise, the return value will be whatever integer is returned by the underlying C implementation --- typically a negative value.
 
 
