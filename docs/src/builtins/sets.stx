@@ -56,7 +56,7 @@ You can check if a set contains an item using the `in` operator:
 
 [[ `:contains(item: any) -> bool` ]]
 
-    Returns `true` if the set contains a member equal to `item`.
+    Returns `true` if the set contains a member equal to `item`, otherwise `false`.
 
 [[ `:count() -> i64` ]]
 
@@ -69,3 +69,4 @@ You can check if a set contains an item using the `in` operator:
 [[ `:remove(item: any)` ]]
 
     Removes `item` from the set.
+    This is a null operation if the set does not contain a member equal to `item`.
