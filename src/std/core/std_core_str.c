@@ -100,6 +100,9 @@ static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value str_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(false);
+    }
 
     for (size_t i = 0; i < str->length; i++) {
         switch (str->bytes[i]) {
@@ -119,8 +122,20 @@ static Value str_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(true);
+    }
+    return str_is_ascii_ws(vm, arg_count, args);
+}
+
+
 static Value str_is_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(false);
+    }
 
     size_t byte_index = 0;
     Utf8CodePoint cp;
@@ -140,6 +155,15 @@ static Value str_is_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     return MAKE_BOOL(true);
+}
+
+
+static Value str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(true);
+    }
+    return str_is_utf8_ws(vm, arg_count, args);
 }
 
 
@@ -1301,6 +1325,57 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value str_is_ascii_decimal(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(false);
+    }
+
+    for (size_t i = 0; i < str->length; i++) {
+        char c = str->bytes[i];
+        if (c < '0' || c > '9') {
+            return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
+
+
+static Value str_is_ascii_octal(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(false);
+    }
+
+    for (size_t i = 0; i < str->length; i++) {
+        char c = str->bytes[i];
+        if (c < '0' || c > '7') {
+            return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
+
+
+static Value str_is_ascii_hex(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(false);
+    }
+
+    for (size_t i = 0; i < str->length; i++) {
+        char c = str->bytes[i];
+        if (!isxdigit(c)) {
+            return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
+
+
 void pyro_load_std_core_str(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$str", fn_str, 1);
@@ -1347,6 +1422,12 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_method(vm, vm->class_str, "join", str_join, 1);
     pyro_define_method(vm, vm->class_str, "lines", str_lines, 0);
     pyro_define_method(vm, vm->class_str, "is_utf8_ws", str_is_utf8_ws, 0);
+    pyro_define_method(vm, vm->class_str, "is_empty_or_utf8_ws", str_is_empty_or_utf8_ws, 0);
     pyro_define_method(vm, vm->class_str, "is_ascii_ws", str_is_ascii_ws, 0);
+    pyro_define_method(vm, vm->class_str, "is_empty_or_ascii_ws", str_is_empty_or_ascii_ws, 0);
     pyro_define_method(vm, vm->class_str, "is_ws", str_is_ascii_ws, 0);
+    pyro_define_method(vm, vm->class_str, "is_empty_or_ws", str_is_empty_or_ascii_ws, 0);
+    pyro_define_method(vm, vm->class_str, "is_ascii_decimal", str_is_ascii_decimal, 0);
+    pyro_define_method(vm, vm->class_str, "is_ascii_octal", str_is_ascii_octal, 0);
+    pyro_define_method(vm, vm->class_str, "is_ascii_hex", str_is_ascii_hex, 0);
 }

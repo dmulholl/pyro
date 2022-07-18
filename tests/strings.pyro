@@ -616,36 +616,117 @@ def $test_indexing_into_string() {
 
 
 def $test_is_ascii_ws() {
-    assert "":is_ascii_ws();
     assert " ":is_ascii_ws();
     assert " \t\r\n\v\f ":is_ascii_ws();
 
+    assert !"":is_ascii_ws();
     assert !"a":is_ascii_ws();
     assert !"abc":is_ascii_ws();
     assert !"abc def":is_ascii_ws();
 }
 
 
+def $test_is_empty_or_ascii_ws() {
+    assert "":is_empty_or_ascii_ws();
+    assert " ":is_empty_or_ascii_ws();
+    assert " \t\r\n\v\f ":is_empty_or_ascii_ws();
+
+    assert !"a":is_empty_or_ascii_ws();
+    assert !"abc":is_empty_or_ascii_ws();
+    assert !"abc def":is_empty_or_ascii_ws();
+}
+
+
 def $test_is_ws() {
-    assert "":is_ws();
     assert " ":is_ws();
     assert " \t\r\n\v\f ":is_ws();
 
+    assert !"":is_ws();
     assert !"a":is_ws();
     assert !"abc":is_ws();
     assert !"abc def":is_ws();
 }
 
 
+def $test_is_empty_or_ws() {
+    assert "":is_empty_or_ws();
+    assert " ":is_empty_or_ws();
+    assert " \t\r\n\v\f ":is_empty_or_ws();
+
+    assert !"a":is_empty_or_ws();
+    assert !"abc":is_empty_or_ws();
+    assert !"abc def":is_empty_or_ws();
+}
+
+
 def $test_is_utf8_ws() {
-    assert "":is_utf8_ws();
     assert " ":is_utf8_ws();
     assert " \t\r\n\v\f ":is_utf8_ws();
 
+    assert !"":is_utf8_ws();
     assert !"a":is_utf8_ws();
     assert !"abc":is_utf8_ws();
     assert !"abc def":is_utf8_ws();
 
     assert " \u0020\u0085\u00A0\u1680 ":is_utf8_ws();
     assert !"🔥":is_utf8_ws();
+}
+
+
+def $test_is_empty_or_utf8_ws() {
+    assert "":is_empty_or_utf8_ws();
+    assert " ":is_empty_or_utf8_ws();
+    assert " \t\r\n\v\f ":is_empty_or_utf8_ws();
+
+    assert !"a":is_empty_or_utf8_ws();
+    assert !"abc":is_empty_or_utf8_ws();
+    assert !"abc def":is_empty_or_utf8_ws();
+
+    assert " \u0020\u0085\u00A0\u1680 ":is_empty_or_utf8_ws();
+    assert !"🔥":is_empty_or_utf8_ws();
+}
+
+
+def $test_is_ascii_octal() {
+    assert "0":is_ascii_octal();
+    assert "000":is_ascii_octal();
+    assert "123":is_ascii_octal();
+    assert "777":is_ascii_octal();
+    assert "01234567":is_ascii_octal();
+
+    assert !"":is_ascii_octal();
+    assert !" ":is_ascii_octal();
+    assert !"8":is_ascii_octal();
+    assert !"789":is_ascii_octal();
+    assert !"abc":is_ascii_octal();
+}
+
+
+def $test_is_ascii_decimal() {
+    assert "0":is_ascii_decimal();
+    assert "000":is_ascii_decimal();
+    assert "123":is_ascii_decimal();
+    assert "456":is_ascii_decimal();
+    assert "999":is_ascii_decimal();
+    assert "123456789":is_ascii_decimal();
+
+    assert !"":is_ascii_decimal();
+    assert !" ":is_ascii_decimal();
+    assert !"abc":is_ascii_decimal();
+    assert !"123abc":is_ascii_decimal();
+}
+
+
+def $test_is_ascii_hex() {
+    assert "0":is_ascii_hex();
+    assert "000":is_ascii_hex();
+    assert "123":is_ascii_hex();
+    assert "456":is_ascii_hex();
+    assert "999":is_ascii_hex();
+    assert "123456789abcdefABCDEF":is_ascii_hex();
+
+    assert !"":is_ascii_hex();
+    assert !" ":is_ascii_hex();
+    assert !"ghi":is_ascii_hex();
+    assert !"123ghi":is_ascii_hex();
 }
