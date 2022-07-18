@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.13</p>
+                <p class="version">Version 0.7.14</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -472,11 +472,45 @@ Returns <code>true</code> if the string is empty or contains only byte values in
 </div>
 <div>
 <dt>
+<code>:is_ascii_decimal() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string contains only ASCII decimal digits, <code>&quot;0&quot;</code> to <code>&quot;9&quot;</code>.
+(Returns <code>false</code> if the string is empty.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii_hex() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string contains only ASCII hexadecimal digits, <code>&quot;0&quot;</code> to <code>&quot;9&quot;</code>, <code>&quot;a&quot;</code> to <code>&quot;f&quot;</code>, or <code>&quot;A&quot;</code> to <code>&quot;F&quot;</code>.
+(Returns <code>false</code> if the string is empty.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii_octal() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string contains only ASCII octal digits, <code>&quot;0&quot;</code> to <code>&quot;7&quot;</code>.
+(Returns <code>false</code> if the string is empty.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:is_ascii_ws() -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string is empty or contains only ASCII whitespace characters.
+Returns <code>true</code> if the string contains only ASCII whitespace characters.
+(Returns <code>false</code> if the string is empty.)
 </p>
 </dd>
 </div>
@@ -487,6 +521,39 @@ Returns <code>true</code> if the string is empty or contains only ASCII whitespa
 <dd>
 <p>
 Returns <code>true</code> if the string is empty, i.e. if its length is zero.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty_or_ascii_ws() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty or contains only ASCII whitespace characters.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty_or_utf8_ws() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is emtpy or contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_empty_or_ws() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string is empty or contains only ASCII whitespace characters.
+</p>
+<p>
+This method is an alias for <code>:is_empty_or_ascii_ws()</code>.
 </p>
 </dd>
 </div>
@@ -507,7 +574,8 @@ Returns <code>true</code> if the string is empty or contains only valid UTF-8.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string is empty or contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+Returns <code>true</code> if the string contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+(Returns <code>false</code> if the string is empty.)
 </p>
 </dd>
 </div>
@@ -517,7 +585,8 @@ Returns <code>true</code> if the string is empty or contains only UTF-8 encoded 
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string is empty or contains only ASCII whitespace characters.
+Returns <code>true</code> if the string contains only ASCII whitespace characters.
+(Returns <code>false</code> if the string is empty.)
 </p>
 <p>
 This method is an alias for <code>:is_ascii_ws()</code>.

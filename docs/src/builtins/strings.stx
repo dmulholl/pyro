@@ -202,13 +202,43 @@ You can also use the `in` operator to check if a string contains a `char`:
     Returns `true` if the string is empty or contains only byte values in the range `[0, 127]`.
     (This is a potentially expensive method as it needs to traverse the string.)
 
+[[ `:is_ascii_decimal() -> bool` ]]
+
+    Returns `true` if the string contains only ASCII decimal digits, `"0"` to `"9"`.
+    (Returns `false` if the string is empty.)
+
+[[ `:is_ascii_hex() -> bool` ]]
+
+    Returns `true` if the string contains only ASCII hexadecimal digits, `"0"` to `"9"`, `"a"` to `"f"`, or `"A"` to `"F"`.
+    (Returns `false` if the string is empty.)
+
+[[ `:is_ascii_octal() -> bool` ]]
+
+    Returns `true` if the string contains only ASCII octal digits, `"0"` to `"7"`.
+    (Returns `false` if the string is empty.)
+
 [[ `:is_ascii_ws() -> bool` ]]
 
-    Returns `true` if the string is empty or contains only ASCII whitespace characters.
+    Returns `true` if the string contains only ASCII whitespace characters.
+    (Returns `false` if the string is empty.)
 
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the string is empty, i.e. if its length is zero.
+
+[[ `:is_empty_or_ascii_ws() -> bool` ]]
+
+    Returns `true` if the string is empty or contains only ASCII whitespace characters.
+
+[[ `:is_empty_or_utf8_ws() -> bool` ]]
+
+    Returns `true` if the string is emtpy or contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+
+[[ `:is_empty_or_ws() -> bool` ]]
+
+    Returns `true` if the string is empty or contains only ASCII whitespace characters.
+
+    This method is an alias for `:is_empty_or_ascii_ws()`.
 
 [[ `:is_utf8() -> bool` ]]
 
@@ -217,11 +247,13 @@ You can also use the `in` operator to check if a string contains a `char`:
 
 [[ `:is_utf8_ws() -> bool` ]]
 
-    Returns `true` if the string is empty or contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+    Returns `true` if the string contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
+    (Returns `false` if the string is empty.)
 
 [[ `:is_ws() -> bool` ]]
 
-    Returns `true` if the string is empty or contains only ASCII whitespace characters.
+    Returns `true` if the string contains only ASCII whitespace characters.
+    (Returns `false` if the string is empty.)
 
     This method is an alias for `:is_ascii_ws()`.
 
