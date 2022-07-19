@@ -248,10 +248,6 @@ You can also use the `in` operator to check if a string contains a `char`:
 
     Returns `true` if the string is emtpy or contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
 
-[[ `:is_empty_or_ws() -> bool` ]]
-
-    This method is an alias for `:is_empty_or_ascii_ws()`.
-
 [[ `:is_utf8() -> bool` ]]
 
     Returns `true` if the string contains only valid UTF-8.
@@ -264,10 +260,6 @@ You can also use the `in` operator to check if a string contains a `char`:
     Returns `true` if the string contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
 
     Returns `false` if the string is empty.
-
-[[ `:is_ws() -> bool` ]]
-
-    This method is an alias for `:is_ascii_ws()`.
 
 [[ `:iter() -> iter[str]` ]]
 
