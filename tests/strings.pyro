@@ -75,16 +75,6 @@ for byte in "abc":bytes() {
 }
 assert sum == 97 + 98 + 99;
 
-assert "":is_ascii();
-assert "abc":is_ascii();
-assert !"a\xFFb":is_ascii();
-assert !"a§b€c👍d":is_ascii();
-
-assert "":is_utf8();
-assert "abc":is_utf8();
-assert "a§b€c👍d":is_utf8();
-assert !"a\x80b":is_utf8();
-
 assert "foo BAR 123":to_ascii_upper() == "FOO BAR 123";
 assert "foo BAR 123":to_ascii_lower() == "foo bar 123";
 
@@ -729,4 +719,44 @@ def $test_is_ascii_hex() {
     assert !" ":is_ascii_hex();
     assert !"ghi":is_ascii_hex();
     assert !"123ghi":is_ascii_hex();
+}
+
+
+def $test_is_ascii() {
+    assert " ":is_ascii();
+    assert "abc":is_ascii();
+
+    assert !"":is_ascii();
+    assert !"a\xFFb":is_ascii();
+    assert !"a§b€c👍d":is_ascii();
+}
+
+
+def $test_is_empty_or_ascii() {
+    assert "":is_empty_or_ascii();
+    assert " ":is_empty_or_ascii();
+    assert "abc":is_empty_or_ascii();
+
+    assert !"a\xFFb":is_empty_or_ascii();
+    assert !"a§b€c👍d":is_empty_or_ascii();
+}
+
+
+def $test_is_utf8() {
+    assert " ":is_utf8();
+    assert "abc":is_utf8();
+    assert "a§b€c👍d":is_utf8();
+
+    assert !"":is_utf8();
+    assert !"a\x80b":is_utf8();
+}
+
+
+def $test_is_empty_or_utf8() {
+    assert "":is_empty_or_utf8();
+    assert " ":is_empty_or_utf8();
+    assert "abc":is_empty_or_utf8();
+    assert "a§b€c👍d":is_empty_or_utf8();
+
+    assert !"a\x80b":is_empty_or_utf8();
 }

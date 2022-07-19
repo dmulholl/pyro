@@ -87,6 +87,9 @@ static Value str_lines(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(false);
+    }
 
     for (size_t i = 0; i < str->length; i++) {
         if (str->bytes[i] & 0x80) {
@@ -95,6 +98,15 @@ static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     return MAKE_BOOL(true);
+}
+
+
+static Value str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(true);
+    }
+    return str_is_ascii(vm, arg_count, args);
 }
 
 
@@ -244,6 +256,9 @@ static Value str_char_count(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value str_is_utf8(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(false);
+    }
 
     size_t byte_index = 0;
     Utf8CodePoint cp;
@@ -260,6 +275,15 @@ static Value str_is_utf8(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     return MAKE_BOOL(true);
+}
+
+
+static Value str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjStr* str = AS_STR(args[-1]);
+    if (str->length == 0) {
+        return MAKE_BOOL(true);
+    }
+    return str_is_utf8(vm, arg_count, args);
 }
 
 
@@ -1381,9 +1405,11 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_global_fn(vm, "$str", fn_str, 1);
     pyro_define_global_fn(vm, "$is_str", fn_is_str, 1);
 
-    // Methdods.
+    // Methods.
     pyro_define_method(vm, vm->class_str, "is_utf8", str_is_utf8, 0);
+    pyro_define_method(vm, vm->class_str, "is_empty_or_utf8", str_is_empty_or_utf8, 0);
     pyro_define_method(vm, vm->class_str, "is_ascii", str_is_ascii, 0);
+    pyro_define_method(vm, vm->class_str, "is_empty_or_ascii", str_is_empty_or_ascii, 0);
     pyro_define_method(vm, vm->class_str, "iter", str_iter, 0);
     pyro_define_method(vm, vm->class_str, "$iter", str_iter, 0);
     pyro_define_method(vm, vm->class_str, "byte", str_byte, 1);
