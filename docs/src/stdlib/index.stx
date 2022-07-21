@@ -8,8 +8,7 @@ All standard library modules are submodules of the root module `$std`.
 
 ::: code pyro
     import $std::math;
-
-    echo math::pi;
+    assert math::abs(-1) == 1;
 
 
 ### Standard Library Modules
