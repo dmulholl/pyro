@@ -1,11 +1,9 @@
 import $std::json::{to_json};
 import $std::json::{from_json};
 
-
 # ------------------ #
 #  Marshall to JSON  #
 # ------------------ #
-
 
 assert to_json(null) == `null`;
 assert to_json(true) == `true`;
@@ -24,30 +22,42 @@ assert to_json(`foo \n bar`) == `"foo \n bar"`;
 assert to_json(`foo \t\r\n bar`) == `"foo \t\r\n bar"`;
 
 var v0 = [];
-var v1 = [1, 2.3, 4];
-var v2 = ["abc", "def", "ghi"];
-var v3 = [v1, v2];
-
 assert to_json(v0) == `[]`;
+
+var v1 = [1, 2.3, 4];
 assert to_json(v1) == `[1, 2.3, 4]`;
+
+var v2 = ["abc", "def", "ghi"];
 assert to_json(v2) == `["abc", "def", "ghi"]`;
+
+var v3 = [v1, v2];
 assert to_json(v3) == `[[1, 2.3, 4], ["abc", "def", "ghi"]]`;
 
 var m0 = {};
-var m1 = {"foo" = 123, "bar" = 456};
-var m2 = {"foo" = v0, "bar" = v1, "baz" = v2};
-var m3 = {"foo" = m0, "bar" = m1, "baz" = m2};
-
 assert to_json(m0) == `{}`;
+
+var m1 = {"foo" = 123, "bar" = 456};
 assert to_json(m1) == `{"foo": 123, "bar": 456}`;
+
+var m2 = {"foo" = v0, "bar" = v1, "baz" = v2};
 assert to_json(m2) == `{"foo": [], "bar": [1, 2.3, 4], "baz": ["abc", "def", "ghi"]}`;
+
+var m3 = {"foo" = m0, "bar" = m1, "baz" = m2};
 assert to_json(m3) == `{"foo": {}, "bar": {"foo": 123, "bar": 456}, "baz": {"foo": [], "bar": [1, 2.3, 4], "baz": ["abc", "def", "ghi"]}}`;
 
+class Foo {
+    def $json() {
+        return `"FOO"`;
+    }
+}
+assert to_json(Foo()) == `"FOO"`;
+
+var map_with_foo = {"key" = Foo()};
+assert to_json(map_with_foo) == `{"key": "FOO"}`;
 
 # ---------------------- #
 #  Unmarshall from JSON  #
 # ---------------------- #
-
 
 assert from_json(`null`) == null;
 assert from_json(`true`) == true;

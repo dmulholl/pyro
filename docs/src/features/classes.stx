@@ -199,6 +199,11 @@ You can implement the `$special` methods listed below to add support for various
     See the documentation on [iterators][1] for details.
 
 
+[[ `$json() -> str` ]]
+
+    If implemented, should return a string containing the object serialized to JSON.
+
+
 [[ `:$next() -> any` ]]
 
     Implementing this method makes the type an *iterator*.

@@ -56,7 +56,7 @@ def marshall_str(arg: str) -> str {
 }
 
 
-def marshall(arg: map|vec|tup|str|i64|f64|bool|null) -> str {
+def marshall(arg: any) -> str {
     if $is_map(arg) {
         return marshall_map(arg);
     } else if $is_vec(arg) || $is_tup(arg) {
@@ -71,6 +71,8 @@ def marshall(arg: map|vec|tup|str|i64|f64|bool|null) -> str {
         return arg ? "true" :| "false";
     } else if $is_null(arg) {
         return "null";
+    } else if $has_method(arg, "$json") {
+        return arg:$json();
     } else {
         $panic("invalid input: type: {}, value: {}", $type(arg), $debug(arg));
     }
