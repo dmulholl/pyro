@@ -218,7 +218,7 @@ You can check if a vector contains an item using the `in` operator:
 
 [[ `:sort() -> vec` <br> `:sort(callback: call(any, any) -> bool) -> vec` ]]
 
-    Sorts the vector in-place using the default stable sorting algorithm (currently mergesort).
+    Sorts the vector in-place using the default stable sorting algorithm.
     Returns the vector to allow chaining.
 
     If a `callback` function is supplied it will be used to compare pairs of values.
