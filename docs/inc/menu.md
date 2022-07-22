@@ -4,7 +4,7 @@
 * [Language Tour](@root/tour//)
 * [Features](@root/features//)
 * [Builtin Types](@root/builtins//)
-* [Globals](@root/globals//)
+* [Superglobals](@root/superglobals//)
 * [Standard Library](@root/stdlib//)
 * [Examples](@root/examples//)
 * [Roadmap](@root/roadmap//)

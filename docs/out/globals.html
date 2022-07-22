@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro &mdash; Global Functions and Variables</title>
+        <title>Pyro &mdash; Superglobals</title>
         <link rel="stylesheet" href="assets/fonts.css">
         <link rel="stylesheet" href="assets/graphite.css">
         <link rel="stylesheet" href="assets/pygments.css">
@@ -34,7 +34,7 @@
 <li><a href="tour.html">Language Tour</a></li>
 <li><a href="features.html">Features</a></li>
 <li><a href="builtins.html">Builtin Types</a></li>
-<li><a href="globals.html">Globals</a></li>
+<li><a href="superglobals.html">Superglobals</a></li>
 <li><a href="stdlib.html">Standard Library</a></li>
 <li><a href="examples.html">Examples</a></li>
 <li><a href="roadmap.html">Roadmap</a></li>
@@ -47,24 +47,24 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>Globals</h1>
+                <h1>Superglobals</h1>
                 
                 <hr>
             </header>
             <p>
-Global variables and functions are available in all modules &mdash; you don't need to import anything to use them.
-All globals live in the <code>$pecial</code> namespace so they won't interfere with your own code.
+Superglobals are available in all modules &mdash; you don't need to import anything to use them.
+All superglobals live in the <code>$</code> namespace so they won't interfere with your own code.
 </p>
 <ul class="stx-toc">
 <li>
-<a href="#global-variables">Global Variables</a>
+<a href="#variables">Variables</a>
 </li>
 <li>
-<a href="#global-functions">Global Functions</a>
+<a href="#functions">Functions</a>
 </li>
 </ul>
-<h3 id="global-variables">
-Global Variables
+<h3 id="variables">
+Variables
 </h3>
 <dl>
 <div>
@@ -98,8 +98,8 @@ A vector of strings containing the root directory paths that Pyro checks when at
 </dd>
 </div>
 </dl>
-<h3 id="global-functions">
-Global Functions
+<h3 id="functions">
+Functions
 </h3>
 <dl>
 <div>
