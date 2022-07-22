@@ -16,6 +16,8 @@ This module contains utility functions for working with JSON.
 
     Supports JSON input with trailing commas and comments beginning with `//`.
 
+    Panics if `arg` isn't a valid JSON string.
+
 
 [[ `to_json(arg: any) -> str` ]]
 
