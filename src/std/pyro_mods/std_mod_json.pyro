@@ -80,7 +80,7 @@ def marshall(arg: map|vec|tup|str|i64|f64|bool|null) -> str {
 def to_json(arg: map|vec|tup|str|i64|f64|bool|null) -> str {
     var result = try marshall(arg);
     if $is_err(result) {
-        $panic("to_json(): {}", result[0]);
+        $panic("to_json(): {}", result);
     }
     return result;
 }
@@ -501,7 +501,7 @@ def from_json(arg: str) -> map|vec|str|i64|f64|bool|null {
 
     var result = try Parser(arg):parse();
     if $is_err(result) {
-        $panic("from_json(): {}", result[0]);
+        $panic("from_json(): {}", result);
     }
 
     return result;
