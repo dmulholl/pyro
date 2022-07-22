@@ -1,0 +1,494 @@
+---
+title: Superglobals
+meta_title: Pyro &mdash; Superglobals
+---
+
+Superglobals are available in all modules --- you don't need to import anything to use them.
+All superglobals live in the `$` namespace so they won't interfere with your own code.
+
+::: insert toc
+
+
+### Variables
+
+
+[[ `$args: tup` ]]
+
+    A tuple of strings containing the program's command line arguments.
+
+
+
+[[ `$filepath: str` ]]
+
+    A string containing the filepath of the script or module file.
+
+
+
+[[ `$roots: vec[str]` ]]
+
+    A vector of strings containing the root directory paths that Pyro checks when attempting to import a module. Directory paths can end with an optional trailing slash. A single dot `.` indicates the current working directory, a single slash `/` indicates the system root directory.
+
+
+
+### Functions
+
+
+[[ `$(cmd: str) -> str` ]]
+
+    Runs a shell command and returns its output as a string.
+
+    This is a convenience shortcut for the `$shell()` function which provides more control over input and output.
+
+
+
+[[ `$bool(arg: any) -> bool` ]]
+
+    Converts `arg` to a `$bool`.
+
+
+
+[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
+
+    Creates a new `buf` object.
+
+    * If called with zero arguments, creates a new empty buffer.
+    * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
+    * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
+
+
+
+[[ `$char(arg: i64) -> char` ]]
+
+    Converts `arg` to a `char`. Panics if the argument is out-of-range.
+
+
+
+[[ `$clock() -> f64` ]]
+
+    Returns the number of seconds since the program was launched.
+    This function is a wrapper around the C standard library's `clock()` function.
+
+
+
+[[ `$debug(arg: any) -> str` ]]
+
+    Returns a string representing `arg` suitable for use in debugging.
+
+    * If `arg` has a `:$debug()` method, the output of this method will be returned.
+    * Otherwise, if `arg` has a `:$str()` method, the output of this method will be returned.
+    * Otherwise, the default string for `arg` will be returned.
+
+
+
+[[ `$env(name: str) -> str|err` <br> `$env(name: str, value: any)` ]]
+
+    Gets or sets environment variables.
+
+    * If called with a single argument, returns the value of the environment variable `name` as a string.
+      Returns an `err` if `name` is not defined.
+
+    * If called with two arguments, sets the environment variable `name` to `value`.
+      Stringifies `value` if `value` is not already a string.
+
+
+
+[[ `$eprint(arg: any) -> i64` <br> `$eprint(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+
+    Prints to the standard error stream.
+
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+
+    Returns the number of bytes written to the error stream.
+
+    This function will panic if a formatting error occurs or if the attempt to write to the error stream fails.
+
+
+
+[[ `$eprintln() -> i64` <br> `$eprintln(arg: any) -> i64` <br> `$eprintln(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+
+    Like `$eprint()` but adds a terminating newline.
+
+
+
+[[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, arg1: any, arg2: any, ...) -> err` ]]
+
+    Creates a new `err` object.
+
+    * If called with no arguments, returns an error with an empty message string.
+
+    * If called with a single argument, stringifies that argument and uses the result as the message string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first.
+
+
+
+[[ `$exec(code: str) -> mod` ]]
+
+    Executes a string of Pyro source code.
+    The code is executed in the context of a new empty module.
+
+    Returns the new module.
+
+
+[[ `$exit(code: i64)` ]]
+
+    Instructs the program to exit with the specified exit code.
+
+
+
+[[ `$f64(arg: i64|char|str) -> f64` ]]
+
+    Converts `arg` to a float.
+    String arguments can contain underscores for readability.
+
+
+
+[[ `$file(path: str, mode: str) -> file` ]]
+
+    Creates a new `file` object.
+    Opens the underlying file stream using the C function `fopen()`.
+    Panics on failure.
+
+
+
+[[ `$fmt(format_string: str, arg1: any, arg2: any, ...) -> str` ]]
+
+    Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/features/formatting//) documentation for details.
+
+
+
+[[ `$has_field(object: any, field_name: str) -> bool` ]]
+
+    Returns `true` if the object has a field called `field_name`.
+
+
+
+[[ `$has_method(object: any, method_name: str) -> bool` ]]
+
+    Returns `true` if the object has a method called `method_name`.
+
+
+
+[[ `$hash(arg: any) -> i64` ]]
+
+    Returns the argument's 64-bit hash value.
+
+    (
+    This function can return negative values.
+    Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.
+    )
+
+
+
+[[ `$i64(arg: f64|char|str) -> i64` ]]
+
+    Converts `arg` to an `i64`.
+    Panics if the argument is out-of-range for an `i64`.
+
+    String arguments can contain underscores and can begin with `0b`, `0o`, or `0x` to specify the base as binary, octal, or hexadecimal; otherwise the base is assumed to be 10.
+
+
+
+[[ `$input() -> str?` ]]
+
+    Reads the next line of input from the standard input stream and returns it as a string.
+    Strips the terminating `\n` or `\r\n` if present.
+
+    Returns `null` if the end of the stream had already been reached.
+
+    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+
+
+
+[[ `$is_bool(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `bool`.
+
+
+
+[[ `$is_buf(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `buf`.
+
+
+
+[[ `$is_callable(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is callable, i.e. is a function, method, class, or callable instance.
+
+
+
+[[ `$is_char(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `char`.
+
+
+
+[[ `$is_class(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a class.
+
+
+
+[[ `$is_err(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an `err`.
+
+
+
+[[ `$is_f64(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an `f64`.
+
+
+
+[[ `$is_file(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `file`.
+
+
+
+[[ `$is_i64(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an `i64`.
+
+
+
+[[ `$is_inf(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is floating-point infinity (positive or negative).
+
+
+
+[[ `$is_instance(object, class_object) -> bool` ]]
+
+    Returns `true` if `object` is an instance of the specified class or of a subclass of the specified class.
+
+
+
+[[ `$is_iter(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an `iter`.
+
+
+
+[[ `$is_iterable(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is iterable, i.e. has an `:$iter()` method that returns an iterator.
+
+
+
+[[ `$is_iterator(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an iterator, i.e. has a `:$next()` method that returns the next item from a sequence.
+
+
+
+[[ `$is_map(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `map`.
+
+
+
+[[ `$is_method(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a method.
+
+
+
+[[ `$is_mod(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a module.
+
+
+
+[[ `$is_nan(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is the floating-point value `NaN`.
+
+
+
+[[ `$is_null(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is `null`.
+
+
+
+[[ `$is_queue(arg: any) -> bool` ]]
+
+    Returns `true` if the argument a `queue`.
+
+
+
+[[ `$is_set(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `set`.
+
+
+
+[[ `$is_stack(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `stack`.
+
+
+
+[[ `$is_str(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `str`.
+
+
+
+[[ `$is_tup(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `tup`.
+
+
+
+[[ `$is_vec(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `vec`.
+
+
+
+[[ `$iter(arg: iterator|iterable) -> iter` ]]
+
+   Wraps an iterator in an `iter` wrapper, adding automatic support for a set of chainable, lazily-evaluated utility methods.
+   `arg` can be either an iterator or an instance of an iterable type, e.g. a vector.
+
+
+
+[[ `$map() -> map` ]]
+
+    Creates a new `$map` object.
+
+
+
+[[ `$panic(error_message: any)` <br> `$panic(format_string: str, arg1: any, arg2: any, ...)` ]]
+
+    Panics with the specified error message.
+
+    * If called with a single argument and `error_message` isn't already a string, it will be automatically stringified.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first.
+
+    If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
+
+
+
+[[ `$print(arg: any) -> i64` <br> `$print(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+
+    Prints to the standard output stream.
+
+    * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+
+    Returns the number of bytes written to the output stream.
+
+    This function will panic if a formatting error occurs or if the attempt to write to the output stream fails.
+
+
+
+[[ `$println() -> i64` <br> `$println(arg: any) -> i64` <br> `$println(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+
+    Like `$print()` but adds a terminating newline.
+
+
+
+[[ `$queue() -> queue` ]]
+
+    Creates a new `queue` object.
+
+
+
+[[ `$range(stop: i64) -> iter[i64]` <br> `$range(start: i64, stop: i64) -> iter[i64]` <br> `$range(start: i64, stop: i64, step: i64) -> iter[i64]` ]]
+
+    Returns an integer iterator over the half-open interval `[start, stop)`.
+    `start` defaults to `0`, `step` defaults to `1` if not specified.
+
+
+
+[[ `$read_file(path: str) -> str` ]]
+
+    Reads the content of the file at `path` and returns it as a string.
+
+    Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+
+
+
+[[ `$set() -> set` <br> `$set(arg: iterable) -> set` ]]
+
+    Creates a new `set` object.
+    If `arg` is iterable, initializes the new set by iterating over its values.
+
+
+
+[[ `$shell(cmd: str) -> tup[i64, str, str]` <br> `$shell(cmd: str, input: str|buf) -> tup[i64, str, str]` ]]
+
+    Runs a shell command.
+
+    Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
+
+    If `input` is specified, its content will be written to the command's `stdin`.
+
+
+
+[[ `$sleep(time_in_seconds: i64|f64)` ]]
+
+    Suspends execution of the calling thread for the specified number of seconds.
+    The duration can be specified in fractions of a second.
+
+    (
+    Sleeps for *at least* the specified duration unless an OS interrupt occurs signalling an error.
+    In this case the function will raise a panic.
+    The actual time slept may be longer than the requested duration due to system latency.
+    )
+
+
+
+[[ `$stack() -> stack` ]]
+
+    Creates a new `stack` object.
+
+
+
+[[ `$str(arg: any) -> str` ]]
+
+    Stringifies the argument, i.e. returns its default string representation.
+    If the argument has a `:$str()` method, the output of this method will be returned.
+
+
+
+[[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
+
+    Creates a new `tup` object.
+    The arguments provide the tuple's values.
+
+
+
+[[ `$type(arg: any) -> str` ]]
+
+    Returns the type of `arg` as a string.
+
+
+
+[[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
+
+    Creates a new `vec` object.
+
+    * If called with zero arguments, creates an empty vector.
+    * If called with a single iterable argument, fills the new vector by iterating over the argument.
+    * If called with two arguments, creates a vector with the specified initial size and fill value.
+
+
+
+[[ `$write_file(path: str, content: str|buf) -> i64` ]]
+
+    Writes `content` to a new file, where `content` is a string or a byte buffer.
+    Returns the number of bytes written.
+
+    If a file already exists at `path`, that file will be overwritten.
+
+    Panics if the arguments are invalid, if the file cannot be opened for writing, or if an I/O write error occurs.

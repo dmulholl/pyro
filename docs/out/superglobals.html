@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Superglobals</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-superglobals node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.7.16</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="installing.html">Install</a></li>
+<li><a href="tour.html">Language Tour</a></li>
+<li><a href="features.html">Features</a></li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="superglobals.html">Superglobals</a></li>
+<li><a href="stdlib.html">Standard Library</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Superglobals</h1>
+                
+                <hr>
+            </header>
+            <p>
+Superglobals are available in all modules &mdash; you don't need to import anything to use them.
+All superglobals live in the <code>$</code> namespace so they won't interfere with your own code.
+</p>
+<ul class="stx-toc">
+<li>
+<a href="#variables">Variables</a>
+</li>
+<li>
+<a href="#functions">Functions</a>
+</li>
+</ul>
+<h3 id="variables">
+Variables
+</h3>
+<dl>
+<div>
+<dt>
+<code>$args: tup</code>
+</dt>
+<dd>
+<p>
+A tuple of strings containing the program's command line arguments.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$filepath: str</code>
+</dt>
+<dd>
+<p>
+A string containing the filepath of the script or module file.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$roots: vec[str]</code>
+</dt>
+<dd>
+<p>
+A vector of strings containing the root directory paths that Pyro checks when attempting to import a module. Directory paths can end with an optional trailing slash. A single dot <code>.</code> indicates the current working directory, a single slash <code>/</code> indicates the system root directory.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="functions">
+Functions
+</h3>
+<dl>
+<div>
+<dt>
+<code>$(cmd: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Runs a shell command and returns its output as a string.
+</p>
+<p>
+This is a convenience shortcut for the <code>$shell()</code> function which provides more control over input and output.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$bool(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to a <code>$bool</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$buf() -&gt; buf</code> <br> <code>$buf(content: str) -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>buf</code> object.
+</p>
+<ul>
+<li>
+If called with zero arguments, creates a new empty buffer.
+</li>
+<li>
+If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
+</li>
+<li>
+If called with two arguments, creates a new buffer with the specified initial size and fill value, where <code>size</code> is a positive integer and <code>value</code> is an integer value in the range <code>[0, 255]</code>.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>$char(arg: i64) -&gt; char</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to a <code>char</code>. Panics if the argument is out-of-range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$clock() -&gt; f64</code>
+</dt>
+<dd>
+<p>
+Returns the number of seconds since the program was launched.
+This function is a wrapper around the C standard library's <code>clock()</code> function.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$debug(arg: any) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a string representing <code>arg</code> suitable for use in debugging.
+</p>
+<ul>
+<li>
+If <code>arg</code> has a <code>:$debug()</code> method, the output of this method will be returned.
+</li>
+<li>
+Otherwise, if <code>arg</code> has a <code>:$str()</code> method, the output of this method will be returned.
+</li>
+<li>
+Otherwise, the default string for <code>arg</code> will be returned.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>$env(name: str) -&gt; str|err</code> <br> <code>$env(name: str, value: any)</code>
+</dt>
+<dd>
+<p>
+Gets or sets environment variables.
+</p>
+<ul>
+<li>
+If called with a single argument, returns the value of the environment variable <code>name</code> as a string.
+Returns an <code>err</code> if <code>name</code> is not defined.
+</li>
+<li>
+If called with two arguments, sets the environment variable <code>name</code> to <code>value</code>.
+Stringifies <code>value</code> if <code>value</code> is not already a string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>$eprint(arg: any) -&gt; i64</code> <br> <code>$eprint(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Prints to the standard error stream.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
+</li>
+</ul>
+<p>
+Returns the number of bytes written to the error stream.
+</p>
+<p>
+This function will panic if a formatting error occurs or if the attempt to write to the error stream fails.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$eprintln() -&gt; i64</code> <br> <code>$eprintln(arg: any) -&gt; i64</code> <br> <code>$eprintln(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Like <code>$eprint()</code> but adds a terminating newline.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$err() -&gt; err</code> <br> <code>$err(message: any) -&gt; err</code> <br> <code>$err(format_string: str, arg1: any, arg2: any, ...) -&gt; err</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>err</code> object.
+</p>
+<ul>
+<li>
+If called with no arguments, returns an error with an empty message string.
+</li>
+<li>
+If called with a single argument, stringifies that argument and uses the result as the message string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>$exec(code: str) -&gt; mod</code>
+</dt>
+<dd>
+<p>
+Executes a string of Pyro source code.
+The code is executed in the context of a new empty module.
+</p>
+<p>
+Returns the new module.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$exit(code: i64)</code>
+</dt>
+<dd>
+<p>
+Instructs the program to exit with the specified exit code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$f64(arg: i64|char|str) -&gt; f64</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to a float.
+String arguments can contain underscores for readability.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$file(path: str, mode: str) -&gt; file</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>file</code> object.
+Opens the underlying file stream using the C function <code>fopen()</code>.
+Panics on failure.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$fmt(format_string: str, arg1: any, arg2: any, ...) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the new string created by interpolating the argument values into the format string &mdash; see the <a href="features/formatting.html">string formatting</a> documentation for details.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$has_field(object: any, field_name: str) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the object has a field called <code>field_name</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$has_method(object: any, method_name: str) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the object has a method called <code>method_name</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$hash(arg: any) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the argument's 64-bit hash value.
+</p>
+<p>
+(
+This function can return negative values.
+Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.
+)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$i64(arg: f64|char|str) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Converts <code>arg</code> to an <code>i64</code>.
+Panics if the argument is out-of-range for an <code>i64</code>.
+</p>
+<p>
+String arguments can contain underscores and can begin with <code>0b</code>, <code>0o</code>, or <code>0x</code> to specify the base as binary, octal, or hexadecimal; otherwise the base is assumed to be 10.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$input() -&gt; str?</code>
+</dt>
+<dd>
+<p>
+Reads the next line of input from the standard input stream and returns it as a string.
+Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
+</p>
+<p>
+Returns <code>null</code> if the end of the stream had already been reached.
+</p>
+<p>
+Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_bool(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>bool</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_buf(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>buf</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_callable(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is callable, i.e. is a function, method, class, or callable instance.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_char(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>char</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_class(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a class.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_err(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>err</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_f64(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>f64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_file(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>file</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_i64(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>i64</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_inf(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is floating-point infinity (positive or negative).
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_instance(object, class_object) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>object</code> is an instance of the specified class or of a subclass of the specified class.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_iter(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>iter</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_iterable(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is iterable, i.e. has an <code>:$iter()</code> method that returns an iterator.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_iterator(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an iterator, i.e. has a <code>:$next()</code> method that returns the next item from a sequence.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_map(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>map</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_method(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a method.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_mod(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a module.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_nan(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is the floating-point value <code>NaN</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_null(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is <code>null</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_queue(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument a <code>queue</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_set(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>set</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_stack(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>stack</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_str(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>str</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_tup(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>tup</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_vec(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>vec</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$iter(arg: iterator|iterable) -&gt; iter</code>
+</dt>
+<dd>
+<p>
+Wraps an iterator in an <code>iter</code> wrapper, adding automatic support for a set of chainable, lazily-evaluated utility methods.
+<code>arg</code> can be either an iterator or an instance of an iterable type, e.g. a vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$map() -&gt; map</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>$map</code> object.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$panic(error_message: any)</code> <br> <code>$panic(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Panics with the specified error message.
+</p>
+<ul>
+<li>
+If called with a single argument and <code>error_message</code> isn't already a string, it will be automatically stringified.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first.
+</li>
+</ul>
+<p>
+If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$print(arg: any) -&gt; i64</code> <br> <code>$print(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Prints to the standard output stream.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
+</li>
+</ul>
+<p>
+Returns the number of bytes written to the output stream.
+</p>
+<p>
+This function will panic if a formatting error occurs or if the attempt to write to the output stream fails.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$println() -&gt; i64</code> <br> <code>$println(arg: any) -&gt; i64</code> <br> <code>$println(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Like <code>$print()</code> but adds a terminating newline.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$queue() -&gt; queue</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>queue</code> object.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$range(stop: i64) -&gt; iter[i64]</code> <br> <code>$range(start: i64, stop: i64) -&gt; iter[i64]</code> <br> <code>$range(start: i64, stop: i64, step: i64) -&gt; iter[i64]</code>
+</dt>
+<dd>
+<p>
+Returns an integer iterator over the half-open interval <code>[start, stop)</code>.
+<code>start</code> defaults to <code>0</code>, <code>step</code> defaults to <code>1</code> if not specified.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$read_file(path: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Reads the content of the file at <code>path</code> and returns it as a string.
+</p>
+<p>
+Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$set() -&gt; set</code> <br> <code>$set(arg: iterable) -&gt; set</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>set</code> object.
+If <code>arg</code> is iterable, initializes the new set by iterating over its values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$shell(cmd: str) -&gt; tup[i64, str, str]</code> <br> <code>$shell(cmd: str, input: str|buf) -&gt; tup[i64, str, str]</code>
+</dt>
+<dd>
+<p>
+Runs a shell command.
+</p>
+<p>
+Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
+</p>
+<p>
+If <code>input</code> is specified, its content will be written to the command's <code>stdin</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$sleep(time_in_seconds: i64|f64)</code>
+</dt>
+<dd>
+<p>
+Suspends execution of the calling thread for the specified number of seconds.
+The duration can be specified in fractions of a second.
+</p>
+<p>
+(
+Sleeps for <i>at least</i> the specified duration unless an OS interrupt occurs signalling an error.
+In this case the function will raise a panic.
+The actual time slept may be longer than the requested duration due to system latency.
+)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$stack() -&gt; stack</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>stack</code> object.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$str(arg: any) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Stringifies the argument, i.e. returns its default string representation.
+If the argument has a <code>:$str()</code> method, the output of this method will be returned.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$tup() -&gt; tup</code> <br> <code>$tup(arg1: any, arg2: any, ...) -&gt; tup</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>tup</code> object.
+The arguments provide the tuple's values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$type(arg: any) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the type of <code>arg</code> as a string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$vec() -&gt; vec</code> <br> <code>$vec(arg: iterable) -&gt; vec</code> <br> <code>$vec(size: i64, fill_value: any) -&gt; vec</code>
+</dt>
+<dd>
+<p>
+Creates a new <code>vec</code> object.
+</p>
+<ul>
+<li>
+If called with zero arguments, creates an empty vector.
+</li>
+<li>
+If called with a single iterable argument, fills the new vector by iterating over the argument.
+</li>
+<li>
+If called with two arguments, creates a vector with the specified initial size and fill value.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>$write_file(path: str, content: str|buf) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Writes <code>content</code> to a new file, where <code>content</code> is a string or a byte buffer.
+Returns the number of bytes written.
+</p>
+<p>
+If a file already exists at <code>path</code>, that file will be overwritten.
+</p>
+<p>
+Panics if the arguments are invalid, if the file cannot be opened for writing, or if an I/O write error occurs.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>
