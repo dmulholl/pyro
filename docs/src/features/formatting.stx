@@ -26,7 +26,9 @@ An empty placeholder `{}` is equivalent to calling `$str(arg)` on the value and 
 
 A placeholder can contain a format specifier --- if the value has a `:$fmt(spec)` method defined, this method will be called and the resulting string will be used.
 
-(The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(spec)` method.)
+The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(spec)` method.
+
+Note that you can escape an opening brace `{` in a format string with a backslash, i.e. `\{` to stop it being treated as a placeholder.
 
 
 

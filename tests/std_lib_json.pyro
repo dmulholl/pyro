@@ -51,9 +51,23 @@ class Foo {
     }
 }
 assert to_json(Foo()) == `"FOO"`;
-
 var map_with_foo = {"key" = Foo()};
 assert to_json(map_with_foo) == `{"key": "FOO"}`;
+
+class Bar {
+    var num: i64 = 123;
+    var obj: Foo;
+
+    def $init() {
+        self.obj = Foo();
+    }
+
+    def $json() {
+        return $fmt(`\{"num": {}, "obj": {}}`, to_json(self.num), to_json(self.obj));
+    }
+}
+var bar = Bar();
+assert to_json(bar) == `{"num": 123, "obj": "FOO"}`;
 
 # ---------------------- #
 #  Unmarshall from JSON  #

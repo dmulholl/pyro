@@ -101,7 +101,10 @@ An empty placeholder <code>{}</code> is equivalent to calling <code>$str(arg)</c
 A placeholder can contain a format specifier &mdash; if the value has a <code>:$fmt(spec)</code> method defined, this method will be called and the resulting string will be used.
 </p>
 <p>
-(The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(spec)</code> method.)
+The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(spec)</code> method.
+</p>
+<p>
+Note that you can escape an opening brace <code>{</code> in a format string with a backslash, i.e. <code>\{</code> to stop it being treated as a placeholder.
 </p>
 <h3 id="formatting-integers">
 Formatting Integers
