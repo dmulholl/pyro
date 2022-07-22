@@ -64,7 +64,7 @@
 </ul>
 <hr>
 <p>
-The error type, <code>err</code>, can be returned by functions to indicate failure.
+An error object, <code>err</code>, can be returned by functions to indicate failure.
 </p>
 <dl>
 <div>
@@ -74,16 +74,17 @@ The error type, <code>err</code>, can be returned by functions to indicate failu
 <dd>
 <p>
 Creates a new <code>err</code> object.
+Every <code>err</code> has a <code>message</code> string and a <code>details</code> map.
 </p>
 <ul>
 <li>
-If called with no arguments, returns an error with an empty message string.
+If called with no arguments, returns an error with an empty <code>message</code> string.
 </li>
 <li>
-If called with a single argument, stringifies that argument and uses the result as the message string.
+If called with a single argument, stringifies that argument and uses the result as the error's <code>message</code> string.
 </li>
 <li>
-Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first.
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and using the result as the error's <code>message</code> string.
 </li>
 </ul>
 </dd>
@@ -100,7 +101,7 @@ Alternatively, you can use the error-coalescing operator <code>!!</code> to supp
 Error Messages
 </h3>
 <p>
-Stringifying an error returns its message:
+Stringifying an error returns its <code>message</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
@@ -114,10 +115,11 @@ Every error object contains a <code>details</code> map which you can use to stor
 You can index into this <code>details</code> map directly on the <code>err</code> object itself, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;disaster strikes&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;disaster strikes!&quot;</span><span class="p">);</span>
 <span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">code</span> <span class="p">=</span> <span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">];</span>
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;disaster strikes!&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <h3 id="methods">
 Methods
