@@ -6,7 +6,7 @@ meta_title: Pyro &mdash; Errors
 ::: insert toc
 ::: hr
 
-An error object, `err`, can be returned by functions to indicate failure.
+An error object, `err`, can be returned by a function to indicate failure.
 
 [[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, arg1: any, arg2: any, ...) -> err` ]]
 
