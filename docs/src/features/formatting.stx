@@ -28,7 +28,7 @@ A placeholder can contain a format specifier --- if the value has a `:$fmt(spec)
 
 The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(spec)` method.
 
-Note that you can escape an opening brace `{` in a format string with a backslash, i.e. `\{` to stop it being treated as a placeholder.
+Note that you can escape an opening brace `{` in a format string with a backslash, i.e. `\{`, to stop it being treated as a placeholder.
 
 
 
