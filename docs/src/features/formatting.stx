@@ -71,7 +71,7 @@ The set of valid letters for `f64` values is:
 * `f` --- decimal floating point, lowercase.
 * `F` --- decimal floating point, uppercase.
 * `g` --- uses the shortest representation, `e` or `f`.
-* `g` --- uses the shortest representation, `E` or `F`.
+* `G` --- uses the shortest representation, `E` or `F`.
 
 
 
