@@ -1,10 +1,9 @@
-#include "os.h"
-
 // Local imports.
-#include "vm.h"
-#include "values.h"
-#include "objects.h"
-#include "heap.h"
+#include "../inc/os.h"
+#include "../inc/vm.h"
+#include "../inc/values.h"
+#include "../inc/objects.h"
+#include "../inc/heap.h"
 
 // POSIX: popen(), pclose()
 #include <stdio.h>

@@ -1,16 +1,15 @@
-#include "../std_lib.h"
-
-#include "../../vm/values.h"
-#include "../../vm/vm.h"
-#include "../../vm/utils.h"
-#include "../../vm/heap.h"
-#include "../../vm/utf8.h"
-#include "../../vm/setup.h"
-#include "../../vm/stringify.h"
-#include "../../vm/panics.h"
-#include "../../vm/os.h"
-#include "../../vm/io.h"
-#include "../../vm/exec.h"
+#include "../../inc/std_lib.h"
+#include "../../inc/values.h"
+#include "../../inc/vm.h"
+#include "../../inc/utils.h"
+#include "../../inc/heap.h"
+#include "../../inc/utf8.h"
+#include "../../inc/setup.h"
+#include "../../inc/stringify.h"
+#include "../../inc/panics.h"
+#include "../../inc/os.h"
+#include "../../inc/io.h"
+#include "../../inc/exec.h"
 
 
 static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {

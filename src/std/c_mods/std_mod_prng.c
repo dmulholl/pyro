@@ -1,10 +1,9 @@
-#include "../std_lib.h"
-
-#include "../../vm/values.h"
-#include "../../vm/vm.h"
+#include "../../inc/std_lib.h"
+#include "../../inc/values.h"
+#include "../../inc/vm.h"
+#include "../../inc/setup.h"
+#include "../../inc/panics.h"
 #include "../../lib/mt64/mt64.h"
-#include "../../vm/setup.h"
-#include "../../vm/panics.h"
 
 
 static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {

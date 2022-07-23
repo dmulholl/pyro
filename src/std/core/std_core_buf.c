@@ -1,10 +1,9 @@
-#include "../std_lib.h"
-
-#include "../../vm/vm.h"
-#include "../../vm/utils.h"
-#include "../../vm/setup.h"
-#include "../../vm/stringify.h"
-#include "../../vm/panics.h"
+#include "../../inc/std_lib.h"
+#include "../../inc/vm.h"
+#include "../../inc/utils.h"
+#include "../../inc/setup.h"
+#include "../../inc/stringify.h"
+#include "../../inc/panics.h"
 
 
 static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {

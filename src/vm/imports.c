@@ -1,10 +1,10 @@
-#include "imports.h"
-#include "vm.h"
-#include "exec.h"
-#include "heap.h"
-#include "panics.h"
-#include "os.h"
-#include "../std/std_lib.h"
+#include "../inc/imports.h"
+#include "../inc/vm.h"
+#include "../inc/exec.h"
+#include "../inc/heap.h"
+#include "../inc/panics.h"
+#include "../inc/os.h"
+#include "../inc/std_lib.h"
 
 
 static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) {
@@ -23,7 +23,6 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
         }
         return;
     }
-
 
     if (strcmp(name->bytes, "prng") == 0) {
         pyro_load_std_mod_prng(vm, module);

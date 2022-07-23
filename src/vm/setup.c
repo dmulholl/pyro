@@ -1,12 +1,11 @@
-#include "setup.h"
-#include "vm.h"
-#include "heap.h"
-#include "values.h"
-#include "utils.h"
-#include "panics.h"
-#include "os.h"
-
-#include "../std/std_lib.h"
+#include "../inc/setup.h"
+#include "../inc/vm.h"
+#include "../inc/heap.h"
+#include "../inc/values.h"
+#include "../inc/utils.h"
+#include "../inc/panics.h"
+#include "../inc/os.h"
+#include "../inc/std_lib.h"
 #include "../lib/mt64/mt64.h"
 
 

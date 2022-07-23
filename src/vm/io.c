@@ -1,7 +1,7 @@
-#include "io.h"
-#include "values.h"
-#include "objects.h"
-#include "vm.h"
+#include "../inc/io.h"
+#include "../inc/values.h"
+#include "../inc/objects.h"
+#include "../inc/vm.h"
 
 
 static int64_t pyro_write_n(PyroVM* vm, Obj* destination, const char* string, size_t count) {

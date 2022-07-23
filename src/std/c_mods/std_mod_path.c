@@ -1,12 +1,11 @@
-#include "../std_lib.h"
-
-#include "../../vm/values.h"
-#include "../../vm/vm.h"
-#include "../../vm/utils.h"
-#include "../../vm/heap.h"
-#include "../../vm/setup.h"
-#include "../../vm/panics.h"
-#include "../../vm/os.h"
+#include "../../inc/std_lib.h"
+#include "../../inc/values.h"
+#include "../../inc/vm.h"
+#include "../../inc/utils.h"
+#include "../../inc/heap.h"
+#include "../../inc/setup.h"
+#include "../../inc/panics.h"
+#include "../../inc/os.h"
 
 
 static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {

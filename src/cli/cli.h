@@ -1,11 +1,11 @@
 #ifndef pyro_cli_h
 #define pyro_cli_h
 
-#include "../vm/pyro.h"
-#include "../vm/setup.h"
-#include "../vm/exec.h"
-#include "../vm/os.h"
-#include "../vm/utils.h"
+#include "../inc/pyro.h"
+#include "../inc/setup.h"
+#include "../inc/exec.h"
+#include "../inc/os.h"
+#include "../inc/utils.h"
 #include "../lib/args/args.h"
 
 void pyro_run_file(ArgParser* parser);

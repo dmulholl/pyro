@@ -1,10 +1,9 @@
-#include "../std_lib.h"
-
-#include "../../vm/vm.h"
-#include "../../vm/heap.h"
-#include "../../vm/setup.h"
-#include "../../vm/panics.h"
-#include "../../vm/gc.h"
+#include "../../inc/std_lib.h"
+#include "../../inc/vm.h"
+#include "../../inc/heap.h"
+#include "../../inc/setup.h"
+#include "../../inc/panics.h"
+#include "../../inc/gc.h"
 
 
 static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {

@@ -1,11 +1,10 @@
-#include "../std_lib.h"
-
-#include "../../vm/values.h"
-#include "../../vm/vm.h"
-#include "../../vm/setup.h"
-#include "../../vm/panics.h"
-#include "../../vm/stringify.h"
-#include "../../vm/io.h"
+#include "../../inc/std_lib.h"
+#include "../../inc/values.h"
+#include "../../inc/vm.h"
+#include "../../inc/setup.h"
+#include "../../inc/panics.h"
+#include "../../inc/stringify.h"
+#include "../../inc/io.h"
 
 
 #define PYRO_STD_LOG_LEVEL_DEBUG 10

@@ -1,9 +1,9 @@
-#include "heap.h"
-#include "vm.h"
-#include "stringify.h"
-#include "panics.h"
-#include "values.h"
-#include "objects.h"
+#include "../inc/heap.h"
+#include "../inc/vm.h"
+#include "../inc/stringify.h"
+#include "../inc/panics.h"
+#include "../inc/values.h"
+#include "../inc/objects.h"
 
 
 // Marks an object as reachable. This sets the object's [is_marked] flag and pushes it onto the

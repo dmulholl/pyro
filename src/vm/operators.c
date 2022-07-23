@@ -1,8 +1,8 @@
-#include "operators.h"
-#include "objects.h"
-#include "vm.h"
-#include "exec.h"
-#include "panics.h"
+#include "../inc/operators.h"
+#include "../inc/objects.h"
+#include "../inc/vm.h"
+#include "../inc/exec.h"
+#include "../inc/panics.h"
 
 
 /* ------------------ */

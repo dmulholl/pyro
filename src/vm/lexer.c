@@ -1,6 +1,6 @@
-#include "lexer.h"
-#include "vm.h"
-#include "panics.h"
+#include "../inc/lexer.h"
+#include "../inc/vm.h"
+#include "../inc/panics.h"
 
 
 static bool is_alpha(char c) {

@@ -1,10 +1,10 @@
-#include "stringify.h"
-#include "utils.h"
-#include "vm.h"
-#include "exec.h"
-#include "heap.h"
-#include "utf8.h"
-#include "panics.h"
+#include "../inc/stringify.h"
+#include "../inc/utils.h"
+#include "../inc/vm.h"
+#include "../inc/exec.h"
+#include "../inc/heap.h"
+#include "../inc/utf8.h"
+#include "../inc/panics.h"
 
 
 // Returns a quoted, escaped string or NULL if memory allocation fails.

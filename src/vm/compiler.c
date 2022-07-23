@@ -1,12 +1,12 @@
-#include "compiler.h"
-#include "debug.h"
-#include "opcodes.h"
-#include "heap.h"
-#include "vm.h"
-#include "utf8.h"
-#include "utils.h"
-#include "lexer.h"
-#include "panics.h"
+#include "../inc/compiler.h"
+#include "../inc/debug.h"
+#include "../inc/opcodes.h"
+#include "../inc/heap.h"
+#include "../inc/vm.h"
+#include "../inc/utf8.h"
+#include "../inc/utils.h"
+#include "../inc/lexer.h"
+#include "../inc/panics.h"
 
 
 /* -------------- */

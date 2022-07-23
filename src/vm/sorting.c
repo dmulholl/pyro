@@ -1,9 +1,9 @@
-#include "sorting.h"
-#include "operators.h"
-#include "vm.h"
-#include "exec.h"
-#include "heap.h"
-#include "panics.h"
+#include "../inc/sorting.h"
+#include "../inc/operators.h"
+#include "../inc/vm.h"
+#include "../inc/exec.h"
+#include "../inc/heap.h"
+#include "../inc/panics.h"
 
 
 static void swap(Value* a, Value* b) {

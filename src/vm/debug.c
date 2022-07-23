@@ -1,7 +1,7 @@
-#include "debug.h"
-#include "opcodes.h"
-#include "utils.h"
-#include "io.h"
+#include "../inc/debug.h"
+#include "../inc/opcodes.h"
+#include "../inc/utils.h"
+#include "../inc/io.h"
 
 
 // A single-byte instruction with no arguments.

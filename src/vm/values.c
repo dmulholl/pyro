@@ -1,11 +1,11 @@
-#include "values.h"
-#include "heap.h"
-#include "vm.h"
-#include "utils.h"
-#include "utf8.h"
-#include "exec.h"
-#include "panics.h"
-#include "io.h"
+#include "../inc/values.h"
+#include "../inc/heap.h"
+#include "../inc/vm.h"
+#include "../inc/utils.h"
+#include "../inc/utf8.h"
+#include "../inc/exec.h"
+#include "../inc/panics.h"
+#include "../inc/io.h"
 
 
 bool pyro_is_truthy(Value value) {

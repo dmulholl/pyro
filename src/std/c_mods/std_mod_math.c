@@ -1,9 +1,8 @@
-#include "../std_lib.h"
-
-#include "../../vm/values.h"
-#include "../../vm/vm.h"
-#include "../../vm/setup.h"
-#include "../../vm/panics.h"
+#include "../../inc/std_lib.h"
+#include "../../inc/values.h"
+#include "../../inc/vm.h"
+#include "../../inc/setup.h"
+#include "../../inc/panics.h"
 
 
 static Value fn_abs(PyroVM* vm, size_t arg_count, Value* args) {
