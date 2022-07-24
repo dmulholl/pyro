@@ -4,8 +4,8 @@
 
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-result
 
-RELEASE_FLAGS = -O3 -D NDEBUG -D PYRO_VERSION_BUILD='"release"'
-DEBUG_FLAGS = -D DEBUG -D PYRO_VERSION_BUILD='"debug"'
+RELEASE_FLAGS = -rdynamic -O3 -D NDEBUG -D PYRO_VERSION_BUILD='"release"'
+DEBUG_FLAGS = -rdynamic -D DEBUG -D PYRO_VERSION_BUILD='"debug"'
 
 DEBUG_LEVEL_1 = -D PYRO_DEBUG_STRESS_GC
 DEBUG_LEVEL_2 = $(DEBUG_LEVEL_1) -D PYRO_DEBUG_DUMP_BYTECODE
@@ -137,7 +137,7 @@ out/lib/std_mod_json.o: src/std/pyro_mods/std_mod_json.pyro
 
 tests/compiled_module.so: tests/compiled_module.c
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.so\n"
-	@${CC} ${CFLAGS} -fPIC -O3 -D NDEBUG -shared -undefined dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
+	@${CC} ${CFLAGS} -O3 -D NDEBUG -shared -fPIC -undefineddynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
 
 check-compiled-module:
 	@rm -f ./tests/compiled_module.so
