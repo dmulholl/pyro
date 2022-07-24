@@ -150,7 +150,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         }
 
         // Given 'import foo::bar::baz', allocate enough space for:
-        // - BASE/foo/bar/baz.pyrolib
+        // - BASE/foo/bar/baz.so
         // - BASE/foo/bar/baz.pyro
         // - BASE/foo/bar/baz/self.pyro
         size_t path_capacity = base_has_trailing_slash ? base->length : base->length + 1;
@@ -184,10 +184,10 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
             path[path_count++] = '/';
         }
 
-        // 1. Try file: BASE/foo/bar/baz.pyrolib
-        memcpy(path + path_count - 1, ".pyrolib", strlen(".pyrolib"));
+        // 1. Try file: BASE/foo/bar/baz.so
         path_count -= 1;
-        path_count += strlen(".pyrolib");
+        memcpy(path + path_count, ".so", strlen(".so"));
+        path_count += strlen(".so");
         path[path_count] = '\0';
 
         if (pyro_is_file(path)) {
@@ -197,8 +197,8 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         }
 
         // 2. Try file: BASE/foo/bar/baz.pyro
-        memcpy(path + path_count - strlen(".pyrolib"), ".pyro", strlen(".pyro"));
-        path_count -= strlen(".pyrolib");
+        path_count -= strlen(".so");
+        memcpy(path + path_count, ".pyro", strlen(".pyro"));
         path_count += strlen(".pyro");
         path[path_count] = '\0';
 
@@ -209,8 +209,8 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         }
 
         // 3. Try file: BASE/foo/bar/baz/self.pyro
-        memcpy(path + path_count - strlen(".pyro"), "/self.pyro", strlen("/self.pyro"));
         path_count -= strlen(".pyro");
+        memcpy(path + path_count, "/self.pyro", strlen("/self.pyro"));
         path_count += strlen("/self.pyro");
         path[path_count] = '\0';
 
