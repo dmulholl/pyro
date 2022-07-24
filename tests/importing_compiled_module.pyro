@@ -1,0 +1,5 @@
+import compiled_module;
+
+assert $is_mod(compiled_module);
+assert compiled_module::add(1, 2) == 3;
+assert compiled_module::add("foo", "bar") == "foobar";

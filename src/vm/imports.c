@@ -5,7 +5,9 @@
 #include "../inc/panics.h"
 #include "../inc/os.h"
 #include "../inc/std_lib.h"
+#include "../inc/stringify.h"
 
+#include <dlfcn.h>
 
 static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) {
     if (strcmp(name->bytes, "math") == 0) {
@@ -93,6 +95,41 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
 }
 
 
+void try_load_compiled_module(PyroVM* vm, const char* path, Value name, ObjModule* module) {
+    void* handle = dlopen(path, RTLD_NOW);
+    if (!handle) {
+        pyro_panic(vm, "failed to load module: %s: %s", path, dlerror());
+        return;
+    }
+
+    char* init_func_name = pyro_sprintf(vm, "pyro_init_mod_%s", AS_STR(name)->bytes);
+    if (vm->halt_flag) {
+        return;
+    }
+
+    typedef bool (*init_func_t)(PyroVM* vm, ObjModule* module);
+    init_func_t init_func;
+
+    init_func = (init_func_t)dlsym(handle, init_func_name);
+    FREE_ARRAY(vm, char, init_func_name, strlen(init_func_name) + 1);
+    if (!init_func) {
+        pyro_panic(vm, "failed to locate module initialization function: %s: %s", path, dlerror());
+        return;
+    }
+
+    bool okay = init_func(vm, module);
+    if (vm->halt_flag) {
+        return;
+    } else if (vm->memory_allocation_failed) {
+        pyro_panic(vm, "out of memory");
+        return;
+    } else if (!okay) {
+        pyro_panic(vm, "failed to initialize module: %s", path);
+        return;
+    }
+}
+
+
 void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
     if (arg_count == 2 && strcmp(AS_STR(args[0])->bytes, "$std") == 0) {
         try_load_stdlib_module(vm, AS_STR(args[1]), module);
@@ -101,30 +138,38 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
 
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         ObjStr* base = AS_STR(vm->import_roots->values[i]);
-
         if (base->length == 0) {
             pyro_panic(vm, "invalid import root (empty string)");
             return;
         }
 
+        // Support `$roots` entries with or without a trailing slash.
         bool base_has_trailing_slash = false;
         if (base->bytes[base->length - 1] == '/') {
             base_has_trailing_slash = true;
         }
 
-        size_t path_length = base_has_trailing_slash ? base->length : base->length + 1;
+        // Given 'import foo::bar::baz', allocate enough space for:
+        // - BASE/foo/bar/baz.pyrolib
+        // - BASE/foo/bar/baz.pyro
+        // - BASE/foo/bar/baz/self.pyro
+        size_t path_capacity = base_has_trailing_slash ? base->length : base->length + 1;
         for (uint8_t j = 0; j < arg_count; j++) {
-            path_length += AS_STR(args[j])->length + 1;
+            path_capacity += AS_STR(args[j])->length + 1;
         }
-        path_length += 4 + 5; // add space for a [.pyro] or [/self.pyro] suffix
+        path_capacity += strlen("self.pyro");
 
-        char* path = ALLOCATE_ARRAY(vm, char, path_length + 1);
+        // Add an extra space for the terminating NULL.
+        path_capacity += 1;
+
+        // Allocate the path buffer.
+        char* path = ALLOCATE_ARRAY(vm, char, path_capacity);
         if (!path) {
             pyro_panic(vm, "out of memory");
             return;
         }
 
-        // We start with path = BASE/
+        // Start with path = BASE/
         memcpy(path, base->bytes, base->length);
         size_t path_count = base->length;
         if (!base_has_trailing_slash) {
@@ -139,38 +184,52 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
             path[path_count++] = '/';
         }
 
-        // 1. Try file: BASE/foo/bar/baz.pyro
-        memcpy(path + path_count - 1, ".pyro", 5);
-        path_count += 4;
+        // 1. Try file: BASE/foo/bar/baz.pyrolib
+        memcpy(path + path_count - 1, ".pyrolib", strlen(".pyrolib"));
+        path_count -= 1;
+        path_count += strlen(".pyrolib");
+        path[path_count] = '\0';
+
+        if (pyro_is_file(path)) {
+            try_load_compiled_module(vm, path, args[arg_count - 1], module);
+            FREE_ARRAY(vm, char, path, path_capacity);
+            return;
+        }
+
+        // 2. Try file: BASE/foo/bar/baz.pyro
+        memcpy(path + path_count - strlen(".pyrolib"), ".pyro", strlen(".pyro"));
+        path_count -= strlen(".pyrolib");
+        path_count += strlen(".pyro");
         path[path_count] = '\0';
 
         if (pyro_is_file(path)) {
             pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_length + 1);
+            FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
-        // 2. Try file: BASE/foo/bar/baz/self.pyro
-        memcpy(path + path_count - 5, "/self.pyro", 10);
-        path_count += 5;
+        // 3. Try file: BASE/foo/bar/baz/self.pyro
+        memcpy(path + path_count - strlen(".pyro"), "/self.pyro", strlen("/self.pyro"));
+        path_count -= strlen(".pyro");
+        path_count += strlen("/self.pyro");
         path[path_count] = '\0';
 
         if (pyro_is_file(path)) {
             pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_length + 1);
+            FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
-        // 3. Try dir: BASE/foo/bar/baz
-        path_count -= 10;
+        // 4. Try dir: BASE/foo/bar/baz
+        path_count -= strlen("/self.pyro");
         path[path_count] = '\0';
 
         if (pyro_is_dir(path)) {
-            FREE_ARRAY(vm, char, path, path_length + 1);
+            FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
-        FREE_ARRAY(vm, char, path, path_length + 1);
+        FREE_ARRAY(vm, char, path, path_capacity);
     }
 
     pyro_panic(

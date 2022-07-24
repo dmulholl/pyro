@@ -51,6 +51,7 @@ debug4: ## As debug3, also logs GC.
 	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_4)"
 
 check: ## Builds the debug binary, then runs the test suite.
+check: tests/compiled_module.pyrolib
 	@make debug
 	@printf "\e[1;32m Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
@@ -63,6 +64,7 @@ install: ## Builds and installs the release binary.
 clean: ## Deletes all build artifacts.
 	rm -rf ./out/*
 	rm -f ./src/std/pyro_mods/*.c
+	rm -f ./tests/compiled_module.pyrolib
 
 help: ## Prints available commands.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
@@ -128,3 +130,16 @@ out/lib/std_mod_json.o: src/std/pyro_mods/std_mod_json.pyro
 	@printf "\e[1;32mBuilding\e[0m \$$std:json\n"
 	@cd src/std/pyro_mods; xxd -i std_mod_json.pyro > std_mod_json.c
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_json.c -o out/lib/std_mod_json.o
+
+# ---------------------- #
+#  Test Compiled Module  #
+# ---------------------- #
+
+tests/compiled_module.pyrolib: tests/compiled_module.c
+	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.pyrolib\n"
+	@${CC} ${CFLAGS} -O3 -D NDEBUG -shared -undefined dynamic_lookup -o tests/compiled_module.pyrolib tests/compiled_module.c
+
+check-compmod:
+	@rm ./tests/compiled_module.pyrolib
+	@make tests/compiled_module.pyrolib
+	@./out/debug/pyro test -v ./tests/importing_compiled_module.pyro
