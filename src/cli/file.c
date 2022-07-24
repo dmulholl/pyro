@@ -2,8 +2,13 @@
 
 
 void pyro_run_file(ArgParser* parser) {
-    char* path = ap_arg(parser, 0);
     size_t stack_size = pyro_cli_get_stack_size(parser);
+
+    char* path = ap_arg(parser, 0);
+    if (!pyro_exists(path)) {
+        fprintf(stderr, "Error: cannot locate %s.\n", path);
+        exit(1);
+    }
 
     PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {

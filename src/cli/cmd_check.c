@@ -17,6 +17,11 @@ void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
         }
 
         char* path = ap_arg(cmd_parser, i);
+        if (!pyro_exists(path)) {
+            fprintf(stderr, "Error: cannot locate %s.\n", path);
+            exit(1);
+        }
+
         pyro_try_compile_file(vm, path);
         if (pyro_get_panic_flag(vm)) {
             had_panic = true;

@@ -139,7 +139,7 @@ tests/compiled_module.pyrolib: tests/compiled_module.c
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.pyrolib\n"
 	@${CC} ${CFLAGS} -O3 -D NDEBUG -shared -undefined dynamic_lookup -o tests/compiled_module.pyrolib tests/compiled_module.c
 
-check-compmod:
+check-compiled-module:
 	@rm ./tests/compiled_module.pyrolib
 	@make tests/compiled_module.pyrolib
-	@./out/debug/pyro test -v ./tests/importing_compiled_module.pyro
+	@./out/debug/pyro test -v ./tests/import_compiled_module.pyro
