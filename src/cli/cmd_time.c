@@ -18,7 +18,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_arg(cmd_parser, i);
         if (!pyro_exists(path)) {
-            fprintf(stderr, "Error: cannot locate %s.\n", path);
+            fprintf(stderr, "Error: invalid path '%s'.\n", path);
             exit(1);
         }
 

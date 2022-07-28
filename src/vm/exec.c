@@ -1511,7 +1511,7 @@ static void run(PyroVM* vm) {
                     if (tup->count < count) {
                         pyro_panic(
                             vm,
-                            "tuple has %zu value(s), requires %zu for unpacking", tup->count, count
+                            "tuple contains %zu value(s), requires %zu for unpacking", tup->count, count
                         );
                     } else {
                         for (size_t i = 0; i < count; i++) {
@@ -1523,7 +1523,7 @@ static void run(PyroVM* vm) {
                     if (vec->count < count) {
                         pyro_panic(
                             vm,
-                            "vector has %zu value(s), requires %zu for unpacking",
+                            "vector contains %zu value(s), requires %zu for unpacking",
                             vec->count, count
                         );
                     } else {
@@ -1532,7 +1532,7 @@ static void run(PyroVM* vm) {
                         }
                     }
                 } else {
-                    pyro_panic(vm, "value is not unpackable");
+                    pyro_panic(vm, "value cannot be unpacked");
                 }
 
                 break;
@@ -1595,7 +1595,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
 void pyro_exec_file_as_main(PyroVM* vm, const char* filepath) {
     char* resolved_path = pyro_realpath(filepath);
     if (!resolved_path) {
-        pyro_panic(vm, "unable to resolve file path '%s'", filepath);
+        pyro_panic(vm, "invalid path '%s'", filepath);
         return;
     }
 
@@ -1631,6 +1631,7 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
             pyro_panic(vm, "out of memory");
             return;
         }
+
         memcpy(filepath, path, path_length);
         memcpy(&filepath[path_length], "/self.pyro", strlen("/self.pyro"));
         filepath[path_length + strlen("/self.pyro")] = '\0';
@@ -1638,7 +1639,7 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
         if (pyro_is_file(filepath)) {
             pyro_exec_file_as_main(vm, filepath);
         } else {
-            pyro_panic(vm, "module requires 'self.pyro' file to be executable");
+            pyro_panic(vm, "unable to execute module without 'self.pyro' file");
         }
 
         free(filepath);

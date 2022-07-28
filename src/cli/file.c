@@ -6,7 +6,7 @@ void pyro_run_file(ArgParser* parser) {
 
     char* path = ap_arg(parser, 0);
     if (!pyro_exists(path)) {
-        fprintf(stderr, "Error: cannot locate %s.\n", path);
+        fprintf(stderr, "Error: invalid path '%s'.\n", path);
         exit(1);
     }
 
