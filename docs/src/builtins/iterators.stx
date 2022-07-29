@@ -61,7 +61,7 @@ Iterator wrappers have the following methods:
     Returns a new `iter` instance mapping the function `callback` to the output of the source iterator.
 
     * `callback` should be a callable that takes a single argument.
-    * The return values will form the output of the new iterator.
+    * The return values of `callback` will form the output of the new iterator.
 
 [[ `:next() -> any` ]]
 

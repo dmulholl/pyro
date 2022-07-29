@@ -194,7 +194,9 @@ You can implement the `$special` methods listed below to add support for various
 [[ `:$iter() -> iterator` ]]
 
     Implementing this method makes the type *iterable*.
-    The method should return an iterator, i.e. an object with a `:$next()` method.
+
+    The method should return an *iterator* --- i.e. an object with a `:$next()` method that returns either
+    the next item from a sequence or an `err` if the sequence has been exhausted.
 
     See the documentation on [iterators][1] for details.
 
@@ -207,6 +209,7 @@ You can implement the `$special` methods listed below to add support for various
 [[ `:$next() -> any` ]]
 
     Implementing this method makes the type an *iterator*.
+
     The method should return either the next item from a sequence or an `err` if the sequence has been exhausted.
 
     See the documentation on [iterators][1] for details.

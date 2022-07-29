@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.16</p>
+                <p class="version">Version 0.7.18</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -310,7 +310,10 @@ Constructor method for initializing new instances.
 <dd>
 <p>
 Implementing this method makes the type <i>iterable</i>.
-The method should return an iterator, i.e. an object with a <code>:$next()</code> method.
+</p>
+<p>
+The method should return an <i>iterator</i> &mdash; i.e. an object with a <code>:$next()</code> method that returns either
+the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
 </p>
 <p>
 See the documentation on <a href="../features/iterators.html">iterators</a> for details.
@@ -334,6 +337,8 @@ If implemented, this method should return a string containing the object seriali
 <dd>
 <p>
 Implementing this method makes the type an <i>iterator</i>.
+</p>
+<p>
 The method should return either the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
 </p>
 <p>
