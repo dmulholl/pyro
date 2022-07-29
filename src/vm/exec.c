@@ -16,7 +16,10 @@
 #include "../inc/gc.h"
 
 
-// The [closure] object and [arg_count] arguments are sitting on top of the stack.
+// - If we're calling [closure] as a function, the [closure] object and [arg_count] arguments should
+//   be sitting on top of the stack.
+// - If we're calling [closure] as a method, the receiver object and [arg_count] arguments should be
+//   sitting on top of the stack.
 static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
     if (vm->frame_count == PYRO_MAX_CALL_FRAMES) {
         pyro_panic(vm, "max call depth exceeded");
@@ -72,7 +75,10 @@ static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
 }
 
 
-// The [fn] object and [arg_count] arguments are sitting on top of the stack.
+// - If we're calling [fn] as a function, the [fn] object and [arg_count] arguments should
+//   be sitting on top of the stack.
+// - If we're calling [fn] as a method, the receiver object and [arg_count] arguments should be
+//   sitting on top of the stack.
 static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
     if (fn->arity == arg_count || fn->arity == -1) {
         Value result = fn->fn_ptr(vm, arg_count, vm->stack_top - arg_count);
@@ -90,8 +96,10 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
 }
 
 
-// The [callee] value and [arg_count] arguments are sitting on top of the stack.
-static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
+// The value to be called and [arg_count] arguments should be sitting on top of the stack.
+static void call_value(PyroVM* vm, uint8_t arg_count) {
+    Value callee = pyro_peek(vm, arg_count);
+
     if (IS_OBJ(callee)) {
         switch(AS_OBJ(callee)->type) {
             case OBJ_BOUND_METHOD: {
@@ -118,7 +126,11 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
 
                 Value init_method;
                 if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_dollar_init), &init_method, vm)) {
-                    call_value(vm, init_method, arg_count);
+                    if (IS_NATIVE_FN(init_method)) {
+                        call_native_fn(vm, AS_NATIVE_FN(init_method), arg_count);
+                    } else {
+                        call_closure(vm, AS_CLOSURE(init_method), arg_count);
+                    }
                 } else if (arg_count != 0) {
                     pyro_panic(vm,
                         "%s(): expected 0 arguments for initializer, found %zu",
@@ -145,7 +157,11 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
 
                 Value call_method;
                 if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_dollar_call), &call_method, vm)) {
-                    call_value(vm, call_method, arg_count);
+                    if (IS_NATIVE_FN(call_method)) {
+                        call_native_fn(vm, AS_NATIVE_FN(call_method), arg_count);
+                    } else {
+                        call_closure(vm, AS_CLOSURE(call_method), arg_count);
+                    }
                 } else {
                     pyro_panic(vm, "object is not callable");
                 }
@@ -157,7 +173,8 @@ static void call_value(PyroVM* vm, Value callee, uint8_t arg_count) {
                 break;
         }
     }
-    pyro_panic(vm, "object is not callable");
+
+    pyro_panic(vm, "value is not callable");
 }
 
 
@@ -369,15 +386,13 @@ static void run(PyroVM* vm) {
 
             case OP_CALL: {
                 uint8_t arg_count = READ_BYTE();
-                Value callee = pyro_peek(vm, arg_count);
-                call_value(vm, callee, arg_count);
+                call_value(vm, arg_count);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
             case OP_CALL_UNPACK_LAST_ARG: {
                 uint8_t arg_count = READ_BYTE();
-                Value callee = pyro_peek(vm, arg_count);
                 Value last_arg = pyro_pop(vm);
                 arg_count--;
 
@@ -407,7 +422,7 @@ static void run(PyroVM* vm) {
                     }
                 }
 
-                call_value(vm, callee, total_args);
+                call_value(vm, total_args);
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
@@ -1433,8 +1448,7 @@ static void run(PyroVM* vm) {
                 size_t stashed_frame_count = vm->frame_count;
 
                 vm->try_depth++;
-                Value callee = pyro_peek(vm, 0);
-                call_value(vm, callee, 0);
+                call_value(vm, 0);
                 run(vm);
                 vm->try_depth--;
 
@@ -1581,7 +1595,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
     }
 
     pyro_push(vm, MAKE_OBJ(closure));
-    call_value(vm, MAKE_OBJ(closure), 0);
+    call_value(vm, 0);
     run(vm);
     pyro_pop(vm);
 
@@ -1679,7 +1693,7 @@ void pyro_exec_code_as_module(
     }
 
     pyro_push(vm, MAKE_OBJ(closure));
-    call_value(vm, MAKE_OBJ(closure), 0);
+    call_value(vm, 0);
     run(vm);
     pyro_pop(vm);
 }
@@ -1719,7 +1733,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
     }
 
     pyro_push(vm, MAKE_OBJ(closure));
-    call_value(vm, MAKE_OBJ(closure), 0);
+    call_value(vm, 0);
     run(vm);
     pyro_pop(vm);
 }
@@ -1737,7 +1751,7 @@ void pyro_run_main_func(PyroVM* vm) {
         if (IS_CLOSURE(main_value)) {
             if (AS_CLOSURE(main_value)->fn->arity == 0) {
                 pyro_push(vm, main_value);
-                call_value(vm, main_value, 0);
+                call_value(vm, 0);
                 run(vm);
                 pyro_pop(vm);
             } else {
@@ -1772,7 +1786,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 vm->exit_code = 0;
 
                 pyro_push(vm, entry->value);
-                call_value(vm, entry->value, 0);
+                call_value(vm, 0);
                 run(vm);
                 pyro_pop(vm);
 
@@ -1837,7 +1851,7 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
 
                 for (size_t j = 0; j < num_iterations; j++) {
                     pyro_push(vm, entry->value);
-                    call_value(vm, entry->value, 0);
+                    call_value(vm, 0);
                     run(vm);
                     pyro_pop(vm);
 
@@ -1874,21 +1888,24 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count) {
     if (IS_NATIVE_FN(method)) {
         call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
         return pyro_pop(vm);
-    } else {
+    } else if (IS_CLOSURE(method)) {
         call_closure(vm, AS_CLOSURE(method), arg_count);
         run(vm);
         return pyro_pop(vm);
+    } else {
+        pyro_panic(vm, "value is not callable as a method");
+        return MAKE_NULL();
     }
 }
 
 
 Value pyro_call_function(PyroVM* vm, uint8_t arg_count) {
-    Value function = pyro_peek(vm, arg_count);
-    if (IS_NATIVE_FN(function)) {
-        call_native_fn(vm, AS_NATIVE_FN(function), arg_count);
+    Value value = pyro_peek(vm, arg_count);
+    if (IS_NATIVE_FN(value)) {
+        call_native_fn(vm, AS_NATIVE_FN(value), arg_count);
         return pyro_pop(vm);
     } else {
-        call_value(vm, function, arg_count);
+        call_value(vm, arg_count);
         run(vm);
         return pyro_pop(vm);
     }
