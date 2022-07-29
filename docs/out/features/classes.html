@@ -206,7 +206,7 @@ Accessing an index:
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
 </pre>
 <p>
-is equivalent to calling the object's <code>$get_index(key)</code> method.
+is equivalent to calling the object's <code>:$get_index(key)</code> method.
 </p>
 <p>
 Assigning to an index:
@@ -215,7 +215,7 @@ Assigning to an index:
 <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
 </pre>
 <p>
-is equivalent to calling the object's <code>$set_index(key, value)</code> method.
+is equivalent to calling the object's <code>:$set_index(key, value)</code> method.
 </p>
 <h3 id="special-methods">
 Special Methods
@@ -322,11 +322,14 @@ See the documentation on <a href="../features/iterators.html">iterators</a> for 
 </div>
 <div>
 <dt>
-<code>$json() -&gt; str</code>
+<code>:$json() -&gt; str</code>
 </dt>
 <dd>
 <p>
 If implemented, this method should return a string containing the object serialized to JSON.
+</p>
+<p>
+This method is used by the <code>$std::json</code> library to serialize objects to JSON.
 </p>
 </dd>
 </div>

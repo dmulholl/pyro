@@ -133,14 +133,14 @@ Accessing an index:
 ::: code pyro
     var foo = object[key];
 
-is equivalent to calling the object's `$get_index(key)` method.
+is equivalent to calling the object's `:$get_index(key)` method.
 
 Assigning to an index:
 
 ::: code pyro
     object[key] = value;
 
-is equivalent to calling the object's `$set_index(key, value)` method.
+is equivalent to calling the object's `:$set_index(key, value)` method.
 
 
 
@@ -201,9 +201,11 @@ You can implement the `$special` methods listed below to add support for various
     See the documentation on [iterators][1] for details.
 
 
-[[ `$json() -> str` ]]
+[[ `:$json() -> str` ]]
 
     If implemented, this method should return a string containing the object serialized to JSON.
+
+    This method is used by the `$std::json` library to serialize objects to JSON.
 
 
 [[ `:$next() -> any` ]]
