@@ -760,3 +760,10 @@ def $test_is_empty_or_utf8() {
 
     assert !"a\x80b":is_empty_or_utf8();
 }
+
+
+def $test_concatenating_strings() {
+    assert "foo" + "bar" == "foobar";
+    assert "" + "foo" == "foo";
+    assert "foo" + "" == "foo";
+}
