@@ -7,6 +7,7 @@
 #include "../../inc/setup.h"
 #include "../../inc/panics.h"
 #include "../../inc/exec.h"
+#include "../../inc/operators.h"
 
 
 static Value fn_is_iter(PyroVM* vm, size_t arg_count, Value* args) {
@@ -399,6 +400,61 @@ static Value iter_count(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value iter_sum(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+    bool is_first_item = true;
+    Value sum = MAKE_NULL();
+
+    while (true) {
+        Value item = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return MAKE_NULL();
+        } else if (IS_ERR(item)) {
+            break;
+        }
+
+        if (is_first_item) {
+            sum = item;
+        } else {
+            sum = pyro_op_binary_plus(vm, sum, item);
+            if (vm->halt_flag) {
+                return MAKE_NULL();
+            }
+        }
+
+        is_first_item = false;
+    }
+
+    return sum;
+}
+
+
+static Value iter_reduce(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjIter* iter = AS_ITER(args[-1]);
+    Value callback = args[0];
+    Value accumulator = args[1];
+
+    while (true) {
+        Value item = ObjIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return MAKE_NULL();
+        } else if (IS_ERR(item)) {
+            break;
+        }
+
+        pyro_push(vm, callback);
+        pyro_push(vm, accumulator);
+        pyro_push(vm, item);
+        accumulator = pyro_call_function(vm, 2);
+        if (vm->halt_flag) {
+            return MAKE_NULL();
+        }
+    }
+
+    return accumulator;
+}
+
+
 void pyro_load_std_core_iter(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$iter", fn_iter, 1);
@@ -418,4 +474,6 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_method(vm, vm->class_iter, "join", iter_join, -1);
     pyro_define_method(vm, vm->class_iter, "count", iter_count, 0);
     pyro_define_method(vm, vm->class_iter, "next", iter_next, 0);
+    pyro_define_method(vm, vm->class_iter, "sum", iter_sum, 0);
+    pyro_define_method(vm, vm->class_iter, "reduce", iter_reduce, 2);
 }

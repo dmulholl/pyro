@@ -128,3 +128,21 @@ def $test_join() {
     assert $is_err(try $range(3):join(123));
     assert $is_err(try $range(3):join(",", 123));
 }
+
+
+def $test_sum() {
+    assert $range(5):sum() == 0 + 1 + 2 + 3 + 4;
+    assert []:iter():sum() == null;
+    assert [1, 2, 3]:iter():sum() == 1 + 2 + 3;
+    assert [1, 2, 3.0]:iter():sum() == 1 + 2 + 3.0;
+    assert ["foo", "bar", "baz"]:iter():sum() == "foobarbaz";
+    assert $is_err(try [123, "foo"]:iter():sum());
+}
+
+
+def $test_reduce() {
+    assert [1, 2, 3, 4]:iter():reduce(def(acc, value) {return acc + value;}, 0) == 10;
+    assert []:iter():reduce(def(acc, value) {return acc + value;}, 0) == 0;
+    assert [1, 2, 3, 4]:iter():reduce(def(acc, value) {return acc * value;}, 1) == 24;
+    assert []:iter():reduce(def(acc, value) {return acc * value;}, 1) == 1;
+}
