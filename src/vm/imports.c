@@ -153,6 +153,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         }
 
         // Given 'import foo::bar::baz', allocate enough space for:
+        // - BASE/foo/bar/baz
         // - BASE/foo/bar/baz.so
         // - BASE/foo/bar/baz.pyro
         // - BASE/foo/bar/baz/self.pyro
@@ -211,8 +212,20 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
             return;
         }
 
-        // 3. Try file: BASE/foo/bar/baz/self.pyro
+        // 3. Try file: BASE/foo/bar/baz/self.so
         path_count -= strlen(".pyro");
+        memcpy(path + path_count, "/self.so", strlen("/self.so"));
+        path_count += strlen("/self.so");
+        path[path_count] = '\0';
+
+        if (pyro_is_file(path)) {
+            try_load_compiled_module(vm, path, args[arg_count - 1], module);
+            FREE_ARRAY(vm, char, path, path_capacity);
+            return;
+        }
+
+        // 4. Try file: BASE/foo/bar/baz/self.pyro
+        path_count -= strlen("/self.so");
         memcpy(path + path_count, "/self.pyro", strlen("/self.pyro"));
         path_count += strlen("/self.pyro");
         path[path_count] = '\0';
@@ -223,7 +236,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
             return;
         }
 
-        // 4. Try dir: BASE/foo/bar/baz
+        // 5. Try dir: BASE/foo/bar/baz
         path_count -= strlen("/self.pyro");
         path[path_count] = '\0';
 
