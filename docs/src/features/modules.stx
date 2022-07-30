@@ -18,7 +18,7 @@ Assume we have a file called `math.pyro` containing math functions:
 
 Use the member access operator `::` to access a module's top-level variables, functions, and classes.
 
-The module's name becomes a variable in the importing scope.
+The imported module's name becomes a variable in the importing scope.
 
 
 
