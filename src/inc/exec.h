@@ -44,12 +44,12 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
 // Attempts to compile but not execute the file.
 void pyro_try_compile_file(PyroVM* vm, const char* path);
 
-// Calls a value as a method on a receiver, where [method] contains one of:
+// Calls a value as a method on a receiver, where [method] is a value returned by pyro_get_method()
+// containing one of:
 //
 // - ObjNativeFn
 // - ObjClosure
 //
-// [method] should be a value returned by pyro_get_method().
 // Returns the value returned by the method.
 //
 // Before calling this function the receiver and the method's arguments should be pushed onto the
