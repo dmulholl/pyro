@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.18</p>
+                <p class="version">Version 0.7.19</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -178,6 +178,22 @@ Returns an <code>err</code> if the iterator has been exhausted.
 </div>
 <div>
 <dt>
+<code>:reduce(callback: call(any, any) -&gt; any, initial_value: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Reduces the iterator to single value using <code>callback</code>, where <code>callback</code> is a function that takes two arguments, an accumulator value and the next value from the iterator.
+</p>
+<p>
+<code>initial_value</code> is the initial value of the accumulator.
+</p>
+<p>
+Returns <code>initial_value</code> if the iterator is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:skip_first(n: i64) -&gt; iter</code>
 </dt>
 <dd>
@@ -198,6 +214,19 @@ Panics if the iterator generates less than <code>n</code> items.
 </p>
 <p>
 Note that this method needs to buffer the iterator's full output to determine the end point.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:sum() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the result of adding the iterator's values using the <code>+</code> operator.
+</p>
+<p>
+Returns <code>null</code> if the iterator is empty.
 </p>
 </dd>
 </div>
