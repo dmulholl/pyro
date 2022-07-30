@@ -153,6 +153,8 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         );
     #endif
 
+    mark_object(vm, (Obj*)object->class);
+
     switch (object->type) {
         case OBJ_BOUND_METHOD: {
             ObjBoundMethod* bound = (ObjBoundMethod*)object;
@@ -199,7 +201,6 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
-            mark_object(vm, (Obj*)instance->obj.class);
             int num_fields = instance->obj.class->field_values->count;
             for (int i = 0; i < num_fields; i++) {
                 mark_value(vm, instance->fields[i]);
