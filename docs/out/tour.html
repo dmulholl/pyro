@@ -634,6 +634,9 @@ Alternatively, you can provide a default value for a function call that might fa
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
+<p>
+You can find a full description of the <code>err</code> type <a href="builtins/errors.html">here</a>.
+</p>
 <h3 id="panics">
 Panics
 </h3>
@@ -656,14 +659,14 @@ A <code>try</code> expression returns the value of its operand if it evaluates w
 <code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">1</span><span class="p">);</span>  <span class="c1"># 1</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>  <span class="c1"># 0.5</span>
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">);</span>  <span class="c1"># err</span>
 </pre>
 <p>
 Note that you can use the error-coalescing operator <code>!!</code> to provide a default value for a panicking expression:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 1</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0.5</span>
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0</span>
 </pre>
 <p>
