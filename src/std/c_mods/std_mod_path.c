@@ -6,6 +6,7 @@
 #include "../../inc/setup.h"
 #include "../../inc/panics.h"
 #include "../../inc/os.h"
+#include "../../inc/stringify.h"
 
 
 static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
@@ -230,15 +231,27 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    char* realpath = pyro_realpath(AS_STR(args[0])->bytes);
-    if (!realpath) {
-        pyro_panic(vm, "realpath(): unable to resolve path '%s'", AS_STR(args[0])->bytes);
-        return MAKE_NULL();
+    char* result = pyro_realpath(AS_STR(args[0])->bytes);
+    if (!result) {
+        ObjStr* message = pyro_sprintf_to_obj(vm,
+            "realpath(): invalid path '%s'",
+            AS_STR(args[0])->bytes
+        );
+        if (!message) {
+            return MAKE_NULL();
+        }
+
+        ObjErr* err = ObjErr_new(vm);
+        if (!err) {
+            return MAKE_NULL();
+        }
+
+        err->message = message;
+        return MAKE_OBJ(err);
     }
 
-    ObjStr* string = ObjStr_copy_raw(realpath, strlen(realpath), vm);
-    free(realpath);
-
+    ObjStr* string = ObjStr_copy_raw(result, strlen(result), vm);
+    free(result);
     if (!string) {
         pyro_panic(vm, "realpath(): out of memory");
         return MAKE_NULL();
