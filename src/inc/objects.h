@@ -264,7 +264,7 @@ struct ObjClass {
     // The class's superclass, if it has one. Note that this field can be NULL.
     ObjClass* superclass;
 
-    // Maps string names to [ObjFn] or [ObjNativeFn] values.
+    // Maps [ObjStr] names to [ObjFn] or [ObjNativeFn] values.
     ObjMap* methods;
 
     // Stores the default/initial values for fields. Each [ObjInstance] gets a copy of this vector.
@@ -428,6 +428,7 @@ bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm);
 /* --------- */
 
 typedef enum {
+    ITER_EMPTY,
     ITER_ENUM,
     ITER_FILE_LINES,
     ITER_FUNC_FILTER,
@@ -461,6 +462,9 @@ typedef struct {
 
 // Creates a new iterator. Returns NULL if the attempt to allocate memory fails.
 ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
+
+// Creates a new empty iterator. Returns NULL if the attempt to allocate memory fails.
+ObjIter* ObjIter_empty(PyroVM* vm);
 
 // Returns the next item from the sequence or an [err] if the sequence has been exhausted.
 // Note that this method may call into Pyro code and can panic or set the exit flag. Check

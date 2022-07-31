@@ -1,0 +1,18 @@
+class Foo {
+    def bar() {
+        echo "bar";
+    }
+
+    def baz() {
+        echo "baz";
+    }
+}
+
+var foo = Foo();
+var methods = $methods(foo):to_vec();
+
+assert methods:count() == 2;
+assert methods[0] == "bar";
+assert methods[1] == "baz";
+
+assert $methods(123):to_vec():is_empty();

@@ -1700,8 +1700,17 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
 }
 
 
+ObjIter* ObjIter_empty(PyroVM* vm) {
+    return ObjIter_new(NULL, ITER_EMPTY, vm);
+}
+
+
 Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
     switch (iter->iter_type) {
+        case ITER_EMPTY: {
+            return MAKE_OBJ(vm->empty_error);
+        }
+
         case ITER_VEC: {
             ObjVec* vec = (ObjVec*)iter->source;
             if (iter->next_index < vec->count) {

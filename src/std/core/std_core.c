@@ -1033,7 +1033,7 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
     Value obj = args[0];
 
     if (!IS_STR(args[1])) {
-        pyro_panic(vm, "$method(): invalid [method_name] argument, expected a string");
+        pyro_panic(vm, "$method(): invalid argument [method_name], expected a string");
         return MAKE_NULL();
     }
     ObjStr* method_name = AS_STR(args[1]);
@@ -1045,11 +1045,32 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, obj, AS_OBJ(method));
     if (!bound_method) {
-        pyro_panic(vm, "out of memory");
+        pyro_panic(vm, "$method(): out of memory");
         return MAKE_NULL();
     }
 
     return MAKE_OBJ(bound_method);
+}
+
+
+static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjClass* class = pyro_get_class(args[0]);
+    if (!class) {
+        ObjIter* iter = ObjIter_empty(vm);
+        if (!iter) {
+            pyro_panic(vm, "$methods(): out of memory");
+            return MAKE_NULL();
+        }
+        return MAKE_OBJ(iter);
+    }
+
+    ObjIter* iter = ObjIter_new((Obj*)class->methods, ITER_MAP_KEYS, vm);
+    if (!iter) {
+        pyro_panic(vm, "$methods(): out of memory");
+        return MAKE_NULL();
+    }
+
+    return MAKE_OBJ(iter);
 }
 
 
@@ -1114,4 +1135,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$exec", fn_exec, 1);
     pyro_define_global_fn(vm, "$type", fn_type, 1);
     pyro_define_global_fn(vm, "$method", fn_method, 2);
+    pyro_define_global_fn(vm, "$methods", fn_methods, 1);
 }
