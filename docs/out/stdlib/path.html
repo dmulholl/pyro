@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.19</p>
+                <p class="version">Version 0.7.21</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -167,7 +167,7 @@ Skips <code>&quot;.&quot;</code> and <code>&quot;..&quot;</code>.
 </div>
 <div>
 <dt>
-<code>realpath(path: str) -&gt; str</code>
+<code>realpath(path: str) -&gt; str|err</code>
 </dt>
 <dd>
 <p>
@@ -176,7 +176,7 @@ All the components of <code>path</code> must exist.
 Equivalent to POSIX <code>realpath()</code>.
 </p>
 <p>
-Panics if <code>path</code> cannot be resolved.
+Returns an <code>err</code> if the path cannot be resolved.
 </p>
 </dd>
 </div>

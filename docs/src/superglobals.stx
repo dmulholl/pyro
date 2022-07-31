@@ -132,9 +132,23 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     Returns the new module.
 
 
+
 [[ `$exit(code: i64)` ]]
 
     Instructs the program to exit with the specified exit code.
+
+
+
+[[ `$field(object: any, field_name: str) -> any` ]]
+
+    Gets a field value by name.
+    Returns an `err` if the field does not exist.
+
+
+
+[[ `$fields(object: any) -> iter[str]` ]]
+
+    Returns an iterator over the object's field names as strings.
 
 
 
@@ -370,6 +384,12 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     Gets a method by name. The returned method is bound to `object`.
 
     Returns an `err` if the method does not exist.
+
+
+
+[[ `$methods(object: any) -> iter[str]` ]]
+
+    Returns an iterator over the object's method names as strings.
 
 
 

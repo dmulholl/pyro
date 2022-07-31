@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.19</p>
+                <p class="version">Version 0.7.21</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -284,6 +284,27 @@ Returns the new module.
 <dd>
 <p>
 Instructs the program to exit with the specified exit code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$field(object: any, field_name: str) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Gets a field value by name.
+Returns an <code>err</code> if the field does not exist.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$fields(object: any) -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the object's field names as strings.
 </p>
 </dd>
 </div>
@@ -655,6 +676,29 @@ Wraps an iterator in an <code>iter</code> wrapper, adding automatic support for 
 <dd>
 <p>
 Creates a new <code>$map</code> object.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$method(object: any, method_name: str) -&gt; method|err</code>
+</dt>
+<dd>
+<p>
+Gets a method by name. The returned method is bound to <code>object</code>.
+</p>
+<p>
+Returns an <code>err</code> if the method does not exist.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$methods(object: any) -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the object's method names as strings.
 </p>
 </dd>
 </div>
