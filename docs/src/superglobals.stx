@@ -276,7 +276,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$is_instance(object, class_object) -> bool` ]]
+[[ `$is_instance(object: any, class: class) -> bool` ]]
 
     Returns `true` if `object` is an instance of the specified class or of a subclass of the specified class.
 
