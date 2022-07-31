@@ -1093,6 +1093,27 @@ static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjClass* class = pyro_get_class(args[0]);
+    if (!class) {
+        ObjIter* iter = ObjIter_empty(vm);
+        if (!iter) {
+            pyro_panic(vm, "$fields(): out of memory");
+            return MAKE_NULL();
+        }
+        return MAKE_OBJ(iter);
+    }
+
+    ObjIter* iter = ObjIter_new((Obj*)class->field_indexes, ITER_MAP_KEYS, vm);
+    if (!iter) {
+        pyro_panic(vm, "$methods(): out of memory");
+        return MAKE_NULL();
+    }
+
+    return MAKE_OBJ(iter);
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1156,4 +1177,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$method", fn_method, 2);
     pyro_define_global_fn(vm, "$methods", fn_methods, 1);
     pyro_define_global_fn(vm, "$field", fn_field, 2);
+    pyro_define_global_fn(vm, "$fields", fn_fields, 1);
 }

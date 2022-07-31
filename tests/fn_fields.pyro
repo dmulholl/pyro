@@ -1,0 +1,11 @@
+class Foo {
+    var bar;
+    var baz;
+}
+
+var foo = Foo();
+var fields = $fields(foo):to_vec();
+
+assert fields:count() == 2;
+assert fields[0] == "bar";
+assert fields[1] == "baz";
