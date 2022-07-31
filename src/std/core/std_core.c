@@ -1029,6 +1029,30 @@ static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
+    Value obj = args[0];
+
+    if (!IS_STR(args[1])) {
+        pyro_panic(vm, "$method(): invalid [method_name] argument, expected a string");
+        return MAKE_NULL();
+    }
+    ObjStr* method_name = AS_STR(args[1]);
+
+    Value method = pyro_get_method(vm, obj, method_name);
+    if (IS_NULL(method)) {
+        return MAKE_OBJ(vm->empty_error);
+    }
+
+    ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, obj, AS_OBJ(method));
+    if (!bound_method) {
+        pyro_panic(vm, "out of memory");
+        return MAKE_NULL();
+    }
+
+    return MAKE_OBJ(bound_method);
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1089,4 +1113,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$input", fn_input, 0);
     pyro_define_global_fn(vm, "$exec", fn_exec, 1);
     pyro_define_global_fn(vm, "$type", fn_type, 1);
+    pyro_define_global_fn(vm, "$method", fn_method, 2);
 }

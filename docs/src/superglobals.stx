@@ -365,6 +365,14 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$method(object: any, method_name: str) -> method|err` ]]
+
+    Gets a method by name. The returned method is bound to `object`.
+
+    Returns an `err` if the method does not exist.
+
+
+
 [[ `$panic(error_message: any)` <br> `$panic(format_string: str, arg1: any, arg2: any, ...)` ]]
 
     Panics with the specified error message.

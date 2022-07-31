@@ -1,0 +1,17 @@
+class Foo {
+    var value;
+
+    def $init(value) {
+        self.value = value;
+    }
+
+    def get_value() {
+        return self.value;
+    }
+}
+
+var foo = Foo(123);
+var method = $method(foo, "get_value");
+
+assert $is_method(method);
+assert method() == 123;
