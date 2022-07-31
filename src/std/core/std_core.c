@@ -1074,6 +1074,25 @@ static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[1])) {
+        pyro_panic(vm, "$field(): invalid argument [field_name], expected a string");
+        return MAKE_NULL();
+    }
+    Value field_name = args[1];
+
+    if (IS_INSTANCE(args[0])) {
+        ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->field_indexes;
+        Value field_index;
+        if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
+            return AS_INSTANCE(args[0])->fields[field_index.as.i64];
+        }
+    }
+
+    return MAKE_OBJ(vm->empty_error);
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1136,4 +1155,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$type", fn_type, 1);
     pyro_define_global_fn(vm, "$method", fn_method, 2);
     pyro_define_global_fn(vm, "$methods", fn_methods, 1);
+    pyro_define_global_fn(vm, "$field", fn_field, 2);
 }

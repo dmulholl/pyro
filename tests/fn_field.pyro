@@ -1,0 +1,14 @@
+class Foo {
+    var bar;
+    var baz;
+
+    def $init(bar, baz) {
+        self.bar = bar;
+        self.baz = baz;
+    }
+}
+
+var foo = Foo(123, 456);
+
+assert $field(foo, "bar") == 123;
+assert $field(foo, "baz") == 456;
