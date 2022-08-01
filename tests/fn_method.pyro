@@ -15,3 +15,6 @@ var method = $method(foo, "get_value");
 
 assert $is_method(method);
 assert method() == 123;
+
+assert $is_err($method(foo, "foobar"));
+assert $is_err($method(123, "foobar"));

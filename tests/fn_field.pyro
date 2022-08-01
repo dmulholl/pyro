@@ -12,3 +12,6 @@ var foo = Foo(123, 456);
 
 assert $field(foo, "bar") == 123;
 assert $field(foo, "baz") == 456;
+
+assert $is_err($field(foo, "foobar"));
+assert $is_err($field(123, "foobar"));
