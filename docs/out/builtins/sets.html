@@ -59,6 +59,9 @@
 <a href="#containment">Containment</a>
 </li>
 <li>
+<a href="#set-operators">Set Operators</a>
+</li>
+<li>
 <a href="#methods">Methods</a>
 </li>
 </ul>
@@ -110,6 +113,20 @@ You can check if a set contains an item using the <code>in</code> operator:
     <span class="k">echo</span> <span class="s">&quot;found&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
+<h3 id="set-operators">
+Set Operators
+</h3>
+<ul>
+<li>
+The <code>|</code> operator returns the union of two sets, e.g. <code>A | B</code>.
+</li>
+<li>
+The <code>&amp;</code> operator returns the intersection of two sets, e.g. <code>A &amp; B</code>.
+</li>
+<li>
+The <code>-</code> operator returns the difference of two sets, e.g. <code>A - B</code>.
+</li>
+</ul>
 <h3 id="methods">
 Methods
 </h3>
@@ -147,6 +164,32 @@ Returns the number of items in the set.
 </div>
 <div>
 <dt>
+<code>:difference(other: set) -&gt; set</code>
+</dt>
+<dd>
+<p>
+Returns a new set containing the difference of the two sets, i.e. the set of all elements that are in <code>receiver</code> but not in <code>other</code>.
+</p>
+<p>
+Equivalent to <code>receiver - other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:intersection(other: set) -&gt; set</code>
+</dt>
+<dd>
+<p>
+Returns a new set containing the intersection of the two sets, i.e. the set of all elements that are in both <code>receiver</code> and <code>other</code>.
+</p>
+<p>
+Equivalent to <code>receiver &amp; other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:is_empty() -&gt; bool</code>
 </dt>
 <dd>
@@ -163,6 +206,19 @@ Returns <code>true</code> if the set is empty.
 <p>
 Removes <code>item</code> from the set.
 This is a null operation if the set does not contain a member equal to <code>item</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:union(other: set) -&gt; set</code>
+</dt>
+<dd>
+<p>
+Returns a new set containing the union of the two sets, i.e. the set of all elements that are in either <code>receiver</code> or <code>other</code>.
+</p>
+<p>
+Equivalent to <code>receiver | other</code>.
 </p>
 </dd>
 </div>

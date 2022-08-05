@@ -46,6 +46,16 @@ You can check if a set contains an item using the `in` operator:
 
 
 
+### Set Operators
+
+* The `|` operator returns the union of two sets, e.g. `A | B`.
+
+* The `&` operator returns the intersection of two sets, e.g. `A & B`.
+
+* The `-` operator returns the difference of two sets, e.g. `A - B`.
+
+
+
 ### Methods
 
 
@@ -62,6 +72,18 @@ You can check if a set contains an item using the `in` operator:
 
     Returns the number of items in the set.
 
+[[ `:difference(other: set) -> set` ]]
+
+    Returns a new set containing the difference of the two sets, i.e. the set of all elements that are in `receiver` but not in `other`.
+
+    Equivalent to `receiver - other`.
+
+[[ `:intersection(other: set) -> set` ]]
+
+    Returns a new set containing the intersection of the two sets, i.e. the set of all elements that are in both `receiver` and `other`.
+
+    Equivalent to `receiver & other`.
+
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the set is empty.
@@ -70,3 +92,9 @@ You can check if a set contains an item using the `in` operator:
 
     Removes `item` from the set.
     This is a null operation if the set does not contain a member equal to `item`.
+
+[[ `:union(other: set) -> set` ]]
+
+    Returns a new set containing the union of the two sets, i.e. the set of all elements that are in either `receiver` or `other`.
+
+    Equivalent to `receiver | other`.
