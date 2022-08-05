@@ -90,9 +90,9 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_op_binary_greater);
     mark_object(vm, (Obj*)vm->str_op_binary_greater_equals);
     mark_object(vm, (Obj*)vm->str_op_binary_plus);
+    mark_object(vm, (Obj*)vm->str_op_binary_minus);
     mark_object(vm, (Obj*)vm->str_op_binary_bar);
     mark_object(vm, (Obj*)vm->str_op_binary_amp);
-    mark_object(vm, (Obj*)vm->str_op_binary_minus);
     mark_object(vm, (Obj*)vm->str_op_binary_star);
     mark_object(vm, (Obj*)vm->str_op_binary_slash);
     mark_object(vm, (Obj*)vm->str_op_unary_plus);

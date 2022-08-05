@@ -105,3 +105,29 @@ def $test_intersection() {
     assert "B" in i1;
     assert "C" in i1;
 }
+
+
+def $test_difference() {
+    var s1 = $set("ABC");
+    var s2 = $set("BCD");
+
+    var d1 = s1:difference(s2);
+    assert $is_set(d1);
+    assert d1:count() == 1;
+    assert "A" in d1;
+
+    var d2 = s2:difference(s1);
+    assert $is_set(d2);
+    assert d2:count() == 1;
+    assert "D" in d2;
+
+    var d3 = s1 - s2;
+    assert $is_set(d3);
+    assert d3:count() == 1;
+    assert "A" in d3;
+
+    var d4 = s2 - s1;
+    assert $is_set(d4);
+    assert d4:count() == 1;
+    assert "D" in d4;
+}
