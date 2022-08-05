@@ -131,3 +131,33 @@ def $test_difference() {
     assert d4:count() == 1;
     assert "D" in d4;
 }
+
+
+def $test_symmetric_difference() {
+    var s1 = $set("ABC");
+    var s2 = $set("BCD");
+
+    var sd1 = s1:symmetric_difference(s2);
+    assert $is_set(sd1);
+    assert sd1:count() == 2;
+    assert "A" in sd1;
+    assert "D" in sd1;
+
+    var sd2 = s2:symmetric_difference(s1);
+    assert $is_set(sd2);
+    assert sd2:count() == 2;
+    assert "A" in sd2;
+    assert "D" in sd2;
+
+    var sd3 = s1 ^ s2;
+    assert $is_set(sd3);
+    assert sd3:count() == 2;
+    assert "A" in sd3;
+    assert "D" in sd3;
+
+    var sd4 = s2 ^ s1;
+    assert $is_set(sd4);
+    assert sd4:count() == 2;
+    assert "A" in sd4;
+    assert "D" in sd4;
+}

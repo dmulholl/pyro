@@ -131,6 +131,7 @@ struct PyroVM {
     ObjStr* str_op_binary_amp;
     ObjStr* str_op_binary_star;
     ObjStr* str_op_binary_slash;
+    ObjStr* str_op_binary_caret;
     ObjStr* str_dollar_hash;
     ObjStr* str_dollar_call;
     ObjStr* str_op_unary_plus;
