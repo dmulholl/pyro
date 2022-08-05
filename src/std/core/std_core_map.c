@@ -63,8 +63,7 @@ static Value map_remove(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    Value value;
-    return MAKE_BOOL(ObjMap_get(map, args[0], &value, vm));
+    return MAKE_BOOL(ObjMap_contains(map, args[0], vm));
 }
 
 
@@ -195,6 +194,85 @@ static Value set_add(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map1 = AS_MAP(args[-1]);
+
+    if (!IS_SET(args[0])) {
+        pyro_panic(vm, "union(): invalid argument, expected a set");
+        return MAKE_NULL();
+    }
+    ObjMap* map2 = AS_MAP(args[0]);
+
+    ObjMap* new_map = ObjMap_new_as_set(vm);
+    if (!new_map) {
+        pyro_panic(vm, "union(): out of memory");
+        return MAKE_NULL();
+    }
+
+    for (size_t i = 0; i < map1->entry_array_count; i++) {
+        MapEntry* entry = &map1->entry_array[i];
+
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (ObjMap_set(new_map, entry->key, MAKE_NULL(), vm) == 0) {
+            pyro_panic(vm, "union(): out of memory");
+            return MAKE_NULL();
+        }
+    }
+
+    for (size_t i = 0; i < map2->entry_array_count; i++) {
+        MapEntry* entry = &map2->entry_array[i];
+
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (ObjMap_set(new_map, entry->key, MAKE_NULL(), vm) == 0) {
+            pyro_panic(vm, "union(): out of memory");
+            return MAKE_NULL();
+        }
+    }
+
+    return MAKE_OBJ(new_map);
+}
+
+
+static Value set_intersection(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map1 = AS_MAP(args[-1]);
+
+    if (!IS_SET(args[0])) {
+        pyro_panic(vm, "intersection(): invalid argument, expected a set");
+        return MAKE_NULL();
+    }
+    ObjMap* map2 = AS_MAP(args[0]);
+
+    ObjMap* new_map = ObjMap_new_as_set(vm);
+    if (!new_map) {
+        pyro_panic(vm, "intersection(): out of memory");
+        return MAKE_NULL();
+    }
+
+    for (size_t i = 0; i < map1->entry_array_count; i++) {
+        MapEntry* entry = &map1->entry_array[i];
+
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (ObjMap_contains(map2, entry->key, vm)) {
+            if (ObjMap_set(new_map, entry->key, MAKE_NULL(), vm) == 0) {
+                pyro_panic(vm, "intersection(): out of memory");
+                return MAKE_NULL();
+            }
+        }
+    }
+
+    return MAKE_OBJ(new_map);
+}
+
+
 void pyro_load_std_core_map(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$map", fn_map, 0);
@@ -222,6 +300,10 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->class_set, "remove", map_remove, 1);
     pyro_define_method(vm, vm->class_set, "contains", map_contains, 1);
     pyro_define_method(vm, vm->class_set, "$contains", map_contains, 1);
-    pyro_define_method(vm, vm->class_set, "add", set_add, 1);
     pyro_define_method(vm, vm->class_set, "$iter", map_keys, 0);
+    pyro_define_method(vm, vm->class_set, "add", set_add, 1);
+    pyro_define_method(vm, vm->class_set, "union", set_union, 1);
+    pyro_define_method(vm, vm->class_set, "$op_binary_bar", set_union, 1);
+    pyro_define_method(vm, vm->class_set, "intersection", set_intersection, 1);
+    pyro_define_method(vm, vm->class_set, "$op_binary_amp", set_intersection, 1);
 }

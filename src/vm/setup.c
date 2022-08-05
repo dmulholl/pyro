@@ -101,6 +101,8 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_less_equals = NULL;
     vm->str_op_binary_minus = NULL;
     vm->str_op_binary_plus = NULL;
+    vm->str_op_binary_bar = NULL;
+    vm->str_op_binary_amp = NULL;
     vm->str_op_binary_slash = NULL;
     vm->str_op_binary_star = NULL;
     vm->str_op_unary_minus = NULL;
@@ -170,6 +172,8 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_greater = STR("$op_binary_greater");
     vm->str_op_binary_greater_equals = STR("$op_binary_greater_equals");
     vm->str_op_binary_plus = STR("$op_binary_plus");
+    vm->str_op_binary_bar = STR("$op_binary_bar");
+    vm->str_op_binary_amp = STR("$op_binary_amp");
     vm->str_op_binary_minus = STR("$op_binary_minus");
     vm->str_op_binary_star = STR("$op_binary_star");
     vm->str_op_binary_slash = STR("$op_binary_slash");

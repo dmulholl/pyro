@@ -315,6 +315,66 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
 }
 
 
+// Returns [a] | [b]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_binary_bar(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return MAKE_I64(a.as.i64 | b.as.i64);
+                default:
+                    pyro_panic(vm, "invalid operand types to '|'");
+                    return MAKE_NULL();
+            }
+        }
+
+        default: {
+            Value method = pyro_get_method(vm, a, vm->str_op_binary_bar);
+            if (!IS_NULL(method)) {
+                pyro_push(vm, a);
+                pyro_push(vm, b);
+                Value result = pyro_call_method(vm, method, 1);
+                return result;
+            } else {
+                pyro_panic(vm, "invalid operand types to '|'");
+                return MAKE_NULL();
+            }
+        }
+    }
+}
+
+
+// Returns [a] & [b]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_binary_amp(PyroVM* vm, Value a, Value b) {
+    switch (a.type) {
+        case VAL_I64: {
+            switch (b.type) {
+                case VAL_I64:
+                    return MAKE_I64(a.as.i64 & b.as.i64);
+                default:
+                    pyro_panic(vm, "invalid operand types to '&'");
+                    return MAKE_NULL();
+            }
+        }
+
+        default: {
+            Value method = pyro_get_method(vm, a, vm->str_op_binary_amp);
+            if (!IS_NULL(method)) {
+                pyro_push(vm, a);
+                pyro_push(vm, b);
+                Value result = pyro_call_method(vm, method, 1);
+                return result;
+            } else {
+                pyro_panic(vm, "invalid operand types to '&'");
+                return MAKE_NULL();
+            }
+        }
+    }
+}
+
+
 // Returns true if [a] is in [b].
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_in(PyroVM* vm, Value a, Value b) {

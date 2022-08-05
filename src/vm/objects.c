@@ -523,6 +523,20 @@ bool ObjMap_get(ObjMap* map, Value key, Value* value, PyroVM* vm) {
 }
 
 
+bool ObjMap_contains(ObjMap* map, Value key, PyroVM* vm) {
+    if (map->live_entry_count == 0) {
+        return false;
+    }
+
+    int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
+    if (*slot == EMPTY || *slot == TOMBSTONE) {
+        return false;
+    }
+
+    return true;
+}
+
+
 bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;

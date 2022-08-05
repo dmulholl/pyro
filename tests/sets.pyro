@@ -65,3 +65,43 @@ def $test_in() {
 
     assert 123 in set == false;
 }
+
+
+def $test_union() {
+    var s1 = $set("ABC");
+    var s2 = $set("BCD");
+
+    var u1 = s1:union(s2);
+    assert $is_set(u1);
+    assert u1:count() == 4;
+    assert "A" in u1;
+    assert "B" in u1;
+    assert "C" in u1;
+    assert "D" in u1;
+
+    var u2 = s1 | s2;
+    assert $is_set(u2);
+    assert u2:count() == 4;
+    assert "A" in u2;
+    assert "B" in u2;
+    assert "C" in u2;
+    assert "D" in u2;
+}
+
+
+def $test_intersection() {
+    var s1 = $set("ABC");
+    var s2 = $set("BCD");
+
+    var i1 = s1:intersection(s2);
+    assert $is_set(i1);
+    assert i1:count() == 2;
+    assert "B" in i1;
+    assert "C" in i1;
+
+    var i2 = s1 & s2;
+    assert $is_set(i2);
+    assert i1:count() == 2;
+    assert "B" in i1;
+    assert "C" in i1;
+}
