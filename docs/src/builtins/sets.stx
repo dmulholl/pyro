@@ -54,6 +54,8 @@ You can check if a set contains an item using the `in` operator:
 
 * The `-` operator returns the difference of two sets, e.g. `A - B`.
 
+* The `^` operator returns the symmetric difference of two sets, e.g. `A ^ B`.
+
 
 
 ### Methods
@@ -74,13 +76,13 @@ You can check if a set contains an item using the `in` operator:
 
 [[ `:difference(other: set) -> set` ]]
 
-    Returns a new set containing the difference of the two sets, i.e. the set of all elements that are in `receiver` but not in `other`.
+    Returns a new set containing the difference of the two sets --- i.e. the set of all elements that are in `receiver` but not in `other`.
 
     Equivalent to `receiver - other`.
 
 [[ `:intersection(other: set) -> set` ]]
 
-    Returns a new set containing the intersection of the two sets, i.e. the set of all elements that are in both `receiver` and `other`.
+    Returns a new set containing the intersection of the two sets --- i.e. the set of all elements that are in both `receiver` and `other`.
 
     Equivalent to `receiver & other`.
 
@@ -93,8 +95,14 @@ You can check if a set contains an item using the `in` operator:
     Removes `item` from the set.
     This is a null operation if the set does not contain a member equal to `item`.
 
+[[ `:symmetric_difference(other: set) -> set` ]]
+
+    Returns a new set containing the symmetric difference of the two sets --- i.e. the set of all elements that are either in `receiver` or in `other` but not both.
+
+    Equivalent to `receiver ^ other`.
+
 [[ `:union(other: set) -> set` ]]
 
-    Returns a new set containing the union of the two sets, i.e. the set of all elements that are in either `receiver` or `other`.
+    Returns a new set containing the union of the two sets --- i.e. the set of all elements that are in either `receiver` or `other`.
 
     Equivalent to `receiver | other`.

@@ -227,6 +227,11 @@ You can implement the `$special` methods listed below to add support for various
     Implementing this method overloads the binary `|` operator for expressions of the form `receiver | other`.
 
 
+[[ `:$op_binary_caret(other: any) -> any` ]]
+
+    Implementing this method overloads the binary `^` operator for expressions of the form `receiver & other`.
+
+
 [[ `:$op_binary_equals_equals(other: any) -> bool` ]]
 
     Implementing this method overloads the binary `==` operator for expressions of the form `receiver == other`.
