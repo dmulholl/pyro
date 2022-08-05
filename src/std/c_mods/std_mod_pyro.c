@@ -71,6 +71,30 @@ static Value fn_set_stdin(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
+    switch (args[0].type) {
+        case VAL_OBJ: {
+            switch (AS_OBJ(args[0])->type) {
+                case OBJ_VEC: {
+                    ObjVec* vec = AS_VEC(args[0]);
+                    return MAKE_I64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
+                }
+                case OBJ_TUP: {
+                    ObjTup* tup = AS_TUP(args[0]);
+                    return MAKE_I64(sizeof(ObjTup) + sizeof(Value) * tup->count);
+                }
+                default: {
+                    return MAKE_I64(-1);
+                }
+            }
+        }
+        default: {
+            return MAKE_I64(sizeof(Value));
+        }
+    }
+}
+
+
 void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     ObjTup* version_tuple = ObjTup_new(5, vm);
     if (!version_tuple) {
@@ -100,4 +124,5 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     pyro_define_member_fn(vm, module, "set_stdin", fn_set_stdin, 1);
     pyro_define_member_fn(vm, module, "set_stdout", fn_set_stdout, 1);
     pyro_define_member_fn(vm, module, "set_stderr", fn_set_stderr, 1);
+    pyro_define_member_fn(vm, module, "sizeof", fn_sizeof, 1);
 }

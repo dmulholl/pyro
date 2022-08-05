@@ -107,6 +107,12 @@ static Value vec_count(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_capacity(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    return MAKE_I64(vec->capacity);
+}
+
+
 static Value vec_append(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (!ObjVec_append(vec, args[0], vm)) {
@@ -586,6 +592,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
 
     // Vector methods.
     pyro_define_method(vm, vm->class_vec, "count", vec_count, 0);
+    pyro_define_method(vm, vm->class_vec, "capacity", vec_capacity, 0);
     pyro_define_method(vm, vm->class_vec, "append", vec_append, 1);
     pyro_define_method(vm, vm->class_vec, "get", vec_get, 1);
     pyro_define_method(vm, vm->class_vec, "set", vec_set, 2);
