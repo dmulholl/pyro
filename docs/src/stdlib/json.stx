@@ -34,5 +34,6 @@ This module contains utility functions for working with JSON.
     * A `vec` or `tup` containing valid values.
     * A `map` containing string keys and valid values.
     * An object with a `:$json()` method that returns a string containing JSON.
+    * Any object whose field values can be marshalled as JSON.
 
     Note that this function does not check for cycles in the input, e.g. a `vec` that contains itself.

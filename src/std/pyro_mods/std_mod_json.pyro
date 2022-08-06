@@ -5,17 +5,11 @@
 
 def marshall_map(arg: map) -> str {
     var buf = $buf();
-    var keys = arg:keys():to_vec();
-    var count = keys:count();
+    var is_first = true;
 
     buf:write("{");
 
-    loop var i = 0; i < count; i += 1 {
-        if i > 0 {
-            buf:write(", ");
-        }
-
-        var key = keys[i];
+    for (key, value) in arg {
         if !$is_str(key) {
             $panic(
                 "invalid key type in map, expected a string: type: {}, value: {}",
@@ -23,9 +17,11 @@ def marshall_map(arg: map) -> str {
                 $debug(key)
             );
         }
-
-        var value = arg[key];
+        if !is_first {
+            buf:write(", ");
+        }
         buf:write("{}: {}", marshall(key), marshall(value));
+        is_first = false;
     }
 
     buf:write("}");
@@ -56,6 +52,26 @@ def marshall_str(arg: str) -> str {
 }
 
 
+def marshall_instance(arg: instance) {
+    var buf = $buf();
+    var is_first = true;
+
+    buf:write("{");
+
+    for field_name in $fields(arg) {
+        var value = $field(arg, field_name);
+        if !is_first {
+            buf:write(", ");
+        }
+        buf:write(`"{}": {}`, field_name, marshall(value));
+        is_first = false;
+    }
+
+    buf:write("}");
+    return buf:to_str();
+}
+
+
 def marshall(arg: any) -> str {
     if $is_map(arg) {
         return marshall_map(arg);
@@ -73,6 +89,8 @@ def marshall(arg: any) -> str {
         return "null";
     } else if $has_method(arg, "$json") {
         return arg:$json();
+    } else if $is_instance(arg) {
+        return marshall_instance(arg);
     } else {
         $panic("invalid input: type: {}, value: {}", $type(arg), $debug(arg));
     }

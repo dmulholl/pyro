@@ -69,6 +69,22 @@ class Bar {
 var bar = Bar();
 assert to_json(bar) == `{"num": 123, "obj": "FOO"}`;
 
+class Baz {
+    var foo;
+    var bar;
+    var baz;
+
+    def $init(foo, bar, baz) {
+        self.foo = foo;
+        self.bar = bar;
+        self.baz = baz;
+    }
+}
+var obj1 = Baz(1, 2, 3);
+var obj2 = Baz("A", "B", "C");
+assert to_json(obj1) == `{"foo": 1, "bar": 2, "baz": 3}`;
+assert to_json(obj2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
+
 # ---------------------- #
 #  Unmarshall from JSON  #
 # ---------------------- #
