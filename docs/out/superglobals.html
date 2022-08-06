@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.27</p>
+                <p class="version">Version 0.7.29</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -490,6 +490,16 @@ Returns <code>true</code> if the argument is a <code>file</code>.
 </div>
 <div>
 <dt>
+<code>$is_func(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a function.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$is_i64(arg: any) -&gt; bool</code>
 </dt>
 <dd>
@@ -520,11 +530,11 @@ Returns <code>true</code> if the argument is an instance of a class.
 </div>
 <div>
 <dt>
-<code>$is_instance_of(object: any, class: class) -&gt; bool</code>
+<code>$is_instance_of(arg: any, class: class) -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if <code>object</code> is an instance of the specified class or of a subclass of the specified class.
+Returns <code>true</code> if the argument is an instance of the specified class or an instance of a subclass of the specified class.
 </p>
 </dd>
 </div>
@@ -605,6 +615,16 @@ Returns <code>true</code> if the argument is the floating-point value <code>NaN<
 <dd>
 <p>
 Returns <code>true</code> if the argument is <code>null</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_obj(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a heap-allocated object.
 </p>
 </dd>
 </div>
