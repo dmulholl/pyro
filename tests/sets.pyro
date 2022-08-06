@@ -217,3 +217,53 @@ def $test_is_proper_subset_of() {
     assert !(s2 < s1);
     assert !(s2 < s3);
 }
+
+
+def $test_is_superset_of() {
+    var s1 = $set("ABC");
+    var s2 = $set("ABCD");
+    var s3 = $set("BCD");
+
+    assert s1:is_superset_of(s1);
+    assert s2:is_superset_of(s1);
+    assert s2:is_superset_of(s3);
+
+    assert !s1:is_superset_of(s3);
+    assert !s3:is_superset_of(s1);
+    assert !s1:is_superset_of(s2);
+    assert !s3:is_superset_of(s2);
+
+    assert s1 >= s1;
+    assert s2 >= s1;
+    assert s2 >= s3;
+
+    assert !(s1 >= s3);
+    assert !(s3 >= s1);
+    assert !(s1 >= s2);
+    assert !(s3 >= s2);
+}
+
+
+def $test_is_proper_superset_of() {
+    var s1 = $set("ABC");
+    var s2 = $set("ABCD");
+    var s3 = $set("BCD");
+
+    assert s2:is_proper_superset_of(s1);
+    assert s2:is_proper_superset_of(s3);
+
+    assert !s1:is_proper_superset_of(s1);
+    assert !s1:is_proper_superset_of(s3);
+    assert !s3:is_proper_superset_of(s1);
+    assert !s1:is_proper_superset_of(s2);
+    assert !s3:is_proper_superset_of(s2);
+
+    assert s2 >= s1;
+    assert s2 >= s3;
+
+    assert !(s1 > s1);
+    assert !(s1 > s3);
+    assert !(s3 > s1);
+    assert !(s1 > s2);
+    assert !(s3 > s2);
+}

@@ -389,7 +389,7 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
-        pyro_panic(vm, "is_subset_of(): invalid argument, expected a set");
+        pyro_panic(vm, "is_proper_subset_of(): invalid argument, expected a set");
         return MAKE_NULL();
     }
     ObjMap* map2 = AS_MAP(args[0]);
@@ -406,6 +406,64 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
+            return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
+
+
+static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map1 = AS_MAP(args[-1]);
+
+    if (!IS_SET(args[0])) {
+        pyro_panic(vm, "is_superset_of(): invalid argument, expected a set");
+        return MAKE_NULL();
+    }
+    ObjMap* map2 = AS_MAP(args[0]);
+
+    if (!(map1->live_entry_count >= map2->live_entry_count)) {
+        return MAKE_BOOL(false);
+    }
+
+    for (size_t i = 0; i < map2->entry_array_count; i++) {
+        MapEntry* entry = &map2->entry_array[i];
+
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (!ObjMap_contains(map1, entry->key, vm)) {
+            return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
+
+
+static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map1 = AS_MAP(args[-1]);
+
+    if (!IS_SET(args[0])) {
+        pyro_panic(vm, "is_superset_of(): invalid argument, expected a set");
+        return MAKE_NULL();
+    }
+    ObjMap* map2 = AS_MAP(args[0]);
+
+    if (!(map1->live_entry_count > map2->live_entry_count)) {
+        return MAKE_BOOL(false);
+    }
+
+    for (size_t i = 0; i < map2->entry_array_count; i++) {
+        MapEntry* entry = &map2->entry_array[i];
+
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (!ObjMap_contains(map1, entry->key, vm)) {
             return MAKE_BOOL(false);
         }
     }
@@ -455,4 +513,8 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->class_set, "$op_binary_less_equals", set_is_subset_of, 1);
     pyro_define_method(vm, vm->class_set, "is_proper_subset_of", set_is_proper_subset_of, 1);
     pyro_define_method(vm, vm->class_set, "$op_binary_less", set_is_proper_subset_of, 1);
+    pyro_define_method(vm, vm->class_set, "is_superset_of", set_is_superset_of, 1);
+    pyro_define_method(vm, vm->class_set, "$op_binary_greater_equals", set_is_superset_of, 1);
+    pyro_define_method(vm, vm->class_set, "is_proper_superset_of", set_is_proper_superset_of, 1);
+    pyro_define_method(vm, vm->class_set, "$op_binary_greater", set_is_proper_superset_of, 1);
 }
