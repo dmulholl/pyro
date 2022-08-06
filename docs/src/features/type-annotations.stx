@@ -36,6 +36,7 @@ Annotations for builtin types are as follows:
 * `f64`
 * `file`
 * `i64`
+* `instance`
 * `iter`
 * `iter[type]`
 * `map`
