@@ -447,7 +447,7 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
-        pyro_panic(vm, "is_superset_of(): invalid argument, expected a set");
+        pyro_panic(vm, "is_proper_superset_of(): invalid argument, expected a set");
         return MAKE_NULL();
     }
     ObjMap* map2 = AS_MAP(args[0]);
