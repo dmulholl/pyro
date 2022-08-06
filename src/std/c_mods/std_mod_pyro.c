@@ -72,25 +72,22 @@ static Value fn_set_stdin(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
-    switch (args[0].type) {
-        case VAL_OBJ: {
-            switch (AS_OBJ(args[0])->type) {
-                case OBJ_VEC: {
-                    ObjVec* vec = AS_VEC(args[0]);
-                    return MAKE_I64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
-                }
-                case OBJ_TUP: {
-                    ObjTup* tup = AS_TUP(args[0]);
-                    return MAKE_I64(sizeof(ObjTup) + sizeof(Value) * tup->count);
-                }
-                default: {
-                    return MAKE_I64(-1);
-                }
+    if (IS_OBJ(args[0])) {
+        switch (AS_OBJ(args[0])->type) {
+            case OBJ_VEC: {
+                ObjVec* vec = AS_VEC(args[0]);
+                return MAKE_I64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
+            }
+            case OBJ_TUP: {
+                ObjTup* tup = AS_TUP(args[0]);
+                return MAKE_I64(sizeof(ObjTup) + sizeof(Value) * tup->count);
+            }
+            default: {
+                return MAKE_I64(-1);
             }
         }
-        default: {
-            return MAKE_I64(sizeof(Value));
-        }
+    } else {
+        return MAKE_I64(sizeof(Value));
     }
 }
 
