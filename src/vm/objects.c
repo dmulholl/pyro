@@ -2107,6 +2107,19 @@ ObjQueue* ObjQueue_new(PyroVM* vm) {
 }
 
 
+void ObjQueue_clear(ObjQueue* queue, PyroVM* vm) {
+    QueueItem* next_item = queue->head;
+    while (next_item) {
+        QueueItem* current_item = next_item;
+        next_item = current_item->next;
+        pyro_realloc(vm, current_item, sizeof(QueueItem), 0);
+    }
+    queue->head = NULL;
+    queue->tail = NULL;
+    queue->count = 0;
+}
+
+
 // Add the new item to the end of the linked list.
 bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm) {
     QueueItem* item = pyro_realloc(vm, NULL, 0, sizeof(QueueItem));

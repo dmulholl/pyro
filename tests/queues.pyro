@@ -31,3 +31,20 @@ for i in $range(100) {
 
 assert foo:count() == 0;
 assert foo:is_empty();
+
+def $test_clear() {
+    var queue = $queue();
+    assert queue:count() == 0;
+
+    queue:enqueue("foo");
+    queue:enqueue("bar");
+    assert queue:count() == 2;
+
+    queue:clear();
+    assert queue:count() == 0;
+
+    queue:enqueue(1);
+    queue:enqueue(2);
+    assert queue:dequeue() == 1;
+    assert queue:dequeue() == 2;
+}

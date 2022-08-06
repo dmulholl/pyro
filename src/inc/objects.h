@@ -426,6 +426,9 @@ bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm);
 // Returns true if a value was successfully dequeued, false if the queue was empty.
 bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm);
 
+// Clears all entries from the queue.
+void ObjQueue_clear(ObjQueue* queue, PyroVM* vm);
+
 /* --------- */
 /* Iterators */
 /* --------- */

@@ -69,6 +69,13 @@ static Value queue_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value queue_clear(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjQueue* queue = AS_QUEUE(args[-1]);
+    ObjQueue_clear(queue, vm);
+    return MAKE_NULL();
+}
+
+
 void pyro_load_std_core_queue(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$queue", fn_queue, 0);
@@ -80,4 +87,5 @@ void pyro_load_std_core_queue(PyroVM* vm) {
     pyro_define_method(vm, vm->class_queue, "dequeue", queue_dequeue, 0);
     pyro_define_method(vm, vm->class_queue, "is_empty", queue_is_empty, 0);
     pyro_define_method(vm, vm->class_queue, "$iter", queue_iter, 0);
+    pyro_define_method(vm, vm->class_queue, "clear", queue_clear, 0);
 }

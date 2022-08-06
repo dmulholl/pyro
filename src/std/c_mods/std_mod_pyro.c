@@ -92,6 +92,10 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
                     sizeof(int64_t) * map->index_array_capacity
                 );
             }
+            case OBJ_QUEUE: {
+                ObjQueue* queue = AS_QUEUE(args[0]);
+                return MAKE_I64(sizeof(ObjQueue) + sizeof(QueueItem) * queue->count);
+            }
             default: {
                 return MAKE_I64(-1);
             }
