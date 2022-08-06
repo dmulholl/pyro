@@ -78,6 +78,10 @@ You can check if a set contains an item using the `in` operator:
     Adds an item to the set.
     This is a null operation if the set already contains a member equal to `item`.
 
+[[ `:clear()` ]]
+
+    Removes all items from the set.
+
 [[ `:contains(item: any) -> bool` ]]
 
     Returns `true` if the set contains a member equal to `item`, otherwise `false`.

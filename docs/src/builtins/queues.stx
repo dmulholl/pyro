@@ -11,6 +11,10 @@ A queue object, `queue`, is a FIFO (first-in-first-out) container type that supp
 
 Queues have the following methods:
 
+[[ `:clear()` ]]
+
+    Removes all items from the queue.
+
 [[ `:count() -> i64` ]]
 
     Returns the number of items in the queue.

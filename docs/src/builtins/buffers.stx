@@ -36,6 +36,10 @@ Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()
 
 ### Methods
 
+[[ `:clear()` ]]
+
+    Clears the buffer.
+
 [[ `:count() -> i64` ]]
 
     Returns the number of bytes in the buffer.

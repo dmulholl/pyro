@@ -92,6 +92,10 @@ You can check if a map contains a key using the `in` operator:
 
 ### Methods
 
+[[ `:clear()` ]]
+
+    Removes all entries from the map.
+
 [[ `:contains(key: any) -> bool` ]]
 
     Returns `true` if the map contains `key`, otherwise `false`.

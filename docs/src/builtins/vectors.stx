@@ -69,6 +69,10 @@ You can check if a vector contains an item using the `in` operator:
 
     Appends a value to the vector.
 
+[[ `:clear()` ]]
+
+    Removes all items from the vector.
+
 [[ `:contains(value: any) -> bool` ]]
 
     Returns `true` if the vector contains an item equal to `value`, otherwise `false`.
