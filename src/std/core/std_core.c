@@ -1124,6 +1124,11 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_is_func(PyroVM* vm, size_t arg_count, Value* args) {
+    return MAKE_BOOL(IS_CLOSURE(args[0]) || IS_NATIVE_FN(args[0]));
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1190,4 +1195,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$sleep", fn_sleep, 1);
     pyro_define_global_fn(vm, "$type", fn_type, 1);
     pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);
+    pyro_define_global_fn(vm, "$is_func", fn_is_func, 1);
 }

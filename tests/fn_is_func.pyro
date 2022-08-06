@@ -1,0 +1,15 @@
+assert !$is_func(123);
+assert !$is_func("foo");
+
+assert $is_func($is_func);
+assert $is_func($bool);
+
+def foo() {}
+assert $is_func(foo);
+
+class Foo {
+    def method() {}
+}
+var foo = Foo();
+var method = foo:method;
+assert !$is_func(method);

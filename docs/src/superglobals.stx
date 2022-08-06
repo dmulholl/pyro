@@ -264,6 +264,12 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$is_func(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a function.
+
+
+
 [[ `$is_i64(arg: any) -> bool` ]]
 
     Returns `true` if the argument is an `i64`.
