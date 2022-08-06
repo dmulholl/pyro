@@ -1403,6 +1403,14 @@ ObjBuf* ObjBuf_new(PyroVM* vm) {
 }
 
 
+void ObjBuf_clear(ObjBuf* buf, PyroVM* vm) {
+    FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
+    buf->count = 0;
+    buf->capacity = 0;
+    buf->bytes = NULL;
+}
+
+
 ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
     ObjBuf* buf = ObjBuf_new(vm);
     if (!buf) {

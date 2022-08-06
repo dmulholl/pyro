@@ -109,3 +109,18 @@ def $test_new_buf_from_string() {
     assert b2[1] == 'o';
     assert b2[2] == 'o';
 }
+
+
+def $test_clear() {
+    var buf = $buf("foobar");
+    assert buf:count() == 6;
+
+    buf:clear();
+    assert buf:count() == 0;
+
+    buf:write("abc");
+    assert buf:count() == 3;
+    assert buf[0] == 'a';
+    assert buf[1] == 'b';
+    assert buf[2] == 'c';
+}

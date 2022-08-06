@@ -283,6 +283,13 @@ static Value buf_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value buf_clear(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjBuf* buf = AS_BUF(args[-1]);
+    ObjBuf_clear(buf, vm);
+    return MAKE_NULL();
+}
+
+
 void pyro_load_std_core_buf(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$buf", fn_buf, -1);
@@ -298,4 +305,5 @@ void pyro_load_std_core_buf(PyroVM* vm) {
     pyro_define_method(vm, vm->class_buf, "write_byte", buf_write_byte, 1);
     pyro_define_method(vm, vm->class_buf, "write", buf_write, -1);
     pyro_define_method(vm, vm->class_buf, "is_empty", buf_is_empty, 0);
+    pyro_define_method(vm, vm->class_buf, "clear", buf_clear, 0);
 }
