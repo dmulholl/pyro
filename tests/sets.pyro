@@ -86,6 +86,9 @@ def $test_union() {
     assert "B" in u2;
     assert "C" in u2;
     assert "D" in u2;
+
+    var u3 = $set() | $set();
+    assert u3:is_empty();
 }
 
 
@@ -104,6 +107,9 @@ def $test_intersection() {
     assert i1:count() == 2;
     assert "B" in i1;
     assert "C" in i1;
+
+    var i3 = $set() & $set();
+    assert i3:is_empty();
 }
 
 
@@ -160,4 +166,29 @@ def $test_symmetric_difference() {
     assert sd4:count() == 2;
     assert "A" in sd4;
     assert "D" in sd4;
+}
+
+
+def $test_is_subset_of() {
+    var s1 = $set("ABC");
+    var s2 = $set("ABCD");
+    var s3 = $set("BCD");
+
+    assert s1:is_subset_of(s1);
+    assert s1:is_subset_of(s2);
+    assert s3:is_subset_of(s2);
+
+    assert !s1:is_subset_of(s3);
+    assert !s3:is_subset_of(s1);
+    assert !s2:is_subset_of(s1);
+    assert !s2:is_subset_of(s3);
+
+    assert s1 <= s1;
+    assert s1 <= s2;
+    assert s3 <= s2;
+
+    assert !(s1 <= s3);
+    assert !(s3 <= s1);
+    assert !(s2 <= s1);
+    assert !(s2 <= s3);
 }
