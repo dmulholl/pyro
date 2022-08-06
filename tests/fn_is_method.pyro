@@ -1,5 +1,3 @@
-import $std::math;
-
 assert !$is_method(123);
 assert !$is_method(123.0);
 assert !$is_method(null);
@@ -7,18 +5,21 @@ assert !$is_method(true);
 assert !$is_method(false);
 assert !$is_method("foo");
 assert !$is_method($clock);
+
+import $std::math;
 assert !$is_method(math::abs);
 
 def foo() {}
 assert !$is_method(foo);
 
 class Foo {
-    def pyro_method() {}
+    def method() {}
 }
 assert !$is_method(Foo);
 
 var foo = Foo();
-assert $is_method(foo:pyro_method);
+var pyro_method = foo:method;
+assert $is_method(pyro_method);
 
 var native_method = $map():count;
 assert $is_method(native_method);
