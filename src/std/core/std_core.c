@@ -870,14 +870,6 @@ static Value fn_is_native_func(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
-    if (IS_BOUND_METHOD(args[0])) {
-        return MAKE_BOOL(true);
-    }
-    return MAKE_BOOL(false);
-}
-
-
 static Value fn_is_iterable(PyroVM* vm, size_t arg_count, Value* args) {
     return MAKE_BOOL(pyro_has_method(vm, args[0], vm->str_dollar_iter));
 }
@@ -1129,6 +1121,11 @@ static Value fn_is_func(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
+    return MAKE_BOOL(IS_BOUND_METHOD(args[0]));
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1178,7 +1175,6 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_instance_of", fn_is_instance_of, 2);
     pyro_define_global_fn(vm, "$is_iterable", fn_is_iterable, 1);
     pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
-    pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
     pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
     pyro_define_global_fn(vm, "$is_native_func", fn_is_native_func, 1);
@@ -1196,4 +1192,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$type", fn_type, 1);
     pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);
     pyro_define_global_fn(vm, "$is_func", fn_is_func, 1);
+    pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
 }

@@ -11,5 +11,8 @@ class Foo {
     def method() {}
 }
 var foo = Foo();
-var method = foo:method;
-assert !$is_func(method);
+var pyro_method = foo:method;
+assert !$is_func(pyro_method);
+
+var native_method = $map():count;
+assert !$is_func(native_method);

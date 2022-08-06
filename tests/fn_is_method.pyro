@@ -13,9 +13,12 @@ def foo() {}
 assert !$is_method(foo);
 
 class Foo {
-    def foo_method() {}
+    def pyro_method() {}
 }
 assert !$is_method(Foo);
 
 var foo = Foo();
-assert $is_method(foo:foo_method);
+assert $is_method(foo:pyro_method);
+
+var native_method = $map():count;
+assert $is_method(native_method);
