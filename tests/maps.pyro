@@ -281,3 +281,23 @@ def $test_in() {
 
     assert 123 in map == false;
 }
+
+
+def $test_clear() {
+    var map = {
+        "abc" = 123,
+        "def" = 456,
+        "ghi" = 789,
+    };
+
+    assert map:count() == 3;
+
+    map:clear();
+    assert map:count() == 0;
+
+    map:set("A", 1);
+    map:set("B", 2);
+    assert map:count() == 2;
+    assert map["A"] == 1;
+    assert map["B"] == 2;
+}

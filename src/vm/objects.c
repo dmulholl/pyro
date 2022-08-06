@@ -351,16 +351,30 @@ ObjMap* ObjMap_new(PyroVM* vm) {
         return NULL;
     }
 
-    map->live_entry_count = 0;
     map->entry_array = NULL;
-    map->entry_array_capacity = 0;
     map->entry_array_count = 0;
+    map->entry_array_capacity = 0;
+    map->live_entry_count = 0;
     map->index_array = NULL;
-    map->index_array_capacity = 0;
     map->index_array_count = 0;
+    map->index_array_capacity = 0;
     map->max_load_threshold = 0;
     map->obj.class = vm->class_map;
     return map;
+}
+
+
+void ObjMap_clear(ObjMap* map, PyroVM* vm) {
+    FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
+    FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
+    map->entry_array = NULL;
+    map->entry_array_count = 0;
+    map->entry_array_capacity = 0;
+    map->live_entry_count = 0;
+    map->index_array = NULL;
+    map->index_array_count = 0;
+    map->index_array_capacity = 0;
+    map->max_load_threshold = 0;
 }
 
 

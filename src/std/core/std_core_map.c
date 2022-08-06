@@ -111,6 +111,13 @@ static Value map_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value map_clear(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map = AS_MAP(args[-1]);
+    ObjMap_clear(map, vm);
+    return MAKE_NULL();
+}
+
+
 static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         ObjMap* map = ObjMap_new_as_set(vm);
@@ -492,6 +499,7 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->class_map, "$iter", map_iter, 0);
     pyro_define_method(vm, vm->class_map, "iter", map_iter, 0);
     pyro_define_method(vm, vm->class_map, "is_empty", map_is_empty, 0);
+    pyro_define_method(vm, vm->class_map, "clear", map_clear, 0);
 
     // Set methods.
     pyro_define_method(vm, vm->class_set, "is_empty", map_is_empty, 0);
