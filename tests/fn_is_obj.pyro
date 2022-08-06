@@ -1,0 +1,14 @@
+assert !$is_obj(123);
+assert !$is_obj(null);
+assert !$is_obj(true);
+assert !$is_obj(false);
+
+assert $is_obj($map());
+assert $is_obj($vec());
+assert $is_obj($tup());
+
+class Foo {}
+assert $is_obj(Foo);
+
+var foo = Foo();
+assert $is_obj(foo);

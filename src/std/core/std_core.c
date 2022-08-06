@@ -420,6 +420,11 @@ static Value fn_is_mod(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_is_obj(PyroVM* vm, size_t arg_count, Value* args) {
+    return MAKE_BOOL(IS_OBJ(args[0]));
+}
+
+
 static Value fn_clock(PyroVM* vm, size_t arg_count, Value* args) {
     return MAKE_F64((double)clock() / CLOCKS_PER_SEC);
 }
@@ -1138,50 +1143,51 @@ void pyro_load_std_core(PyroVM* vm) {
         pyro_define_global(vm, "$args", MAKE_OBJ(args));
     }
 
-    pyro_define_global_fn(vm, "$exit", fn_exit, 1);
-    pyro_define_global_fn(vm, "$panic", fn_panic, -1);
-    pyro_define_global_fn(vm, "$clock", fn_clock, 0);
-    pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
-    pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
-    pyro_define_global_fn(vm, "$is_inf", fn_is_inf, 1);
-    pyro_define_global_fn(vm, "$is_null", fn_is_null, 1);
-    pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
-    pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
-    pyro_define_global_fn(vm, "$is_instance_of", fn_is_instance_of, 2);
-    pyro_define_global_fn(vm, "$shell", fn_shell, -1);
     pyro_define_global_fn(vm, "$", fn_shell_shortcut, 1);
-    pyro_define_global_fn(vm, "$debug", fn_debug, 1);
-    pyro_define_global_fn(vm, "$read_file", fn_read_file, 1);
-    pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);
-    pyro_define_global_fn(vm, "$f64", fn_f64, 1);
-    pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);
-    pyro_define_global_fn(vm, "$i64", fn_i64, 1);
-    pyro_define_global_fn(vm, "$is_i64", fn_is_i64, 1);
-    pyro_define_global_fn(vm, "$char", fn_char, 1);
-    pyro_define_global_fn(vm, "$is_char", fn_is_char, 1);
     pyro_define_global_fn(vm, "$bool", fn_bool, 1);
-    pyro_define_global_fn(vm, "$is_bool", fn_is_bool, 1);
-    pyro_define_global_fn(vm, "$fmt", fn_fmt, -1);
-    pyro_define_global_fn(vm, "$print", fn_print, -1);
-    pyro_define_global_fn(vm, "$println", fn_println, -1);
+    pyro_define_global_fn(vm, "$char", fn_char, 1);
+    pyro_define_global_fn(vm, "$clock", fn_clock, 0);
+    pyro_define_global_fn(vm, "$debug", fn_debug, 1);
+    pyro_define_global_fn(vm, "$env", fn_env, -1);
     pyro_define_global_fn(vm, "$eprint", fn_eprint, -1);
     pyro_define_global_fn(vm, "$eprintln", fn_eprintln, -1);
-    pyro_define_global_fn(vm, "$hash", fn_hash, 1);
-    pyro_define_global_fn(vm, "$sleep", fn_sleep, 1);
-    pyro_define_global_fn(vm, "$is_callable", fn_is_callable, 1);
-    pyro_define_global_fn(vm, "$is_class", fn_is_class, 1);
-    pyro_define_global_fn(vm, "$is_pyro_func", fn_is_pyro_func, 1);
-    pyro_define_global_fn(vm, "$is_native_func", fn_is_native_func, 1);
-    pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
-    pyro_define_global_fn(vm, "$is_iterable", fn_is_iterable, 1);
-    pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
-    pyro_define_global_fn(vm, "$env", fn_env, -1);
-    pyro_define_global_fn(vm, "$input", fn_input, 0);
     pyro_define_global_fn(vm, "$exec", fn_exec, 1);
-    pyro_define_global_fn(vm, "$type", fn_type, 1);
-    pyro_define_global_fn(vm, "$method", fn_method, 2);
-    pyro_define_global_fn(vm, "$methods", fn_methods, 1);
+    pyro_define_global_fn(vm, "$exit", fn_exit, 1);
+    pyro_define_global_fn(vm, "$f64", fn_f64, 1);
     pyro_define_global_fn(vm, "$field", fn_field, 2);
     pyro_define_global_fn(vm, "$fields", fn_fields, 1);
+    pyro_define_global_fn(vm, "$fmt", fn_fmt, -1);
+    pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
+    pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
+    pyro_define_global_fn(vm, "$hash", fn_hash, 1);
+    pyro_define_global_fn(vm, "$i64", fn_i64, 1);
+    pyro_define_global_fn(vm, "$input", fn_input, 0);
+    pyro_define_global_fn(vm, "$is_bool", fn_is_bool, 1);
+    pyro_define_global_fn(vm, "$is_callable", fn_is_callable, 1);
+    pyro_define_global_fn(vm, "$is_char", fn_is_char, 1);
+    pyro_define_global_fn(vm, "$is_class", fn_is_class, 1);
+    pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);
+    pyro_define_global_fn(vm, "$is_i64", fn_is_i64, 1);
+    pyro_define_global_fn(vm, "$is_inf", fn_is_inf, 1);
     pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 1);
+    pyro_define_global_fn(vm, "$is_instance_of", fn_is_instance_of, 2);
+    pyro_define_global_fn(vm, "$is_iterable", fn_is_iterable, 1);
+    pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
+    pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
+    pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
+    pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
+    pyro_define_global_fn(vm, "$is_native_func", fn_is_native_func, 1);
+    pyro_define_global_fn(vm, "$is_null", fn_is_null, 1);
+    pyro_define_global_fn(vm, "$is_obj", fn_is_obj, 1);
+    pyro_define_global_fn(vm, "$is_pyro_func", fn_is_pyro_func, 1);
+    pyro_define_global_fn(vm, "$method", fn_method, 2);
+    pyro_define_global_fn(vm, "$methods", fn_methods, 1);
+    pyro_define_global_fn(vm, "$panic", fn_panic, -1);
+    pyro_define_global_fn(vm, "$print", fn_print, -1);
+    pyro_define_global_fn(vm, "$println", fn_println, -1);
+    pyro_define_global_fn(vm, "$read_file", fn_read_file, 1);
+    pyro_define_global_fn(vm, "$shell", fn_shell, -1);
+    pyro_define_global_fn(vm, "$sleep", fn_sleep, 1);
+    pyro_define_global_fn(vm, "$type", fn_type, 1);
+    pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);
 }

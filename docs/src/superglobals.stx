@@ -336,6 +336,12 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$is_obj(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a heap-allocated object.
+
+
+
 [[ `$is_queue(arg: any) -> bool` ]]
 
     Returns `true` if the argument a `queue`.
