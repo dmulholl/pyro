@@ -8,17 +8,17 @@ class Complex {
     }
 
     def $op_binary_plus(other) {
-        assert $is_instance(other, Complex);
+        assert $is_instance_of(other, Complex);
         return Complex(self.re + other.re, self.im + other.im);
     }
 
     def $op_binary_minus(other) {
-        assert $is_instance(other, Complex);
+        assert $is_instance_of(other, Complex);
         return Complex(self.re - other.re, self.im - other.im);
     }
 
     def $op_binary_star(other) {
-        assert $is_instance(other, Complex);
+        assert $is_instance_of(other, Complex);
         var re = self.re * other.re - self.im * other.im;
         var im = self.re * other.im + self.im * other.re;
         return Complex(re, im);

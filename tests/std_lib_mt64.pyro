@@ -4,10 +4,10 @@ assert mt64::test();
 assert $is_class(mt64::MT64);
 
 var gen1 = mt64::MT64();
-assert $is_instance(gen1, mt64::MT64);
+assert $is_instance_of(gen1, mt64::MT64);
 
 var gen2 = mt64::MT64();
-assert $is_instance(gen2, mt64::MT64);
+assert $is_instance_of(gen2, mt64::MT64);
 
 gen2:seed_with_hash(123);
 gen2:seed_with_array("foobarbaz");

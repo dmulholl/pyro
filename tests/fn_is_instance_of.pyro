@@ -1,0 +1,29 @@
+class Foo {}
+
+assert !$is_instance_of(123, Foo);
+assert !$is_instance_of("foo", Foo);
+
+var foo = Foo();
+assert $is_instance_of(foo, Foo);
+
+
+class Bar < Foo {}
+
+var bar = Bar();
+assert $is_instance_of(bar, Bar);
+assert $is_instance_of(bar, Foo);
+
+
+class Baz < Bar {}
+
+var baz = Baz();
+assert $is_instance_of(baz, Baz);
+assert $is_instance_of(baz, Bar);
+assert $is_instance_of(baz, Foo);
+
+
+class Bam {}
+
+assert !$is_instance_of(foo, Bam);
+assert !$is_instance_of(bar, Bam);
+assert !$is_instance_of(baz, Bam);

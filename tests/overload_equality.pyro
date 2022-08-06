@@ -13,7 +13,7 @@ class Bar {
     }
 
     def $op_binary_equals_equals(other) {
-        return $is_instance(other, Bar) && other.value == self.value;
+        return $is_instance_of(other, Bar) && other.value == self.value;
     }
 
     def $hash() {

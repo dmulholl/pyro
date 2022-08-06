@@ -576,8 +576,13 @@ static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
+    return MAKE_BOOL(IS_INSTANCE(args[0]));
+}
+
+
+static Value fn_is_instance_of(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_CLASS(args[1])) {
-        pyro_panic(vm, "$is_instance(): invalid argument [class_object], expected a class object");
+        pyro_panic(vm, "$is_instance_of(): invalid argument [class], expected a class object");
         return MAKE_NULL();
     }
     ObjClass* target_class = AS_CLASS(args[1]);
@@ -1142,7 +1147,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_null", fn_is_null, 1);
     pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
     pyro_define_global_fn(vm, "$has_field", fn_has_field, 2);
-    pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 2);
+    pyro_define_global_fn(vm, "$is_instance_of", fn_is_instance_of, 2);
     pyro_define_global_fn(vm, "$shell", fn_shell, -1);
     pyro_define_global_fn(vm, "$", fn_shell_shortcut, 1);
     pyro_define_global_fn(vm, "$debug", fn_debug, 1);
@@ -1178,4 +1183,5 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$methods", fn_methods, 1);
     pyro_define_global_fn(vm, "$field", fn_field, 2);
     pyro_define_global_fn(vm, "$fields", fn_fields, 1);
+    pyro_define_global_fn(vm, "$is_instance", fn_is_instance, 1);
 }

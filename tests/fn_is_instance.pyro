@@ -1,29 +1,9 @@
-class Foo {}
+assert !$is_instance(123);
+assert !$is_instance("foo");
+assert !$is_instance([]);
 
-assert !$is_instance(123, Foo);
-assert !$is_instance("foo", Foo);
+class Foo {}
+assert !$is_instance(Foo);
 
 var foo = Foo();
-assert $is_instance(foo, Foo);
-
-
-class Bar < Foo {}
-
-var bar = Bar();
-assert $is_instance(bar, Bar);
-assert $is_instance(bar, Foo);
-
-
-class Baz < Bar {}
-
-var baz = Baz();
-assert $is_instance(baz, Baz);
-assert $is_instance(baz, Bar);
-assert $is_instance(baz, Foo);
-
-
-class Bam {}
-
-assert !$is_instance(foo, Bam);
-assert !$is_instance(bar, Bam);
-assert !$is_instance(baz, Bam);
+assert $is_instance(foo);
