@@ -58,6 +58,18 @@ You can check if a set contains an item using the `in` operator:
 
 
 
+### Comparison Operators
+
+* `A <= B` is `true` if `A` is a subset of `B`.
+
+* `A < B` is `true` if `A` is a proper subset of `B`.
+
+* `A >= B` is `true` if `A` is a superset of `B`.
+
+* `A > B` is `true` if `A` is a proper superset of `B`.
+
+
+
 ### Methods
 
 
@@ -89,6 +101,30 @@ You can check if a set contains an item using the `in` operator:
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the set is empty.
+
+[[ `:is_proper_subset_of(other: set) -> bool` ]]
+
+    Returns `true` if `receiver` is a proper subset of `other`.
+
+    Equivalent to `receiver < other`.
+
+[[ `:is_proper_superset_of(other: set) -> bool` ]]
+
+    Returns `true` if `receiver` is a proper superset of `other`.
+
+    Equivalent to `receiver > other`.
+
+[[ `:is_subset_of(other: set) -> bool` ]]
+
+    Returns `true` if `receiver` is a subset of `other`.
+
+    Equivalent to `receiver <= other`.
+
+[[ `:is_superset_of(other: set) -> bool` ]]
+
+    Returns `true` if `receiver` is a superset of `other`.
+
+    Equivalent to `receiver >= other`.
 
 [[ `:remove(item: any)` ]]
 

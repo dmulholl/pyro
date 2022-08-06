@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.25</p>
+                <p class="version">Version 0.7.26</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -60,6 +60,9 @@
 </li>
 <li>
 <a href="#set-operators">Set Operators</a>
+</li>
+<li>
+<a href="#comparison-operators">Comparison Operators</a>
 </li>
 <li>
 <a href="#methods">Methods</a>
@@ -130,6 +133,23 @@ The <code>-</code> operator returns the difference of two sets, e.g. <code>A - B
 The <code>^</code> operator returns the symmetric difference of two sets, e.g. <code>A ^ B</code>.
 </li>
 </ul>
+<h3 id="comparison-operators">
+Comparison Operators
+</h3>
+<ul>
+<li>
+<code>A &lt;= B</code> is <code>true</code> if <code>A</code> is a subset of <code>B</code>.
+</li>
+<li>
+<code>A &lt; B</code> is <code>true</code> if <code>A</code> is a proper subset of <code>B</code>.
+</li>
+<li>
+<code>A &gt;= B</code> is <code>true</code> if <code>A</code> is a superset of <code>B</code>.
+</li>
+<li>
+<code>A &gt; B</code> is <code>true</code> if <code>A</code> is a proper superset of <code>B</code>.
+</li>
+</ul>
 <h3 id="methods">
 Methods
 </h3>
@@ -198,6 +218,58 @@ Equivalent to <code>receiver &amp; other</code>.
 <dd>
 <p>
 Returns <code>true</code> if the set is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_proper_subset_of(other: set) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>receiver</code> is a proper subset of <code>other</code>.
+</p>
+<p>
+Equivalent to <code>receiver &lt; other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_proper_superset_of(other: set) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>receiver</code> is a proper superset of <code>other</code>.
+</p>
+<p>
+Equivalent to <code>receiver &gt; other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_subset_of(other: set) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>receiver</code> is a subset of <code>other</code>.
+</p>
+<p>
+Equivalent to <code>receiver &lt;= other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_superset_of(other: set) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>receiver</code> is a superset of <code>other</code>.
+</p>
+<p>
+Equivalent to <code>receiver &gt;= other</code>.
 </p>
 </dd>
 </div>
