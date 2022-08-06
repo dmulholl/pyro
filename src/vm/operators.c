@@ -736,7 +736,7 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
                     pyro_panic(vm, "values are not comparable");
                     return false;
                 }
-                case OBJ_INSTANCE: {
+                default: {
                     Value method = pyro_get_method(vm, a, vm->str_op_binary_less);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
@@ -750,9 +750,6 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
                     pyro_panic(vm, "values are not comparable");
                     return false;
                 }
-                default:
-                    pyro_panic(vm, "values are not comparable");
-                    return false;
             }
         }
 

@@ -385,6 +385,33 @@ static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map1 = AS_MAP(args[-1]);
+
+    if (!IS_SET(args[0])) {
+        pyro_panic(vm, "is_subset_of(): invalid argument, expected a set");
+        return MAKE_NULL();
+    }
+    ObjMap* map2 = AS_MAP(args[0]);
+
+    if (!(map1->live_entry_count < map2->live_entry_count)) {
+        return MAKE_BOOL(false);
+    }
+
+    for (size_t i = 0; i < map1->entry_array_count; i++) {
+        MapEntry* entry = &map1->entry_array[i];
+
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (!ObjMap_contains(map2, entry->key, vm)) {
+            return MAKE_BOOL(false);
+        }
+    }
+
+    return MAKE_BOOL(true);
+}
 
 
 void pyro_load_std_core_map(PyroVM* vm) {
@@ -426,4 +453,6 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->class_set, "$op_binary_caret", set_symmetric_difference, 1);
     pyro_define_method(vm, vm->class_set, "is_subset_of", set_is_subset_of, 1);
     pyro_define_method(vm, vm->class_set, "$op_binary_less_equals", set_is_subset_of, 1);
+    pyro_define_method(vm, vm->class_set, "is_proper_subset_of", set_is_proper_subset_of, 1);
+    pyro_define_method(vm, vm->class_set, "$op_binary_less", set_is_proper_subset_of, 1);
 }
