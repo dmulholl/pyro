@@ -636,4 +636,5 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->class_stack, "push", vec_append, 1);
     pyro_define_method(vm, vm->class_stack, "pop", stack_pop, 0);
     pyro_define_method(vm, vm->class_stack, "$iter", vec_iter, 0);
+    pyro_define_method(vm, vm->class_stack, "clear", vec_clear, 0);
 }

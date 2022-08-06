@@ -25,3 +25,20 @@ for item in bar {
     assert item == index;
     index += 1;
 }
+
+def $test_clear() {
+    var stack = $stack();
+    assert stack:count() == 0;
+
+    stack:push(123);
+    stack:push(456);
+    assert stack:count() == 2;
+
+    stack:clear();
+    assert stack:count() == 0;
+
+    stack:push("A");
+    stack:push("B");
+    assert stack:pop() == "B";
+    assert stack:pop() == "A";
+}

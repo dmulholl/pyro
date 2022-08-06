@@ -74,7 +74,8 @@ static Value fn_set_stdin(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_OBJ(args[0])) {
         switch (AS_OBJ(args[0])->type) {
-            case OBJ_VEC: {
+            case OBJ_VEC:
+            case OBJ_VEC_AS_STACK: {
                 ObjVec* vec = AS_VEC(args[0]);
                 return MAKE_I64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
             }
