@@ -583,6 +583,13 @@ static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value vec_clear(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjVec* vec = AS_VEC(args[-1]);
+    ObjVec_clear(vec, vm);
+    return MAKE_NULL();
+}
+
+
 void pyro_load_std_core_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
@@ -621,6 +628,7 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_method(vm, vm->class_vec, "iter", vec_iter, 0);
     pyro_define_method(vm, vm->class_vec, "remove_random", vec_remove_random, 0);
     pyro_define_method(vm, vm->class_vec, "random", vec_random, 0);
+    pyro_define_method(vm, vm->class_vec, "clear", vec_clear, 0);
 
     // Stack methods.
     pyro_define_method(vm, vm->class_stack, "count", vec_count, 0);

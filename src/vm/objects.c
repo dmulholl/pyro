@@ -1180,6 +1180,14 @@ ObjVec* ObjVec_new(PyroVM* vm) {
 }
 
 
+void ObjVec_clear(ObjVec* vec, PyroVM* vm) {
+    FREE_ARRAY(vm, Value, vec->values, vec->capacity);
+    vec->count = 0;
+    vec->capacity = 0;
+    vec->values = NULL;
+}
+
+
 ObjVec* ObjVec_new_as_stack(PyroVM* vm) {
     ObjVec* stack = ObjVec_new(vm);
     if (!stack) {

@@ -379,3 +379,18 @@ def $test_join() {
     assert [1, 2, 3]:join("") == "123";
     assert [1, 2, 3]:join(",") == "1,2,3";
 }
+
+
+def $test_clear() {
+    var vec = [1, 2, 3];
+    assert vec:count() == 3;
+
+    vec:clear();
+    assert vec:count() == 0;
+
+    vec:append("A");
+    vec:append("B");
+    assert vec:count() == 2;
+    assert vec[0] == "A";
+    assert vec[1] == "B";
+}

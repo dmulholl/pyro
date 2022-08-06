@@ -140,6 +140,7 @@ ObjVec* ObjVec_new(PyroVM* vm);
 ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm);
 ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm);
 ObjVec* ObjVec_new_as_stack(PyroVM* vm);
+void ObjVec_clear(ObjVec* vec, PyroVM* vm);
 
 // Returns true if the value was successfully appended, false if memory allocation failed.
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
