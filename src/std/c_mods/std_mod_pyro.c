@@ -82,7 +82,8 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
                 ObjTup* tup = AS_TUP(args[0]);
                 return MAKE_I64(sizeof(ObjTup) + sizeof(Value) * tup->count);
             }
-            case OBJ_MAP: {
+            case OBJ_MAP:
+            case OBJ_MAP_AS_SET: {
                 ObjMap* map = AS_MAP(args[0]);
                 return MAKE_I64(
                     sizeof(ObjMap) +

@@ -525,4 +525,5 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_method(vm, vm->class_set, "$op_binary_greater_equals", set_is_superset_of, 1);
     pyro_define_method(vm, vm->class_set, "is_proper_superset_of", set_is_proper_superset_of, 1);
     pyro_define_method(vm, vm->class_set, "$op_binary_greater", set_is_proper_superset_of, 1);
+    pyro_define_method(vm, vm->class_set, "clear", map_clear, 0);
 }

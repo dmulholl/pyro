@@ -267,3 +267,12 @@ def $test_is_proper_superset_of() {
     assert !(s1 > s2);
     assert !(s3 > s2);
 }
+
+
+def $test_clear() {
+    var set = $set("ABC");
+    assert set:count() == 3;
+
+    set:clear();
+    assert set:count() == 0;
+}
