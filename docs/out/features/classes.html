@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.30</p>
+                <p class="version">Version 0.7.33</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -375,7 +375,7 @@ Implementing this method overloads the binary <code>|</code> operator for expres
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>^</code> operator for expressions of the form <code>receiver &amp; other</code>.
+Implementing this method overloads the binary <code>^</code> operator for expressions of the form <code>receiver ^ other</code>.
 </p>
 </dd>
 </div>
@@ -445,6 +445,16 @@ Implementing this method overloads the binary <code>-</code> operator for expres
 </div>
 <div>
 <dt>
+<code>:$op_binary_percent(other: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the binary <code>%</code> operator for expressions of the form <code>receiver % other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:$op_binary_plus(other: any) -&gt; any</code>
 </dt>
 <dd>
@@ -465,11 +475,31 @@ Implementing this method overloads the binary <code>/</code> operator for expres
 </div>
 <div>
 <dt>
+<code>:$op_binary_slash_slash(other: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the binary <code>//</code> operator for expressions of the form <code>receiver // other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:$op_binary_star(other: any) -&gt; any</code>
 </dt>
 <dd>
 <p>
 Implementing this method overloads the binary <code>*</code> operator for expressions of the form <code>receiver * other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$op_binary_star_star(other: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the binary <code>**</code> operator for expressions of the form <code>receiver ** other</code>.
 </p>
 </dd>
 </div>
