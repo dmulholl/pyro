@@ -1258,19 +1258,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_STAR_STAR: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                if (IS_I64(a) && IS_I64(b)) {
-                    pyro_push(vm, MAKE_F64(pow((double)a.as.i64, (double)b.as.i64)));
-                } else if (IS_F64(a) && IS_F64(b)) {
-                    pyro_push(vm, MAKE_F64(pow(a.as.f64, b.as.f64)));
-                } else if (IS_I64(a) && IS_F64(b)) {
-                    pyro_push(vm, MAKE_F64(pow((double)a.as.i64, b.as.f64)));
-                } else if (IS_F64(a) && IS_I64(b)) {
-                    pyro_push(vm, MAKE_F64(pow(a.as.f64, (double)b.as.i64)));
-                } else {
-                    pyro_panic(vm, "operands to '^' must both be numbers");
-                }
-
+                pyro_push(vm, pyro_op_binary_star_star(vm, a, b));
                 break;
             }
 

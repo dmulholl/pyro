@@ -285,6 +285,11 @@ You can implement the `$special` methods listed below to add support for various
     Implementing this method overloads the binary `*` operator for expressions of the form `receiver * other`.
 
 
+[[ `:$op_binary_star_star(other: any) -> any` ]]
+
+    Implementing this method overloads the binary `**` operator for expressions of the form `receiver ** other`.
+
+
 [[ `:$op_unary_minus() -> any` ]]
 
     Implementing this method overloads the unary `-` operator for expressions of the form `-receiver`.
