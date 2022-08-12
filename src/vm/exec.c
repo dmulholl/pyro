@@ -1192,35 +1192,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_PERCENT: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-
-                if (IS_I64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) {
-                        pyro_panic(vm, "modulo by zero");
-                        break;
-                    }
-                    pyro_push(vm, MAKE_I64(a.as.i64 % b.as.i64));
-                } else if (IS_F64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, "modulo by zero");
-                        break;
-                    }
-                    pyro_push(vm, MAKE_F64(fmod(a.as.f64, b.as.f64)));
-                } else if (IS_I64(a) && IS_F64(b)) {
-                    if (b.as.f64 == 0.0) {
-                        pyro_panic(vm, "modulo by zero");
-                        break;
-                    }
-                    pyro_push(vm, MAKE_F64(fmod((double)a.as.i64, b.as.f64)));
-                } else if (IS_F64(a) && IS_I64(b)) {
-                    if (b.as.i64 == 0) {
-                        pyro_panic(vm, "modulo by zero");
-                        break;
-                    }
-                    pyro_push(vm, MAKE_F64(fmod(a.as.f64, (double)b.as.i64)));
-                } else {
-                    pyro_panic(vm, "operands to '%%' must both be numbers");
-                }
-
+                pyro_push(vm, pyro_op_binary_percent(vm, a, b));
                 break;
             }
 
