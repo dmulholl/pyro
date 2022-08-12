@@ -98,6 +98,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_op_binary_caret);
     mark_object(vm, (Obj*)vm->str_op_binary_percent);
     mark_object(vm, (Obj*)vm->str_op_binary_star_star);
+    mark_object(vm, (Obj*)vm->str_op_binary_slash_slash);
     mark_object(vm, (Obj*)vm->str_op_unary_plus);
     mark_object(vm, (Obj*)vm->str_op_unary_minus);
     mark_object(vm, (Obj*)vm->str_dollar_hash);

@@ -40,6 +40,10 @@ Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b);
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b);
 
+// Returns [a] // [b]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b);
+
 // Returns +[operand]. Panics if the operation is not defined for the operand type.
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_unary_plus(PyroVM* vm, Value operand);
