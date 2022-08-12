@@ -280,27 +280,17 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_OBJ: {
-            if (IS_INSTANCE(a)) {
-                Value method = pyro_get_method(vm, a, vm->str_op_binary_slash);
-                if (!IS_NULL(method)) {
-                    pyro_push(vm, a);
-                    pyro_push(vm, b);
-                    Value result = pyro_call_method(vm, method, 1);
-                    return result;
-                } else {
-                    pyro_panic(vm, "invalid operand types to '/'");
-                    return MAKE_NULL();
-                }
+        default: {
+            Value method = pyro_get_method(vm, a, vm->str_op_binary_slash);
+            if (!IS_NULL(method)) {
+                pyro_push(vm, a);
+                pyro_push(vm, b);
+                Value result = pyro_call_method(vm, method, 1);
+                return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '/'");
                 return MAKE_NULL();
             }
-        }
-
-        default: {
-            pyro_panic(vm, "invalid operand types to '/'");
-            return MAKE_NULL();
         }
     }
 }
