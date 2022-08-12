@@ -272,20 +272,20 @@ You can indicate that a type is nullable &mdash; i.e. can be either the specifie
 </pre>
 <ul>
 <li>
-<code>foo</code> is either an <code>i64</code> or <code>null</code>.
+<code>foo</code> is either <code>null</code> or an <code>i64</code>.
 </li>
 <li>
-<code>bar</code> is a <code>vec</code> whose entries are either <code>str</code> or <code>null</code>.
+<code>bar</code> is a <code>vec</code> whose entries are either <code>null</code> or <code>str</code>.
 </li>
 <li>
-<code>baz</code> is either a <code>map</code> with <code>str</code> keys and <code>i64</code> values or <code>null</code>.
+<code>baz</code> is either <code>null</code> or a <code>map</code> with <code>str</code> keys and <code>i64</code> values.
 </li>
 </ul>
 <h3 id="callable-values">
 Callable Values
 </h3>
 <p>
-You can indicate that a value is callable &mdash; i.e. that the value is a function, method, or class object &mdash; using the <code>call</code> type, e.g.
+You can indicate that a value is callable &mdash; i.e. that the value is a function, method, class, or callable instance &mdash; using the <code>call</code> type, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">call</span><span class="p">;</span>
@@ -328,10 +328,10 @@ The <code>call</code> type is nullable, e.g.
 </pre>
 <ul>
 <li>
-<code>foo</code> is either a callable or <code>null</code>.
+<code>foo</code> is either <code>null</code> or a callable.
 </li>
 <li>
-<code>bar</code> is either a callable that takes takes an <code>i64</code> parameter and returns a <code>bool</code> or <code>null</code>.
+<code>bar</code> is either <code>null</code> or a callable that takes takes an <code>i64</code> parameter and returns a <code>bool</code>.
 </li>
 </ul>
 <h3 id="type-names">

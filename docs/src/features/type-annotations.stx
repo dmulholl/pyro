@@ -123,15 +123,15 @@ You can indicate that a type is nullable --- i.e. can be either the specified ty
     var bar: vec[str?];
     var baz: map?[str, i64];
 
-* `foo` is either an `i64` or `null`.
-* `bar` is a `vec` whose entries are either `str` or `null`.
-* `baz` is either a `map` with `str` keys and `i64` values or `null`.
+* `foo` is either `null` or an `i64`.
+* `bar` is a `vec` whose entries are either `null` or `str`.
+* `baz` is either `null` or a `map` with `str` keys and `i64` values.
 
 
 
 ### Callable Values
 
-You can indicate that a value is callable --- i.e. that the value is a function, method, or class object --- using the `call` type, e.g.
+You can indicate that a value is callable --- i.e. that the value is a function, method, class, or callable instance --- using the `call` type, e.g.
 
 ::: code pyro
     var foo: call;
@@ -160,8 +160,8 @@ The `call` type is nullable, e.g.
     var foo: call?;
     var bar: call?(i64) -> bool;
 
-* `foo` is either a callable or `null`.
-* `bar` is either a callable that takes takes an `i64` parameter and returns a `bool` or `null`.
+* `foo` is either `null` or a callable.
+* `bar` is either `null` or a callable that takes takes an `i64` parameter and returns a `bool`.
 
 
 
