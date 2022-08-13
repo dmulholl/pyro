@@ -51,7 +51,22 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#character-literals">Character Literals</a>
+</li>
+<li>
+<a href="#conversions">Conversions</a>
+</li>
+<li>
+<a href="#concatenating">Concatenating</a>
+</li>
+<li>
+<a href="#methods">Methods</a>
+</li>
+</ul>
+<hr>
+<p>
 A character, <code>char</code>, is an unsigned 32-bit integer representing a Unicode code point.
 </p>
 <dl>
@@ -67,6 +82,9 @@ Panics if the argument is out of range.
 </dd>
 </div>
 </dl>
+<h3 id="character-literals">
+Character Literals
+</h3>
 <p>
 Character literals use single quotes:
 </p>
@@ -83,8 +101,11 @@ A character literal should contain either a single UTF-8 encoded code point or a
 <span class="k">assert</span> <span class="sc">&#39;\u20AC&#39;</span> <span class="o">==</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
 </pre>
 <p>
-Character literals support all the same backslashed escape sequences as strings.
+Character literals support the same backslashed escape sequences as strings.
 </p>
+<h3 id="conversions">
+Conversions
+</h3>
 <p>
 You can convert a character to a string using the <code>$str()</code> function  &mdash; this returns a string containing the UTF-8 encoded representation of the codepoint:
 </p>
@@ -99,6 +120,9 @@ You can convert a character to an integer using the <code>$i64()</code> function
 <span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">97</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$char</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 </pre>
+<h3 id="concatenating">
+Concatenating
+</h3>
 <p>
 If you add two characters together using the <code>+</code> operator, the result will be a UTF-8 encoded string:
 </p>
@@ -119,6 +143,71 @@ You can multiply a character by an integer <code>n</code> to produce a string wi
 <span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;xxx&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="sc">&#39;🔥&#39;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;🔥🔥🔥&quot;</span><span class="p">;</span>
 </pre>
+<h3 id="methods">
+Methods
+</h3>
+<dl>
+<div>
+<dt>
+<code>:is_ascii() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the character is in the ASCII range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii_decimal() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the character is an ASCII decimal digit.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii_hex() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the character is an ASCII hexadecimal digit.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii_octal() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the character is an ASCII octal digit.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii_ws() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the character is an ASCII whitespace character.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_unicode_ws() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the character is a Unicode whitespace character.
+</p>
+</dd>
+</div>
+</dl>
         </article>
         
     </body>

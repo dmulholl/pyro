@@ -3,12 +3,20 @@ title: Characters
 meta_title: Pyro &mdash; Characters
 ---
 
+::: insert toc
+::: hr
+
+
 A character, `char`, is an unsigned 32-bit integer representing a Unicode code point.
 
 [[ `$char(arg: i64) -> char` ]]
 
     Converts `arg` to a `char`.
     Panics if the argument is out of range.
+
+
+
+### Character Literals
 
 Character literals use single quotes:
 
@@ -23,7 +31,11 @@ A character literal should contain either a single UTF-8 encoded code point or a
     assert '\x61' == 'a';
     assert '\u20AC' == '€';
 
-Character literals support all the same backslashed escape sequences as strings.
+Character literals support the same backslashed escape sequences as strings.
+
+
+
+### Conversions
 
 You can convert a character to a string using the `$str()` function  --- this returns a string containing the UTF-8 encoded representation of the codepoint:
 
@@ -36,6 +48,10 @@ You can convert a character to an integer using the `$i64()` function or an inte
 ::: code pyro
     assert $i64('a') == 97;
     assert $char(97) == 'a';
+
+
+
+### Concatenating
 
 If you add two characters together using the `+` operator, the result will be a UTF-8 encoded string:
 
@@ -54,3 +70,30 @@ You can multiply a character by an integer `n` to produce a string with `n` UTF-
     assert 'x' * 3 == "xxx";
     assert '🔥' * 3 == "🔥🔥🔥";
 
+
+
+### Methods
+
+[[ `:is_ascii() -> bool` ]]
+
+    Returns `true` if the character is in the ASCII range.
+
+[[ `:is_ascii_decimal() -> bool` ]]
+
+    Returns `true` if the character is an ASCII decimal digit.
+
+[[ `:is_ascii_hex() -> bool` ]]
+
+    Returns `true` if the character is an ASCII hexadecimal digit.
+
+[[ `:is_ascii_octal() -> bool` ]]
+
+    Returns `true` if the character is an ASCII octal digit.
+
+[[ `:is_ascii_ws() -> bool` ]]
+
+    Returns `true` if the character is an ASCII whitespace character.
+
+[[ `:is_unicode_ws() -> bool` ]]
+
+    Returns `true` if the character is a Unicode whitespace character.
