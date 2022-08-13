@@ -9,6 +9,7 @@
 
 #include <dlfcn.h>
 
+
 static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) {
     if (strcmp(name->bytes, "math") == 0) {
         pyro_load_std_mod_math(vm, module);
@@ -102,18 +103,17 @@ void try_load_compiled_module(PyroVM* vm, const char* path, Value name, ObjModul
         return;
     }
 
+    typedef bool (*init_func_t)(PyroVM* vm, ObjModule* module);
+    init_func_t init_func;
+
     char* init_func_name = pyro_sprintf(vm, "pyro_init_mod_%s", AS_STR(name)->bytes);
     if (vm->halt_flag) {
         return;
     }
 
-    typedef bool (*init_func_t)(PyroVM* vm, ObjModule* module);
-    init_func_t init_func;
-
     // The contortion on the left is to silence a compiler warning about converting an object
     // pointer to a function pointer. The conversion is safe and is required by dlsym().
     *(void**)(&init_func) = dlsym(handle, init_func_name);
-
     FREE_ARRAY(vm, char, init_func_name, strlen(init_func_name) + 1);
     if (!init_func) {
         pyro_panic(vm, "failed to locate module initialization function: %s: %s", path, dlerror());
@@ -156,6 +156,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         // - BASE/foo/bar/baz
         // - BASE/foo/bar/baz.so
         // - BASE/foo/bar/baz.pyro
+        // - BASE/foo/bar/baz/self.so
         // - BASE/foo/bar/baz/self.pyro
         size_t path_capacity = base_has_trailing_slash ? base->length : base->length + 1;
         for (uint8_t j = 0; j < arg_count; j++) {

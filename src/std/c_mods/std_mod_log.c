@@ -14,7 +14,7 @@
 #define PYRO_STD_LOG_LEVEL_FATAL 50
 
 
-static void pyro_log(
+static void write_msg(
     PyroVM* vm,
     const char* fn_name,
     const char* timestamp_format,
@@ -78,31 +78,31 @@ static void pyro_log(
 
 
 static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_log(vm, "debug", "[%Y-%m-%d %H:%M:%S]", "DEBUG", NULL, arg_count, args);
+    write_msg(vm, "debug", "[%Y-%m-%d %H:%M:%S]", "DEBUG", NULL, arg_count, args);
     return MAKE_NULL();
 }
 
 
 static Value fn_info(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_log(vm, "info", "[%Y-%m-%d %H:%M:%S]", "INFO", NULL, arg_count, args);
+    write_msg(vm, "info", "[%Y-%m-%d %H:%M:%S]", "INFO", NULL, arg_count, args);
     return MAKE_NULL();
 }
 
 
 static Value fn_warn(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_log(vm, "warn", "[%Y-%m-%d %H:%M:%S]", "WARN", NULL, arg_count, args);
+    write_msg(vm, "warn", "[%Y-%m-%d %H:%M:%S]", "WARN", NULL, arg_count, args);
     return MAKE_NULL();
 }
 
 
 static Value fn_error(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_log(vm, "error", "[%Y-%m-%d %H:%M:%S]", "ERROR", NULL, arg_count, args);
+    write_msg(vm, "error", "[%Y-%m-%d %H:%M:%S]", "ERROR", NULL, arg_count, args);
     return MAKE_NULL();
 }
 
 
 static Value fn_fatal(PyroVM* vm, size_t arg_count, Value* args) {
-    pyro_log(vm, "fatal", "[%Y-%m-%d %H:%M:%S]", "FATAL", NULL, arg_count, args);
+    write_msg(vm, "fatal", "[%Y-%m-%d %H:%M:%S]", "FATAL", NULL, arg_count, args);
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = 1;
@@ -118,7 +118,7 @@ static Value logger_debug(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_DEBUG >= log_level) {
-        pyro_log(vm, "debug", timestamp_format->bytes, "DEBUG", file, arg_count, args);
+        write_msg(vm, "debug", timestamp_format->bytes, "DEBUG", file, arg_count, args);
     }
 
     return MAKE_NULL();
@@ -133,7 +133,7 @@ static Value logger_info(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_INFO >= log_level) {
-        pyro_log(vm, "info", timestamp_format->bytes, "INFO", file, arg_count, args);
+        write_msg(vm, "info", timestamp_format->bytes, "INFO", file, arg_count, args);
     }
 
     return MAKE_NULL();
@@ -148,7 +148,7 @@ static Value logger_warn(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_WARN >= log_level) {
-        pyro_log(vm, "warn", timestamp_format->bytes, "WARN", file, arg_count, args);
+        write_msg(vm, "warn", timestamp_format->bytes, "WARN", file, arg_count, args);
     }
 
     return MAKE_NULL();
@@ -163,7 +163,7 @@ static Value logger_error(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_ERROR >= log_level) {
-        pyro_log(vm, "error", timestamp_format->bytes, "ERROR", file, arg_count, args);
+        write_msg(vm, "error", timestamp_format->bytes, "ERROR", file, arg_count, args);
     }
 
     return MAKE_NULL();
@@ -178,7 +178,7 @@ static Value logger_fatal(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_FATAL >= log_level) {
-        pyro_log(vm, "fatal", timestamp_format->bytes, "FATAL", file, arg_count, args);
+        write_msg(vm, "fatal", timestamp_format->bytes, "FATAL", file, arg_count, args);
     }
 
     vm->halt_flag = true;

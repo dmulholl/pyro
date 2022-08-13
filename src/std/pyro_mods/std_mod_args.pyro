@@ -31,7 +31,7 @@ class Flag {
 
 
 class Option {
-    var parser: fn?(str) -> any;
+    var parser: call?(str) -> any;
     var default: any;
     var values: vec[any];
 
@@ -44,7 +44,7 @@ class Option {
         return self;
     }
 
-    def parser(func: fn(str) -> any) -> Option {
+    def parser(func: call(str) -> any) -> Option {
         self.parser = func;
         return self;
     }
@@ -88,7 +88,7 @@ class Option {
 class ArgParser {
     var helptext: str?;
     var version: str?;
-    var callback: fn?(str, ArgParser);
+    var callback: call?(str, ArgParser);
     var enable_help_command: bool = false;
     var exit_on_error: bool = true;
 
