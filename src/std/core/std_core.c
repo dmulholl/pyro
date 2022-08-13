@@ -521,27 +521,6 @@ static Value fn_is_i64(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_char(PyroVM* vm, size_t arg_count, Value* args) {
-    if (IS_I64(args[0])) {
-        int64_t arg = args[0].as.i64;
-        if (arg >= 0 && arg <= UINT32_MAX) {
-            return MAKE_CHAR((uint32_t)arg);
-        } else {
-            pyro_panic(vm, "$char(): invalid argument, integer is out of range");
-            return MAKE_NULL();
-        }
-    }
-
-    pyro_panic(vm, "$char(): invalid argument");
-    return MAKE_NULL();
-}
-
-
-static Value fn_is_char(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_CHAR(args[0]));
-}
-
-
 static Value fn_bool(PyroVM* vm, size_t arg_count, Value* args) {
     return MAKE_BOOL(pyro_is_truthy(args[0]));
 }
@@ -1056,7 +1035,7 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjClass* class = pyro_get_class(args[0]);
+    ObjClass* class = pyro_get_class(vm, args[0]);
     if (!class) {
         ObjIter* iter = ObjIter_empty(vm);
         if (!iter) {
@@ -1096,7 +1075,7 @@ static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjClass* class = pyro_get_class(args[0]);
+    ObjClass* class = pyro_get_class(vm, args[0]);
     if (!class) {
         ObjIter* iter = ObjIter_empty(vm);
         if (!iter) {
@@ -1147,7 +1126,6 @@ void pyro_load_std_core(PyroVM* vm) {
 
     pyro_define_global_fn(vm, "$", fn_shell_shortcut, 1);
     pyro_define_global_fn(vm, "$bool", fn_bool, 1);
-    pyro_define_global_fn(vm, "$char", fn_char, 1);
     pyro_define_global_fn(vm, "$clock", fn_clock, 0);
     pyro_define_global_fn(vm, "$debug", fn_debug, 1);
     pyro_define_global_fn(vm, "$env", fn_env, -1);
@@ -1166,7 +1144,6 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$input", fn_input, 0);
     pyro_define_global_fn(vm, "$is_bool", fn_is_bool, 1);
     pyro_define_global_fn(vm, "$is_callable", fn_is_callable, 1);
-    pyro_define_global_fn(vm, "$is_char", fn_is_char, 1);
     pyro_define_global_fn(vm, "$is_class", fn_is_class, 1);
     pyro_define_global_fn(vm, "$is_f64", fn_is_f64, 1);
     pyro_define_global_fn(vm, "$is_i64", fn_is_i64, 1);

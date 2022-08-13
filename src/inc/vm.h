@@ -32,6 +32,7 @@ struct PyroVM {
     ObjClass* class_queue;
     ObjClass* class_err;
     ObjClass* class_module;
+    ObjClass* class_char;
 
     // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;

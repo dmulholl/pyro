@@ -22,18 +22,23 @@ bool pyro_is_truthy(Value value) {
 }
 
 
-ObjClass* pyro_get_class(Value value) {
-    if (IS_OBJ(value)) {
-        return AS_OBJ(value)->class;
+ObjClass* pyro_get_class(PyroVM* vm, Value value) {
+    switch (value.type) {
+        case VAL_CHAR:
+            return vm->class_char;
+        case VAL_OBJ:
+            return AS_OBJ(value)->class;
+        default:
+            return NULL;
     }
-    return NULL;
 }
 
 
 Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
-    if (IS_OBJ(receiver) && AS_OBJ(receiver)->class) {
+    ObjClass* class = pyro_get_class(vm, receiver);
+    if (class) {
         Value method;
-        if (ObjMap_get(AS_OBJ(receiver)->class->methods, MAKE_OBJ(method_name), &method, vm)) {
+        if (ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
             return method;
         }
     }

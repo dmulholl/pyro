@@ -196,7 +196,7 @@ static void call_method_by_name_from_class(PyroVM* vm, ObjClass* class, ObjStr* 
 // The receiver value and [arg_count] arguments are sitting on top of the stack.
 static void call_method_by_name(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
     Value receiver = pyro_peek(vm, arg_count);
-    ObjClass* class = pyro_get_class(receiver);
+    ObjClass* class = pyro_get_class(vm, receiver);
     if (class) {
         call_method_by_name_from_class(vm, class, method_name, arg_count);
     } else {
@@ -634,7 +634,7 @@ static void run(PyroVM* vm) {
             case OP_GET_METHOD: {
                 Value receiver = pyro_peek(vm, 0);
                 ObjStr* method_name = READ_STRING();
-                ObjClass* class = pyro_get_class(receiver);
+                ObjClass* class = pyro_get_class(vm, receiver);
 
                 if (class) {
                     bind_method(vm, class, method_name);

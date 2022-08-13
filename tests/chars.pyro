@@ -64,3 +64,24 @@ def $test_multiplication_by_int() {
     assert 'x' * 3 == "xxx";
     assert '🔥' * 3 == "🔥🔥🔥";
 }
+
+
+def $test_methods() {
+    assert 'x':is_ascii();
+    assert !'🔥':is_ascii();
+
+    assert ' ':is_ascii_ws();
+    assert !'x':is_ascii_ws();
+
+    assert ' ':is_unicode_ws();
+    assert !'x':is_unicode_ws();
+
+    assert '1':is_ascii_decimal();
+    assert !'x':is_ascii_decimal();
+
+    assert '1':is_ascii_octal();
+    assert !'9':is_ascii_octal();
+
+    assert '1':is_ascii_hex();
+    assert !'x':is_ascii_hex();
+}

@@ -39,6 +39,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->class_tup = NULL;
     vm->class_vec = NULL;
     vm->class_module = NULL;
+    vm->class_char = NULL;
     vm->empty_error = NULL;
     vm->empty_string = NULL;
     vm->exit_code = 0;
@@ -142,6 +143,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->class_tup = ObjClass_new(vm);
     vm->class_vec = ObjClass_new(vm);
     vm->class_module = ObjClass_new(vm);
+    vm->class_char = ObjClass_new(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -243,6 +245,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     pyro_load_std_core_queue(vm);
     pyro_load_std_core_err(vm);
     pyro_load_std_core_mod(vm);
+    pyro_load_std_core_char(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

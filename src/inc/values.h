@@ -121,7 +121,7 @@ struct Obj {
 #define STR(c_string)               ObjStr_copy_raw(c_string, strlen(c_string), vm)
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
-ObjClass* pyro_get_class(Value value);
+ObjClass* pyro_get_class(PyroVM* vm, Value value);
 
 // Returns the named method if it is defined for the value, otherwise MAKE_NULL().
 Value pyro_get_method(PyroVM* vm, Value value, ObjStr* method_name);
