@@ -1471,8 +1471,8 @@ static void parse_assert_stmt(Parser* parser) {
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "assignment is not allowed in 'assert' statements "
-            "(wrap the assignment in parentheses to enable it)"
+            "invalid assignment: assignment is not allowed inside 'assert' statements: "
+            "wrap the assignment in parentheses to enable it"
         );
         return;
     }
@@ -1662,8 +1662,8 @@ static void parse_if_stmt(Parser* parser) {
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "assignment is not allowed in the condition expression of an 'if' statement "
-            "(wrap the assignment in parentheses to enable it)"
+            "invalid assignment: assignment is not allowed inside 'if' conditions: "
+            "wrap the assignment in parentheses to enable it"
         );
         return;
     }
@@ -1926,8 +1926,8 @@ static void parse_while_stmt(Parser* parser) {
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "assignment is not allowed in the condition expression of a 'while' statement "
-            "(wrap the assignment in parentheses to enable it)"
+            "invalid assignment: assignment is not allowed inside 'while' conditions: "
+            "wrap the assignment in parentheses to enable it"
         );
         return;
     }
