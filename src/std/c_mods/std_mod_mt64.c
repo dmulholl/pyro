@@ -128,7 +128,7 @@ void pyro_load_std_mod_mt64(PyroVM* vm, ObjModule* module) {
     mt64_class->name = STR("MT64");
     pyro_define_member(vm, module, "MT64", MAKE_OBJ(mt64_class));
 
-    pyro_define_field(vm, mt64_class, "generator", MAKE_NULL());
+    pyro_define_pub_field(vm, mt64_class, "generator", MAKE_NULL());
 
     pyro_define_method(vm, mt64_class, "$init", mt64_init, 0);
     pyro_define_method(vm, mt64_class, "seed_with_hash", mt64_seed_with_hash, 1);

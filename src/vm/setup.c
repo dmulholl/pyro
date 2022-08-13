@@ -415,7 +415,7 @@ bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, pyro_nati
 }
 
 
-bool pyro_define_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
+bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
     size_t field_index = class->default_field_values->count;
 
     ObjStr* name_string = STR(name);

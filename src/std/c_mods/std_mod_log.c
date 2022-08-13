@@ -247,9 +247,9 @@ void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
     logger_class->name = STR("Logger");
     pyro_define_member(vm, module, "Logger", MAKE_OBJ(logger_class));
 
-    pyro_define_field(vm, logger_class, "level", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_field(vm, logger_class, "timestamp", MAKE_OBJ(STR("[%Y-%m-%d %H:%M:%S]")));
-    pyro_define_field(vm, logger_class, "file", MAKE_NULL());
+    pyro_define_pub_field(vm, logger_class, "level", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
+    pyro_define_pub_field(vm, logger_class, "timestamp", MAKE_OBJ(STR("[%Y-%m-%d %H:%M:%S]")));
+    pyro_define_pub_field(vm, logger_class, "file", MAKE_NULL());
 
     pyro_define_method(vm, logger_class, "level", logger_level, 1);
     pyro_define_method(vm, logger_class, "timestamp", logger_timestamp, 1);
