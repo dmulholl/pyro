@@ -442,6 +442,27 @@ bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value 
 }
 
 
+bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
+    size_t field_index = class->default_field_values->count;
+
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
+        return false;
+    }
+
+    if (!ObjVec_append(class->default_field_values, default_value, vm)) {
+        return false;
+    }
+
+    if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
+        class->default_field_values->count--;
+        return false;
+    }
+
+    return true;
+}
+
+
 bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
     ObjStr* name_string = STR(name);
     if (!name_string) {
