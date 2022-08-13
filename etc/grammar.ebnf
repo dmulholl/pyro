@@ -101,4 +101,6 @@ callable_type = atomic_type ( "(" ( type ( "," type )* )? ")" )? ( "->" type )? 
 
 single_type = atomic_type | container_type | callable_type ;
 
-type = single_type ( "|" single_type )* ;
+bracketed_type = single_type | "(" single_type ")" ;
+
+type = bracketed_type ( "|" bracketed_type )* ;

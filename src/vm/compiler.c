@@ -1422,7 +1422,12 @@ static void parse_single_type(Parser* parser) {
 
 static void parse_type(Parser* parser) {
     do {
-        parse_single_type(parser);
+        if (match(parser, TOKEN_LEFT_PAREN)) {
+            parse_single_type(parser);
+            consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after type declaration");
+        } else {
+            parse_single_type(parser);
+        }
     } while (match(parser, TOKEN_BAR));
 }
 
