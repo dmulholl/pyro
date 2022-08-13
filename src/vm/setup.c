@@ -416,19 +416,25 @@ bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, pyro_nati
 
 
 bool pyro_define_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
-    size_t field_index = class->field_values->count;
+    size_t field_index = class->default_field_values->count;
 
     ObjStr* name_string = STR(name);
     if (!name_string) {
         return false;
     }
 
-    if (!ObjVec_append(class->field_values, default_value, vm)) {
+    if (!ObjVec_append(class->default_field_values, default_value, vm)) {
         return false;
     }
 
-    if (ObjMap_set(class->field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
-        class->field_values->count--;
+    if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
+        class->default_field_values->count--;
+        return false;
+    }
+
+    if (ObjMap_set(class->pub_field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
+        ObjMap_remove(class->all_field_indexes, MAKE_OBJ(name_string), vm);
+        class->default_field_values->count--;
         return false;
     }
 

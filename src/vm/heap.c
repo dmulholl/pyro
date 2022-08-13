@@ -91,7 +91,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
-            int num_fields = instance->obj.class->field_values->count;
+            int num_fields = instance->obj.class->default_field_values->count;
             pyro_realloc(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(Value), 0);
             break;
         }

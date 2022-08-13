@@ -6,7 +6,7 @@ assert foo1 == foo1;
 assert foo1 != foo2;
 
 class Bar {
-    var value;
+    pub var value;
 
     def $init(value) {
         self.value = value;

@@ -86,15 +86,15 @@ class Option {
 
 
 class ArgParser {
-    var helptext: str?;
-    var version: str?;
-    var callback: call?(str, ArgParser);
-    var enable_help_command: bool = false;
-    var exit_on_error: bool = true;
+    pub var helptext: str?;
+    pub var version: str?;
+    pub var callback: call?(str, ArgParser);
+    pub var enable_help_command: bool = false;
+    pub var exit_on_error: bool = true;
 
-    var args: vec[str];
-    var command_name: str?;
-    var command_parser: ArgParser?;
+    pub var args: vec[str];
+    pub var command_name: str?;
+    pub var command_parser: ArgParser?;
 
     var options: map[str, Option];
     var flags: map[str, Flag];

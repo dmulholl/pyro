@@ -154,15 +154,17 @@ ObjClass* ObjClass_new(PyroVM* vm) {
 
     class->name = NULL;
     class->methods = NULL;
-    class->field_values = NULL;
-    class->field_indexes = NULL;
+    class->default_field_values = NULL;
+    class->all_field_indexes = NULL;
+    class->pub_field_indexes = NULL;
     class->superclass = NULL;
 
     class->methods = ObjMap_new(vm);
-    class->field_values = ObjVec_new(vm);
-    class->field_indexes = ObjMap_new(vm);
+    class->default_field_values = ObjVec_new(vm);
+    class->all_field_indexes = ObjMap_new(vm);
+    class->pub_field_indexes = ObjMap_new(vm);
 
-    if (!class->methods || !class->field_values || !class->field_indexes) {
+    if (vm->memory_allocation_failed) {
         return NULL;
     }
 
@@ -176,7 +178,7 @@ ObjClass* ObjClass_new(PyroVM* vm) {
 
 
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
-    size_t num_fields = class->field_values->count;
+    size_t num_fields = class->default_field_values->count;
 
     ObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, ObjInstance, OBJ_INSTANCE, num_fields, Value);
     if (!instance) {
@@ -185,7 +187,7 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 
     instance->obj.class = class;
     if (num_fields > 0) {
-        memcpy(instance->fields, class->field_values->values, sizeof(Value) * num_fields);
+        memcpy(instance->fields, class->default_field_values->values, sizeof(Value) * num_fields);
     }
 
     return instance;
@@ -1056,10 +1058,12 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 1;
 
         case OP_BREAK:
-        case OP_DEFINE_FIELD:
+        case OP_DEFINE_PRI_FIELD:
+        case OP_DEFINE_PUB_FIELD:
         case OP_DEFINE_GLOBAL:
         case OP_DEFINE_METHOD:
         case OP_GET_FIELD:
+        case OP_GET_PUB_FIELD:
         case OP_GET_GLOBAL:
         case OP_GET_MEMBER:
         case OP_GET_METHOD:
@@ -1078,6 +1082,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_MAKE_VEC:
         case OP_POP_JUMP_IF_FALSE:
         case OP_SET_FIELD:
+        case OP_SET_PUB_FIELD:
         case OP_SET_GLOBAL:
             return 2;
 

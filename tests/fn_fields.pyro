@@ -1,6 +1,6 @@
 class Foo {
-    var bar;
-    var baz;
+    pub var bar;
+    pub var baz;
 }
 
 var foo = Foo();

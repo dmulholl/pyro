@@ -1,6 +1,6 @@
 class Point {
-    var x, y;
-    var bar;
+    pub var x, y;
+    pub var bar;
 }
 
 var foo = Point();

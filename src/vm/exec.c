@@ -532,28 +532,61 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_DEFINE_FIELD: {
-                // The field's initial value will be sitting on top of the stack.
-                Value initial_value = pyro_peek(vm, 0);
+            case OP_DEFINE_PRI_FIELD: {
+                // The field's default value will be sitting on top of the stack.
+                Value default_value = pyro_peek(vm, 0);
 
-                // The class object will be on the stack just below the initial value.
+                // The class object will be on the stack just below the default value.
                 ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
                 ObjStr* field_name = READ_STRING();
-                size_t field_index = class->field_values->count;
+                size_t field_index = class->default_field_values->count;
 
-                if (!ObjVec_append(class->field_values, initial_value, vm)) {
+                if (!ObjVec_append(class->default_field_values, default_value, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                if (ObjMap_set(class->field_indexes, MAKE_OBJ(field_name), MAKE_I64(field_index), vm) == 0) {
-                    class->field_values->count--;
+                if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(field_name), MAKE_I64(field_index), vm) == 0) {
+                    class->default_field_values->count--;
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                // Pop the initial value but leave the class object on the stack.
+                // Pop the default value but leave the class object on the stack.
+                pyro_pop(vm);
+                break;
+            }
+
+            case OP_DEFINE_PUB_FIELD: {
+                // The field's default value will be sitting on top of the stack.
+                Value default_value = pyro_peek(vm, 0);
+
+                // The class object will be on the stack just below the default value.
+                ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
+                ObjStr* field_name = READ_STRING();
+                size_t field_index = class->default_field_values->count;
+
+                if (!ObjVec_append(class->default_field_values, default_value, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(field_name), MAKE_I64(field_index), vm) == 0) {
+                    class->default_field_values->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (ObjMap_set(class->pub_field_indexes, MAKE_OBJ(field_name), MAKE_I64(field_index), vm) == 0) {
+                    ObjMap_remove(class->all_field_indexes, MAKE_OBJ(field_name), vm);
+                    class->default_field_values->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                // Pop the default value but leave the class object on the stack.
                 pyro_pop(vm);
                 break;
             }
@@ -562,20 +595,41 @@ static void run(PyroVM* vm) {
                 Value field_name = READ_CONSTANT();
 
                 if (!IS_INSTANCE(pyro_peek(vm, 0))) {
-                    pyro_panic(vm, "receiver has no field '%s'", AS_STR(field_name)->bytes);
+                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
                     break;
                 }
 
                 ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 0));
 
                 Value field_index;
-                if (ObjMap_get(instance->obj.class->field_indexes, field_name, &field_index, vm)) {
+                if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
                     pyro_pop(vm); // pop the instance
                     pyro_push(vm, instance->fields[field_index.as.i64]);
                     break;
                 }
 
-                pyro_panic(vm, "receiver has no field '%s'", AS_STR(field_name)->bytes);
+                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                break;
+            }
+
+            case OP_GET_PUB_FIELD: {
+                Value field_name = READ_CONSTANT();
+
+                if (!IS_INSTANCE(pyro_peek(vm, 0))) {
+                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                    break;
+                }
+
+                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 0));
+
+                Value field_index;
+                if (ObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
+                    pyro_pop(vm); // pop the instance
+                    pyro_push(vm, instance->fields[field_index.as.i64]);
+                    break;
+                }
+
+                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
                 break;
             }
 
@@ -846,11 +900,15 @@ static void run(PyroVM* vm) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
-                if (!ObjMap_copy_entries(superclass->field_indexes, subclass->field_indexes, vm)) {
+                if (!ObjMap_copy_entries(superclass->all_field_indexes, subclass->all_field_indexes, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
-                if (!ObjVec_copy_entries(superclass->field_values, subclass->field_values, vm)) {
+                if (!ObjMap_copy_entries(superclass->pub_field_indexes, subclass->pub_field_indexes, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!ObjVec_copy_entries(superclass->default_field_values, subclass->default_field_values, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -1294,19 +1352,38 @@ static void run(PyroVM* vm) {
             }
 
             case OP_SET_FIELD: {
+                Value field_name = READ_CONSTANT();
+
                 if (!IS_INSTANCE(pyro_peek(vm, 1))) {
-                    pyro_panic(
-                        vm,
-                        "invalid field access '.', receiver does not have fields"
-                    );
+                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                    break;
+                }
+                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 1));
+
+                Value field_index;
+                if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                    Value new_value = pyro_pop(vm);
+                    pyro_pop(vm); // pop the instance
+                    instance->fields[field_index.as.i64] = new_value;
+                    pyro_push(vm, new_value);
                     break;
                 }
 
-                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 1));
+                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                break;
+            }
+
+            case OP_SET_PUB_FIELD: {
                 Value field_name = READ_CONSTANT();
 
+                if (!IS_INSTANCE(pyro_peek(vm, 1))) {
+                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                    break;
+                }
+                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 1));
+
                 Value field_index;
-                if (ObjMap_get(instance->obj.class->field_indexes, field_name, &field_index, vm)) {
+                if (ObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
                     Value new_value = pyro_pop(vm);
                     pyro_pop(vm); // pop the instance
                     instance->fields[field_index.as.i64] = new_value;

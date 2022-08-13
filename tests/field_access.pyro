@@ -1,0 +1,27 @@
+class Point {
+    pub var x;
+    pri var y;
+    var z;
+
+    def $init(x, y, z) {
+        self.x = x;
+        self.y = y;
+        self.z = z;
+    }
+
+    def get() {
+        return $tup(self.x, self.y, self.z);
+    }
+}
+
+var foo = Point(1, 2, 3);
+assert foo.x == 1;
+assert $is_err(try foo.y);
+assert $is_err(try foo.z);
+assert foo:get() == $tup(1, 2, 3);
+
+assert foo.x == 1;
+
+foo.x = 999;
+assert foo.x == 999;
+assert foo:get() == $tup(999, 2, 3);

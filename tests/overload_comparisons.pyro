@@ -1,5 +1,5 @@
 class Foo {
-    var value;
+    pub var value;
 
     def $init(value) {
         self.value = value;

@@ -1,6 +1,6 @@
 # Methods implemented in Pyro.
 class Foo {
-    var number = 0;
+    pub var number = 0;
 
     def get_number() {
         return self.number;

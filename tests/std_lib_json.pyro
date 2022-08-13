@@ -70,9 +70,9 @@ var bar = Bar();
 assert to_json(bar) == `{"num": 123, "obj": "FOO"}`;
 
 class Baz {
-    var foo;
-    var bar;
-    var baz;
+    pub var foo;
+    pub var bar;
+    pub var baz;
 
     def $init(foo, bar, baz) {
         self.foo = foo;

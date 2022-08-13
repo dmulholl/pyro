@@ -1,5 +1,5 @@
 class Shape {
-    var colour;
+    pub var colour;
 
     def $init(colour) {
         self.colour = colour;
@@ -16,7 +16,7 @@ class Shape {
 
 
 class Square < Shape {
-    var side;
+    pub var side;
 
     def $init(colour, side) {
         super:$init(colour);

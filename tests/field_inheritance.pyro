@@ -1,0 +1,28 @@
+class ParentPoint {
+    var x;
+    var y;
+
+    def $init(x, y) {
+        self.x = x;
+        self.y = y;
+    }
+}
+
+class ChildPoint < ParentPoint {
+    pub var z;
+
+    def $init(x, y, z) {
+        super:$init(x, y);
+        self.z = z;
+    }
+
+    def get() {
+        return $tup(self.x, self.y, self.z);
+    }
+}
+
+var child = ChildPoint(1, 2, 3);
+assert child:get() == $tup(1, 2, 3);
+assert $is_err(try child.x);
+assert $is_err(try child.y);
+assert child.z == 3;

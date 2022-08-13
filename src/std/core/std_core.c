@@ -548,7 +548,7 @@ static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
     Value field_name = args[1];
 
     if (IS_INSTANCE(args[0])) {
-        ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->field_indexes;
+        ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         Value field_index;
         if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
             return MAKE_BOOL(true);
@@ -1063,7 +1063,7 @@ static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
     Value field_name = args[1];
 
     if (IS_INSTANCE(args[0])) {
-        ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->field_indexes;
+        ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         Value field_index;
         if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
             return AS_INSTANCE(args[0])->fields[field_index.as.i64];
@@ -1085,9 +1085,9 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_OBJ(iter);
     }
 
-    ObjIter* iter = ObjIter_new((Obj*)class->field_indexes, ITER_MAP_KEYS, vm);
+    ObjIter* iter = ObjIter_new((Obj*)class->pub_field_indexes, ITER_MAP_KEYS, vm);
     if (!iter) {
-        pyro_panic(vm, "$methods(): out of memory");
+        pyro_panic(vm, "$fields(): out of memory");
         return MAKE_NULL();
     }
 

@@ -1,6 +1,6 @@
 class Point {
-    var x, y;
-    var func;
+    pub var x, y;
+    pub var func;
 
     def $init() {
         self.x = 1;

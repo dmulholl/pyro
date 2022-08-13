@@ -112,6 +112,12 @@ typedef struct {
 } Parser;
 
 
+typedef enum Access {
+    PRIVATE,
+    PUBLIC
+} Access;
+
+
 /* -------------------- */
 /* Forward Declarations */
 /* -------------------- */
@@ -942,7 +948,9 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
 }
 
 
-static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
+static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
+    TokenType token_type = parser->next_token.type;
+
     if (match(parser, TOKEN_TRUE)) {
         emit_byte(parser, OP_LOAD_TRUE);
     }
@@ -1018,7 +1026,6 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
     else if (match(parser, TOKEN_SUPER)) {
         if (parser->class_compiler == NULL) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' outside a class");
-            return;
         } else if (!parser->class_compiler->has_superclass) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a class with no superclass");
         }
@@ -1066,11 +1073,14 @@ static void parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_
             parser->next_token.start
         );
     }
+
+    return token_type;
 }
 
 
 static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_primary_expr(parser, can_assign, can_assign_in_parens);
+    TokenType last_token_type = parse_primary_expr(parser, can_assign, can_assign_in_parens);
+
     while (true) {
         if (match(parser, TOKEN_LEFT_PAREN)) {
             bool unpack_last_argument;
@@ -1106,25 +1116,27 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         }
 
         else if (match(parser, TOKEN_DOT)) {
+            OpCode get_opcode = last_token_type == TOKEN_SELF ? OP_GET_FIELD : OP_GET_PUB_FIELD;
+            OpCode set_opcode = last_token_type == TOKEN_SELF ? OP_SET_FIELD : OP_SET_PUB_FIELD;
             consume(parser, TOKEN_IDENTIFIER, "expected a field name after '.'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (can_assign && match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
-                emit_u8_u16be(parser, OP_SET_FIELD, index);
+                emit_u8_u16be(parser, set_opcode, index);
             } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
                 emit_byte(parser, OP_DUP);
-                emit_u8_u16be(parser, OP_GET_FIELD, index);
+                emit_u8_u16be(parser, get_opcode, index);
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_BINARY_PLUS);
-                emit_u8_u16be(parser, OP_SET_FIELD, index);
+                emit_u8_u16be(parser, set_opcode, index);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
                 emit_byte(parser, OP_DUP);
-                emit_u8_u16be(parser, OP_GET_FIELD, index);
+                emit_u8_u16be(parser, get_opcode, index);
                 parse_expression(parser, true, true);
                 emit_byte(parser, OP_BINARY_MINUS);
-                emit_u8_u16be(parser, OP_SET_FIELD, index);
+                emit_u8_u16be(parser, set_opcode, index);
             } else {
-                emit_u8_u16be(parser, OP_GET_FIELD, index);
+                emit_u8_u16be(parser, get_opcode, index);
             }
         }
 
@@ -1147,7 +1159,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         }
 
         else if (match(parser, TOKEN_COLON_COLON)) {
-            consume(parser, TOKEN_IDENTIFIER, "expected a module name after '::'");
+            consume(parser, TOKEN_IDENTIFIER, "expected a member name after '::'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             emit_u8_u16be(parser, OP_GET_MEMBER, index);
         }
@@ -2039,7 +2051,7 @@ static void parse_method_declaration(Parser* parser) {
 }
 
 
-static void parse_field_declaration(Parser* parser) {
+static void parse_field_declaration(Parser* parser, Access access) {
     do {
         consume(parser, TOKEN_IDENTIFIER, "expected field name");
         uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
@@ -2054,7 +2066,11 @@ static void parse_field_declaration(Parser* parser) {
             emit_byte(parser, OP_LOAD_NULL);
         }
 
-        emit_u8_u16be(parser, OP_DEFINE_FIELD, index);
+        if (access == PUBLIC) {
+            emit_u8_u16be(parser, OP_DEFINE_PUB_FIELD, index);
+        } else {
+            emit_u8_u16be(parser, OP_DEFINE_PRI_FIELD, index);
+        }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "expected ';' after field declaration");
 }
@@ -2097,15 +2113,35 @@ static void parse_class_declaration(Parser* parser) {
 
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before class body");
     while (true) {
-        if (match(parser, TOKEN_DEF)) {
-            parse_method_declaration(parser);
-        } else if (match(parser, TOKEN_VAR)) {
-            parse_field_declaration(parser);
+        if (match(parser, TOKEN_PUB)) {
+            if (match(parser, TOKEN_DEF)) {
+                parse_method_declaration(parser);
+            } else if (match(parser, TOKEN_VAR)) {
+                parse_field_declaration(parser, PUBLIC);
+            } else {
+                ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'pub'");
+                return;
+            }
+        } else if (match(parser, TOKEN_PRI)) {
+            if (match(parser, TOKEN_DEF)) {
+                parse_method_declaration(parser);
+            } else if (match(parser, TOKEN_VAR)) {
+                parse_field_declaration(parser, PRIVATE);
+            } else {
+                ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'pri'");
+                return;
+            }
         } else {
-            break;
+            if (match(parser, TOKEN_DEF)) {
+                parse_method_declaration(parser);
+            } else if (match(parser, TOKEN_VAR)) {
+                parse_field_declaration(parser, PRIVATE);
+            } else {
+                break;
+            }
         }
     }
-    consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after class body");
+    consume(parser, TOKEN_RIGHT_BRACE, "unexpected token, expected '}' after class body");
     emit_byte(parser, OP_POP); // pop the class object
 
     if (class_compiler.has_superclass) {

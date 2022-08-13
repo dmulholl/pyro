@@ -1,6 +1,6 @@
 class Complex {
-    var re;
-    var im;
+    pub var re;
+    pub var im;
 
     def $init(re, im) {
         self.re = re;

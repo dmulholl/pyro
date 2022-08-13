@@ -204,6 +204,11 @@ static TokenType get_identifier_type(Lexer* lexer) {
             if (check_keyword(lexer, "null")) return TOKEN_NULL;
             break;
 
+        case 'p':
+            if (check_keyword(lexer, "pri")) return TOKEN_PRI;
+            if (check_keyword(lexer, "pub")) return TOKEN_PUB;
+            break;
+
         case 'r':
             if (check_keyword(lexer, "return")) return TOKEN_RETURN;
             break;
