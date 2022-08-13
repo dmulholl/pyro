@@ -5,7 +5,7 @@ meta_title: Pyro &mdash; Roadmap
 
 All the core language functionality described here in the documentation has been implemented.
 
-The standard library is very sparse and needs a lot of work before Pyro could be considered a practical programming language.
+The standard library still needs a lot of work before Pyro could be considered a practical programming language.
 A regex library, a built-in SQLite implementation, and a networking library are currently at the top of the list.
 
 

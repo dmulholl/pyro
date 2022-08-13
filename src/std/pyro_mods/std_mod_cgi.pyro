@@ -135,25 +135,25 @@ class Response {
         return self;
     }
 
-    def redirect_301(url: str) -> Response {
+    def make_301_redirect(url: str) -> Response {
         self:add_header("Status: 301 Moved Permanently");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def redirect_302(url: str) -> Response {
+    def make_302_redirect(url: str) -> Response {
         self:add_header("Status: 302 Found");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def redirect_303(url: str) -> Response {
+    def make_303_redirect(url: str) -> Response {
         self:add_header("Status: 303 See Other");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def redirect_307(url: str) -> Response {
+    def make_307_redirect(url: str) -> Response {
         self:add_header("Status: 307 Temporary Redirect");
         self:add_header("Location: " + url);
         return self;
