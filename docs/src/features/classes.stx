@@ -17,14 +17,14 @@ Class definitions look like this:
 
 ::: code pyro
     class Person {
-        var name;
-        var role = "programmer";
+        pub var name;
+        pub var role = "programmer";
 
         def $init(name) {
             self.name = name;
         }
 
-        def info() {
+        pub def info() {
             $println("{} is a {}.", self.name, self.role);
         }
     }
@@ -40,12 +40,12 @@ Arguments are passed on to the optional `$init()` method.
 
 ### Fields and Methods
 
-Get or set an instance's fields using the field access operator `.`:
+Get or set an instance's fields using the field access operator `.`, e.g.
 
 ::: code pyro
     dave.role = "pyro programmer";
 
-Call a method on an instance using the method access operator `:`:
+Call a method on an instance using the method access operator `:`, e.g.
 
 ::: code pyro
     dave:info();
@@ -58,7 +58,63 @@ Methods are bound to their instances and you can pass them around just like any 
 
 
 
+### The Self Keyword
+
+Use the `self` keyword inside a class to access the instance's fields and methods:
+
+::: code pyro
+    class Foo {
+        pub var field;
+
+        pub def method() {
+            return self.field;
+        }
+
+        pub def other_method() {
+            return self:method();
+        }
+    }
+
+
+
+### Public/Private Members
+
+Fields and methods are private by default --- use the `pub` keyword to make them public:
+
+::: code pyro
+    class Foo {
+        pub var public_field;
+        var private_field;
+
+        pub def public_method() {
+            return "public";
+        }
+
+        def private_method() {
+            return "private";
+        }
+    }
+
+Public members can be accessed from inside or outside the class;
+private members can only be accessed inside the class using `self` or `super`.
+
+
+
 ### Field Initializers
+
+Uninitialized fields have the default value `null`.
+
+You can specify default values for fields, e.g.
+
+::: code pyro
+    class Foo {
+        pub var bar = 123;
+        pub var baz;
+    }
+
+    var foo = Foo();
+    assert foo.bar == 123;
+    assert foo.baz == null;
 
 Field initializers are evaluated once when the class statement itself is executed ---
 each instance gets a copy of these values.
@@ -144,9 +200,9 @@ is equivalent to calling the object's `:$set_index(key, value)` method.
 
 
 
-### Special Methods
+### Dollar Methods
 
-You can implement the `$special` methods listed below to add support for various language features to your types:
+You can implement the `$`-prefixed methods listed below to overload operators or add support for various language features to your types:
 
 
 [[ `:$call(arg1: any, arg2: any, ...) -> any` ]]

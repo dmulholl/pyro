@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.34</p>
+                <p class="version">Version 0.8.0-alpha</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -59,6 +59,12 @@
 <a href="#fields-and-methods">Fields and Methods</a>
 </li>
 <li>
+<a href="#the-self-keyword">The Self Keyword</a>
+</li>
+<li>
+<a href="#public-private-members">Public/Private Members</a>
+</li>
+<li>
 <a href="#field-initializers">Field Initializers</a>
 </li>
 <li>
@@ -68,7 +74,7 @@
 <a href="#indexing">Indexing</a>
 </li>
 <li>
-<a href="#special-methods">Special Methods</a>
+<a href="#dollar-methods">Dollar Methods</a>
 </li>
 </ul>
 <h3 id="class-definitions">
@@ -79,14 +85,14 @@ Class definitions look like this:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;{} is a {}.&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">role</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -104,13 +110,13 @@ Arguments are passed on to the optional <code>$init()</code> method.
 Fields and Methods
 </h3>
 <p>
-Get or set an instance's fields using the field access operator <code>.</code>:
+Get or set an instance's fields using the field access operator <code>.</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">dave</span><span class="p">.</span><span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;pyro programmer&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Call a method on an instance using the method access operator <code>:</code>:
+Call a method on an instance using the method access operator <code>:</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
@@ -122,9 +128,68 @@ Methods are bound to their instances and you can pass them around just like any 
 <span class="kd">var</span> <span class="nx">method</span> <span class="p">=</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">;</span>
 <span class="nx">method</span><span class="p">();</span> <span class="c1"># &quot;Dave is a pyro programmer.&quot;</span>
 </pre>
+<h3 id="the-self-keyword">
+The Self Keyword
+</h3>
+<p>
+Use the <code>self</code> keyword inside a class to access the instance's fields and methods:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">field</span><span class="p">;</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">method</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">field</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">other_method</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">:</span><span class="nx">method</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<h3 id="public-private-members">
+Public/Private Members
+</h3>
+<p>
+Fields and methods are private by default &mdash; use the <code>pub</code> keyword to make them public:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">public_field</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">private_field</span><span class="p">;</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">public_method</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;public&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">private_method</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;private&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+Public members can be accessed from inside or outside the class;
+private members can only be accessed inside the class using <code>self</code> or <code>super</code>.
+</p>
 <h3 id="field-initializers">
 Field Initializers
 </h3>
+<p>
+Uninitialized fields have the default value <code>null</code>.
+</p>
+<p>
+You can specify default values for fields, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">baz</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">Foo</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
+</pre>
 <p>
 Field initializers are evaluated once when the class statement itself is executed &mdash;
 each instance gets a copy of these values.
@@ -217,11 +282,11 @@ Assigning to an index:
 <p>
 is equivalent to calling the object's <code>:$set_index(key, value)</code> method.
 </p>
-<h3 id="special-methods">
-Special Methods
+<h3 id="dollar-methods">
+Dollar Methods
 </h3>
 <p>
-You can implement the <code>$special</code> methods listed below to add support for various language features to your types:
+You can implement the <code>$</code>-prefixed methods listed below to overload operators or add support for various language features to your types:
 </p>
 <dl>
 <div>

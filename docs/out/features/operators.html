@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.7.34</p>
+                <p class="version">Version 0.8.0-alpha</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -73,6 +73,12 @@
 <li>
 <a href="#the-error-coalescing-operator">The Error-coalescing Operator</a>
 </li>
+<li>
+<a href="#assignment-operators">Assignment Operators</a>
+</li>
+<li>
+<a href="#overloading-operators">Overloading Operators</a>
+</li>
 </ul>
 <h3 id="operator-precedence">
 Operator Precedence
@@ -100,7 +106,7 @@ Associativity
 Call
 </td>
 <td>
-<code>()</code> <code>.</code> <code>:</code> <code>::</code>
+<code>()</code> <code>[]</code> <code>.</code> <code>:</code> <code>::</code>
 </td>
 <td>
 Left
@@ -372,6 +378,94 @@ The error-coalescing operator <code>!!</code> lets you swap in a default value i
 </pre>
 <p>
 The value of the expression <code>a !! b</code> is the value of the first operand if that operand is not an <code>$err</code>, otherwise the value of the second operand.
+</p>
+<h3 id="assignment-operators">
+Assignment Operators
+</h3>
+<p>
+An assignment expression returns the value assigned, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="p">(</span><span class="nx">foo</span> <span class="p">=</span> <span class="mi">5</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">5</span><span class="p">;</span>
+</pre>
+<p>
+Assignment using a compound assignment operator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">foo</span> <span class="o">+=</span> <span class="nx">bar</span><span class="p">;</span>
+</pre>
+<p>
+is equivalent to the longform expression:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">foo</span> <span class="p">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="nx">bar</span><span class="p">;</span>
+</pre>
+<p>
+Compound assignment operators cannot be overloaded independently of their base operators &mdash; i.e. overloading <code>+</code> automatically overloads <code>+=</code>;
+</p>
+<h3 id="overloading-operators">
+Overloading Operators
+</h3>
+<p>
+The following operators can be overloaded by user-defined types:
+</p>
+<ul>
+<li>
+<code>()</code>
+</li>
+<li>
+<code>[]</code>
+</li>
+<li>
+<code>&amp;</code>
+</li>
+<li>
+<code>^</code>
+</li>
+<li>
+<code>|</code>
+</li>
+<li>
+<code>==</code>
+</li>
+<li>
+<code>&gt;</code>
+</li>
+<li>
+<code>&gt;=</code>
+</li>
+<li>
+<code>&lt;</code>
+</li>
+<li>
+<code>&lt;=</code>
+</li>
+<li>
+<code>-</code> (binary/unary)
+</li>
+<li>
+<code>+</code> (binary/unary)
+</li>
+<li>
+<code>%</code>
+</li>
+<li>
+<code>/</code>
+</li>
+<li>
+<code>//</code>
+</li>
+<li>
+<code>*</code>
+</li>
+<li>
+<code>**</code>
+</li>
+</ul>
+<p>
+You can overload these operators using the <code>$</code>-prefixed methods listed <a href="../features/classes.html#dollar-methods">here</a>.
 </p>
         </article>
         

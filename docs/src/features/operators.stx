@@ -15,7 +15,7 @@ Operator precedence in the table below goes from high at the top to low at the b
     Level            |   Operators                                |   Associativity
     -------------------------------------------------------------------------------
 
-    Call             |   `()` `.` `:` `::`                        |   Left
+    Call             |   `()` `[]` `.` `:` `::`                   |   Left
     Power            |   `**`                                     |   Right
     Unary            |   `!` `+` `-` `~` `try`                    |   Right
     Bitwise          |   `&` <code>&#124;</code> `^` `>>` `<<`    |   Left
@@ -113,3 +113,52 @@ The error-coalescing operator `!!` lets you swap in a default value in place of 
     var foo = maybe_error() !! "default";
 
 The value of the expression `a !! b` is the value of the first operand if that operand is not an `$err`, otherwise the value of the second operand.
+
+
+
+### Assignment Operators
+
+An assignment expression returns the value assigned, e.g.
+
+::: code pyro
+    var foo;
+    var bar = (foo = 5);
+    assert bar == 5;
+
+Assignment using a compound assignment operator, e.g.
+
+::: code pyro
+    foo += bar;
+
+is equivalent to the longform expression:
+
+::: code pyro
+    foo = foo + bar;
+
+Compound assignment operators cannot be overloaded independently of their base operators --- i.e. overloading `+` automatically overloads `+=`;
+
+
+
+### Overloading Operators
+
+The following operators can be overloaded by user-defined types:
+
+* `()`
+* `[]`
+* `&`
+* `^`
+* `|`
+* `==`
+* `>`
+* `>=`
+* `<`
+* `<=`
+* `-` (binary/unary)
+* `+` (binary/unary)
+* `%`
+* `/`
+* `//`
+* `*`
+* `**`
+
+You can overload these operators using the `$`-prefixed methods listed [here](@root/features/classes//#dollar-methods).
