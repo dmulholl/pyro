@@ -296,14 +296,14 @@ void pyro_load_std_core_buf(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_buf", fn_is_buf, 1);
 
     // Methods.
-    pyro_define_method(vm, vm->class_buf, "to_str", buf_to_str, 0);
-    pyro_define_method(vm, vm->class_buf, "count", buf_count, 0);
-    pyro_define_method(vm, vm->class_buf, "get", buf_get, 1);
-    pyro_define_method(vm, vm->class_buf, "set", buf_set, 2);
-    pyro_define_method(vm, vm->class_buf, "$get_index", buf_get, 1);
-    pyro_define_method(vm, vm->class_buf, "$set_index", buf_set, 2);
-    pyro_define_method(vm, vm->class_buf, "write_byte", buf_write_byte, 1);
-    pyro_define_method(vm, vm->class_buf, "write", buf_write, -1);
-    pyro_define_method(vm, vm->class_buf, "is_empty", buf_is_empty, 0);
-    pyro_define_method(vm, vm->class_buf, "clear", buf_clear, 0);
+    pyro_define_pri_method(vm, vm->class_buf, "$get_index", buf_get, 1);
+    pyro_define_pri_method(vm, vm->class_buf, "$set_index", buf_set, 2);
+    pyro_define_pub_method(vm, vm->class_buf, "to_str", buf_to_str, 0);
+    pyro_define_pub_method(vm, vm->class_buf, "count", buf_count, 0);
+    pyro_define_pub_method(vm, vm->class_buf, "get", buf_get, 1);
+    pyro_define_pub_method(vm, vm->class_buf, "set", buf_set, 2);
+    pyro_define_pub_method(vm, vm->class_buf, "write_byte", buf_write_byte, 1);
+    pyro_define_pub_method(vm, vm->class_buf, "write", buf_write, -1);
+    pyro_define_pub_method(vm, vm->class_buf, "is_empty", buf_is_empty, 0);
+    pyro_define_pub_method(vm, vm->class_buf, "clear", buf_clear, 0);
 }

@@ -16,7 +16,7 @@ class ChildPoint < ParentPoint {
         self.z = z;
     }
 
-    def get() {
+    pub def get() {
         return $tup(self.x, self.y, self.z);
     }
 }

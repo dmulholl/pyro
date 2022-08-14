@@ -10,7 +10,7 @@ assert func(1, 2, *[]) == $tup(1, 2);
 
 
 class Foo {
-    def method(*args) {
+    pub def method(*args) {
         return args;
     }
 }
@@ -23,7 +23,7 @@ assert Foo():method(1, 2, *[]) == $tup(1, 2);
 
 
 class Bar < Foo {
-    def method(*args) {
+    pub def method(*args) {
         return super:method(*args);
     }
 }

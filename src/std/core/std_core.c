@@ -1045,7 +1045,7 @@ static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_OBJ(iter);
     }
 
-    ObjIter* iter = ObjIter_new((Obj*)class->methods, ITER_MAP_KEYS, vm);
+    ObjIter* iter = ObjIter_new((Obj*)class->pub_methods, ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "$methods(): out of memory");
         return MAKE_NULL();

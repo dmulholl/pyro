@@ -88,7 +88,8 @@ def marshall(arg: any) -> str {
     } else if $is_null(arg) {
         return "null";
     } else if $has_method(arg, "$json") {
-        return arg:$json();
+        var method = $method(arg, "$json");
+        return method();
     } else if $is_instance(arg) {
         return marshall_instance(arg);
     } else {
@@ -126,7 +127,7 @@ class Lexer {
         self.index = 0;
     }
 
-    def next() -> Token {
+    pub def next() -> Token {
         while self.index < self.count && self.input[self.index]:is_ws() {
             self.index += 1;
         }
@@ -303,7 +304,7 @@ class Parser {
         return false;
     }
 
-    def parse() -> map|vec|str|i64|f64|bool|null {
+    pub def parse() -> map|vec|str|i64|f64|bool|null {
         var value = self:parse_value();
 
         var (token_type, start_index, length) = self:next();

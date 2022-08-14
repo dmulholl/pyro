@@ -61,8 +61,11 @@ bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value v
 // Returns true on success, false if memory could not be allocated.
 bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
-// Adds a new method to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
+// Adds a new public method to the class. Returns true on success, false if memory could not be allocated.
+bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
+
+// Adds a new private method to the class. Returns true on success, false if memory could not be allocated.
+bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new public field to the class. Returns true on success, false if memory could not be allocated.
 bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value);

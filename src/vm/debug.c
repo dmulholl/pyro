@@ -162,6 +162,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return constant_instruction(vm, "OP_GET_MEMBER", fn, ip);
         case OP_GET_METHOD:
             return constant_instruction(vm, "OP_GET_METHOD", fn, ip);
+        case OP_GET_PUB_METHOD:
+            return constant_instruction(vm, "OP_GET_PUB_METHOD", fn, ip);
         case OP_GET_SUPER_METHOD:
             return constant_instruction(vm, "OP_GET_SUPER_METHOD", fn, ip);
         case OP_GET_UPVALUE:
@@ -180,16 +182,20 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_INHERIT", ip);
         case OP_CALL_METHOD:
             return invoke_instruction(vm, "OP_CALL_METHOD", fn, ip);
-        case OP_CALL_METHOD_UNPACK_LAST_ARG:
-            return invoke_instruction(vm, "OP_CALL_METHOD_UNPACK_LAST_ARG", fn, ip);
+        case OP_CALL_PUB_METHOD:
+            return invoke_instruction(vm, "OP_CALL_PUB_METHOD", fn, ip);
+        case OP_CALL_METHOD_UNPACK:
+            return invoke_instruction(vm, "OP_CALL_METHOD_UNPACK", fn, ip);
+        case OP_CALL_PUB_METHOD_UNPACK:
+            return invoke_instruction(vm, "OP_CALL_PUB_METHOD_UNPACK", fn, ip);
         case OP_CALL_SUPER_METHOD:
             return invoke_instruction(vm, "OP_CALL_SUPER_METHOD", fn, ip);
-        case OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG:
-            return invoke_instruction(vm, "OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG", fn, ip);
-        case OP_GET_ITERATOR_OBJECT:
-            return atomic_instruction(vm, "OP_GET_ITERATOR_OBJECT", ip);
-        case OP_GET_ITERATOR_NEXT_VALUE:
-            return atomic_instruction(vm, "OP_GET_ITERATOR_NEXT_VALUE", ip);
+        case OP_CALL_SUPER_METHOD_UNPACK:
+            return invoke_instruction(vm, "OP_CALL_SUPER_METHOD_UNPACK", fn, ip);
+        case OP_GET_ITERATOR:
+            return atomic_instruction(vm, "OP_GET_ITERATOR", ip);
+        case OP_GET_NEXT_FROM_ITERATOR:
+            return atomic_instruction(vm, "OP_GET_NEXT_FROM_ITERATOR", ip);
         case OP_JUMP:
             return jump_instruction(vm, "OP_JUMP", 1, fn, ip);
         case OP_JUMP_IF_ERR:
@@ -242,8 +248,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return u16_instruction(vm, "OP_MAKE_MAP", fn, ip);
         case OP_MAKE_VEC:
             return u16_instruction(vm, "OP_MAKE_VEC", fn, ip);
-        case OP_DEFINE_METHOD:
-            return constant_instruction(vm, "OP_DEFINE_METHOD", fn, ip);
+        case OP_DEFINE_PRI_METHOD:
+            return constant_instruction(vm, "OP_DEFINE_PRI_METHOD", fn, ip);
+        case OP_DEFINE_PUB_METHOD:
+            return constant_instruction(vm, "OP_DEFINE_PUB_METHOD", fn, ip);
         case OP_BINARY_PERCENT:
             return atomic_instruction(vm, "OP_BINARY_PERCENT", ip);
         case OP_BINARY_STAR:

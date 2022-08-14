@@ -125,7 +125,7 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
                 vm->stack_top[-arg_count - 1] = MAKE_OBJ(instance);
 
                 Value init_method;
-                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_dollar_init), &init_method, vm)) {
+                if (ObjMap_get(class->all_methods, MAKE_OBJ(vm->str_dollar_init), &init_method, vm)) {
                     if (IS_NATIVE_FN(init_method)) {
                         call_native_fn(vm, AS_NATIVE_FN(init_method), arg_count);
                     } else {
@@ -156,7 +156,7 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
                 ObjClass* class = AS_OBJ(callee)->class;
 
                 Value call_method;
-                if (ObjMap_get(class->methods, MAKE_OBJ(vm->str_dollar_call), &call_method, vm)) {
+                if (ObjMap_get(class->all_methods, MAKE_OBJ(vm->str_dollar_call), &call_method, vm)) {
                     if (IS_NATIVE_FN(call_method)) {
                         call_native_fn(vm, AS_NATIVE_FN(call_method), arg_count);
                     } else {
@@ -175,33 +175,6 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
     }
 
     pyro_panic(vm, "value is not callable");
-}
-
-
-// The receiver value and [arg_count] arguments are sitting on top of the stack.
-static void call_method_by_name_from_class(PyroVM* vm, ObjClass* class, ObjStr* method_name, uint8_t arg_count) {
-    Value method;
-    if (!ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
-        pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
-        return;
-    }
-    if (IS_NATIVE_FN(method)) {
-        call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
-    } else {
-        call_closure(vm, AS_CLOSURE(method), arg_count);
-    }
-}
-
-
-// The receiver value and [arg_count] arguments are sitting on top of the stack.
-static void call_method_by_name(PyroVM* vm, ObjStr* method_name, uint8_t arg_count) {
-    Value receiver = pyro_peek(vm, arg_count);
-    ObjClass* class = pyro_get_class(vm, receiver);
-    if (class) {
-        call_method_by_name_from_class(vm, class, method_name, arg_count);
-    } else {
-        pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
-    }
 }
 
 
@@ -248,25 +221,6 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
         upvalue->location = &upvalue->closed;
         vm->open_upvalues = upvalue->next;
     }
-}
-
-
-// The receiver is sitting on top of the stack. This pops the receiver and replaces it with the
-// bound method object.
-static void bind_method(PyroVM* vm, ObjClass* class, ObjStr* method_name) {
-    Value method;
-    if (!ObjMap_get(class->methods, MAKE_OBJ(method_name), &method, vm)) {
-        pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
-        return;
-    }
-
-    ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, pyro_peek(vm, 0), AS_OBJ(method));
-    if (!bound_method) {
-        pyro_panic(vm, "out of memory");
-        return;
-    }
-
-    vm->stack_top[-1] = MAKE_OBJ(bound_method);
 }
 
 
@@ -688,21 +642,64 @@ static void run(PyroVM* vm) {
             case OP_GET_METHOD: {
                 Value receiver = pyro_peek(vm, 0);
                 ObjStr* method_name = READ_STRING();
-                ObjClass* class = pyro_get_class(vm, receiver);
 
-                if (class) {
-                    bind_method(vm, class, method_name);
-                } else {
-                    pyro_panic(vm, "receiver has no method '%s'", method_name->bytes);
+                Value method = pyro_get_method(vm, receiver, method_name);
+                if (IS_NULL(method)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
                 }
 
+                ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, receiver, AS_OBJ(method));
+                if (!bound_method) {
+                    pyro_panic(vm, "out of memory");
+                    return;
+                }
+
+                // Pop the receiver and replace it with the bound method.
+                vm->stack_top[-1] = MAKE_OBJ(bound_method);
+                break;
+            }
+
+            case OP_GET_PUB_METHOD: {
+                Value receiver = pyro_peek(vm, 0);
+                ObjStr* method_name = READ_STRING();
+
+                Value method = pyro_get_pub_method(vm, receiver, method_name);
+                if (IS_NULL(method)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, receiver, AS_OBJ(method));
+                if (!bound_method) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                // Pop the receiver and replace it with the bound method.
+                vm->stack_top[-1] = MAKE_OBJ(bound_method);
                 break;
             }
 
             case OP_GET_SUPER_METHOD: {
                 ObjStr* method_name = READ_STRING();
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
-                bind_method(vm, superclass, method_name);
+                Value receiver = pyro_peek(vm, 0);
+
+                Value method;
+                if (!ObjMap_get(superclass->all_methods, MAKE_OBJ(method_name), &method, vm)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, receiver, AS_OBJ(method));
+                if (!bound_method) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                // Pop the receiver and replace it with the bound method.
+                vm->stack_top[-1] = MAKE_OBJ(bound_method);
                 break;
             }
 
@@ -896,7 +893,11 @@ static void run(PyroVM* vm) {
                 // "Copy-down inheritance". We copy all the superclass's methods, field indexes,
                 // and field initializers to the subclass. This means that there's no extra
                 // runtime work involved in looking up inherited methods or fields.
-                if (!ObjMap_copy_entries(superclass->methods, subclass->methods, vm)) {
+                if (!ObjMap_copy_entries(superclass->all_methods, subclass->all_methods, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!ObjMap_copy_entries(superclass->pub_methods, subclass->pub_methods, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -918,17 +919,51 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // The receiver value and [arg_count] arguments are sitting on top of the stack.
             case OP_CALL_METHOD: {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
-                call_method_by_name(vm, method_name, arg_count);
+                Value receiver = pyro_peek(vm, arg_count);
+
+                Value method = pyro_get_method(vm, receiver, method_name);
+                if (IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
+                } else if (IS_CLOSURE(method)) {
+                    call_closure(vm, AS_CLOSURE(method), arg_count);
+                } else {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
-            case OP_CALL_METHOD_UNPACK_LAST_ARG: {
+            // The receiver value and [arg_count] arguments are sitting on top of the stack.
+            case OP_CALL_PUB_METHOD: {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
+                Value receiver = pyro_peek(vm, arg_count);
+
+                Value method = pyro_get_pub_method(vm, receiver, method_name);
+                if (IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
+                } else if (IS_CLOSURE(method)) {
+                    call_closure(vm, AS_CLOSURE(method), arg_count);
+                } else {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                frame = &vm->frames[vm->frame_count - 1];
+                break;
+            }
+
+            // The receiver value and [arg_count] arguments are sitting on top of the stack.
+            case OP_CALL_METHOD_UNPACK: {
+                ObjStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                Value receiver = pyro_peek(vm, arg_count);
                 Value last_arg = pyro_pop(vm);
                 arg_count--;
 
@@ -958,21 +993,91 @@ static void run(PyroVM* vm) {
                     }
                 }
 
-                call_method_by_name(vm, method_name, total_args);
+                Value method = pyro_get_method(vm, receiver, method_name);
+                if (IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, AS_NATIVE_FN(method), total_args);
+                } else if (IS_CLOSURE(method)) {
+                    call_closure(vm, AS_CLOSURE(method), total_args);
+                } else {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
+            // The receiver value and [arg_count] arguments are sitting on top of the stack.
+            case OP_CALL_PUB_METHOD_UNPACK: {
+                ObjStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                Value receiver = pyro_peek(vm, arg_count);
+                Value last_arg = pyro_pop(vm);
+                arg_count--;
+
+                Value* values;
+                size_t value_count;
+
+                if (IS_TUP(last_arg)) {
+                    values = AS_TUP(last_arg)->values;
+                    value_count = AS_TUP(last_arg)->count;
+                } else if (IS_VEC(last_arg)) {
+                    values = AS_VEC(last_arg)->values;
+                    value_count = AS_VEC(last_arg)->count;
+                } else {
+                    pyro_panic(vm, "can only unpack a vector or tuple");
+                    break;
+                }
+
+                size_t total_args = (size_t)arg_count + value_count;
+                if (total_args > 255) {
+                    pyro_panic(vm, "too many arguments to unpack");
+                    break;
+                }
+
+                for (size_t i = 0; i < value_count; i++) {
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
+                }
+
+                Value method = pyro_get_pub_method(vm, receiver, method_name);
+                if (IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, AS_NATIVE_FN(method), total_args);
+                } else if (IS_CLOSURE(method)) {
+                    call_closure(vm, AS_CLOSURE(method), total_args);
+                } else {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                frame = &vm->frames[vm->frame_count - 1];
+                break;
+            }
+
+            // The [receiver], [arg_count] args, and the [superclass] are sitting on top of the stack.
             case OP_CALL_SUPER_METHOD: {
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
-                call_method_by_name_from_class(vm, superclass, method_name, arg_count);
+
+                Value method;
+                if (!ObjMap_get(superclass->all_methods, MAKE_OBJ(method_name), &method, vm)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                if (IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
+                } else {
+                    call_closure(vm, AS_CLOSURE(method), arg_count);
+                }
+
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
-            case OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG: {
+            case OP_CALL_SUPER_METHOD_UNPACK: {
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
@@ -1005,30 +1110,62 @@ static void run(PyroVM* vm) {
                     }
                 }
 
-                call_method_by_name_from_class(vm, superclass, method_name, total_args);
+                Value method;
+                if (!ObjMap_get(superclass->all_methods, MAKE_OBJ(method_name), &method, vm)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                if (IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, AS_NATIVE_FN(method), total_args);
+                } else {
+                    call_closure(vm, AS_CLOSURE(method), total_args);
+                }
+
                 frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
-            case OP_GET_ITERATOR_OBJECT: {
-                if (pyro_has_method(vm, pyro_peek(vm, 0), vm->str_dollar_iter)) {
-                    call_method_by_name(vm, vm->str_dollar_iter, 0);
-                    frame = &vm->frames[vm->frame_count - 1];
+            case OP_GET_ITERATOR: {
+                Value receiver = pyro_peek(vm, 0);
+                Value iter_method = pyro_get_method(vm, receiver, vm->str_dollar_iter);
+
+                if (IS_NATIVE_FN(iter_method)) {
+                    call_native_fn(vm, AS_NATIVE_FN(iter_method), 0);
+                } else if (IS_CLOSURE(iter_method)) {
+                    call_closure(vm, AS_CLOSURE(iter_method), 0);
                 } else {
-                    pyro_panic(vm, "object is not iterable");
+                    pyro_panic(vm, "value is not iterable");
+                    break;
                 }
+
+                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
-            case OP_GET_ITERATOR_NEXT_VALUE: {
-                if (IS_ITER(pyro_peek(vm, 0))) {
-                    Value next_value = ObjIter_next(AS_ITER(pyro_peek(vm, 0)), vm);
+            case OP_GET_NEXT_FROM_ITERATOR: {
+                Value receiver = pyro_peek(vm, 0);
+
+                if (IS_ITER(receiver)) {
+                    Value next_value = ObjIter_next(AS_ITER(receiver), vm);
                     pyro_push(vm, next_value);
-                } else {
-                    pyro_push(vm, pyro_peek(vm, 0));
-                    call_method_by_name(vm, vm->str_dollar_next, 0);
-                    frame = &vm->frames[vm->frame_count - 1];
+                    break;
                 }
+
+                Value next_method = pyro_get_method(vm, receiver, vm->str_dollar_next);
+
+                if (IS_NATIVE_FN(next_method)) {
+                    pyro_push(vm, receiver);
+                    call_native_fn(vm, AS_NATIVE_FN(next_method), 0);
+                } else if (IS_CLOSURE(next_method)) {
+                    pyro_push(vm, receiver);
+                    call_closure(vm, AS_CLOSURE(next_method), 0);
+                } else {
+                    pyro_panic(vm, "invalid iterator: no $next() method");
+                    break;
+                }
+
+                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1228,7 +1365,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_DEFINE_METHOD: {
+            case OP_DEFINE_PRI_METHOD: {
                 // The method's ObjClosure will be sitting on top of the stack.
                 Value method = pyro_peek(vm, 0);
 
@@ -1237,7 +1374,32 @@ static void run(PyroVM* vm) {
 
                 ObjStr* name = READ_STRING();
 
-                if (ObjMap_set(class->methods, MAKE_OBJ(name), method, vm) == 0) {
+                if (ObjMap_set(class->all_methods, MAKE_OBJ(name), method, vm) == 0) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                // Pop the method but leave the class behind on the stack.
+                pyro_pop(vm);
+                break;
+            }
+
+            case OP_DEFINE_PUB_METHOD: {
+                // The method's ObjClosure will be sitting on top of the stack.
+                Value method = pyro_peek(vm, 0);
+
+                // The class object will be on the stack just below the method.
+                ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
+                ObjStr* name = READ_STRING();
+
+                if (ObjMap_set(class->all_methods, MAKE_OBJ(name), method, vm) == 0) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (ObjMap_set(class->pub_methods, MAKE_OBJ(name), method, vm) == 0) {
+                    ObjMap_remove(class->all_methods, MAKE_OBJ(name), vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }

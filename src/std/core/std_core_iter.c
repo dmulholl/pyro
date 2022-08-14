@@ -462,18 +462,18 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_global_fn(vm, "$range", fn_range, -1);
 
     // Methods.
-    pyro_define_method(vm, vm->class_iter, "$iter", iter_iter, 0);
-    pyro_define_method(vm, vm->class_iter, "$next", iter_next, 0);
-    pyro_define_method(vm, vm->class_iter, "map", iter_map, 1);
-    pyro_define_method(vm, vm->class_iter, "filter", iter_filter, 1);
-    pyro_define_method(vm, vm->class_iter, "to_vec", iter_to_vec, 0);
-    pyro_define_method(vm, vm->class_iter, "to_set", iter_to_set, 0);
-    pyro_define_method(vm, vm->class_iter, "enumerate", iter_enumerate, -1);
-    pyro_define_method(vm, vm->class_iter, "skip_first", iter_skip_first, 1);
-    pyro_define_method(vm, vm->class_iter, "skip_last", iter_skip_last, 1);
-    pyro_define_method(vm, vm->class_iter, "join", iter_join, -1);
-    pyro_define_method(vm, vm->class_iter, "count", iter_count, 0);
-    pyro_define_method(vm, vm->class_iter, "next", iter_next, 0);
-    pyro_define_method(vm, vm->class_iter, "sum", iter_sum, 0);
-    pyro_define_method(vm, vm->class_iter, "reduce", iter_reduce, 2);
+    pyro_define_pri_method(vm, vm->class_iter, "$iter", iter_iter, 0);
+    pyro_define_pri_method(vm, vm->class_iter, "$next", iter_next, 0);
+    pyro_define_pub_method(vm, vm->class_iter, "map", iter_map, 1);
+    pyro_define_pub_method(vm, vm->class_iter, "filter", iter_filter, 1);
+    pyro_define_pub_method(vm, vm->class_iter, "to_vec", iter_to_vec, 0);
+    pyro_define_pub_method(vm, vm->class_iter, "to_set", iter_to_set, 0);
+    pyro_define_pub_method(vm, vm->class_iter, "enumerate", iter_enumerate, -1);
+    pyro_define_pub_method(vm, vm->class_iter, "skip_first", iter_skip_first, 1);
+    pyro_define_pub_method(vm, vm->class_iter, "skip_last", iter_skip_last, 1);
+    pyro_define_pub_method(vm, vm->class_iter, "join", iter_join, -1);
+    pyro_define_pub_method(vm, vm->class_iter, "count", iter_count, 0);
+    pyro_define_pub_method(vm, vm->class_iter, "next", iter_next, 0);
+    pyro_define_pub_method(vm, vm->class_iter, "sum", iter_sum, 0);
+    pyro_define_pub_method(vm, vm->class_iter, "reduce", iter_reduce, 2);
 }

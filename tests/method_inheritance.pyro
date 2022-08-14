@@ -1,0 +1,49 @@
+class Parent {
+    def foo() {
+        return "foo";
+    }
+
+    pub def bar() {
+        return "bar";
+    }
+}
+
+var parent = Parent();
+assert $is_err(try parent:foo());
+assert parent:bar() == "bar";
+
+class Child < Parent {
+    pub def baz() {
+        return "baz";
+    }
+
+    pub def bam() {
+        return super:foo() + "bam";
+    }
+}
+
+var child = Child();
+assert $is_err(try child:foo());
+assert child:bar() == "bar";
+assert child:baz() == "baz";
+assert child:bam() == "foobam";
+
+class Grandchild < Child {
+    pub def bam() {
+        return super:bam() + "bam";
+    }
+
+    pub def get_foo() {
+        return super:foo;
+    }
+}
+
+var grandchild = Grandchild();
+assert $is_err(try grandchild:foo());
+assert grandchild:bar() == "bar";
+assert grandchild:baz() == "baz";
+assert grandchild:bam() == "foobambam";
+
+var method = grandchild:get_foo();
+assert $is_method(method);
+assert method() == "foo";

@@ -10,32 +10,32 @@ class Email {
         self.body = $buf();
     }
 
-    def to(email_addr: str) -> Email {
+    pub def to(email_addr: str) -> Email {
         self.to_addr = email_addr;
         return self;
     }
 
-    def from(email_addr: str) -> Email {
+    pub def from(email_addr: str) -> Email {
         self.from_addr = email_addr;
         return self;
     }
 
-    def subject(value: str) -> Email {
+    pub def subject(value: str) -> Email {
         self.subject = value;
         return self;
     }
 
-    def add_header(header: str) -> Email {
+    pub def add_header(header: str) -> Email {
         self.headers:append(header);
         return self;
     }
 
-    def write(*args) -> Email {
+    pub def write(*args) -> Email {
         self.body:write(*args);
         return self;
     }
 
-    def print() -> Email {
+    pub def print() -> Email {
         var msg = self:make_message();
         if $is_err(msg) {
             $println("<instance Email: {}>", msg);
@@ -45,7 +45,7 @@ class Email {
         return self;
     }
 
-    def send() -> err? {
+    pub def send() -> err? {
         var msg = self:make_message();
         if $is_err(msg) {
             return msg;
@@ -53,7 +53,7 @@ class Email {
 
         var result = try $shell("sendmail -i -t", msg);
         if $is_err(result) {
-            return $err(result);
+            return result;
         }
 
         var (exit_code, _, error_output) = result;

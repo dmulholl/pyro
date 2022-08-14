@@ -263,14 +263,17 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* na
 struct ObjClass {
     Obj obj;
 
-    // The class's name, if it has one. Note that this field can be NULL.
+    // The class's name, if it has one. This field can be NULL.
     ObjStr* name;
 
-    // The class's superclass, if it has one. Note that this field can be NULL.
+    // The class's superclass, if it has one. This field can be NULL.
     ObjClass* superclass;
 
-    // Maps [ObjStr] names to [ObjFn] or [ObjNativeFn] values.
-    ObjMap* methods;
+    // Maps [ObjStr] names to [ObjClosure] or [ObjNativeFn] values.
+    // - [all_methods] contains both public and private methods.
+    // - [pub_methods] contains only public methods.
+    ObjMap* all_methods;
+    ObjMap* pub_methods;
 
     // Initialization values for fields. Each new [ObjInstance] gets a copy of this vector.
     ObjVec* default_field_values;

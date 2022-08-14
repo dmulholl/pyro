@@ -7,7 +7,7 @@ assert !$is_pyro_func("foo");
 assert !$is_pyro_func($clock);
 
 class Foo {
-    def foo_method() {}
+    pub def foo_method() {}
 }
 assert !$is_pyro_func(Foo);
 

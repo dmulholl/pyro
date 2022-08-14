@@ -8,7 +8,7 @@ def foo() {}
 assert $is_func(foo);
 
 class Foo {
-    def method() {}
+    pub def method() {}
 }
 var foo = Foo();
 var pyro_method = foo:method;

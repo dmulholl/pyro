@@ -396,7 +396,7 @@ bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro
 }
 
 
-bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity) {
+bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity) {
     ObjStr* name_string = STR(name);
     if (!name_string) {
         return false;
@@ -407,7 +407,31 @@ bool pyro_define_method(PyroVM* vm, ObjClass* class, const char* name, pyro_nati
         return false;
     }
 
-    if (ObjMap_set(class->methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+    if (ObjMap_set(class->all_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+        return false;
+    }
+
+    if (ObjMap_set(class->pub_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+        ObjMap_remove(class->all_methods, MAKE_OBJ(name_string), vm);
+        return false;
+    }
+
+    return true;
+}
+
+
+bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity) {
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
+        return false;
+    }
+
+    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!func_object) {
+        return false;
+    }
+
+    if (ObjMap_set(class->all_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
         return false;
     }
 

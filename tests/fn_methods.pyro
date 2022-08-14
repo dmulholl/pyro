@@ -1,10 +1,14 @@
 class Foo {
-    def bar() {
+    pub def bar() {
         echo "bar";
     }
 
-    def baz() {
+    pub def baz() {
         echo "baz";
+    }
+
+    def bam() {
+        echo "bam";
     }
 }
 

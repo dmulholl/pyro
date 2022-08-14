@@ -2,7 +2,7 @@
 class Foo {
     pub var number = 0;
 
-    def get_number() {
+    pub def get_number() {
         return self.number;
     }
 }

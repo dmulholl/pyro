@@ -13,7 +13,7 @@ def foo() {}
 assert !$is_method(foo);
 
 class Foo {
-    def method() {}
+    pub def method() {}
 }
 assert !$is_method(Foo);
 

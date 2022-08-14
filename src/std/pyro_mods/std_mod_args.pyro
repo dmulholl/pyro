@@ -6,25 +6,25 @@ class ArgStream {
         self.args = args;
     }
 
-    def next() -> str {
+    pub def next() -> str {
         self.index += 1;
         return self.args[self.index - 1];
     }
 
-    def has_next() -> bool {
+    pub def has_next() -> bool {
         return self.index < self.args:count();
     }
 }
 
 
 class Flag {
-    var count: i64 = 0;
+    pub var count: i64 = 0;
 
-    def found() -> bool {
+    pub def found() -> bool {
         return self.count > 0;
     }
 
-    def count() -> i64 {
+    pub def count() -> i64 {
         return self.count;
     }
 }
@@ -39,17 +39,17 @@ class Option {
         self.values = $vec();
     }
 
-    def default(value: any) -> Option {
+    pub def default(value: any) -> Option {
         self.default = value;
         return self;
     }
 
-    def parser(func: call(str) -> any) -> Option {
+    pub def parser(func: call(str) -> any) -> Option {
         self.parser = func;
         return self;
     }
 
-    def try_append_value(value: str) -> bool {
+    pub def try_append_value(value: str) -> bool {
         if self.parser {
             var parsed_value = try self.parser(value);
             if $is_err(parsed_value) {
@@ -63,15 +63,15 @@ class Option {
         return true;
     }
 
-    def found() -> bool {
+    pub def found() -> bool {
         return self.count > 0;
     }
 
-    def count() -> i64 {
+    pub def count() -> i64 {
         return self.values:count();
     }
 
-    def value() -> any {
+    pub def value() -> any {
         if self.values:count() > 0 {
             return self.values:last();
         } else {
@@ -79,7 +79,7 @@ class Option {
         }
     }
 
-    def values() -> vec {
+    pub def values() -> vec {
         return self.values;
     }
 }
@@ -111,7 +111,7 @@ class ArgParser {
     #  Setup methods.  #
     # ---------------- #
 
-    def flag(name: str) -> Flag {
+    pub def flag(name: str) -> Flag {
         var flag = Flag();
         for alias in name:split() {
             self.flags[alias] = flag;
@@ -119,7 +119,7 @@ class ArgParser {
         return flag;
     }
 
-    def option(name: str) -> Option {
+    pub def option(name: str) -> Option {
         var option = Option();
         for alias in name:split() {
             self.options[alias] = option;
@@ -127,7 +127,7 @@ class ArgParser {
         return option;
     }
 
-    def command(name: str) -> ArgParser {
+    pub def command(name: str) -> ArgParser {
         self.enable_help_command = true;
         var cmd_parser = ArgParser();
         for alias in name:split() {
@@ -140,7 +140,7 @@ class ArgParser {
     #  Inspection methods.  #
     # --------------------- #
 
-    def count(name: str) -> i64 {
+    pub def count(name: str) -> i64 {
         if name in self.flags {
             return self.flags[name]:count();
         } else if name in self.options {
@@ -150,11 +150,11 @@ class ArgParser {
         }
     }
 
-    def found(name: str) -> bool {
+    pub def found(name: str) -> bool {
         return self:count(name) > 0;
     }
 
-    def value(name: str) -> any {
+    pub def value(name: str) -> any {
         if name in self.options {
             return self.options[name]:value();
         } else {
@@ -162,7 +162,7 @@ class ArgParser {
         }
     }
 
-    def values(name: str) -> any {
+    pub def values(name: str) -> any {
         if name in self.options {
             return self.options[name]:values();
         } else {
@@ -174,26 +174,26 @@ class ArgParser {
     #  Parsing machinery.  #
     # -------------------- #
 
-    def parse() -> err? {
+    pub def parse() -> err? {
         if $args:count() > 1 {
             var args = $args:slice(1);
             return self:parse_args(args);
         }
     }
 
-    def parse_args(args: vec[str]|tup[str]) -> err? {
+    pub def parse_args(args: vec[str]|tup[str]) -> err? {
         var stream = ArgStream(args);
         var result = try self:parse_stream(stream);
         if $is_err(result) {
             if self.exit_on_error {
                 self:exit_with_error(result);
             } else {
-                return $err(result);
+                return result;
             }
         }
     }
 
-    def parse_stream(stream: ArgStream) {
+    pub def parse_stream(stream: ArgStream) {
         var is_first_arg = true;
 
         while (stream:has_next()) {
@@ -322,26 +322,26 @@ class ArgParser {
     #  Utilities.  #
     # ------------ #
 
-    def exit_with_help() {
+    pub def exit_with_help() {
         if self.helptext {
             $println(self.helptext:strip());
         }
         $exit(0);
     }
 
-    def exit_with_version() {
+    pub def exit_with_version() {
         if self.version {
             $println(self.version:strip());
         }
         $exit(0);
     }
 
-    def exit_with_error(message: any) {
+    pub def exit_with_error(message: any) {
         $eprintln("Error: {}.", message);
         $exit(1);
     }
 
-    def print() {
+    pub def print() {
         $println("Flags:");
         if self.flags:count() > 0 {
             for (name, flag) in self.flags {

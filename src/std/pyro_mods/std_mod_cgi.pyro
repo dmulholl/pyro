@@ -51,22 +51,20 @@ def url_decode(input: str) -> str|err {
 
 
 class Request {
-    # Public.
-    var method: str;
-    var content_type: str;
+    pub var method: str;
+    pub var content_type: str;
 
-    # Private.
-    var _body: str?;
-    var _data: map[str, vec[str]];
+    var body: str?;
+    var data: map[str, vec[str]];
 
     def $init() {
         self.method = $env("REQUEST_METHOD");
         self.content_type = $env("CONTENT_TYPE");
-        self._data = $map();
+        self.data = $map();
 
         if self.method in $tup("POST", "PUT") {
             if self.content_type == "application/x-www-form-urlencoded" {
-                self:_unpack_url_encoded_string(self:body());
+                self:unpack_url_encoded_string(self:body());
             } else if self.content_type == "multipart/form-data" {
                 # Not implemented.
             }
@@ -74,44 +72,44 @@ class Request {
 
         var query_string = $env("QUERY_STRING");
         if $is_str(query_string) {
-            self:_unpack_url_encoded_string(query_string);
+            self:unpack_url_encoded_string(query_string);
         }
     }
 
-    def body() -> str {
-        if $is_str(self._body) {
-            return self._body;
+    pub def body() -> str {
+        if $is_str(self.body) {
+            return self.body;
         }
-        self._body = pyro::stdin():read_string();
-        return self._body;
+        self.body = pyro::stdin():read_string();
+        return self.body;
     }
 
-    def found(key: str) -> bool {
-        return key in self._data;
+    pub def found(key: str) -> bool {
+        return key in self.data;
     }
 
-    def value(key: str) -> str|err {
-        var values = self._data[key];
+    pub def value(key: str) -> str|err {
+        var values = self.data[key];
         if $is_err(values) {
             return $err();
         }
         return try values:last();
     }
 
-    def values(key: str) -> vec[str]|err {
-        return self._data[key];
+    pub def values(key: str) -> vec[str]|err {
+        return self.data[key];
     }
 
-    def _unpack_url_encoded_string(input: str) {
+    def unpack_url_encoded_string(input: str) {
         for element in input:split("&") {
             if element:contains("=") {
                 var parts = element:split("=");
                 var key = url_decode(parts[0]);
                 var value = url_decode(parts[1]);
 
-                var values = self._data[key];
+                var values = self.data[key];
                 if $is_err(values) {
-                    self._data[key] = [value];
+                    self.data[key] = [value];
                 } else {
                     values:append(value);
                 }
@@ -122,64 +120,58 @@ class Request {
 
 
 class Response {
-    var _headers: vec[str];
-    var _body: buf;
+    var headers: vec[str];
+    var body: buf;
 
     def $init() {
-        self._headers = $vec();
-        self._body = $buf();
+        self.headers = $vec();
+        self.body = $buf();
     }
 
-    def add_header(header: str) -> Response {
-        self._headers:append(header);
+    pub def add_header(header: str) -> Response {
+        self.headers:append(header);
         return self;
     }
 
-    def make_301_redirect(url: str) -> Response {
+    pub def make_301_redirect(url: str) -> Response {
         self:add_header("Status: 301 Moved Permanently");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def make_302_redirect(url: str) -> Response {
+    pub def make_302_redirect(url: str) -> Response {
         self:add_header("Status: 302 Found");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def make_303_redirect(url: str) -> Response {
+    pub def make_303_redirect(url: str) -> Response {
         self:add_header("Status: 303 See Other");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def make_307_redirect(url: str) -> Response {
+    pub def make_307_redirect(url: str) -> Response {
         self:add_header("Status: 307 Temporary Redirect");
         self:add_header("Location: " + url);
         return self;
     }
 
-    def write(*args) -> Response {
-        self._body:write(*args);
+    pub def write(*args) -> Response {
+        self.body:write(*args);
         return self;
     }
 
-    def send() {
-        var response = self:_make_response();
-        $println(response);
-    }
-
-    def _make_response() -> buf {
+    pub def send() {
         var response = $buf();
 
-        for header in self._headers {
-            var header_string = header:strip():replace("\r", "\\r"):replace("\n", "\\n");
-            response:write("{}\r\n", header_string);
+        for header in self.headers {
+            var line = header:strip():replace("\r", "\\r"):replace("\n", "\\n");
+            response:write("{}\r\n", line);
         }
 
         response:write("\r\n");
-        response:write($str(self._body):strip());
-
-        return response;
+        response:write($str(self.body):strip());
+        $println(response);
     }
 }

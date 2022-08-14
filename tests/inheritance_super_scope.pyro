@@ -1,16 +1,16 @@
 class A {
-    def foo() {
+    pub def foo() {
         return "a-foo";
     }
 }
 
 
 class B < A {
-    def foo() {
+    pub def foo() {
         return "b-foo";
     }
 
-    def super_foo() {
+    pub def super_foo() {
         return super:foo();
     }
 }

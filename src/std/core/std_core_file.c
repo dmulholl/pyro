@@ -344,14 +344,14 @@ void pyro_load_std_core_file(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_file", fn_is_file, 1);
 
     // Methods.
-    pyro_define_method(vm, vm->class_file, "close", file_close, 0);
-    pyro_define_method(vm, vm->class_file, "flush", file_flush, 0);
-    pyro_define_method(vm, vm->class_file, "read", file_read, 0);
-    pyro_define_method(vm, vm->class_file, "read_string", file_read_string, 0);
-    pyro_define_method(vm, vm->class_file, "read_line", file_read_line, 0);
-    pyro_define_method(vm, vm->class_file, "read_bytes", file_read_bytes, 1);
-    pyro_define_method(vm, vm->class_file, "read_byte", file_read_byte, 0);
-    pyro_define_method(vm, vm->class_file, "write", file_write, -1);
-    pyro_define_method(vm, vm->class_file, "write_byte", file_write_byte, 1);
-    pyro_define_method(vm, vm->class_file, "lines", file_lines, 0);
+    pyro_define_pub_method(vm, vm->class_file, "close", file_close, 0);
+    pyro_define_pub_method(vm, vm->class_file, "flush", file_flush, 0);
+    pyro_define_pub_method(vm, vm->class_file, "read", file_read, 0);
+    pyro_define_pub_method(vm, vm->class_file, "read_string", file_read_string, 0);
+    pyro_define_pub_method(vm, vm->class_file, "read_line", file_read_line, 0);
+    pyro_define_pub_method(vm, vm->class_file, "read_bytes", file_read_bytes, 1);
+    pyro_define_pub_method(vm, vm->class_file, "read_byte", file_read_byte, 0);
+    pyro_define_pub_method(vm, vm->class_file, "write", file_write, -1);
+    pyro_define_pub_method(vm, vm->class_file, "write_byte", file_write_byte, 1);
+    pyro_define_pub_method(vm, vm->class_file, "lines", file_lines, 0);
 }

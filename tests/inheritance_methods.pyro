@@ -1,16 +1,16 @@
 class A {
-    def foo() {
+    pub def foo() {
         return "a-foo";
     }
 
-    def bar() {
+    pub def bar() {
         return "a-bar";
     }
 }
 
 
 class B < A {
-    def foo() {
+    pub def foo() {
         return "b-foo";
     }
 }

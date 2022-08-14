@@ -10,17 +10,17 @@ def fib(n) {
 
 
 class Foo {
-    var value;
+    pub var value;
 
     def $init(value) {
         self.value = value * 257 + 123;
     }
 
-    def change_value(arg) {
+    pub def change_value(arg) {
         self.value = self.value * arg;
     }
 
-    def get_value() {
+    pub def get_value() {
         return self.value;
     }
 }

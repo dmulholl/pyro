@@ -77,10 +77,10 @@ void pyro_load_std_core_char(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_char", fn_is_char, 1);
 
     // Methods.
-    pyro_define_method(vm, vm->class_char, "is_ascii", char_is_ascii, 0);
-    pyro_define_method(vm, vm->class_char, "is_ascii_ws", char_is_ascii_ws, 0);
-    pyro_define_method(vm, vm->class_char, "is_unicode_ws", char_is_unicode_ws, 0);
-    pyro_define_method(vm, vm->class_char, "is_ascii_decimal", char_is_ascii_decimal, 0);
-    pyro_define_method(vm, vm->class_char, "is_ascii_octal", char_is_ascii_octal, 0);
-    pyro_define_method(vm, vm->class_char, "is_ascii_hex", char_is_ascii_hex, 0);
+    pyro_define_pub_method(vm, vm->class_char, "is_ascii", char_is_ascii, 0);
+    pyro_define_pub_method(vm, vm->class_char, "is_ascii_ws", char_is_ascii_ws, 0);
+    pyro_define_pub_method(vm, vm->class_char, "is_unicode_ws", char_is_unicode_ws, 0);
+    pyro_define_pub_method(vm, vm->class_char, "is_ascii_decimal", char_is_ascii_decimal, 0);
+    pyro_define_pub_method(vm, vm->class_char, "is_ascii_octal", char_is_ascii_octal, 0);
+    pyro_define_pub_method(vm, vm->class_char, "is_ascii_hex", char_is_ascii_hex, 0);
 }

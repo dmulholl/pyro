@@ -1044,7 +1044,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
             if (unpack_last_argument) {
-                emit_byte(parser, OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG);
+                emit_byte(parser, OP_CALL_SUPER_METHOD_UNPACK);
             } else {
                 emit_byte(parser, OP_CALL_SUPER_METHOD);
             }
@@ -1150,14 +1150,17 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 bool unpack_last_argument;
                 uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
                 if (unpack_last_argument) {
-                    emit_u8_u16be(parser, OP_CALL_METHOD_UNPACK_LAST_ARG, index);
+                    OpCode opcode = last_token_type == TOKEN_SELF ? OP_CALL_METHOD_UNPACK : OP_CALL_PUB_METHOD_UNPACK;
+                    emit_u8_u16be(parser, opcode, index);
                     emit_byte(parser, arg_count);
                 } else {
-                    emit_u8_u16be(parser, OP_CALL_METHOD, index);
+                    OpCode opcode = last_token_type == TOKEN_SELF ? OP_CALL_METHOD : OP_CALL_PUB_METHOD;
+                    emit_u8_u16be(parser, opcode, index);
                     emit_byte(parser, arg_count);
                 }
             } else {
-                emit_u8_u16be(parser, OP_GET_METHOD, index);
+                OpCode opcode = last_token_type == TOKEN_SELF ? OP_GET_METHOD : OP_GET_PUB_METHOD;
+                emit_u8_u16be(parser, opcode, index);
             }
         }
 
@@ -1170,6 +1173,8 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         else {
             break;
         }
+
+        last_token_type = TOKEN_NULL;
     }
 }
 
@@ -1746,7 +1751,7 @@ static void parse_for_in_stmt(Parser* parser) {
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before the loop body");
 
     // Replace the object on top of the stack with the result of calling :$iter() on it.
-    emit_byte(parser, OP_GET_ITERATOR_OBJECT);
+    emit_byte(parser, OP_GET_ITERATOR);
     add_local(parser, syntoken("*iterator*"));
 
     // This is the point in the bytecode the loop will jump back to.
@@ -1757,7 +1762,7 @@ static void parse_for_in_stmt(Parser* parser) {
     loop.enclosing = parser->compiler->loop_compiler;
     parser->compiler->loop_compiler = &loop;
 
-    emit_byte(parser, OP_GET_ITERATOR_NEXT_VALUE);
+    emit_byte(parser, OP_GET_NEXT_FROM_ITERATOR);
     size_t exit_jump_index = emit_jump(parser, OP_JUMP_IF_ERR);
 
     begin_scope(parser);
@@ -2040,7 +2045,7 @@ static void parse_function_declaration(Parser* parser) {
 }
 
 
-static void parse_method_declaration(Parser* parser) {
+static void parse_method_declaration(Parser* parser, Access access) {
     consume(parser, TOKEN_IDENTIFIER, "expected method name");
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
@@ -2050,7 +2055,11 @@ static void parse_method_declaration(Parser* parser) {
     }
     parse_function_definition(parser, type, parser->previous_token);
 
-    emit_u8_u16be(parser, OP_DEFINE_METHOD, index);
+    if (access == PUBLIC) {
+        emit_u8_u16be(parser, OP_DEFINE_PUB_METHOD, index);
+    } else {
+        emit_u8_u16be(parser, OP_DEFINE_PRI_METHOD, index);
+    }
 }
 
 
@@ -2118,7 +2127,7 @@ static void parse_class_declaration(Parser* parser) {
     while (true) {
         if (match(parser, TOKEN_PUB)) {
             if (match(parser, TOKEN_DEF)) {
-                parse_method_declaration(parser);
+                parse_method_declaration(parser, PUBLIC);
             } else if (match(parser, TOKEN_VAR)) {
                 parse_field_declaration(parser, PUBLIC);
             } else {
@@ -2127,7 +2136,7 @@ static void parse_class_declaration(Parser* parser) {
             }
         } else if (match(parser, TOKEN_PRI)) {
             if (match(parser, TOKEN_DEF)) {
-                parse_method_declaration(parser);
+                parse_method_declaration(parser, PRIVATE);
             } else if (match(parser, TOKEN_VAR)) {
                 parse_field_declaration(parser, PRIVATE);
             } else {
@@ -2136,7 +2145,7 @@ static void parse_class_declaration(Parser* parser) {
             }
         } else {
             if (match(parser, TOKEN_DEF)) {
-                parse_method_declaration(parser);
+                parse_method_declaration(parser, PRIVATE);
             } else if (match(parser, TOKEN_VAR)) {
                 parse_field_declaration(parser, PRIVATE);
             } else {

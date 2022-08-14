@@ -153,16 +153,18 @@ ObjClass* ObjClass_new(PyroVM* vm) {
     }
 
     class->name = NULL;
-    class->methods = NULL;
-    class->default_field_values = NULL;
+    class->superclass = NULL;
+    class->all_methods = NULL;
+    class->pub_methods = NULL;
     class->all_field_indexes = NULL;
     class->pub_field_indexes = NULL;
-    class->superclass = NULL;
+    class->default_field_values = NULL;
 
-    class->methods = ObjMap_new(vm);
-    class->default_field_values = ObjVec_new(vm);
+    class->all_methods = ObjMap_new(vm);
+    class->pub_methods = ObjMap_new(vm);
     class->all_field_indexes = ObjMap_new(vm);
     class->pub_field_indexes = ObjMap_new(vm);
+    class->default_field_values = ObjVec_new(vm);
 
     if (vm->memory_allocation_failed) {
         return NULL;
@@ -1018,8 +1020,8 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_DUP:
         case OP_DUP_2:
         case OP_GET_INDEX:
-        case OP_GET_ITERATOR_NEXT_VALUE:
-        case OP_GET_ITERATOR_OBJECT:
+        case OP_GET_NEXT_FROM_ITERATOR:
+        case OP_GET_ITERATOR:
         case OP_INHERIT:
         case OP_LOAD_FALSE:
         case OP_LOAD_I64_0:
@@ -1061,12 +1063,14 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_DEFINE_PRI_FIELD:
         case OP_DEFINE_PUB_FIELD:
         case OP_DEFINE_GLOBAL:
-        case OP_DEFINE_METHOD:
+        case OP_DEFINE_PRI_METHOD:
+        case OP_DEFINE_PUB_METHOD:
         case OP_GET_FIELD:
         case OP_GET_PUB_FIELD:
         case OP_GET_GLOBAL:
         case OP_GET_MEMBER:
         case OP_GET_METHOD:
+        case OP_GET_PUB_METHOD:
         case OP_GET_SUPER_METHOD:
         case OP_IMPORT_NAMED_MEMBERS:
         case OP_JUMP:
@@ -1087,9 +1091,11 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 2;
 
         case OP_CALL_METHOD:
-        case OP_CALL_METHOD_UNPACK_LAST_ARG:
+        case OP_CALL_PUB_METHOD:
+        case OP_CALL_METHOD_UNPACK:
+        case OP_CALL_PUB_METHOD_UNPACK:
         case OP_CALL_SUPER_METHOD:
-        case OP_CALL_SUPER_METHOD_UNPACK_LAST_ARG:
+        case OP_CALL_SUPER_METHOD_UNPACK:
             return 3;
 
         // 2 bytes for the constant index, plus two for each upvalue.

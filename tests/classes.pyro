@@ -7,23 +7,23 @@ class Point {
         self.y = 2;
     }
 
-    def get_x() {
+    pub def get_x() {
         return self.x;
     }
 
-    def set_x(arg) {
+    pub def set_x(arg) {
         self.x = arg;
     }
 
-    def get_y() {
+    pub def get_y() {
         return self.y;
     }
 
-    def set_y(arg) {
+    pub def set_y(arg) {
         self.y = arg;
     }
 
-    def get_closure() {
+    pub def get_closure() {
         def closure() {
             return self.x;
         }

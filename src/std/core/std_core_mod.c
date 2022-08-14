@@ -39,8 +39,8 @@ static Value mod_globals(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_core_mod(PyroVM* vm) {
     // Module methods.
-    pyro_define_method(vm, vm->class_module, "get", mod_get, 1);
-    pyro_define_method(vm, vm->class_module, "contains", mod_contains, 1);
-    pyro_define_method(vm, vm->class_module, "$contains", mod_contains, 1);
-    pyro_define_method(vm, vm->class_module, "globals", mod_globals, 0);
+    pyro_define_pri_method(vm, vm->class_module, "$contains", mod_contains, 1);
+    pyro_define_pub_method(vm, vm->class_module, "get", mod_get, 1);
+    pyro_define_pub_method(vm, vm->class_module, "contains", mod_contains, 1);
+    pyro_define_pub_method(vm, vm->class_module, "globals", mod_globals, 0);
 }

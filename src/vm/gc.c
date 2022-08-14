@@ -176,11 +176,12 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_CLASS: {
             ObjClass* class = (ObjClass*)object;
             mark_object(vm, (Obj*)class->name);
-            mark_object(vm, (Obj*)class->methods);
-            mark_object(vm, (Obj*)class->default_field_values);
+            mark_object(vm, (Obj*)class->superclass);
+            mark_object(vm, (Obj*)class->all_methods);
+            mark_object(vm, (Obj*)class->pub_methods);
             mark_object(vm, (Obj*)class->all_field_indexes);
             mark_object(vm, (Obj*)class->pub_field_indexes);
-            mark_object(vm, (Obj*)class->superclass);
+            mark_object(vm, (Obj*)class->default_field_values);
             break;
         }
 

@@ -130,11 +130,11 @@ void pyro_load_std_core_tup(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_tup", fn_is_tup, 1);
 
     // Methods.
-    pyro_define_method(vm, vm->class_tup, "count", tup_count, 0);
-    pyro_define_method(vm, vm->class_tup, "slice", tup_slice, -1);
-    pyro_define_method(vm, vm->class_tup, "get", tup_get, 1);
-    pyro_define_method(vm, vm->class_tup, "$iter", tup_iter, 0);
-    pyro_define_method(vm, vm->class_tup, "iter", tup_iter, 0);
-    pyro_define_method(vm, vm->class_tup, "contains", tup_contains, 1);
-    pyro_define_method(vm, vm->class_tup, "$contains", tup_contains, 1);
+    pyro_define_pri_method(vm, vm->class_tup, "$contains", tup_contains, 1);
+    pyro_define_pri_method(vm, vm->class_tup, "$iter", tup_iter, 0);
+    pyro_define_pub_method(vm, vm->class_tup, "count", tup_count, 0);
+    pyro_define_pub_method(vm, vm->class_tup, "slice", tup_slice, -1);
+    pyro_define_pub_method(vm, vm->class_tup, "get", tup_get, 1);
+    pyro_define_pub_method(vm, vm->class_tup, "iter", tup_iter, 0);
+    pyro_define_pub_method(vm, vm->class_tup, "contains", tup_contains, 1);
 }

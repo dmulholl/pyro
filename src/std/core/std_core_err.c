@@ -83,8 +83,8 @@ void pyro_load_std_core_err(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_err", fn_is_err, 1);
 
     // Methods.
-    pyro_define_method(vm, vm->class_err, "$get_index", err_get, 1);
-    pyro_define_method(vm, vm->class_err, "$set_index", err_set, 2);
-    pyro_define_method(vm, vm->class_err, "message", err_message, 0);
-    pyro_define_method(vm, vm->class_err, "details", err_details, 0);
+    pyro_define_pri_method(vm, vm->class_err, "$get_index", err_get, 1);
+    pyro_define_pri_method(vm, vm->class_err, "$set_index", err_set, 2);
+    pyro_define_pub_method(vm, vm->class_err, "message", err_message, 0);
+    pyro_define_pub_method(vm, vm->class_err, "details", err_details, 0);
 }

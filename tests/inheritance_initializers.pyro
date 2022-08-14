@@ -5,11 +5,11 @@ class Shape {
         self.colour = colour;
     }
 
-    def area() {
+    pub def area() {
         return null;
     }
 
-    def get_colour() {
+    pub def get_colour() {
         return self.colour;
     }
 }
@@ -23,7 +23,7 @@ class Square < Shape {
         self.side = side;
     }
 
-    def area() {
+    pub def area() {
         return self.side * self.side;
     }
 }

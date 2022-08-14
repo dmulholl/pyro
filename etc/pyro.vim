@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.3.3
+" v0.3.4
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -14,6 +14,7 @@ syn region pyroChar start=+'+ end=+'+ skip=+\\\\\|\\'+
 
 " Keywords.
 syn keyword pyroKeyword var def class typedef
+syn keyword pyroKeyword pub pri static
 syn keyword pyroKeyword if else for while in loop
 syn keyword pyroKeyword return break continue
 syn keyword pyroKeyword try echo

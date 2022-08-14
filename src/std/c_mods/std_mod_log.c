@@ -251,12 +251,12 @@ void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
     pyro_define_pub_field(vm, logger_class, "timestamp", MAKE_OBJ(STR("[%Y-%m-%d %H:%M:%S]")));
     pyro_define_pub_field(vm, logger_class, "file", MAKE_NULL());
 
-    pyro_define_method(vm, logger_class, "level", logger_level, 1);
-    pyro_define_method(vm, logger_class, "timestamp", logger_timestamp, 1);
-    pyro_define_method(vm, logger_class, "file", logger_file, 1);
-    pyro_define_method(vm, logger_class, "debug", logger_debug, -1);
-    pyro_define_method(vm, logger_class, "info", logger_info, -1);
-    pyro_define_method(vm, logger_class, "warn", logger_warn, -1);
-    pyro_define_method(vm, logger_class, "error", logger_error, -1);
-    pyro_define_method(vm, logger_class, "fatal", logger_fatal, -1);
+    pyro_define_pub_method(vm, logger_class, "level", logger_level, 1);
+    pyro_define_pub_method(vm, logger_class, "timestamp", logger_timestamp, 1);
+    pyro_define_pub_method(vm, logger_class, "file", logger_file, 1);
+    pyro_define_pub_method(vm, logger_class, "debug", logger_debug, -1);
+    pyro_define_pub_method(vm, logger_class, "info", logger_info, -1);
+    pyro_define_pub_method(vm, logger_class, "warn", logger_warn, -1);
+    pyro_define_pub_method(vm, logger_class, "error", logger_error, -1);
+    pyro_define_pub_method(vm, logger_class, "fatal", logger_fatal, -1);
 }

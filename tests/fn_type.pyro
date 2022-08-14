@@ -32,7 +32,7 @@ assert $type($print) == "fn";
 
 
 class Foo {
-    def test_method() {
+    pub def test_method() {
         return "foo";
     }
 }

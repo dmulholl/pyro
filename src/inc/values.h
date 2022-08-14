@@ -123,11 +123,13 @@ struct Obj {
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
 ObjClass* pyro_get_class(PyroVM* vm, Value value);
 
-// Returns the named method if it is defined for the value, otherwise MAKE_NULL().
+// Returns the named method if it exists, otherwise NULL.
 Value pyro_get_method(PyroVM* vm, Value value, ObjStr* method_name);
+Value pyro_get_pub_method(PyroVM* vm, Value value, ObjStr* method_name);
 
-// Returns true if the named method is defined for the value.
+// Returns true if the named method exists.
 bool pyro_has_method(PyroVM* vm, Value value, ObjStr* method_name);
+bool pyro_has_pub_method(PyroVM* vm, Value value, ObjStr* method_name);
 
 // Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
 // Pyro code.

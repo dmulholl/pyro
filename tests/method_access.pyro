@@ -1,0 +1,36 @@
+class Foo {
+    def foo() {
+        return "foo";
+    }
+
+    pri def bar() {
+        return "bar";
+    }
+
+    pub def baz() {
+        return "baz";
+    }
+
+    pub def bam() {
+        return self:foo();
+    }
+
+    pub def bof() {
+        var method = self:bar;
+        return method();
+    }
+}
+
+var obj = Foo();
+
+assert $is_err(try obj:foo);
+assert $is_err(try obj:foo());
+
+assert $is_err(try obj:bar);
+assert $is_err(try obj:bar());
+
+assert $is_method(obj:baz);
+assert obj:baz() == "baz";
+
+assert obj:bam() == "foo";
+assert obj:bof() == "bar";

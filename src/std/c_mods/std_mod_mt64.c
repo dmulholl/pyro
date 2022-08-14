@@ -130,10 +130,10 @@ void pyro_load_std_mod_mt64(PyroVM* vm, ObjModule* module) {
 
     pyro_define_pub_field(vm, mt64_class, "generator", MAKE_NULL());
 
-    pyro_define_method(vm, mt64_class, "$init", mt64_init, 0);
-    pyro_define_method(vm, mt64_class, "seed_with_hash", mt64_seed_with_hash, 1);
-    pyro_define_method(vm, mt64_class, "seed_with_array", mt64_seed_with_array, 1);
-    pyro_define_method(vm, mt64_class, "rand_int", mt64_rand_int, 1);
-    pyro_define_method(vm, mt64_class, "rand_int_in_range", mt64_rand_int_in_range, 2);
-    pyro_define_method(vm, mt64_class, "rand_float", mt64_rand_float, 0);
+    pyro_define_pri_method(vm, mt64_class, "$init", mt64_init, 0);
+    pyro_define_pub_method(vm, mt64_class, "seed_with_hash", mt64_seed_with_hash, 1);
+    pyro_define_pub_method(vm, mt64_class, "seed_with_array", mt64_seed_with_array, 1);
+    pyro_define_pub_method(vm, mt64_class, "rand_int", mt64_rand_int, 1);
+    pyro_define_pub_method(vm, mt64_class, "rand_int_in_range", mt64_rand_int_in_range, 2);
+    pyro_define_pub_method(vm, mt64_class, "rand_float", mt64_rand_float, 0);
 }

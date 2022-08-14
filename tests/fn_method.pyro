@@ -5,16 +5,24 @@ class Foo {
         self.value = value;
     }
 
-    def get_value() {
+    def pri_get_value() {
+        return self.value;
+    }
+
+    pub def pub_get_value() {
         return self.value;
     }
 }
 
 var foo = Foo(123);
-var method = $method(foo, "get_value");
 
-assert $is_method(method);
-assert method() == 123;
+var private_method = $method(foo, "pri_get_value");
+assert $is_method(private_method);
+assert private_method() == 123;
+
+var public_method = $method(foo, "pub_get_value");
+assert $is_method(public_method);
+assert public_method() == 123;
 
 assert $is_err($method(foo, "foobar"));
 assert $is_err($method(123, "foobar"));
