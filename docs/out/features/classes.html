@@ -235,7 +235,7 @@ A class can inherit from a superclass.
         <span class="kc">self</span><span class="p">.</span><span class="nx">color</span> <span class="p">=</span> <span class="nx">color</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;color: {}&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -248,7 +248,7 @@ A class can inherit from a superclass.
         <span class="kc">self</span><span class="p">.</span><span class="nx">radius</span> <span class="p">=</span> <span class="nx">radius</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
         <span class="kc">super</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
         <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;radius: {}&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">radius</span><span class="p">);</span>
     <span class="p">}</span>
