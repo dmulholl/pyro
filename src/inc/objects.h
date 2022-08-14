@@ -272,7 +272,7 @@ struct ObjClass {
     // Maps [ObjStr] names to [ObjFn] or [ObjNativeFn] values.
     ObjMap* methods;
 
-    // Stores the default values for fields. Each new [ObjInstance] gets a copy of this vector.
+    // Initialization values for fields. Each new [ObjInstance] gets a copy of this vector.
     ObjVec* default_field_values;
 
     // Maps [ObjStr] names to [i64] indexes in the instance's [fields] vector.
