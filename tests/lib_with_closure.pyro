@@ -1,0 +1,8 @@
+var value = 0;
+
+def get_closure() {
+    def add_to_value(number) {
+        value += number;
+    }
+    return add_to_value;
+}

@@ -1,0 +1,10 @@
+import lib_with_closure;
+assert lib_with_closure::value == 0;
+
+var add_to_value_closure = lib_with_closure::get_closure();
+
+add_to_value_closure(1);
+assert lib_with_closure::value == 1;
+
+add_to_value_closure(1);
+assert lib_with_closure::value == 2;
