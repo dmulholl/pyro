@@ -61,9 +61,10 @@ typedef enum {
     TOKEN_WHILE,
 
     // Synthetic tokens.
-    TOKEN_ERROR,
     TOKEN_EOF,
+    TOKEN_ERROR,
     TOKEN_SYNTHETIC,
+    TOKEN_UNDEFINED,
 } TokenType;
 
 typedef struct {
