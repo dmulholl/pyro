@@ -991,7 +991,11 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_LEFT_PAREN)) {
         parse_expression(parser, can_assign_in_parens, can_assign_in_parens);
         if (match_assignment_token(parser) && !can_assign_in_parens) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
+            if (parser->compiler->type == TYPE_TRY_EXPR) {
+                ERROR_AT_PREVIOUS_TOKEN("assignment is not allowed inside try expressions");
+            } else {
+                ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
+            }
         }
         consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after expression");
     }
