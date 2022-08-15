@@ -25,3 +25,20 @@ assert bar == 99;
 
 assert (foo -= 99) == 0;
 assert foo == 0;
+
+class Foo {
+    pub var value;
+}
+
+var foo = Foo();
+foo.value = 1;
+assert foo.value == 1;
+foo.value += 2;
+assert foo.value == 3;
+
+var vec = [1];
+assert vec[0] == 1;
+vec[0] = 2;
+assert vec[0] == 2;
+vec[0] += 1;
+assert vec[0] == 3;
