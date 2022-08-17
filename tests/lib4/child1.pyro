@@ -1,16 +1,16 @@
 import lib4;
 import lib4::child2;
 
-var mod_name = "lib4::child1";
+pub var mod_name = "lib4::child1";
 
-def get_mod_name() {
+pub def get_mod_name() {
     return mod_name;
 }
 
-def get_sib_name() {
+pub def get_sib_name() {
     return child2::get_mod_name();
 }
 
-def get_parent_name() {
+pub def get_parent_name() {
     return lib4::get_mod_name();
 }

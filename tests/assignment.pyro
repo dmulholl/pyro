@@ -26,15 +26,15 @@ assert bar == 99;
 assert (foo -= 99) == 0;
 assert foo == 0;
 
-class Foo {
+class Object {
     pub var value;
 }
 
-var foo = Foo();
-foo.value = 1;
-assert foo.value == 1;
-foo.value += 2;
-assert foo.value == 3;
+var obj = Object();
+obj.value = 1;
+assert obj.value == 1;
+obj.value += 2;
+assert obj.value == 3;
 
 var vec = [1];
 assert vec[0] == 1;

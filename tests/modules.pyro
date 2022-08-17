@@ -49,14 +49,14 @@ var func2 = lib2::get_mod_name;
 assert func2() == "lib2";
 
 # ./lib2/child1.pyro
-import lib2::child1;
-assert $is_mod(child1);
-assert child1::PI == 3.14;
-assert child1::add(1, 2) == 3;
-assert child1::mod_name == "lib2::child1";
-assert child1::get_mod_name() == "lib2::child1";
+import lib2::child1 as l2_child1;
+assert $is_mod(l2_child1);
+assert l2_child1::PI == 3.14;
+assert l2_child1::add(1, 2) == 3;
+assert l2_child1::mod_name == "lib2::child1";
+assert l2_child1::get_mod_name() == "lib2::child1";
 
-var func3 = child1::get_mod_name;
+var func3 = l2_child1::get_mod_name;
 assert func3() == "lib2::child1";
 
 # ./lib3/
@@ -64,27 +64,24 @@ import lib3;
 assert $is_mod(lib3);
 
 # ./lib3/child1.pyro
-import lib3::child1;
-assert $is_mod(child1);
-assert child1::PI == 3.14;
-assert child1::add(1, 2) == 3;
-assert child1::mod_name == "lib3::child1";
-assert child1::get_mod_name() == "lib3::child1";
+import lib3::child1 as l3_child1;
+assert $is_mod(l3_child1);
+assert l3_child1::PI == 3.14;
+assert l3_child1::add(1, 2) == 3;
+assert l3_child1::mod_name == "lib3::child1";
+assert l3_child1::get_mod_name() == "lib3::child1";
 
-var func4 = child1::get_mod_name;
+var func4 = l3_child1::get_mod_name;
 assert func4() == "lib3::child1";
 
 # Test parent importing child.
-import lib2;
 lib2::test_importing_child();
 
 # Test child importing parent and sibling.
-import lib2::child1;
-child1::test_importing_parent();
-child1::test_importing_sibling();
+l2_child1::test_importing_parent();
+l2_child1::test_importing_sibling();
 
 # Test methods defined on the module object itself.
-import $std::math;
 assert $is_mod(math);
 assert "abs" in math;
 assert math:contains("abs");

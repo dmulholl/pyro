@@ -1,21 +1,21 @@
-var mod = $exec("");
-assert $is_mod(mod);
+var mod1 = $exec("");
+assert $is_mod(mod1);
 
-var mod = $exec("var foo = 1 + 2 + 3;");
-assert $is_mod(mod);
-assert mod::foo == 6;
+var mod2 = $exec("pub var foo = 1 + 2 + 3;");
+assert $is_mod(mod2);
+assert mod2::foo == 6;
 
-var mod = $exec("var foo, bar; foo = $str(123); bar = 'a' + 'b';");
-assert $is_mod(mod);
-assert mod::foo == "123";
-assert mod::bar == "ab";
+var mod3 = $exec("pub var foo, bar; foo = $str(123); bar = 'a' + 'b';");
+assert $is_mod(mod3);
+assert mod3::foo == "123";
+assert mod3::bar == "ab";
 
 var code = `
-def add(x, y) {
+pub def add(x, y) {
     return x + y;
 }
 `;
 
-var mod = $exec(code);
-assert $is_mod(mod);
-assert mod::add(1, 2) == 3;
+var mod4 = $exec(code);
+assert $is_mod(mod4);
+assert mod4::add(1, 2) == 3;

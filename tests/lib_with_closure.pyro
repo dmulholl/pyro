@@ -1,6 +1,6 @@
-var value = 0;
+pub var value = 0;
 
-def get_closure() {
+pub def get_closure() {
     def add_to_value(number) {
         value += number;
     }

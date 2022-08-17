@@ -1,0 +1,11 @@
+pub var var1 = 1;
+pri var var2 = 2;
+var var3 = 3;
+
+pub def func1() {}
+pri def func2() {}
+def func3() {}
+
+pub class Class1 {}
+pri class Class2 {}
+class Class3 {}

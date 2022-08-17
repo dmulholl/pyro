@@ -1,0 +1,21 @@
+import lib_with_pri as lib;
+
+assert lib::var1 == 1;
+assert lib:contains("var1");
+assert lib:get("var1") == 1;
+
+assert $is_err(try lib::var2);
+assert lib:contains("var2");
+assert lib:get("var2") == 2;
+
+assert $is_err(try lib::var3);
+assert lib:contains("var3");
+assert lib:get("var3") == 3;
+
+assert $is_func(lib::func1);
+assert $is_err(try lib::func2);
+assert $is_err(try lib::func3);
+
+assert $is_class(lib::Class1);
+assert $is_err(try lib::Class2);
+assert $is_err(try lib::Class3);

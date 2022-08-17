@@ -8,49 +8,49 @@ def add(a, b) {
 }
 
 
-var foo = try 123;
-assert foo == 123;
+var foo1 = try 123;
+assert foo1 == 123;
 
 
-var foo = try 123 !! 456;
-assert foo == 123;
+var foo2 = try 123 !! 456;
+assert foo2 == 123;
 
 
-var foo = try add(1, 2);
-assert foo == 3;
+var foo3 = try add(1, 2);
+assert foo3 == 3;
 
 
-var foo = try (1 + 2);
-assert foo == 3;
+var foo4 = try (1 + 2);
+assert foo4 == 3;
 
 
-var foo = try calls_panic();
-assert $is_err(foo);
-assert $str(foo) == "oh no!";
-assert $debug(foo) == `<err "oh no!">`;
+var foo5 = try calls_panic();
+assert $is_err(foo5);
+assert $str(foo5) == "oh no!";
+assert $debug(foo5) == `<err "oh no!">`;
 
 
-var foo = try calls_panic() !! "fallback";
-assert foo == "fallback";
+var foo6 = try calls_panic() !! "fallback";
+assert foo6 == "fallback";
 
 
-var foo = try add(123, "foo");
-assert $is_err(foo);
+var foo7 = try add(123, "foo");
+assert $is_err(foo7);
 
 
-var foo = try add(123, "foo") !! "fallback";
-assert foo == "fallback";
+var foo8 = try add(123, "foo") !! "fallback";
+assert foo8 == "fallback";
 
 
-var foo = try try try 123;
-assert foo == 123;
+var foo9 = try try try 123;
+assert foo9 == 123;
 
 
-var foo = try try try calls_panic();
-assert $is_err(foo);
-assert $str(foo) == "oh no!";
-assert $debug(foo) == `<err "oh no!">`;
+var foo10 = try try try calls_panic();
+assert $is_err(foo10);
+assert $str(foo10) == "oh no!";
+assert $debug(foo10) == `<err "oh no!">`;
 
 
-var foo = try try try calls_panic() !! "fallback";
-assert foo == "fallback";
+var foo11 = try try try calls_panic() !! "fallback";
+assert foo11 == "fallback";

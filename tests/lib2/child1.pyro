@@ -1,22 +1,22 @@
-var PI = 3.14;
+pub var PI = 3.14;
 
-var mod_name = "lib2::child1";
+pub var mod_name = "lib2::child1";
 
-def get_mod_name() {
+pub def get_mod_name() {
     return mod_name;
 }
 
-def add(a, b) {
+pub def add(a, b) {
     return a + b;
 }
 
-def test_importing_parent() {
+pub def test_importing_parent() {
     import lib2;
     assert lib2::mod_name == "lib2";
     assert lib2::get_mod_name() == "lib2";
 }
 
-def test_importing_sibling() {
+pub def test_importing_sibling() {
     import lib2::child2;
     assert child2::mod_name == "lib2::child2";
     assert child2::get_mod_name() == "lib2::child2";

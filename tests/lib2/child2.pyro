@@ -1,11 +1,11 @@
-var PI = 3.14;
+pub var PI = 3.14;
 
-var mod_name = "lib2::child2";
+pub var mod_name = "lib2::child2";
 
-def get_mod_name() {
+pub def get_mod_name() {
     return mod_name;
 }
 
-def add(a, b) {
+pub def add(a, b) {
     return a + b;
 }

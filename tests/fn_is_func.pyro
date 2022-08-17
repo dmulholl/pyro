@@ -4,8 +4,8 @@ assert !$is_func("foo");
 assert $is_func($is_func);
 assert $is_func($bool);
 
-def foo() {}
-assert $is_func(foo);
+def func() {}
+assert $is_func(func);
 
 class Foo {
     pub def method() {}

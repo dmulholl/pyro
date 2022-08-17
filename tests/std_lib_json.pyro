@@ -116,51 +116,51 @@ assert $debug(from_json(`"foo \r\n\t bar"`)) == `"foo \r\n\t bar"`;
 
 assert from_json(`"\u20AC"`) == "€";
 
-var input = `[]`;
-var output = from_json(input);
-assert $is_vec(output);
-assert output:is_empty();
+var input1 = `[]`;
+var output1 = from_json(input1);
+assert $is_vec(output1);
+assert output1:is_empty();
 
-var input = `[123, 456.789, "foo"]`;
-var output = from_json(input);
-assert $is_vec(output);
-assert output[0] == 123;
-assert output[1] == 456.789;
-assert output[2] == "foo";
+var input2 = `[123, 456.789, "foo"]`;
+var output2 = from_json(input2);
+assert $is_vec(output2);
+assert output2[0] == 123;
+assert output2[1] == 456.789;
+assert output2[2] == "foo";
 
-var input = `[123, 456.789, "foo", [1, 2, 3]]`;
-var output = from_json(input);
-assert $is_vec(output);
-assert output[0] == 123;
-assert output[1] == 456.789;
-assert output[2] == "foo";
-assert $is_vec(output[3]);
-assert output[3][0] == 1;
-assert output[3][1] == 2;
-assert output[3][2] == 3;
+var input3 = `[123, 456.789, "foo", [1, 2, 3]]`;
+var output3 = from_json(input3);
+assert $is_vec(output3);
+assert output3[0] == 123;
+assert output3[1] == 456.789;
+assert output3[2] == "foo";
+assert $is_vec(output3[3]);
+assert output3[3][0] == 1;
+assert output3[3][1] == 2;
+assert output3[3][2] == 3;
 
-var input = `{}`;
-var output = from_json(input);
-assert $is_map(output);
-assert output:is_empty();
+var input4 = `{}`;
+var output4 = from_json(input4);
+assert $is_map(output4);
+assert output4:is_empty();
 
-var input = `{"foo": 123, "bar": 456}`;
-var output = from_json(input);
-assert $is_map(output);
-assert output["foo"] ==  123;
-assert output["bar"] ==  456;
+var input5 = `{"foo": 123, "bar": 456}`;
+var output5 = from_json(input5);
+assert $is_map(output5);
+assert output5["foo"] ==  123;
+assert output5["bar"] ==  456;
 
-var input = `{"foo": [1, 2, 3], "bar": [4, 5, 6]}`;
-var output = from_json(input);
-assert $is_map(output);
-assert $is_vec(output["foo"]);
-assert $is_vec(output["bar"]);
+var input6 = `{"foo": [1, 2, 3], "bar": [4, 5, 6]}`;
+var output6 = from_json(input6);
+assert $is_map(output6);
+assert $is_vec(output6["foo"]);
+assert $is_vec(output6["bar"]);
 
-var input = `[{"foo": 123, "bar": 456}, {"bam": 789, "baz": 987}]`;
-var output = from_json(input);
-assert $is_vec(output);
-assert output[0]["foo"] == 123;
-assert output[1]["baz"] == 987;
+var input7 = `[{"foo": 123, "bar": 456}, {"bam": 789, "baz": 987}]`;
+var output7 = from_json(input7);
+assert $is_vec(output7);
+assert output7[0]["foo"] == 123;
+assert output7[1]["baz"] == 987;
 
 assert $is_err(try from_json(``));
 assert $is_err(try from_json(`foo`));

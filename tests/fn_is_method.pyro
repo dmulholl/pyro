@@ -9,8 +9,8 @@ assert !$is_method($clock);
 import $std::math;
 assert !$is_method(math::abs);
 
-def foo() {}
-assert !$is_method(foo);
+def func() {}
+assert !$is_method(func);
 
 class Foo {
     pub def method() {}

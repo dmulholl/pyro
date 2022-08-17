@@ -4,18 +4,18 @@ class Foo {
 }
 
 var foo = Foo();
-var fields = $fields(foo):to_vec();
-assert fields:count() == 2;
-assert fields[0] == "bar";
-assert fields[1] == "baz";
+var foo_fields = $fields(foo):to_vec();
+assert foo_fields:count() == 2;
+assert foo_fields[0] == "bar";
+assert foo_fields[1] == "baz";
 
 
 class Bar {
 }
 
 var bar = Bar();
-var fields = $fields(bar):to_vec();
-assert fields:is_empty();
+var bar_fields = $fields(bar):to_vec();
+assert bar_fields:is_empty();
 
 
 assert $fields(123):to_vec():is_empty();
