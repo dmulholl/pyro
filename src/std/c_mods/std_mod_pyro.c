@@ -120,7 +120,7 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     version_tuple->values[2] = MAKE_I64(PYRO_VERSION_PATCH);
     version_tuple->values[3] = MAKE_OBJ(STR(PYRO_VERSION_LABEL));
     version_tuple->values[4] = MAKE_OBJ(STR(PYRO_VERSION_BUILD));
-    pyro_define_member(vm, module, "version_tuple", MAKE_OBJ(version_tuple));
+    pyro_define_pub_member(vm, module, "version_tuple", MAKE_OBJ(version_tuple));
 
     char* version_c_string = pyro_get_version_string();
     if (version_c_string) {
@@ -128,16 +128,16 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
         if (!version_pyro_string) {
             return;
         }
-        pyro_define_member(vm, module, "version_string", MAKE_OBJ(version_pyro_string));
+        pyro_define_pub_member(vm, module, "version_string", MAKE_OBJ(version_pyro_string));
     }
 
-    pyro_define_member_fn(vm, module, "memory", fn_memory, 0);
-    pyro_define_member_fn(vm, module, "gc", fn_memory, 0);
-    pyro_define_member_fn(vm, module, "stdin", fn_stdin, 0);
-    pyro_define_member_fn(vm, module, "stdout", fn_stdout, 0);
-    pyro_define_member_fn(vm, module, "stderr", fn_stderr, 0);
-    pyro_define_member_fn(vm, module, "set_stdin", fn_set_stdin, 1);
-    pyro_define_member_fn(vm, module, "set_stdout", fn_set_stdout, 1);
-    pyro_define_member_fn(vm, module, "set_stderr", fn_set_stderr, 1);
-    pyro_define_member_fn(vm, module, "sizeof", fn_sizeof, 1);
+    pyro_define_pub_member_fn(vm, module, "memory", fn_memory, 0);
+    pyro_define_pub_member_fn(vm, module, "gc", fn_memory, 0);
+    pyro_define_pub_member_fn(vm, module, "stdin", fn_stdin, 0);
+    pyro_define_pub_member_fn(vm, module, "stdout", fn_stdout, 0);
+    pyro_define_pub_member_fn(vm, module, "stderr", fn_stderr, 0);
+    pyro_define_pub_member_fn(vm, module, "set_stdin", fn_set_stdin, 1);
+    pyro_define_pub_member_fn(vm, module, "set_stdout", fn_set_stdout, 1);
+    pyro_define_pub_member_fn(vm, module, "set_stderr", fn_set_stderr, 1);
+    pyro_define_pub_member_fn(vm, module, "sizeof", fn_sizeof, 1);
 }

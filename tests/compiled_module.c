@@ -7,5 +7,5 @@ static Value fn_add(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 bool pyro_init_mod_compiled_module(PyroVM* vm, ObjModule* module) {
-    return pyro_define_member_fn(vm, module, "add", fn_add, 2);
+    return pyro_define_pub_member_fn(vm, module, "add", fn_add, 2);
 }

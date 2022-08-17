@@ -1947,7 +1947,7 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* filepath) {
         free(resolved_path);
         return;
     }
-    pyro_define_member(vm, vm->main_module, "$filepath", MAKE_OBJ(resolved_path_as_string));
+    pyro_define_pri_member(vm, vm->main_module, "$filepath", MAKE_OBJ(resolved_path_as_string));
     free(resolved_path);
 
     FileData fd;
@@ -2040,7 +2040,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
         free(resolved_path);
         return;
     }
-    pyro_define_member(vm, module, "$filepath", MAKE_OBJ(resolved_path_as_string));
+    pyro_define_pri_member(vm, module, "$filepath", MAKE_OBJ(resolved_path_as_string));
     free(resolved_path);
 
     FileData fd;

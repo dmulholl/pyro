@@ -11,5 +11,5 @@ void pyro_load_std_mod_sqlite(PyroVM* vm, ObjModule* module) {
     if (!version) {
         return;
     }
-    pyro_define_member(vm, module, "version", MAKE_OBJ(version));
+    pyro_define_pub_member(vm, module, "version", MAKE_OBJ(version));
 }

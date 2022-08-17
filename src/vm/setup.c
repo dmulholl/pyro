@@ -373,7 +373,28 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 }
 
 
-bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
+bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
+    ObjStr* name_string = STR(name);
+    if (!name_string) {
+        return false;
+    }
+    Value name_value = MAKE_OBJ(name_string);
+
+    size_t member_index = module->members->count;
+    if (!ObjVec_append(module->members, value, vm)) {
+        return false;
+    }
+
+    if (ObjMap_set(module->all_member_indexes, name_value, MAKE_I64(member_index), vm) == 0) {
+        module->members->count--;
+        return false;
+    }
+
+    return true;
+}
+
+
+bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
     ObjStr* name_string = STR(name);
     if (!name_string) {
         return false;
@@ -400,12 +421,21 @@ bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value v
 }
 
 
-bool pyro_define_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity) {
+bool pyro_define_pri_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity) {
     ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
     if (!func_object) {
         return false;
     }
-    return pyro_define_member(vm, module, name, MAKE_OBJ(func_object));
+    return pyro_define_pri_member(vm, module, name, MAKE_OBJ(func_object));
+}
+
+
+bool pyro_define_pub_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity) {
+    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!func_object) {
+        return false;
+    }
+    return pyro_define_pub_member(vm, module, name, MAKE_OBJ(func_object));
 }
 
 

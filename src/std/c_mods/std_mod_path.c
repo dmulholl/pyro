@@ -278,16 +278,16 @@ static Value fn_cd(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 void pyro_load_std_mod_path(PyroVM* vm, ObjModule* module) {
-    pyro_define_member_fn(vm, module, "exists", fn_exists, 1);
-    pyro_define_member_fn(vm, module, "is_file", fn_is_file, 1);
-    pyro_define_member_fn(vm, module, "is_dir", fn_is_dir, 1);
-    pyro_define_member_fn(vm, module, "is_symlink", fn_is_symlink, 1);
-    pyro_define_member_fn(vm, module, "dirname", fn_dirname, 1);
-    pyro_define_member_fn(vm, module, "basename", fn_basename, 1);
-    pyro_define_member_fn(vm, module, "join", fn_join, -1);
-    pyro_define_member_fn(vm, module, "rm", fn_rm, 1);
-    pyro_define_member_fn(vm, module, "cwd", fn_cwd, 0);
-    pyro_define_member_fn(vm, module, "listdir", fn_listdir, 1);
-    pyro_define_member_fn(vm, module, "realpath", fn_realpath, 1);
-    pyro_define_member_fn(vm, module, "cd", fn_cd, 1);
+    pyro_define_pub_member_fn(vm, module, "exists", fn_exists, 1);
+    pyro_define_pub_member_fn(vm, module, "is_file", fn_is_file, 1);
+    pyro_define_pub_member_fn(vm, module, "is_dir", fn_is_dir, 1);
+    pyro_define_pub_member_fn(vm, module, "is_symlink", fn_is_symlink, 1);
+    pyro_define_pub_member_fn(vm, module, "dirname", fn_dirname, 1);
+    pyro_define_pub_member_fn(vm, module, "basename", fn_basename, 1);
+    pyro_define_pub_member_fn(vm, module, "join", fn_join, -1);
+    pyro_define_pub_member_fn(vm, module, "rm", fn_rm, 1);
+    pyro_define_pub_member_fn(vm, module, "cwd", fn_cwd, 0);
+    pyro_define_pub_member_fn(vm, module, "listdir", fn_listdir, 1);
+    pyro_define_pub_member_fn(vm, module, "realpath", fn_realpath, 1);
+    pyro_define_pub_member_fn(vm, module, "cd", fn_cd, 1);
 }

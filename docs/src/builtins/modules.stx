@@ -28,14 +28,18 @@ A module object can also be created by executing a string of source code using t
 
 [[ `:contains(name: str) -> bool` ]]
 
-    Returns `true` if the module contains a global variable named `name`, otherwise `false`.
+    Returns `true` if the module contains a member named `name`, otherwise `false`.
 
     (You can also test for containment using the `in` keyword.)
 
+[[ `:iter() -> iter[str]` ]]
+
+    Returns an iterator over the module's public member names as strings.
+
 [[ `:get(name: str) -> any` ]]
 
-    Returns the value of the global variable `name`, or an `err` if `name` is not defined.
+    Returns the value of the member `name`, or an `err` if `name` is not defined.
 
 [[ `:globals() -> map[str, any]` ]]
 
-    Returns a map containing copies of the module's global variables, indexed by name.
+    Returns a map containing copies of the module's public members, indexed by name.

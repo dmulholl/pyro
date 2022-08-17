@@ -228,24 +228,24 @@ static Value logger_file(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
-    pyro_define_member_fn(vm, module, "debug", fn_debug, -1);
-    pyro_define_member_fn(vm, module, "info", fn_info, -1);
-    pyro_define_member_fn(vm, module, "warn", fn_warn, -1);
-    pyro_define_member_fn(vm, module, "error", fn_error, -1);
-    pyro_define_member_fn(vm, module, "fatal", fn_fatal, -1);
+    pyro_define_pub_member_fn(vm, module, "debug", fn_debug, -1);
+    pyro_define_pub_member_fn(vm, module, "info", fn_info, -1);
+    pyro_define_pub_member_fn(vm, module, "warn", fn_warn, -1);
+    pyro_define_pub_member_fn(vm, module, "error", fn_error, -1);
+    pyro_define_pub_member_fn(vm, module, "fatal", fn_fatal, -1);
 
-    pyro_define_member(vm, module, "DEBUG", MAKE_I64(PYRO_STD_LOG_LEVEL_DEBUG));
-    pyro_define_member(vm, module, "INFO", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_member(vm, module, "WARN", MAKE_I64(PYRO_STD_LOG_LEVEL_WARN));
-    pyro_define_member(vm, module, "ERROR", MAKE_I64(PYRO_STD_LOG_LEVEL_ERROR));
-    pyro_define_member(vm, module, "FATAL", MAKE_I64(PYRO_STD_LOG_LEVEL_FATAL));
+    pyro_define_pub_member(vm, module, "DEBUG", MAKE_I64(PYRO_STD_LOG_LEVEL_DEBUG));
+    pyro_define_pub_member(vm, module, "INFO", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
+    pyro_define_pub_member(vm, module, "WARN", MAKE_I64(PYRO_STD_LOG_LEVEL_WARN));
+    pyro_define_pub_member(vm, module, "ERROR", MAKE_I64(PYRO_STD_LOG_LEVEL_ERROR));
+    pyro_define_pub_member(vm, module, "FATAL", MAKE_I64(PYRO_STD_LOG_LEVEL_FATAL));
 
     ObjClass* logger_class = ObjClass_new(vm);
     if (!logger_class) {
         return;
     }
     logger_class->name = STR("Logger");
-    pyro_define_member(vm, module, "Logger", MAKE_OBJ(logger_class));
+    pyro_define_pub_member(vm, module, "Logger", MAKE_OBJ(logger_class));
 
     pyro_define_pub_field(vm, logger_class, "level", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
     pyro_define_pub_field(vm, logger_class, "timestamp", MAKE_OBJ(STR("[%Y-%m-%d %H:%M:%S]")));
