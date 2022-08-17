@@ -410,23 +410,136 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_DEFINE_GLOBAL: {
+            case OP_DEFINE_PRI_GLOBAL: {
+                ObjModule* module = frame->closure->module;
                 Value name = READ_CONSTANT();
-                ObjMap* globals = frame->closure->module->globals;
-                if (ObjMap_set(globals, name, pyro_peek(vm, 0), vm) == 0) {
-                    pyro_panic(vm, "out of memory");
+
+                if (AS_STR(name)->length == 1 && AS_STR(name)->bytes[0] == '_') {
+                    pyro_pop(vm);
+                    break;
                 }
+
+                if (ObjMap_contains(module->all_member_indexes, name, vm)) {
+                    pyro_panic(vm, "the global variable '%s' already exists", AS_STR(name)->bytes);
+                    break;
+                }
+
+                size_t member_index = module->members->count;
+                if (!ObjVec_append(module->members, pyro_peek(vm, 0), vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (ObjMap_set(module->all_member_indexes, name, MAKE_I64(member_index), vm) == 0) {
+                    module->members->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
                 pyro_pop(vm);
                 break;
             }
 
-            case OP_DEFINE_GLOBALS: {
+            case OP_DEFINE_PUB_GLOBAL: {
+                ObjModule* module = frame->closure->module;
+                Value name = READ_CONSTANT();
+
+                if (AS_STR(name)->length == 1 && AS_STR(name)->bytes[0] == '_') {
+                    pyro_pop(vm);
+                    break;
+                }
+
+                if (ObjMap_contains(module->all_member_indexes, name, vm)) {
+                    pyro_panic(vm, "the global variable '%s' already exists", AS_STR(name)->bytes);
+                    break;
+                }
+
+                size_t member_index = module->members->count;
+                if (!ObjVec_append(module->members, pyro_peek(vm, 0), vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (ObjMap_set(module->all_member_indexes, name, MAKE_I64(member_index), vm) == 0) {
+                    module->members->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (ObjMap_set(module->pub_member_indexes, name, MAKE_I64(member_index), vm) == 0) {
+                    ObjMap_remove(module->all_member_indexes, name, vm);
+                    module->members->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
+            case OP_DEFINE_PRI_GLOBALS: {
+                ObjModule* module = frame->closure->module;
                 uint8_t count = READ_BYTE();
-                ObjMap* globals = frame->closure->module->globals;
 
                 for (uint8_t i = 0; i < count; i++) {
                     Value name = READ_CONSTANT();
-                    if (ObjMap_set(globals, name, pyro_peek(vm, count - 1 - i), vm) == 0) {
+                    if (AS_STR(name)->length == 1 && AS_STR(name)->bytes[0] == '_') {
+                        continue;
+                    }
+
+                    if (ObjMap_contains(module->all_member_indexes, name, vm)) {
+                        pyro_panic(vm, "the global variable '%s' already exists", AS_STR(name)->bytes);
+                        break;
+                    }
+
+                    size_t member_index = module->members->count;
+                    if (!ObjVec_append(module->members, pyro_peek(vm, count - 1 - i), vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (ObjMap_set(module->all_member_indexes, name, MAKE_I64(member_index), vm) == 0) {
+                        module->members->count--;
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= count;
+                break;
+            }
+
+            case OP_DEFINE_PUB_GLOBALS: {
+                ObjModule* module = frame->closure->module;
+                uint8_t count = READ_BYTE();
+
+                for (uint8_t i = 0; i < count; i++) {
+                    Value name = READ_CONSTANT();
+
+                    if (AS_STR(name)->length == 1 && AS_STR(name)->bytes[0] == '_') {
+                        continue;
+                    }
+
+                    if (ObjMap_contains(module->all_member_indexes, name, vm)) {
+                        pyro_panic(vm, "the global variable '%s' already exists", AS_STR(name)->bytes);
+                        break;
+                    }
+
+                    size_t member_index = module->members->count;
+                    if (!ObjVec_append(module->members, pyro_peek(vm, count - 1 - i), vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (ObjMap_set(module->all_member_indexes, name, MAKE_I64(member_index), vm) == 0) {
+                        module->members->count--;
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (ObjMap_set(module->pub_member_indexes, name, MAKE_I64(member_index), vm) == 0) {
+                        ObjMap_remove(module->all_member_indexes, name, vm);
+                        module->members->count--;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
@@ -494,8 +607,12 @@ static void run(PyroVM* vm) {
                 ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
                 ObjStr* field_name = READ_STRING();
-                size_t field_index = class->default_field_values->count;
+                if (ObjMap_contains(class->all_field_indexes, MAKE_OBJ(field_name), vm)) {
+                    pyro_panic(vm, "the field '%s' already exists", field_name->bytes);
+                    break;
+                }
 
+                size_t field_index = class->default_field_values->count;
                 if (!ObjVec_append(class->default_field_values, default_value, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
@@ -520,8 +637,12 @@ static void run(PyroVM* vm) {
                 ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
                 ObjStr* field_name = READ_STRING();
-                size_t field_index = class->default_field_values->count;
+                if (ObjMap_contains(class->all_field_indexes, MAKE_OBJ(field_name), vm)) {
+                    pyro_panic(vm, "the field '%s' already exists", field_name->bytes);
+                    break;
+                }
 
+                size_t field_index = class->default_field_values->count;
                 if (!ObjVec_append(class->default_field_values, default_value, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
@@ -589,17 +710,21 @@ static void run(PyroVM* vm) {
 
             case OP_GET_GLOBAL: {
                 Value name = READ_CONSTANT();
-                ObjMap* globals = frame->closure->module->globals;
 
-                Value value;
-                if (!ObjMap_get(globals, name, &value, vm)) {
-                    if (!ObjMap_get(vm->globals, name, &value, vm)) {
-                        pyro_panic(vm, "undefined variable '%s'", AS_STR(name)->bytes);
-                        break;
-                    }
+                Value member_index;
+                if (ObjMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
+                    Value value = frame->closure->module->members->values[member_index.as.i64];
+                    pyro_push(vm, value);
+                    break;
                 }
 
-                pyro_push(vm, value);
+                Value value;
+                if (ObjMap_get(vm->superglobals, name, &value, vm)) {
+                    pyro_push(vm, value);
+                    break;
+                }
+
+                pyro_panic(vm, "undefined variable '%s'", AS_STR(name)->bytes);
                 break;
             }
 
@@ -626,16 +751,19 @@ static void run(PyroVM* vm) {
                     );
                     break;
                 }
-
                 ObjModule* module = AS_MOD(pyro_pop(vm));
 
-                Value value;
-                if (ObjMap_get(module->globals, member_name, &value, vm)) {
-                    pyro_push(vm, value);
+                Value member_index;
+                if (ObjMap_get(module->pub_member_indexes, member_name, &member_index, vm)) {
+                    pyro_push(vm, module->members->values[member_index.as.i64]);
                     break;
                 }
 
-                pyro_panic(vm, "module has no member '%s'", AS_STR(member_name)->bytes);
+                if (ObjMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
+                    pyro_panic(vm, "module member '%s' is private", AS_STR(member_name)->bytes);
+                } else {
+                    pyro_panic(vm, "module has no member '%s'", AS_STR(member_name)->bytes);
+                }
                 break;
             }
 
@@ -806,12 +934,35 @@ static void run(PyroVM* vm) {
                     supermod_modules_map = module_object->submodules;
                 }
 
-                ObjMap* current_module_globals = frame->closure->module->globals;
-                ObjMap* imported_module_globals = AS_MOD(module_value)->globals;
+                ObjModule* current_module = frame->closure->module;
+                ObjModule* imported_module = AS_MOD(module_value);
 
-                if (!ObjMap_copy_entries(imported_module_globals, current_module_globals, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    return;
+                for (size_t i = 0; i < imported_module->pub_member_indexes->entry_array_count; i++) {
+                    MapEntry* entry = &imported_module->pub_member_indexes->entry_array[i];
+                    if (IS_TOMBSTONE(entry->key)) {
+                        continue;
+                    }
+
+                    Value member_name = entry->key;
+                    Value member_index_in_imported_module = entry->value;
+                    Value value = imported_module->members->values[member_index_in_imported_module.as.i64];
+
+                    if (ObjMap_contains(current_module->all_member_indexes, member_name, vm)) {
+                        pyro_panic(vm, "the global variable '%s' already exists", AS_STR(member_name)->bytes);
+                        return;
+                    }
+
+                    size_t member_index_in_current_module = current_module->members->count;
+                    if (!ObjVec_append(current_module->members, value, vm)) {
+                        pyro_panic(vm, "out of memory");
+                        return;
+                    }
+
+                    if (ObjMap_set(current_module->all_member_indexes, member_name, MAKE_I64(member_index_in_current_module), vm) == 0) {
+                        current_module->members->count--;
+                        pyro_panic(vm, "out of memory");
+                        return;
+                    }
                 }
 
                 vm->stack_top -= module_count;
@@ -857,19 +1008,19 @@ static void run(PyroVM* vm) {
                     supermod_modules_map = module_object->submodules;
                 }
 
-                ObjMap* module_globals = AS_MOD(module_value)->globals;
+                ObjModule* module = AS_MOD(module_value);
 
                 for (uint8_t i = 0; i < member_count; i++) {
                     Value name = args[module_count + i];
-                    Value member;
-                    if (!ObjMap_get(module_globals, name, &member, vm)) {
+                    Value member_index;
+                    if (!ObjMap_get(module->all_member_indexes, name, &member_index, vm)) {
                         pyro_panic(
                             vm,
                             "member '%s' not found in module", AS_STR(name)->bytes
                         );
                         return;
                     }
-                    args[i] = member;
+                    args[i] = module->members->values[member_index.as.i64];
                 }
 
                 vm->stack_top -= module_count;
@@ -1373,6 +1524,10 @@ static void run(PyroVM* vm) {
                 ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
                 ObjStr* name = READ_STRING();
+                if (ObjMap_contains(class->pub_methods, MAKE_OBJ(name), vm)) {
+                    pyro_panic(vm, "cannot override public method '%s' as private", name->bytes);
+                    break;
+                }
 
                 if (ObjMap_set(class->all_methods, MAKE_OBJ(name), method, vm) == 0) {
                     pyro_panic(vm, "out of memory");
@@ -1392,6 +1547,12 @@ static void run(PyroVM* vm) {
                 ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
                 ObjStr* name = READ_STRING();
+                if (ObjMap_contains(class->all_methods, MAKE_OBJ(name), vm)) {
+                    if (!ObjMap_contains(class->pub_methods, MAKE_OBJ(name), vm)) {
+                        pyro_panic(vm, "cannot override private method '%s' as public", name->bytes);
+                        break;
+                    }
+                }
 
                 if (ObjMap_set(class->all_methods, MAKE_OBJ(name), method, vm) == 0) {
                     pyro_panic(vm, "out of memory");
@@ -1559,12 +1720,20 @@ static void run(PyroVM* vm) {
 
             case OP_SET_GLOBAL: {
                 Value name = READ_CONSTANT();
-                ObjMap* globals = frame->closure->module->globals;
-                if (!ObjMap_update_entry(globals, name, pyro_peek(vm, 0), vm)) {
-                    if (!ObjMap_update_entry(vm->globals, name, pyro_peek(vm, 0), vm)) {
-                        pyro_panic(vm, "undefined variable '%s'", AS_STR(name)->bytes);
-                    }
+                Value value = pyro_peek(vm, 0);
+
+                Value member_index;
+                if (ObjMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
+                    frame->closure->module->members->values[member_index.as.i64] = value;
+                    break;
                 }
+
+                if (ObjMap_contains(vm->superglobals, name, vm)) {
+                    pyro_panic(vm, "cannot assign to superglobal '%s'", AS_STR(name)->bytes);
+                    break;
+                }
+
+                pyro_panic(vm, "undefined variable '%s'", AS_STR(name)->bytes);
                 break;
             }
 
@@ -1905,8 +2074,9 @@ void pyro_run_main_func(PyroVM* vm) {
         return;
     }
 
-    Value main_value;
-    if (ObjMap_get(vm->main_module->globals, MAKE_OBJ(main_string), &main_value, vm)) {
+    Value main_index;
+    if (ObjMap_get(vm->main_module->all_member_indexes, MAKE_OBJ(main_string), &main_index, vm)) {
+        Value main_value = vm->main_module->members->values[main_index.as.i64];
         if (IS_CLOSURE(main_value)) {
             if (AS_CLOSURE(main_value)->fn->arity == 0) {
                 pyro_push(vm, main_value);
@@ -1914,7 +2084,7 @@ void pyro_run_main_func(PyroVM* vm) {
                 run(vm);
                 pyro_pop(vm);
             } else {
-                pyro_panic(vm, "invalid $main(), must take 0 arguments");
+                pyro_panic(vm, "invalid $main() function, must take 0 arguments");
             }
         } else {
             pyro_panic(vm, "invalid $main, must be a function");
@@ -1927,12 +2097,20 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
     int tests_passed = 0;
     int tests_failed = 0;
 
-    for (size_t i = 0; i < vm->main_module->globals->entry_array_count; i++) {
-        MapEntry* entry = &vm->main_module->globals->entry_array[i];
-        if (IS_STR(entry->key) && IS_CLOSURE(entry->value)) {
-            ObjStr* name = AS_STR(entry->key);
+    for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
+        MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        Value member_name = entry->key;
+        Value member_index = entry->value;
+        Value member_value = vm->main_module->members->values[member_index.as.i64];
+
+        if (IS_CLOSURE(member_value)) {
+            ObjStr* name = AS_STR(member_name);
             if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
-                if (AS_CLOSURE(entry->value)->fn->arity > 0) {
+                if (AS_CLOSURE(member_value)->fn->arity > 0) {
                     pyro_stdout_write_f(vm, " · Invalid test function (%s), too many args.\n", name->bytes);
                     tests_failed += 1;
                     continue;
@@ -1944,7 +2122,7 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
                 vm->hard_panic = false;
                 vm->exit_code = 0;
 
-                pyro_push(vm, entry->value);
+                pyro_push(vm, member_value);
                 call_value(vm, 0);
                 run(vm);
                 pyro_pop(vm);
@@ -1985,12 +2163,20 @@ void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
 void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
     size_t max_name_length = 0;
 
-    for (size_t i = 0; i < vm->main_module->globals->entry_array_count; i++) {
-        MapEntry* entry = &vm->main_module->globals->entry_array[i];
-        if (IS_STR(entry->key) && IS_CLOSURE(entry->value)) {
-            ObjStr* name = AS_STR(entry->key);
+    for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
+        MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        Value member_name = entry->key;
+        Value member_index = entry->value;
+        Value member_value = vm->main_module->members->values[member_index.as.i64];
+
+        if (IS_CLOSURE(member_value)) {
+            ObjStr* name = AS_STR(member_name);
             if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
-                if (AS_CLOSURE(entry->value)->fn->arity > 0) {
+                if (AS_CLOSURE(member_value)->fn->arity > 0) {
                     pyro_stdout_write_f(vm, " · Invalid time function (%s), too many args.\n", name->bytes);
                     return;
                 }
@@ -2001,15 +2187,23 @@ void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
         }
     }
 
-    for (size_t i = 0; i < vm->main_module->globals->entry_array_count; i++) {
-        MapEntry* entry = &vm->main_module->globals->entry_array[i];
-        if (IS_STR(entry->key) && IS_CLOSURE(entry->value)) {
-            ObjStr* name = AS_STR(entry->key);
+    for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
+        MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        Value member_name = entry->key;
+        Value member_index = entry->value;
+        Value member_value = vm->main_module->members->values[member_index.as.i64];
+
+        if (IS_CLOSURE(member_value)) {
+            ObjStr* name = AS_STR(member_name);
             if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                 double start_time = clock();
 
                 for (size_t j = 0; j < num_iterations; j++) {
-                    pyro_push(vm, entry->value);
+                    pyro_push(vm, member_value);
                     call_value(vm, 0);
                     run(vm);
                     pyro_pop(vm);

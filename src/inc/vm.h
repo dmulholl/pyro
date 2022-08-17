@@ -80,7 +80,7 @@ struct PyroVM {
     MT64* mt64;
 
     // Stores global functions and variables, available in all modules.
-    ObjMap* globals;
+    ObjMap* superglobals;
 
     // The tree of imported modules.
     ObjMap* modules;

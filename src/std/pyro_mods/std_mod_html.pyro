@@ -1,5 +1,5 @@
 # Escapes a string so it can be safely used inside HTML tags.
-def esc_html(text: str) -> str {
+pub def esc_html(text: str) -> str {
     return text
         :replace("&", "&amp;")
         :replace("<", "&lt;")
@@ -7,7 +7,7 @@ def esc_html(text: str) -> str {
 }
 
 # Escapes a string so it can be safely used inside a HTML attribute.
-def esc_attr(text: str) -> str {
+pub def esc_attr(text: str) -> str {
     return text
         :replace("&", "&amp;")
         :replace("<", "&lt;")

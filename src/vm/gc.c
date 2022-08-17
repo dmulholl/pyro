@@ -127,7 +127,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_err);
 
     // Other object fields.
-    mark_object(vm, (Obj*)vm->globals);
+    mark_object(vm, (Obj*)vm->superglobals);
     mark_object(vm, (Obj*)vm->modules);
     mark_object(vm, (Obj*)vm->strings);
     mark_object(vm, (Obj*)vm->main_module);
@@ -251,8 +251,10 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
         case OBJ_MODULE: {
             ObjModule* module = (ObjModule*)object;
-            mark_object(vm, (Obj*)module->globals);
             mark_object(vm, (Obj*)module->submodules);
+            mark_object(vm, (Obj*)module->members);
+            mark_object(vm, (Obj*)module->all_member_indexes);
+            mark_object(vm, (Obj*)module->pub_member_indexes);
             break;
         }
 

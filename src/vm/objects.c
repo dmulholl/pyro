@@ -1062,7 +1062,8 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BREAK:
         case OP_DEFINE_PRI_FIELD:
         case OP_DEFINE_PUB_FIELD:
-        case OP_DEFINE_GLOBAL:
+        case OP_DEFINE_PRI_GLOBAL:
+        case OP_DEFINE_PUB_GLOBAL:
         case OP_DEFINE_PRI_METHOD:
         case OP_DEFINE_PUB_METHOD:
         case OP_GET_FIELD:
@@ -1106,7 +1107,8 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         }
 
         // 1 byte for the count, plus two for each constant index.
-        case OP_DEFINE_GLOBALS: {
+        case OP_DEFINE_PRI_GLOBALS:
+        case OP_DEFINE_PUB_GLOBALS: {
             uint8_t count = fn->code[ip + 1];
             return 1 + count * 2;
         }
@@ -1170,16 +1172,28 @@ ObjModule* ObjModule_new(PyroVM* vm) {
     }
 
     module->obj.class = vm->class_module;
-    module->globals = NULL;
     module->submodules = NULL;
-
-    module->globals = ObjMap_new(vm);
-    if (!module->globals) {
-        return NULL;
-    }
+    module->members = NULL;
+    module->all_member_indexes = NULL;
+    module->pub_member_indexes = NULL;
 
     module->submodules = ObjMap_new(vm);
     if (!module->submodules) {
+        return NULL;
+    }
+
+    module->members = ObjVec_new(vm);
+    if (!module->members) {
+        return NULL;
+    }
+
+    module->all_member_indexes = ObjMap_new(vm);
+    if (!module->all_member_indexes) {
+        return NULL;
+    }
+
+    module->pub_member_indexes = ObjMap_new(vm);
+    if (!module->pub_member_indexes) {
         return NULL;
     }
 

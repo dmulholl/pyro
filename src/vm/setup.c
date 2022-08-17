@@ -46,7 +46,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->exit_flag = false;
     vm->frame_count = 0;
     vm->gc_disallows = 0;
-    vm->globals = NULL;
+    vm->superglobals = NULL;
     vm->grey_capacity = 0;
     vm->grey_count = 0;
     vm->grey_stack = NULL;
@@ -219,7 +219,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     }
 
     // All other object fields.
-    vm->globals = ObjMap_new(vm);
+    vm->superglobals = ObjMap_new(vm);
     vm->modules = ObjMap_new(vm);
     vm->main_module = ObjModule_new(vm);
     vm->import_roots = ObjVec_new(vm);
@@ -378,8 +378,21 @@ bool pyro_define_member(PyroVM* vm, ObjModule* module, const char* name, Value v
     if (!name_string) {
         return false;
     }
+    Value name_value = MAKE_OBJ(name_string);
 
-    if (ObjMap_set(module->globals, MAKE_OBJ(name_string), value, vm) == 0) {
+    size_t member_index = module->members->count;
+    if (!ObjVec_append(module->members, value, vm)) {
+        return false;
+    }
+
+    if (ObjMap_set(module->all_member_indexes, name_value, MAKE_I64(member_index), vm) == 0) {
+        module->members->count--;
+        return false;
+    }
+
+    if (ObjMap_set(module->pub_member_indexes, name_value, MAKE_I64(member_index), vm) == 0) {
+        ObjMap_remove(module->all_member_indexes, name_value, vm);
+        module->members->count--;
         return false;
     }
 
@@ -493,7 +506,7 @@ bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
         return false;
     }
 
-    if (ObjMap_set(vm->globals, MAKE_OBJ(name_string), value, vm) == 0) {
+    if (ObjMap_set(vm->superglobals, MAKE_OBJ(name_string), value, vm) == 0) {
         return false;
     }
 

@@ -177,8 +177,16 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm);
 
 struct ObjModule {
     Obj obj;
-    ObjMap* globals;
     ObjMap* submodules;
+
+    // Stores the module's global members.
+    ObjVec* members;
+
+    // Maps [ObjStr] names to [i64] indexes in the module's [members] vector.
+    // - [all_member_indexes] contains indexes for both public and private members.
+    // - [pub_member_indexes] contains indexes for only public members.
+    ObjMap* all_member_indexes;
+    ObjMap* pub_member_indexes;
 };
 
 ObjModule* ObjModule_new(PyroVM* vm);

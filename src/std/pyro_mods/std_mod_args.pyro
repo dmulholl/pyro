@@ -17,7 +17,7 @@ class ArgStream {
 }
 
 
-class Flag {
+pub class Flag {
     pub var count: i64 = 0;
 
     pub def found() -> bool {
@@ -30,7 +30,7 @@ class Flag {
 }
 
 
-class Option {
+pub class Option {
     var parser: call?(str) -> any;
     var default: any;
     var values: vec[any];
@@ -85,7 +85,7 @@ class Option {
 }
 
 
-class ArgParser {
+pub class ArgParser {
     pub var helptext: str?;
     pub var version: str?;
     pub var callback: call?(str, ArgParser);

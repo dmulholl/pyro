@@ -8,7 +8,7 @@
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
-    #define PYRO_VERSION_LABEL "alpha"
+    #define PYRO_VERSION_LABEL "beta"
 #endif
 
 // Build label, e.g. "release", "debug".

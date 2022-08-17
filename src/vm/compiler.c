@@ -521,22 +521,24 @@ static void mark_initialized_multi(Parser* parser, size_t count) {
 }
 
 
-static void define_variable(Parser* parser, uint16_t index) {
+static void define_variable(Parser* parser, uint16_t index, Access access) {
     if (parser->compiler->scope_depth > 0) {
         mark_initialized(parser);
         return;
     }
-    emit_byte(parser, OP_DEFINE_GLOBAL);
+    OpCode opcode = (access == PUBLIC) ? OP_DEFINE_PUB_GLOBAL : OP_DEFINE_PRI_GLOBAL;
+    emit_byte(parser, opcode);
     emit_u16be(parser, index);
 }
 
 
-static void define_variables(Parser* parser, uint16_t* indexes, size_t count) {
+static void define_variables(Parser* parser, uint16_t* indexes, size_t count, Access access) {
     if (parser->compiler->scope_depth > 0) {
         mark_initialized_multi(parser, count);
         return;
     }
-    emit_u8_u8(parser, OP_DEFINE_GLOBALS, count);
+    OpCode opcode = (access == PUBLIC) ? OP_DEFINE_PUB_GLOBALS : OP_DEFINE_PRI_GLOBALS;
+    emit_u8_u8(parser, opcode, count);
     for (size_t i = 0; i < count; i++) {
         emit_u16be(parser, indexes[i]);
     }
@@ -1508,7 +1510,7 @@ static void parse_expression_stmt(Parser* parser) {
 }
 
 
-static void parse_unpacking_declaration(Parser* parser) {
+static void parse_unpacking_declaration(Parser* parser, Access access) {
     uint16_t indexes[16];
     size_t count = 0;
 
@@ -1529,14 +1531,14 @@ static void parse_unpacking_declaration(Parser* parser) {
     parse_expression(parser, true, true);
     emit_u8_u8(parser, OP_UNPACK, count);
 
-    define_variables(parser, indexes, count);
+    define_variables(parser, indexes, count, access);
 }
 
 
-static void parse_var_declaration(Parser* parser) {
+static void parse_var_declaration(Parser* parser, Access access) {
     do {
         if (match(parser, TOKEN_LEFT_PAREN)) {
-            parse_unpacking_declaration(parser);
+            parse_unpacking_declaration(parser, access);
         } else {
             uint16_t index = consume_variable_name(parser, "expected variable name");
             if (match(parser, TOKEN_COLON)) {
@@ -1547,7 +1549,7 @@ static void parse_var_declaration(Parser* parser) {
             } else {
                 emit_byte(parser, OP_LOAD_NULL);
             }
-            define_variable(parser, index);
+            define_variable(parser, index, access);
         }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "expected ';' after variable declaration");
@@ -1643,14 +1645,14 @@ static void parse_import_stmt(Parser* parser) {
         for (int i = 0; i < member_count; i++) {
             declare_variable(parser, member_names[i]);
         }
-        define_variables(parser, member_indexes, member_count);
+        define_variables(parser, member_indexes, member_count, PRIVATE);
     } else {
         if (alias_count > 1) {
             ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement");
             return;
         }
         declare_variable(parser, module_name);
-        define_variable(parser, module_index);
+        define_variable(parser, module_index, PRIVATE);
     }
 
     consume(parser, TOKEN_SEMICOLON, "expected ';' after import statement");
@@ -1820,7 +1822,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     if (match(parser, TOKEN_SEMICOLON)) {
         // No initializer clause.
     } else if (match(parser, TOKEN_VAR)) {
-        parse_var_declaration(parser);
+        parse_var_declaration(parser, PRIVATE);
     } else {
         parse_expression_stmt(parser);
     }
@@ -2002,7 +2004,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
-        define_variable(parser, index);
+        define_variable(parser, index, PRIVATE);
         compiler.fn->arity++;
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after function parameters");
@@ -2043,11 +2045,11 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 }
 
 
-static void parse_function_declaration(Parser* parser) {
+static void parse_function_declaration(Parser* parser, Access access) {
     uint16_t index = consume_variable_name(parser, "expected function name");
     mark_initialized(parser);
     parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
-    define_variable(parser, index);
+    define_variable(parser, index, access);
 }
 
 
@@ -2094,7 +2096,7 @@ static void parse_field_declaration(Parser* parser, Access access) {
 }
 
 
-static void parse_class_declaration(Parser* parser) {
+static void parse_class_declaration(Parser* parser, Access access) {
     consume(parser, TOKEN_IDENTIFIER, "expected class name");
     Token class_name = parser->previous_token;
 
@@ -2102,7 +2104,7 @@ static void parse_class_declaration(Parser* parser) {
     declare_variable(parser, parser->previous_token);
 
     emit_u8_u16be(parser, OP_MAKE_CLASS, index);
-    define_variable(parser, index);
+    define_variable(parser, index, access);
 
     // Push a new class compiler onto the implicit linked-list stack.
     ClassCompiler class_compiler;
@@ -2119,7 +2121,7 @@ static void parse_class_declaration(Parser* parser) {
         // declarations so it can be captured by the upvalue machinery.
         begin_scope(parser);
         add_local(parser, syntoken("super"));
-        define_variable(parser, 0);
+        define_variable(parser, 0, PRIVATE);
 
         emit_load_named_variable(parser, class_name);
         emit_byte(parser, OP_INHERIT);
@@ -2219,45 +2221,81 @@ static void parse_statement(Parser* parser) {
         return;
     }
 
-    if (match(parser, TOKEN_LEFT_BRACE)) {
-        begin_scope(parser);
-        parse_block(parser);
-        end_scope(parser);
-    } else if (match(parser, TOKEN_VAR)) {
-        parse_var_declaration(parser);
-    } else if (match(parser, TOKEN_DEF)) {
-        parse_function_declaration(parser);
-    } else if (match(parser, TOKEN_CLASS)) {
-        parse_class_declaration(parser);
-    } else if (match(parser, TOKEN_ECHO)) {
-        parse_echo_stmt(parser);
-    } else if (match(parser, TOKEN_ASSERT)) {
-        parse_assert_stmt(parser);
-    } else if (match(parser, TOKEN_IF)) {
-        parse_if_stmt(parser);
-    } else if (match(parser, TOKEN_WHILE)) {
-        parse_while_stmt(parser);
-    } else if (match(parser, TOKEN_LOOP)) {
-        if (match(parser, TOKEN_LEFT_BRACE)) {
-            parse_infinite_loop_stmt(parser);
-        } else {
-            parse_c_style_loop_stmt(parser);
+    if (match(parser, TOKEN_PUB)) {
+        if (parser->compiler->type != TYPE_MODULE || parser->compiler->scope_depth > 0) {
+            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pub', only valid at global scope");
+            return;
         }
-    } else if (match(parser, TOKEN_FOR)) {
-        parse_for_in_stmt(parser);
-    } else if (match(parser, TOKEN_RETURN)) {
-        parse_return_stmt(parser);
-    } else if (match(parser, TOKEN_BREAK)) {
-        parse_break_stmt(parser);
-    } else if (match(parser, TOKEN_CONTINUE)) {
-        parse_continue_stmt(parser);
-    } else if (match(parser, TOKEN_IMPORT)) {
-        parse_import_stmt(parser);
-    } else if (match(parser, TOKEN_TYPEDEF)) {
-        parse_typedef_stmt(parser);
-    } else {
-        parse_expression_stmt(parser);
-        parser->num_expression_statements++;
+        if (match(parser, TOKEN_VAR)) {
+            parse_var_declaration(parser, PUBLIC);
+        } else if (match(parser, TOKEN_DEF)) {
+            parse_function_declaration(parser, PUBLIC);
+        } else if (match(parser, TOKEN_CLASS)) {
+            parse_class_declaration(parser, PUBLIC);
+        } else {
+            ERROR_AT_NEXT_TOKEN("unexpected token after 'pub'");
+            return;
+        }
+    }
+
+    else if (match(parser, TOKEN_PRI)) {
+        if (parser->compiler->type != TYPE_MODULE || parser->compiler->scope_depth > 0) {
+            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pri', only valid at global scope");
+            return;
+        }
+        if (match(parser, TOKEN_VAR)) {
+            parse_var_declaration(parser, PRIVATE);
+        } else if (match(parser, TOKEN_DEF)) {
+            parse_function_declaration(parser, PRIVATE);
+        } else if (match(parser, TOKEN_CLASS)) {
+            parse_class_declaration(parser, PRIVATE);
+        } else {
+            ERROR_AT_NEXT_TOKEN("unexpected token after 'pri'");
+            return;
+        }
+    }
+
+    else {
+        if (match(parser, TOKEN_LEFT_BRACE)) {
+            begin_scope(parser);
+            parse_block(parser);
+            end_scope(parser);
+        } else if (match(parser, TOKEN_VAR)) {
+            parse_var_declaration(parser, PRIVATE);
+        } else if (match(parser, TOKEN_DEF)) {
+            parse_function_declaration(parser, PRIVATE);
+        } else if (match(parser, TOKEN_CLASS)) {
+            parse_class_declaration(parser, PRIVATE);
+        } else if (match(parser, TOKEN_ECHO)) {
+            parse_echo_stmt(parser);
+        } else if (match(parser, TOKEN_ASSERT)) {
+            parse_assert_stmt(parser);
+        } else if (match(parser, TOKEN_IF)) {
+            parse_if_stmt(parser);
+        } else if (match(parser, TOKEN_WHILE)) {
+            parse_while_stmt(parser);
+        } else if (match(parser, TOKEN_LOOP)) {
+            if (match(parser, TOKEN_LEFT_BRACE)) {
+                parse_infinite_loop_stmt(parser);
+            } else {
+                parse_c_style_loop_stmt(parser);
+            }
+        } else if (match(parser, TOKEN_FOR)) {
+            parse_for_in_stmt(parser);
+        } else if (match(parser, TOKEN_RETURN)) {
+            parse_return_stmt(parser);
+        } else if (match(parser, TOKEN_BREAK)) {
+            parse_break_stmt(parser);
+        } else if (match(parser, TOKEN_CONTINUE)) {
+            parse_continue_stmt(parser);
+        } else if (match(parser, TOKEN_IMPORT)) {
+            parse_import_stmt(parser);
+        } else if (match(parser, TOKEN_TYPEDEF)) {
+            parse_typedef_stmt(parser);
+        } else {
+            parse_expression_stmt(parser);
+            parser->num_expression_statements++;
+        }
     }
 
     parser->num_statements++;

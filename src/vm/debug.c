@@ -116,11 +116,12 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
 
             return ip;
         }
-        case OP_DEFINE_GLOBALS: {
+        case OP_DEFINE_PRI_GLOBALS:
+        case OP_DEFINE_PUB_GLOBALS: {
             uint8_t count = fn->code[ip + 1];
             ip += 2;
 
-            pyro_stdout_write_f(vm, "%-24s %4d\n", "OP_DEFINE_GLOBALS", count);
+            pyro_stdout_write_f(vm, "%-24s %4d\n", "OP_DEFINE_{PRI/PUB}_GLOBALS", count);
 
             for (uint8_t i = 0; i < count; i++) {
                 uint16_t index = (fn->code[ip] << 8) | fn->code[ip + 1];
@@ -132,8 +133,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
 
             return ip;
         }
-        case OP_DEFINE_GLOBAL:
-            return constant_instruction(vm, "OP_DEFINE_GLOBAL", fn, ip);
+        case OP_DEFINE_PRI_GLOBAL:
+            return constant_instruction(vm, "OP_DEFINE_PRI_GLOBAL", fn, ip);
+        case OP_DEFINE_PUB_GLOBAL:
+            return constant_instruction(vm, "OP_DEFINE_PUB_GLOBAL", fn, ip);
         case OP_DUP:
             return atomic_instruction(vm, "OP_DUP", ip);
         case OP_DUP_2:

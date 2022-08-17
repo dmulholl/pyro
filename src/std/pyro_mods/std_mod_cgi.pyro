@@ -4,7 +4,7 @@ import $std::pyro;
 var url_reserved_chars = " !#$%&'()*+,/:;=?@[]":bytes():to_set();
 
 
-def url_encode(input: str) -> str {
+pub def url_encode(input: str) -> str {
     var buf = $buf();
 
     for byte in input:bytes() {
@@ -19,7 +19,7 @@ def url_encode(input: str) -> str {
 }
 
 
-def url_decode(input: str) -> str|err {
+pub def url_decode(input: str) -> str|err {
     var index = 0;
     var count = input:count();
     var buf = $buf();
@@ -50,7 +50,7 @@ def url_decode(input: str) -> str|err {
 }
 
 
-class Request {
+pub class Request {
     pub var method: str;
     pub var content_type: str;
 
@@ -119,7 +119,7 @@ class Request {
 }
 
 
-class Response {
+pub class Response {
     var headers: vec[str];
     var body: buf;
 
