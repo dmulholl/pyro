@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.0-alpha</p>
+                <p class="version">Version 0.8.0-beta</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -576,14 +576,14 @@ Class definitions look like this:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;{} is a {}.&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">role</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>

@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.0-alpha</p>
+                <p class="version">Version 0.8.0-beta</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -82,10 +82,20 @@ Methods
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the module contains a global variable named <code>name</code>, otherwise <code>false</code>.
+Returns <code>true</code> if the module contains a member named <code>name</code>, otherwise <code>false</code>.
 </p>
 <p>
 (You can also test for containment using the <code>in</code> keyword.)
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:iter() -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the module's public member names as strings.
 </p>
 </dd>
 </div>
@@ -95,7 +105,7 @@ Returns <code>true</code> if the module contains a global variable named <code>n
 </dt>
 <dd>
 <p>
-Returns the value of the global variable <code>name</code>, or an <code>err</code> if <code>name</code> is not defined.
+Returns the value of the member <code>name</code>, or an <code>err</code> if <code>name</code> is not defined.
 </p>
 </dd>
 </div>
@@ -105,7 +115,7 @@ Returns the value of the global variable <code>name</code>, or an <code>err</cod
 </dt>
 <dd>
 <p>
-Returns a map containing copies of the module's global variables, indexed by name.
+Returns a map containing copies of the module's public members, indexed by name.
 </p>
 </dd>
 </div>

@@ -374,14 +374,14 @@ Class definitions look like this:
 
 ::: code pyro
     class Person {
-        var name;
-        var role = "programmer";
+        pub var name;
+        pub var role = "programmer";
 
         def $init(name) {
             self.name = name;
         }
 
-        def info() {
+        pub def info() {
             $println("{} is a {}.", self.name, self.role);
         }
     }
