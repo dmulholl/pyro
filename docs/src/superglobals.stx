@@ -500,6 +500,39 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$stderr() -> file` <br> `$stderr(arg: file)`  ]]
+
+    Gets or sets the standard error stream.
+
+    * If called with no arguments, returns the `file` object representing the standard error stream.
+      By default, this is a `file` object wrapping `STDERR`.
+
+    * If called with one argument, sets the standard error stream to `arg`.
+
+
+
+[[ `$stdin() -> file` <br> `$stdin(arg: file)`  ]]
+
+    Gets or sets the standard input stream.
+
+    * If called with no arguments, returns the `file` object representing the standard input stream.
+      By default, this is a `file` object wrapping `STDIN`.
+
+    * If called with one argument, sets the standard input stream to `arg`.
+
+
+
+[[ `$stdout() -> file` <br> `$stdout(arg: file)`  ]]
+
+    Gets or sets the standard output stream.
+
+    * If called with no arguments, returns the `file` object representing the standard output stream.
+      By default, this is a `file` object wrapping `STDOUT`.
+
+    * If called with one argument, sets the standard output stream to `arg`.
+
+
+
 [[ `$str(arg: any) -> str` ]]
 
     Stringifies the argument, i.e. returns its default string representation.
