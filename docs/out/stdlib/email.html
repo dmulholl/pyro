@@ -74,6 +74,9 @@ Example
 <span class="c1"># Write the email&#39;s content to its `body` buffer.</span>
 <span class="nx">mail</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;This is the email&#39;s content.&quot;</span><span class="p">);</span>
 
+<span class="c1"># Optional: print the email&#39;s raw text.</span>
+<span class="k">echo</span> <span class="nx">mail</span><span class="p">;</span>
+
 <span class="c1"># Send the email.</span>
 <span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">mail</span><span class="p">:</span><span class="nx">send</span><span class="p">();</span>
 <span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
@@ -135,19 +138,6 @@ Alternatively, the argument can combine a name and an email address, e.g.
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">mail</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;John Doe &lt;johndoe@example.com&gt;&quot;</span><span class="p">);</span>
 </pre>
-<p>
-Returns <code>self</code> to allow chaining.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:print() -&gt; Email</code>
-</dt>
-<dd>
-<p>
-Prints the email's raw text.
-</p>
 <p>
 Returns <code>self</code> to allow chaining.
 </p>

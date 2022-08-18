@@ -1,4 +1,4 @@
-class Email {
+pub class Email {
     var headers: vec[str];
     var to_addr: str;
     var from_addr: str;
@@ -8,6 +8,14 @@ class Email {
     def $init() {
         self.headers = $vec();
         self.body = $buf();
+    }
+
+    def $str() {
+        var msg = self:make_message();
+        if $is_err(msg) {
+            return $fmt("<instance Email: {}>", msg);
+        }
+        return msg:to_str();
     }
 
     pub def to(email_addr: str) -> Email {
@@ -32,16 +40,6 @@ class Email {
 
     pub def write(*args) -> Email {
         self.body:write(*args);
-        return self;
-    }
-
-    pub def print() -> Email {
-        var msg = self:make_message();
-        if $is_err(msg) {
-            $println("<instance Email: {}>", msg);
-        } else {
-            $println(msg);
-        }
         return self;
     }
 

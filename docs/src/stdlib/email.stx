@@ -26,6 +26,9 @@ A utility module for sending email. Uses the system's `sendmail` command.
     # Write the email's content to its `body` buffer.
     mail:write("This is the email's content.");
 
+    # Optional: print the email's raw text.
+    echo mail;
+
     # Send the email.
     var result = mail:send();
     if $is_err(result) {
@@ -63,12 +66,6 @@ A utility module for sending email. Uses the system's `sendmail` command.
 
     ::: code pyro
         mail:from("John Doe <johndoe@example.com>");
-
-    Returns `self` to allow chaining.
-
-[[ `:print() -> Email` ]]
-
-    Prints the email's raw text.
 
     Returns `self` to allow chaining.
 
