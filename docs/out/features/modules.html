@@ -53,6 +53,9 @@
             </header>
             <ul class="stx-toc">
 <li>
+<a href="#public-private-members">Public/Private Members</a>
+</li>
+<li>
 <a href="#submodules">Submodules</a>
 </li>
 <li>
@@ -92,6 +95,32 @@ Use the member access operator <code>::</code> to access a module's top-level va
 <p>
 The imported module's name becomes a variable in the importing scope.
 </p>
+<h3 id="public-private-members">
+Public/Private Members
+</h3>
+<p>
+A module's top-level members (variables, functions, and classes) are private by default
+&mdash; use the <code>pub</code> keyword to make them public, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+
+<span class="kd">pub</span> <span class="kd">def</span> <span class="nx">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">&quot;hello world!&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">pub</span> <span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">value</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<ul>
+<li>
+Public members can be accessed from inside or outside the module.
+</li>
+<li>
+Private members can only be accessed from inside the module.
+</li>
+</ul>
 <h3 id="submodules">
 Submodules
 </h3>

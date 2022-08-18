@@ -95,8 +95,8 @@ Fields and methods are private by default --- use the `pub` keyword to make them
         }
     }
 
-Public members can be accessed from inside or outside the class;
-private members can only be accessed inside the class using `self` or `super`.
+* Public members can be accessed from inside or outside the class.
+* Private members can only be accessed from inside the class using `self` or `super`.
 
 
 

@@ -21,6 +21,26 @@ Use the member access operator `::` to access a module's top-level variables, fu
 The imported module's name becomes a variable in the importing scope.
 
 
+### Public/Private Members
+
+A module's top-level members (variables, functions, and classes) are private by default
+--- use the `pub` keyword to make them public, e.g.
+
+::: code pyro
+    pub var number = 123;
+
+    pub def func() {
+        return "hello world!";
+    }
+
+    pub class Object {
+        var value;
+    }
+
+
+* Public members can be accessed from inside or outside the module.
+* Private members can only be accessed from inside the module.
+
 
 ### Submodules
 
