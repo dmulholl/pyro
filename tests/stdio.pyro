@@ -1,28 +1,22 @@
-import $std::pyro;
-
-var stdin = pyro::stdin();
-var stdout = pyro::stdout();
-var stderr = pyro::stderr();
-
-assert $is_file(stdin);
-assert $is_file(stdout);
-assert $is_file(stderr) || $is_null(stderr);
+assert $is_file($stdin());
+assert $is_file($stdout());
+assert $is_file($stderr()) || $is_null($stderr());
 
 var echo_buf = $buf();
-pyro::set_stdout(echo_buf);
+$stdout(echo_buf);
 echo "foo";
 echo "bar";
 echo "baz", "bam";
 assert $str(echo_buf) == "foo\nbar\nbaz bam\n";
 
 var print_buf = $buf();
-pyro::set_stdout(print_buf);
+$stdout(print_buf);
 assert $print("foo") == 3;
 assert $println("bar") == 4;
 assert $str(print_buf) == "foobar\n";
 
 var eprint_buf = $buf();
-pyro::set_stderr(eprint_buf);
+$stderr(eprint_buf);
 assert $eprint("foo") == 3;
 assert $eprintln("bar") == 4;
 assert $str(eprint_buf) == "foobar\n";

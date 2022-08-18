@@ -20,7 +20,6 @@ assert $type($err()) == "err";
 
 import $std::pyro;
 assert $type(pyro) == "module";
-assert $type(pyro::stdin()) == "file";
 
 
 def func() {

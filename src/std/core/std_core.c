@@ -1105,6 +1105,72 @@ static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        if (vm->stdout_stream) {
+            return MAKE_OBJ(vm->stdout_stream);
+        }
+        return MAKE_NULL();
+    }
+
+    if (arg_count == 1) {
+        if (!(IS_FILE(args[0]) || IS_BUF(args[0]))) {
+            pyro_panic(vm, "$stdout(): invalid argument, expected a file");
+            return MAKE_NULL();
+        }
+        vm->stdout_stream = AS_OBJ(args[0]);
+        return MAKE_NULL();
+    }
+
+    pyro_panic(vm, "$stdout(): expected 0 or 1 arguments, found %zu", arg_count);
+    return MAKE_NULL();
+}
+
+
+static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        if (vm->stderr_stream) {
+            return MAKE_OBJ(vm->stderr_stream);
+        }
+        return MAKE_NULL();
+    }
+
+    if (arg_count == 1) {
+        if (!(IS_FILE(args[0]) || IS_BUF(args[0]))) {
+            pyro_panic(vm, "$stderr(): invalid argument, expected a file");
+            return MAKE_NULL();
+        }
+        vm->stderr_stream = AS_OBJ(args[0]);
+        return MAKE_NULL();
+    }
+
+    pyro_panic(vm, "$stderr(): expected 0 or 1 arguments, found %zu", arg_count);
+    return MAKE_NULL();
+}
+
+
+static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
+    if (arg_count == 0) {
+        if (vm->stdin_stream) {
+            return MAKE_OBJ(vm->stdin_stream);
+        }
+        return MAKE_NULL();
+    }
+
+    if (arg_count == 1) {
+        if (!IS_FILE(args[0])) {
+            pyro_panic(vm, "$stdin(): invalid argument, expected a file");
+            return MAKE_NULL();
+        }
+        vm->stdin_stream = AS_OBJ(args[0]);
+        return MAKE_NULL();
+    }
+
+    pyro_panic(vm, "$stdin(): expected 0 or 1 arguments, found %zu", arg_count);
+    return MAKE_NULL();
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1170,4 +1236,8 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_global_fn(vm, "$write_file", fn_write_file, 2);
     pyro_define_global_fn(vm, "$is_func", fn_is_func, 1);
     pyro_define_global_fn(vm, "$is_method", fn_is_method, 1);
+    pyro_define_global_fn(vm, "$stdin", fn_stdin, -1);
+    pyro_define_global_fn(vm, "$stdout", fn_stdout, -1);
+    pyro_define_global_fn(vm, "$stderr", fn_stderr, -1);
+
 }
