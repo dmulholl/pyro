@@ -1934,28 +1934,24 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
 }
 
 
-void pyro_exec_file_as_main(PyroVM* vm, const char* filepath) {
-    char* resolved_path = pyro_realpath(filepath);
-    if (!resolved_path) {
-        pyro_panic(vm, "invalid path '%s'", filepath);
+void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
+    ObjStr* path_string = STR(path);
+    if (!path_string) {
+        pyro_panic(vm, "out of memory");
         return;
     }
 
-    ObjStr* resolved_path_as_string = STR(resolved_path);
-    if (!resolved_path_as_string) {
+    if (!pyro_define_pri_member(vm, vm->main_module, "$filepath", MAKE_OBJ(path_string))) {
         pyro_panic(vm, "out of memory");
-        free(resolved_path);
         return;
     }
-    pyro_define_pri_member(vm, vm->main_module, "$filepath", MAKE_OBJ(resolved_path_as_string));
-    free(resolved_path);
 
     FileData fd;
-    if (!pyro_read_file(vm, filepath, &fd) || fd.size == 0) {
+    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
         return;
     }
 
-    pyro_exec_code_as_main(vm, fd.data, fd.size, filepath);
+    pyro_exec_code_as_main(vm, fd.data, fd.size, path);
     FREE_ARRAY(vm, char, fd.data, fd.size);
 }
 
@@ -2027,28 +2023,24 @@ void pyro_exec_code_as_module(
 }
 
 
-void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* module) {
-    char* resolved_path = pyro_realpath(filepath);
-    if (!resolved_path) {
-        pyro_panic(vm, "unable to resolve module path '%s'", filepath);
+void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
+    ObjStr* path_string = STR(path);
+    if (!path_string) {
+        pyro_panic(vm, "out of memory");
         return;
     }
 
-    ObjStr* resolved_path_as_string = STR(resolved_path);
-    if (!resolved_path_as_string) {
+    if (!pyro_define_pri_member(vm, module, "$filepath", MAKE_OBJ(path_string))) {
         pyro_panic(vm, "out of memory");
-        free(resolved_path);
         return;
     }
-    pyro_define_pri_member(vm, module, "$filepath", MAKE_OBJ(resolved_path_as_string));
-    free(resolved_path);
 
     FileData fd;
-    if (!pyro_read_file(vm, filepath, &fd) || fd.size == 0) {
+    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
         return;
     }
 
-    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, filepath);
+    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path);
     FREE_ARRAY(vm, char, fd.data, fd.size);
     if (vm->halt_flag) {
         return;
