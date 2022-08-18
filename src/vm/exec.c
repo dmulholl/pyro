@@ -704,7 +704,11 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                    pyro_panic(vm, "field '%s' is private", AS_STR(field_name)->bytes);
+                } else {
+                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                }
                 break;
             }
 
@@ -794,7 +798,11 @@ static void run(PyroVM* vm) {
 
                 Value method = pyro_get_pub_method(vm, receiver, method_name);
                 if (IS_NULL(method)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    if (IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    } else {
+                        pyro_panic(vm, "method '%s' is private", method_name->bytes);
+                    }
                     break;
                 }
 
@@ -1102,7 +1110,11 @@ static void run(PyroVM* vm) {
                 } else if (IS_CLOSURE(method)) {
                     call_closure(vm, AS_CLOSURE(method), arg_count);
                 } else {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    if (IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    } else {
+                        pyro_panic(vm, "method '%s' is private", method_name->bytes);
+                    }
                     break;
                 }
 
