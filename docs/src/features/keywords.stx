@@ -20,6 +20,8 @@ The following keywords are reserved by the language and cannot be used as identi
 * `in`
 * `loop`
 * `null`
+* `pri`
+* `pub`
 * `return`
 * `self`
 * `super`
@@ -39,8 +41,6 @@ The following keywords are reserved for future use:
 * `let`
 * `match`
 * `or`
-* `pri`
-* `pub`
 * `reimport`
 * `run`
 * `select`
