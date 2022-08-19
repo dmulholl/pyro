@@ -59,10 +59,10 @@
 <a href="#fields-and-methods">Fields and Methods</a>
 </li>
 <li>
-<a href="#the-self-keyword">The Self Keyword</a>
+<a href="#public-private-members">Public/Private Members</a>
 </li>
 <li>
-<a href="#public-private-members">Public/Private Members</a>
+<a href="#the-self-keyword">The Self Keyword</a>
 </li>
 <li>
 <a href="#static-members">Static Members</a>
@@ -131,25 +131,6 @@ Methods are bound to their instances and you can pass them around just like any 
 <span class="kd">var</span> <span class="nx">method</span> <span class="p">=</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">;</span>
 <span class="nx">method</span><span class="p">();</span> <span class="c1"># &quot;Dave is a pyro programmer.&quot;</span>
 </pre>
-<h3 id="the-self-keyword">
-The Self Keyword
-</h3>
-<p>
-Use the <code>self</code> keyword inside a class to access the instance's fields and methods:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">field</span><span class="p">;</span>
-
-    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">method</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">field</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">other_method</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">self</span><span class="p">:</span><span class="nx">method</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre>
 <h3 id="public-private-members">
 Public/Private Members
 </h3>
@@ -178,6 +159,25 @@ Public members can be accessed from inside or outside the class.
 Private members can only be accessed from inside the class using <code>self</code> or <code>super</code>.
 </li>
 </ul>
+<h3 id="the-self-keyword">
+The Self Keyword
+</h3>
+<p>
+Use the <code>self</code> keyword inside a class to access the instance's fields and methods:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">field</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">private_method</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">field</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">public_method</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">:</span><span class="nx">private_method</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
 <h3 id="static-members">
 Static Members
 </h3>

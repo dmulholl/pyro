@@ -58,25 +58,6 @@ Methods are bound to their instances and you can pass them around just like any 
 
 
 
-### The Self Keyword
-
-Use the `self` keyword inside a class to access the instance's fields and methods:
-
-::: code pyro
-    class Foo {
-        pub var field;
-
-        pub def method() {
-            return self.field;
-        }
-
-        pub def other_method() {
-            return self:method();
-        }
-    }
-
-
-
 ### Public/Private Members
 
 Fields and methods are private by default --- use the `pub` keyword to make them public:
@@ -97,6 +78,25 @@ Fields and methods are private by default --- use the `pub` keyword to make them
 
 * Public members can be accessed from inside or outside the class.
 * Private members can only be accessed from inside the class using `self` or `super`.
+
+
+
+### The Self Keyword
+
+Use the `self` keyword inside a class to access the instance's fields and methods:
+
+::: code pyro
+    class Foo {
+        var field;
+
+        def private_method() {
+            return self.field;
+        }
+
+        pub def public_method() {
+            return self:private_method();
+        }
+    }
 
 
 
