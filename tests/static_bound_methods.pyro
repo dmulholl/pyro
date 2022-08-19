@@ -1,0 +1,18 @@
+class Object {
+    static var value = 0;
+
+    static def increment() {
+        Object.value += 1;
+    }
+}
+
+assert Object.value == 0;
+
+var method = Object:increment;
+assert $is_method(method);
+
+method();
+assert Object.value == 1;
+
+method();
+assert Object.value == 2;
