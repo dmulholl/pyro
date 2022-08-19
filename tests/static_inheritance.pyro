@@ -1,0 +1,33 @@
+class Object {
+    static var value = 0;
+
+    static def increment() {
+        Object.value += 1;
+    }
+}
+assert Object.value == 0;
+Object:increment();
+assert Object.value == 1;
+
+class Child1 < Object {
+}
+assert Child1.value == 1;
+Child1:increment();
+assert Object.value == 2;
+assert Child1.value == 1;
+Child1.value = 123;
+assert Child1.value == 123;
+assert Object.value == 2;
+
+class Child2 < Object {
+    static def increment() {
+        Child2.value += 1;
+    }
+}
+assert Child2.value == 2;
+Child2:increment();
+assert Child2.value == 3;
+assert Object.value == 2;
+Child2.value = 456;
+assert Child2.value == 456;
+assert Object.value == 2;

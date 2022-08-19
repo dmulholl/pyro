@@ -1066,6 +1066,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_BREAK:
         case OP_DEFINE_PRI_FIELD:
         case OP_DEFINE_PUB_FIELD:
+        case OP_DEFINE_STATIC_FIELD:
         case OP_DEFINE_PRI_GLOBAL:
         case OP_DEFINE_PUB_GLOBAL:
         case OP_DEFINE_PRI_METHOD:

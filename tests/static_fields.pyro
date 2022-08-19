@@ -1,0 +1,25 @@
+class Object {
+    static var value = 0;
+    pub var public;
+}
+assert Object.value == 0;
+assert $is_err(try Object.public);
+
+Object.value = 1;
+assert Object.value == 1;
+
+Object.value += 1;
+assert Object.value == 2;
+
+class Child < Object {
+}
+assert Child.value == 2;
+assert $is_err(try Child.public);
+
+Object.value = 123;
+assert Object.value == 123;
+assert Child.value == 2;
+
+Child.value = 456;
+assert Object.value == 123;
+assert Child.value == 456;

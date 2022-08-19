@@ -666,21 +666,49 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_GET_FIELD: {
-                Value field_name = READ_CONSTANT();
+            case OP_DEFINE_STATIC_FIELD: {
+                // The field's default value will be sitting on top of the stack.
+                Value default_value = pyro_peek(vm, 0);
 
-                if (!IS_INSTANCE(pyro_peek(vm, 0))) {
-                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
+                // The class object will be on the stack just below the default value.
+                ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
+                ObjStr* field_name = READ_STRING();
+                if (ObjMap_contains(class->static_fields, MAKE_OBJ(field_name), vm)) {
+                    pyro_panic(vm, "the static field '%s' already exists", field_name->bytes);
                     break;
                 }
 
-                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 0));
-
-                Value field_index;
-                if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
-                    pyro_pop(vm); // pop the instance
-                    pyro_push(vm, instance->fields[field_index.as.i64]);
+                if (ObjMap_set(class->static_fields, MAKE_OBJ(field_name), default_value, vm) == 0) {
+                    pyro_panic(vm, "out of memory");
                     break;
+                }
+
+                // Pop the default value but leave the class object on the stack.
+                pyro_pop(vm);
+                break;
+            }
+
+            case OP_GET_FIELD: {
+                Value field_name = READ_CONSTANT();
+                Value receiver = pyro_peek(vm, 0);
+
+                if (IS_INSTANCE(receiver)) {
+                    ObjInstance* instance = AS_INSTANCE(receiver);
+                    Value field_index;
+                    if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        pyro_pop(vm); // pop the instance
+                        pyro_push(vm, instance->fields[field_index.as.i64]);
+                        break;
+                    }
+                } else if (IS_CLASS(receiver)) {
+                    ObjClass* class = AS_CLASS(receiver);
+                    Value value;
+                    if (ObjMap_get(class->static_fields, field_name, &value, vm)) {
+                        pyro_pop(vm); // pop the class
+                        pyro_push(vm, value);
+                        break;
+                    }
                 }
 
                 pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
@@ -689,26 +717,30 @@ static void run(PyroVM* vm) {
 
             case OP_GET_PUB_FIELD: {
                 Value field_name = READ_CONSTANT();
+                Value receiver = pyro_peek(vm, 0);
 
-                if (!IS_INSTANCE(pyro_peek(vm, 0))) {
-                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
-                    break;
+                if (IS_INSTANCE(receiver)) {
+                    ObjInstance* instance = AS_INSTANCE(receiver);
+                    Value field_index;
+                    if (ObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
+                        pyro_pop(vm); // pop the instance
+                        pyro_push(vm, instance->fields[field_index.as.i64]);
+                        break;
+                    } else if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        pyro_panic(vm, "field '%s' is private", AS_STR(field_name)->bytes);
+                        break;
+                    }
+                } else if (IS_CLASS(receiver)) {
+                    ObjClass* class = AS_CLASS(receiver);
+                    Value value;
+                    if (ObjMap_get(class->static_fields, field_name, &value, vm)) {
+                        pyro_pop(vm); // pop the class
+                        pyro_push(vm, value);
+                        break;
+                    }
                 }
 
-                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 0));
-
-                Value field_index;
-                if (ObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
-                    pyro_pop(vm); // pop the instance
-                    pyro_push(vm, instance->fields[field_index.as.i64]);
-                    break;
-                }
-
-                if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
-                    pyro_panic(vm, "field '%s' is private", AS_STR(field_name)->bytes);
-                } else {
-                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
-                }
+                pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
                 break;
             }
 
@@ -1714,20 +1746,27 @@ static void run(PyroVM* vm) {
 
             case OP_SET_FIELD: {
                 Value field_name = READ_CONSTANT();
+                Value receiver = pyro_peek(vm, 1);
 
-                if (!IS_INSTANCE(pyro_peek(vm, 1))) {
-                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
-                    break;
-                }
-                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 1));
-
-                Value field_index;
-                if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
-                    Value new_value = pyro_pop(vm);
-                    pyro_pop(vm); // pop the instance
-                    instance->fields[field_index.as.i64] = new_value;
-                    pyro_push(vm, new_value);
-                    break;
+                if (IS_INSTANCE(receiver)) {
+                    ObjInstance* instance = AS_INSTANCE(receiver);
+                    Value field_index;
+                    if (ObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        Value new_value = pyro_pop(vm); // pop the value
+                        pyro_pop(vm); // pop the instance
+                        instance->fields[field_index.as.i64] = new_value;
+                        pyro_push(vm, new_value);
+                        break;
+                    }
+                } else if (IS_CLASS(receiver)) {
+                    ObjClass* class = AS_CLASS(receiver);
+                    if (ObjMap_contains(class->static_fields, field_name, vm)) {
+                        Value new_value = pyro_pop(vm); // pop the value
+                        pyro_pop(vm); // pop the class
+                        ObjMap_set(class->static_fields, field_name, new_value, vm);
+                        pyro_push(vm, new_value);
+                        break;
+                    }
                 }
 
                 pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
@@ -1736,20 +1775,27 @@ static void run(PyroVM* vm) {
 
             case OP_SET_PUB_FIELD: {
                 Value field_name = READ_CONSTANT();
+                Value receiver = pyro_peek(vm, 1);
 
-                if (!IS_INSTANCE(pyro_peek(vm, 1))) {
-                    pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
-                    break;
-                }
-                ObjInstance* instance = AS_INSTANCE(pyro_peek(vm, 1));
-
-                Value field_index;
-                if (ObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
-                    Value new_value = pyro_pop(vm);
-                    pyro_pop(vm); // pop the instance
-                    instance->fields[field_index.as.i64] = new_value;
-                    pyro_push(vm, new_value);
-                    break;
+                if (IS_INSTANCE(receiver)) {
+                    ObjInstance* instance = AS_INSTANCE(receiver);
+                    Value field_index;
+                    if (ObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
+                        Value new_value = pyro_pop(vm); // pop the value
+                        pyro_pop(vm); // pop the instance
+                        instance->fields[field_index.as.i64] = new_value;
+                        pyro_push(vm, new_value);
+                        break;
+                    }
+                } else if (IS_CLASS(receiver)) {
+                    ObjClass* class = AS_CLASS(receiver);
+                    if (ObjMap_contains(class->static_fields, field_name, vm)) {
+                        Value new_value = pyro_pop(vm); // pop the value
+                        pyro_pop(vm); // pop the class
+                        ObjMap_set(class->static_fields, field_name, new_value, vm);
+                        pyro_push(vm, new_value);
+                        break;
+                    }
                 }
 
                 pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);

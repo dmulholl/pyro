@@ -2104,7 +2104,7 @@ static void parse_field_declaration(Parser* parser, Access access) {
         } else if (access == PRIVATE) {
             emit_u8_u16be(parser, OP_DEFINE_PRI_FIELD, index);
         } else {
-            ERROR_AT_PREVIOUS_TOKEN("static fields are not implemented");
+            emit_u8_u16be(parser, OP_DEFINE_STATIC_FIELD, index);
         }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "expected ';' after field declaration");

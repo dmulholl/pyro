@@ -149,6 +149,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return constant_instruction(vm, "OP_DEFINE_PRI_FIELD", fn, ip);
         case OP_DEFINE_PUB_FIELD:
             return constant_instruction(vm, "OP_DEFINE_PUB_FIELD", fn, ip);
+        case OP_DEFINE_STATIC_FIELD:
+            return constant_instruction(vm, "OP_DEFINE_STATIC_FIELD", fn, ip);
         case OP_BINARY_SLASH:
             return atomic_instruction(vm, "OP_BINARY_SLASH", ip);
         case OP_GET_FIELD:
