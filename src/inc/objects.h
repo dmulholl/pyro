@@ -291,6 +291,10 @@ struct ObjClass {
     // - [pub_field_indexes] contains indexes for only public fields.
     ObjMap* all_field_indexes;
     ObjMap* pub_field_indexes;
+
+    // Static members.
+    ObjMap* static_methods;
+    ObjMap* static_fields;
 };
 
 ObjClass* ObjClass_new(PyroVM* vm);

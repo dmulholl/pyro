@@ -35,6 +35,14 @@ ObjClass* pyro_get_class(PyroVM* vm, Value value) {
 
 
 Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+    if (IS_CLASS(receiver)) {
+        Value method;
+        if (ObjMap_get(AS_CLASS(receiver)->static_methods, MAKE_OBJ(method_name), &method, vm)) {
+            return method;
+        }
+        return MAKE_NULL();
+    }
+
     ObjClass* class = pyro_get_class(vm, receiver);
     if (class) {
         Value method;
@@ -47,6 +55,14 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
 
 
 Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+    if (IS_CLASS(receiver)) {
+        Value method;
+        if (ObjMap_get(AS_CLASS(receiver)->static_methods, MAKE_OBJ(method_name), &method, vm)) {
+            return method;
+        }
+        return MAKE_NULL();
+    }
+
     ObjClass* class = pyro_get_class(vm, receiver);
     if (class) {
         Value method;

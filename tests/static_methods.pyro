@@ -1,0 +1,28 @@
+class Object {
+    static def hello() {
+        return "hello";
+    }
+    pub def instance_method() {
+        return "instance";
+    }
+}
+assert Object:hello() == "hello";
+assert $is_err(try Object():hello());
+assert Object():instance_method() == "instance";
+assert $is_err(try Object:instance_method());
+
+class Child1 < Object {}
+assert Child1:hello() == "hello";
+assert $is_err(try Child1():hello());
+assert Child1():instance_method() == "instance";
+assert $is_err(try Child1:instance_method());
+
+class Child2 < Object {
+    static def hello() {
+        return "child";
+    }
+}
+assert Child2:hello() == "child";
+assert $is_err(try Child2():hello());
+assert Child2():instance_method() == "instance";
+assert $is_err(try Child2:instance_method());

@@ -215,6 +215,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
 
         case 's':
             if (check_keyword(lexer, "self")) return TOKEN_SELF;
+            if (check_keyword(lexer, "static")) return TOKEN_STATIC;
             if (check_keyword(lexer, "super")) return TOKEN_SUPER;
             break;
 

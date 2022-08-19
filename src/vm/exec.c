@@ -1072,6 +1072,14 @@ static void run(PyroVM* vm) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
+                if (!ObjMap_copy_entries(superclass->static_methods, subclass->static_methods, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!ObjMap_copy_entries(superclass->static_fields, subclass->static_fields, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
 
                 subclass->superclass = superclass;
                 pyro_pop(vm); // the subclass
@@ -1573,6 +1581,24 @@ static void run(PyroVM* vm) {
 
                 if (ObjMap_set(class->pub_methods, MAKE_OBJ(name), method, vm) == 0) {
                     ObjMap_remove(class->all_methods, MAKE_OBJ(name), vm);
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                // Pop the method but leave the class behind on the stack.
+                pyro_pop(vm);
+                break;
+            }
+
+            case OP_DEFINE_STATIC_METHOD: {
+                // The method's ObjClosure will be sitting on top of the stack.
+                Value method = pyro_peek(vm, 0);
+
+                // The class object will be on the stack just below the method.
+                ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
+
+                ObjStr* name = READ_STRING();
+                if (ObjMap_set(class->static_methods, MAKE_OBJ(name), method, vm) == 0) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }

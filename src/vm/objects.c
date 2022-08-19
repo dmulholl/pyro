@@ -159,12 +159,16 @@ ObjClass* ObjClass_new(PyroVM* vm) {
     class->all_field_indexes = NULL;
     class->pub_field_indexes = NULL;
     class->default_field_values = NULL;
+    class->static_methods = NULL;
+    class->static_fields = NULL;
 
     class->all_methods = ObjMap_new(vm);
     class->pub_methods = ObjMap_new(vm);
     class->all_field_indexes = ObjMap_new(vm);
     class->pub_field_indexes = ObjMap_new(vm);
     class->default_field_values = ObjVec_new(vm);
+    class->static_methods = ObjMap_new(vm);
+    class->static_fields = ObjMap_new(vm);
 
     if (vm->memory_allocation_failed) {
         return NULL;
@@ -1066,6 +1070,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_DEFINE_PUB_GLOBAL:
         case OP_DEFINE_PRI_METHOD:
         case OP_DEFINE_PUB_METHOD:
+        case OP_DEFINE_STATIC_METHOD:
         case OP_GET_FIELD:
         case OP_GET_PUB_FIELD:
         case OP_GET_GLOBAL:

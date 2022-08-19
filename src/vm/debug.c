@@ -255,6 +255,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return constant_instruction(vm, "OP_DEFINE_PRI_METHOD", fn, ip);
         case OP_DEFINE_PUB_METHOD:
             return constant_instruction(vm, "OP_DEFINE_PUB_METHOD", fn, ip);
+        case OP_DEFINE_STATIC_METHOD:
+            return constant_instruction(vm, "OP_DEFINE_STATIC_METHOD", fn, ip);
         case OP_BINARY_PERCENT:
             return atomic_instruction(vm, "OP_BINARY_PERCENT", ip);
         case OP_BINARY_STAR:

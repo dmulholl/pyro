@@ -182,6 +182,8 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             mark_object(vm, (Obj*)class->all_field_indexes);
             mark_object(vm, (Obj*)class->pub_field_indexes);
             mark_object(vm, (Obj*)class->default_field_values);
+            mark_object(vm, (Obj*)class->static_methods);
+            mark_object(vm, (Obj*)class->static_fields);
             break;
         }
 

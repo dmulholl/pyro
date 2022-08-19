@@ -65,6 +65,7 @@ typedef enum {
     TYPE_FUNCTION,
     TYPE_INIT_METHOD,
     TYPE_METHOD,
+    TYPE_STATIC_METHOD,
     TYPE_MODULE,
     TYPE_TRY_EXPR,
 } FnType;
@@ -114,7 +115,8 @@ typedef struct {
 
 typedef enum Access {
     PRIVATE,
-    PUBLIC
+    PUBLIC,
+    STATIC
 } Access;
 
 
@@ -1028,6 +1030,8 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a method declaration");
+        } else if (parser->compiler->type == TYPE_STATIC_METHOD) {
+            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' in a static method");
         }
         emit_load_named_variable(parser, parser->previous_token);
     }
@@ -1035,6 +1039,8 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_SUPER)) {
         if (parser->class_compiler == NULL) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' outside a class");
+        } else if (parser->compiler->type == TYPE_STATIC_METHOD) {
+            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a static method");
         } else if (!parser->class_compiler->has_superclass) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a class with no superclass");
         }
@@ -2057,16 +2063,23 @@ static void parse_method_declaration(Parser* parser, Access access) {
     consume(parser, TOKEN_IDENTIFIER, "expected method name");
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
-    FnType type = TYPE_METHOD;
-    if (parser->previous_token.length == 5 && memcmp(parser->previous_token.start, "$init", 5) == 0) {
+    FnType type;
+    if (access == STATIC) {
+        type = TYPE_STATIC_METHOD;
+    } else if (parser->previous_token.length == 5 && memcmp(parser->previous_token.start, "$init", 5) == 0) {
         type = TYPE_INIT_METHOD;
+    } else {
+        type = TYPE_METHOD;
     }
+
     parse_function_definition(parser, type, parser->previous_token);
 
     if (access == PUBLIC) {
         emit_u8_u16be(parser, OP_DEFINE_PUB_METHOD, index);
-    } else {
+    } else if (access == PRIVATE) {
         emit_u8_u16be(parser, OP_DEFINE_PRI_METHOD, index);
+    } else {
+        emit_u8_u16be(parser, OP_DEFINE_STATIC_METHOD, index);
     }
 }
 
@@ -2088,8 +2101,10 @@ static void parse_field_declaration(Parser* parser, Access access) {
 
         if (access == PUBLIC) {
             emit_u8_u16be(parser, OP_DEFINE_PUB_FIELD, index);
-        } else {
+        } else if (access == PRIVATE) {
             emit_u8_u16be(parser, OP_DEFINE_PRI_FIELD, index);
+        } else {
+            ERROR_AT_PREVIOUS_TOKEN("static fields are not implemented");
         }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "expected ';' after field declaration");
@@ -2149,6 +2164,15 @@ static void parse_class_declaration(Parser* parser, Access access) {
                 parse_field_declaration(parser, PRIVATE);
             } else {
                 ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'pri'");
+                return;
+            }
+        } else if (match(parser, TOKEN_STATIC)) {
+            if (match(parser, TOKEN_DEF)) {
+                parse_method_declaration(parser, STATIC);
+            } else if (match(parser, TOKEN_VAR)) {
+                parse_field_declaration(parser, STATIC);
+            } else {
+                ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'static'");
                 return;
             }
         } else {
