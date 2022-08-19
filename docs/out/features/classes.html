@@ -65,6 +65,9 @@
 <a href="#public-private-members">Public/Private Members</a>
 </li>
 <li>
+<a href="#static-members">Static Members</a>
+</li>
+<li>
 <a href="#field-initializers">Field Initializers</a>
 </li>
 <li>
@@ -175,6 +178,35 @@ Public members can be accessed from inside or outside the class.
 Private members can only be accessed from inside the class using <code>self</code> or <code>super</code>.
 </li>
 </ul>
+<h3 id="static-members">
+Static Members
+</h3>
+<p>
+Static fields and methods are defined on the class object itself:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="kd">var</span> <span class="nx">count</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="kd">static</span> <span class="kd">def</span> <span class="nx">increment</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Object</span><span class="p">.</span><span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">Object</span><span class="p">:</span><span class="nx">increment</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">Object</span><span class="p">.</span><span class="nx">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+</pre>
+<p>
+Static members can't be accessed from instances of the class:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">obj</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">count</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">obj</span><span class="p">:</span><span class="nx">increment</span><span class="p">());</span>
+</pre>
+<p>
+Note that you can't use <code>self</code> or <code>super</code> inside static methods.
+</p>
 <h3 id="field-initializers">
 Field Initializers
 </h3>

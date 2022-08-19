@@ -100,6 +100,33 @@ Fields and methods are private by default --- use the `pub` keyword to make them
 
 
 
+### Static Members
+
+Static fields and methods are defined on the class object itself:
+
+::: code pyro
+    class Object {
+        static var count = 0;
+
+        static def increment() {
+            Object.count += 1;
+        }
+    }
+
+    Object:increment();
+    assert Object.count == 1;
+
+Static members can't be accessed from instances of the class:
+
+::: code pyro
+    var obj = Object();
+    assert $is_err(try obj.count);
+    assert $is_err(try obj:increment());
+
+Note that you can't use `self` or `super` inside static methods.
+
+
+
 ### Field Initializers
 
 Uninitialized fields have the default value `null`.
