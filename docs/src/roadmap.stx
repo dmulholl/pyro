@@ -12,10 +12,6 @@ A regex library, a built-in SQLite implementation, and a networking library are 
 
 ### Planned Features
 
-(*) Public/private access specifiers for fields, methods, and module members.
-
-(*) Static fields and methods on classes.
-
 (*) Support for default values for function parameters.
 
 
