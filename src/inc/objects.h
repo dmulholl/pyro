@@ -278,7 +278,7 @@ struct ObjClass {
     ObjClass* superclass;
 
     // Instance methods. Maps [ObjStr] names to [ObjClosure] or [ObjNativeFn] values.
-    // - [all_methods] contains both public and private instance methods.
+    // - [all_instance_methods] contains both public and private instance methods.
     // - [pub_instance_methods] contains only public instance methods.
     ObjMap* all_instance_methods;
     ObjMap* pub_instance_methods;
