@@ -125,7 +125,7 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
                 vm->stack_top[-arg_count - 1] = MAKE_OBJ(instance);
 
                 Value init_method;
-                if (ObjMap_get(class->all_methods, MAKE_OBJ(vm->str_dollar_init), &init_method, vm)) {
+                if (ObjMap_get(class->all_instance_methods, MAKE_OBJ(vm->str_dollar_init), &init_method, vm)) {
                     if (IS_NATIVE_FN(init_method)) {
                         call_native_fn(vm, AS_NATIVE_FN(init_method), arg_count);
                     } else {
@@ -156,7 +156,7 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
                 ObjClass* class = AS_OBJ(callee)->class;
 
                 Value call_method;
-                if (ObjMap_get(class->all_methods, MAKE_OBJ(vm->str_dollar_call), &call_method, vm)) {
+                if (ObjMap_get(class->all_instance_methods, MAKE_OBJ(vm->str_dollar_call), &call_method, vm)) {
                     if (IS_NATIVE_FN(call_method)) {
                         call_native_fn(vm, AS_NATIVE_FN(call_method), arg_count);
                     } else {
@@ -855,7 +855,7 @@ static void run(PyroVM* vm) {
                 Value receiver = pyro_peek(vm, 0);
 
                 Value method;
-                if (!ObjMap_get(superclass->all_methods, MAKE_OBJ(method_name), &method, vm)) {
+                if (!ObjMap_get(superclass->all_instance_methods, MAKE_OBJ(method_name), &method, vm)) {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
@@ -1084,11 +1084,11 @@ static void run(PyroVM* vm) {
                 // "Copy-down inheritance". We copy all the superclass's methods, field indexes,
                 // and field initializers to the subclass. This means that there's no extra
                 // runtime work involved in looking up inherited methods or fields.
-                if (!ObjMap_copy_entries(superclass->all_methods, subclass->all_methods, vm)) {
+                if (!ObjMap_copy_entries(superclass->all_instance_methods, subclass->all_instance_methods, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
-                if (!ObjMap_copy_entries(superclass->pub_methods, subclass->pub_methods, vm)) {
+                if (!ObjMap_copy_entries(superclass->pub_instance_methods, subclass->pub_instance_methods, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -1265,7 +1265,7 @@ static void run(PyroVM* vm) {
                 uint8_t arg_count = READ_BYTE();
 
                 Value method;
-                if (!ObjMap_get(superclass->all_methods, MAKE_OBJ(method_name), &method, vm)) {
+                if (!ObjMap_get(superclass->all_instance_methods, MAKE_OBJ(method_name), &method, vm)) {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
@@ -1314,7 +1314,7 @@ static void run(PyroVM* vm) {
                 }
 
                 Value method;
-                if (!ObjMap_get(superclass->all_methods, MAKE_OBJ(method_name), &method, vm)) {
+                if (!ObjMap_get(superclass->all_instance_methods, MAKE_OBJ(method_name), &method, vm)) {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
@@ -1576,12 +1576,12 @@ static void run(PyroVM* vm) {
                 ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
                 ObjStr* name = READ_STRING();
-                if (ObjMap_contains(class->pub_methods, MAKE_OBJ(name), vm)) {
+                if (ObjMap_contains(class->pub_instance_methods, MAKE_OBJ(name), vm)) {
                     pyro_panic(vm, "cannot override public method '%s' as private", name->bytes);
                     break;
                 }
 
-                if (ObjMap_set(class->all_methods, MAKE_OBJ(name), method, vm) == 0) {
+                if (ObjMap_set(class->all_instance_methods, MAKE_OBJ(name), method, vm) == 0) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -1599,20 +1599,20 @@ static void run(PyroVM* vm) {
                 ObjClass* class = AS_CLASS(pyro_peek(vm, 1));
 
                 ObjStr* name = READ_STRING();
-                if (ObjMap_contains(class->all_methods, MAKE_OBJ(name), vm)) {
-                    if (!ObjMap_contains(class->pub_methods, MAKE_OBJ(name), vm)) {
+                if (ObjMap_contains(class->all_instance_methods, MAKE_OBJ(name), vm)) {
+                    if (!ObjMap_contains(class->pub_instance_methods, MAKE_OBJ(name), vm)) {
                         pyro_panic(vm, "cannot override private method '%s' as public", name->bytes);
                         break;
                     }
                 }
 
-                if (ObjMap_set(class->all_methods, MAKE_OBJ(name), method, vm) == 0) {
+                if (ObjMap_set(class->all_instance_methods, MAKE_OBJ(name), method, vm) == 0) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                if (ObjMap_set(class->pub_methods, MAKE_OBJ(name), method, vm) == 0) {
-                    ObjMap_remove(class->all_methods, MAKE_OBJ(name), vm);
+                if (ObjMap_set(class->pub_instance_methods, MAKE_OBJ(name), method, vm) == 0) {
+                    ObjMap_remove(class->all_instance_methods, MAKE_OBJ(name), vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }

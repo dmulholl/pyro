@@ -154,16 +154,16 @@ ObjClass* ObjClass_new(PyroVM* vm) {
 
     class->name = NULL;
     class->superclass = NULL;
-    class->all_methods = NULL;
-    class->pub_methods = NULL;
+    class->all_instance_methods = NULL;
+    class->pub_instance_methods = NULL;
     class->all_field_indexes = NULL;
     class->pub_field_indexes = NULL;
     class->default_field_values = NULL;
     class->static_methods = NULL;
     class->static_fields = NULL;
 
-    class->all_methods = ObjMap_new(vm);
-    class->pub_methods = ObjMap_new(vm);
+    class->all_instance_methods = ObjMap_new(vm);
+    class->pub_instance_methods = ObjMap_new(vm);
     class->all_field_indexes = ObjMap_new(vm);
     class->pub_field_indexes = ObjMap_new(vm);
     class->default_field_values = ObjVec_new(vm);

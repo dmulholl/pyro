@@ -450,12 +450,12 @@ bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
         return false;
     }
 
-    if (ObjMap_set(class->all_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+    if (ObjMap_set(class->all_instance_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
         return false;
     }
 
-    if (ObjMap_set(class->pub_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
-        ObjMap_remove(class->all_methods, MAKE_OBJ(name_string), vm);
+    if (ObjMap_set(class->pub_instance_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+        ObjMap_remove(class->all_instance_methods, MAKE_OBJ(name_string), vm);
         return false;
     }
 
@@ -474,7 +474,7 @@ bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
         return false;
     }
 
-    if (ObjMap_set(class->all_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
+    if (ObjMap_set(class->all_instance_methods, MAKE_OBJ(name_string), MAKE_OBJ(func_object), vm) == 0) {
         return false;
     }
 

@@ -277,11 +277,11 @@ struct ObjClass {
     // The class's superclass, if it has one. This field can be NULL.
     ObjClass* superclass;
 
-    // Maps [ObjStr] names to [ObjClosure] or [ObjNativeFn] values.
-    // - [all_methods] contains both public and private methods.
-    // - [pub_methods] contains only public methods.
-    ObjMap* all_methods;
-    ObjMap* pub_methods;
+    // Instance methods. Maps [ObjStr] names to [ObjClosure] or [ObjNativeFn] values.
+    // - [all_methods] contains both public and private instance methods.
+    // - [pub_instance_methods] contains only public instance methods.
+    ObjMap* all_instance_methods;
+    ObjMap* pub_instance_methods;
 
     // Initialization values for fields. Each new [ObjInstance] gets a copy of this vector.
     ObjVec* default_field_values;
