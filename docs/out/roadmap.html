@@ -52,7 +52,7 @@
                 <hr>
             </header>
             <p>
-All the core language functionality described here in the documentation has been implemented.
+All the functionality described here in the documentation has been implemented.
 </p>
 <p>
 The standard library still needs a lot of work before Pyro can be considered a practical programming language.
@@ -64,7 +64,7 @@ Planned Features
 <ul>
 <li>
 <p>
-Support for default values for function parameters.
+Default values for function parameters.
 </p>
 </li>
 </ul>
@@ -78,24 +78,27 @@ Packaging is on the medium-length finger.
 I'm planning to add a <code>build</code> command to Pyro which will bundle up a script and all of its dependencies into a zip archive which it will append to a copy of the Pyro binary to create an easily-distributable single-file executable.
 </p>
 <p>
-'Virtual environments' and friends are a hell which Pyro will attempt to avoid at all costs if it ever becomes a real programming language.
+'Virtual environments' and friends are a hell which Pyro will attempt to avoid at all costs.
 </p>
 <h3 id="concurrency">
 Concurrency
 </h3>
 <p>
-Adding support for concurrency is on the long finger.
-Pyro is currently single-threaded and likely to remain that way for the foreseeable future.
-Getting concurrency right is a tough challenge and not one I'm in a rush to tackle.
+Adding support for concurrency is on the very long finger.
+I'm waiting until I decide if it's worth investing the significant time and effort needed to do it right.
+</p>
+<p>
+If I do add suppprt for concurrency, the implementation is likely to be influnced by the Go model.
 </p>
 <h3 id="string-interpolation">
 String Interpolation
 </h3>
 <p>
-String interpolation for double-quoted strings is planned but not yet implemented. The syntax will be:
+Some day I'll get around to implementing string interpolation for double-quoted strings.
+The syntax will be:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">echo</span> <span class="s">&quot;string with ${expr;fmt_spec} interpolations&quot;</span><span class="p">;</span>
+<span class="s">&quot;string with ${expr;fmt_spec} interpolations&quot;</span>
 </pre>
 <p>
 For example:

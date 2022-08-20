@@ -95,26 +95,27 @@ Design Goals
 <i>Elegance</i> &mdash; A well-crafted tool should be a pleasure to use.
 </li>
 </ul>
-<h3 id="source">
-Source
+<h3 id="source-code">
+Source Code
 </h3>
 <p>
 You can find Pyro's source code on <a href="https://github.com/dmulholl/pyro">Github</a>.
 </p>
-<h3 id="status">
-Status
+<h3 id="internals">
+Internals
 </h3>
+<ul>
+<li>
 <p>
-Pyro is an experimental project I'm working on mostly for my own edutainment.
-It may graduate to being a practical programming language some day but it isn't suitable yet for real world use &mdash; the standard library is too sparse and the language itself is under development and subject to arbitrary change.
+Pyro compiles source code into bytecode which it executes using a stack-based VM.
 </p>
+</li>
+<li>
 <p>
-If you do decide to try Pyro out, your feedback would be very welcome!
+Pyro manages memory using a simple mark-and-sweep garbage collector.
 </p>
-<p>
-In particular, the Pyro binary should build cleanly from source without any compiler warnings.
-If you do get compiler warnings when building Pyro, please let me know by opening an issue on <a href="https://github.com/dmulholl/pyro/issues">Github</a> and pasting in the compiler output.
-</p>
+</li>
+</ul>
 <h3 id="license">
 License
 </h3>

@@ -42,21 +42,17 @@ the control code for your pacemaker/anti-ballistic missile defence system in it 
 
 
 
-### Source
+### Source Code
 
 You can find Pyro's source code on [Github][1].
 
 
 
-### Status
+### Internals
 
-Pyro is an experimental project I'm working on mostly for my own edutainment.
-It may graduate to being a practical programming language some day but it isn't suitable yet for real world use --- the standard library is too sparse and the language itself is under development and subject to arbitrary change.
+(*) Pyro compiles source code into bytecode which it executes using a stack-based VM.
 
-If you do decide to try Pyro out, your feedback would be very welcome!
-
-In particular, the Pyro binary should build cleanly from source without any compiler warnings.
-If you do get compiler warnings when building Pyro, please let me know by opening an issue on [Github][4] and pasting in the compiler output.
+(*) Pyro manages memory using a simple mark-and-sweep garbage collector.
 
 
 
