@@ -1980,6 +1980,17 @@ static void run(PyroVM* vm) {
 
 
 static void reset_stack(PyroVM* vm) {
+    assert(false);
+}
+
+
+void pyro_reset_vm(PyroVM* vm) {
+    vm->memory_allocation_failed = false;
+    vm->halt_flag = false;
+    vm->exit_flag = false;
+    vm->panic_flag = false;
+    vm->hard_panic = false;
+    vm->exit_code = 0;
     vm->stack_top = vm->stack;
     vm->frame_count = 0;
     vm->open_upvalues = NULL;
@@ -1987,34 +1998,31 @@ static void reset_stack(PyroVM* vm) {
 
 
 void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id) {
-    vm->halt_flag = false;
-    vm->exit_flag = false;
-    vm->panic_flag = false;
-    vm->hard_panic = false;
-    vm->exit_code = 0;
-
     ObjFn* fn = pyro_compile(vm, code, code_length, source_id);
     if (vm->halt_flag) {
         return;
     }
 
-    pyro_push(vm, MAKE_OBJ(fn));
     ObjClosure* closure = ObjClosure_new(vm, fn, vm->main_module);
-    pyro_pop(vm);
     if (!closure) {
         pyro_panic(vm, "out of memory");
         return;
     }
+
+    #ifdef DEBUG
+        Value* saved_stack_top = vm->stack_top;
+    #endif
 
     pyro_push(vm, MAKE_OBJ(closure));
     call_value(vm, 0);
     run(vm);
     pyro_pop(vm);
 
-    if (vm->halt_flag) {
-        reset_stack(vm);
-    }
-    assert(vm->stack_top == vm->stack);
+    #ifdef DEBUG
+        if (!vm->panic_flag) {
+            assert(vm->stack_top == saved_stack_top);
+        }
+    #endif
 }
 
 
@@ -2061,7 +2069,7 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
         if (pyro_is_file(filepath)) {
             pyro_exec_file_as_main(vm, filepath);
         } else {
-            pyro_panic(vm, "unable to execute module without 'self.pyro' file");
+            pyro_panic(vm, "directory has no 'self.pyro' file: '%s'", path);
         }
 
         free(filepath);
@@ -2100,10 +2108,20 @@ void pyro_exec_code_as_module(
         return;
     }
 
+    #ifdef DEBUG
+        Value* saved_stack_top = vm->stack_top;
+    #endif
+
     pyro_push(vm, MAKE_OBJ(closure));
     call_value(vm, 0);
     run(vm);
     pyro_pop(vm);
+
+    #ifdef DEBUG
+        if (!vm->panic_flag) {
+            assert(vm->stack_top == saved_stack_top);
+        }
+    #endif
 }
 
 
@@ -2166,73 +2184,6 @@ void pyro_run_main_func(PyroVM* vm) {
             pyro_panic(vm, "invalid $main, must be a function");
         }
     }
-}
-
-
-void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed) {
-    int tests_passed = 0;
-    int tests_failed = 0;
-
-    for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
-        MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
-        if (IS_TOMBSTONE(entry->key)) {
-            continue;
-        }
-
-        Value member_name = entry->key;
-        Value member_index = entry->value;
-        Value member_value = vm->main_module->members->values[member_index.as.i64];
-
-        if (IS_CLOSURE(member_value)) {
-            ObjStr* name = AS_STR(member_name);
-            if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
-                if (AS_CLOSURE(member_value)->fn->arity > 0) {
-                    pyro_stdout_write_f(vm, " · Invalid test function (%s), too many args.\n", name->bytes);
-                    tests_failed += 1;
-                    continue;
-                }
-
-                vm->halt_flag = false;
-                vm->exit_flag = false;
-                vm->panic_flag = false;
-                vm->hard_panic = false;
-                vm->exit_code = 0;
-
-                pyro_push(vm, member_value);
-                call_value(vm, 0);
-                run(vm);
-                pyro_pop(vm);
-
-                if (vm->halt_flag) {
-                    reset_stack(vm);
-                }
-                assert(vm->stack_top == vm->stack);
-
-                if (vm->exit_flag) {
-                    pyro_stdout_write_f(vm, " · \x1B[1;31mEXIT\x1B[0m (%d) %s\n", vm->exit_code, name->bytes);
-                    tests_failed += 1;
-                    break;
-                }
-
-                if (vm->hard_panic) {
-                    pyro_stdout_write_f(vm, " · \x1B[1;31mHARD PANIC\x1B[0m %s\n", name->bytes);
-                    tests_failed += 1;
-                    break;
-                }
-
-                if (vm->panic_flag) {
-                    pyro_stdout_write_f(vm, " · \x1B[1;31mFAIL\x1B[0m %s\n", name->bytes);
-                    tests_failed += 1;
-                    continue;
-                }
-
-                tests_passed += 1;
-            }
-        }
-    }
-
-    *passed = tests_passed;
-    *failed = tests_failed;
 }
 
 

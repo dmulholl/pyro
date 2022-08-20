@@ -35,9 +35,6 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
 // Runs the $main() function if it is defined in the main module.
 void pyro_run_main_func(PyroVM* vm);
 
-// Runs $test_ functions if any are defined in the main module.
-void pyro_run_test_funcs(PyroVM* vm, int* passed, int* failed);
-
 // Runs $time_ functions if any are defined in the main module.
 void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
 
@@ -93,5 +90,7 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 //  4. Check [vm->halt_flag].
 //
 Value pyro_call_function(PyroVM* vm, uint8_t arg_count);
+
+void pyro_reset_vm(PyroVM* vm);
 
 #endif
