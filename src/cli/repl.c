@@ -168,6 +168,7 @@ void pyro_run_repl(ArgParser* parser) {
 
         pyro_exec_code_as_main(vm, code, code_count, "<repl>");
         if (pyro_get_exit_flag(vm) || pyro_get_hard_panic_flag(vm)) {
+            pyro_free_vm(vm);
             exit(pyro_get_exit_code(vm));
         } else if (pyro_get_panic_flag(vm)) {
             pyro_reset_vm(vm);
