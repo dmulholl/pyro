@@ -88,6 +88,9 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 //
 Value pyro_call_function(PyroVM* vm, uint8_t arg_count);
 
+// Call this function to reset the VM after a panic.
+// - Resets the flags, the stack pointer, and the frame pointer.
+// - Does not reset the main module or the imported module cache.
 void pyro_reset_vm(PyroVM* vm);
 
 #endif
