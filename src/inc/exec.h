@@ -35,9 +35,6 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* modul
 // Runs the $main() function if it is defined in the main module.
 void pyro_run_main_func(PyroVM* vm);
 
-// Runs $time_ functions if any are defined in the main module.
-void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations);
-
 // Attempts to compile but not execute the file.
 void pyro_try_compile_file(PyroVM* vm, const char* path);
 

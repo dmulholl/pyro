@@ -1979,11 +1979,6 @@ static void run(PyroVM* vm) {
 }
 
 
-static void reset_stack(PyroVM* vm) {
-    assert(false);
-}
-
-
 void pyro_reset_vm(PyroVM* vm) {
     vm->memory_allocation_failed = false;
     vm->halt_flag = false;
@@ -2182,83 +2177,6 @@ void pyro_run_main_func(PyroVM* vm) {
             }
         } else {
             pyro_panic(vm, "invalid $main, must be a function");
-        }
-    }
-}
-
-
-void pyro_run_time_funcs(PyroVM* vm, size_t num_iterations) {
-    size_t max_name_length = 0;
-
-    for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
-        MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
-        if (IS_TOMBSTONE(entry->key)) {
-            continue;
-        }
-
-        Value member_name = entry->key;
-        Value member_index = entry->value;
-        Value member_value = vm->main_module->members->values[member_index.as.i64];
-
-        if (IS_CLOSURE(member_value)) {
-            ObjStr* name = AS_STR(member_name);
-            if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
-                if (AS_CLOSURE(member_value)->fn->arity > 0) {
-                    pyro_stdout_write_f(vm, " · Invalid time function (%s), too many args.\n", name->bytes);
-                    return;
-                }
-                if (name->length > max_name_length) {
-                    max_name_length = name->length;
-                }
-            }
-        }
-    }
-
-    for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
-        MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
-        if (IS_TOMBSTONE(entry->key)) {
-            continue;
-        }
-
-        Value member_name = entry->key;
-        Value member_index = entry->value;
-        Value member_value = vm->main_module->members->values[member_index.as.i64];
-
-        if (IS_CLOSURE(member_value)) {
-            ObjStr* name = AS_STR(member_name);
-            if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
-                double start_time = clock();
-
-                for (size_t j = 0; j < num_iterations; j++) {
-                    pyro_push(vm, member_value);
-                    call_value(vm, 0);
-                    run(vm);
-                    pyro_pop(vm);
-
-                    if (vm->halt_flag) {
-                        reset_stack(vm);
-                        return;
-                    }
-                }
-
-                double total_runtime = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-                double average_in_secs = total_runtime / num_iterations;
-                double average_in_millisecs = average_in_secs * 1000;
-
-                pyro_stdout_write_f(vm, " · %s() ···", name->bytes);
-                for (size_t j = 0; j < max_name_length - name->length; j++) {
-                    pyro_stdout_write(vm, "·");
-                }
-
-                pyro_stdout_write_f(vm, " %.6f s", average_in_secs);
-
-                if (average_in_secs < 1.0) {
-                    pyro_stdout_write(vm, " ··· ");
-                    pyro_stdout_write_f(vm, "%.3f ms", average_in_millisecs);
-                }
-
-                pyro_stdout_write(vm, "\n");
-            }
         }
     }
 }
