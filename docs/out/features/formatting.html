@@ -207,6 +207,14 @@ The set of valid letters for <code>char</code> values is:
 <code>X</code> for uppercase hexadecimal.
 </li>
 </ul>
+<p>
+Using an empty format specifier for a <code>char</code> is equivalent to calling <code>$str()</code> on the <code>char</code> &mdash; i.e. it converts the <code>char</code> value to a UTF-8 encoded string, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;a&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="sc">&#39;🔥&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;🔥&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="sc">&#39;🔥&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;\xF0\x9F\x94\xA5&quot;</span><span class="p">;</span>
+</pre>
 <h3 id="formatting-strings">
 Formatting Strings
 </h3>

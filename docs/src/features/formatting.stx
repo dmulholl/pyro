@@ -92,6 +92,13 @@ The set of valid letters for `char` values is:
 * `x` for lowercase hexadecimal.
 * `X` for uppercase hexadecimal.
 
+Using an empty format specifier for a `char` is equivalent to calling `$str()` on the `char` --- i.e. it converts the `char` value to a UTF-8 encoded string, e.g.
+
+::: code pyro
+    assert $fmt("{}", 'a') == "a";
+    assert $fmt("{}", '🔥') == "🔥";
+    assert $fmt("{}", '🔥') == "\xF0\x9F\x94\xA5";
+
 
 
 ### Formatting Strings

@@ -501,7 +501,7 @@ Note that the `$main()` function won't be run if you import the same file as a m
 
 ### Unpacking
 
-You can unpack the values of a tuple, error, or vector in a `var` declaration using the following syntax:
+You can unpack the values of a tuple or vector in a `var` declaration using the following syntax:
 
 ::: code pyro
     var (foo, bar, baz) = $tup(123, 456, 789);
