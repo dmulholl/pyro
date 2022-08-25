@@ -53,14 +53,19 @@ void pyro_panic(PyroVM* vm, const char* format_string, ...) {
     size_t line_number = 0;
 
     if (vm->frame_count > 0) {
-        CallFrame* frame = &vm->frames[vm->frame_count - 1];
-        ObjFn* fn = frame->closure->fn;
+        CallFrame* current_frame = &vm->frames[vm->frame_count - 1];
+        ObjFn* fn = current_frame->closure->fn;
         source_id = fn->source_id;
         line_number = 1;
 
-        if (frame->ip > fn->code) {
-            size_t ip = frame->ip - fn->code - 1;
+        if (current_frame->ip > fn->code) {
+            size_t ip = current_frame->ip - fn->code - 1;
             line_number = ObjFn_get_line_number(fn, ip);
+        } else if (vm->frame_count > 1) {
+            CallFrame* outer_frame = &vm->frames[vm->frame_count - 2];
+            ObjFn* outer_fn = outer_frame->closure->fn;
+            size_t outer_ip = outer_frame->ip - outer_fn->code - 1;
+            line_number = ObjFn_get_line_number(outer_fn, outer_ip);
         }
 
         vm->panic_source_id = fn->source_id;
