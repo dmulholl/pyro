@@ -952,6 +952,73 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
 }
 
 
+static void parse_default_value_expression(Parser* parser) {
+    if (match(parser, TOKEN_TRUE)) {
+        emit_byte(parser, OP_LOAD_TRUE);
+    }
+
+    else if (match(parser, TOKEN_FALSE)) {
+        emit_byte(parser, OP_LOAD_FALSE);
+    }
+
+    else if (match(parser, TOKEN_NULL)) {
+        emit_byte(parser, OP_LOAD_NULL);
+    }
+
+    else if (match(parser, TOKEN_INT)) {
+        int64_t value = parse_int_literal(parser);
+        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+    }
+
+    else if (match(parser, TOKEN_HEX_INT)) {
+        int64_t value = parse_hex_literal(parser);
+        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+    }
+
+    else if (match(parser, TOKEN_BINARY_INT)) {
+        int64_t value = parse_binary_literal(parser);
+        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+    }
+
+    else if (match(parser, TOKEN_OCTAL_INT)) {
+        int64_t value = parse_octal_literal(parser);
+        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+    }
+
+    else if (match(parser, TOKEN_FLOAT)) {
+        double value = parse_float_literal(parser);
+        emit_load_value_from_constant_table(parser, MAKE_F64(value));
+    }
+
+    else if (match(parser, TOKEN_STRING)) {
+        const char* start = parser->previous_token.start + 1;
+        size_t length = parser->previous_token.length - 2;
+        ObjStr* string = ObjStr_copy_raw(start, length, parser->vm);
+        emit_load_value_from_constant_table(parser, MAKE_OBJ(string));
+    }
+
+    else if (match(parser, TOKEN_ESCAPED_STRING)) {
+        const char* start = parser->previous_token.start + 1;
+        size_t length = parser->previous_token.length - 2;
+        ObjStr* string = ObjStr_copy_esc(start, length, parser->vm);
+        emit_load_value_from_constant_table(parser, MAKE_OBJ(string));
+    }
+
+    else if (match(parser, TOKEN_CHAR)) {
+        uint32_t codepoint = parse_char_literal(parser);
+        emit_load_value_from_constant_table(parser, MAKE_CHAR(codepoint));
+    }
+
+    else {
+        ERROR_AT_NEXT_TOKEN(
+            "unexpected token '%.*s', a default value must be a simple literal",
+            parser->next_token.length,
+            parser->next_token.start
+        );
+    }
+}
+
+
 static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     TokenType token_type = parser->next_token.type;
 
@@ -2094,7 +2161,11 @@ static void parse_field_declaration(Parser* parser, Access access) {
         }
 
         if (match(parser, TOKEN_EQUAL)) {
-            parse_expression(parser, true, true);
+            if (access == STATIC) {
+                parse_expression(parser, true, true);
+            } else {
+                parse_default_value_expression(parser);
+            }
         } else {
             emit_byte(parser, OP_LOAD_NULL);
         }

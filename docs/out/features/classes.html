@@ -227,35 +227,10 @@ You can specify default values for fields, e.g.
 <span class="k">assert</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
 </pre>
 <p>
-Field initializers are evaluated once when the class statement itself is executed &mdash;
-each instance gets a copy of these values.
+A default field value must be a simple literal &mdash; one of <code>i64</code>, <code>f64</code>, <code>str</code>, <code>bool</code>, or <code>null</code>.
 </p>
 <p>
-Don't do this:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">hobbies</span> <span class="p">=</span> <span class="nx">$vec</span><span class="p">();</span>
-<span class="p">}</span>
-</pre>
-<p>
-All instances of <code>Person</code> will share a single <code>hobbies</code> vector!
-</p>
-<p>
-Use field initializers for immutable values like strings, booleans, or numbers.
-Initialize mutable objects from the <code>$init()</code> method instead:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">hobbies</span><span class="p">;</span>
-
-    <span class="kd">def</span> <span class="nx">$init</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">hobbies</span> <span class="p">=</span> <span class="nx">$vec</span><span class="p">();</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre>
-<p>
-This way, each <code>Person</code> instance gets its own individual <code>hobbies</code> vector.
+(This restriction only applies to instance fields. Static fields can be initialized to any value.)
 </p>
 <h3 id="inheritance">
 Inheritance

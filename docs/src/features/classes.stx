@@ -143,31 +143,9 @@ You can specify default values for fields, e.g.
     assert foo.bar == 123;
     assert foo.baz == null;
 
-Field initializers are evaluated once when the class statement itself is executed ---
-each instance gets a copy of these values.
+A default field value must be a simple literal --- one of `i64`, `f64`, `str`, `bool`, or `null`.
 
-Don't do this:
-
-::: code pyro
-    class Person {
-        var hobbies = $vec();
-    }
-
-All instances of `Person` will share a single `hobbies` vector!
-
-Use field initializers for immutable values like strings, booleans, or numbers.
-Initialize mutable objects from the `$init()` method instead:
-
-::: code pyro
-    class Person {
-        var hobbies;
-
-        def $init() {
-            self.hobbies = $vec();
-        }
-    }
-
-This way, each `Person` instance gets its own individual `hobbies` vector.
+(This restriction only applies to instance fields. Static fields can be initialized to any value.)
 
 
 
