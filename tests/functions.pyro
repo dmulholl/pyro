@@ -16,6 +16,12 @@ assert add(1, 2, 3) == 6;
 assert add(1, 2, 3,) == 6;
 
 
+def takes_zero_args() {
+}
+assert $is_err(try takes_zero_args("foo"));
+assert $is_err(try takes_zero_args("foo", "bar"));
+
+
 def takes_one_arg(arg) {
 }
 assert $is_err(try takes_one_arg());
