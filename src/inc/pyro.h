@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 8
-#define PYRO_VERSION_PATCH 9
+#define PYRO_VERSION_PATCH 10
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -28,7 +28,7 @@
 
 // Sets the initial capacity of the call-frame stack.
 #ifndef PYRO_INITIAL_CALL_FRAME_CAPACITY
-    #define PYRO_INITIAL_CALL_FRAME_CAPACITY 1
+    #define PYRO_INITIAL_CALL_FRAME_CAPACITY 64
 #endif
 
 // Initial garbage collection threshold in bytes. Defaults to 4MB.
