@@ -3,9 +3,9 @@
 import time
 import random
 
-num_runs = 25
+num_runs = 100
 
-# ------------------------------------------------------------------------------
+# TESTS ------------------------------------------------------------------------
 
 global_variable = 0
 
@@ -13,7 +13,6 @@ def fib(n):
     if n < 2:
         return n
     return fib(n - 1) + fib(n - 2)
-
 
 class Foo:
     def __init__(self, value):
@@ -25,7 +24,6 @@ class Foo:
     def get_value(self):
         return self.value
 
-
 def do_arithmetic(a, b, c, d):
     foo = (((a * 137 + b * 17 + c * 23) / 31) * a) / (b + 1) + 2 * d
     bar = ((foo * a) / (b + 1)) * c + 3 * d
@@ -33,12 +31,10 @@ def do_arithmetic(a, b, c, d):
     bam = foo * 2 + bar * 3 + baz * 4
     return bam
 
-
 def make_adder(n):
     def adds_n(arg):
         return arg + n
     return adds_n
-
 
 def fizzbuzz(n):
     if n % 15 == 0:
@@ -49,7 +45,6 @@ def fizzbuzz(n):
         return "buzz"
     else:
         return n
-
 
 def benchmark():
     vec = list()
@@ -130,10 +125,11 @@ def benchmark():
     sort_vec.sort()
 
     # Iterating over a map.
+    new_map = {}
     for key, value in map.items():
-        map[key] = value
+        new_map[key] = value
 
-# ------------------------------------------------------------------------------
+# END TESTS --------------------------------------------------------------------
 
 def main():
     start = time.process_time()

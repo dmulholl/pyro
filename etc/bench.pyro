@@ -1,5 +1,10 @@
-var global_variable = 0;
+#!/usr/bin/env pyro
 
+var num_runs = 100;
+
+# TESTS ------------------------------------------------------------------------
+
+var global_variable = 0;
 
 def fib(n) {
     if n < 2 {
@@ -8,23 +13,21 @@ def fib(n) {
     return fib(n - 1) + fib(n - 2);
 }
 
-
 class Foo {
-    var value;
+    pub var value;
 
     def $init(value) {
         self.value = value * 257 + 123;
     }
 
-    def change_value(arg) {
+    pub def change_value(arg) {
         self.value = self.value * arg;
     }
 
-    def get_value() {
+    pub def get_value() {
         return self.value;
     }
 }
-
 
 def do_arithmetic(a, b, c, d) {
     var foo = (((a * 137 + b * 17 + c * 23) / 31) * a) / (b + 1) + 2 * d;
@@ -34,14 +37,12 @@ def do_arithmetic(a, b, c, d) {
     return bam;
 }
 
-
 def make_adder(n) {
     def adds_n(arg) {
         return arg + n;
     }
     return adds_n;
 }
-
 
 def fizzbuzz(n) {
     if n % 15 == 0 {
@@ -54,7 +55,6 @@ def fizzbuzz(n) {
         return n;
     }
 }
-
 
 def benchmark() {
     var vec = $vec();
@@ -148,22 +148,29 @@ def benchmark() {
     sort_vec:sort();
 
     # Iterating over a map.
-    for (key, value) in map:entries() {
-        map[key] = value;
+    var new_map = $map();
+    for (key, value) in map {
+        new_map[key] = value;
     }
 }
 
+# END TESTS --------------------------------------------------------------------
 
 def $time_benchmark() {
     benchmark();
 }
 
-
 def $test_benchmark() {
     benchmark();
 }
 
-
 def $main() {
-    benchmark();
+    var start = $clock();
+    for i in $range(num_runs) {
+        benchmark();
+    }
+    var runtime = $clock() - start;
+    var average = runtime / num_runs;
+    var average_in_ms = average * 1000;
+    $println("Average time: {} s :: {} ms", average, average_in_ms);
 }

@@ -16,3 +16,8 @@ It solves the problem that I wanted to build a programming language.
 I built the first prototype version in Python and it burned through CPU cycles. I think that qualifies as *blazingly fast* for marketing purposes.
 
 
+### Is Pyro fast?
+
+No. Right now, Pyro is approximately as fast as Python, which is generally considered to be a slow language.
+
+Pyro is designed to be highly *optimizable* so, in theory, future versions could run at least an order of magnitude faster, but for now this is a theoretical possibility.
