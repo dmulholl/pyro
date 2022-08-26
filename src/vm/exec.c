@@ -16,45 +16,33 @@
 #include "../inc/gc.h"
 
 
-// - If we're calling [closure] as a function, the [closure] object and [arg_count] arguments should
-//   be sitting on top of the stack.
-// - If we're calling [closure] as a method, the receiver object and [arg_count] arguments should be
-//   sitting on top of the stack.
-static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
+// Pushes a new frame onto the call stack. [frame_pointer] points to the frame's zeroth
+// local variable (for instance methods, this will be 'self').
+static void push_call_frame(PyroVM* vm, ObjClosure* closure, Value* frame_pointer) {
     if (vm->frame_count == PYRO_MAX_CALL_FRAMES) {
         pyro_panic(vm, "max call depth exceeded");
         return;
     }
 
-    CallFrame* new_frame = &vm->frames[vm->frame_count++];
-    new_frame->closure = closure;
-    new_frame->ip = closure->fn->code;
-    new_frame->fp = vm->stack_top - arg_count - 1;
+    CallFrame* frame = &vm->frames[vm->frame_count];
+    vm->frame_count++;
+
+    frame->closure = closure;
+    frame->ip = closure->fn->code;
+    frame->fp = frame_pointer;
+}
+
+
+// - If we're calling [closure] as a function, the [closure] object and [arg_count] arguments should
+//   be sitting on top of the stack.
+// - If we're calling [closure] as a method, the receiver object and [arg_count] arguments should be
+//   sitting on top of the stack.
+static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
+    Value* frame_pointer = vm->stack_top - arg_count - 1;
 
     if (closure->fn->is_variadic) {
         size_t num_required_args = closure->fn->arity - 1;
-        if (arg_count >= num_required_args) {
-            size_t num_variadic_args = arg_count - num_required_args;
-            if (num_variadic_args == 0) {
-                ObjTup* tup = ObjTup_new(0, vm);
-                if (!tup) {
-                    pyro_panic(vm, "out of memory");
-                    return;
-                }
-                if (!pyro_push(vm, MAKE_OBJ(tup))) {
-                    return;
-                }
-            } else {
-                ObjTup* tup = ObjTup_new(num_variadic_args, vm);
-                if (!tup) {
-                    pyro_panic(vm, "out of memory");
-                    return;
-                }
-                memcpy(tup->values, vm->stack_top - num_variadic_args, sizeof(Value) * num_variadic_args);
-                *(vm->stack_top - num_variadic_args) = MAKE_OBJ(tup);
-                vm->stack_top -= (num_variadic_args - 1);
-            }
-        } else {
+        if (arg_count < num_required_args) {
             pyro_panic(vm,
                 "%s(): expected at least %zu argument%s, found %zu",
                 closure->fn->name->bytes,
@@ -62,16 +50,46 @@ static void call_closure(PyroVM* vm, ObjClosure* closure, uint8_t arg_count) {
                 num_required_args == 1 ? "" : "s",
                 arg_count
             );
+            return;
         }
-    } else if (arg_count != closure->fn->arity) {
-        pyro_panic(vm,
-            "%s(): expected %zu argument%s, found %zu",
-            closure->fn->name->bytes,
-            closure->fn->arity,
-            closure->fn->arity == 1 ? "" : "s",
-            arg_count
-        );
+        size_t num_variadic_args = arg_count - num_required_args;
+        ObjTup* tup = ObjTup_new(num_variadic_args, vm);
+        if (!tup) {
+            pyro_panic(vm, "out of memory");
+            return;
+        }
+        if (num_variadic_args > 0) {
+            memcpy(tup->values, vm->stack_top - num_variadic_args, sizeof(Value) * num_variadic_args);
+            vm->stack_top -= num_variadic_args;
+        }
+        pyro_push(vm, MAKE_OBJ(tup));
+        push_call_frame(vm, closure, frame_pointer);
+        return;
     }
+
+    if (arg_count == closure->fn->arity) {
+        push_call_frame(vm, closure, frame_pointer);
+        return;
+    }
+
+    if (arg_count < closure->fn->arity && arg_count + closure->default_values->count >= closure->fn->arity) {
+        size_t num_args_to_push = closure->fn->arity - arg_count;
+        size_t start_index = closure->default_values->count - num_args_to_push;
+        for (size_t i = 0; i < num_args_to_push; i++) {
+            Value arg = closure->default_values->values[start_index + i];
+            pyro_push(vm, arg);
+        }
+        push_call_frame(vm, closure, frame_pointer);
+        return;
+    }
+
+    pyro_panic(vm,
+        "%s(): expected %zu argument%s, found %zu",
+        closure->fn->name->bytes,
+        closure->fn->arity,
+        closure->fn->arity == 1 ? "" : "s",
+        arg_count
+    );
 }
 
 
@@ -395,6 +413,40 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
+                pyro_push(vm, MAKE_OBJ(closure));
+
+                for (size_t i = 0; i < closure->upvalue_count; i++) {
+                    uint8_t is_local = READ_BYTE();
+                    uint8_t index = READ_BYTE();
+                    if (is_local) {
+                        closure->upvalues[i] = capture_upvalue(vm, frame->fp + index);
+                    } else {
+                        closure->upvalues[i] = frame->closure->upvalues[index];
+                    }
+                }
+
+                break;
+            }
+
+            case OP_MAKE_CLOSURE_WITH_DEF_ARGS: {
+                ObjFn* fn = AS_FN(READ_CONSTANT());
+                ObjModule* module = frame->closure->module;
+                ObjClosure* closure = ObjClosure_new(vm, fn, module);
+                if (!closure) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                uint8_t default_value_count = READ_BYTE();
+                for (uint8_t i = 0; i < default_value_count; i++) {
+                    Value value = vm->stack_top[-default_value_count + i];
+                    if (!ObjVec_append(closure->default_values, value, vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= default_value_count;
                 pyro_push(vm, MAKE_OBJ(closure));
 
                 for (size_t i = 0; i < closure->upvalue_count; i++) {

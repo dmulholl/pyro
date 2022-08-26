@@ -1,0 +1,72 @@
+def foo(arg = 123) {
+    return arg;
+}
+assert foo() == 123;
+assert foo(456) == 456;
+assert foo("abc") == "abc";
+assert $is_err(try foo(123, 456));
+
+
+def bar(arg1, arg2 = 123, arg3 = 456) {
+    return $tup(arg1, arg2, arg3);
+}
+assert bar(111) == $tup(111, 123, 456);
+assert bar(111, 222) == $tup(111, 222, 456);
+assert bar(111, 222, 333) == $tup(111, 222, 333);
+assert $is_err(try bar());
+assert $is_err(try bar(111, 222, 333, 444));
+
+
+def baz(arg1: i64, arg2: i64 = 123, arg3: i64 = 456) {
+    return $tup(arg1, arg2, arg3);
+}
+assert baz(111) == $tup(111, 123, 456);
+assert baz(111, 222) == $tup(111, 222, 456);
+assert baz(111, 222, 333) == $tup(111, 222, 333);
+assert $is_err(try baz());
+assert $is_err(try baz(111, 222, 333, 444));
+
+
+var global = "global";
+{
+    var local1 = 1 + 1 + 1;
+    var local2 = 2 + 2 + 2;
+
+    def func(arg1, arg2 = 2, arg3 = 3) {
+        var foo = 1 + 2 * 3 / 4 + 5;
+        var sum = arg1 + arg2 + arg3;
+        return $tup(arg1, arg2, arg3, sum);
+    }
+
+    var stack_junk1 = 1 + 2 * 3 / 4 + 5 * 6 + 7 / 8 * 9;
+    assert func(1) == $tup(1, 2, 3, 6);
+    var stack_junk2 = 1 + 2 * 3 / 4 + 5 - 6 * 7 / 8 + 9;
+    assert func(1, 4) == $tup(1, 4, 3, 8);
+    var stack_junk3 = 1 + 2 * 3 / 4 + 5 ** 6 / 7 * 8 - 9;
+    assert func(1, 4, 6) == $tup(1, 4, 6, 11);
+
+    assert local1 == 3;
+    assert local2 == 6;
+}
+assert global == "global";
+
+
+class Object {
+    pub def method1(arg = 123) {
+        return arg;
+    }
+
+    pub def method2(arg1, arg2 = 123, arg3 = 456) {
+        return $tup(arg1, arg2, arg3);
+    }
+}
+var obj = Object();
+assert obj:method1() == 123;
+assert obj:method1(456) == 456;
+assert obj:method1("abc") == "abc";
+assert $is_err(try obj:method1(123, 456));
+assert obj:method2(111) == $tup(111, 123, 456);
+assert obj:method2(111, 222) == $tup(111, 222, 456);
+assert obj:method2(111, 222, 333) == $tup(111, 222, 333);
+assert $is_err(try obj:method2());
+assert $is_err(try obj:method2(111, 222, 333, 444));

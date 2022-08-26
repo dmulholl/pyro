@@ -333,6 +333,7 @@ typedef struct {
     Obj obj;
     ObjFn* fn;
     ObjModule* module;
+    ObjVec* default_values;
     ObjUpvalue** upvalues;
     size_t upvalue_count;
 } ObjClosure;

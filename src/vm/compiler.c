@@ -2057,6 +2057,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
         return;
     }
     begin_scope(parser);
+    uint8_t default_value_count = 0;
 
     // Compile the parameter list.
     consume(parser, TOKEN_LEFT_PAREN, "expected '(' before function parameters");
@@ -2074,11 +2075,24 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
             compiler.fn->is_variadic = true;
         }
         uint16_t index = consume_variable_name(parser, "expected parameter name");
+        define_variable(parser, index, PRIVATE);
+        compiler.fn->arity++;
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
-        define_variable(parser, index, PRIVATE);
-        compiler.fn->arity++;
+        if (default_value_count > 0 && !check(parser, TOKEN_EQUAL)) {
+            ERROR_AT_NEXT_TOKEN("missing default value for parameter");
+            return;
+        }
+        if (match(parser, TOKEN_EQUAL)) {
+            if (compiler.fn->is_variadic) {
+                ERROR_AT_PREVIOUS_TOKEN("a variadic function cannot have default argument values");
+            }
+            parser->compiler = compiler.enclosing;
+            parse_default_value_expression(parser);
+            parser->compiler = &compiler;
+            default_value_count += 1;
+        }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after function parameters");
 
@@ -2109,7 +2123,12 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     uint16_t index = add_value_to_constant_table(parser, MAKE_OBJ(fn));
 
     // Emit the bytecode to load the function onto the stack as an ObjClosure.
-    emit_u8_u16be(parser, OP_MAKE_CLOSURE, index);
+    if (default_value_count > 0) {
+        emit_u8_u16be(parser, OP_MAKE_CLOSURE_WITH_DEF_ARGS, index);
+        emit_byte(parser, default_value_count);
+    } else {
+        emit_u8_u16be(parser, OP_MAKE_CLOSURE, index);
+    }
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
@@ -2119,7 +2138,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
 
 static void parse_function_declaration(Parser* parser, Access access) {
-    uint16_t index = consume_variable_name(parser, "expected function name");
+    uint16_t index = consume_variable_name(parser, "expected a function name");
     mark_initialized(parser);
     parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
     define_variable(parser, index, access);
@@ -2127,7 +2146,7 @@ static void parse_function_declaration(Parser* parser, Access access) {
 
 
 static void parse_method_declaration(Parser* parser, Access access) {
-    consume(parser, TOKEN_IDENTIFIER, "expected method name");
+    consume(parser, TOKEN_IDENTIFIER, "expected a method name");
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
 
     FnType type;

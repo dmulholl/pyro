@@ -191,6 +191,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             ObjClosure* closure = (ObjClosure*)object;
             mark_object(vm, (Obj*)closure->fn);
             mark_object(vm, (Obj*)closure->module);
+            mark_object(vm, (Obj*)closure->default_values);
             for (size_t i = 0; i < closure->upvalue_count; i++) {
                 mark_object(vm, (Obj*)closure->upvalues[i]);
             }

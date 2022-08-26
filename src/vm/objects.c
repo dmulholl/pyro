@@ -103,19 +103,23 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn, ObjModule* module) {
 
     closure->fn = fn;
     closure->module = module;
+    closure->default_values = NULL;
     closure->upvalues = NULL;
     closure->upvalue_count = 0;
+
+    closure->default_values = ObjVec_new(vm);
+    if (!closure->default_values) {
+        return NULL;
+    }
 
     if (fn->upvalue_count > 0) {
         ObjUpvalue** array = ALLOCATE_ARRAY(vm, ObjUpvalue*, fn->upvalue_count);
         if (!array) {
             return NULL;
         }
-
         for (size_t i = 0; i < fn->upvalue_count; i++) {
             array[i] = NULL;
         }
-
         closure->upvalues = array;
         closure->upvalue_count = fn->upvalue_count;
     }
@@ -1110,6 +1114,13 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
             ObjFn* closure_fn = AS_FN(fn->constants[const_index]);
             return 2 + closure_fn->upvalue_count * 2;
+        }
+
+        // 2 bytes for the constant index, 1 byte for the value count, plus two for each upvalue.
+        case OP_MAKE_CLOSURE_WITH_DEF_ARGS: {
+            uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
+            ObjFn* closure_fn = AS_FN(fn->constants[const_index]);
+            return 2 + 1 + closure_fn->upvalue_count * 2;
         }
 
         // 1 byte for the count, plus two for each constant index.

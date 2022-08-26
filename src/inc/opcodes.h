@@ -86,6 +86,7 @@ typedef enum {
     OP_LOAD_TRUE,
     OP_MAKE_CLASS,
     OP_MAKE_CLOSURE,
+    OP_MAKE_CLOSURE_WITH_DEF_ARGS,
     OP_MAKE_MAP,
     OP_MAKE_VEC,
     OP_POP,
