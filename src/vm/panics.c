@@ -4,7 +4,7 @@
 
 
 static void print_stack_trace(PyroVM* vm) {
-    pyro_stderr_write(vm, "\nTraceback (most recent function call first):\n\n");
+    pyro_stderr_write(vm, "\nStack Trace:\n\n");
 
     for (size_t i = vm->frame_count; i > 0; i--) {
         CallFrame* frame = &vm->frames[i - 1];
