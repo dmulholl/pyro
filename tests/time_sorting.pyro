@@ -1,19 +1,20 @@
+import $std;
+import $std::prng;
+
 def $time_quicksort_shuffled_sequential_integers() {
     var vec = $range(1_000_000):to_vec():shuffle();
     vec:quicksort();
     assert vec:is_sorted();
 }
 
-
 def $time_quicksort_random_integers_with_duplicates() {
     var vec = $vec();
     for i in $range(1_000_000) {
-        vec:append($std::prng::rand_int(1_000));
+        vec:append(prng::rand_int(1_000));
     }
     vec:quicksort();
     assert vec:is_sorted();
 }
-
 
 def $time_mergesort_shuffled_sequential_integers() {
     var vec = $range(1_000_000):to_vec():shuffle();
@@ -21,11 +22,10 @@ def $time_mergesort_shuffled_sequential_integers() {
     assert vec:is_sorted();
 }
 
-
 def $time_mergesort_random_integers_with_duplicates() {
     var vec = $vec();
     for i in $range(1_000_000) {
-        vec:append($std::prng::rand_int(1_000));
+        vec:append(prng::rand_int(1_000));
     }
     vec:mergesort();
     assert vec:is_sorted();
