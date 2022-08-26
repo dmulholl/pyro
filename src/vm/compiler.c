@@ -105,7 +105,7 @@ typedef struct {
     bool had_syntax_error;
     bool had_memory_error;
     PyroVM* vm;
-    FnCompiler* compiler;
+    FnCompiler* fn_compiler;
     ClassCompiler* class_compiler;
     const char* src_id;
     size_t num_statements;
@@ -199,7 +199,7 @@ static bool lexemes_are_equal(Token* a, Token* b) {
 // Appends a single byte to the current function's bytecode. All writes to the bytecode go through
 // this function.
 static void emit_byte(Parser* parser, uint8_t byte) {
-    if (!ObjFn_write(parser->compiler->fn, byte, parser->previous_token.line, parser->vm)) {
+    if (!ObjFn_write(parser->fn_compiler->fn, byte, parser->previous_token.line, parser->vm)) {
         parser->had_memory_error = true;
     }
 }
@@ -230,7 +230,7 @@ static void emit_u8_u16be(Parser* parser, uint8_t u8_arg, uint16_t u16_arg) {
 // Emits a naked return instruction -- i.e. a return with no value specified. Inside an $init()
 // method this returns the object instance being initialized, otherwise it returns null.
 static void emit_naked_return(Parser* parser) {
-    if (parser->compiler->type == TYPE_INIT_METHOD) {
+    if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
         emit_u8_u8(parser, OP_GET_LOCAL, 0);
     } else {
         emit_byte(parser, OP_LOAD_NULL);
@@ -241,7 +241,7 @@ static void emit_naked_return(Parser* parser) {
 
 // Adds the value to the current function's constant table and returns its index.
 static uint16_t add_value_to_constant_table(Parser* parser, Value value) {
-    int64_t index = ObjFn_add_constant(parser->compiler->fn, value, parser->vm);
+    int64_t index = ObjFn_add_constant(parser->fn_compiler->fn, value, parser->vm);
     if (index < 0) {
         parser->had_memory_error = true;
         return 0;
@@ -357,42 +357,42 @@ static bool match_assignment_token(Parser* parser) {
 
 // Returns true if initialization succeeded, false if initialization failed because memory
 // could not be allocated.
-static bool init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, Token name) {
+static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType type, Token name) {
     // Set this compiler's enclosing compiler to the parser's current compiler.
     // Set the parser's current compiler to this compiler i.e. the last compiler in the chain.
-    compiler->enclosing = parser->compiler;
-    parser->compiler = compiler;
+    fn_compiler->enclosing = parser->fn_compiler;
+    parser->fn_compiler = fn_compiler;
 
-    compiler->type = type;
-    compiler->local_count = 0;
-    compiler->scope_depth = 0;
-    compiler->loop_compiler = NULL;
+    fn_compiler->type = type;
+    fn_compiler->local_count = 0;
+    fn_compiler->scope_depth = 0;
+    fn_compiler->loop_compiler = NULL;
 
     // Assign to NULL first as the function initializer can trigger the GC.
-    compiler->fn = NULL;
-    compiler->fn = ObjFn_new(parser->vm);
-    if (!compiler->fn) {
+    fn_compiler->fn = NULL;
+    fn_compiler->fn = ObjFn_new(parser->vm);
+    if (!fn_compiler->fn) {
         parser->had_memory_error = true;
-        parser->compiler = compiler->enclosing;
+        parser->fn_compiler = fn_compiler->enclosing;
         return false;
     }
 
-    compiler->fn->name = ObjStr_copy_raw(name.start, name.length, parser->vm);
-    if (!compiler->fn->name) {
+    fn_compiler->fn->name = ObjStr_copy_raw(name.start, name.length, parser->vm);
+    if (!fn_compiler->fn->name) {
         parser->had_memory_error = true;
-        parser->compiler = compiler->enclosing;
+        parser->fn_compiler = fn_compiler->enclosing;
         return false;
     }
 
-    compiler->fn->source_id = ObjStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
-    if (!compiler->fn->source_id) {
+    fn_compiler->fn->source_id = ObjStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
+    if (!fn_compiler->fn->source_id) {
         parser->had_memory_error = true;
-        parser->compiler = compiler->enclosing;
+        parser->fn_compiler = fn_compiler->enclosing;
         return false;
     }
 
     // Reserve slot zero for the receiver when calling methods.
-    Local* local = &compiler->locals[compiler->local_count++];
+    Local* local = &fn_compiler->locals[fn_compiler->local_count++];
     local->depth = 0;
     local->is_initialized = true;
     local->is_captured = false;
@@ -410,7 +410,7 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* compiler, FnType type, 
 
 static ObjFn* end_fn_compiler(Parser* parser) {
     emit_naked_return(parser);
-    ObjFn* fn = parser->compiler->fn;
+    ObjFn* fn = parser->fn_compiler->fn;
 
     #ifdef PYRO_DEBUG_DUMP_BYTECODE
         if (!parser->had_syntax_error) {
@@ -418,14 +418,14 @@ static ObjFn* end_fn_compiler(Parser* parser) {
         }
     #endif
 
-    parser->compiler = parser->compiler->enclosing;
+    parser->fn_compiler = parser->fn_compiler->enclosing;
     return fn;
 }
 
 
-static int resolve_local(Parser* parser, FnCompiler* compiler, Token* name) {
-    for (int i = compiler->local_count - 1; i >= 0; i--) {
-        Local* local = &compiler->locals[i];
+static int resolve_local(Parser* parser, FnCompiler* fn_compiler, Token* name) {
+    for (int i = fn_compiler->local_count - 1; i >= 0; i--) {
+        Local* local = &fn_compiler->locals[i];
         if (lexemes_are_equal(name, &local->name)) {
             if (local->is_initialized) {
                 return i;
@@ -439,13 +439,13 @@ static int resolve_local(Parser* parser, FnCompiler* compiler, Token* name) {
 
 // [index] is the closed-over local variable's slot index.
 // Returns the index of the newly created upvalue in the function's upvalue list.
-static int add_upvalue(Parser* parser, FnCompiler* compiler, uint8_t index, bool is_local) {
-    size_t upvalue_count = compiler->fn->upvalue_count;
+static int add_upvalue(Parser* parser, FnCompiler* fn_compiler, uint8_t index, bool is_local) {
+    size_t upvalue_count = fn_compiler->fn->upvalue_count;
 
     // Dont add duplicate upvalues unnecessarily if a closure references the same variable in a
     // surrounding function multiple times.
     for (size_t i = 0; i < upvalue_count; i++) {
-        Upvalue* upvalue = &compiler->upvalues[i];
+        Upvalue* upvalue = &fn_compiler->upvalues[i];
         if (upvalue->index == index && upvalue->is_local == is_local) {
             return i;
         }
@@ -456,35 +456,35 @@ static int add_upvalue(Parser* parser, FnCompiler* compiler, uint8_t index, bool
         return 0;
     }
 
-    compiler->upvalues[upvalue_count].is_local = is_local;
-    compiler->upvalues[upvalue_count].index = index;
-    return compiler->fn->upvalue_count++;
+    fn_compiler->upvalues[upvalue_count].is_local = is_local;
+    fn_compiler->upvalues[upvalue_count].index = index;
+    return fn_compiler->fn->upvalue_count++;
 }
 
 
 // Looks for a local variable declared in any of the surrounding functions.
 // If it finds one, it returns the 'upvalue index' for that variable.
 // A return value of -1 means the variable is either global or undefined.
-static int resolve_upvalue(Parser* parser, FnCompiler* compiler, Token* name) {
-    if (compiler->enclosing == NULL) {
+static int resolve_upvalue(Parser* parser, FnCompiler* fn_compiler, Token* name) {
+    if (fn_compiler->enclosing == NULL) {
         return -1;
     }
 
     // Look for a matching local variable in the directly enclosing function.
     // If we find one, capture it and return the upvalue index.
-    int local = resolve_local(parser, compiler->enclosing, name);
+    int local = resolve_local(parser, fn_compiler->enclosing, name);
     if (local != -1) {
-        compiler->enclosing->locals[local].is_captured = true;
-        return add_upvalue(parser, compiler, (uint8_t)local, true);
+        fn_compiler->enclosing->locals[local].is_captured = true;
+        return add_upvalue(parser, fn_compiler, (uint8_t)local, true);
     }
 
     // Look for a matching local variable beyond the immediately enclosing function by
     // recursively walking the chain of nested compilers. If we find one, the most deeply
     // nested call will capture it and return its upvalue index. As the recursive calls
     // unwind we'll construct a chain of upvalues leading to the captured variable.
-    int upvalue = resolve_upvalue(parser, compiler->enclosing, name);
+    int upvalue = resolve_upvalue(parser, fn_compiler->enclosing, name);
     if (upvalue != -1) {
-        return add_upvalue(parser, compiler, (uint8_t)upvalue, false);
+        return add_upvalue(parser, fn_compiler, (uint8_t)upvalue, false);
     }
 
     // No matching local variable in any enclosing scope.
@@ -493,38 +493,38 @@ static int resolve_upvalue(Parser* parser, FnCompiler* compiler, Token* name) {
 
 
 static void add_local(Parser* parser, Token name) {
-    if (parser->compiler->local_count == 256) {
+    if (parser->fn_compiler->local_count == 256) {
         ERROR_AT_PREVIOUS_TOKEN("too many local variables in scope (max 256)");
         return;
     }
-    Local* local = &parser->compiler->locals[parser->compiler->local_count++];
+    Local* local = &parser->fn_compiler->locals[parser->fn_compiler->local_count++];
     local->name = name;
-    local->depth = parser->compiler->scope_depth;
+    local->depth = parser->fn_compiler->scope_depth;
     local->is_initialized = false; // the variable has been declared but not yet defined
     local->is_captured = false;
 }
 
 
 static void mark_initialized(Parser* parser) {
-    if (parser->compiler->scope_depth == 0) {
+    if (parser->fn_compiler->scope_depth == 0) {
         return;
     }
-    parser->compiler->locals[parser->compiler->local_count - 1].is_initialized = true;
+    parser->fn_compiler->locals[parser->fn_compiler->local_count - 1].is_initialized = true;
 }
 
 
 static void mark_initialized_multi(Parser* parser, size_t count) {
-    if (parser->compiler->scope_depth == 0) {
+    if (parser->fn_compiler->scope_depth == 0) {
         return;
     }
     for (size_t i = 0; i < count; i++) {
-        parser->compiler->locals[parser->compiler->local_count - 1 - i].is_initialized = true;
+        parser->fn_compiler->locals[parser->fn_compiler->local_count - 1 - i].is_initialized = true;
     }
 }
 
 
 static void define_variable(Parser* parser, uint16_t index, Access access) {
-    if (parser->compiler->scope_depth > 0) {
+    if (parser->fn_compiler->scope_depth > 0) {
         mark_initialized(parser);
         return;
     }
@@ -535,7 +535,7 @@ static void define_variable(Parser* parser, uint16_t index, Access access) {
 
 
 static void define_variables(Parser* parser, uint16_t* indexes, size_t count, Access access) {
-    if (parser->compiler->scope_depth > 0) {
+    if (parser->fn_compiler->scope_depth > 0) {
         mark_initialized_multi(parser, count);
         return;
     }
@@ -549,7 +549,7 @@ static void define_variables(Parser* parser, uint16_t* indexes, size_t count, Ac
 
 // Add a newly declared local variable to the compiler's locals list.
 static void declare_variable(Parser* parser, Token name) {
-    if (parser->compiler->scope_depth == 0) {
+    if (parser->fn_compiler->scope_depth == 0) {
         // Don't do anything for globals.
         return;
     }
@@ -559,9 +559,9 @@ static void declare_variable(Parser* parser, Token name) {
         return;
     }
 
-    for (int i = parser->compiler->local_count - 1; i >= 0; i--) {
-        Local* local = &parser->compiler->locals[i];
-        if (local->depth < parser->compiler->scope_depth) {
+    for (int i = parser->fn_compiler->local_count - 1; i >= 0; i--) {
+        Local* local = &parser->fn_compiler->locals[i];
+        if (local->depth < parser->fn_compiler->scope_depth) {
             break;
         }
         if (lexemes_are_equal(&name, &local->name)) {
@@ -580,7 +580,7 @@ static uint16_t consume_variable_name(Parser* parser, const char* error_message)
 
     // Local variables are referenced by index not by name so we don't need to add the name
     // of a local to the list of constants. This return value will simply be ignored.
-    if (parser->compiler->scope_depth > 0) {
+    if (parser->fn_compiler->scope_depth > 0) {
         return 0;
     }
 
@@ -593,10 +593,10 @@ static uint16_t consume_variable_name(Parser* parser, const char* error_message)
 // Returns the number of locals discarded. (This function doesn't decremement the local count as
 // it's called directly by break statements.)
 static int discard_locals(Parser* parser, int depth) {
-    int local_count = parser->compiler->local_count;
+    int local_count = parser->fn_compiler->local_count;
 
-    while (local_count > 0 && parser->compiler->locals[local_count - 1].depth >= depth) {
-        if (parser->compiler->locals[local_count - 1].is_captured) {
+    while (local_count > 0 && parser->fn_compiler->locals[local_count - 1].depth >= depth) {
+        if (parser->fn_compiler->locals[local_count - 1].is_captured) {
             emit_byte(parser, OP_CLOSE_UPVALUE);
         } else {
             emit_byte(parser, OP_POP);
@@ -604,19 +604,19 @@ static int discard_locals(Parser* parser, int depth) {
         local_count--;
     }
 
-    return parser->compiler->local_count - local_count;
+    return parser->fn_compiler->local_count - local_count;
 }
 
 
 static void begin_scope(Parser* parser) {
-    parser->compiler->scope_depth++;
+    parser->fn_compiler->scope_depth++;
 }
 
 
 static void end_scope(Parser* parser) {
-    int popped = discard_locals(parser, parser->compiler->scope_depth);
-    parser->compiler->local_count -= popped;
-    parser->compiler->scope_depth--;
+    int popped = discard_locals(parser, parser->fn_compiler->scope_depth);
+    parser->fn_compiler->local_count -= popped;
+    parser->fn_compiler->scope_depth--;
 }
 
 
@@ -626,7 +626,7 @@ static size_t emit_jump(Parser* parser, OpCode instruction) {
     emit_byte(parser, instruction);
     emit_byte(parser, 0xff);
     emit_byte(parser, 0xff);
-    return parser->compiler->fn->code_count - 2;
+    return parser->fn_compiler->fn->code_count - 2;
 }
 
 
@@ -636,14 +636,14 @@ static void patch_jump(Parser* parser, size_t index) {
         return;
     }
 
-    size_t jump = parser->compiler->fn->code_count - index - 2;
+    size_t jump = parser->fn_compiler->fn->code_count - index - 2;
     if (jump > UINT16_MAX) {
         ERROR_AT_PREVIOUS_TOKEN("too much code to jump over");
         return;
     }
 
-    parser->compiler->fn->code[index] = (jump >> 8) & 0xff;
-    parser->compiler->fn->code[index + 1] = jump & 0xff;
+    parser->fn_compiler->fn->code[index] = (jump >> 8) & 0xff;
+    parser->fn_compiler->fn->code[index + 1] = jump & 0xff;
 }
 
 
@@ -681,13 +681,13 @@ static uint8_t parse_argument_list(Parser* parser, bool* unpack_last_argument) {
 
 // Emits bytecode to load the value of the named variable onto the stack.
 static void emit_load_named_variable(Parser* parser, Token name) {
-    int local_index = resolve_local(parser, parser->compiler, &name);
+    int local_index = resolve_local(parser, parser->fn_compiler, &name);
     if (local_index != -1) {
         emit_u8_u8(parser, OP_GET_LOCAL, (uint8_t)local_index);
         return;
     }
 
-    int upvalue_index = resolve_upvalue(parser, parser->compiler, &name);
+    int upvalue_index = resolve_upvalue(parser, parser->fn_compiler, &name);
     if (upvalue_index != -1) {
         emit_u8_u8(parser, OP_GET_UPVALUE, (uint8_t)upvalue_index);
         return;
@@ -701,13 +701,13 @@ static void emit_load_named_variable(Parser* parser, Token name) {
 
 // Emits bytecode to set the named variable to the value on top of the stack.
 static void emit_store_named_variable(Parser* parser, Token name) {
-    int local_index = resolve_local(parser, parser->compiler, &name);
+    int local_index = resolve_local(parser, parser->fn_compiler, &name);
     if (local_index != -1) {
         emit_u8_u8(parser, OP_SET_LOCAL, (uint8_t)local_index);
         return;
     }
 
-    int upvalue_index = resolve_upvalue(parser, parser->compiler, &name);
+    int upvalue_index = resolve_upvalue(parser, parser->fn_compiler, &name);
     if (upvalue_index != -1) {
         emit_u8_u8(parser, OP_SET_UPVALUE, (uint8_t)upvalue_index);
         return;
@@ -1062,7 +1062,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_LEFT_PAREN)) {
         parse_expression(parser, can_assign_in_parens, can_assign_in_parens);
         if (match_assignment_token(parser) && !can_assign_in_parens) {
-            if (parser->compiler->type == TYPE_TRY_EXPR) {
+            if (parser->fn_compiler->type == TYPE_TRY_EXPR) {
                 ERROR_AT_PREVIOUS_TOKEN("assignment is not allowed inside try expressions");
             } else {
                 ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
@@ -1097,7 +1097,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a method declaration");
-        } else if (parser->compiler->type == TYPE_STATIC_METHOD) {
+        } else if (parser->fn_compiler->type == TYPE_STATIC_METHOD) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' in a static method");
         }
         emit_load_named_variable(parser, parser->previous_token);
@@ -1106,7 +1106,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_SUPER)) {
         if (parser->class_compiler == NULL) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' outside a class");
-        } else if (parser->compiler->type == TYPE_STATIC_METHOD) {
+        } else if (parser->fn_compiler->type == TYPE_STATIC_METHOD) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a static method");
         } else if (!parser->class_compiler->has_superclass) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a class with no superclass");
@@ -1261,8 +1261,8 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
 
 
 static void parse_try_expr(Parser* parser) {
-    FnCompiler compiler;
-    if (!init_fn_compiler(parser, &compiler, TYPE_TRY_EXPR, syntoken("try"))) {
+    FnCompiler fn_compiler;
+    if (!init_fn_compiler(parser, &fn_compiler, TYPE_TRY_EXPR, syntoken("try"))) {
         return;
     }
 
@@ -1274,8 +1274,8 @@ static void parse_try_expr(Parser* parser) {
     emit_u8_u16be(parser, OP_MAKE_CLOSURE, add_value_to_constant_table(parser, MAKE_OBJ(fn)));
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
-        emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
-        emit_byte(parser, compiler.upvalues[i].index);
+        emit_byte(parser, fn_compiler.upvalues[i].is_local ? 1 : 0);
+        emit_byte(parser, fn_compiler.upvalues[i].index);
     }
 }
 
@@ -1648,7 +1648,7 @@ static void parse_import_stmt(Parser* parser) {
             if (match(parser, TOKEN_STAR)) {
                 if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after '*' in import statement")) return;
                 if (!consume(parser, TOKEN_SEMICOLON, "expected ';' after '{*}' in import statement")) return;
-                if (parser->compiler->type != TYPE_MODULE || parser->compiler->scope_depth != 0) {
+                if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth != 0) {
                     ERROR_AT_PREVIOUS_TOKEN("can only import {*} at global scope");
                     return;
                 }
@@ -1790,7 +1790,7 @@ static void parse_if_stmt(Parser* parser) {
 static void emit_loop(Parser* parser, size_t start_index) {
     emit_byte(parser, OP_JUMP_BACK);
 
-    size_t offset = parser->compiler->fn->code_count - start_index + 2;
+    size_t offset = parser->fn_compiler->fn->code_count - start_index + 2;
     if (offset > UINT16_MAX) {
         ERROR_AT_PREVIOUS_TOKEN("loop body is too large");
     }
@@ -1837,11 +1837,11 @@ static void parse_for_in_stmt(Parser* parser) {
 
     // This is the point in the bytecode the loop will jump back to.
     LoopCompiler loop;
-    loop.start_index = parser->compiler->fn->code_count;
-    loop.start_depth = parser->compiler->scope_depth;
+    loop.start_index = parser->fn_compiler->fn->code_count;
+    loop.start_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
-    loop.enclosing = parser->compiler->loop_compiler;
-    parser->compiler->loop_compiler = &loop;
+    loop.enclosing = parser->fn_compiler->loop_compiler;
+    parser->fn_compiler->loop_compiler = &loop;
 
     emit_byte(parser, OP_GET_NEXT_FROM_ITERATOR);
     size_t exit_jump_index = emit_jump(parser, OP_JUMP_IF_ERR);
@@ -1869,7 +1869,7 @@ static void parse_for_in_stmt(Parser* parser) {
     // If there were any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjFn* fn = parser->compiler->fn;
+        ObjFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == OP_BREAK) {
                 fn->code[ip] = OP_JUMP;
@@ -1880,7 +1880,7 @@ static void parse_for_in_stmt(Parser* parser) {
         }
     }
 
-    parser->compiler->loop_compiler = loop.enclosing;
+    parser->fn_compiler->loop_compiler = loop.enclosing;
 
     // Pop the scope containing the dummy iterator local.
     end_scope(parser);
@@ -1902,11 +1902,11 @@ static void parse_c_style_loop_stmt(Parser* parser) {
 
     // This is the point in the bytecode the loop will jump back to.
     LoopCompiler loop;
-    loop.start_index = parser->compiler->fn->code_count;
-    loop.start_depth = parser->compiler->scope_depth;
+    loop.start_index = parser->fn_compiler->fn->code_count;
+    loop.start_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
-    loop.enclosing = parser->compiler->loop_compiler;
-    parser->compiler->loop_compiler = &loop;
+    loop.enclosing = parser->fn_compiler->loop_compiler;
+    parser->fn_compiler->loop_compiler = &loop;
 
     // Parse the (optional) condition.
     bool loop_has_condition = false;
@@ -1922,7 +1922,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     if (!match(parser, TOKEN_LEFT_BRACE)) {
         size_t body_jump_index = emit_jump(parser, OP_JUMP);
 
-        size_t increment_index = parser->compiler->fn->code_count;
+        size_t increment_index = parser->fn_compiler->fn->code_count;
         parse_expression(parser, true, true);
         emit_byte(parser, OP_POP);
         consume(parser, TOKEN_LEFT_BRACE, "expected '{' before loop body");
@@ -1948,7 +1948,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     // If there were any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjFn* fn = parser->compiler->fn;
+        ObjFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == OP_BREAK) {
                 fn->code[ip] = OP_JUMP;
@@ -1959,7 +1959,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         }
     }
 
-    parser->compiler->loop_compiler = loop.enclosing;
+    parser->fn_compiler->loop_compiler = loop.enclosing;
 
     // Pop the scope surrounding the loop variables.
     end_scope(parser);
@@ -1968,11 +1968,11 @@ static void parse_c_style_loop_stmt(Parser* parser) {
 
 static void parse_infinite_loop_stmt(Parser* parser) {
     LoopCompiler loop;
-    loop.start_index = parser->compiler->fn->code_count;
-    loop.start_depth = parser->compiler->scope_depth;
+    loop.start_index = parser->fn_compiler->fn->code_count;
+    loop.start_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
-    loop.enclosing = parser->compiler->loop_compiler;
-    parser->compiler->loop_compiler = &loop;
+    loop.enclosing = parser->fn_compiler->loop_compiler;
+    parser->fn_compiler->loop_compiler = &loop;
 
     // Emit the bytecode for the block.
     begin_scope(parser);
@@ -1985,7 +1985,7 @@ static void parse_infinite_loop_stmt(Parser* parser) {
     // If we found any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjFn* fn = parser->compiler->fn;
+        ObjFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == OP_BREAK) {
                 fn->code[ip] = OP_JUMP;
@@ -1996,17 +1996,17 @@ static void parse_infinite_loop_stmt(Parser* parser) {
         }
     }
 
-    parser->compiler->loop_compiler = loop.enclosing;
+    parser->fn_compiler->loop_compiler = loop.enclosing;
 }
 
 
 static void parse_while_stmt(Parser* parser) {
     LoopCompiler loop;
-    loop.start_index = parser->compiler->fn->code_count;
-    loop.start_depth = parser->compiler->scope_depth;
+    loop.start_index = parser->fn_compiler->fn->code_count;
+    loop.start_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
-    loop.enclosing = parser->compiler->loop_compiler;
-    parser->compiler->loop_compiler = &loop;
+    loop.enclosing = parser->fn_compiler->loop_compiler;
+    parser->fn_compiler->loop_compiler = &loop;
 
     // Parse the condition.
     parse_expression(parser, false, true);
@@ -2034,7 +2034,7 @@ static void parse_while_stmt(Parser* parser) {
     // If we found any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjFn* fn = parser->compiler->fn;
+        ObjFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == OP_BREAK) {
                 fn->code[ip] = OP_JUMP;
@@ -2045,15 +2045,15 @@ static void parse_while_stmt(Parser* parser) {
         }
     }
 
-    parser->compiler->loop_compiler = loop.enclosing;
+    parser->fn_compiler->loop_compiler = loop.enclosing;
 }
 
 
 // This helper parses a function definition, i.e. the bit after the name that looks like (...){...}.
 // It emits the bytecode to create an ObjClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
-    FnCompiler compiler;
-    if (!init_fn_compiler(parser, &compiler, type, name)) {
+    FnCompiler fn_compiler;
+    if (!init_fn_compiler(parser, &fn_compiler, type, name)) {
         return;
     }
     begin_scope(parser);
@@ -2065,18 +2065,18 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
         if (check(parser, TOKEN_RIGHT_PAREN)) {
             break;
         }
-        if (compiler.fn->arity == 255) {
+        if (fn_compiler.fn->arity == 255) {
             ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
         }
-        if (compiler.fn->is_variadic) {
+        if (fn_compiler.fn->is_variadic) {
             ERROR_AT_NEXT_TOKEN("variadic parameter must be final parameter");
         }
         if (match(parser, TOKEN_STAR)) {
-            compiler.fn->is_variadic = true;
+            fn_compiler.fn->is_variadic = true;
         }
         uint16_t index = consume_variable_name(parser, "expected parameter name");
         define_variable(parser, index, PRIVATE);
-        compiler.fn->arity++;
+        fn_compiler.fn->arity++;
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
@@ -2085,12 +2085,12 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
             return;
         }
         if (match(parser, TOKEN_EQUAL)) {
-            if (compiler.fn->is_variadic) {
+            if (fn_compiler.fn->is_variadic) {
                 ERROR_AT_PREVIOUS_TOKEN("a variadic function cannot have default argument values");
             }
-            parser->compiler = compiler.enclosing;
+            parser->fn_compiler = fn_compiler.enclosing;
             parse_default_value_expression(parser);
-            parser->compiler = &compiler;
+            parser->fn_compiler = &fn_compiler;
             default_value_count += 1;
         }
     } while (match(parser, TOKEN_COMMA));
@@ -2098,11 +2098,11 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
     // Check the arity for known method names.
     if (type == TYPE_METHOD) {
-        if (strcmp(compiler.fn->name->bytes, "$fmt") == 0 && compiler.fn->arity != 1) {
+        if (strcmp(fn_compiler.fn->name->bytes, "$fmt") == 0 && fn_compiler.fn->arity != 1) {
             ERROR_AT_PREVIOUS_TOKEN("invalid method definition, $fmt() takes 1 argument");
             return;
         }
-        if (strcmp(compiler.fn->name->bytes, "$str") == 0 && compiler.fn->arity != 0) {
+        if (strcmp(fn_compiler.fn->name->bytes, "$str") == 0 && fn_compiler.fn->arity != 0) {
             ERROR_AT_PREVIOUS_TOKEN("invalid method definition, $str() takes no arguments");
             return;
         }
@@ -2131,8 +2131,8 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     }
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
-        emit_byte(parser, compiler.upvalues[i].is_local ? 1 : 0);
-        emit_byte(parser, compiler.upvalues[i].index);
+        emit_byte(parser, fn_compiler.upvalues[i].is_local ? 1 : 0);
+        emit_byte(parser, fn_compiler.upvalues[i].index);
     }
 }
 
@@ -2288,14 +2288,14 @@ static void parse_class_declaration(Parser* parser, Access access) {
 
 
 static void parse_return_stmt(Parser* parser) {
-    if (parser->compiler->type == TYPE_MODULE) {
+    if (parser->fn_compiler->type == TYPE_MODULE) {
         ERROR_AT_PREVIOUS_TOKEN("can't return from top-level code");
     }
 
     if (match(parser, TOKEN_SEMICOLON)) {
         emit_naked_return(parser);
     } else {
-        if (parser->compiler->type == TYPE_INIT_METHOD) {
+        if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
             ERROR_AT_PREVIOUS_TOKEN("can't return a value from an initializer");
         }
         parse_expression(parser, true, true);
@@ -2306,26 +2306,26 @@ static void parse_return_stmt(Parser* parser) {
 
 
 static void parse_break_stmt(Parser* parser) {
-    if (parser->compiler->loop_compiler == NULL) {
+    if (parser->fn_compiler->loop_compiler == NULL) {
         ERROR_AT_PREVIOUS_TOKEN("invalid use of 'break' outside a loop");
         return;
     }
-    parser->compiler->loop_compiler->had_break = true;
+    parser->fn_compiler->loop_compiler->had_break = true;
 
-    discard_locals(parser, parser->compiler->loop_compiler->start_depth + 1);
+    discard_locals(parser, parser->fn_compiler->loop_compiler->start_depth + 1);
     emit_jump(parser, OP_BREAK);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after 'break'");
 }
 
 
 static void parse_continue_stmt(Parser* parser) {
-    if (parser->compiler->loop_compiler == NULL) {
+    if (parser->fn_compiler->loop_compiler == NULL) {
         ERROR_AT_PREVIOUS_TOKEN("invalid use of 'continue' outside a loop");
         return;
     }
 
-    discard_locals(parser, parser->compiler->loop_compiler->start_depth + 1);
-    emit_loop(parser, parser->compiler->loop_compiler->start_index);
+    discard_locals(parser, parser->fn_compiler->loop_compiler->start_depth + 1);
+    emit_loop(parser, parser->fn_compiler->loop_compiler->start_index);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after 'continue'");
 }
 
@@ -2336,7 +2336,7 @@ static void parse_statement(Parser* parser) {
     }
 
     if (match(parser, TOKEN_PUB)) {
-        if (parser->compiler->type != TYPE_MODULE || parser->compiler->scope_depth > 0) {
+        if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pub', only valid at global scope");
             return;
         }
@@ -2353,7 +2353,7 @@ static void parse_statement(Parser* parser) {
     }
 
     else if (match(parser, TOKEN_PRI)) {
-        if (parser->compiler->type != TYPE_MODULE || parser->compiler->scope_depth > 0) {
+        if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
             ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pri', only valid at global scope");
             return;
         }
@@ -2423,7 +2423,7 @@ static void parse_statement(Parser* parser) {
 
 static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     Parser parser;
-    parser.compiler = NULL;
+    parser.fn_compiler = NULL;
     parser.class_compiler = NULL;
     parser.had_syntax_error = false;
     parser.had_memory_error = false;
@@ -2440,8 +2440,8 @@ static ObjFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const ch
     }
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
-    FnCompiler compiler;
-    if (!init_fn_compiler(&parser, &compiler, TYPE_MODULE, basename_syntoken(src_id))) {
+    FnCompiler fn_compiler;
+    if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, basename_syntoken(src_id))) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
