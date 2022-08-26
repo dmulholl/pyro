@@ -27,6 +27,9 @@ PyroVM* pyro_new_vm(size_t stack_size) {
 
     // Initialize or zero-out all fields before attempting to allocate memory.
     vm->bytes_allocated = sizeof(PyroVM) + stack_size;
+    vm->frames = NULL;
+    vm->frame_count = 0;
+    vm->frame_capacity = 0;
     vm->class_buf = NULL;
     vm->class_err = NULL;
     vm->class_file = NULL;
@@ -44,7 +47,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->empty_string = NULL;
     vm->exit_code = 0;
     vm->exit_flag = false;
-    vm->frame_count = 0;
     vm->gc_disallows = 0;
     vm->superglobals = NULL;
     vm->grey_capacity = 0;
@@ -121,6 +123,14 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_vec = NULL;
     vm->strings = NULL;
     vm->try_depth = 0;
+
+    // Initialize the [frames] stack.
+    vm->frames = ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
+    if (!vm->frames) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+    vm->frame_capacity = PYRO_INITIAL_CALL_FRAME_CAPACITY;
 
     // Initialize the MT64 PRNG.
     vm->mt64 = pyro_mt64_new();
@@ -265,6 +275,7 @@ void pyro_free_vm(PyroVM* vm) {
     }
 
     FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity);
+    FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
 
     if (vm->mt64) {
         pyro_mt64_free(vm->mt64);

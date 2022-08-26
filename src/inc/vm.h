@@ -9,9 +9,9 @@
 
 #include "../lib/mt64/mt64.h"
 
-// We create a new [CallFrame] on the call stack for each function call. [ip] is the instruction
-// pointer -- it points to the next instruction in the function's bytecode to be executed. [fp] is
-// the frame pointer -- it points to slot zero on the value stack for the function call.
+// We create a new [CallFrame] on the [vm->frames] stack for each function call.
+// - [ip] is the instruction pointer -- it points to the next bytecode instruction to be executed.
+// - [fp] is the frame pointer -- it points to slot zero on the value stack for the function call.
 typedef struct {
     ObjClosure* closure;
     uint8_t* ip;
@@ -67,8 +67,9 @@ struct PyroVM {
     Obj* stdin_stream;
 
     // The call stack.
-    CallFrame frames[PYRO_MAX_CALL_FRAMES];
+    CallFrame* frames;
     size_t frame_count;
+    size_t frame_capacity;
 
     // The value stack.
     Value* stack;

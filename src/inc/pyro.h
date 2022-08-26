@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 8
-#define PYRO_VERSION_PATCH 8
+#define PYRO_VERSION_PATCH 9
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -26,9 +26,9 @@
     #define PYRO_MAX_HASHMAP_LOAD 0.5
 #endif
 
-// Max number of call frames.
-#ifndef PYRO_MAX_CALL_FRAMES
-    #define PYRO_MAX_CALL_FRAMES 1024
+// Sets the initial capacity of the call-frame stack.
+#ifndef PYRO_INITIAL_CALL_FRAME_CAPACITY
+    #define PYRO_INITIAL_CALL_FRAME_CAPACITY 1
 #endif
 
 // Initial garbage collection threshold in bytes. Defaults to 4MB.

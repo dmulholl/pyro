@@ -19,9 +19,15 @@
 // Pushes a new frame onto the call stack. [frame_pointer] points to the frame's zeroth
 // local variable (for instance methods, this will be 'self').
 static void push_call_frame(PyroVM* vm, ObjClosure* closure, Value* frame_pointer) {
-    if (vm->frame_count == PYRO_MAX_CALL_FRAMES) {
-        pyro_panic(vm, "max call depth exceeded");
-        return;
+    if (vm->frame_count == vm->frame_capacity) {
+        size_t new_capacity = GROW_CAPACITY(vm->frame_capacity);
+        CallFrame* new_array = REALLOCATE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity, new_capacity);
+        if (!new_array) {
+            pyro_panic(vm, "out of memory");
+            return;
+        }
+        vm->frames = new_array;
+        vm->frame_capacity = new_capacity;
     }
 
     CallFrame* frame = &vm->frames[vm->frame_count];
@@ -243,7 +249,6 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 
 
 static void run(PyroVM* vm) {
-    CallFrame* frame = &vm->frames[vm->frame_count - 1];
     size_t frame_count_on_entry = vm->frame_count;
     assert(frame_count_on_entry >= 1);
 
@@ -265,6 +270,10 @@ static void run(PyroVM* vm) {
         if (vm->halt_flag) {
             return;
         }
+
+        // The last instruction may have changed the frame count or (this can lead to nasty bugs)
+        // forced a reallocation of the frame stack so reset the frame pointer for every iteration.
+        CallFrame* frame = &vm->frames[vm->frame_count - 1];
 
         #ifdef PYRO_DEBUG_STRESS_GC
             pyro_collect_garbage(vm);
@@ -345,7 +354,6 @@ static void run(PyroVM* vm) {
             case OP_CALL: {
                 uint8_t arg_count = READ_BYTE();
                 call_value(vm, arg_count);
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -381,7 +389,6 @@ static void run(PyroVM* vm) {
                 }
 
                 call_value(vm, total_args);
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1184,7 +1191,6 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1208,7 +1214,6 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1256,7 +1261,6 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1304,7 +1308,6 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1326,7 +1329,6 @@ static void run(PyroVM* vm) {
                     call_closure(vm, AS_CLOSURE(method), arg_count);
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1375,7 +1377,6 @@ static void run(PyroVM* vm) {
                     call_closure(vm, AS_CLOSURE(method), total_args);
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1392,7 +1393,6 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1418,7 +1418,6 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1775,7 +1774,6 @@ static void run(PyroVM* vm) {
                     return;
                 }
 
-                frame = &vm->frames[vm->frame_count - 1];
                 break;
             }
 
@@ -1927,7 +1925,6 @@ static void run(PyroVM* vm) {
                     vm->stack_top = stashed_stack_top - 1;
                     close_upvalues(vm, stashed_stack_top);
                     vm->frame_count = stashed_frame_count;
-                    frame = &vm->frames[vm->frame_count - 1];
 
                     ObjStr* err_str = ObjBuf_to_str(vm->panic_buffer, vm);
                     if (!err_str) {
@@ -2015,7 +2012,6 @@ static void run(PyroVM* vm) {
             }
 
             default:
-                assert(false);
                 vm->hard_panic = true;
                 pyro_panic(vm, "invalid opcode");
                 break;
