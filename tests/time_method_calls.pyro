@@ -1,0 +1,34 @@
+class Object {
+    var value = 0;
+
+    pub def method() {
+        self.value += 1;
+        return self.value;
+    }
+}
+
+var obj1 = Object();
+def $time_lookup_calls() {
+    var sum = 0;
+    for i in $range(10_000) {
+        sum += obj1:method();
+    }
+}
+
+var obj2 = Object();
+def $time_direct_calls() {
+    var sum = 0;
+    var method = obj2:method;
+    for i in $range(10_000) {
+        sum += method();
+    }
+}
+
+var obj3 = Object();
+def $test_calls() {
+    var sum = 0;
+    for i in $range(5) {
+        sum += obj3:method();
+    }
+    assert sum == (0 + 1 + 2 + 3 + 4 + 5);
+}
