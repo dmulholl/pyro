@@ -42,6 +42,7 @@ You can convert a character to a string using the `$str()` function  --- this re
 ::: code pyro
     assert $str('a') == "a";
     assert $str('🔥') == "🔥";
+    assert $str('🔥') == "\xF0\x9F\x94\xA5";
 
 You can convert a character to an integer using the `$i64()` function or an integer to a character using the `$char()` function:
 
