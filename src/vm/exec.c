@@ -295,9 +295,7 @@ static void run(PyroVM* vm) {
             pyro_disassemble_instruction(vm, frame->closure->fn, ip);
         #endif
 
-        uint8_t instruction;
-        switch (instruction = READ_BYTE()) {
-
+        switch (READ_BYTE()) {
             case OP_BINARY_PLUS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
