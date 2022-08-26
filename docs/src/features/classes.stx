@@ -143,7 +143,7 @@ You can specify default values for fields, e.g.
     assert foo.bar == 123;
     assert foo.baz == null;
 
-A default field value must be a simple literal --- one of `i64`, `f64`, `str`, `bool`, or `null`.
+A default field value must be a simple literal --- one of `i64`, `f64`, `char`, `str`, `bool`, or `null`.
 
 (This restriction only applies to instance fields. Static fields can be initialized to any value.)
 

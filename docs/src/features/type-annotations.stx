@@ -16,6 +16,10 @@ Pyro supports optional type annotations for variable, function, and method decla
         return text.byte_count() > 100;
     }
 
+    def get_num(value: i64 = 123) -> i64 {
+        return value;
+    }
+
 Pyro doesn't currently do anything with these type annotations, apart from verifying their syntax, but they're useful for documenting your code's intended interface.
 
 Future versions of Pyro may support optional type-checking or automatic documentation generation using type annotations.

@@ -24,6 +24,7 @@ The following keywords are reserved by the language and cannot be used as identi
 * `pub`
 * `return`
 * `self`
+* `static`
 * `super`
 * `true`
 * `try`
@@ -44,6 +45,5 @@ The following keywords are reserved for future use:
 * `reimport`
 * `run`
 * `select`
-* `static`
 * `switch`
 * `with`

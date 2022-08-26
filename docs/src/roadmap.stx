@@ -10,12 +10,6 @@ A regex library, a built-in SQLite implementation, and a networking library are 
 
 
 
-### Planned Features
-
-(*) Default values for function parameters.
-
-
-
 ### Packaging
 
 Packaging is on the medium-length finger.

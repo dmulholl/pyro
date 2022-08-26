@@ -70,6 +70,23 @@ An inner function declared inside an outer function can capture the outer functi
 
 
 
+### Default Argument Values
+
+You can specify default values for trailing arguments, e.g.
+
+::: code pyro
+    def func(arg1, arg2 = 222, arg3 = 333) {
+        return $tup(arg1, arg2, arg3);
+    }
+
+    assert func(1) == $tup(1, 222, 333);
+    assert func(1, 2) == $tup(1, 2, 333);
+    assert func(1, 2, 3) == $tup(1, 2, 3);
+
+A default argument value must be a simple literal --- one of `i64`, `f64`, `char`, `str`, `bool`, or `null`.
+
+
+
 ### Variadic Functions
 
 A variadic function is a function that accepts a variable number of arguments.

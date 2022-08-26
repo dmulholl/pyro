@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.6</p>
+                <p class="version">Version 0.8.8</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -63,6 +63,9 @@
 </li>
 <li>
 <a href="#closures">Closures</a>
+</li>
+<li>
+<a href="#default-argument-values">Default Argument Values</a>
 </li>
 <li>
 <a href="#variadic-functions">Variadic Functions</a>
@@ -136,6 +139,24 @@ An inner function declared inside an outer function can capture the outer functi
 <span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
+<h3 id="default-argument-values">
+Default Argument Values
+</h3>
+<p>
+You can specify default values for trailing arguments, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">func</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span> <span class="p">=</span> <span class="mi">222</span><span class="p">,</span> <span class="nx">arg3</span> <span class="p">=</span> <span class="mi">333</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">$tup</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="mi">333</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">333</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+</pre>
+<p>
+A default argument value must be a simple literal &mdash; one of <code>i64</code>, <code>f64</code>, <code>char</code>, <code>str</code>, <code>bool</code>, or <code>null</code>.
+</p>
 <h3 id="variadic-functions">
 Variadic Functions
 </h3>
