@@ -76,19 +76,18 @@ class Option {
 
 
 pub class ArgParser {
-    pub var helptext: str?;
-    pub var version: str?;
-    pub var callback: call?(str, ArgParser);
-    pub var enable_help_command: bool = false;
-    pub var exit_on_error: bool = true;
-
     pub var args: vec[str];
     pub var command_name: str?;
     pub var command_parser: ArgParser?;
 
+    var helptext: str?;
+    var version: str?;
     var options: map[str, Option];
     var flags: map[str, Flag];
     var commands: map[str, ArgParser];
+    var callback: call?(str, ArgParser);
+    var enable_help_command: bool = false;
+    var exit_on_error: bool = true;
 
     def $init() {
         self.options = $map();
@@ -101,11 +100,49 @@ pub class ArgParser {
     #  Setup methods.  #
     # ---------------- #
 
+    pub def helptext(*args) -> ArgParser|str|null {
+        if args:count() == 0 {
+            return self.helptext;
+        } else if args:count() == 1 {
+            self.helptext = args[0];
+            return self;
+        } else {
+            $panic("helptext(): expected 0 or 1 arguments, found {}", args:count());
+        }
+    }
+
+    pub def version(*args) -> ArgParser|str|null {
+        if args:count() == 0 {
+            return self.version;
+        } else if args:count() == 1 {
+            self.version = args[0];
+            return self;
+        } else {
+            $panic("version(): expected 0 or 1 arguments, found {}", args:count());
+        }
+    }
+
+    pub def callback(callback: call(str, ArgParser)) -> ArgParser {
+        self.callback = callback;
+        return self;
+    }
+
+    pub def enable_help_command(enable: bool) -> ArgParser {
+        self.enable_help_command = enable;
+        return self;
+    }
+
+    pub def exit_on_error(enable: bool) -> ArgParser {
+        self.exit_on_error = enable;
+        return self;
+    }
+
     pub def flag(name: str) {
         var flag = Flag();
         for alias in name:split() {
             self.flags[alias] = flag;
         }
+        return self;
     }
 
     pub def option(name: str, default: any = null, parser: call(str) -> any = null) {
@@ -115,6 +152,7 @@ pub class ArgParser {
         }
         option.default = default;
         option.parser = parser;
+        return self;
     }
 
     pub def command(name: str) -> ArgParser {

@@ -1,5 +1,15 @@
 import $std::args;
 
+# Test setup.
+
+def $test_setup() {
+    var parser = args::ArgParser()
+        :helptext("foo")
+        :version("bar");
+    assert parser:helptext() == "foo";
+    assert parser:version() == "bar";
+}
+
 # Test flags.
 
 def $test_flag_empty() {
@@ -179,16 +189,16 @@ def $test_option_with_integer_default_value() {
 }
 
 def $test_option_with_invalid_value() {
-    var parser = args::ArgParser();
-    parser.exit_on_error = false;
-    parser:option("opt o", 0, $i64);
+    var parser = args::ArgParser()
+        :exit_on_error(false)
+        :option("opt o", 0, $i64);
     assert $is_err(try parser:parse_args(["--opt", "xxx"]));
 }
 
 def $test_option_with_missing_value() {
-    var parser = args::ArgParser();
-    parser.exit_on_error = false;
-    parser:option("opt o");
+    var parser = args::ArgParser()
+        :exit_on_error(false)
+        :option("opt o");
     assert $is_err(try parser:parse_args(["--opt"]));
 }
 
@@ -209,14 +219,14 @@ def $test_option_with_multiple_integers() {
 # Test unrecognised flags/options.
 
 def $test_unrecognised_long() {
-    var parser = args::ArgParser();
-    parser.exit_on_error = false;
+    var parser = args::ArgParser()
+        :exit_on_error(false);
     assert $is_err(try parser:parse_args(["--opt", "xxx"]));
 }
 
 def $test_unrecognised_short() {
-    var parser = args::ArgParser();
-    parser.exit_on_error = false;
+    var parser = args::ArgParser()
+        :exit_on_error(false);
     assert $is_err(try parser:parse_args(["-o", "xxx"]));
 }
 
@@ -267,4 +277,59 @@ def $test_command() {
     assert cmd_parser.args:count() == 2;
     assert cmd_parser.args[0] == "arg1";
     assert cmd_parser.args[1] == "arg2";
+}
+
+# Test chaining.
+
+def $test_chaining_1() {
+    var parser = args::ArgParser()
+        :helptext("helptext")
+        :version("version")
+        :flag("flag")
+        :option("str1")
+        :option("str2", "def2")
+        :option("str3", "def3", null)
+        :option("int", 0, $i64)
+        :option("float", 0.0, $f64);
+
+    parser:parse_args([]);
+
+    assert parser:helptext() == "helptext";
+    assert parser:version() == "version";
+    assert parser:found("flag") == false;
+    assert parser:value("str1") == null;
+    assert parser:value("str2") == "def2";
+    assert parser:value("str3") == "def3";
+    assert parser:value("int") == 0;
+    assert parser:value("float") == 0.0;
+}
+
+def $test_chaining_2() {
+    var parser = args::ArgParser()
+        :helptext("helptext")
+        :version("version")
+        :flag("flag")
+        :option("str1")
+        :option("str2", "def2")
+        :option("str3", "def3", null)
+        :option("int", 0, $i64)
+        :option("float", 0.0, $f64);
+
+    parser:parse_args([
+        "--flag",
+        "--str1", "foo",
+        "--str2", "bar",
+        "--str3", "baz",
+        "--int", "123",
+        "--float", "456.789",
+    ]);
+
+    assert parser:helptext() == "helptext";
+    assert parser:version() == "version";
+    assert parser:found("flag") == true;
+    assert parser:value("str1") == "foo";
+    assert parser:value("str2") == "bar";
+    assert parser:value("str3") == "baz";
+    assert parser:value("int") == 123;
+    assert parser:value("float") == 456.789;
 }
