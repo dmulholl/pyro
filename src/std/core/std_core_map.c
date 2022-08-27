@@ -51,7 +51,7 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_get(map, args[0], &value, vm)) {
         return value;
     }
-    return MAKE_OBJ(vm->empty_error);
+    return MAKE_OBJ(vm->error);
 }
 
 

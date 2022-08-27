@@ -912,7 +912,7 @@ static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (index + target->length > str->length) {
-        return MAKE_OBJ(vm->empty_error);
+        return MAKE_OBJ(vm->error);
     }
 
     size_t last_possible_match_index = str->length - target->length;
@@ -924,7 +924,7 @@ static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
         index++;
     }
 
-    return MAKE_OBJ(vm->empty_error);
+    return MAKE_OBJ(vm->error);
 }
 
 

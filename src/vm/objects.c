@@ -1794,7 +1794,7 @@ ObjIter* ObjIter_empty(PyroVM* vm) {
 Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
     switch (iter->iter_type) {
         case ITER_EMPTY: {
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_VEC: {
@@ -1804,7 +1804,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 Value result = vec->values[iter->next_index - 1];
                 return result;
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_TUP: {
@@ -1813,7 +1813,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->next_index++;
                 return tup->values[iter->next_index - 1];
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_QUEUE: {
@@ -1822,7 +1822,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->next_queue_item = iter->next_queue_item->next;
                 return next_value;
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_STR: {
@@ -1831,12 +1831,12 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 ObjStr* new_str = ObjStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
                 if (!new_str) {
                     pyro_panic(vm, "out of memory");
-                    return MAKE_OBJ(vm->empty_error);
+                    return MAKE_OBJ(vm->error);
                 }
                 iter->next_index++;
                 return MAKE_OBJ(new_str);
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_STR_BYTES: {
@@ -1846,7 +1846,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->next_index++;
                 return MAKE_I64(byte_value);
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_STR_CHARS: {
@@ -1865,7 +1865,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                     iter->next_index
                 );
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_MAP_KEYS: {
@@ -1878,7 +1878,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 }
                 return entry->key;
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_MAP_VALUES: {
@@ -1891,7 +1891,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 }
                 return entry->value;
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_MAP_ENTRIES: {
@@ -1906,14 +1906,14 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 ObjTup* tup = ObjTup_new(2, vm);
                 if (!tup) {
                     pyro_panic(vm, "out of memory");
-                    return MAKE_OBJ(vm->empty_error);
+                    return MAKE_OBJ(vm->error);
                 }
 
                 tup->values[0] = entry->key;
                 tup->values[1] = entry->value;
                 return MAKE_OBJ(tup);
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_FUNC_MAP: {
@@ -1927,7 +1927,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             pyro_push(vm, next_value);
             Value result = pyro_call_function(vm, 1);
             if (vm->halt_flag) {
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
             return result;
@@ -1946,7 +1946,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 pyro_push(vm, next_value);
                 Value result = pyro_call_function(vm, 1);
                 if (vm->halt_flag) {
-                    return MAKE_OBJ(vm->empty_error);
+                    return MAKE_OBJ(vm->error);
                 }
 
                 if (pyro_is_truthy(result)) {
@@ -1965,7 +1965,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             ObjTup* tup = ObjTup_new(2, vm);
             if (!tup) {
                 pyro_panic(vm, "out of memory");
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
             tup->values[0] = MAKE_I64(iter->next_enum);
@@ -1980,7 +1980,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             pyro_push(vm, MAKE_OBJ(iter->source));
             Value result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
             return result;
         }
@@ -1992,7 +1992,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                     iter->range_next += iter->range_step;
                     return MAKE_I64(range_next);
                 }
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
             if (iter->range_step < 0) {
@@ -2001,16 +2001,16 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                     iter->range_next += iter->range_step;
                     return MAKE_I64(range_next);
                 }
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case ITER_STR_LINES: {
             // If the source is NULL, the iterator has been exhausted.
             if (iter->source == NULL) {
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
             ObjStr* str = (ObjStr*)iter->source;
 
@@ -2046,7 +2046,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             ObjStr* next_line = ObjStr_copy_raw(line_start, line_end - line_start, vm);
             if (!next_line) {
                 pyro_panic(vm, "out of memory");
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
             // If the string ends with a linebreak, we have one more (empty) string to return. This
@@ -2062,19 +2062,19 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
         case ITER_FILE_LINES: {
             // If the source is NULL, the iterator has been exhausted.
             if (iter->source == NULL) {
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
             ObjFile* file = (ObjFile*)iter->source;
             ObjStr* next_line = ObjFile_read_line(file, vm);
             if (vm->halt_flag) {
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
             // A NULL return value means the file has been exhausted.
             if (!next_line) {
                 iter->source = NULL;
-                return MAKE_OBJ(vm->empty_error);
+                return MAKE_OBJ(vm->error);
             }
 
             return MAKE_OBJ(next_line);
@@ -2082,7 +2082,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
         default:
             assert(false);
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
     }
 }
 

@@ -870,7 +870,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
         ObjStr* name = AS_STR(args[0]);
         char* value = getenv(name->bytes);
         if (!value) {
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         ObjStr* string = STR(value);
@@ -1021,7 +1021,7 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
 
     Value method = pyro_get_method(vm, obj, method_name);
     if (IS_NULL(method)) {
-        return MAKE_OBJ(vm->empty_error);
+        return MAKE_OBJ(vm->error);
     }
 
     ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, obj, AS_OBJ(method));
@@ -1070,7 +1070,7 @@ static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(vm->empty_error);
+    return MAKE_OBJ(vm->error);
 }
 
 

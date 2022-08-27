@@ -43,7 +43,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->class_vec = NULL;
     vm->class_module = NULL;
     vm->class_char = NULL;
-    vm->empty_error = NULL;
+    vm->error = NULL;
     vm->empty_string = NULL;
     vm->exit_code = 0;
     vm->exit_flag = false;
@@ -167,10 +167,16 @@ PyroVM* pyro_new_vm(size_t stack_size) {
         return NULL;
     }
 
-    // Canned objects, mostly static strings.
+    // Canned objects.
     vm->empty_string = ObjStr_empty(vm);
-    vm->empty_error = ObjErr_new(vm);
-    vm->empty_error->message = STR("error");
+    vm->error = ObjErr_new(vm);
+    if (!vm->error) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+    vm->error->message = STR("error");
+
+    // Static strings.
     vm->str_dollar_init = STR("$init");
     vm->str_dollar_str = STR("$str");
     vm->str_true = STR("true");

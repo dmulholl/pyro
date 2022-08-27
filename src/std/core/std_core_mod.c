@@ -14,7 +14,7 @@ static Value mod_get(PyroVM* vm, size_t arg_count, Value* args) {
 
     Value member_index;
     if (!ObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
-        return MAKE_OBJ(vm->empty_error);
+        return MAKE_OBJ(vm->error);
     }
 
     return mod->members->values[member_index.as.i64];

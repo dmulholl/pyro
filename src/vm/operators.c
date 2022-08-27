@@ -1224,7 +1224,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
             if (ObjMap_get(map, key, &value, vm)) {
                 return value;
             }
-            return MAKE_OBJ(vm->empty_error);
+            return MAKE_OBJ(vm->error);
         }
 
         case OBJ_STR: {

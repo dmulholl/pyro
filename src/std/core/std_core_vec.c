@@ -269,7 +269,7 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(vm->empty_error);
+    return MAKE_OBJ(vm->error);
 }
 
 
