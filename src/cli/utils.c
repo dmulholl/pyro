@@ -5,7 +5,7 @@
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     char* resolved_path = pyro_realpath(path);
     if (!resolved_path) {
-        fprintf(stderr, "Error: Unable to resolve path '%s' to determine import roots.\n", path);
+        fprintf(stderr, "Error: unable to resolve path '%s' to determine import roots.\n", path);
         exit(1);
     }
 
@@ -14,13 +14,13 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     size_t dirpath_length = strlen(dirpath);
     pyro_add_import_root(vm, dirpath);
 
+    // Add [dirpath/modules].
     char* array = malloc(dirpath_length + strlen("/modules") + 1);
     if (!array) {
-        fprintf(stderr, "Error: Out of memory.\n");
+        fprintf(stderr, "Error: out of memory.\n");
         exit(2);
     }
 
-    // Add [dirpath/modules].
     memcpy(array, dirpath, dirpath_length);
     memcpy(&array[dirpath_length], "/modules", strlen("/modules"));
     array[dirpath_length + strlen("/modules")] = '\0';
@@ -31,7 +31,7 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
 }
 
 
-void pyro_cli_add_command_line_import_roots(PyroVM* vm, ArgParser* parser) {
+void pyro_cli_add_import_roots_from_command_line(PyroVM* vm, ArgParser* parser) {
     if (!ap_found(parser, "import-root")) {
         return;
     }
@@ -42,6 +42,28 @@ void pyro_cli_add_command_line_import_roots(PyroVM* vm, ArgParser* parser) {
         char* root = ap_str_value_at_index(parser, "import-root", i);
         pyro_add_import_root(vm, root);
     }
+}
+
+
+void pyro_cli_add_import_roots_from_environment(PyroVM* vm) {
+    char* env_roots_var = getenv("PYRO_IMPORT_ROOTS");
+    if (!env_roots_var) {
+        return;
+    }
+
+    char* array = strdup(env_roots_var);
+    if (!array) {
+        fprintf(stderr, "Error: out of memory.\n");
+        exit(2);
+    }
+
+    char* token = strtok(array, ":");
+    while (token != NULL) {
+        pyro_add_import_root(vm, token);
+        token = strtok(NULL, ":");
+    }
+
+    free(array);
 }
 
 

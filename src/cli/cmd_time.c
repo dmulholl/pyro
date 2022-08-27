@@ -1,5 +1,4 @@
 #include "cli.h"
-
 #include "../inc/exec.h"
 #include "../inc/vm.h"
 
@@ -34,7 +33,8 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         }
 
         pyro_cli_set_max_memory(vm, cmd_parser);
-        pyro_cli_add_command_line_import_roots(vm, cmd_parser);
+        pyro_cli_add_import_roots_from_command_line(vm, cmd_parser);
+        pyro_cli_add_import_roots_from_environment(vm);
         pyro_cli_add_import_roots_from_path(vm, path);
 
         pyro_exec_path_as_main(vm, path);

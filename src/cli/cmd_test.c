@@ -1,5 +1,4 @@
 #include "cli.h"
-
 #include "../inc/exec.h"
 #include "../inc/vm.h"
 
@@ -28,7 +27,8 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
         }
 
         pyro_cli_set_max_memory(vm, cmd_parser);
-        pyro_cli_add_command_line_import_roots(vm, cmd_parser);
+        pyro_cli_add_import_roots_from_command_line(vm, cmd_parser);
+        pyro_cli_add_import_roots_from_environment(vm);
         pyro_cli_add_import_roots_from_path(vm, path);
 
         pyro_exec_path_as_main(vm, path);
@@ -119,7 +119,8 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
         }
 
         pyro_cli_set_max_memory(vm, cmd_parser);
-        pyro_cli_add_command_line_import_roots(vm, cmd_parser);
+        pyro_cli_add_import_roots_from_command_line(vm, cmd_parser);
+        pyro_cli_add_import_roots_from_environment(vm);
         pyro_cli_add_import_roots_from_path(vm, path);
         pyro_set_stderr(vm, NULL);
 

@@ -12,7 +12,7 @@ void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         PyroVM* vm = pyro_new_vm(stack_size);
         if (!vm) {
-            fprintf(stderr, "Error: Out of memory, unable to initialize Pyro VM.\n");
+            fprintf(stderr, "Error: out of memory, unable to initialize Pyro VM.\n");
             exit(1);
         }
 
