@@ -14,9 +14,9 @@ Here's an example of a simple argument parser:
     import $std::args;
 
     # Initialize a new argument parser.
-    var parser = args::ArgParser();
-    parser.helptext = "Usage: foo...";
-    parser.version = "1.0";
+    var parser = args::ArgParser()
+        :helptext("Usage: foo...")
+        :version("1.0");
 
     # Register a flag.
     parser:flag("flag f");
@@ -26,13 +26,23 @@ Here's an example of a simple argument parser:
 
     # Register an integer-valued option and set its
     # default value to 0.
-    parser:option("count c"):parser($i64):default(0);
+    parser:option("count c", 0, $i64);
 
     # Parse the command line arguments.
     parser:parse();
 
     # Dump the parser to stdout.
     parser:print();
+
+Note that we can chain the commands to `flag()` and `option()`, e.g.
+
+::: code pyro
+    var parser = args::ArgParser()
+        :helptext("Usage: foo...")
+        :version("1.0")
+        :flag("flag f")
+        :option("name n")
+        :option("count c", 0, $i64);
 
 
 
@@ -51,20 +61,20 @@ Here's an example of an argument parser that registers a command:
     }
 
     # Initialize a new argument parser.
-    var parser = args::ArgParser();
-    parser.helptext = "Usage: foo...";
-    parser.version = "1.0";
+    var parser = args::ArgParser()
+        :helptext("Usage: foo...")
+        :version("1.0");
 
     # Register a command 'boo'.
-    var cmd_parser = parser:command("boo");
-    cmd_parser.helptext = "Usage: foo boo...";
+    var cmd_parser = parser:command("boo")
+        :helptext("Usage: foo boo...");
 
     # We can register flags and options on the command.
     cmd_parser:flag("flag f");
     cmd_parser:option("opt o");
 
     # If the command is found, its callback will be called.
-    cmd_parser.callback = cmd_boo;
+    cmd_parser:callback(cmd_boo);
 
     # Parse the command line arguments.
     parser:parse();
@@ -72,5 +82,11 @@ Here's an example of an argument parser that registers a command:
     # Dump the parser to stdout.
     parser:print();
 
+Note that we can chain the calls to `flag()`, `option()`, and `callback()`, e.g.
 
-
+::: code pyro
+    var cmd_parser = parser:command("boo")
+        :helptext("Usage: foo boo...")
+        :flag("flag f")
+        :option("opt o")
+        :callback(cmd_boo);

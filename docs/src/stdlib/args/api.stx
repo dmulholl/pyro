@@ -12,31 +12,46 @@ meta_title: API &mdash; $std::args
 
     Creates a new argument parser.
 
-You can customize an `ArgParser` by specifying values for the fields below:
+You can customize an `ArgParser` using the methods below:
 
-[[ `.helptext: str?` ]]
+[[ `:helptext() -> str?` <br> `:helptext(text: str) -> ArgParser` ]]
+
+    Gets or sets the parser's helptext string.
+
+    * If called with no arguments, returns the parser's helptext string.
+
+    * If called with a single argument, sets the parser's helptext string. Returns the parser to enable chaining.
 
     Specifying a `helptext` string for a parser activates an automatic `--help` flag;
     also a `-h` shortcut unless registered by another option.
 
-[[ `.version: str?` ]]
+
+[[ `:version() -> str?` <br> `:version(text: str) -> ArgParser` ]]
+
+    Gets or sets the parser's version string.
+
+    * If called with no arguments, returns the parser's version string.
+
+    * If called with a single argument, sets the parser's version string. Returns the parser to enable chaining.
 
     Specifying a `version` string for a parser activates an automatic `--version` flag;
     also a `-v` shortcut unless registered by another option.
 
-[[ `.callback: call?(str, ArgParser)` ]]
 
-    Sets the callback function for a command parser.
-
-[[ `.enable_help_command: bool` ]]
+[[ `:enable_help_command(enable: bool) -> ArgParser` ]]
 
     This boolean switch toggles support for an automatic `help` command that prints subcommand helptext. The value defaults to `false` but gets toggled automatically to `true` whenever a command is registered. You can use this switch to disable the feature if required.
 
-[[ `.exit_on_error: bool` ]]
+    Returns the parser to enable chaining.
+
+
+[[ `:exit_on_error(enable: bool) -> ArgParser` ]]
 
     If this boolean switch is `true` (the default), the parser will cause the program to exit with an error message and a non-zero status code if the user supplies invalid command line arguments.
 
     If this switch is set to `false`, the `:parse()` method will return an `err` instead of exiting.
+
+    Returns the parser to enable chaining.
 
 
 
@@ -44,33 +59,30 @@ You can customize an `ArgParser` by specifying values for the fields below:
 
 You can register flags and options on an `ArgParser` using the methods below:
 
-[[ `:flag(name: str) -> Flag` ]]
+[[ `:flag(name: str) -> ArgParser` ]]
 
-    Registers a new flag. The `name` parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+    Registers a new flag.
 
-[[ `:option(name: str) -> Option` ]]
+    * A flag is a boolean option that is either present or absent but takes no argument.
 
-    Registers a new option. The `name` parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+    * The `name` parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
 
-    You can chain a call to the option's `:default()` method to set a default value for the option:
+    Returns the parser to enable chaining.
 
-    [[ `:default(value: any) -> Option` ]]
 
-        Sets the option's default value.
+[[ `:option(name: str) -> ArgParser` <br> `:option(name: str, default: any) -> ArgParser` <br> `:option(name: str, default: any, parser: call(str) -> any) -> ArgParser` ]]
 
-        If you don't set a default value for an option, its default value will be `null`.
+    Registers a new option.
 
-    Options are string-valued by default but you can specify a parser callback using the option's `:parser()` method:
+    * The `name` parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
 
-    [[ `:parser(callback: call(str) -> any) -> Option` ]]
+    * If you don't specify a `default` value for an option, its default value will be `null`.
 
-        Sets the option's parser callback.
+    * If you specify a `parser` for an option, it should be a callable that takes a single string argument (the option's value) and returns the parsed value. It can panic or return an `err` to indicate failure.
 
-        A parser callback should accept a single string argument (the option's value).
-        It should return the parsed value.
-        It can panic or return an `err` to indicate failure.
+    * You can specify the builtin function `$i64` to parse an option's value as an integer or the builtin function `$f64` to parse an option's value as a float.
 
-    You can specify the builtin function `$i64` to parse an option's value as an integer or the builtin function `$f64` to parse an option's value as a float.
+    Returns the parser to enable chaining.
 
 
 
@@ -124,15 +136,26 @@ Positional arguments are appended to the parser's `.args` vector.
 
 ### Commands
 
-You can register a command on an `ArgParser` using the method below:
+Register a command on an `ArgParser` using the method below:
 
 [[ `:command(name: str) -> ArgParser` ]]
 
     Registers a new command on an `ArgParser` instance.
-    The `name` parameter accepts an unlimited number of space-separated aliases for the command.
-    Returns the command's `ArgParser` instance which can be used to register the command's help text, flags, options, and callback function.
 
-If the command is found and it has a `callback` function, the function will be called with the command's name and `ArgParser` instance as arguments.
+    * The `name` parameter accepts an unlimited number of space-separated aliases for the command.
+
+    * Returns the command's `ArgParser` instance which can be used to register the command's help text, flags, options, and callback function.
+
+
+Register a callback function for a command using the method below:
+
+[[ `:callback(callback: call(str, ArgParser)) -> ArgParser` ]]
+
+    Sets the callback function for a command parser.
+    If the command is found, this function will be called with the command's name and `ArgParser` instance.
+
+    Returns the parser to enable chaining.
+
 
 The following `ArgParser` fields can also be used for processing commands:
 

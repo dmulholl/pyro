@@ -87,14 +87,25 @@ Creates a new argument parser.
 </div>
 </dl>
 <p>
-You can customize an <code>ArgParser</code> by specifying values for the fields below:
+You can customize an <code>ArgParser</code> using the methods below:
 </p>
 <dl>
 <div>
 <dt>
-<code>.helptext: str?</code>
+<code>:helptext() -&gt; str?</code> <br> <code>:helptext(text: str) -&gt; ArgParser</code>
 </dt>
 <dd>
+<p>
+Gets or sets the parser's helptext string.
+</p>
+<ul>
+<li>
+If called with no arguments, returns the parser's helptext string.
+</li>
+<li>
+If called with a single argument, sets the parser's helptext string. Returns the parser to enable chaining.
+</li>
+</ul>
 <p>
 Specifying a <code>helptext</code> string for a parser activates an automatic <code>--help</code> flag;
 also a <code>-h</code> shortcut unless registered by another option.
@@ -103,9 +114,20 @@ also a <code>-h</code> shortcut unless registered by another option.
 </div>
 <div>
 <dt>
-<code>.version: str?</code>
+<code>:version() -&gt; str?</code> <br> <code>:version(text: str) -&gt; ArgParser</code>
 </dt>
 <dd>
+<p>
+Gets or sets the parser's version string.
+</p>
+<ul>
+<li>
+If called with no arguments, returns the parser's version string.
+</li>
+<li>
+If called with a single argument, sets the parser's version string. Returns the parser to enable chaining.
+</li>
+</ul>
 <p>
 Specifying a <code>version</code> string for a parser activates an automatic <code>--version</code> flag;
 also a <code>-v</code> shortcut unless registered by another option.
@@ -114,27 +136,20 @@ also a <code>-v</code> shortcut unless registered by another option.
 </div>
 <div>
 <dt>
-<code>.callback: call?(str, ArgParser)</code>
-</dt>
-<dd>
-<p>
-Sets the callback function for a command parser.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>.enable_help_command: bool</code>
+<code>:enable_help_command(enable: bool) -&gt; ArgParser</code>
 </dt>
 <dd>
 <p>
 This boolean switch toggles support for an automatic <code>help</code> command that prints subcommand helptext. The value defaults to <code>false</code> but gets toggled automatically to <code>true</code> whenever a command is registered. You can use this switch to disable the feature if required.
 </p>
+<p>
+Returns the parser to enable chaining.
+</p>
 </dd>
 </div>
 <div>
 <dt>
-<code>.exit_on_error: bool</code>
+<code>:exit_on_error(enable: bool) -&gt; ArgParser</code>
 </dt>
 <dd>
 <p>
@@ -142,6 +157,9 @@ If this boolean switch is <code>true</code> (the default), the parser will cause
 </p>
 <p>
 If this switch is set to <code>false</code>, the <code>:parse()</code> method will return an <code>err</code> instead of exiting.
+</p>
+<p>
+Returns the parser to enable chaining.
 </p>
 </dd>
 </div>
@@ -155,62 +173,49 @@ You can register flags and options on an <code>ArgParser</code> using the method
 <dl>
 <div>
 <dt>
-<code>:flag(name: str) -&gt; Flag</code>
+<code>:flag(name: str) -&gt; ArgParser</code>
 </dt>
 <dd>
 <p>
-Registers a new flag. The <code>name</code> parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+Registers a new flag.
+</p>
+<ul>
+<li>
+A flag is a boolean option that is either present or absent but takes no argument.
+</li>
+<li>
+The <code>name</code> parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+</li>
+</ul>
+<p>
+Returns the parser to enable chaining.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:option(name: str) -&gt; Option</code>
+<code>:option(name: str) -&gt; ArgParser</code> <br> <code>:option(name: str, default: any) -&gt; ArgParser</code> <br> <code>:option(name: str, default: any, parser: call(str) -&gt; any) -&gt; ArgParser</code>
 </dt>
 <dd>
 <p>
-Registers a new option. The <code>name</code> parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+Registers a new option.
 </p>
-<p>
-You can chain a call to the option's <code>:default()</code> method to set a default value for the option:
-</p>
-<dl>
-<div>
-<dt>
-<code>:default(value: any) -&gt; Option</code>
-</dt>
-<dd>
-<p>
-Sets the option's default value.
-</p>
-<p>
-If you don't set a default value for an option, its default value will be <code>null</code>.
-</p>
-</dd>
-</div>
-</dl>
-<p>
-Options are string-valued by default but you can specify a parser callback using the option's <code>:parser()</code> method:
-</p>
-<dl>
-<div>
-<dt>
-<code>:parser(callback: call(str) -&gt; any) -&gt; Option</code>
-</dt>
-<dd>
-<p>
-Sets the option's parser callback.
-</p>
-<p>
-A parser callback should accept a single string argument (the option's value).
-It should return the parsed value.
-It can panic or return an <code>err</code> to indicate failure.
-</p>
-</dd>
-</div>
-</dl>
-<p>
+<ul>
+<li>
+The <code>name</code> parameter accepts an unlimited number of space-separated aliases and single-character shortcuts.
+</li>
+<li>
+If you don't specify a <code>default</code> value for an option, its default value will be <code>null</code>.
+</li>
+<li>
+If you specify a <code>parser</code> for an option, it should be a callable that takes a single string argument (the option's value) and returns the parsed value. It can panic or return an <code>err</code> to indicate failure.
+</li>
+<li>
 You can specify the builtin function <code>$i64</code> to parse an option's value as an integer or the builtin function <code>$f64</code> to parse an option's value as a float.
+</li>
+</ul>
+<p>
+Returns the parser to enable chaining.
 </p>
 </dd>
 </div>
@@ -315,7 +320,7 @@ Stores positonal arguments as a <code>vec</code> of strings.
 Commands
 </h3>
 <p>
-You can register a command on an <code>ArgParser</code> using the method below:
+Register a command on an <code>ArgParser</code> using the method below:
 </p>
 <dl>
 <div>
@@ -325,15 +330,37 @@ You can register a command on an <code>ArgParser</code> using the method below:
 <dd>
 <p>
 Registers a new command on an <code>ArgParser</code> instance.
-The <code>name</code> parameter accepts an unlimited number of space-separated aliases for the command.
-Returns the command's <code>ArgParser</code> instance which can be used to register the command's help text, flags, options, and callback function.
 </p>
+<ul>
+<li>
+The <code>name</code> parameter accepts an unlimited number of space-separated aliases for the command.
+</li>
+<li>
+Returns the command's <code>ArgParser</code> instance which can be used to register the command's help text, flags, options, and callback function.
+</li>
+</ul>
 </dd>
 </div>
 </dl>
 <p>
-If the command is found and it has a <code>callback</code> function, the function will be called with the command's name and <code>ArgParser</code> instance as arguments.
+Register a callback function for a command using the method below:
 </p>
+<dl>
+<div>
+<dt>
+<code>:callback(callback: call(str, ArgParser)) -&gt; ArgParser</code>
+</dt>
+<dd>
+<p>
+Sets the callback function for a command parser.
+If the command is found, this function will be called with the command's name and <code>ArgParser</code> instance.
+</p>
+<p>
+Returns the parser to enable chaining.
+</p>
+</dd>
+</div>
+</dl>
 <p>
 The following <code>ArgParser</code> fields can also be used for processing commands:
 </p>

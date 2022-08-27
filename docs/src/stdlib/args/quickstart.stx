@@ -12,17 +12,17 @@ First we need to create an `ArgParser` instance:
 ::: code pyro
     import $std::args;
 
-    var parser = args::ArgParser();
-    parser.helptext = "Usage: mp3cat...";
-    parser.version = "1.0";
+    var parser = args::ArgParser()
+        :helptext("Usage: mp3cat...")
+        :version("1.0");
 
 Supplying a helptext string for the parser activates an automatic `--help/-h` flag; similarly, supplying a version string activates an automatic `--version/-v` flag.
 
-Now we can register our options and flags:
+Now we can register our flags and options:
 
 ::: code pyro
-    parser:option("out o"):default("output.mp3");
     parser:flag("quiet q");
+    parser:option("out o", "output.mp3");
 
 Here we're setting a default value of `"output.mp3"` for the `--out/-o` option --- this will be used if the user doesn't specify a custom value on the command line.
 
