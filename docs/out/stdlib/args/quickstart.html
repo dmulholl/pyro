@@ -62,9 +62,9 @@ First we need to create an <code>ArgParser</code> instance:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">args</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">()</span>
-    <span class="p">:</span><span class="nx">helptext</span><span class="p">(</span><span class="s">&quot;Usage: mp3cat...&quot;</span><span class="p">)</span>
-    <span class="p">:</span><span class="nx">version</span><span class="p">(</span><span class="s">&quot;1.0&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">();</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">helptext</span><span class="p">(</span><span class="s">&quot;Usage: mp3cat...&quot;</span><span class="p">);</span>
+<span class="nx">parser</span><span class="p">:</span><span class="nx">version</span><span class="p">(</span><span class="s">&quot;1.0&quot;</span><span class="p">);</span>
 </pre>
 <p>
 Supplying a helptext string for the parser activates an automatic <code>--help/-h</code> flag; similarly, supplying a version string activates an automatic <code>--version/-v</code> flag.

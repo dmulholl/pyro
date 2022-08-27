@@ -12,9 +12,9 @@ First we need to create an `ArgParser` instance:
 ::: code pyro
     import $std::args;
 
-    var parser = args::ArgParser()
-        :helptext("Usage: mp3cat...")
-        :version("1.0");
+    var parser = args::ArgParser();
+    parser:helptext("Usage: mp3cat...");
+    parser:version("1.0");
 
 Supplying a helptext string for the parser activates an automatic `--help/-h` flag; similarly, supplying a version string activates an automatic `--version/-v` flag.
 
