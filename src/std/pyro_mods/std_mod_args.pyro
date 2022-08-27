@@ -17,7 +17,7 @@ class ArgStream {
 }
 
 
-pub class Flag {
+class Flag {
     pub var count: i64 = 0;
 
     pub def found() -> bool {
@@ -30,23 +30,13 @@ pub class Flag {
 }
 
 
-pub class Option {
-    var parser: call?(str) -> any;
-    var default: any;
+class Option {
+    pub var parser: call?(str) -> any;
+    pub var default: any;
     var values: vec[any];
 
     def $init() {
         self.values = $vec();
-    }
-
-    pub def default(value: any) -> Option {
-        self.default = value;
-        return self;
-    }
-
-    pub def parser(func: call(str) -> any) -> Option {
-        self.parser = func;
-        return self;
     }
 
     pub def try_append_value(value: str) -> bool {
@@ -111,20 +101,20 @@ pub class ArgParser {
     #  Setup methods.  #
     # ---------------- #
 
-    pub def flag(name: str) -> Flag {
+    pub def flag(name: str) {
         var flag = Flag();
         for alias in name:split() {
             self.flags[alias] = flag;
         }
-        return flag;
     }
 
-    pub def option(name: str) -> Option {
+    pub def option(name: str, default: any = null, parser: call(str) -> any = null) {
         var option = Option();
         for alias in name:split() {
             self.options[alias] = option;
         }
-        return option;
+        option.default = default;
+        option.parser = parser;
     }
 
     pub def command(name: str) -> ArgParser {

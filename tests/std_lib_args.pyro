@@ -135,7 +135,7 @@ def $test_option_multiple() {
 
 def $test_option_with_default_value() {
     var parser = args::ArgParser();
-    parser:option("opt o"):default("value");
+    parser:option("opt o", "value");
     parser:parse_args([]);
     assert parser:found("opt") == false;
     assert parser:count("opt") == 0;
@@ -147,7 +147,7 @@ def $test_option_with_default_value() {
 
 def $test_option_with_integer_value() {
     var parser = args::ArgParser();
-    parser:option("opt o"):parser($i64);
+    parser:option("opt o", 0, $i64);
     parser:parse_args(["--opt", "123"]);
     assert parser:found("opt") == true;
     assert parser:count("opt") == 1;
@@ -159,7 +159,7 @@ def $test_option_with_integer_value() {
 
 def $test_option_with_negative_integer_value() {
     var parser = args::ArgParser();
-    parser:option("opt o"):parser($i64);
+    parser:option("opt o", 0, $i64);
     parser:parse_args(["--opt", "-123"]);
     assert parser:found("opt") == true;
     assert parser:count("opt") == 1;
@@ -168,7 +168,7 @@ def $test_option_with_negative_integer_value() {
 
 def $test_option_with_integer_default_value() {
     var parser = args::ArgParser();
-    parser:option("opt o"):default(123);
+    parser:option("opt o", 123);
     parser:parse_args([]);
     assert parser:found("opt") == false;
     assert parser:count("opt") == 0;
@@ -181,21 +181,21 @@ def $test_option_with_integer_default_value() {
 def $test_option_with_invalid_value() {
     var parser = args::ArgParser();
     parser.exit_on_error = false;
-    parser:option("opt o"):parser($i64);
+    parser:option("opt o", 0, $i64);
     assert $is_err(try parser:parse_args(["--opt", "xxx"]));
 }
 
 def $test_option_with_missing_value() {
     var parser = args::ArgParser();
     parser.exit_on_error = false;
-    parser:option("opt o"):parser($i64);
+    parser:option("opt o");
     assert $is_err(try parser:parse_args(["--opt"]));
 }
 
 def $test_option_with_multiple_integers() {
     var parser = args::ArgParser();
     parser:flag("foo f");
-    parser:option("opt o"):parser($i64);
+    parser:option("opt o", 0, $i64);
     parser:parse_args(["--opt", "123", "-o", "456", "-fo", "789"]);
     assert parser:found("foo");
     assert parser:count("foo") == 1;
