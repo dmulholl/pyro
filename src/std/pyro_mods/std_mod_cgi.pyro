@@ -76,6 +76,10 @@ pub class Request {
         }
     }
 
+    def $str() {
+        return $str(self.data);
+    }
+
     pub def body() -> str {
         if $is_str(self.body) {
             return self.body;
