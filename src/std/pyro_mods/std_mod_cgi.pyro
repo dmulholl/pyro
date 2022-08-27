@@ -1,6 +1,3 @@
-import $std::pyro;
-
-
 var url_reserved_chars = " !#$%&'()*+,/:;=?@[]":bytes():to_set();
 
 
@@ -84,7 +81,7 @@ pub class Request {
         if $is_str(self.body) {
             return self.body;
         }
-        self.body = pyro::stdin():read_string();
+        self.body = $stdin():read_string();
         return self.body;
     }
 
