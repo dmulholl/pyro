@@ -36,7 +36,6 @@ Annotations for builtin types are as follows:
 * `char`
 * `class`
 * `err`
-* `err[type1, type2, ...]`
 * `f64`
 * `file`
 * `i64`
