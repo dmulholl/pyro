@@ -159,11 +159,13 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$file(path: str, mode: str) -> file` ]]
+[[ `$file(path: str) -> file` <br> `$file(path: str, mode: str) -> file` ]]
 
     Creates a new `file` object.
     Opens the underlying file stream using the C function `fopen()`.
     Panics on failure.
+
+    If `mode` is not specified, defaults to `"r"`.
 
 
 

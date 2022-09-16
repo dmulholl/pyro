@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.13</p>
+                <p class="version">Version 0.8.14</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -321,13 +321,16 @@ String arguments can contain underscores for readability.
 </div>
 <div>
 <dt>
-<code>$file(path: str, mode: str) -&gt; file</code>
+<code>$file(path: str) -&gt; file</code> <br> <code>$file(path: str, mode: str) -&gt; file</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>file</code> object.
 Opens the underlying file stream using the C function <code>fopen()</code>.
 Panics on failure.
+</p>
+<p>
+If <code>mode</code> is not specified, defaults to <code>&quot;r&quot;</code>.
 </p>
 </dd>
 </div>
