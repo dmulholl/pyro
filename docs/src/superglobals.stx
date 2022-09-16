@@ -165,7 +165,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     Opens the underlying file stream using the C function `fopen()`.
     Panics on failure.
 
-    If `mode` is not specified, defaults to `"r"`.
+    If `mode` is not specified, it defaults to `"r"`, i.e. open an existing file for reading.
 
 
 
