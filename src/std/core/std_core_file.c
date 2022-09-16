@@ -9,19 +9,34 @@
 
 
 static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
-    if (!IS_STR(args[0])) {
-        pyro_panic(vm, "$file(): invalid argument [path], expected a string");
+    const char* path;
+    const char* mode = "r";
+
+    if (arg_count == 1) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, "$file(): invalid argument [path], expected a string");
+            return MAKE_NULL();
+        }
+        path = AS_STR(args[0])->bytes;
+    } else if (arg_count == 2) {
+        if (!IS_STR(args[0])) {
+            pyro_panic(vm, "$file(): invalid argument [path], expected a string");
+            return MAKE_NULL();
+        }
+        path = AS_STR(args[0])->bytes;
+        if (!IS_STR(args[1])) {
+            pyro_panic(vm, "$file(): invalid argument [mode], expected a string");
+            return MAKE_NULL();
+        }
+        mode = AS_STR(args[1])->bytes;
+    } else {
+        pyro_panic(vm, "$file(): expected 1 or 2 arguments, found %zu", arg_count);
         return MAKE_NULL();
     }
 
-    if (!IS_STR(args[1])) {
-        pyro_panic(vm, "$file(): invalid argument [mode], expected a string");
-        return MAKE_NULL();
-    }
-
-    FILE* stream = fopen(AS_STR(args[0])->bytes, AS_STR(args[1])->bytes);
+    FILE* stream = fopen(path, mode);
     if (!stream) {
-        pyro_panic(vm, "$file(): unable to open file '%s'", AS_STR(args[0])->bytes);
+        pyro_panic(vm, "$file(): unable to open file '%s'", path);
         return MAKE_NULL();
     }
 
@@ -340,7 +355,7 @@ static Value file_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_core_file(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$file", fn_file, 2);
+    pyro_define_global_fn(vm, "$file", fn_file, -1);
     pyro_define_global_fn(vm, "$is_file", fn_is_file, 1);
 
     // Methods.
