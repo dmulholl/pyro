@@ -234,11 +234,11 @@ void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
     pyro_define_pub_member_fn(vm, module, "error", fn_error, -1);
     pyro_define_pub_member_fn(vm, module, "fatal", fn_fatal, -1);
 
-    pyro_define_pub_member(vm, module, "DEBUG", MAKE_I64(PYRO_STD_LOG_LEVEL_DEBUG));
-    pyro_define_pub_member(vm, module, "INFO", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_pub_member(vm, module, "WARN", MAKE_I64(PYRO_STD_LOG_LEVEL_WARN));
-    pyro_define_pub_member(vm, module, "ERROR", MAKE_I64(PYRO_STD_LOG_LEVEL_ERROR));
-    pyro_define_pub_member(vm, module, "FATAL", MAKE_I64(PYRO_STD_LOG_LEVEL_FATAL));
+    pyro_define_pub_member(vm, module, "DEBUG", pyro_make_i64(PYRO_STD_LOG_LEVEL_DEBUG));
+    pyro_define_pub_member(vm, module, "INFO", pyro_make_i64(PYRO_STD_LOG_LEVEL_INFO));
+    pyro_define_pub_member(vm, module, "WARN", pyro_make_i64(PYRO_STD_LOG_LEVEL_WARN));
+    pyro_define_pub_member(vm, module, "ERROR", pyro_make_i64(PYRO_STD_LOG_LEVEL_ERROR));
+    pyro_define_pub_member(vm, module, "FATAL", pyro_make_i64(PYRO_STD_LOG_LEVEL_FATAL));
 
     ObjClass* logger_class = ObjClass_new(vm);
     if (!logger_class) {
@@ -247,7 +247,7 @@ void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
     logger_class->name = ObjStr_new("Logger", vm);
     pyro_define_pub_member(vm, module, "Logger", MAKE_OBJ(logger_class));
 
-    pyro_define_pub_field(vm, logger_class, "level", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
+    pyro_define_pub_field(vm, logger_class, "level", pyro_make_i64(PYRO_STD_LOG_LEVEL_INFO));
     pyro_define_pub_field(vm, logger_class, "timestamp", MAKE_OBJ(ObjStr_new("[%Y-%m-%d %H:%M:%S]", vm)));
     pyro_define_pub_field(vm, logger_class, "file", pyro_make_null());
 

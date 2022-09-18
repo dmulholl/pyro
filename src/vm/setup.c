@@ -402,7 +402,7 @@ bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Val
         return false;
     }
 
-    if (ObjMap_set(module->all_member_indexes, name_value, MAKE_I64(member_index), vm) == 0) {
+    if (ObjMap_set(module->all_member_indexes, name_value, pyro_make_i64(member_index), vm) == 0) {
         module->members->count--;
         return false;
     }
@@ -423,12 +423,12 @@ bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, Val
         return false;
     }
 
-    if (ObjMap_set(module->all_member_indexes, name_value, MAKE_I64(member_index), vm) == 0) {
+    if (ObjMap_set(module->all_member_indexes, name_value, pyro_make_i64(member_index), vm) == 0) {
         module->members->count--;
         return false;
     }
 
-    if (ObjMap_set(module->pub_member_indexes, name_value, MAKE_I64(member_index), vm) == 0) {
+    if (ObjMap_set(module->pub_member_indexes, name_value, pyro_make_i64(member_index), vm) == 0) {
         ObjMap_remove(module->all_member_indexes, name_value, vm);
         module->members->count--;
         return false;
@@ -511,12 +511,12 @@ bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value 
         return false;
     }
 
-    if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
+    if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(name_string), pyro_make_i64(field_index), vm) == 0) {
         class->default_field_values->count--;
         return false;
     }
 
-    if (ObjMap_set(class->pub_field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
+    if (ObjMap_set(class->pub_field_indexes, MAKE_OBJ(name_string), pyro_make_i64(field_index), vm) == 0) {
         ObjMap_remove(class->all_field_indexes, MAKE_OBJ(name_string), vm);
         class->default_field_values->count--;
         return false;
@@ -538,7 +538,7 @@ bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value 
         return false;
     }
 
-    if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(name_string), MAKE_I64(field_index), vm) == 0) {
+    if (ObjMap_set(class->all_field_indexes, MAKE_OBJ(name_string), pyro_make_i64(field_index), vm) == 0) {
         class->default_field_values->count--;
         return false;
     }

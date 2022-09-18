@@ -25,7 +25,7 @@ static Value fn_is_queue(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value queue_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjQueue* queue = AS_QUEUE(args[-1]);
-    return MAKE_I64(queue->count);
+    return pyro_make_i64(queue->count);
 }
 
 

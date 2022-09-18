@@ -396,7 +396,7 @@ static Value iter_count(PyroVM* vm, size_t arg_count, Value* args) {
         count++;
     }
 
-    return MAKE_I64(count);
+    return pyro_make_i64(count);
 }
 
 

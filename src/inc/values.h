@@ -59,7 +59,6 @@ struct Obj {
 };
 
 // Macros for creating Value instances.
-#define MAKE_I64(c_i64)             ((Value){VAL_I64, {.i64 = c_i64}})
 #define MAKE_F64(c_f64)             ((Value){VAL_F64, {.f64 = c_f64}})
 #define MAKE_CHAR(c_u32)            ((Value){VAL_CHAR, {.u32 = c_u32}})
 #define MAKE_OBJ(c_ptr)             ((Value){VAL_OBJ, {.obj = (Obj*)c_ptr}})

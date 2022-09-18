@@ -1849,7 +1849,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             if (iter->next_index < str->length) {
                 int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
                 iter->next_index++;
-                return MAKE_I64(byte_value);
+                return pyro_make_i64(byte_value);
             }
             return MAKE_OBJ(vm->error);
         }
@@ -1973,7 +1973,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 return MAKE_OBJ(vm->error);
             }
 
-            tup->values[0] = MAKE_I64(iter->next_enum);
+            tup->values[0] = pyro_make_i64(iter->next_enum);
             tup->values[1] = next_value;
             iter->next_enum++;
 
@@ -1995,7 +1995,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 if (iter->range_next < iter->range_stop) {
                     int64_t range_next = iter->range_next;
                     iter->range_next += iter->range_step;
-                    return MAKE_I64(range_next);
+                    return pyro_make_i64(range_next);
                 }
                 return MAKE_OBJ(vm->error);
             }
@@ -2004,7 +2004,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 if (iter->range_next > iter->range_stop) {
                     int64_t range_next = iter->range_next;
                     iter->range_next += iter->range_step;
-                    return MAKE_I64(range_next);
+                    return pyro_make_i64(range_next);
                 }
                 return MAKE_OBJ(vm->error);
             }

@@ -228,7 +228,7 @@ static Value file_read_byte(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_I64(byte);
+    return pyro_make_i64(byte);
 }
 
 
@@ -271,7 +271,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "write(): I/O write error");
                 return pyro_make_null();
             }
-            return MAKE_I64((int64_t)n);
+            return pyro_make_i64((int64_t)n);
         } else {
             ObjStr* string = pyro_stringify_value(vm, args[0]);
             if (vm->halt_flag) {
@@ -282,7 +282,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "write(): I/O write error");
                 return pyro_make_null();
             }
-            return MAKE_I64((int64_t)n);
+            return pyro_make_i64((int64_t)n);
         }
     }
 
@@ -303,7 +303,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "write(): I/O write error");
         return pyro_make_null();
     }
-    return MAKE_I64((int64_t)n);
+    return pyro_make_i64((int64_t)n);
 }
 
 

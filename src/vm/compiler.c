@@ -967,22 +967,22 @@ static void parse_default_value_expression(Parser* parser) {
 
     else if (match(parser, TOKEN_INT)) {
         int64_t value = parse_int_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_HEX_INT)) {
         int64_t value = parse_hex_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_BINARY_INT)) {
         int64_t value = parse_binary_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_OCTAL_INT)) {
         int64_t value = parse_octal_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_FLOAT)) {
@@ -1036,22 +1036,22 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
 
     else if (match(parser, TOKEN_INT)) {
         int64_t value = parse_int_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_HEX_INT)) {
         int64_t value = parse_hex_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_BINARY_INT)) {
         int64_t value = parse_binary_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_OCTAL_INT)) {
         int64_t value = parse_octal_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_I64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_i64(value));
     }
 
     else if (match(parser, TOKEN_FLOAT)) {

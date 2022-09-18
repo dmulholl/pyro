@@ -94,7 +94,7 @@ static Value mt64_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_I64(pyro_mt64_gen_int(mt64, (uint64_t)args[0].as.i64));
+    return pyro_make_i64(pyro_mt64_gen_int(mt64, (uint64_t)args[0].as.i64));
 }
 
 
@@ -114,7 +114,7 @@ static Value mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 
     // Select a random integer from the range [lower, upper).
     int64_t rand_int = lower + (int64_t)pyro_mt64_gen_int(mt64, delta);
-    return MAKE_I64(rand_int);
+    return pyro_make_i64(rand_int);
 }
 
 

@@ -26,7 +26,7 @@ static Value fn_is_map(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return MAKE_I64(map->live_entry_count);
+    return pyro_make_i64(map->live_entry_count);
 }
 
 

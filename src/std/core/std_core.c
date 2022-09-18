@@ -156,7 +156,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$eprint(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_I64(result);
+        return pyro_make_i64(result);
     }
 
     if (!IS_STR(args[0])) {
@@ -177,7 +177,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$eprint(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_I64(result);
+    return pyro_make_i64(result);
 }
 
 
@@ -191,7 +191,7 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$eprintln(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_I64(result);
+        return pyro_make_i64(result);
     }
 
     if (arg_count == 1) {
@@ -215,7 +215,7 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$eprintln(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_I64(result1 + result2);
+        return pyro_make_i64(result1 + result2);
     }
 
     if (!IS_STR(args[0])) {
@@ -244,7 +244,7 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$eprintln(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_I64(result1 + result2);
+    return pyro_make_i64(result1 + result2);
 }
 
 
@@ -267,7 +267,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$print(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_I64(result);
+        return pyro_make_i64(result);
     }
 
     if (!IS_STR(args[0])) {
@@ -288,7 +288,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$print(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_I64(result);
+    return pyro_make_i64(result);
 }
 
 
@@ -302,7 +302,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$println(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_I64(result);
+        return pyro_make_i64(result);
     }
 
     if (arg_count == 1) {
@@ -326,7 +326,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$println(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_I64(result1 + result2);
+        return pyro_make_i64(result1 + result2);
     }
 
     if (!IS_STR(args[0])) {
@@ -355,7 +355,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$println(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_I64(result1 + result2);
+    return pyro_make_i64(result1 + result2);
 }
 
 
@@ -483,13 +483,13 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
             return args[0];
 
         case VAL_CHAR:
-            return MAKE_I64((int64_t)args[0].as.u32);
+            return pyro_make_i64((int64_t)args[0].as.u32);
 
         case VAL_F64: {
             if (args[0].as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
                 && args[0].as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
             ) {
-                return MAKE_I64((int64_t)args[0].as.f64);
+                return pyro_make_i64((int64_t)args[0].as.f64);
             }
             pyro_panic(vm, "$i64(): invalid argument, floating-point value is out-of-range");
             return pyro_make_null();
@@ -500,7 +500,7 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
                 ObjStr* string = AS_STR(args[0]);
                 int64_t value;
                 if (pyro_parse_string_as_int(string->bytes, string->length, &value)) {
-                    return MAKE_I64(value);
+                    return pyro_make_i64(value);
                 }
                 pyro_panic(vm, "$i64(): invalid argument, unable to parse string");
                 return pyro_make_null();
@@ -662,7 +662,7 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    tup->values[0] = MAKE_I64(exit_code);
+    tup->values[0] = pyro_make_i64(exit_code);
     tup->values[1] = MAKE_OBJ(out_str);
     tup->values[2] = MAKE_OBJ(err_str);
 
@@ -769,7 +769,7 @@ static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
             return pyro_make_null();
         }
         fclose(stream);
-        return MAKE_I64((int64_t)n);
+        return pyro_make_i64((int64_t)n);
     }
 
     ObjStr* string = AS_STR(args[1]);
@@ -780,12 +780,12 @@ static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
     fclose(stream);
-    return MAKE_I64((int64_t)n);
+    return pyro_make_i64((int64_t)n);
 }
 
 
 static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_I64((int64_t)pyro_hash_value(vm, args[0]));
+    return pyro_make_i64((int64_t)pyro_hash_value(vm, args[0]));
 }
 
 

@@ -27,7 +27,7 @@ static Value fn_is_tup(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value tup_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = AS_TUP(args[-1]);
-    return MAKE_I64(tup->count);
+    return pyro_make_i64(tup->count);
 }
 
 

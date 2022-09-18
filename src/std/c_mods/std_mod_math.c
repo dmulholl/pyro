@@ -8,7 +8,7 @@
 static Value fn_abs(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 1) {
         if (IS_I64(args[0])) {
-            return MAKE_I64(imaxabs(args[0].as.i64));
+            return pyro_make_i64(imaxabs(args[0].as.i64));
         } else if (IS_F64(args[0])) {
             return MAKE_F64(fabs(args[0].as.f64));
         }
@@ -21,7 +21,7 @@ static Value fn_abs(PyroVM* vm, size_t arg_count, Value* args) {
             if (args[0].as.i64 == INT64_MIN) {
                 return args[1];
             } else {
-                return MAKE_I64(imaxabs(args[0].as.i64));
+                return pyro_make_i64(imaxabs(args[0].as.i64));
             }
         } else if (IS_F64(args[0])) {
             return MAKE_F64(fabs(args[0].as.f64));
@@ -246,8 +246,8 @@ void pyro_load_std_mod_math(PyroVM* vm, ObjModule* module) {
     pyro_define_pub_member(vm, module, "E", MAKE_F64(PYRO_E));
     pyro_define_pub_member(vm, module, "NAN", MAKE_F64(NAN));
     pyro_define_pub_member(vm, module, "INF", MAKE_F64(INFINITY));
-    pyro_define_pub_member(vm, module, "I64_MAX", MAKE_I64(INT64_MAX));
-    pyro_define_pub_member(vm, module, "I64_MIN", MAKE_I64(INT64_MIN));
+    pyro_define_pub_member(vm, module, "I64_MAX", pyro_make_i64(INT64_MAX));
+    pyro_define_pub_member(vm, module, "I64_MIN", pyro_make_i64(INT64_MIN));
 
     pyro_define_pub_member_fn(vm, module, "abs", fn_abs, -1);
     pyro_define_pub_member_fn(vm, module, "acos", fn_acos, 1);

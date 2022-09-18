@@ -103,13 +103,13 @@ static Value fn_is_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value vec_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    return MAKE_I64(vec->count);
+    return pyro_make_i64(vec->count);
 }
 
 
 static Value vec_capacity(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    return MAKE_I64(vec->capacity);
+    return pyro_make_i64(vec->capacity);
 }
 
 
@@ -265,7 +265,7 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
 
     for (size_t i = 0; i < vec->count; i++) {
         if (pyro_op_compare_eq(vm, vec->values[i], args[0])) {
-            return MAKE_I64((int64_t)i);
+            return pyro_make_i64((int64_t)i);
         }
     }
 

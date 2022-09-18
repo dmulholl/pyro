@@ -43,7 +43,7 @@ static Value str_iter(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value str_byte_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
-    return MAKE_I64(str->length);
+    return pyro_make_i64(str->length);
 }
 
 
@@ -52,7 +52,7 @@ static Value str_byte(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < str->length) {
-            return MAKE_I64((uint8_t)str->bytes[index]);
+            return pyro_make_i64((uint8_t)str->bytes[index]);
         }
         pyro_panic(vm, "byte(): invalid argument [index], integer is out of range");
         return pyro_make_null();
@@ -249,7 +249,7 @@ static Value str_char_count(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_I64(char_count);
+    return pyro_make_i64(char_count);
 }
 
 
@@ -919,7 +919,7 @@ static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (index <= last_possible_match_index) {
         if (memcmp(&str->bytes[index], target->bytes, target->length) == 0) {
-            return MAKE_I64((int64_t)index);
+            return pyro_make_i64((int64_t)index);
         }
         index++;
     }

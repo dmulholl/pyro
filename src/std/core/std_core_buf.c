@@ -65,7 +65,7 @@ static Value fn_is_buf(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value buf_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
-    return MAKE_I64(buf->count);
+    return pyro_make_i64(buf->count);
 }
 
 
@@ -176,7 +176,7 @@ static Value buf_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < buf->count) {
-            return MAKE_I64(buf->bytes[index]);
+            return pyro_make_i64(buf->bytes[index]);
         }
         pyro_panic(vm, "get(): invalid argument [index], out of range");
         return pyro_make_null();
@@ -240,7 +240,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "write(): out of memory");
                 return pyro_make_null();
             }
-            return MAKE_I64((int64_t)src_buf->count);
+            return pyro_make_i64((int64_t)src_buf->count);
         } else {
             ObjStr* string = pyro_stringify_value(vm, args[0]);
             if (vm->halt_flag) {
@@ -252,7 +252,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
                 return pyro_make_null();
             }
             pyro_pop(vm);
-            return MAKE_I64((int64_t)string->length);
+            return pyro_make_i64((int64_t)string->length);
         }
     }
 
@@ -273,7 +273,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
     }
     pyro_pop(vm);
 
-    return MAKE_I64((int64_t)string->length);
+    return pyro_make_i64((int64_t)string->length);
 }
 
 

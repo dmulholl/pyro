@@ -7,7 +7,7 @@
 
 
 static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_I64((int64_t)vm->bytes_allocated);
+    return pyro_make_i64((int64_t)vm->bytes_allocated);
 }
 
 
@@ -23,16 +23,16 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
             case OBJ_VEC:
             case OBJ_VEC_AS_STACK: {
                 ObjVec* vec = AS_VEC(args[0]);
-                return MAKE_I64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
+                return pyro_make_i64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
             }
             case OBJ_TUP: {
                 ObjTup* tup = AS_TUP(args[0]);
-                return MAKE_I64(sizeof(ObjTup) + sizeof(Value) * tup->count);
+                return pyro_make_i64(sizeof(ObjTup) + sizeof(Value) * tup->count);
             }
             case OBJ_MAP:
             case OBJ_MAP_AS_SET: {
                 ObjMap* map = AS_MAP(args[0]);
-                return MAKE_I64(
+                return pyro_make_i64(
                     sizeof(ObjMap) +
                     sizeof(MapEntry) * map->entry_array_capacity +
                     sizeof(int64_t) * map->index_array_capacity
@@ -40,18 +40,18 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
             }
             case OBJ_QUEUE: {
                 ObjQueue* queue = AS_QUEUE(args[0]);
-                return MAKE_I64(sizeof(ObjQueue) + sizeof(QueueItem) * queue->count);
+                return pyro_make_i64(sizeof(ObjQueue) + sizeof(QueueItem) * queue->count);
             }
             case OBJ_BUF: {
                 ObjBuf* buf = AS_BUF(args[0]);
-                return MAKE_I64(sizeof(ObjBuf) + sizeof(uint8_t) * buf->capacity);
+                return pyro_make_i64(sizeof(ObjBuf) + sizeof(uint8_t) * buf->capacity);
             }
             default: {
-                return MAKE_I64(-1);
+                return pyro_make_i64(-1);
             }
         }
     } else {
-        return MAKE_I64(sizeof(Value));
+        return pyro_make_i64(sizeof(Value));
     }
 }
 
@@ -61,9 +61,9 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     if (!version_tuple) {
         return;
     }
-    version_tuple->values[0] = MAKE_I64(PYRO_VERSION_MAJOR);
-    version_tuple->values[1] = MAKE_I64(PYRO_VERSION_MINOR);
-    version_tuple->values[2] = MAKE_I64(PYRO_VERSION_PATCH);
+    version_tuple->values[0] = pyro_make_i64(PYRO_VERSION_MAJOR);
+    version_tuple->values[1] = pyro_make_i64(PYRO_VERSION_MINOR);
+    version_tuple->values[2] = pyro_make_i64(PYRO_VERSION_PATCH);
     version_tuple->values[3] = MAKE_OBJ(ObjStr_new(PYRO_VERSION_LABEL, vm));
     version_tuple->values[4] = MAKE_OBJ(ObjStr_new(PYRO_VERSION_BUILD, vm));
     pyro_define_pub_member(vm, module, "version_tuple", MAKE_OBJ(version_tuple));
