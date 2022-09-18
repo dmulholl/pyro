@@ -80,9 +80,9 @@ def marshall(arg: any) -> str {
     } else if $is_str(arg) {
         return marshall_str(arg);
     } else if $is_i64(arg) {
-        return $str(arg);
+        return $debug(arg);
     } else if $is_f64(arg) {
-        return $str(arg);
+        return $debug(arg);
     } else if $is_bool(arg) {
         return arg ? "true" :| "false";
     } else if $is_null(arg) {
@@ -98,7 +98,7 @@ def marshall(arg: any) -> str {
 }
 
 
-pub def to_json(arg: map|vec|tup|str|i64|f64|bool|null) -> str {
+pub def to_json(arg: any) -> str {
     var result = try marshall(arg);
     if $is_err(result) {
         $panic("to_json(): {}", result);
@@ -526,4 +526,91 @@ pub def from_json(arg: str) -> map|vec|str|i64|f64|bool|null {
     }
 
     return result;
+}
+
+
+# ---------------- #
+#  Pretty Printer  #
+# ---------------- #
+
+
+def pretty_print_map(buf: buf, map: map, indent: i64, current_indent: i64) {
+    if map:count() == 0 {
+        buf:write("{}");
+        return;
+    }
+
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
+    buf:write("{");
+
+    for (key, value) in map {
+        if !is_first {
+            buf:write(",");
+        }
+        buf:write("\n");
+        buf:write(spaces);
+        buf:write($debug(key));
+        buf:write(": ");
+        pretty_print_value(buf, value, indent, current_indent + indent);
+        is_first = false;
+    }
+
+    buf:write("\n");
+    buf:write(" " * current_indent);
+    buf:write("}");
+}
+
+
+def pretty_print_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
+    if vec:count() == 0 {
+        buf:write("[]");
+        return;
+    }
+
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
+    buf:write("[");
+
+    for item in vec {
+        if !is_first {
+            buf:write(",");
+        }
+        buf:write("\n");
+        buf:write(spaces);
+        pretty_print_value(buf, item, indent, current_indent + indent);
+        is_first = false;
+    }
+
+    buf:write("\n");
+    buf:write(" " * current_indent);
+    buf:write("]");
+}
+
+
+def pretty_print_value(buf: buf, value: any, indent: i64, current_indent: i64) {
+    if $is_map(value) {
+        pretty_print_map(buf, value, indent, current_indent);
+    } else if $is_vec(value) {
+        pretty_print_vec(buf, value, indent, current_indent);
+    } else {
+        buf:write($debug(value));
+    }
+}
+
+
+pub def pretty_print(json: str, indent: i64 = 2) -> str {
+    var buf = $buf();
+
+    var value = try from_json(json);
+    if $is_err(value) {
+        $panic("pretty_print(): invalid argument [json], not valid JSON: {}", value);
+    }
+
+    var result = try pretty_print_value(buf, value, indent, 0);
+    if $is_err(result) {
+        $panic("pretty_print(): {}", result);
+    }
+
+    return buf:to_str();
 }
