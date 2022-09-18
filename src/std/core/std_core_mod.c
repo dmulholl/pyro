@@ -14,7 +14,7 @@ static Value mod_get(PyroVM* vm, size_t arg_count, Value* args) {
 
     Value member_index;
     if (!ObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
-        return MAKE_OBJ(vm->error);
+        return pyro_make_obj(vm->error);
     }
 
     return mod->members->values[member_index.as.i64];
@@ -56,7 +56,7 @@ static Value mod_globals(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(new_map);
+    return pyro_make_obj(new_map);
 }
 
 
@@ -69,7 +69,7 @@ static Value mod_iter(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 

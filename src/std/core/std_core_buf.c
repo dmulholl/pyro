@@ -13,7 +13,7 @@ static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$buf(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_OBJ(buf);
+        return pyro_make_obj(buf);
     }
 
     else if (arg_count == 1) {
@@ -23,7 +23,7 @@ static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "$buf(): out of memory");
                 return pyro_make_null();
             }
-            return MAKE_OBJ(buf);
+            return pyro_make_obj(buf);
         } else {
             pyro_panic(vm, "$buf(): invalid argument [content], expected a string");
             return pyro_make_null();
@@ -46,7 +46,7 @@ static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "$buf(): out of memory");
                 return pyro_make_null();
             }
-            return MAKE_OBJ(buf);
+            return pyro_make_obj(buf);
         } else {
             pyro_panic(vm, "$buf(): invalid argument [size], expected a positive integer");
             return pyro_make_null();
@@ -167,7 +167,7 @@ static Value buf_to_str(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "to_str(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 
@@ -246,7 +246,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
             if (vm->halt_flag) {
                 return pyro_make_null();
             }
-            pyro_push(vm, MAKE_OBJ(string));
+            pyro_push(vm, pyro_make_obj(string));
             if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
                 pyro_panic(vm, "write(): out of memory");
                 return pyro_make_null();

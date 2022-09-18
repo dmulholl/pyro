@@ -47,14 +47,14 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                             pyro_panic(vm, "out of memory");
                             return pyro_make_null();
                         }
-                        return MAKE_OBJ(result);
+                        return pyro_make_obj(result);
                     } else if (IS_CHAR(b)) {
                         ObjStr* result = ObjStr_append_codepoint_as_utf8(AS_STR(a), b.as.u32, vm);
                         if (!result) {
                             pyro_panic(vm, "out of memory");
                             return pyro_make_null();
                         }
-                        return MAKE_OBJ(result);
+                        return pyro_make_obj(result);
                     } else {
                         pyro_panic(vm, "invalid operand types to '+'");
                         return pyro_make_null();
@@ -87,14 +87,14 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                     pyro_panic(vm, "out of memory");
                     return pyro_make_null();
                 }
-                return MAKE_OBJ(result);
+                return pyro_make_obj(result);
             } else if (IS_STR(b)) {
                 ObjStr* result = ObjStr_prepend_codepoint_as_utf8(AS_STR(b), a.as.u32, vm);
                 if (!result) {
                     pyro_panic(vm, "out of memory");
                     return pyro_make_null();
                 }
-                return MAKE_OBJ(result);
+                return pyro_make_obj(result);
             } else {
                 pyro_panic(vm, "invalid operand types to '+'");
                 return pyro_make_null();
@@ -188,7 +188,7 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
                         pyro_panic(vm, "out of memory");
                         return pyro_make_null();
                     }
-                    return MAKE_OBJ(result);
+                    return pyro_make_obj(result);
                 } else {
                     pyro_panic(vm, "invalid operand types to '*'");
                     return pyro_make_null();
@@ -217,7 +217,7 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
                     pyro_panic(vm, "out of memory");
                     return pyro_make_null();
                 }
-                return MAKE_OBJ(result);
+                return pyro_make_obj(result);
             } else {
                 pyro_panic(vm, "invalid operand types to '*'");
                 return pyro_make_null();
@@ -1224,7 +1224,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
             if (ObjMap_get(map, key, &value, vm)) {
                 return value;
             }
-            return MAKE_OBJ(vm->error);
+            return pyro_make_obj(vm->error);
         }
 
         case OBJ_STR: {
@@ -1237,7 +1237,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
                         pyro_panic(vm, "out of memory");
                         return pyro_make_null();
                     }
-                    return MAKE_OBJ(new_str);
+                    return pyro_make_obj(new_str);
                 }
                 pyro_panic(vm, "index is out of range");
                 return pyro_make_null();

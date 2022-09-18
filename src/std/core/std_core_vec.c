@@ -18,7 +18,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$vec(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     else if (arg_count == 1) {
@@ -50,7 +50,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$vec(): out of memory");
             return pyro_make_null();
         }
-        pyro_push(vm, MAKE_OBJ(vec)); // protect from GC
+        pyro_push(vm, pyro_make_obj(vec)); // protect from GC
 
         while (true) {
             pyro_push(vm, iterator); // receiver for the :$next() method call
@@ -72,7 +72,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_pop(vm); // vec
         pyro_pop(vm); // next_method
         pyro_pop(vm); // iterator
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     else if (arg_count == 2) {
@@ -82,7 +82,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "$vec(): out of memory");
                 return pyro_make_null();
             }
-            return MAKE_OBJ(vec);
+            return pyro_make_obj(vec);
         } else {
             pyro_panic(vm, "$vec(): invalid argument [size], expected a positive integer");
             return pyro_make_null();
@@ -157,7 +157,7 @@ static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (vec->count < 2) {
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     Value* low = &vec->values[0];
@@ -171,7 +171,7 @@ static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
         high--;
     }
 
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
@@ -180,12 +180,12 @@ static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         pyro_mergesort(vm, vec->values, vec->count);
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     if (arg_count == 1) {
         pyro_mergesort_with_callback(vm, vec->values, vec->count, args[0]);
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     pyro_panic(vm, "sort(): expected 0 or 1 arguments, found %zu", arg_count);
@@ -198,12 +198,12 @@ static Value vec_mergesort(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         pyro_mergesort(vm, vec->values, vec->count);
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     if (arg_count == 1) {
         pyro_mergesort_with_callback(vm, vec->values, vec->count, args[0]);
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     pyro_panic(vm, "mergesort(): expected 0 or 1 arguments, found %zu", arg_count);
@@ -216,12 +216,12 @@ static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         pyro_quicksort(vm, vec->values, vec->count);
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     if (arg_count == 1) {
         pyro_quicksort_with_callback(vm, vec->values, vec->count, args[0]);
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     pyro_panic(vm, "quicksort(): expected 0 or 1 arguments, found %zu", arg_count);
@@ -232,7 +232,7 @@ static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     pyro_shuffle(vm, vec->values, vec->count);
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
@@ -243,7 +243,7 @@ static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "copy(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
@@ -269,7 +269,7 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(vm->error);
+    return pyro_make_obj(vm->error);
 }
 
 
@@ -281,7 +281,7 @@ static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "map(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(new_vec));
+    pyro_push(vm, pyro_make_obj(new_vec));
 
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the map function
@@ -295,7 +295,7 @@ static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     pyro_pop(vm);
-    return MAKE_OBJ(new_vec);
+    return pyro_make_obj(new_vec);
 }
 
 
@@ -307,7 +307,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "filter(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(new_vec));
+    pyro_push(vm, pyro_make_obj(new_vec));
 
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the filter function
@@ -325,7 +325,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     pyro_pop(vm);
-    return MAKE_OBJ(new_vec);
+    return pyro_make_obj(new_vec);
 }
 
 
@@ -338,7 +338,7 @@ static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -447,7 +447,7 @@ static Value fn_stack(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$stack(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
@@ -514,10 +514,10 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (length == 0) {
-        return MAKE_OBJ(new_vec);
+        return pyro_make_obj(new_vec);
     }
 
-    pyro_push(vm, MAKE_OBJ(new_vec));
+    pyro_push(vm, pyro_make_obj(new_vec));
     Value* new_array = ALLOCATE_ARRAY(vm, Value, length);
     if (!new_array) {
         pyro_panic(vm, "slice(): out of memory");
@@ -530,7 +530,7 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     new_vec->capacity = length;
     new_vec->count = length;
 
-    return MAKE_OBJ(new_vec);
+    return pyro_make_obj(new_vec);
 }
 
 
@@ -560,10 +560,10 @@ static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 0) {
-        pyro_push(vm, MAKE_OBJ(iter));
+        pyro_push(vm, pyro_make_obj(iter));
         ObjStr* result = ObjIter_join(iter, "", 0, vm);
         pyro_pop(vm);
-        return vm->halt_flag ? pyro_make_null() : MAKE_OBJ(result);
+        return vm->halt_flag ? pyro_make_null() : pyro_make_obj(result);
     }
 
     if (arg_count == 1) {
@@ -572,10 +572,10 @@ static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
             return pyro_make_null();
         }
         ObjStr* sep = AS_STR(args[0]);
-        pyro_push(vm, MAKE_OBJ(iter));
+        pyro_push(vm, pyro_make_obj(iter));
         ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
         pyro_pop(vm);
-        return vm->halt_flag ? pyro_make_null() : MAKE_OBJ(result);
+        return vm->halt_flag ? pyro_make_null() : pyro_make_obj(result);
     }
 
     pyro_panic(vm, "join(): expected 0 or 1 arguments, found %zu", arg_count);

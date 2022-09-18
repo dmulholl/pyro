@@ -144,7 +144,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_STR: {
             ObjStr* string = (ObjStr*)object;
-            ObjMap_remove(vm->strings, MAKE_OBJ(string), vm);
+            ObjMap_remove(vm->strings, pyro_make_obj(string), vm);
             FREE_ARRAY(vm, char, string->bytes, string->length + 1);
             FREE_OBJECT(vm, ObjStr, object);
             break;

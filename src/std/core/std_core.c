@@ -97,7 +97,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             if (out_count + formatted->length + 1 > out_capacity) {
                 size_t new_capacity = out_count + formatted->length + 1;
 
-                pyro_push(vm, MAKE_OBJ(formatted));
+                pyro_push(vm, pyro_make_obj(formatted));
                 char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
                 pyro_pop(vm);
 
@@ -133,7 +133,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 
@@ -663,10 +663,10 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     tup->values[0] = pyro_make_i64(exit_code);
-    tup->values[1] = MAKE_OBJ(out_str);
-    tup->values[2] = MAKE_OBJ(err_str);
+    tup->values[1] = pyro_make_obj(out_str);
+    tup->values[2] = pyro_make_obj(err_str);
 
-    return MAKE_OBJ(tup);
+    return pyro_make_obj(tup);
 }
 
 
@@ -675,7 +675,7 @@ static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return pyro_make_null();
     }
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 
@@ -739,7 +739,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     fclose(stream);
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 
@@ -870,7 +870,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
         ObjStr* name = AS_STR(args[0]);
         char* value = getenv(name->bytes);
         if (!value) {
-            return MAKE_OBJ(vm->error);
+            return pyro_make_obj(vm->error);
         }
 
         ObjStr* string = ObjStr_new(value, vm);
@@ -879,7 +879,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
             return pyro_make_null();
         }
 
-        return MAKE_OBJ(string);
+        return pyro_make_obj(string);
     }
 
     // Note: setenv() is a POSIX function, not part of the C standard library.
@@ -921,7 +921,7 @@ static Value fn_input(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return string ? MAKE_OBJ(string) : pyro_make_null();
+    return string ? pyro_make_obj(string) : pyro_make_null();
 }
 
 
@@ -939,73 +939,73 @@ static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // Push the module onto the stack to keep it safe from the garbage collector.
-    if (!pyro_push(vm, MAKE_OBJ(module))) { return pyro_make_null(); }
+    if (!pyro_push(vm, pyro_make_obj(module))) { return pyro_make_null(); }
     pyro_exec_code_as_module(vm, code->bytes, code->length, "<exec>", module);
     pyro_pop(vm);
 
-    return MAKE_OBJ(module);
+    return pyro_make_obj(module);
 }
 
 
 static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
         case VAL_BOOL:
-            return MAKE_OBJ(vm->str_bool);
+            return pyro_make_obj(vm->str_bool);
         case VAL_NULL:
-            return MAKE_OBJ(vm->str_null);
+            return pyro_make_obj(vm->str_null);
         case VAL_I64:
-            return MAKE_OBJ(vm->str_i64);
+            return pyro_make_obj(vm->str_i64);
         case VAL_F64:
-            return MAKE_OBJ(vm->str_f64);
+            return pyro_make_obj(vm->str_f64);
         case VAL_CHAR:
-            return MAKE_OBJ(vm->str_char);
+            return pyro_make_obj(vm->str_char);
         case VAL_OBJ: {
             switch (AS_OBJ(args[0])->type) {
                 case OBJ_BOUND_METHOD:
-                    return MAKE_OBJ(vm->str_method);
+                    return pyro_make_obj(vm->str_method);
                 case OBJ_BUF:
-                    return MAKE_OBJ(vm->str_buf);
+                    return pyro_make_obj(vm->str_buf);
                 case OBJ_CLASS:
-                    return MAKE_OBJ(vm->str_class);
+                    return pyro_make_obj(vm->str_class);
                 case OBJ_INSTANCE: {
                     ObjStr* class_name = AS_OBJ(args[0])->class->name;
                     if (class_name) {
-                        return MAKE_OBJ(class_name);
+                        return pyro_make_obj(class_name);
                     }
-                    return MAKE_OBJ(vm->str_instance);
+                    return pyro_make_obj(vm->str_instance);
                 }
                 case OBJ_CLOSURE:
                 case OBJ_FN:
                 case OBJ_NATIVE_FN:
-                    return MAKE_OBJ(vm->str_fn);
+                    return pyro_make_obj(vm->str_fn);
                 case OBJ_FILE:
-                    return MAKE_OBJ(vm->str_file);
+                    return pyro_make_obj(vm->str_file);
                 case OBJ_ITER:
-                    return MAKE_OBJ(vm->str_iter);
+                    return pyro_make_obj(vm->str_iter);
                 case OBJ_MAP:
-                    return MAKE_OBJ(vm->str_map);
+                    return pyro_make_obj(vm->str_map);
                 case OBJ_MAP_AS_SET:
-                    return MAKE_OBJ(vm->str_set);
+                    return pyro_make_obj(vm->str_set);
                 case OBJ_VEC:
-                    return MAKE_OBJ(vm->str_vec);
+                    return pyro_make_obj(vm->str_vec);
                 case OBJ_VEC_AS_STACK:
-                    return MAKE_OBJ(vm->str_stack);
+                    return pyro_make_obj(vm->str_stack);
                 case OBJ_QUEUE:
-                    return MAKE_OBJ(vm->str_queue);
+                    return pyro_make_obj(vm->str_queue);
                 case OBJ_STR:
-                    return MAKE_OBJ(vm->str_str);
+                    return pyro_make_obj(vm->str_str);
                 case OBJ_MODULE:
-                    return MAKE_OBJ(vm->str_module);
+                    return pyro_make_obj(vm->str_module);
                 case OBJ_TUP:
-                    return MAKE_OBJ(vm->str_tup);
+                    return pyro_make_obj(vm->str_tup);
                 case OBJ_ERR:
-                    return MAKE_OBJ(vm->str_err);
+                    return pyro_make_obj(vm->str_err);
                 default:
-                    return MAKE_OBJ(vm->empty_string);
+                    return pyro_make_obj(vm->empty_string);
             }
         }
         default:
-            return MAKE_OBJ(vm->empty_string);
+            return pyro_make_obj(vm->empty_string);
     }
 }
 
@@ -1021,7 +1021,7 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
 
     Value method = pyro_get_method(vm, obj, method_name);
     if (IS_NULL(method)) {
-        return MAKE_OBJ(vm->error);
+        return pyro_make_obj(vm->error);
     }
 
     ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, obj, AS_OBJ(method));
@@ -1030,7 +1030,7 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(bound_method);
+    return pyro_make_obj(bound_method);
 }
 
 
@@ -1042,7 +1042,7 @@ static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$methods(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_OBJ(iter);
+        return pyro_make_obj(iter);
     }
 
     ObjIter* iter = ObjIter_new((Obj*)class->pub_instance_methods, ITER_MAP_KEYS, vm);
@@ -1051,7 +1051,7 @@ static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -1070,7 +1070,7 @@ static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(vm->error);
+    return pyro_make_obj(vm->error);
 }
 
 
@@ -1082,7 +1082,7 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$fields(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_OBJ(iter);
+        return pyro_make_obj(iter);
     }
 
     ObjIter* iter = ObjIter_new((Obj*)class->pub_field_indexes, ITER_MAP_KEYS, vm);
@@ -1091,7 +1091,7 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -1108,7 +1108,7 @@ static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         if (vm->stdout_stream) {
-            return MAKE_OBJ(vm->stdout_stream);
+            return pyro_make_obj(vm->stdout_stream);
         }
         return pyro_make_null();
     }
@@ -1130,7 +1130,7 @@ static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         if (vm->stderr_stream) {
-            return MAKE_OBJ(vm->stderr_stream);
+            return pyro_make_obj(vm->stderr_stream);
         }
         return pyro_make_null();
     }
@@ -1152,7 +1152,7 @@ static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         if (vm->stdin_stream) {
-            return MAKE_OBJ(vm->stdin_stream);
+            return pyro_make_obj(vm->stdin_stream);
         }
         return pyro_make_null();
     }
@@ -1183,11 +1183,11 @@ Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_core(PyroVM* vm) {
     pyro_define_module_1(vm, "$std");
-    pyro_define_global(vm, "$roots", MAKE_OBJ(vm->import_roots));
+    pyro_define_global(vm, "$roots", pyro_make_obj(vm->import_roots));
 
     ObjTup* args = ObjTup_new(0, vm);
     if (args) {
-        pyro_define_global(vm, "$args", MAKE_OBJ(args));
+        pyro_define_global(vm, "$args", pyro_make_obj(args));
     }
 
     pyro_define_global_fn(vm, "$", fn_shell_shortcut, 1);

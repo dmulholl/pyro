@@ -64,9 +64,9 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     version_tuple->values[0] = pyro_make_i64(PYRO_VERSION_MAJOR);
     version_tuple->values[1] = pyro_make_i64(PYRO_VERSION_MINOR);
     version_tuple->values[2] = pyro_make_i64(PYRO_VERSION_PATCH);
-    version_tuple->values[3] = MAKE_OBJ(ObjStr_new(PYRO_VERSION_LABEL, vm));
-    version_tuple->values[4] = MAKE_OBJ(ObjStr_new(PYRO_VERSION_BUILD, vm));
-    pyro_define_pub_member(vm, module, "version_tuple", MAKE_OBJ(version_tuple));
+    version_tuple->values[3] = pyro_make_obj(ObjStr_new(PYRO_VERSION_LABEL, vm));
+    version_tuple->values[4] = pyro_make_obj(ObjStr_new(PYRO_VERSION_BUILD, vm));
+    pyro_define_pub_member(vm, module, "version_tuple", pyro_make_obj(version_tuple));
 
     char* version_c_string = pyro_get_version_string();
     if (version_c_string) {
@@ -74,7 +74,7 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
         if (!version_pyro_string) {
             return;
         }
-        pyro_define_pub_member(vm, module, "version_string", MAKE_OBJ(version_pyro_string));
+        pyro_define_pub_member(vm, module, "version_string", pyro_make_obj(version_pyro_string));
     }
 
     pyro_define_pub_member_fn(vm, module, "memory", fn_memory, 0);

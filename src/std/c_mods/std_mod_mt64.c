@@ -36,8 +36,8 @@ static Value mt64_init(PyroVM* vm, size_t arg_count, Value* args) {
     }
     vm->bytes_allocated += pyro_mt64_size();
 
-    instance->fields[0] = MAKE_OBJ(resource);
-    return MAKE_OBJ(instance);
+    instance->fields[0] = pyro_make_obj(resource);
+    return pyro_make_obj(instance);
 }
 
 
@@ -126,7 +126,7 @@ void pyro_load_std_mod_mt64(PyroVM* vm, ObjModule* module) {
         return;
     }
     mt64_class->name = ObjStr_new("MT64", vm);
-    pyro_define_pub_member(vm, module, "MT64", MAKE_OBJ(mt64_class));
+    pyro_define_pub_member(vm, module, "MT64", pyro_make_obj(mt64_class));
 
     pyro_define_pub_field(vm, mt64_class, "generator", pyro_make_null());
 

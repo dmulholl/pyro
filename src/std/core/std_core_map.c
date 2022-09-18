@@ -15,7 +15,7 @@ static Value fn_map(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$map(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(map);
+    return pyro_make_obj(map);
 }
 
 
@@ -51,7 +51,7 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_get(map, args[0], &value, vm)) {
         return value;
     }
-    return MAKE_OBJ(vm->error);
+    return pyro_make_obj(vm->error);
 }
 
 
@@ -74,7 +74,7 @@ static Value map_copy(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "copy(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(copy);
+    return pyro_make_obj(copy);
 }
 
 
@@ -85,7 +85,7 @@ static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "keys(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -96,7 +96,7 @@ static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "values(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -107,7 +107,7 @@ static Value map_iter(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -125,7 +125,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$set(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_OBJ(map);
+        return pyro_make_obj(map);
     }
 
     if (arg_count > 1) {
@@ -161,7 +161,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$set(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(map)); // protect from GC
+    pyro_push(vm, pyro_make_obj(map)); // protect from GC
 
     while (true) {
         pyro_push(vm, iterator); // receiver for the :$next() method call
@@ -183,7 +183,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_pop(vm); // map
     pyro_pop(vm); // next_method
     pyro_pop(vm); // iterator
-    return MAKE_OBJ(map);
+    return pyro_make_obj(map);
 }
 
 
@@ -242,7 +242,7 @@ static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(new_map);
+    return pyro_make_obj(new_map);
 }
 
 
@@ -276,7 +276,7 @@ static Value set_intersection(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(new_map);
+    return pyro_make_obj(new_map);
 }
 
 
@@ -310,7 +310,7 @@ static Value set_difference(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_OBJ(new_map);
+    return pyro_make_obj(new_map);
 }
 
 
@@ -359,7 +359,7 @@ static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args)
         }
     }
 
-    return MAKE_OBJ(new_map);
+    return pyro_make_obj(new_map);
 }
 
 

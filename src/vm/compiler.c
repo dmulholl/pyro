@@ -261,7 +261,7 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
         parser->had_memory_error = true;
         return 0;
     }
-    return add_value_to_constant_table(parser, MAKE_OBJ(string));
+    return add_value_to_constant_table(parser, pyro_make_obj(string));
 }
 
 
@@ -994,14 +994,14 @@ static void parse_default_value_expression(Parser* parser) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
         ObjStr* string = ObjStr_copy_raw(start, length, parser->vm);
-        emit_load_value_from_constant_table(parser, MAKE_OBJ(string));
+        emit_load_value_from_constant_table(parser, pyro_make_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
         ObjStr* string = ObjStr_copy_esc(start, length, parser->vm);
-        emit_load_value_from_constant_table(parser, MAKE_OBJ(string));
+        emit_load_value_from_constant_table(parser, pyro_make_obj(string));
     }
 
     else if (match(parser, TOKEN_CHAR)) {
@@ -1075,14 +1075,14 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
         ObjStr* string = ObjStr_copy_raw(start, length, parser->vm);
-        emit_load_value_from_constant_table(parser, MAKE_OBJ(string));
+        emit_load_value_from_constant_table(parser, pyro_make_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
         ObjStr* string = ObjStr_copy_esc(start, length, parser->vm);
-        emit_load_value_from_constant_table(parser, MAKE_OBJ(string));
+        emit_load_value_from_constant_table(parser, pyro_make_obj(string));
     }
 
     else if (match(parser, TOKEN_CHAR)) {
@@ -1271,7 +1271,7 @@ static void parse_try_expr(Parser* parser) {
     emit_byte(parser, OP_RETURN);
 
     ObjFn* fn = end_fn_compiler(parser);
-    emit_u8_u16be(parser, OP_MAKE_CLOSURE, add_value_to_constant_table(parser, MAKE_OBJ(fn)));
+    emit_u8_u16be(parser, OP_MAKE_CLOSURE, add_value_to_constant_table(parser, pyro_make_obj(fn)));
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, fn_compiler.upvalues[i].is_local ? 1 : 0);
@@ -2120,7 +2120,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     ObjFn* fn = end_fn_compiler(parser);
 
     // Add the function to the current function's constant table.
-    uint16_t index = add_value_to_constant_table(parser, MAKE_OBJ(fn));
+    uint16_t index = add_value_to_constant_table(parser, pyro_make_obj(fn));
 
     // Emit the bytecode to load the function onto the stack as an ObjClosure.
     if (default_value_count > 0) {

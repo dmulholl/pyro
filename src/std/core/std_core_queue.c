@@ -14,7 +14,7 @@ static Value fn_queue(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$queue(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(queue);
+    return pyro_make_obj(queue);
 }
 
 
@@ -65,7 +65,7 @@ static Value queue_iter(PyroVM* vm, size_t arg_count, Value* args) {
     }
     iter->next_queue_item = queue->head;
 
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 

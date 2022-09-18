@@ -46,7 +46,7 @@ static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(file);
+    return pyro_make_obj(file);
 }
 
 
@@ -123,7 +123,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
     buf->capacity = capacity;
     buf->bytes = array;
 
-    return MAKE_OBJ(buf);
+    return pyro_make_obj(buf);
 }
 
 
@@ -174,7 +174,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 
@@ -194,7 +194,7 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (num_bytes_to_read == 0 || feof(file->stream)) {
-        return MAKE_OBJ(buf);
+        return pyro_make_obj(buf);
     }
 
     buf->count = fread(buf->bytes, sizeof(uint8_t), num_bytes_to_read, file->stream);
@@ -204,7 +204,7 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(buf);
+    return pyro_make_obj(buf);
 }
 
 
@@ -240,7 +240,7 @@ static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return string ? MAKE_OBJ(string) : pyro_make_null();
+    return string ? pyro_make_obj(string) : pyro_make_null();
 }
 
 
@@ -251,7 +251,7 @@ static Value file_lines(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "lines(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 

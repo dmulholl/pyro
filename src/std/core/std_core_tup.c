@@ -16,7 +16,7 @@ static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
-    return MAKE_OBJ(tup);
+    return pyro_make_obj(tup);
 }
 
 
@@ -52,7 +52,7 @@ static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
     if (!iter) {
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -103,11 +103,11 @@ static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (length == 0) {
-        return MAKE_OBJ(new_tup);
+        return pyro_make_obj(new_tup);
     }
 
     memcpy(new_tup->values, &tup->values[start_index], sizeof(Value) * length);
-    return MAKE_OBJ(new_tup);
+    return pyro_make_obj(new_tup);
 }
 
 

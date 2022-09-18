@@ -58,9 +58,6 @@ struct Obj {
     bool is_marked;
 };
 
-// Macros for creating Value instances.
-#define MAKE_OBJ(c_ptr)             ((Value){VAL_OBJ, {.obj = (Obj*)c_ptr}})
-
 // Inline functions for creating Value instance.
 static inline Value pyro_make_bool(bool value) {
     return (Value){VAL_BOOL, {.boolean = value}};

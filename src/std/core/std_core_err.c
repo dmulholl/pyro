@@ -18,14 +18,14 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 0) {
-        return MAKE_OBJ(err);
+        return pyro_make_obj(err);
     } else if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_make_null();
         }
         err->message = string;
-        return MAKE_OBJ(err);
+        return pyro_make_obj(err);
     } else {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$err(): invalid argument [format_string], expected a string");
@@ -36,7 +36,7 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
             return pyro_make_null();
         }
         err->message = AS_STR(formatted);
-        return MAKE_OBJ(err);
+        return pyro_make_obj(err);
     }
 }
 
@@ -61,19 +61,19 @@ static Value err_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_get(err->details, args[0], &value, vm)) {
         return value;
     }
-    return MAKE_OBJ(vm->error);
+    return pyro_make_obj(vm->error);
 }
 
 
 static Value err_message(PyroVM* vm, size_t arg_count, Value* args) {
     ObjErr* err = AS_ERR(args[-1]);
-    return MAKE_OBJ(err->message);
+    return pyro_make_obj(err->message);
 }
 
 
 static Value err_details(PyroVM* vm, size_t arg_count, Value* args) {
     ObjErr* err = AS_ERR(args[-1]);
-    return MAKE_OBJ(err->details);
+    return pyro_make_obj(err->details);
 }
 
 

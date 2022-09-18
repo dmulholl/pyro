@@ -73,7 +73,7 @@ static Value fn_dirname(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     free(path_copy);
-    return MAKE_OBJ(output);
+    return pyro_make_obj(output);
 }
 
 
@@ -105,7 +105,7 @@ static Value fn_basename(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     free(path_copy);
-    return MAKE_OBJ(output);
+    return pyro_make_obj(output);
 }
 
 
@@ -159,7 +159,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (!array) {
-        return MAKE_OBJ(vm->empty_string);
+        return pyro_make_obj(vm->empty_string);
     }
 
     array[array_count] = '\0';
@@ -171,7 +171,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(output);
+    return pyro_make_obj(output);
 }
 
 
@@ -206,7 +206,7 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 
@@ -221,7 +221,7 @@ static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
@@ -247,7 +247,7 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         err->message = message;
-        return MAKE_OBJ(err);
+        return pyro_make_obj(err);
     }
 
     ObjStr* string = ObjStr_copy_raw(result, strlen(result), vm);
@@ -257,7 +257,7 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 

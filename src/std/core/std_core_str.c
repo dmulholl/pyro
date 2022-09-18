@@ -15,7 +15,7 @@ static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
     if (vm->halt_flag) {
         return pyro_make_null();
     }
-    return MAKE_OBJ(string);
+    return pyro_make_obj(string);
 }
 
 
@@ -37,7 +37,7 @@ static Value str_iter(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -69,7 +69,7 @@ static Value str_bytes(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "bytes(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -80,7 +80,7 @@ static Value str_lines(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "lines(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -185,7 +185,7 @@ static Value str_chars(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "chars(): out of memory");
         return pyro_make_null();
     }
-    return MAKE_OBJ(iter);
+    return pyro_make_obj(iter);
 }
 
 
@@ -289,7 +289,7 @@ static Value str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, Value* args) {
 static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* array = ALLOCATE_ARRAY(vm, char, str->length + 1);
@@ -312,14 +312,14 @@ static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_string);
+    return pyro_make_obj(new_string);
 }
 
 
 static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* array = ALLOCATE_ARRAY(vm, char, str->length + 1);
@@ -342,7 +342,7 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_string);
+    return pyro_make_obj(new_string);
 }
 
 
@@ -401,7 +401,7 @@ static Value str_strip_prefix(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* target = AS_STR(args[0]);
 
     if (str->length < target->length) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     if (memcmp(str->bytes, target->bytes, target->length) == 0) {
@@ -410,10 +410,10 @@ static Value str_strip_prefix(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "strip_prefix(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_OBJ(new_str);
+        return pyro_make_obj(new_str);
     }
 
-    return MAKE_OBJ(str);
+    return pyro_make_obj(str);
 }
 
 
@@ -428,7 +428,7 @@ static Value str_strip_suffix(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* target = AS_STR(args[0]);
 
     if (str->length < target->length) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     if (memcmp(&str->bytes[str->length - target->length], target->bytes, target->length) == 0) {
@@ -437,10 +437,10 @@ static Value str_strip_suffix(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "strip_suffix(): out of memory");
             return pyro_make_null();
         }
-        return MAKE_OBJ(new_str);
+        return pyro_make_obj(new_str);
     }
 
-    return MAKE_OBJ(str);
+    return pyro_make_obj(str);
 }
 
 
@@ -455,7 +455,7 @@ static Value str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* prefix = AS_STR(args[0]);
 
     if (prefix->length == 0 || str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* start = str->bytes;
@@ -475,7 +475,7 @@ static Value str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -490,7 +490,7 @@ static Value str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* suffix = AS_STR(args[0]);
 
     if (suffix->length == 0 || str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* start = str->bytes;
@@ -510,7 +510,7 @@ static Value str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -525,7 +525,7 @@ static Value str_strip_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* target = AS_STR(args[0]);
 
     if (target->length == 0 || str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* start = str->bytes;
@@ -553,14 +553,14 @@ static Value str_strip_bytes(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
 static Value str_strip_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     const char* whitespace = " \t\r\n\v\f";
@@ -590,14 +590,14 @@ static Value str_strip_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
 static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* start = str->bytes;
@@ -631,7 +631,7 @@ static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -651,7 +651,7 @@ static Value str_strip_chars(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (target->length == 0 || str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* start = str->bytes;
@@ -685,7 +685,7 @@ static Value str_strip_chars(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -705,7 +705,7 @@ static Value str_strip_suffix_chars(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (target->length == 0 || str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* start = str->bytes;
@@ -729,7 +729,7 @@ static Value str_strip_suffix_chars(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -749,7 +749,7 @@ static Value str_strip_prefix_chars(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (target->length == 0 || str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     char* start = str->bytes;
@@ -773,7 +773,7 @@ static Value str_strip_prefix_chars(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -837,7 +837,7 @@ static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* new = AS_STR(args[1]);
 
     if (old->length == 0 || old->length > str->length) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     ObjBuf* buf = ObjBuf_new(vm);
@@ -845,7 +845,7 @@ static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "replace(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(buf)); // keep the buffer safe from the GC
+    pyro_push(vm, pyro_make_obj(buf)); // keep the buffer safe from the GC
 
     size_t index = 0;
     size_t last_possible_match_index = str->length - old->length;
@@ -880,7 +880,7 @@ static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     pyro_pop(vm); // pop the buffer
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -912,7 +912,7 @@ static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (index + target->length > str->length) {
-        return MAKE_OBJ(vm->error);
+        return pyro_make_obj(vm->error);
     }
 
     size_t last_possible_match_index = str->length - target->length;
@@ -924,7 +924,7 @@ static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
         index++;
     }
 
-    return MAKE_OBJ(vm->error);
+    return pyro_make_obj(vm->error);
 }
 
 
@@ -972,7 +972,7 @@ static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "split_on_ascii_ws(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(vec));
+    pyro_push(vm, pyro_make_obj(vec));
 
     const char* whitespace = " \t\r\n\v\f";
 
@@ -1004,8 +1004,8 @@ static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "split_on_ascii_ws(): out of memory");
                 return pyro_make_null();
             }
-            pyro_push(vm, MAKE_OBJ(new_string));
-            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+            pyro_push(vm, pyro_make_obj(new_string));
+            if (!ObjVec_append(vec, pyro_make_obj(new_string), vm)) {
                 pyro_panic(vm, "split_on_ascii_ws(): out of memory");
                 return pyro_make_null();
             }
@@ -1024,15 +1024,15 @@ static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "split_on_ascii_ws(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(new_string));
-    if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+    pyro_push(vm, pyro_make_obj(new_string));
+    if (!ObjVec_append(vec, pyro_make_obj(new_string), vm)) {
         pyro_panic(vm, "split_on_ascii_ws(): out of memory");
         return pyro_make_null();
     }
     pyro_pop(vm);
 
     pyro_pop(vm); // pop the vector
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
@@ -1057,15 +1057,15 @@ static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "split(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(vec));
+    pyro_push(vm, pyro_make_obj(vec));
 
     if (str->length < sep->length || sep->length == 0) {
-        if (!ObjVec_append(vec, MAKE_OBJ(str), vm)) {
+        if (!ObjVec_append(vec, pyro_make_obj(str), vm)) {
             pyro_panic(vm, "split(): out of memory");
             return pyro_make_null();
         }
         pyro_pop(vm);
-        return MAKE_OBJ(vec);
+        return pyro_make_obj(vec);
     }
 
     size_t start = 0;
@@ -1079,8 +1079,8 @@ static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "split(): out of memory");
                 return pyro_make_null();
             }
-            pyro_push(vm, MAKE_OBJ(new_string));
-            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+            pyro_push(vm, pyro_make_obj(new_string));
+            if (!ObjVec_append(vec, pyro_make_obj(new_string), vm)) {
                 pyro_panic(vm, "split(): out of memory");
                 return pyro_make_null();
             }
@@ -1097,15 +1097,15 @@ static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "split(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(new_string));
-    if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+    pyro_push(vm, pyro_make_obj(new_string));
+    if (!ObjVec_append(vec, pyro_make_obj(new_string), vm)) {
         pyro_panic(vm, "split(): out of memory");
         return pyro_make_null();
     }
     pyro_pop(vm);
 
     pyro_pop(vm); // pop the vector
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
@@ -1117,7 +1117,7 @@ static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "split_lines(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(vec));
+    pyro_push(vm, pyro_make_obj(vec));
 
     // Points to the byte *after* the last byte in the string.
     const char* const string_end = str->bytes + str->length;
@@ -1136,8 +1136,8 @@ static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "split_lines(): out of memory");
                 return pyro_make_null();
             }
-            pyro_push(vm, MAKE_OBJ(new_string));
-            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+            pyro_push(vm, pyro_make_obj(new_string));
+            if (!ObjVec_append(vec, pyro_make_obj(new_string), vm)) {
                 pyro_panic(vm, "split_lines(): out of memory");
                 return pyro_make_null();
             }
@@ -1150,8 +1150,8 @@ static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "split_lines(): out of memory");
                 return pyro_make_null();
             }
-            pyro_push(vm, MAKE_OBJ(new_string));
-            if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+            pyro_push(vm, pyro_make_obj(new_string));
+            if (!ObjVec_append(vec, pyro_make_obj(new_string), vm)) {
                 pyro_panic(vm, "split_lines(): out of memory");
                 return pyro_make_null();
             }
@@ -1168,22 +1168,22 @@ static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "split_lines(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(new_string));
-    if (!ObjVec_append(vec, MAKE_OBJ(new_string), vm)) {
+    pyro_push(vm, pyro_make_obj(new_string));
+    if (!ObjVec_append(vec, pyro_make_obj(new_string), vm)) {
         pyro_panic(vm, "split_lines(): out of memory");
         return pyro_make_null();
     }
     pyro_pop(vm);
 
     pyro_pop(vm); // pop the vector
-    return MAKE_OBJ(vec);
+    return pyro_make_obj(vec);
 }
 
 
 static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_OBJ(str);
+        return pyro_make_obj(str);
     }
 
     ObjBuf* buf = ObjBuf_new(vm);
@@ -1191,7 +1191,7 @@ static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "to_hex(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(buf));
+    pyro_push(vm, pyro_make_obj(buf));
 
     for (size_t i = 0; i < str->length; i++) {
         if (!ObjBuf_append_hex_escaped_byte(buf, str->bytes[i], vm)) {
@@ -1207,7 +1207,7 @@ static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     pyro_pop(vm);
-    return MAKE_OBJ(output_string);
+    return pyro_make_obj(output_string);
 }
 
 
@@ -1252,7 +1252,7 @@ static Value str_slice(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (length == 0) {
-        return MAKE_OBJ(vm->empty_string);
+        return pyro_make_obj(vm->empty_string);
     }
 
     ObjStr* new_str = ObjStr_copy_raw(&str->bytes[start_index], length, vm);
@@ -1261,7 +1261,7 @@ static Value str_slice(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return MAKE_OBJ(new_str);
+    return pyro_make_obj(new_str);
 }
 
 
@@ -1296,7 +1296,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "join(): out of memory");
         return pyro_make_null();
     }
-    pyro_push(vm, MAKE_OBJ(buf)); // protect from GC
+    pyro_push(vm, pyro_make_obj(buf)); // protect from GC
 
     bool is_first_item = true;
 
@@ -1324,7 +1324,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
         }
         pyro_pop(vm); // next_value
 
-        pyro_push(vm, MAKE_OBJ(value_string));
+        pyro_push(vm, pyro_make_obj(value_string));
         if (!ObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, "join(): out of memory");
             return pyro_make_null();
@@ -1344,7 +1344,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_pop(vm); // next_method
     pyro_pop(vm); // iterator
 
-    return MAKE_OBJ(output_string);
+    return pyro_make_obj(output_string);
 }
 
 
