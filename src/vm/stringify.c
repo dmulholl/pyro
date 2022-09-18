@@ -7,14 +7,16 @@
 #include "../inc/panics.h"
 
 
-// Returns a quoted, escaped string or NULL if memory allocation fails.
+// Returns a quoted, escaped string. Panics and returns NULL if memory allocation fails.
 static ObjStr* make_debug_string_for_string(PyroVM* vm, ObjStr* input_string) {
     ObjBuf* buf = ObjBuf_new(vm);
     if (!buf) {
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
     if (!ObjBuf_append_byte(buf, '"', vm)) {
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
@@ -51,11 +53,13 @@ static ObjStr* make_debug_string_for_string(PyroVM* vm, ObjStr* input_string) {
         }
 
         if (!ok) {
+            pyro_panic(vm, "out of memory");
             return NULL;
         }
     }
 
     if (!ObjBuf_append_byte(buf, '"', vm)) {
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
@@ -63,17 +67,37 @@ static ObjStr* make_debug_string_for_string(PyroVM* vm, ObjStr* input_string) {
 }
 
 
-// Returns a quoted, escaped string or NULL if memory allocation fails.
+// Returns a <buf "content"> string containing a quoted, escaped string representation of the
+// buffer's content. Panics and returns NULL if memory allocation fails.
+static ObjStr* make_debug_string_for_buf(PyroVM* vm, ObjBuf* buf) {
+    ObjStr* raw_content = ObjStr_copy_raw((char*)buf->bytes, buf->count, vm);
+    if (!raw_content) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    ObjStr* content = make_debug_string_for_string(vm, raw_content);
+    if (!content) {
+        return NULL;
+    }
+
+    return pyro_sprintf_to_obj(vm, "<buf %s>", content->bytes);
+}
+
+
+// Returns a quoted, escaped string. Panics and returns NULL if memory allocation fails.
 static ObjStr* make_debug_string_for_char(PyroVM* vm, Value value) {
     uint8_t utf8_buffer[4];
     size_t count = pyro_write_utf8_codepoint(value.as.u32, utf8_buffer);
 
     ObjBuf* buf = ObjBuf_new(vm);
     if (!buf) {
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
     if (!ObjBuf_append_byte(buf, '\'', vm)) {
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
@@ -115,10 +139,12 @@ static ObjStr* make_debug_string_for_char(PyroVM* vm, Value value) {
     }
 
     if (!ok) {
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
     if (!ObjBuf_append_byte(buf, '\'', vm)) {
+        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
@@ -694,7 +720,14 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
     if (IS_STR(value)) {
         ObjStr* string = make_debug_string_for_string(vm, AS_STR(value));
         if (!string) {
-            pyro_panic(vm, "out of memory");
+            return NULL;
+        }
+        return string;
+    }
+
+    if (IS_BUF(value)) {
+        ObjStr* string = make_debug_string_for_buf(vm, AS_BUF(value));
+        if (!string) {
             return NULL;
         }
         return string;
@@ -703,7 +736,6 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
     if (IS_CHAR(value)) {
         ObjStr* string = make_debug_string_for_char(vm, value);
         if (!string) {
-            pyro_panic(vm, "out of memory");
             return NULL;
         }
         return string;
