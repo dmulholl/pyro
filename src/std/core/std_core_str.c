@@ -225,7 +225,7 @@ static Value str_char(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return MAKE_CHAR(cp.value);
+    return pyro_make_char(cp.value);
 }
 
 

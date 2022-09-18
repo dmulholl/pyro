@@ -14,7 +14,7 @@ static Value fn_char(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
         int64_t arg = args[0].as.i64;
         if (arg >= 0 && arg <= UINT32_MAX) {
-            return MAKE_CHAR((uint32_t)arg);
+            return pyro_make_char((uint32_t)arg);
         } else {
             pyro_panic(vm, "$char(): invalid argument, integer is out of range");
             return pyro_make_null();

@@ -1006,7 +1006,7 @@ static void parse_default_value_expression(Parser* parser) {
 
     else if (match(parser, TOKEN_CHAR)) {
         uint32_t codepoint = parse_char_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_CHAR(codepoint));
+        emit_load_value_from_constant_table(parser, pyro_make_char(codepoint));
     }
 
     else {
@@ -1087,7 +1087,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
 
     else if (match(parser, TOKEN_CHAR)) {
         uint32_t codepoint = parse_char_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_CHAR(codepoint));
+        emit_load_value_from_constant_table(parser, pyro_make_char(codepoint));
     }
 
     else if (match(parser, TOKEN_IDENTIFIER)) {

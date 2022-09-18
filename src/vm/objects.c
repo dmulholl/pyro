@@ -1862,7 +1862,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 Utf8CodePoint cp;
                 if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
                     iter->next_index += cp.length;
-                    return MAKE_CHAR(cp.value);
+                    return pyro_make_char(cp.value);
                 }
                 pyro_panic(
                     vm,
