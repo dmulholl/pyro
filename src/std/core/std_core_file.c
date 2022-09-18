@@ -178,10 +178,6 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-// Attempts to read [n] bytes from the file into a byte buffer. May read less than [n] bytes if the
-// end of the file is reached first. Returns the byte buffer or [NULL] if the end of the file had
-// already been reached before the method was called. Panics if an I/O read error occurs, if the
-// argument is invalid, or if memory cannot be allocated for the buffer.
 static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
 
@@ -189,11 +185,6 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "read_bytes(): invalid argument [n], expected a non-negative integer");
         return MAKE_NULL();
     }
-
-    if (feof(file->stream)) {
-        return MAKE_NULL();
-    }
-
     size_t num_bytes_to_read = args[0].as.i64;
 
     ObjBuf* buf = ObjBuf_new_with_cap(num_bytes_to_read, vm);
@@ -202,21 +193,15 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
         return MAKE_NULL();
     }
 
-    if (num_bytes_to_read == 0) {
+    if (num_bytes_to_read == 0 || feof(file->stream)) {
         return MAKE_OBJ(buf);
     }
 
-    size_t n = fread(buf->bytes, sizeof(uint8_t), num_bytes_to_read, file->stream);
-    buf->count = n;
+    buf->count = fread(buf->bytes, sizeof(uint8_t), num_bytes_to_read, file->stream);
 
-    if (n < num_bytes_to_read) {
-        if (ferror(file->stream)) {
-            pyro_panic(vm, "read_bytes(): I/O read error");
-            return MAKE_NULL();
-        }
-        if (n == 0) {
-            return MAKE_NULL();
-        }
+    if (buf->count < num_bytes_to_read && ferror(file->stream)) {
+        pyro_panic(vm, "read_bytes(): I/O read error");
+        return MAKE_NULL();
     }
 
     return MAKE_OBJ(buf);
