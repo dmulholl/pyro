@@ -987,7 +987,7 @@ static void parse_default_value_expression(Parser* parser) {
 
     else if (match(parser, TOKEN_FLOAT)) {
         double value = parse_float_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_F64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_f64(value));
     }
 
     else if (match(parser, TOKEN_STRING)) {
@@ -1056,7 +1056,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
 
     else if (match(parser, TOKEN_FLOAT)) {
         double value = parse_float_literal(parser);
-        emit_load_value_from_constant_table(parser, MAKE_F64(value));
+        emit_load_value_from_constant_table(parser, pyro_make_f64(value));
     }
 
     else if (match(parser, TOKEN_LEFT_PAREN)) {

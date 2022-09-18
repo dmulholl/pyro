@@ -19,7 +19,7 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                 case VAL_I64:
                     return pyro_make_i64(a.as.i64 + b.as.i64);
                 case VAL_F64:
-                    return MAKE_F64((double)a.as.i64 + b.as.f64);
+                    return pyro_make_f64((double)a.as.i64 + b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '+'");
                     return pyro_make_null();
@@ -29,9 +29,9 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
         case VAL_F64: {
             switch (b.type) {
                 case VAL_I64:
-                    return MAKE_F64(a.as.f64 + (double)b.as.i64);
+                    return pyro_make_f64(a.as.f64 + (double)b.as.i64);
                 case VAL_F64:
-                    return MAKE_F64(a.as.f64 + b.as.f64);
+                    return pyro_make_f64(a.as.f64 + b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '+'");
                     return pyro_make_null();
@@ -117,7 +117,7 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
                 case VAL_I64:
                     return pyro_make_i64(a.as.i64 - b.as.i64);
                 case VAL_F64:
-                    return MAKE_F64((double)a.as.i64 - b.as.f64);
+                    return pyro_make_f64((double)a.as.i64 - b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '-'");
                     return pyro_make_null();
@@ -127,9 +127,9 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
         case VAL_F64: {
             switch (b.type) {
                 case VAL_I64:
-                    return MAKE_F64(a.as.f64 - (double)b.as.i64);
+                    return pyro_make_f64(a.as.f64 - (double)b.as.i64);
                 case VAL_F64:
-                    return MAKE_F64(a.as.f64 - b.as.f64);
+                    return pyro_make_f64(a.as.f64 - b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '-'");
                     return pyro_make_null();
@@ -161,7 +161,7 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
                 case VAL_I64:
                     return pyro_make_i64(a.as.i64 * b.as.i64);
                 case VAL_F64:
-                    return MAKE_F64((double)a.as.i64 * b.as.f64);
+                    return pyro_make_f64((double)a.as.i64 * b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '*'");
                     return pyro_make_null();
@@ -171,9 +171,9 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
         case VAL_F64: {
             switch (b.type) {
                 case VAL_I64:
-                    return MAKE_F64(a.as.f64 * (double)b.as.i64);
+                    return pyro_make_f64(a.as.f64 * (double)b.as.i64);
                 case VAL_F64:
-                    return MAKE_F64(a.as.f64 * b.as.f64);
+                    return pyro_make_f64(a.as.f64 * b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '*'");
                     return pyro_make_null();
@@ -243,14 +243,14 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
                         pyro_panic(vm, "division by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64((double)a.as.i64 / (double)b.as.i64);
+                        return pyro_make_f64((double)a.as.i64 / (double)b.as.i64);
                     }
                 case VAL_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64((double)a.as.i64 / b.as.f64);
+                        return pyro_make_f64((double)a.as.i64 / b.as.f64);
                     }
                 default:
                     pyro_panic(vm, "invalid operand types to '/'");
@@ -265,14 +265,14 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
                         pyro_panic(vm, "division by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(a.as.f64 / (double)b.as.i64);
+                        return pyro_make_f64(a.as.f64 / (double)b.as.i64);
                     }
                 case VAL_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(a.as.f64 / b.as.f64);
+                        return pyro_make_f64(a.as.f64 / b.as.f64);
                     }
                 default:
                     pyro_panic(vm, "invalid operand types to '/'");
@@ -404,7 +404,7 @@ Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
                         pyro_panic(vm, "modulo by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(fmod((double)a.as.i64, b.as.f64));
+                        return pyro_make_f64(fmod((double)a.as.i64, b.as.f64));
                     }
                 default:
                     pyro_panic(vm, "invalid operand types to '%%'");
@@ -419,14 +419,14 @@ Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
                         pyro_panic(vm, "modulo by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(fmod(a.as.f64, (double)b.as.i64));
+                        return pyro_make_f64(fmod(a.as.f64, (double)b.as.i64));
                     }
                 case VAL_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "modulo by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(fmod(a.as.f64, b.as.f64));
+                        return pyro_make_f64(fmod(a.as.f64, b.as.f64));
                     }
                 default:
                     pyro_panic(vm, "invalid operand types to '%%'");
@@ -457,9 +457,9 @@ Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
         case VAL_I64: {
             switch (b.type) {
                 case VAL_I64:
-                    return MAKE_F64(pow((double)a.as.i64, (double)b.as.i64));
+                    return pyro_make_f64(pow((double)a.as.i64, (double)b.as.i64));
                 case VAL_F64:
-                    return MAKE_F64(pow((double)a.as.i64, b.as.f64));
+                    return pyro_make_f64(pow((double)a.as.i64, b.as.f64));
                 default:
                     pyro_panic(vm, "invalid operand types to '**'");
                     return pyro_make_null();
@@ -469,9 +469,9 @@ Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
         case VAL_F64: {
             switch (b.type) {
                 case VAL_I64:
-                    return MAKE_F64(pow(a.as.f64, (double)b.as.i64));
+                    return pyro_make_f64(pow(a.as.f64, (double)b.as.i64));
                 case VAL_F64:
-                    return MAKE_F64(pow(a.as.f64, b.as.f64));
+                    return pyro_make_f64(pow(a.as.f64, b.as.f64));
                 default:
                     pyro_panic(vm, "invalid operand types to '**'");
                     return pyro_make_null();
@@ -512,7 +512,7 @@ Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b) {
                         pyro_panic(vm, "division by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(trunc((double)a.as.i64 / b.as.f64));
+                        return pyro_make_f64(trunc((double)a.as.i64 / b.as.f64));
                     }
                 default:
                     pyro_panic(vm, "invalid operand types to '//'");
@@ -527,14 +527,14 @@ Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b) {
                         pyro_panic(vm, "division by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(trunc(a.as.f64 / (double)b.as.i64));
+                        return pyro_make_f64(trunc(a.as.f64 / (double)b.as.i64));
                     }
                 case VAL_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_make_null();
                     } else {
-                        return MAKE_F64(trunc(a.as.f64 / b.as.f64));
+                        return pyro_make_f64(trunc(a.as.f64 / b.as.f64));
                     }
                 default:
                     pyro_panic(vm, "invalid operand types to '//'");
@@ -623,7 +623,7 @@ Value pyro_op_unary_minus(PyroVM* vm, Value operand) {
             return pyro_make_i64(-operand.as.i64);
 
         case VAL_F64:
-            return MAKE_F64(-operand.as.f64);
+            return pyro_make_f64(-operand.as.f64);
 
         case VAL_OBJ: {
             if (IS_INSTANCE(operand)) {

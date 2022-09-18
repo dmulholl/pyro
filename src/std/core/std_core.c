@@ -426,7 +426,7 @@ static Value fn_is_obj(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_clock(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_F64((double)clock() / CLOCKS_PER_SEC);
+    return pyro_make_f64((double)clock() / CLOCKS_PER_SEC);
 }
 
 
@@ -443,20 +443,20 @@ static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
         case VAL_I64:
-            return MAKE_F64((double)args[0].as.i64);
+            return pyro_make_f64((double)args[0].as.i64);
 
         case VAL_F64:
             return args[0];
 
         case VAL_CHAR:
-            return MAKE_F64((double)args[0].as.u32);
+            return pyro_make_f64((double)args[0].as.u32);
 
         case VAL_OBJ: {
             if (IS_STR(args[0])) {
                 ObjStr* string = AS_STR(args[0]);
                 double value;
                 if (pyro_parse_string_as_float(string->bytes, string->length, &value)) {
-                    return MAKE_F64(value);
+                    return pyro_make_f64(value);
                 }
                 pyro_panic(vm, "$f64(): invalid argument, unable to parse string");
                 return pyro_make_null();
