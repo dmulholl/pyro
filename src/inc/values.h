@@ -117,9 +117,6 @@ struct Obj {
 #define AS_RESOURCE_POINTER(value)  ((ObjResourcePointer*)AS_OBJ(value))
 #define AS_ERR(value)               ((ObjErr*)AS_OBJ(value))
 
-// Macro for creating a string object by copying a C string.
-#define STR(c_string)               ObjStr_copy_raw(c_string, strlen(c_string), vm)
-
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
 ObjClass* pyro_get_class(PyroVM* vm, Value value);
 

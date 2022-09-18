@@ -15,6 +15,10 @@ struct ObjStr {
     char* bytes;
 };
 
+// Creates a new string object by copying the null-terminated C-string [src], ignoring backslashed
+// escapes.
+ObjStr* ObjStr_new(const char* src, PyroVM* vm);
+
 // Creates a new string object by copying [length] bytes from [src], ignoring backslashed escapes.
 // If [length] is 0, [src] can be NULL. Returns NULL if the attempt to allocate memory for the
 // string object fails.

@@ -932,7 +932,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
 
     Value method = pyro_get_method(vm, value, vm->str_dollar_fmt);
     if (!IS_NULL(method)) {
-        ObjStr* format_string_object = STR(format_string);
+        ObjStr* format_string_object = ObjStr_new(format_string, vm);
         if (!format_string_object) {
             pyro_panic(vm, "out of memory");
             return NULL;

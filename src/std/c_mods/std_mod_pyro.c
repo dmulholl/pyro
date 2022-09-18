@@ -64,13 +64,13 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     version_tuple->values[0] = MAKE_I64(PYRO_VERSION_MAJOR);
     version_tuple->values[1] = MAKE_I64(PYRO_VERSION_MINOR);
     version_tuple->values[2] = MAKE_I64(PYRO_VERSION_PATCH);
-    version_tuple->values[3] = MAKE_OBJ(STR(PYRO_VERSION_LABEL));
-    version_tuple->values[4] = MAKE_OBJ(STR(PYRO_VERSION_BUILD));
+    version_tuple->values[3] = MAKE_OBJ(ObjStr_new(PYRO_VERSION_LABEL, vm));
+    version_tuple->values[4] = MAKE_OBJ(ObjStr_new(PYRO_VERSION_BUILD, vm));
     pyro_define_pub_member(vm, module, "version_tuple", MAKE_OBJ(version_tuple));
 
     char* version_c_string = pyro_get_version_string();
     if (version_c_string) {
-        ObjStr* version_pyro_string = STR(version_c_string);
+        ObjStr* version_pyro_string = ObjStr_new(version_c_string, vm);
         if (!version_pyro_string) {
             return;
         }

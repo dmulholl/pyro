@@ -873,7 +873,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
             return MAKE_OBJ(vm->error);
         }
 
-        ObjStr* string = STR(value);
+        ObjStr* string = ObjStr_new(value, vm);
         if (!string) {
             pyro_panic(vm, "$env(): out of memory");
             return MAKE_NULL();

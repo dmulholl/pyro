@@ -659,6 +659,11 @@ ObjStr* ObjStr_empty(PyroVM* vm) {
 }
 
 
+ObjStr* ObjStr_new(const char* src, PyroVM* vm) {
+    return ObjStr_copy_raw(src, strlen(src), vm);
+}
+
+
 ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
     if (length == 0) {
         return ObjStr_empty(vm);
@@ -1144,7 +1149,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
 
 
 ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* name, int arity) {
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return NULL;
     }

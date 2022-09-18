@@ -137,7 +137,7 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
     vm->exit_code = 1;
     vm->panic_line_number = source_line;
 
-    vm->panic_source_id = STR(source_id);
+    vm->panic_source_id = ObjStr_new(source_id, vm);
     if (!vm->panic_source_id) {
         vm->panic_source_id = vm->empty_string;
     }

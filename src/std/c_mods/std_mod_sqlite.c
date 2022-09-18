@@ -7,7 +7,7 @@
 
 
 void pyro_load_std_mod_sqlite(PyroVM* vm, ObjModule* module) {
-    ObjStr* version = STR(SQLITE_VERSION);
+    ObjStr* version = ObjStr_new(SQLITE_VERSION, vm);
     if (!version) {
         return;
     }

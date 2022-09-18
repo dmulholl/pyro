@@ -1948,8 +1948,8 @@ static void run(PyroVM* vm) {
                     err->message = err_str;
 
                     if (vm->panic_source_id) {
-                        ObjStr* source_key = STR("source");
-                        ObjStr* line_key = STR("line_number");
+                        ObjStr* source_key = ObjStr_new("source", vm);
+                        ObjStr* line_key = ObjStr_new("line_number", vm);
                         if (!source_key || !line_key) {
                             vm->hard_panic = true;
                             pyro_panic(vm, "out of memory");
@@ -2068,7 +2068,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
 
 
 void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
-    ObjStr* path_string = STR(path);
+    ObjStr* path_string = ObjStr_new(path, vm);
     if (!path_string) {
         pyro_panic(vm, "out of memory");
         return;
@@ -2167,7 +2167,7 @@ void pyro_exec_code_as_module(
 
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
-    ObjStr* path_string = STR(path);
+    ObjStr* path_string = ObjStr_new(path, vm);
     if (!path_string) {
         pyro_panic(vm, "out of memory");
         return;
@@ -2203,7 +2203,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
 
 
 void pyro_run_main_func(PyroVM* vm) {
-    ObjStr* main_string = STR("$main");
+    ObjStr* main_string = ObjStr_new("$main", vm);
     if (!main_string) {
         pyro_panic(vm, "out of memory");
         return;

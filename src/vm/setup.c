@@ -174,60 +174,60 @@ PyroVM* pyro_new_vm(size_t stack_size) {
         pyro_free_vm(vm);
         return NULL;
     }
-    vm->error->message = STR("error");
+    vm->error->message = ObjStr_new("error", vm);
 
     // Static strings.
-    vm->str_dollar_init = STR("$init");
-    vm->str_dollar_str = STR("$str");
-    vm->str_true = STR("true");
-    vm->str_false = STR("false");
-    vm->str_null = STR("null");
-    vm->str_dollar_fmt = STR("$fmt");
-    vm->str_dollar_iter = STR("$iter");
-    vm->str_dollar_next = STR("$next");
-    vm->str_dollar_get_index = STR("$get_index");
-    vm->str_dollar_set_index = STR("$set_index");
-    vm->str_dollar_debug = STR("$debug");
-    vm->str_op_binary_equals_equals = STR("$op_binary_equals_equals");
-    vm->str_op_binary_less = STR("$op_binary_less");
-    vm->str_op_binary_less_equals = STR("$op_binary_less_equals");
-    vm->str_op_binary_greater = STR("$op_binary_greater");
-    vm->str_op_binary_greater_equals = STR("$op_binary_greater_equals");
-    vm->str_op_binary_plus = STR("$op_binary_plus");
-    vm->str_op_binary_minus = STR("$op_binary_minus");
-    vm->str_op_binary_bar = STR("$op_binary_bar");
-    vm->str_op_binary_amp = STR("$op_binary_amp");
-    vm->str_op_binary_star = STR("$op_binary_star");
-    vm->str_op_binary_slash = STR("$op_binary_slash");
-    vm->str_op_binary_caret = STR("$op_binary_caret");
-    vm->str_op_binary_percent = STR("$op_binary_percent");
-    vm->str_op_binary_star_star = STR("$op_binary_star_star");
-    vm->str_op_binary_slash_slash = STR("$op_binary_slash_slash");
-    vm->str_op_unary_plus = STR("$op_unary_plus");
-    vm->str_op_unary_minus = STR("$op_unary_minus");
-    vm->str_dollar_hash = STR("$hash");
-    vm->str_dollar_call = STR("$call");
-    vm->str_dollar_contains = STR("$contains");
-    vm->str_bool = STR("bool");
-    vm->str_i64 = STR("i64");
-    vm->str_f64 = STR("f64");
-    vm->str_char = STR("char");
-    vm->str_method = STR("method");
-    vm->str_buf = STR("buf");
-    vm->str_class = STR("class");
-    vm->str_fn = STR("fn");
-    vm->str_instance = STR("instance");
-    vm->str_file = STR("file");
-    vm->str_iter = STR("iter");
-    vm->str_map = STR("map");
-    vm->str_set = STR("set");
-    vm->str_vec = STR("vec");
-    vm->str_stack = STR("stack");
-    vm->str_queue = STR("queue");
-    vm->str_str = STR("str");
-    vm->str_module = STR("module");
-    vm->str_tup = STR("tup");
-    vm->str_err = STR("err");
+    vm->str_dollar_init = ObjStr_new("$init", vm);
+    vm->str_dollar_str = ObjStr_new("$str", vm);
+    vm->str_true = ObjStr_new("true", vm);
+    vm->str_false = ObjStr_new("false", vm);
+    vm->str_null = ObjStr_new("null", vm);
+    vm->str_dollar_fmt = ObjStr_new("$fmt", vm);
+    vm->str_dollar_iter = ObjStr_new("$iter", vm);
+    vm->str_dollar_next = ObjStr_new("$next", vm);
+    vm->str_dollar_get_index = ObjStr_new("$get_index", vm);
+    vm->str_dollar_set_index = ObjStr_new("$set_index", vm);
+    vm->str_dollar_debug = ObjStr_new("$debug", vm);
+    vm->str_op_binary_equals_equals = ObjStr_new("$op_binary_equals_equals", vm);
+    vm->str_op_binary_less = ObjStr_new("$op_binary_less", vm);
+    vm->str_op_binary_less_equals = ObjStr_new("$op_binary_less_equals", vm);
+    vm->str_op_binary_greater = ObjStr_new("$op_binary_greater", vm);
+    vm->str_op_binary_greater_equals = ObjStr_new("$op_binary_greater_equals", vm);
+    vm->str_op_binary_plus = ObjStr_new("$op_binary_plus", vm);
+    vm->str_op_binary_minus = ObjStr_new("$op_binary_minus", vm);
+    vm->str_op_binary_bar = ObjStr_new("$op_binary_bar", vm);
+    vm->str_op_binary_amp = ObjStr_new("$op_binary_amp", vm);
+    vm->str_op_binary_star = ObjStr_new("$op_binary_star", vm);
+    vm->str_op_binary_slash = ObjStr_new("$op_binary_slash", vm);
+    vm->str_op_binary_caret = ObjStr_new("$op_binary_caret", vm);
+    vm->str_op_binary_percent = ObjStr_new("$op_binary_percent", vm);
+    vm->str_op_binary_star_star = ObjStr_new("$op_binary_star_star", vm);
+    vm->str_op_binary_slash_slash = ObjStr_new("$op_binary_slash_slash", vm);
+    vm->str_op_unary_plus = ObjStr_new("$op_unary_plus", vm);
+    vm->str_op_unary_minus = ObjStr_new("$op_unary_minus", vm);
+    vm->str_dollar_hash = ObjStr_new("$hash", vm);
+    vm->str_dollar_call = ObjStr_new("$call", vm);
+    vm->str_dollar_contains = ObjStr_new("$contains", vm);
+    vm->str_bool = ObjStr_new("bool", vm);
+    vm->str_i64 = ObjStr_new("i64", vm);
+    vm->str_f64 = ObjStr_new("f64", vm);
+    vm->str_char = ObjStr_new("char", vm);
+    vm->str_method = ObjStr_new("method", vm);
+    vm->str_buf = ObjStr_new("buf", vm);
+    vm->str_class = ObjStr_new("class", vm);
+    vm->str_fn = ObjStr_new("fn", vm);
+    vm->str_instance = ObjStr_new("instance", vm);
+    vm->str_file = ObjStr_new("file", vm);
+    vm->str_iter = ObjStr_new("iter", vm);
+    vm->str_map = ObjStr_new("map", vm);
+    vm->str_set = ObjStr_new("set", vm);
+    vm->str_vec = ObjStr_new("vec", vm);
+    vm->str_stack = ObjStr_new("stack", vm);
+    vm->str_queue = ObjStr_new("queue", vm);
+    vm->str_str = ObjStr_new("str", vm);
+    vm->str_module = ObjStr_new("module", vm);
+    vm->str_tup = ObjStr_new("tup", vm);
+    vm->str_err = ObjStr_new("err", vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -297,7 +297,7 @@ void pyro_free_vm(PyroVM* vm) {
 
 
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return NULL;
     }
@@ -316,7 +316,7 @@ ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
 
 
 ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name) {
-    ObjStr* parent_string = STR(parent);
+    ObjStr* parent_string = ObjStr_new(parent, vm);
     if (!parent_string) {
         return NULL;
     }
@@ -327,7 +327,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
         return NULL;
     }
 
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return NULL;
     }
@@ -348,7 +348,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
 
 
 ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name) {
-    ObjStr* grandparent_string = STR(parent);
+    ObjStr* grandparent_string = ObjStr_new(parent, vm);
     if (!grandparent_string) {
         return NULL;
     }
@@ -359,7 +359,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
         return NULL;
     }
 
-    ObjStr* parent_string = STR(parent);
+    ObjStr* parent_string = ObjStr_new(parent, vm);
     if (!parent_string) {
         return NULL;
     }
@@ -370,7 +370,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
         return NULL;
     }
 
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return NULL;
     }
@@ -391,7 +391,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 
 
 bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
@@ -412,7 +412,7 @@ bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Val
 
 
 bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
@@ -457,7 +457,7 @@ bool pyro_define_pub_member_fn(PyroVM* vm, ObjModule* module, const char* name, 
 
 
 bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity) {
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
@@ -481,7 +481,7 @@ bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
 
 
 bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity) {
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
@@ -502,7 +502,7 @@ bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
 bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
     size_t field_index = class->default_field_values->count;
 
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
@@ -529,7 +529,7 @@ bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value 
 bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
     size_t field_index = class->default_field_values->count;
 
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
@@ -548,7 +548,7 @@ bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value 
 
 
 bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
-    ObjStr* name_string = STR(name);
+    ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
@@ -629,7 +629,7 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
     }
 
     for (size_t i = 0; i < arg_count; i++) {
-        ObjStr* string = STR(args[i]);
+        ObjStr* string = ObjStr_new(args[i], vm);
         if (!string) {
             return false;
         }
@@ -646,7 +646,7 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
         return false;
     }
 
-    ObjStr* string = STR(path);
+    ObjStr* string = ObjStr_new(path, vm);
     if (!string) {
         return false;
     }
