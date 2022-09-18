@@ -19,7 +19,7 @@ static Value fn_queue(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_queue(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_QUEUE(args[0]));
+    return pyro_make_bool(IS_QUEUE(args[0]));
 }
 
 
@@ -51,7 +51,7 @@ static Value queue_dequeue(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value queue_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjQueue* queue = AS_QUEUE(args[-1]);
-    return MAKE_BOOL(queue->count == 0);
+    return pyro_make_bool(queue->count == 0);
 }
 
 

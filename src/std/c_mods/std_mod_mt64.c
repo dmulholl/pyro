@@ -9,7 +9,7 @@
 
 
 static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(pyro_mt64_test());
+    return pyro_make_bool(pyro_mt64_test());
 }
 
 

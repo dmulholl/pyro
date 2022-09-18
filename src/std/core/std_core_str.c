@@ -20,13 +20,13 @@ static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_str(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_STR(args[0]));
+    return pyro_make_bool(IS_STR(args[0]));
 }
 
 
 static Value str_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
-    return MAKE_BOOL(str->length == 0);
+    return pyro_make_bool(str->length == 0);
 }
 
 
@@ -87,23 +87,23 @@ static Value str_lines(PyroVM* vm, size_t arg_count, Value* args) {
 static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < str->length; i++) {
         if (str->bytes[i] & 0x80) {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
 static Value str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
     return str_is_ascii(vm, arg_count, args);
 }
@@ -112,7 +112,7 @@ static Value str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, Value* args) {
 static Value str_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < str->length; i++) {
@@ -125,18 +125,18 @@ static Value str_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
             case '\f':
                 break;
             default:
-                return MAKE_BOOL(false);
+                return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
 static Value str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
     return str_is_ascii_ws(vm, arg_count, args);
 }
@@ -145,7 +145,7 @@ static Value str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, Value* args)
 static Value str_is_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     size_t byte_index = 0;
@@ -158,21 +158,21 @@ static Value str_is_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
             byte_index += cp.length;
             if (!pyro_is_unicode_whitespace(cp.value)) {
-                return MAKE_BOOL(false);
+                return pyro_make_bool(false);
             }
         } else {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
 static Value str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
     return str_is_utf8_ws(vm, arg_count, args);
 }
@@ -256,7 +256,7 @@ static Value str_char_count(PyroVM* vm, size_t arg_count, Value* args) {
 static Value str_is_utf8(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     size_t byte_index = 0;
@@ -269,18 +269,18 @@ static Value str_is_utf8(PyroVM* vm, size_t arg_count, Value* args) {
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
             byte_index += cp.length;
         } else {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
 static Value str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
     return str_is_utf8(vm, arg_count, args);
 }
@@ -357,14 +357,14 @@ static Value str_starts_with(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* target = AS_STR(args[0]);
 
     if (str->length < target->length) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     if (memcmp(str->bytes, target->bytes, target->length) == 0) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
@@ -379,14 +379,14 @@ static Value str_ends_with(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* target = AS_STR(args[0]);
 
     if (str->length < target->length) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     if (memcmp(&str->bytes[str->length - target->length], target->bytes, target->length) == 0) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
@@ -809,14 +809,14 @@ static Value str_match(PyroVM* vm, size_t arg_count, Value* args) {
     size_t index = (size_t)args[1].as.i64;
 
     if (index + target->length > str->length) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     if (memcmp(&str->bytes[index], target->bytes, target->length) == 0) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
@@ -947,7 +947,7 @@ static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (str->length < target_length) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     size_t index = 0;
@@ -955,12 +955,12 @@ static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (index <= last_possible_match_index) {
         if (memcmp(&str->bytes[index], target, target_length) == 0) {
-            return MAKE_BOOL(true);
+            return pyro_make_bool(true);
         }
         index++;
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
@@ -1351,51 +1351,51 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
 static Value str_is_ascii_decimal(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < str->length; i++) {
         char c = str->bytes[i];
         if (c < '0' || c > '9') {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
 static Value str_is_ascii_octal(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < str->length; i++) {
         char c = str->bytes[i];
         if (c < '0' || c > '7') {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
 static Value str_is_ascii_hex(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < str->length; i++) {
         char c = str->bytes[i];
         if (!isxdigit(c)) {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 

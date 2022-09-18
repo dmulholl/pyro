@@ -97,7 +97,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_vec(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_VEC(args[0]));
+    return pyro_make_bool(IS_VEC(args[0]));
 }
 
 
@@ -252,11 +252,11 @@ static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
 
     for (size_t i = 0; i < vec->count; i++) {
         if (pyro_op_compare_eq(vm, vec->values[i], args[0])) {
-            return MAKE_BOOL(true);
+            return pyro_make_bool(true);
         }
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
@@ -437,7 +437,7 @@ static Value vec_last(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value vec_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
-    return MAKE_BOOL(vec->count == 0);
+    return pyro_make_bool(vec->count == 0);
 }
 
 
@@ -452,7 +452,7 @@ static Value fn_stack(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_stack(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_STACK(args[0]));
+    return pyro_make_bool(IS_STACK(args[0]));
 }
 
 
@@ -538,11 +538,11 @@ static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (arg_count == 0) {
-        return MAKE_BOOL(pyro_is_sorted(vm, vec->values, vec->count));
+        return pyro_make_bool(pyro_is_sorted(vm, vec->values, vec->count));
     }
 
     if (arg_count == 1) {
-        return MAKE_BOOL(pyro_is_sorted_with_callback(vm, vec->values, vec->count, args[0]));
+        return pyro_make_bool(pyro_is_sorted_with_callback(vm, vec->values, vec->count, args[0]));
     }
 
     pyro_panic(vm, "is_sorted(): expected 0 or 1 arguments, found %zu", arg_count);

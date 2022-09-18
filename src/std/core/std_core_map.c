@@ -20,7 +20,7 @@ static Value fn_map(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_map(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_MAP(args[0]));
+    return pyro_make_bool(IS_MAP(args[0]));
 }
 
 
@@ -32,7 +32,7 @@ static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return MAKE_BOOL(map->live_entry_count == 0);
+    return pyro_make_bool(map->live_entry_count == 0);
 }
 
 
@@ -57,13 +57,13 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_remove(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return MAKE_BOOL(ObjMap_remove(map, args[0], vm));
+    return pyro_make_bool(ObjMap_remove(map, args[0], vm));
 }
 
 
 static Value map_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return MAKE_BOOL(ObjMap_contains(map, args[0], vm));
+    return pyro_make_bool(ObjMap_contains(map, args[0], vm));
 }
 
 
@@ -188,7 +188,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_set(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_SET(args[0]));
+    return pyro_make_bool(IS_SET(args[0]));
 }
 
 
@@ -373,7 +373,7 @@ static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count <= map2->live_entry_count)) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -384,11 +384,11 @@ static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
@@ -402,7 +402,7 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count < map2->live_entry_count)) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -413,11 +413,11 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
@@ -431,7 +431,7 @@ static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count >= map2->live_entry_count)) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
@@ -442,11 +442,11 @@ static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (!ObjMap_contains(map1, entry->key, vm)) {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 
@@ -460,7 +460,7 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count > map2->live_entry_count)) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
@@ -471,11 +471,11 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
         }
 
         if (!ObjMap_contains(map1, entry->key, vm)) {
-            return MAKE_BOOL(false);
+            return pyro_make_bool(false);
         }
     }
 
-    return MAKE_BOOL(true);
+    return pyro_make_bool(true);
 }
 
 

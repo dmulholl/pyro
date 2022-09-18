@@ -11,7 +11,7 @@
 
 
 static Value fn_is_iter(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_ITER(args[0]));
+    return pyro_make_bool(IS_ITER(args[0]));
 }
 
 

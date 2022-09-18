@@ -26,10 +26,10 @@ static Value mod_contains(PyroVM* vm, size_t arg_count, Value* args) {
 
     Value member_index;
     if (ObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 

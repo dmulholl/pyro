@@ -42,7 +42,7 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_err(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_ERR(args[0]));
+    return pyro_make_bool(IS_ERR(args[0]));
 }
 
 

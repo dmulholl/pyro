@@ -21,7 +21,7 @@ static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_tup(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_TUP(args[0]));
+    return pyro_make_bool(IS_TUP(args[0]));
 }
 
 
@@ -116,11 +116,11 @@ static Value tup_contains(PyroVM* vm, size_t arg_count, Value* args) {
 
     for (size_t i = 0; i < tup->count; i++) {
         if (pyro_op_compare_eq(vm, tup->values[i], args[0])) {
-            return MAKE_BOOL(true);
+            return pyro_make_bool(true);
         }
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 

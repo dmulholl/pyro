@@ -645,7 +645,7 @@ static void run(PyroVM* vm) {
             case OP_BINARY_EQUAL_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(pyro_op_compare_eq(vm, a, b)));
+                pyro_push(vm, pyro_make_bool(pyro_op_compare_eq(vm, a, b)));
                 break;
             }
 
@@ -937,14 +937,14 @@ static void run(PyroVM* vm) {
             case OP_BINARY_GREATER: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(pyro_op_compare_gt(vm, a, b)));
+                pyro_push(vm, pyro_make_bool(pyro_op_compare_gt(vm, a, b)));
                 break;
             }
 
             case OP_BINARY_GREATER_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(pyro_op_compare_ge(vm, a, b)));
+                pyro_push(vm, pyro_make_bool(pyro_op_compare_ge(vm, a, b)));
                 break;
             }
 
@@ -1470,21 +1470,21 @@ static void run(PyroVM* vm) {
             case OP_BINARY_LESS: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(pyro_op_compare_lt(vm, a, b)));
+                pyro_push(vm, pyro_make_bool(pyro_op_compare_lt(vm, a, b)));
                 break;
             }
 
             case OP_BINARY_LESS_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(pyro_op_compare_le(vm, a, b)));
+                pyro_push(vm, pyro_make_bool(pyro_op_compare_le(vm, a, b)));
                 break;
             }
 
             case OP_BINARY_IN: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(pyro_op_in(vm, a, b)));
+                pyro_push(vm, pyro_make_bool(pyro_op_in(vm, a, b)));
                 break;
             }
 
@@ -1495,7 +1495,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_LOAD_FALSE:
-                pyro_push(vm, MAKE_BOOL(false));
+                pyro_push(vm, pyro_make_bool(false));
                 break;
 
             case OP_LOAD_I64_0:
@@ -1543,7 +1543,7 @@ static void run(PyroVM* vm) {
                 break;
 
             case OP_LOAD_TRUE:
-                pyro_push(vm, MAKE_BOOL(true));
+                pyro_push(vm, pyro_make_bool(true));
                 break;
 
             case OP_JUMP_BACK: {
@@ -1717,14 +1717,14 @@ static void run(PyroVM* vm) {
 
             case OP_UNARY_BANG: {
                 Value operand = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(!pyro_is_truthy(operand)));
+                pyro_push(vm, pyro_make_bool(!pyro_is_truthy(operand)));
                 break;
             }
 
             case OP_BINARY_BANG_EQUAL: {
                 Value b = pyro_pop(vm);
                 Value a = pyro_pop(vm);
-                pyro_push(vm, MAKE_BOOL(!pyro_op_compare_eq(vm, a, b)));
+                pyro_push(vm, pyro_make_bool(!pyro_op_compare_eq(vm, a, b)));
                 break;
             }
 

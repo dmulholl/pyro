@@ -59,13 +59,10 @@ struct Obj {
 };
 
 // Macros for creating Value instances.
-#define MAKE_BOOL(c_bool)           ((Value){VAL_BOOL, {.boolean = c_bool}})
 #define MAKE_I64(c_i64)             ((Value){VAL_I64, {.i64 = c_i64}})
 #define MAKE_F64(c_f64)             ((Value){VAL_F64, {.f64 = c_f64}})
 #define MAKE_CHAR(c_u32)            ((Value){VAL_CHAR, {.u32 = c_u32}})
 #define MAKE_OBJ(c_ptr)             ((Value){VAL_OBJ, {.obj = (Obj*)c_ptr}})
-#define MAKE_TOMBSTONE()            ((Value){VAL_TOMBSTONE, {.i64 = 0}})
-#define MAKE_NULL()                 ((Value){VAL_NULL, {.i64 = 0}})
 
 // Inline functions for creating Value instance.
 static inline Value pyro_make_bool(bool value) {

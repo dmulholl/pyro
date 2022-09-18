@@ -59,7 +59,7 @@ static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_buf(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_BUF(args[0]));
+    return pyro_make_bool(IS_BUF(args[0]));
 }
 
 
@@ -118,15 +118,15 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 /*     uint8_t byte2 = value & 0xFF;           // LSB */
 
 /*     if (!ObjBuf_append_byte(buf, byte1, vm)) { */
-/*         return MAKE_BOOL(false); */
+/*         return pyro_make_bool(false); */
 /*     } */
 
 /*     if (!ObjBuf_append_byte(buf, byte2, vm)) { */
 /*         buf->count--; */
-/*         return MAKE_BOOL(false); */
+/*         return pyro_make_bool(false); */
 /*     } */
 
-/*     return MAKE_BOOL(true); */
+/*     return pyro_make_bool(true); */
 /* } */
 
 
@@ -148,15 +148,15 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 /*     uint8_t byte2 = value & 0xFF;           // LSB */
 
 /*     if (!ObjBuf_append_byte(buf, byte2, vm)) { */
-/*         return MAKE_BOOL(false); */
+/*         return pyro_make_bool(false); */
 /*     } */
 
 /*     if (!ObjBuf_append_byte(buf, byte1, vm)) { */
 /*         buf->count--; */
-/*         return MAKE_BOOL(false); */
+/*         return pyro_make_bool(false); */
 /*     } */
 
-/*     return MAKE_BOOL(true); */
+/*     return pyro_make_bool(true); */
 /* } */
 
 
@@ -279,7 +279,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value buf_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
-    return MAKE_BOOL(buf->count == 0);
+    return pyro_make_bool(buf->count == 0);
 }
 
 

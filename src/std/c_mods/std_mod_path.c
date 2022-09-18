@@ -14,7 +14,7 @@ static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "exists(): invalid argument [path], expected a string");
         return pyro_make_null();
     }
-    return MAKE_BOOL(pyro_exists(AS_STR(args[0])->bytes));
+    return pyro_make_bool(pyro_exists(AS_STR(args[0])->bytes));
 }
 
 
@@ -23,7 +23,7 @@ static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "is_file(): invalid argument [path], expected a string");
         return pyro_make_null();
     }
-    return MAKE_BOOL(pyro_is_file(AS_STR(args[0])->bytes));
+    return pyro_make_bool(pyro_is_file(AS_STR(args[0])->bytes));
 }
 
 
@@ -32,7 +32,7 @@ static Value fn_is_dir(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "is_dir(): invalid argument [path], expected a string");
         return pyro_make_null();
     }
-    return MAKE_BOOL(pyro_is_dir(AS_STR(args[0])->bytes));
+    return pyro_make_bool(pyro_is_dir(AS_STR(args[0])->bytes));
 }
 
 
@@ -41,7 +41,7 @@ static Value fn_is_symlink(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "is_symlink(): invalid argument [path], expected a string");
         return pyro_make_null();
     }
-    return MAKE_BOOL(pyro_is_symlink(AS_STR(args[0])->bytes));
+    return pyro_make_bool(pyro_is_symlink(AS_STR(args[0])->bytes));
 }
 
 

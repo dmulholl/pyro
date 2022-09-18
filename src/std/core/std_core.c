@@ -416,12 +416,12 @@ static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_mod(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_MOD(args[0]));
+    return pyro_make_bool(IS_MOD(args[0]));
 }
 
 
 static Value fn_is_obj(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_OBJ(args[0]));
+    return pyro_make_bool(IS_OBJ(args[0]));
 }
 
 
@@ -431,12 +431,12 @@ static Value fn_clock(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_nan(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_F64(args[0]) && isnan(args[0].as.f64));
+    return pyro_make_bool(IS_F64(args[0]) && isnan(args[0].as.f64));
 }
 
 
 static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_F64(args[0]) && isinf(args[0].as.f64));
+    return pyro_make_bool(IS_F64(args[0]) && isinf(args[0].as.f64));
 }
 
 
@@ -473,7 +473,7 @@ static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_f64(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_F64(args[0]));
+    return pyro_make_bool(IS_F64(args[0]));
 }
 
 
@@ -517,17 +517,17 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_i64(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_I64(args[0]));
+    return pyro_make_bool(IS_I64(args[0]));
 }
 
 
 static Value fn_bool(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(pyro_is_truthy(args[0]));
+    return pyro_make_bool(pyro_is_truthy(args[0]));
 }
 
 
 static Value fn_is_bool(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_BOOL(args[0]));
+    return pyro_make_bool(IS_BOOL(args[0]));
 }
 
 
@@ -536,7 +536,7 @@ static Value fn_has_method(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$has_method(): invalid argument [method_name], expected a string");
         return pyro_make_null();
     }
-    return MAKE_BOOL(pyro_has_method(vm, args[0], AS_STR(args[1])));
+    return pyro_make_bool(pyro_has_method(vm, args[0], AS_STR(args[1])));
 }
 
 
@@ -551,16 +551,16 @@ static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
         ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         Value field_index;
         if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
-            return MAKE_BOOL(true);
+            return pyro_make_bool(true);
         }
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
 static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_INSTANCE(args[0]));
+    return pyro_make_bool(IS_INSTANCE(args[0]));
 }
 
 
@@ -572,18 +572,18 @@ static Value fn_is_instance_of(PyroVM* vm, size_t arg_count, Value* args) {
     ObjClass* target_class = AS_CLASS(args[1]);
 
     if (!IS_INSTANCE(args[0])) {
-        return MAKE_BOOL(false);
+        return pyro_make_bool(false);
     }
     ObjClass* instance_class = AS_INSTANCE(args[0])->obj.class;
 
     while (instance_class != NULL) {
         if (instance_class == target_class) {
-            return MAKE_BOOL(true);
+            return pyro_make_bool(true);
         }
         instance_class = instance_class->superclass;
     }
 
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
@@ -811,51 +811,51 @@ static Value fn_sleep(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_is_callable(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_CLOSURE(args[0])) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     } else if (IS_NATIVE_FN(args[0])) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     } else if (IS_CLASS(args[0])) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     } else if (IS_BOUND_METHOD(args[0])) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     } else if (IS_INSTANCE(args[0]) && pyro_has_method(vm, args[0], vm->str_dollar_call)) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
 static Value fn_is_class(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_CLASS(args[0])) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
 static Value fn_is_pyro_func(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_CLOSURE(args[0])) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
 static Value fn_is_native_func(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_NATIVE_FN(args[0])) {
-        return MAKE_BOOL(true);
+        return pyro_make_bool(true);
     }
-    return MAKE_BOOL(false);
+    return pyro_make_bool(false);
 }
 
 
 static Value fn_is_iterable(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(pyro_has_method(vm, args[0], vm->str_dollar_iter));
+    return pyro_make_bool(pyro_has_method(vm, args[0], vm->str_dollar_iter));
 }
 
 
 static Value fn_is_iterator(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(pyro_has_method(vm, args[0], vm->str_dollar_next));
+    return pyro_make_bool(pyro_has_method(vm, args[0], vm->str_dollar_next));
 }
 
 
@@ -909,7 +909,7 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_null(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_NULL(args[0]));
+    return pyro_make_bool(IS_NULL(args[0]));
 }
 
 
@@ -1096,12 +1096,12 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_is_func(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_CLOSURE(args[0]) || IS_NATIVE_FN(args[0]));
+    return pyro_make_bool(IS_CLOSURE(args[0]) || IS_NATIVE_FN(args[0]));
 }
 
 
 static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
-    return MAKE_BOOL(IS_BOUND_METHOD(args[0]));
+    return pyro_make_bool(IS_BOUND_METHOD(args[0]));
 }
 
 
