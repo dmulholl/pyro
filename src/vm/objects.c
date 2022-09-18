@@ -573,7 +573,7 @@ bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
         return false;
     }
 
-    map->entry_array[*slot].key = MAKE_TOMBSTONE();
+    map->entry_array[*slot].key = pyro_make_tombstone();
     *slot = TOMBSTONE;
     map->live_entry_count--;
     return true;
