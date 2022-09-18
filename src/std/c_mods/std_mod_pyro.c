@@ -13,7 +13,7 @@ static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_collect_garbage(vm);
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 

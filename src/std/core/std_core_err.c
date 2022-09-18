@@ -14,7 +14,7 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     ObjErr* err = ObjErr_new(vm);
     if (err == NULL) {
         pyro_panic(vm, "$err(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     if (arg_count == 0) {
@@ -22,18 +22,18 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     } else if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         err->message = string;
         return MAKE_OBJ(err);
     } else {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$err(): invalid argument [format_string], expected a string");
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         Value formatted = pyro_fn_fmt(vm, arg_count, args);
         if (vm->halt_flag) {
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         err->message = AS_STR(formatted);
         return MAKE_OBJ(err);
@@ -51,7 +51,7 @@ static Value err_set(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_set(err->details, args[0], args[1], vm) == 0) {
         pyro_panic(vm, "err:set(): out of memory");
     }
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 

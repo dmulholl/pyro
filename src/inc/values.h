@@ -67,6 +67,35 @@ struct Obj {
 #define MAKE_TOMBSTONE()            ((Value){VAL_TOMBSTONE, {.i64 = 0}})
 #define MAKE_NULL()                 ((Value){VAL_NULL, {.i64 = 0}})
 
+// Inline functions for creating Value instance.
+static inline Value pyro_make_bool(bool value) {
+    return (Value){VAL_BOOL, {.boolean = value}};
+}
+
+static inline Value pyro_make_i64(int64_t value) {
+    return (Value){VAL_I64, {.i64 = value}};
+}
+
+static inline Value pyro_make_f64(double value) {
+    return (Value){VAL_F64, {.f64 = value}};
+}
+
+static inline Value pyro_make_char(uint32_t value) {
+    return (Value){VAL_CHAR, {.u32 = value}};
+}
+
+static inline Value pyro_make_obj(void* value) {
+    return (Value){VAL_OBJ, {.obj = (Obj*)value}};
+}
+
+static inline Value pyro_make_tombstone() {
+    return (Value){VAL_TOMBSTONE, {.i64 = 0}};
+}
+
+static inline Value pyro_make_null() {
+    return (Value){VAL_NULL, {.i64 = 0}};
+}
+
 // Macros for checking the type of a Value instance.
 #define IS_BOOL(value)              ((value).type == VAL_BOOL)
 #define IS_NULL(value)              ((value).type == VAL_NULL)

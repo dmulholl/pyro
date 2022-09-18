@@ -12,7 +12,7 @@ static Value fn_queue(PyroVM* vm, size_t arg_count, Value* args) {
     ObjQueue* queue = ObjQueue_new(vm);
     if (!queue) {
         pyro_panic(vm, "$queue(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return MAKE_OBJ(queue);
 }
@@ -34,7 +34,7 @@ static Value queue_enqueue(PyroVM* vm, size_t arg_count, Value* args) {
     if (!ObjQueue_enqueue(queue, args[0], vm)) {
         pyro_panic(vm, "enqueue(): out of memory");
     }
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -43,7 +43,7 @@ static Value queue_dequeue(PyroVM* vm, size_t arg_count, Value* args) {
     Value value;
     if (!ObjQueue_dequeue(queue, &value, vm)) {
         pyro_panic(vm, "dequeue(): cannot dequeue from empty queue");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return value;
 }
@@ -61,7 +61,7 @@ static Value queue_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)queue, ITER_QUEUE, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     iter->next_queue_item = queue->head;
 
@@ -72,7 +72,7 @@ static Value queue_iter(PyroVM* vm, size_t arg_count, Value* args) {
 static Value queue_clear(PyroVM* vm, size_t arg_count, Value* args) {
     ObjQueue* queue = AS_QUEUE(args[-1]);
     ObjQueue_clear(queue, vm);
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 

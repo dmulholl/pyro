@@ -1539,7 +1539,7 @@ static void run(PyroVM* vm) {
                 break;
 
             case OP_LOAD_NULL:
-                pyro_push(vm, MAKE_NULL());
+                pyro_push(vm, pyro_make_null());
                 break;
 
             case OP_LOAD_TRUE:
@@ -2238,7 +2238,7 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count) {
         return pyro_pop(vm);
     } else {
         pyro_panic(vm, "value is not callable as a method");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 }
 

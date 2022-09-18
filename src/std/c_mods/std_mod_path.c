@@ -12,7 +12,7 @@
 static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "exists(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return MAKE_BOOL(pyro_exists(AS_STR(args[0])->bytes));
 }
@@ -21,7 +21,7 @@ static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "is_file(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return MAKE_BOOL(pyro_is_file(AS_STR(args[0])->bytes));
 }
@@ -30,7 +30,7 @@ static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_is_dir(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "is_dir(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return MAKE_BOOL(pyro_is_dir(AS_STR(args[0])->bytes));
 }
@@ -39,7 +39,7 @@ static Value fn_is_dir(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_is_symlink(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "is_symlink(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return MAKE_BOOL(pyro_is_symlink(AS_STR(args[0])->bytes));
 }
@@ -48,28 +48,28 @@ static Value fn_is_symlink(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_dirname(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "dirname(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     char* path = AS_STR(args[0])->bytes;
 
     char* path_copy = pyro_strdup(path);
     if (!path_copy) {
         pyro_panic(vm, "dirname(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     char* result = pyro_dirname(path_copy);
     if (!result) {
         pyro_panic(vm, "dirname(): out of memory");
         free(path_copy);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjStr* output = ObjStr_copy_raw(result, strlen(result), vm);
     if (!output) {
         pyro_panic(vm, "dirname(): out of memory");
         free(path_copy);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     free(path_copy);
@@ -80,28 +80,28 @@ static Value fn_dirname(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_basename(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "basename(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     char* path = AS_STR(args[0])->bytes;
 
     char* path_copy = pyro_strdup(path);
     if (!path_copy) {
         pyro_panic(vm, "basename(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     char* result = pyro_basename(path_copy);
     if (!result) {
         pyro_panic(vm, "basename(): out of memory");
         free(path_copy);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjStr* output = ObjStr_copy_raw(result, strlen(result), vm);
     if (!output) {
         pyro_panic(vm, "basename(): out of memory");
         free(path_copy);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     free(path_copy);
@@ -112,13 +112,13 @@ static Value fn_basename(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count < 2) {
         pyro_panic(vm, "join(): expected at least 2 arguments");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     for (size_t i = 0; i < arg_count; i++) {
         if (!IS_STR(args[i])) {
             pyro_panic(vm, "join(): invalid argument (%zu), expected a string", i + 1);
-            return MAKE_NULL();
+            return pyro_make_null();
         }
     }
 
@@ -144,7 +144,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
                 FREE_ARRAY(vm, char, array, array_capacity);
             }
             pyro_panic(vm, "join(): out of memory");
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         array = new_array;
         array_capacity = new_capacity;
@@ -168,7 +168,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
     if (!output) {
         FREE_ARRAY(vm, char, array, array_capacity);
         pyro_panic(vm, "join(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     return MAKE_OBJ(output);
@@ -178,7 +178,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "rm(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjStr* path = AS_STR(args[0]);
@@ -187,7 +187,7 @@ static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "rm(): unable to delete '%s'", path->bytes);
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -195,7 +195,7 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
     char* cwd = pyro_getcwd();
     if (!cwd) {
         pyro_panic(vm, "cwd(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjStr* string = ObjStr_copy_raw(cwd, strlen(cwd), vm);
@@ -203,7 +203,7 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!string) {
         pyro_panic(vm, "cwd(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     return MAKE_OBJ(string);
@@ -213,12 +213,12 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "listdir(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjVec* vec = pyro_listdir(vm, AS_STR(args[0])->bytes);
     if (vm->halt_flag) {
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     return MAKE_OBJ(vec);
@@ -228,7 +228,7 @@ static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "realpath(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     char* result = pyro_realpath(AS_STR(args[0])->bytes);
@@ -238,12 +238,12 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
             AS_STR(args[0])->bytes
         );
         if (!message) {
-            return MAKE_NULL();
+            return pyro_make_null();
         }
 
         ObjErr* err = ObjErr_new(vm);
         if (!err) {
-            return MAKE_NULL();
+            return pyro_make_null();
         }
 
         err->message = message;
@@ -254,7 +254,7 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
     free(result);
     if (!string) {
         pyro_panic(vm, "realpath(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     return MAKE_OBJ(string);
@@ -264,16 +264,16 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_cd(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "cd(): invalid argument [path], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjStr* path = AS_STR(args[0]);
     if (!pyro_cd(path->bytes)) {
         pyro_panic(vm, "cd(): failed to change current working directory to '%s'", path->bytes);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 

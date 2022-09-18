@@ -17,12 +17,12 @@ static Value fn_char(PyroVM* vm, size_t arg_count, Value* args) {
             return MAKE_CHAR((uint32_t)arg);
         } else {
             pyro_panic(vm, "$char(): invalid argument, integer is out of range");
-            return MAKE_NULL();
+            return pyro_make_null();
         }
     }
 
     pyro_panic(vm, "$char(): invalid argument");
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 

@@ -40,7 +40,7 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
         if (ObjMap_get(AS_CLASS(receiver)->static_methods, MAKE_OBJ(method_name), &method, vm)) {
             return method;
         }
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjClass* class = pyro_get_class(vm, receiver);
@@ -50,7 +50,7 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
             return method;
         }
     }
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -60,7 +60,7 @@ Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
         if (ObjMap_get(AS_CLASS(receiver)->static_methods, MAKE_OBJ(method_name), &method, vm)) {
             return method;
         }
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjClass* class = pyro_get_class(vm, receiver);
@@ -70,7 +70,7 @@ Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
             return method;
         }
     }
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 

@@ -62,7 +62,7 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
     tup->obj.class = vm->class_tup;
     tup->count = count;
     for (size_t i = 0; i < count; i++) {
-        tup->values[i] = MAKE_NULL();
+        tup->values[i] = pyro_make_null();
     }
     return tup;
 }
@@ -139,7 +139,7 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
         return NULL;
     }
     upvalue->location = addr;
-    upvalue->closed = MAKE_NULL();
+    upvalue->closed = pyro_make_null();
     upvalue->next = NULL;
     return upvalue;
 }
@@ -615,7 +615,7 @@ static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t 
     string->bytes = bytes;
     string->obj.class = vm->class_str;
 
-    if (ObjMap_set(vm->strings, MAKE_OBJ(string), MAKE_NULL(), vm) == 0) {
+    if (ObjMap_set(vm->strings, MAKE_OBJ(string), pyro_make_null(), vm) == 0) {
         return NULL;
     }
 
@@ -1347,7 +1347,7 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove last item from empty vector");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     vec->count--;
     return vec->values[vec->count];
@@ -1357,7 +1357,7 @@ Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
 Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove first item from empty vector");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     if (vec->count == 1) {
@@ -1377,7 +1377,7 @@ Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
 Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
     if (index >= vec->count) {
         pyro_panic(vm, "index is out of range");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     if (vec->count == 1) {

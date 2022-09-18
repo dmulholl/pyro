@@ -15,35 +15,35 @@ static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 1) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$file(): invalid argument [path], expected a string");
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         path = AS_STR(args[0])->bytes;
     } else if (arg_count == 2) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$file(): invalid argument [path], expected a string");
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         path = AS_STR(args[0])->bytes;
         if (!IS_STR(args[1])) {
             pyro_panic(vm, "$file(): invalid argument [mode], expected a string");
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         mode = AS_STR(args[1])->bytes;
     } else {
         pyro_panic(vm, "$file(): expected 1 or 2 arguments, found %zu", arg_count);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     FILE* stream = fopen(path, mode);
     if (!stream) {
         pyro_panic(vm, "$file(): unable to open file '%s'", path);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     ObjFile* file = ObjFile_new(vm, stream);
     if (!file) {
         pyro_panic(vm, "$file(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     return MAKE_OBJ(file);
@@ -62,7 +62,7 @@ static Value file_flush(PyroVM* vm, size_t arg_count, Value* args) {
         fflush(file->stream);
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -74,7 +74,7 @@ static Value file_close(PyroVM* vm, size_t arg_count, Value* args) {
         file->stream = NULL;
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -92,7 +92,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
             if (!new_array) {
                 pyro_panic(vm, "read(): out of memory");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
-                return MAKE_NULL();
+                return pyro_make_null();
             }
             capacity = new_capacity;
             array = new_array;
@@ -104,7 +104,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
             if (ferror(file->stream)) {
                 pyro_panic(vm, "read(): I/O read error");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
-                return MAKE_NULL();
+                return pyro_make_null();
             }
             break;
         }
@@ -116,7 +116,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
     if (!buf) {
         pyro_panic(vm, "read(): out of memory");
         FREE_ARRAY(vm, uint8_t, array, capacity);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     buf->count = count;
@@ -141,7 +141,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
             if (!new_array) {
                 pyro_panic(vm, "read_string(): out of memory");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
-                return MAKE_NULL();
+                return pyro_make_null();
             }
             capacity = new_capacity;
             array = new_array;
@@ -153,7 +153,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
             if (ferror(file->stream)) {
                 pyro_panic(vm, "read_string(): I/O read error");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
-                return MAKE_NULL();
+                return pyro_make_null();
             }
             break;
         }
@@ -171,7 +171,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
     if (!string) {
         pyro_panic(vm, "read_string(): out of memory");
         FREE_ARRAY(vm, uint8_t, array, capacity);
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     return MAKE_OBJ(string);
@@ -183,14 +183,14 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "read_bytes(): invalid argument [n], expected a non-negative integer");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     size_t num_bytes_to_read = args[0].as.i64;
 
     ObjBuf* buf = ObjBuf_new_with_cap(num_bytes_to_read, vm);
     if (!buf) {
         pyro_panic(vm, "read_bytes(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     if (num_bytes_to_read == 0 || feof(file->stream)) {
@@ -201,7 +201,7 @@ static Value file_read_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (buf->count < num_bytes_to_read && ferror(file->stream)) {
         pyro_panic(vm, "read_bytes(): I/O read error");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     return MAKE_OBJ(buf);
@@ -212,7 +212,7 @@ static Value file_read_byte(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
 
     if (feof(file->stream)) {
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     uint8_t byte;
@@ -221,10 +221,10 @@ static Value file_read_byte(PyroVM* vm, size_t arg_count, Value* args) {
     if (n < 1) {
         if (ferror(file->stream)) {
             pyro_panic(vm, "read_byte(): I/O read error");
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         if (n == 0) {
-            return MAKE_NULL();
+            return pyro_make_null();
         }
     }
 
@@ -237,10 +237,10 @@ static Value file_read_line(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* string = ObjFile_read_line(file, vm);
     if (vm->halt_flag) {
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
-    return string ? MAKE_OBJ(string) : MAKE_NULL();
+    return string ? MAKE_OBJ(string) : pyro_make_null();
 }
 
 
@@ -249,7 +249,7 @@ static Value file_lines(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)file, ITER_FILE_LINES, vm);
     if (!iter) {
         pyro_panic(vm, "lines(): out of memory");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return MAKE_OBJ(iter);
 }
@@ -260,7 +260,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         pyro_panic(vm, "write(): expected 1 or more arguments, found 0");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     if (arg_count == 1) {
@@ -269,18 +269,18 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
             size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, file->stream);
             if (n < buf->count) {
                 pyro_panic(vm, "write(): I/O write error");
-                return MAKE_NULL();
+                return pyro_make_null();
             }
             return MAKE_I64((int64_t)n);
         } else {
             ObjStr* string = pyro_stringify_value(vm, args[0]);
             if (vm->halt_flag) {
-                return MAKE_NULL();
+                return pyro_make_null();
             }
             size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
             if (n < string->length) {
                 pyro_panic(vm, "write(): I/O write error");
-                return MAKE_NULL();
+                return pyro_make_null();
             }
             return MAKE_I64((int64_t)n);
         }
@@ -288,12 +288,12 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "write(): invalid agument [format_string], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     Value formatted = pyro_fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     ObjStr* string = AS_STR(formatted);
 
@@ -301,7 +301,7 @@ static Value file_write(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (n < string->length) {
         pyro_panic(vm, "write(): I/O write error");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
     return MAKE_I64((int64_t)n);
 }
@@ -314,27 +314,27 @@ static Value file_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
         if (args[0].as.i64 < 0 || args[0].as.i64 > 255) {
             pyro_panic(vm, "write_byte(): invalid argument [byte], integer (%d) is out of range", args[0].as.i64);
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         byte = (uint8_t)args[0].as.i64;
     } else if (IS_CHAR(args[0])) {
         if (args[0].as.u32 > 255) {
             pyro_panic(vm, "write_byte(): invalid argument [byte], char (%d) is out of range", args[0].as.u32);
-            return MAKE_NULL();
+            return pyro_make_null();
         }
         byte = (uint8_t)args[0].as.u32;
     } else {
         pyro_panic(vm, "write_byte(): invalid argument [byte], expected an integer");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     size_t n = fwrite(&byte, sizeof(uint8_t), 1, file->stream);
     if (n < 1) {
         pyro_panic(vm, "write_byte(): I/O write error");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 

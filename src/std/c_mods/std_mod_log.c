@@ -79,25 +79,25 @@ static void write_msg(
 
 static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
     write_msg(vm, "debug", "[%Y-%m-%d %H:%M:%S]", "DEBUG", NULL, arg_count, args);
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
 static Value fn_info(PyroVM* vm, size_t arg_count, Value* args) {
     write_msg(vm, "info", "[%Y-%m-%d %H:%M:%S]", "INFO", NULL, arg_count, args);
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
 static Value fn_warn(PyroVM* vm, size_t arg_count, Value* args) {
     write_msg(vm, "warn", "[%Y-%m-%d %H:%M:%S]", "WARN", NULL, arg_count, args);
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
 static Value fn_error(PyroVM* vm, size_t arg_count, Value* args) {
     write_msg(vm, "error", "[%Y-%m-%d %H:%M:%S]", "ERROR", NULL, arg_count, args);
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -106,7 +106,7 @@ static Value fn_fatal(PyroVM* vm, size_t arg_count, Value* args) {
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = 1;
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -121,7 +121,7 @@ static Value logger_debug(PyroVM* vm, size_t arg_count, Value* args) {
         write_msg(vm, "debug", timestamp_format->bytes, "DEBUG", file, arg_count, args);
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -136,7 +136,7 @@ static Value logger_info(PyroVM* vm, size_t arg_count, Value* args) {
         write_msg(vm, "info", timestamp_format->bytes, "INFO", file, arg_count, args);
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -151,7 +151,7 @@ static Value logger_warn(PyroVM* vm, size_t arg_count, Value* args) {
         write_msg(vm, "warn", timestamp_format->bytes, "WARN", file, arg_count, args);
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -166,7 +166,7 @@ static Value logger_error(PyroVM* vm, size_t arg_count, Value* args) {
         write_msg(vm, "error", timestamp_format->bytes, "ERROR", file, arg_count, args);
     }
 
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -184,7 +184,7 @@ static Value logger_fatal(PyroVM* vm, size_t arg_count, Value* args) {
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = 1;
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -193,11 +193,11 @@ static Value logger_level(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "level(): invalid argument [level], expected an integer");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     instance->fields[0] = args[0];
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -206,11 +206,11 @@ static Value logger_timestamp(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "timestamp(): invalid argument [format_string], expected a string");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     instance->fields[1] = args[0];
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -219,11 +219,11 @@ static Value logger_file(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_FILE(args[0])) {
         pyro_panic(vm, "file(): invalid argument [file], expected a file");
-        return MAKE_NULL();
+        return pyro_make_null();
     }
 
     instance->fields[2] = args[0];
-    return MAKE_NULL();
+    return pyro_make_null();
 }
 
 
@@ -249,7 +249,7 @@ void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
 
     pyro_define_pub_field(vm, logger_class, "level", MAKE_I64(PYRO_STD_LOG_LEVEL_INFO));
     pyro_define_pub_field(vm, logger_class, "timestamp", MAKE_OBJ(ObjStr_new("[%Y-%m-%d %H:%M:%S]", vm)));
-    pyro_define_pub_field(vm, logger_class, "file", MAKE_NULL());
+    pyro_define_pub_field(vm, logger_class, "file", pyro_make_null());
 
     pyro_define_pub_method(vm, logger_class, "level", logger_level, 1);
     pyro_define_pub_method(vm, logger_class, "timestamp", logger_timestamp, 1);
