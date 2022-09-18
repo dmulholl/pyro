@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.14</p>
+                <p class="version">Version 0.8.15</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -198,7 +198,7 @@ Panics if an I/O read error occurs.
 </div>
 <div>
 <dt>
-<code>:read_bytes(n: i64) -&gt; buf?</code>
+<code>:read_bytes(n: i64) -&gt; buf</code>
 </dt>
 <dd>
 <p>
@@ -206,7 +206,7 @@ Attempts to read <code>n</code> bytes from the file into a new byte buffer.
 May read less than <code>n</code> bytes if the end of the file is reached first.
 </p>
 <p>
-Returns the new byte buffer or <code>null</code> if the end of the file had already been reached before the method was called.
+Returns the new byte buffer. Returns an empty buffer if the end of the file had already been reached before the method was called.
 </p>
 <p>
 Panics if an I/O read error occurs, if the argument is invalid, or if sufficient memory cannot be allocated for the buffer.
