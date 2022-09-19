@@ -3,107 +3,169 @@
 # ------------------ #
 
 
-def marshall_map(arg: map) -> str {
-    var buf = $buf();
-    var is_first = true;
+def marshall_map(buf: buf, map: map, indent: i64, current_indent: i64) {
+    if map:count() == 0 {
+        buf:write("{}");
+        return;
+    }
 
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
     buf:write("{");
 
-    for (key, value) in arg {
+    for (key, value) in map {
+        if indent > 0 {
+            buf:write(is_first ? "\n" :| ",\n");
+        } else if !is_first {
+            buf:write(", ");
+        }
+        buf:write(spaces);
+
         if !$is_str(key) {
             $panic(
-                "invalid key type in map, expected a string: type: {}, value: {}",
+                "invalid key type {} in map, expected a string",
                 $type(key),
-                $debug(key)
             );
         }
-        if !is_first {
-            buf:write(", ");
-        }
-        buf:write("{}: {}", marshall(key), marshall(value));
+
+        buf:write($debug(key));
+        buf:write(": ");
+        marshall_value(buf, value, indent, current_indent + indent);
         is_first = false;
     }
 
+    if indent > 0 {
+        buf:write("\n");
+        buf:write(" " * current_indent);
+    }
     buf:write("}");
-    return buf:to_str();
 }
 
 
-def marshall_vec_or_tup(arg: vec|tup) -> str {
-    var buf = $buf();
-    var count = arg:count();
+def marshall_vec(buf: buf, vec: vec|tup, indent: i64, current_indent: i64) {
+    if vec:count() == 0 {
+        buf:write("[]");
+        return;
+    }
 
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
     buf:write("[");
 
-    loop var i = 0; i < count; i += 1 {
-        if i > 0 {
+    for value in vec {
+        if indent > 0 {
+            buf:write(is_first ? "\n" :| ",\n");
+        } else if !is_first {
             buf:write(", ");
         }
-        buf:write(marshall(arg[i]));
-    }
-
-    buf:write("]");
-    return buf:to_str();
-}
-
-
-def marshall_str(arg: str) -> str {
-    return $debug(arg);
-}
-
-
-def marshall_instance(arg: instance) {
-    var buf = $buf();
-    var is_first = true;
-
-    buf:write("{");
-
-    for field_name in $fields(arg) {
-        var value = $field(arg, field_name);
-        if !is_first {
-            buf:write(", ");
-        }
-        buf:write(`"{}": {}`, field_name, marshall(value));
+        buf:write(spaces);
+        marshall_value(buf, value, indent, current_indent + indent);
         is_first = false;
     }
 
-    buf:write("}");
-    return buf:to_str();
+    if indent > 0 {
+        buf:write("\n");
+        buf:write(" " * current_indent);
+    }
+    buf:write("]");
 }
 
 
-def marshall(arg: any) -> str {
-    if $is_map(arg) {
-        return marshall_map(arg);
-    } else if $is_vec(arg) || $is_tup(arg) {
-        return marshall_vec_or_tup(arg);
-    } else if $is_str(arg) {
-        return marshall_str(arg);
-    } else if $is_i64(arg) {
-        return $debug(arg);
-    } else if $is_f64(arg) {
-        return $debug(arg);
-    } else if $is_bool(arg) {
-        return arg ? "true" :| "false";
-    } else if $is_null(arg) {
-        return "null";
-    } else if $has_method(arg, "$json") {
-        var method = $method(arg, "$json");
-        return method();
-    } else if $is_instance(arg) {
-        return marshall_instance(arg);
+def marshall_instance_with_method(buf: buf, obj: instance, indent: i64, current_indent: i64) {
+    var method = $method(obj, "$json");
+    var json = method();
+
+    if !$is_str(json) {
+        $panic(
+            "method $json() on object of type {} returned invalid type {}, expected a string",
+            $type(obj),
+            $type(json),
+        );
+    }
+
+    if indent == 0 {
+        buf:write(json);
+        return;
+    }
+
+    var value = try from_json(json);
+    if $is_err(value) {
+        $panic(
+            "method $json() on object of type {} returned invalid JSON",
+            $type(obj),
+        );
+    }
+
+    format_value(buf, value, indent, current_indent);
+}
+
+
+def marshall_instance(buf: buf, obj: instance, indent: i64, current_indent: i64) {
+    if $fields(obj):count() == 0 {
+        buf:write("{}");
+        return;
+    }
+
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
+    buf:write("{");
+
+    for field_name in $fields(obj) {
+        if indent > 0 {
+            buf:write(is_first ? "\n" :| ",\n");
+        } else if !is_first {
+            buf:write(", ");
+        }
+        buf:write(spaces);
+
+        var field_value = $field(obj, field_name);
+        buf:write(`"{}": `, field_name);
+        marshall_value(buf, field_value, indent, current_indent + indent);
+        is_first = false;
+    }
+
+    if indent > 0 {
+        buf:write("\n");
+        buf:write(" " * current_indent);
+    }
+    buf:write("}");
+}
+
+
+def marshall_value(buf: buf, value: any, indent: i64, current_indent: i64) {
+    if $is_map(value) {
+        marshall_map(buf, value, indent, current_indent);
+    } else if $is_vec(value) || $is_tup(value) {
+        marshall_vec(buf, value, indent, current_indent);
+    } else if $is_str(value) {
+        buf:write($debug(value));
+    } else if $is_i64(value) {
+        buf:write($debug(value));
+    } else if $is_f64(value) {
+        buf:write($debug(value));
+    } else if $is_bool(value) {
+        buf:write($debug(value));
+    } else if $is_null(value) {
+        buf:write($debug(value));
+    } else if $has_method(value, "$json") {
+        marshall_instance_with_method(buf, value, indent, current_indent);
+    } else if $is_instance(value) {
+        marshall_instance(buf, value, indent, current_indent);
     } else {
-        $panic("invalid input: type: {}, value: {}", $type(arg), $debug(arg));
+        $panic("invalid input: type: {}, value: {}", $type(value), $debug(value));
     }
 }
 
 
-pub def to_json(arg: any) -> str {
-    var result = try marshall(arg);
+pub def to_json(arg: any, indent: i64 = 0) -> str {
+    var buf = $buf();
+
+    var result = try marshall_value(buf, arg, indent, 0);
     if $is_err(result) {
         $panic("to_json(): {}", result);
     }
-    return result;
+
+    return buf:to_str();
 }
 
 

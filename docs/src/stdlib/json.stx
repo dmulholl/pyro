@@ -25,9 +25,10 @@ This module contains utility functions for working with JSON.
     Panics if `arg` isn't a valid JSON string.
 
 
-[[ `to_json(arg: any) -> str` ]]
+[[ `to_json(arg: any, indent: i64 = 0) -> str` ]]
 
     Marshalls the Pyro value `arg` to JSON, returning the result as a string.
+    The `indent` argument specifies the number of spaces per level of indentation.
 
     The set of valid input values is:
 
