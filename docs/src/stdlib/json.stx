@@ -8,6 +8,12 @@ This module contains utility functions for working with JSON.
 
 ### Functions
 
+[[ `format(json: str, indent: i64 = 2) -> str` ]]
+
+    Formats a string of JSON.
+    The `indent` argument specifies the number of spaces per level of indentation.
+
+
 [[ `from_json(arg: str) -> map|vec|str|i64|f64|bool|null` ]]
 
     Unmarshalls the input JSON string.
@@ -37,9 +43,3 @@ This module contains utility functions for working with JSON.
     * Any object whose field values can be marshalled as JSON.
 
     Note that this function does not check for cycles in the input, e.g. a `vec` that contains itself.
-
-
-[[ `format(json: str, indent: i64 = 2) -> str` ]]
-
-    Formats a JSON string.
-    The `indent` argument specifies the number of spaces per level of indentation.
