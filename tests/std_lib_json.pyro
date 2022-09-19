@@ -1,6 +1,6 @@
 import $std::json::{to_json};
 import $std::json::{from_json};
-import $std::json::{pretty_print};
+import $std::json::{format};
 
 # ------------------ #
 #  Marshall to JSON  #
@@ -178,23 +178,23 @@ assert $is_err(try from_json(`123 456`));
 # ---------------- #
 
 var input = ``;
-assert $is_err(try pretty_print(input));
+assert $is_err(try format(input));
 
 input = `123`;
-assert pretty_print(input) == `123`;
+assert format(input) == `123`;
 
 input = `[]`;
-assert pretty_print(input) == `[]`;
+assert format(input) == `[]`;
 
 input = `[1, 2, 3]`;
-assert pretty_print(input) == `[
+assert format(input) == `[
   1,
   2,
   3
 ]`;
 
 input = `[1, [2, 3], 4]`;
-assert pretty_print(input) == `[
+assert format(input) == `[
   1,
   [
     2,
@@ -204,16 +204,16 @@ assert pretty_print(input) == `[
 ]`;
 
 input = `{}`;
-assert pretty_print(input) == `{}`;
+assert format(input) == `{}`;
 
 input = `{"foo": 123, "bar": 456}`;
-assert pretty_print(input) == `{
+assert format(input) == `{
   "foo": 123,
   "bar": 456
 }`;
 
 input = `{"foo": 123, "bar": 456, "baz": {"a": 1, "b": 2}}`;
-assert pretty_print(input) == `{
+assert format(input) == `{
   "foo": 123,
   "bar": 456,
   "baz": {
@@ -223,7 +223,7 @@ assert pretty_print(input) == `{
 }`;
 
 input = `[1, {"foo": 2, "bar": [3, 4], "baz": {"a": true, "b": false, "c": [], "d": {}, "e": {"f": null}}}, 5]`;
-assert pretty_print(input) == `[
+assert format(input) == `[
   1,
   {
     "foo": 2,

@@ -534,7 +534,7 @@ pub def from_json(arg: str) -> map|vec|str|i64|f64|bool|null {
 # ---------------- #
 
 
-def pretty_print_map(buf: buf, map: map, indent: i64, current_indent: i64) {
+def format_map(buf: buf, map: map, indent: i64, current_indent: i64) {
     if map:count() == 0 {
         buf:write("{}");
         return;
@@ -552,7 +552,7 @@ def pretty_print_map(buf: buf, map: map, indent: i64, current_indent: i64) {
         buf:write(spaces);
         buf:write($debug(key));
         buf:write(": ");
-        pretty_print_value(buf, value, indent, current_indent + indent);
+        format_value(buf, value, indent, current_indent + indent);
         is_first = false;
     }
 
@@ -562,7 +562,7 @@ def pretty_print_map(buf: buf, map: map, indent: i64, current_indent: i64) {
 }
 
 
-def pretty_print_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
+def format_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
     if vec:count() == 0 {
         buf:write("[]");
         return;
@@ -578,7 +578,7 @@ def pretty_print_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
         }
         buf:write("\n");
         buf:write(spaces);
-        pretty_print_value(buf, item, indent, current_indent + indent);
+        format_value(buf, item, indent, current_indent + indent);
         is_first = false;
     }
 
@@ -588,28 +588,28 @@ def pretty_print_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
 }
 
 
-def pretty_print_value(buf: buf, value: any, indent: i64, current_indent: i64) {
+def format_value(buf: buf, value: any, indent: i64, current_indent: i64) {
     if $is_map(value) {
-        pretty_print_map(buf, value, indent, current_indent);
+        format_map(buf, value, indent, current_indent);
     } else if $is_vec(value) {
-        pretty_print_vec(buf, value, indent, current_indent);
+        format_vec(buf, value, indent, current_indent);
     } else {
         buf:write($debug(value));
     }
 }
 
 
-pub def pretty_print(json: str, indent: i64 = 2) -> str {
+pub def format(json: str, indent: i64 = 2) -> str {
     var buf = $buf();
 
     var value = try from_json(json);
     if $is_err(value) {
-        $panic("pretty_print(): invalid argument [json], not valid JSON: {}", value);
+        $panic("format(): invalid argument [json], not valid JSON: {}", value);
     }
 
-    var result = try pretty_print_value(buf, value, indent, 0);
+    var result = try format_value(buf, value, indent, 0);
     if $is_err(result) {
-        $panic("pretty_print(): {}", result);
+        $panic("format(): {}", result);
     }
 
     return buf:to_str();

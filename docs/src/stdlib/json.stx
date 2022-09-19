@@ -39,7 +39,7 @@ This module contains utility functions for working with JSON.
     Note that this function does not check for cycles in the input, e.g. a `vec` that contains itself.
 
 
-[[ `pretty_print(json: str, indent: i64 = 2) -> str` ]]
+[[ `format(json: str, indent: i64 = 2) -> str` ]]
 
-    Pretty-prints a string of JSON.
+    Formats a JSON string.
     The `indent` argument specifies the number of spaces per level of indentation.
