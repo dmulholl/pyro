@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.18</p>
+                <p class="version">Version 0.8.19</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -60,6 +60,17 @@ Functions
 <dl>
 <div>
 <dt>
+<code>format(json: str, indent: i64 = 2) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Formats a string of JSON.
+The <code>indent</code> argument specifies the number of spaces per level of indentation.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>from_json(arg: str) -&gt; map|vec|str|i64|f64|bool|null</code>
 </dt>
 <dd>
@@ -79,11 +90,12 @@ Panics if <code>arg</code> isn't a valid JSON string.
 </div>
 <div>
 <dt>
-<code>to_json(arg: any) -&gt; str</code>
+<code>to_json(arg: any, indent: i64 = 0) -&gt; str</code>
 </dt>
 <dd>
 <p>
 Marshalls the Pyro value <code>arg</code> to JSON, returning the result as a string.
+The <code>indent</code> argument specifies the number of spaces per level of indentation.
 </p>
 <p>
 The set of valid input values is:
@@ -122,17 +134,6 @@ Any object whose field values can be marshalled as JSON.
 </ul>
 <p>
 Note that this function does not check for cycles in the input, e.g. a <code>vec</code> that contains itself.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>format(json: str, indent: i64 = 2) -&gt; str</code>
-</dt>
-<dd>
-<p>
-Formats a JSON string.
-The <code>indent</code> argument specifies the number of spaces per level of indentation.
 </p>
 </dd>
 </div>
