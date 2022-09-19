@@ -86,6 +86,102 @@ var obj2 = Baz("A", "B", "C");
 assert to_json(obj1) == `{"foo": 1, "bar": 2, "baz": 3}`;
 assert to_json(obj2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
 
+# --------------------------- #
+#  Marshall to indented JSON  #
+# --------------------------- #
+
+var obj;
+
+obj = [];
+assert to_json(obj, 2) == `[]`;
+
+obj = [1, 2, 3];
+assert to_json(obj, 2) == `[
+  1,
+  2,
+  3
+]`;
+
+obj = [1, [2, 3], 4];
+assert to_json(obj, 2) == `[
+  1,
+  [
+    2,
+    3
+  ],
+  4
+]`;
+
+obj = {};
+assert to_json(obj, 2) == `{}`;
+
+obj = {"foo" = 123, "bar" = 456};
+assert to_json(obj, 2) == `{
+  "foo": 123,
+  "bar": 456
+}`;
+
+obj = {"foo" = 123, "bar" = 456, "baz" = {"a" = 1, "b" = 2}};
+assert to_json(obj, 2) == `{
+  "foo": 123,
+  "bar": 456,
+  "baz": {
+    "a": 1,
+    "b": 2
+  }
+}`;
+
+obj = [
+    1,
+    {"foo" = 2, "bar" = [3, 4], "baz" = {"a" = true, "b" = false, "c" = [], "d" = {}, "e" = {"f" = null}}},
+    5
+];
+assert to_json(obj, 2) == `[
+  1,
+  {
+    "foo": 2,
+    "bar": [
+      3,
+      4
+    ],
+    "baz": {
+      "a": true,
+      "b": false,
+      "c": [],
+      "d": {},
+      "e": {
+        "f": null
+      }
+    }
+  },
+  5
+]`;
+
+class Bam {
+    def $json() {
+        return `{"foo": 123, "bar": 456}`;
+    }
+}
+
+assert to_json(Bam(), 2) == `{
+  "foo": 123,
+  "bar": 456
+}`;
+
+obj = [11, {"a" = 1, "b" = Bam(), "c" = 2}, 22];
+assert to_json(obj, 2) == `[
+  11,
+  {
+    "a": 1,
+    "b": {
+      "foo": 123,
+      "bar": 456
+    },
+    "c": 2
+  },
+  22
+]`;
+
 # ---------------------- #
 #  Unmarshall from JSON  #
 # ---------------------- #
@@ -178,6 +274,15 @@ assert $is_err(try from_json(`123 456`));
 # ---------------- #
 
 var input = ``;
+assert $is_err(try format(input));
+
+input = `[`;
+assert $is_err(try format(input));
+
+input = `[1, 2, 3`;
+assert $is_err(try format(input));
+
+input = `foo`;
 assert $is_err(try format(input));
 
 input = `123`;
