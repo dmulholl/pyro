@@ -5,7 +5,7 @@
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 		 -Wno-unused-parameter -Wno-unused-function -Wno-unused-result
 
-RELEASE_FLAGS = -rdynamic -O3 -D NDEBUG -D PYRO_VERSION_BUILD='"release"'
+RELEASE_FLAGS = -rdynamic -O2 -D NDEBUG -D PYRO_VERSION_BUILD='"release"'
 DEBUG_FLAGS = -rdynamic -D DEBUG -D PYRO_VERSION_BUILD='"debug"'
 
 DEBUG_LEVEL_1 = -D PYRO_DEBUG_STRESS_GC
