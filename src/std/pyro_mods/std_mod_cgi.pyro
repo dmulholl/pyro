@@ -1,3 +1,6 @@
+import $std::json;
+
+
 var url_reserved_chars = " !#$%&'()*+,/:;=?@[]":bytes():to_set();
 
 
@@ -99,6 +102,14 @@ pub class Request {
 
     pub def values(key: str) -> vec[str]|err {
         return self.data[key];
+    }
+
+    pub def data() -> map[str, vec[str]] {
+        return self.data;
+    }
+
+    pub def json() -> map|vec|str|i64|f64|bool|null {
+        return json::from_json(self:body());
     }
 
     def unpack_url_encoded_string(input: str) {
