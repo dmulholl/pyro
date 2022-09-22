@@ -81,9 +81,9 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
     double time = (double)(clock() - start_time) / CLOCKS_PER_SEC;
 
     if (files_failed > 0) {
-        printf("\n[ \x1B[1;31m FAIL \x1B[0m ]");
+        printf("\n  \x1B[1;41;30m FAIL \x1B[0m  ");
     } else {
-        printf("\n[ \x1B[1;32m PASS \x1B[0m ]");
+        printf("\n  \x1B[1;42;30m PASS \x1B[0m  ");
     }
 
     printf("  Files: %d/%d", files_passed, files_passed + files_failed);
@@ -177,9 +177,9 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
     double time = (double)(clock() - start_time) / CLOCKS_PER_SEC;
 
     if (files_failed > 0) {
-        printf("\n[ \x1B[1;31m FAIL \x1B[0m ]");
+        printf("\n  \x1B[1;41;30m FAIL \x1B[0m  ");
     } else {
-        printf("\n[ \x1B[1;32m PASS \x1B[0m ]");
+        printf("\n  \x1B[1;42;30m PASS \x1B[0m  ");
     }
 
     printf("  Files: %d/%d", files_passed, files_passed + files_failed);
