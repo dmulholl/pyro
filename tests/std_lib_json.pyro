@@ -11,7 +11,7 @@ assert to_json(true) == `true`;
 assert to_json(false) == `false`;
 
 assert to_json(123) == `123`;
-assert to_json(123.456) == `123.456`;
+assert to_json(1.25) == `1.25`;
 assert to_json(1) == `1`;
 assert to_json(-1) == `-1`;
 assert to_json(1.0) == `1.0`;
@@ -25,14 +25,14 @@ assert to_json(`foo \t\r\n bar`) == `"foo \t\r\n bar"`;
 var v0 = [];
 assert to_json(v0) == `[]`;
 
-var v1 = [1, 2.3, 4];
-assert to_json(v1) == `[1, 2.3, 4]`;
+var v1 = [1, 2.5, 3];
+assert to_json(v1) == `[1, 2.5, 3]`;
 
 var v2 = ["abc", "def", "ghi"];
 assert to_json(v2) == `["abc", "def", "ghi"]`;
 
 var v3 = [v1, v2];
-assert to_json(v3) == `[[1, 2.3, 4], ["abc", "def", "ghi"]]`;
+assert to_json(v3) == `[[1, 2.5, 3], ["abc", "def", "ghi"]]`;
 
 var m0 = {};
 assert to_json(m0) == `{}`;
@@ -41,10 +41,10 @@ var m1 = {"foo" = 123, "bar" = 456};
 assert to_json(m1) == `{"foo": 123, "bar": 456}`;
 
 var m2 = {"foo" = v0, "bar" = v1, "baz" = v2};
-assert to_json(m2) == `{"foo": [], "bar": [1, 2.3, 4], "baz": ["abc", "def", "ghi"]}`;
+assert to_json(m2) == `{"foo": [], "bar": [1, 2.5, 3], "baz": ["abc", "def", "ghi"]}`;
 
 var m3 = {"foo" = m0, "bar" = m1, "baz" = m2};
-assert to_json(m3) == `{"foo": {}, "bar": {"foo": 123, "bar": 456}, "baz": {"foo": [], "bar": [1, 2.3, 4], "baz": ["abc", "def", "ghi"]}}`;
+assert to_json(m3) == `{"foo": {}, "bar": {"foo": 123, "bar": 456}, "baz": {"foo": [], "bar": [1, 2.5, 3], "baz": ["abc", "def", "ghi"]}}`;
 
 class Foo {
     def $json() {
@@ -198,7 +198,7 @@ assert from_json(`123`) == 123 ;
 assert from_json(`-1.0`) == -1.0 ;
 assert from_json(`0.0`) == 0.0 ;
 assert from_json(`1.0`) == 1.0 ;
-assert from_json(`456.789`) == 456.789 ;
+assert from_json(`1.25`) == 1.25;
 assert from_json(`1e3`) == 1000.0;
 assert from_json(`1e6`) == 1000000.0;
 assert from_json(`1e-3`) == 0.001;
@@ -218,18 +218,18 @@ var output1 = from_json(input1);
 assert $is_vec(output1);
 assert output1:is_empty();
 
-var input2 = `[123, 456.789, "foo"]`;
+var input2 = `[123, 1.25, "foo"]`;
 var output2 = from_json(input2);
 assert $is_vec(output2);
 assert output2[0] == 123;
-assert output2[1] == 456.789;
+assert output2[1] == 1.25;
 assert output2[2] == "foo";
 
-var input3 = `[123, 456.789, "foo", [1, 2, 3]]`;
+var input3 = `[123, 1.25, "foo", [1, 2, 3]]`;
 var output3 = from_json(input3);
 assert $is_vec(output3);
 assert output3[0] == 123;
-assert output3[1] == 456.789;
+assert output3[1] == 1.25;
 assert output3[2] == "foo";
 assert $is_vec(output3[3]);
 assert output3[3][0] == 1;

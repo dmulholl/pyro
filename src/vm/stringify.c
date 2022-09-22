@@ -549,6 +549,34 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
 }
 
 
+// Panics and returns NULL if an error occurs.
+static ObjStr* stringify_f64(PyroVM* vm, double value, size_t precision) {
+    char* array = pyro_sprintf(vm, "%.*f", precision, value);
+    if (vm->halt_flag) {
+        return NULL;
+    }
+
+    size_t original_length = strlen(array);
+    size_t trimmed_length = original_length;
+
+    while (array[trimmed_length - 1] == '0') {
+        trimmed_length--;
+    }
+
+    if (array[trimmed_length - 1] == '.') {
+        trimmed_length++;
+    }
+
+    ObjStr* string = ObjStr_copy_raw(array, trimmed_length, vm);
+    FREE_ARRAY(vm, char, array, original_length + 1);
+    if (!string) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+    return string;
+}
+
+
 char* pyro_stringify_object_type(ObjType type) {
     switch (type) {
         case OBJ_BOUND_METHOD: return "<method>";
@@ -656,31 +684,8 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
         case VAL_I64:
             return pyro_sprintf_to_obj(vm, "%" PRId64, value.as.i64);
 
-        case VAL_F64: {
-            char* array = pyro_sprintf(vm, "%.6f", value.as.f64);
-            if (vm->halt_flag) {
-                return NULL;
-            }
-
-            size_t original_length = strlen(array);
-            size_t trimmed_length = original_length;
-
-            while (array[trimmed_length - 1] == '0') {
-                trimmed_length--;
-            }
-
-            if (array[trimmed_length - 1] == '.') {
-                trimmed_length++;
-            }
-
-            ObjStr* string = ObjStr_copy_raw(array, trimmed_length, vm);
-            FREE_ARRAY(vm, char, array, original_length + 1);
-            if (!string) {
-                pyro_panic(vm, "out of memory");
-                return NULL;
-            }
-            return string;
-        }
+        case VAL_F64:
+            return stringify_f64(vm, value.as.f64, 6);
 
         case VAL_CHAR: {
             char buffer[4];
@@ -748,6 +753,10 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
             return NULL;
         }
         return pyro_sprintf_to_obj(vm, "<err %s>", debug_message->bytes);
+    }
+
+    if (IS_F64(value)) {
+        return stringify_f64(vm, value.as.f64, 16);
     }
 
     return pyro_stringify_value(vm, value);

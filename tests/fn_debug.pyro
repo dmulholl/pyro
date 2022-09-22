@@ -3,7 +3,7 @@ assert $debug(true) == `true`;
 assert $debug(false) == `false`;
 
 assert $debug(123) == `123`;
-assert $debug(123.456) == `123.456`;
+assert $debug(1.25) == `1.25`;
 
 assert $debug("foo") == `"foo"`;
 assert $debug("\n") == `"\n"`;
@@ -21,11 +21,11 @@ assert $debug(`\x0A`) == `"\x0A"`;
 assert $debug(`\x01`) == `"\x01"`;
 assert $debug(`foo \n bar`) == `"foo \n bar"`;
 
-var vec = [123, 456.789];
-assert $debug(vec) == `[123, 456.789]`;
+var vec = [123, 1.25];
+assert $debug(vec) == `[123, 1.25]`;
 
-var map = {"foo" = 123, "bar" = 456.789};
-assert $debug(map) == `{"foo" = 123, "bar" = 456.789}`;
+var map = {"foo" = 123, "bar" = 1.25};
+assert $debug(map) == `{"foo" = 123, "bar" = 1.25}`;
 
 class Foo {
     def $debug() {

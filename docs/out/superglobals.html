@@ -177,15 +177,18 @@ Returns a string representing <code>arg</code> suitable for use in debugging.
 </p>
 <ul>
 <li>
-If <code>arg</code> has a <code>:$debug()</code> method, the output of this method will be returned.
+If <code>arg</code> has a <code>$debug()</code> method, the output of this method will be returned.
 </li>
 <li>
-Otherwise, if <code>arg</code> has a <code>:$str()</code> method, the output of this method will be returned.
+Otherwise, if <code>arg</code> has a <code>$str()</code> method, the output of this method will be returned.
 </li>
 <li>
 Otherwise, the default string for <code>arg</code> will be returned.
 </li>
 </ul>
+<p>
+Note that calling <code>$debug()</code> on an <code>f64</code> prints its value to 16 decimal digits of precision, stripping trailing zeros after the decimal point.
+</p>
 </dd>
 </div>
 <div>
@@ -942,8 +945,11 @@ If called with one argument, sets the standard output stream to <code>arg</code>
 </dt>
 <dd>
 <p>
-Stringifies the argument, i.e. returns its default string representation.
-If the argument has a <code>:$str()</code> method, the output of this method will be returned.
+Stringifies the argument &mdash; i.e. returns its default string representation.
+If the argument has a <code>$str()</code> method, the output of this method will be returned.
+</p>
+<p>
+Note that calling <code>$str()</code> on an <code>f64</code> prints its value to 6 decimal digits of precision, stripping trailing zeros after the decimal point.
 </p>
 </dd>
 </div>

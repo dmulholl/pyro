@@ -82,8 +82,11 @@ A string, <code>str</code>, is an immutable array of bytes.
 </dt>
 <dd>
 <p>
-Stringifies the argument, i.e. returns its default string representation.
-If the argument has a <code>:$str()</code> method, the output of this method will be returned.
+Stringifies the argument &mdash; i.e. returns its default string representation.
+If the argument has a <code>$str()</code> method, the output of this method will be returned.
+</p>
+<p>
+Note that calling <code>$str()</code> on an <code>f64</code> prints its value to 6 decimal digits of precision, stripping trailing zeros after the decimal point.
 </p>
 </dd>
 </div>

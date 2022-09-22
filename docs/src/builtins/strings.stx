@@ -11,8 +11,10 @@ A string, `str`, is an immutable array of bytes.
 
 [[ `$str(arg: any) -> str` ]]
 
-    Stringifies the argument, i.e. returns its default string representation.
-    If the argument has a `:$str()` method, the output of this method will be returned.
+    Stringifies the argument --- i.e. returns its default string representation.
+    If the argument has a `$str()` method, the output of this method will be returned.
+
+    Note that calling `$str()` on an `f64` prints its value to 6 decimal digits of precision, stripping trailing zeros after the decimal point.
 
 Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding --- a string can contain any sequence of byte values including null bytes or invalid UTF-8.
 
