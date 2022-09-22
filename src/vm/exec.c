@@ -2060,7 +2060,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
     pyro_pop(vm);
 
     #ifdef DEBUG
-        if (!vm->panic_flag) {
+        if (!vm->halt_flag) {
             assert(vm->stack_top == saved_stack_top);
         }
     #endif
@@ -2159,7 +2159,7 @@ void pyro_exec_code_as_module(
     pyro_pop(vm);
 
     #ifdef DEBUG
-        if (!vm->panic_flag) {
+        if (!vm->halt_flag) {
             assert(vm->stack_top == saved_stack_top);
         }
     #endif
