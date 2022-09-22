@@ -1,0 +1,106 @@
+def pp_instance(buf: buf, instance: instance, indent: i64, current_indent: i64) {
+    if $fields(instance):count() == 0 {
+        buf:write($debug(instance));
+        return;
+    }
+
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
+    buf:write($type(instance));
+    buf:write(" {");
+
+    for field_name in $fields(instance) {
+        if indent > 0 {
+            buf:write(is_first ? "\n" :| ",\n");
+        } else if !is_first {
+            buf:write(", ");
+        }
+        buf:write(spaces);
+
+        var field_value = $field(instance, field_name);
+        buf:write(`{}: `, field_name);
+        pp_value(buf, field_value, indent, current_indent + indent);
+        is_first = false;
+    }
+
+    if indent > 0 {
+        buf:write("\n");
+        buf:write(" " * current_indent);
+    }
+    buf:write("}");
+}
+
+def pp_map(buf: buf, map: map, indent: i64, current_indent: i64) {
+    if map:count() == 0 {
+        buf:write("{}");
+        return;
+    }
+
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
+    buf:write("{");
+
+    for (key, value) in map {
+        if !is_first {
+            buf:write(",");
+        }
+        buf:write("\n");
+        buf:write(spaces);
+        buf:write($debug(key));
+        buf:write(" = ");
+        pp_value(buf, value, indent, current_indent + indent);
+        is_first = false;
+    }
+
+    buf:write("\n");
+    buf:write(" " * current_indent);
+    buf:write("}");
+}
+
+
+def pp_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
+    if vec:count() == 0 {
+        buf:write("[]");
+        return;
+    }
+
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
+    buf:write("[");
+
+    for item in vec {
+        if !is_first {
+            buf:write(",");
+        }
+        buf:write("\n");
+        buf:write(spaces);
+        pp_value(buf, item, indent, current_indent + indent);
+        is_first = false;
+    }
+
+    buf:write("\n");
+    buf:write(" " * current_indent);
+    buf:write("]");
+}
+
+
+def pp_value(buf: buf, value: any, indent: i64, current_indent: i64) {
+    if $is_map(value) {
+        pp_map(buf, value, indent, current_indent);
+    } else if $is_vec(value) || $is_tup(value) {
+        pp_vec(buf, value, indent, current_indent);
+    } else if $is_instance(value) {
+        pp_instance(buf, value, indent, current_indent);
+    } else if $is_f64(value) {
+        buf:write($str(value));
+    } else {
+        buf:write($debug(value));
+    }
+}
+
+
+pub def print(arg: any, indent: i64 = 4) -> str {
+    var buf = $buf();
+    pp_value(buf, arg, indent, 0);
+    return buf:to_str();
+}

@@ -15,8 +15,16 @@ DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/cli/*.c src/vm/*.c src/std/core/*.c src/std/c_mods/*.c
-OBJ_FILES = out/lib/sqlite.o out/lib/bestline.o out/lib/args.o out/lib/mt64.o \
-			out/lib/std_mod_args.o out/lib/std_mod_email.o out/lib/std_mod_html.o out/lib/std_mod_cgi.o \
+
+OBJ_FILES = out/lib/sqlite.o \
+			out/lib/bestline.o \
+			out/lib/args.o \
+			out/lib/mt64.o \
+			out/lib/std_mod_args.o \
+			out/lib/std_mod_email.o \
+			out/lib/std_mod_html.o \
+			out/lib/std_mod_cgi.o \
+			out/lib/std_mod_pretty.o \
 			out/lib/std_mod_json.o
 
 INPUT = $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
@@ -131,6 +139,12 @@ out/lib/std_mod_json.o: src/std/pyro_mods/std_mod_json.pyro
 	@printf "\e[1;32mBuilding\e[0m \$$std:json\n"
 	@cd src/std/pyro_mods; xxd -i std_mod_json.pyro > std_mod_json.c
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_json.c -o out/lib/std_mod_json.o
+
+out/lib/std_mod_pretty.o: src/std/pyro_mods/std_mod_pretty.pyro
+	@mkdir -p out/lib
+	@printf "\e[1;32mBuilding\e[0m \$$std:pretty\n"
+	@cd src/std/pyro_mods; xxd -i std_mod_pretty.pyro > std_mod_pretty.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_pretty.c -o out/lib/std_mod_pretty.o
 
 # ---------------------- #
 #  Test Compiled Module  #

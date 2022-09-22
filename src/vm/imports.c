@@ -92,6 +92,11 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
         return;
     }
 
+    if (strcmp(name->bytes, "pretty") == 0) {
+        pyro_exec_code_as_module(vm, (char*)std_mod_pretty_pyro, std_mod_pretty_pyro_len, "$std::pretty", module);
+        return;
+    }
+
     pyro_panic(vm, "no module in standard library named '%s'", name->bytes);
 }
 
