@@ -221,7 +221,7 @@ pub class ArgParser {
         }
     }
 
-    pub def parse_stream(stream: ArgStream) {
+    def parse_stream(stream: ArgStream) {
         var is_first_arg = true;
 
         while (stream:has_next()) {
@@ -254,9 +254,13 @@ pub class ArgParser {
             else if is_first_arg && self.commands:contains(arg) {
                 self.command_name = arg;
                 self.command_parser = self.commands[arg];
-                self.command_parser:parse_stream(stream);
-                if self.command_parser.callback {
-                    self.command_parser.callback(arg, self.command_parser);
+
+                var cmd_parse_stream_method = $method(self.command_parser, "parse_stream");
+                cmd_parse_stream_method(stream);
+
+                var cmd_callback = $field(self.command_parser, "callback");
+                if (cmd_callback) {
+                    cmd_callback(arg, self.command_parser);
                 }
             }
 
@@ -382,7 +386,7 @@ pub class ArgParser {
         $println("\nOptions:");
         if self.options:count() > 0 {
             for (name, option) in self.options {
-                $println("  {}: ({}) {}", name, $debug(option.default), option.values);
+                $println("  {}: ({}) {}", name, $debug(option.default), option:values());
             }
         } else {
             $println(" [none]");
