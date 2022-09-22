@@ -150,7 +150,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
                     pyro_reset_vm(vm);
                     pyro_push(vm, member_value);
                     pyro_call_function(vm, 0);
-                    if (vm->panic_flag) {
+                    if (pyro_get_panic_flag(vm)) {
                         if (!had_failed_test_func) {
                             printf("\r[  \x1B[1;31mFAIL\x1B[0m\n");
                         }
