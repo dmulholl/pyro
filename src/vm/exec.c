@@ -842,27 +842,39 @@ static void run(PyroVM* vm) {
 
             case OP_GET_MEMBER: {
                 Value member_name = READ_CONSTANT();
+                Value receiver = pyro_pop(vm);
 
-                if (!IS_MOD(pyro_peek(vm, 0))) {
-                    pyro_panic(vm,
-                        "invalid member access '%s', receiver is not a module",
-                        AS_STR(member_name)->bytes
-                    );
+                if (!IS_MOD(receiver)) {
+                    if (IS_INSTANCE(receiver)) {
+                        pyro_panic(vm,
+                            "invalid member access '%s', receiver is an object instance, did you mean to use ':'",
+                            AS_STR(member_name)->bytes
+                        );
+                    } else if (IS_CLASS(receiver)) {
+                        pyro_panic(vm,
+                            "invalid member access '%s', receiver is a class, did you mean to use ':'",
+                            AS_STR(member_name)->bytes
+                        );
+                    } else {
+                        pyro_panic(vm,
+                            "invalid member access '%s', receiver is not a module",
+                            AS_STR(member_name)->bytes
+                        );
+                    }
                     break;
                 }
-                ObjModule* module = AS_MOD(pyro_pop(vm));
 
+                ObjModule* module = AS_MOD(receiver);
                 Value member_index;
+
                 if (ObjMap_get(module->pub_member_indexes, member_name, &member_index, vm)) {
                     pyro_push(vm, module->members->values[member_index.as.i64]);
-                    break;
-                }
-
-                if (ObjMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
+                } else if (ObjMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
                     pyro_panic(vm, "module member '%s' is private", AS_STR(member_name)->bytes);
                 } else {
                     pyro_panic(vm, "module has no member '%s'", AS_STR(member_name)->bytes);
                 }
+
                 break;
             }
 
