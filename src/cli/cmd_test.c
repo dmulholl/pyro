@@ -32,7 +32,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
         pyro_cli_add_import_roots_from_path(vm, path);
 
         pyro_exec_path_as_main(vm, path);
-        if (pyro_get_panic_flag(vm)) {
+        if (pyro_get_panic_flag(vm) || pyro_get_exit_code(vm) != 0) {
             printf("            - \x1B[1;31mFAIL\x1B[0m\n");
             files_failed += 1;
             pyro_free_vm(vm);
@@ -57,7 +57,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
                     pyro_reset_vm(vm);
                     pyro_push(vm, member_value);
                     pyro_call_function(vm, 0);
-                    if (vm->panic_flag) {
+                    if (pyro_get_panic_flag(vm) || pyro_get_exit_code(vm) != 0) {
                         had_failed_test_func = true;
                         funcs_failed += 1;
                         printf("            - \x1B[1;31m%s\x1B[0m\n", name->bytes);
@@ -125,7 +125,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
         pyro_set_stderr(vm, NULL);
 
         pyro_exec_path_as_main(vm, path);
-        if (pyro_get_panic_flag(vm)) {
+        if (pyro_get_panic_flag(vm) || pyro_get_exit_code(vm) != 0) {
             printf("\r[  \x1B[1;31mFAIL\x1B[0m\n");
             files_failed += 1;
             pyro_free_vm(vm);
@@ -150,7 +150,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
                     pyro_reset_vm(vm);
                     pyro_push(vm, member_value);
                     pyro_call_function(vm, 0);
-                    if (pyro_get_panic_flag(vm)) {
+                    if (pyro_get_panic_flag(vm) || pyro_get_exit_code(vm) != 0) {
                         if (!had_failed_test_func) {
                             printf("\r[  \x1B[1;31mFAIL\x1B[0m\n");
                         }
