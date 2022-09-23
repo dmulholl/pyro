@@ -18,7 +18,8 @@ def pp_instance(buf: buf, instance: instance, indent: i64, current_indent: i64) 
         buf:write(spaces);
 
         var field_value = $field(instance, field_name);
-        buf:write(`{}: `, field_name);
+        buf:write(field_name);
+        buf:write(": ");
         pp_value(buf, field_value, indent, current_indent + indent);
         is_first = false;
     }

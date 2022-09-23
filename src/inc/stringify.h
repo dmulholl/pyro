@@ -40,6 +40,11 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value);
 // - [format_string] must be non-NULL and non-zero-length.
 ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string);
 
+// Stringifies a double, stripping trailing zeros.
+// - Panics and returns NULL if an error occurs.
+// - [precision] specifies the maximum number of decimal digits after the decimal point.
+ObjStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision);
+
 // Returns a pointer to a static string.
 char* pyro_stringify_object_type(ObjType type);
 

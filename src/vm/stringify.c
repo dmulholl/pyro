@@ -549,8 +549,7 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
 }
 
 
-// Panics and returns NULL if an error occurs.
-static ObjStr* stringify_f64(PyroVM* vm, double value, size_t precision) {
+ObjStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
     char* array = pyro_sprintf(vm, "%.*f", precision, value);
     if (vm->halt_flag) {
         return NULL;
@@ -685,7 +684,7 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
             return pyro_sprintf_to_obj(vm, "%" PRId64, value.as.i64);
 
         case VAL_F64:
-            return stringify_f64(vm, value.as.f64, 6);
+            return pyro_stringify_f64(vm, value.as.f64, 6);
 
         case VAL_CHAR: {
             char buffer[4];
@@ -756,7 +755,7 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
     }
 
     if (IS_F64(value)) {
-        return stringify_f64(vm, value.as.f64, 16);
+        return pyro_stringify_f64(vm, value.as.f64, 16);
     }
 
     return pyro_stringify_value(vm, value);
