@@ -45,6 +45,10 @@ All standard library modules are submodules of the root module `$std`.
 
     Filepath utilities.
 
+[[ [pretty](@root/stdlib/pretty//) ]]
+
+    Support for pretty-printing.
+
 [[ [prng](@root/stdlib/prng//) ]]
 
     Convenience functions for generating pseudo-random numbers.
