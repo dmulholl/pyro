@@ -70,18 +70,22 @@ static ObjStr* make_debug_string_for_string(PyroVM* vm, ObjStr* input_string) {
 // Returns a <buf "content"> string containing a quoted, escaped string representation of the
 // buffer's content. Panics and returns NULL if memory allocation fails.
 static ObjStr* make_debug_string_for_buf(PyroVM* vm, ObjBuf* buf) {
+    if (buf->count == 0) {
+        return pyro_sprintf_to_obj(vm, "<buf>");
+    }
+
     ObjStr* raw_content = ObjStr_copy_raw((char*)buf->bytes, buf->count, vm);
     if (!raw_content) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
 
-    ObjStr* content = make_debug_string_for_string(vm, raw_content);
-    if (!content) {
+    ObjStr* debug_string = make_debug_string_for_string(vm, raw_content);
+    if (!debug_string) {
         return NULL;
     }
 
-    return pyro_sprintf_to_obj(vm, "<buf %s>", content->bytes);
+    return pyro_sprintf_to_obj(vm, "<buf %s>", debug_string->bytes);
 }
 
 

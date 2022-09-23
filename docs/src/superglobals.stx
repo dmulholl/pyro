@@ -79,6 +79,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     * Otherwise, the default string for `arg` will be returned.
 
     Note that calling `$debug()` on an `f64` prints its value to 17 decimal digits of precision, stripping trailing zeros after the decimal point.
+    (17 is the minimum number of digits that guarantees that any two distinct 64-bit floats have distinct representations.)
 
 
 [[ `$env(name: str) -> str|err` <br> `$env(name: str, value: any)` ]]
