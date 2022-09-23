@@ -85,6 +85,32 @@ def pp_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
 }
 
 
+def pp_set(buf: buf, set: set, indent: i64, current_indent: i64) {
+    if set:count() == 0 {
+        buf:write("{}");
+        return;
+    }
+
+    var spaces = " " * (current_indent + indent);
+    var is_first = true;
+    buf:write("{");
+
+    for item in set {
+        if !is_first {
+            buf:write(",");
+        }
+        buf:write("\n");
+        buf:write(spaces);
+        pp_value(buf, item, indent, current_indent + indent);
+        is_first = false;
+    }
+
+    buf:write("\n");
+    buf:write(" " * current_indent);
+    buf:write("}");
+}
+
+
 def pp_value(buf: buf, value: any, indent: i64, current_indent: i64) {
     if $is_map(value) {
         pp_map(buf, value, indent, current_indent);
@@ -94,6 +120,8 @@ def pp_value(buf: buf, value: any, indent: i64, current_indent: i64) {
         pp_instance(buf, value, indent, current_indent);
     } else if $is_f64(value) {
         buf:write($str(value));
+    } else if $is_set(value) {
+        pp_set(buf, value, indent, current_indent);
     } else {
         buf:write($debug(value));
     }

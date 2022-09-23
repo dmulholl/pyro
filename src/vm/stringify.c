@@ -755,7 +755,9 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
     }
 
     if (IS_F64(value)) {
-        return pyro_stringify_f64(vm, value.as.f64, 16);
+        // 17 is the minimum number of significant digits that guarantees that any two distinct
+        // IEEE-754 64-bit floats will have distinct representations when converted to decimal.
+        return pyro_stringify_f64(vm, value.as.f64, 17);
     }
 
     return pyro_stringify_value(vm, value);
