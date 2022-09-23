@@ -795,6 +795,12 @@ static void run(PyroVM* vm) {
                         pyro_push(vm, value);
                         break;
                     }
+                } else if (IS_MOD(receiver)) {
+                    pyro_panic(vm,
+                        "invalid field name '%s'; receiver is a module, did you mean to use '::'",
+                        AS_STR(field_name)->bytes
+                    );
+                    break;
                 }
 
                 pyro_panic(vm, "invalid field name '%s'", AS_STR(field_name)->bytes);
@@ -888,7 +894,14 @@ static void run(PyroVM* vm) {
                 Value method = pyro_get_pub_method(vm, receiver, method_name);
                 if (IS_NULL(method)) {
                     if (IS_NULL(pyro_get_method(vm, receiver, method_name))) {
-                        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                        if (IS_MOD(receiver)) {
+                            pyro_panic(vm,
+                                "invalid method name '%s'; receiver is a module, did you mean to use '::'",
+                                method_name->bytes
+                            );
+                        } else {
+                            pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                        }
                     } else {
                         pyro_panic(vm, "method '%s' is private", method_name->bytes);
                     }
