@@ -79,7 +79,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     * Otherwise, the default string for `arg` will be returned.
 
     Note that calling `$debug()` on an `f64` prints its value to 17 decimal digits of precision, stripping trailing zeros after the decimal point.
-    (17 is the minimum number of digits that guarantees that any two distinct 64-bit floats have distinct representations.)
+    (17 is the minimum number of decimal digits required to guarantee that any two distinct 64-bit floats have distinct representations.)
 
 
 [[ `$env(name: str) -> str|err` <br> `$env(name: str, value: any)` ]]
@@ -90,7 +90,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
       Returns an `err` if `name` is not defined.
 
     * If called with two arguments, sets the environment variable `name` to `value`.
-      Stringifies `value` if `value` is not already a string.
+      Stringifies `value` if `value` is not already a string. (This is equivalent to calling `$str()` on `value`.)
 
 
 
@@ -120,9 +120,9 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     * If called with no arguments, returns an error with an empty message string.
 
-    * If called with a single argument, stringifies that argument and uses the result as the message string.
+    * If called with a single argument, stringifies that argument and uses the result as the message string. (This is equivalent to calling `$str()` on the argument.)
 
-    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first.
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and using the result as the message string.
 
 
 
@@ -145,6 +145,8 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     Gets a field value by name.
     Returns an `err` if the field does not exist.
+
+    (Allows access to both public and private fields.)
 
 
 
@@ -404,8 +406,9 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 [[ `$method(object: any, method_name: str) -> method|err` ]]
 
     Gets a method by name. The returned method is bound to `object`.
-
     Returns an `err` if the method does not exist.
+
+    (Allows access to both public and private methods.)
 
 
 
@@ -419,9 +422,9 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     Panics with the specified error message.
 
-    * If called with a single argument and `error_message` isn't already a string, it will be automatically stringified.
+    * If called with a single argument and `error_message` isn't already a string, it will be automatically stringified. (This is equivalent to calling `$str()` on the argument.)
 
-    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first.
+    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and using the result as the message string.
 
     If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
 
