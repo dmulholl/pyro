@@ -31,6 +31,7 @@ def pp_instance(buf: buf, instance: instance, indent: i64, current_indent: i64) 
     buf:write("}");
 }
 
+
 def pp_map(buf: buf, map: map, indent: i64, current_indent: i64) {
     if map:count() == 0 {
         buf:write("{}");
