@@ -1,5 +1,5 @@
 #include "cli.h"
-#include "../lib/bestline/bestline.h"
+#include "../../lib/bestline/bestline.h"
 
 
 // Returns true if [code] contains an open quote.

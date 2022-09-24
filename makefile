@@ -82,25 +82,25 @@ help: ## Prints available commands.
 #  C Libraries  #
 # ------------- #
 
-out/build/sqlite.o: src/lib/sqlite/sqlite3.c src/lib/sqlite/sqlite3.h
+out/build/sqlite.o: lib/sqlite/sqlite3.c lib/sqlite/sqlite3.h
 	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m sqlite\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/sqlite/sqlite3.c -o out/build/sqlite.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/sqlite/sqlite3.c -o out/build/sqlite.o
 
-out/build/bestline.o: src/lib/bestline/bestline.c src/lib/bestline/bestline.h
+out/build/bestline.o: lib/bestline/bestline.c lib/bestline/bestline.h
 	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m bestline\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/bestline/bestline.c -o out/build/bestline.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/bestline/bestline.c -o out/build/bestline.o
 
-out/build/args.o: src/lib/args/args.c src/lib/args/args.h
+out/build/args.o: lib/args/args.c lib/args/args.h
 	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m args\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/args/args.c -o out/build/args.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/args/args.c -o out/build/args.o
 
-out/build/mt64.o: src/lib/mt64/mt64.c src/lib/mt64/mt64.h
+out/build/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m mt64\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/mt64/mt64.c -o out/build/mt64.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/mt64/mt64.c -o out/build/mt64.o
 
 # ---------------- #
 #  Pyro Libraries  #

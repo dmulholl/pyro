@@ -6,7 +6,7 @@
 #include "../inc/panics.h"
 #include "../inc/os.h"
 #include "../inc/std_lib.h"
-#include "../lib/mt64/mt64.h"
+#include "../../lib/mt64/mt64.h"
 
 
 PyroVM* pyro_new_vm(size_t stack_size) {

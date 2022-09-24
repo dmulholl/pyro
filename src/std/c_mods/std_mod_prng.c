@@ -3,7 +3,7 @@
 #include "../../inc/vm.h"
 #include "../../inc/setup.h"
 #include "../../inc/panics.h"
-#include "../../lib/mt64/mt64.h"
+#include "../../../lib/mt64/mt64.h"
 
 
 static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {

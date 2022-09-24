@@ -6,7 +6,7 @@
 #include "../inc/exec.h"
 #include "../inc/os.h"
 #include "../inc/utils.h"
-#include "../lib/args/args.h"
+#include "../../lib/args/args.h"
 
 void pyro_run_file(ArgParser* parser);
 void pyro_run_repl(ArgParser* parser);

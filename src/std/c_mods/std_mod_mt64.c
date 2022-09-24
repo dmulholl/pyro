@@ -5,7 +5,7 @@
 #include "../../inc/panics.h"
 #include "../../inc/io.h"
 #include "../../inc/stringify.h"
-#include "../../lib/mt64/mt64.h"
+#include "../../../lib/mt64/mt64.h"
 
 
 static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
