@@ -16,16 +16,16 @@ DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 SRC_FILES = src/cli/*.c src/vm/*.c src/std/core/*.c src/std/c_mods/*.c
 
-OBJ_FILES = out/lib/sqlite.o \
-			out/lib/bestline.o \
-			out/lib/args.o \
-			out/lib/mt64.o \
-			out/lib/std_mod_args.o \
-			out/lib/std_mod_email.o \
-			out/lib/std_mod_html.o \
-			out/lib/std_mod_cgi.o \
-			out/lib/std_mod_pretty.o \
-			out/lib/std_mod_json.o
+OBJ_FILES = out/build/sqlite.o \
+			out/build/bestline.o \
+			out/build/args.o \
+			out/build/mt64.o \
+			out/build/std_mod_args.o \
+			out/build/std_mod_email.o \
+			out/build/std_mod_html.o \
+			out/build/std_mod_cgi.o \
+			out/build/std_mod_pretty.o \
+			out/build/std_mod_json.o
 
 INPUT = $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 
@@ -44,7 +44,7 @@ debug: ## Builds the debug binary.
 debug: $(OBJ_FILES)
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(INPUT)
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(INPUT)
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 debug1: ## Checks assertions, stresses GC.
@@ -72,7 +72,6 @@ install: ## Builds and installs the release binary.
 
 clean: ## Deletes all build artifacts.
 	rm -rf ./out/*
-	rm -f ./src/std/pyro_mods/*.c
 	rm -f ./tests/compiled_module.so
 
 help: ## Prints available commands.
@@ -83,25 +82,25 @@ help: ## Prints available commands.
 #  C Libraries  #
 # ------------- #
 
-out/lib/sqlite.o: src/lib/sqlite/sqlite3.c src/lib/sqlite/sqlite3.h
-	@mkdir -p out/lib
+out/build/sqlite.o: src/lib/sqlite/sqlite3.c src/lib/sqlite/sqlite3.h
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m sqlite\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/sqlite/sqlite3.c -o out/lib/sqlite.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/sqlite/sqlite3.c -o out/build/sqlite.o
 
-out/lib/bestline.o: src/lib/bestline/bestline.c src/lib/bestline/bestline.h
-	@mkdir -p out/lib
+out/build/bestline.o: src/lib/bestline/bestline.c src/lib/bestline/bestline.h
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m bestline\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/bestline/bestline.c -o out/lib/bestline.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/bestline/bestline.c -o out/build/bestline.o
 
-out/lib/args.o: src/lib/args/args.c src/lib/args/args.h
-	@mkdir -p out/lib
+out/build/args.o: src/lib/args/args.c src/lib/args/args.h
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m args\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/args/args.c -o out/lib/args.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/args/args.c -o out/build/args.o
 
-out/lib/mt64.o: src/lib/mt64/mt64.c src/lib/mt64/mt64.h
-	@mkdir -p out/lib
+out/build/mt64.o: src/lib/mt64/mt64.c src/lib/mt64/mt64.h
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m mt64\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/lib/mt64/mt64.c -o out/lib/mt64.o
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c src/lib/mt64/mt64.c -o out/build/mt64.o
 
 # ---------------- #
 #  Pyro Libraries  #
@@ -110,41 +109,41 @@ out/lib/mt64.o: src/lib/mt64/mt64.c src/lib/mt64/mt64.h
 # These are Pyro standard library modules written in Pyro. We use `xxd` to compile the source
 # code into byte-arrays in C source file format, then embed them directly into the Pyro binary.
 
-out/lib/std_mod_args.o: src/std/pyro_mods/std_mod_args.pyro
-	@mkdir -p out/lib
+out/build/std_mod_args.o: src/std/pyro_mods/std_mod_args.pyro
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m \$$std:args\n"
-	@cd src/std/pyro_mods; xxd -i std_mod_args.pyro > std_mod_args.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_args.c -o out/lib/std_mod_args.o
+	@cd src/std/pyro_mods; xxd -i std_mod_args.pyro > ../../../out/build/std_mod_args.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_args.c -o out/build/std_mod_args.o
 
-out/lib/std_mod_email.o: src/std/pyro_mods/std_mod_email.pyro
-	@mkdir -p out/lib
+out/build/std_mod_email.o: src/std/pyro_mods/std_mod_email.pyro
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m \$$std:email\n"
-	@cd src/std/pyro_mods; xxd -i std_mod_email.pyro > std_mod_email.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_email.c -o out/lib/std_mod_email.o
+	@cd src/std/pyro_mods; xxd -i std_mod_email.pyro > ../../../out/build/std_mod_email.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_email.c -o out/build/std_mod_email.o
 
-out/lib/std_mod_html.o: src/std/pyro_mods/std_mod_html.pyro
-	@mkdir -p out/lib
+out/build/std_mod_html.o: src/std/pyro_mods/std_mod_html.pyro
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m \$$std:html\n"
-	@cd src/std/pyro_mods; xxd -i std_mod_html.pyro > std_mod_html.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_html.c -o out/lib/std_mod_html.o
+	@cd src/std/pyro_mods; xxd -i std_mod_html.pyro > ../../../out/build/std_mod_html.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_html.c -o out/build/std_mod_html.o
 
-out/lib/std_mod_cgi.o: src/std/pyro_mods/std_mod_cgi.pyro
-	@mkdir -p out/lib
+out/build/std_mod_cgi.o: src/std/pyro_mods/std_mod_cgi.pyro
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m \$$std:cgi\n"
-	@cd src/std/pyro_mods; xxd -i std_mod_cgi.pyro > std_mod_cgi.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_cgi.c -o out/lib/std_mod_cgi.o
+	@cd src/std/pyro_mods; xxd -i std_mod_cgi.pyro > ../../../out/build/std_mod_cgi.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_cgi.c -o out/build/std_mod_cgi.o
 
-out/lib/std_mod_json.o: src/std/pyro_mods/std_mod_json.pyro
-	@mkdir -p out/lib
+out/build/std_mod_json.o: src/std/pyro_mods/std_mod_json.pyro
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m \$$std:json\n"
-	@cd src/std/pyro_mods; xxd -i std_mod_json.pyro > std_mod_json.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_json.c -o out/lib/std_mod_json.o
+	@cd src/std/pyro_mods; xxd -i std_mod_json.pyro > ../../../out/build/std_mod_json.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_json.c -o out/build/std_mod_json.o
 
-out/lib/std_mod_pretty.o: src/std/pyro_mods/std_mod_pretty.pyro
-	@mkdir -p out/lib
+out/build/std_mod_pretty.o: src/std/pyro_mods/std_mod_pretty.pyro
+	@mkdir -p out/build
 	@printf "\e[1;32mBuilding\e[0m \$$std:pretty\n"
-	@cd src/std/pyro_mods; xxd -i std_mod_pretty.pyro > std_mod_pretty.c
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c src/std/pyro_mods/std_mod_pretty.c -o out/lib/std_mod_pretty.o
+	@cd src/std/pyro_mods; xxd -i std_mod_pretty.pyro > ../../../out/build/std_mod_pretty.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_pretty.c -o out/build/std_mod_pretty.o
 
 # ---------------------- #
 #  Test Compiled Module  #
@@ -152,7 +151,7 @@ out/lib/std_mod_pretty.o: src/std/pyro_mods/std_mod_pretty.pyro
 
 tests/compiled_module.so: tests/compiled_module.c
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.so\n"
-	@${CC} ${CFLAGS} -O3 -D NDEBUG -shared -fPIC -undefineddynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
+	@${CC} ${CFLAGS} -O2 -D NDEBUG -shared -fPIC -undefineddynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
 
 check-compiled-module:
 	@rm -f ./tests/compiled_module.so
