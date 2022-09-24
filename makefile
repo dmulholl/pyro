@@ -44,7 +44,7 @@ debug: ## Builds the debug binary.
 debug: $(OBJ_FILES)
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
-	$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(INPUT)
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(INPUT)
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 debug1: ## Checks assertions, stresses GC.
