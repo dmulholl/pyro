@@ -60,7 +60,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
     vm->modules = NULL;
-    vm->mt64 = NULL;
     vm->next_gc_threshold = PYRO_INIT_GC_THRESHOLD;
     vm->objects = NULL;
     vm->open_upvalues = NULL;
@@ -133,12 +132,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->frame_capacity = PYRO_INITIAL_CALL_FRAME_CAPACITY;
 
     // Initialize the MT64 PRNG.
-    vm->mt64 = pyro_mt64_new();
-    if (!vm->mt64) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-    vm->bytes_allocated += pyro_mt64_size();
+    mt64_init(&vm->mt64);
 
     // We need to initialize these classes before we create any objects.
     vm->class_buf = ObjClass_new(vm);
@@ -282,11 +276,6 @@ void pyro_free_vm(PyroVM* vm) {
 
     FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity);
     FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
-
-    if (vm->mt64) {
-        pyro_mt64_free(vm->mt64);
-        vm->bytes_allocated -= pyro_mt64_size();
-    }
 
     free(vm->stack);
     vm->bytes_allocated -= vm->stack_size;

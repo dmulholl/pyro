@@ -9,33 +9,34 @@
 
 
 static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(pyro_mt64_test());
+    return pyro_make_bool(mt64_test());
 }
 
 
 static void mt64_free_callback(PyroVM* vm, void* pointer) {
-    pyro_mt64_free(pointer);
-    vm->bytes_allocated -= pyro_mt64_size();
+    free(pointer);
+    vm->bytes_allocated -= sizeof(MT64);
 }
 
 
-static Value mt64_init(PyroVM* vm, size_t arg_count, Value* args) {
+static Value mt64_init_method(PyroVM* vm, size_t arg_count, Value* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
-    MT64* mt64 = pyro_mt64_new();
+    MT64* mt64 = malloc(sizeof(MT64));
     if (!mt64) {
         pyro_panic(vm, "$std::mt64::MT4:$init(): out of memory");
         return pyro_make_null();
     }
+    mt64_init(mt64);
 
     ObjResourcePointer* resource = ObjResourcePointer_new(mt64, mt64_free_callback, vm);
     if (!resource) {
-        pyro_mt64_free(mt64);
+        free(mt64);
         pyro_panic(vm, "$std::mt64::MT4:$init(): out of memory");
         return pyro_make_null();
     }
-    vm->bytes_allocated += pyro_mt64_size();
 
+    vm->bytes_allocated += sizeof(MT64);
     instance->fields[0] = pyro_make_obj(resource);
     return pyro_make_obj(instance);
 }
@@ -45,7 +46,7 @@ static Value mt64_seed_with_hash(PyroVM* vm, size_t arg_count, Value* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
-    pyro_mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
+    mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
     return pyro_make_null();
 }
 
@@ -58,16 +59,16 @@ static Value mt64_seed_with_array(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_STR(args[0])) {
         ObjStr* string = AS_STR(args[0]);
         if (string->length < 8) {
-            pyro_mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
+            mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
         } else {
-            pyro_mt64_seed_with_byte_array(mt64, (uint8_t*)string->bytes, string->length);
+            mt64_seed_with_byte_array(mt64, (uint8_t*)string->bytes, string->length);
         }
     } else if (IS_BUF(args[0])) {
         ObjBuf* buf = AS_BUF(args[0]);
         if (buf->count < 8) {
-            pyro_mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
+            mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
         } else {
-            pyro_mt64_seed_with_byte_array(mt64, buf->bytes, buf->count);
+            mt64_seed_with_byte_array(mt64, buf->bytes, buf->count);
         }
     } else {
         pyro_panic(vm, "seed_with_array(): invalid argument, expected a string or buffer");
@@ -80,7 +81,7 @@ static Value mt64_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
-    return pyro_make_f64(pyro_mt64_gen_f64b(mt64));
+    return pyro_make_f64(mt64_gen_f64b(mt64));
 }
 
 
@@ -94,7 +95,7 @@ static Value mt64_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    return pyro_make_i64(pyro_mt64_gen_int(mt64, (uint64_t)args[0].as.i64));
+    return pyro_make_i64(mt64_gen_int(mt64, (uint64_t)args[0].as.i64));
 }
 
 
@@ -113,7 +114,7 @@ static Value mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
     uint64_t delta = (uint64_t)(upper - lower);
 
     // Select a random integer from the range [lower, upper).
-    int64_t rand_int = lower + (int64_t)pyro_mt64_gen_int(mt64, delta);
+    int64_t rand_int = lower + (int64_t)mt64_gen_int(mt64, delta);
     return pyro_make_i64(rand_int);
 }
 
@@ -130,7 +131,7 @@ void pyro_load_std_mod_mt64(PyroVM* vm, ObjModule* module) {
 
     pyro_define_pub_field(vm, mt64_class, "generator", pyro_make_null());
 
-    pyro_define_pri_method(vm, mt64_class, "$init", mt64_init, 0);
+    pyro_define_pri_method(vm, mt64_class, "$init", mt64_init_method, 0);
     pyro_define_pub_method(vm, mt64_class, "seed_with_hash", mt64_seed_with_hash, 1);
     pyro_define_pub_method(vm, mt64_class, "seed_with_array", mt64_seed_with_array, 1);
     pyro_define_pub_method(vm, mt64_class, "rand_int", mt64_rand_int, 1);

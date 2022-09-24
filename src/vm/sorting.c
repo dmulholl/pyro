@@ -22,7 +22,7 @@ static void swap(Value* a, Value* b) {
 // from the remaining unshuffled entries, i.e. for each i we choose j from the interval [i, count).
 void pyro_shuffle(PyroVM* vm, Value* values, size_t count) {
     for (size_t i = 0; i < count; i++) {
-        size_t j = i + pyro_mt64_gen_int(vm->mt64, count - i);
+        size_t j = i + mt64_gen_int(&vm->mt64, count - i);
         swap(&values[i], &values[j]);
     }
 }

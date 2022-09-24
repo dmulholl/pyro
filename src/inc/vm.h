@@ -78,7 +78,7 @@ struct PyroVM {
     size_t stack_size;
 
     // 64-bit Mersenne Twister PRNG.
-    MT64* mt64;
+    MT64 mt64;
 
     // Stores global functions and variables, available in all modules.
     ObjMap* superglobals;

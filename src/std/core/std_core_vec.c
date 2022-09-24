@@ -379,7 +379,7 @@ static Value vec_remove_random(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    size_t index = pyro_mt64_gen_int(vm->mt64, vec->count);
+    size_t index = mt64_gen_int(&vm->mt64, vec->count);
     return ObjVec_remove_at_index(vec, index, vm);
 }
 
@@ -392,7 +392,7 @@ static Value vec_random(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_make_null();
     }
 
-    size_t index = pyro_mt64_gen_int(vm->mt64, vec->count);
+    size_t index = mt64_gen_int(&vm->mt64, vec->count);
     return vec->values[index];
 }
 
