@@ -47,7 +47,7 @@ debug: $(OBJ_FILES)
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(INPUT)
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
-debug1: ## Checks assertions, stresses GC.
+debug1: ## Debug build. Checks assertions, stresses GC.
 	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_1)"
 
 debug2: ## As debug1, also dumps bytecode.
@@ -59,11 +59,20 @@ debug3: ## As debug2, also traces execution.
 debug4: ## As debug3, also logs GC.
 	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_4)"
 
-check: ## Builds the debug binary, then runs the test suite.
-check: tests/compiled_module.so
+check-debug: ## Builds the debug binary, then runs the test suite.
+check-debug: tests/compiled_module.so
 	@make debug
 	@printf "\e[1;32m Running\e[0m test suite\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
+
+check-release: ## Builds the release binary, then runs the test suite.
+check-release: tests/compiled_module.so
+	@make release
+	@printf "\e[1;32m Running\e[0m test suite\n\n"
+	@./out/release/pyro test ./tests/*.pyro
+
+check:
+	@make check-debug
 
 install: ## Builds and installs the release binary.
 	@if [ ! -f ./out/release/pyro ]; then make release; fi
