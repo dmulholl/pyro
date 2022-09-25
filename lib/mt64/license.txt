@@ -1,6 +1,8 @@
 This library is based on the original implementation by the algorithm's
 inventors which was released under the following 3-clause BSD license.
 
+Source: http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/emt.html
+
 Copyright (C) 2004, 2014, Makoto Matsumoto and Takuji Nishimura,
 All rights reserved.
 
