@@ -1,5 +1,8 @@
-import compiled_module;
+import $std::path;
 
-assert $is_mod(compiled_module);
-assert compiled_module::add(1, 2) == 3;
-assert compiled_module::add("foo", "bar") == "foobar";
+if path::exists(path::dirname($filepath) + "/compiled_module.so") {
+    import compiled_module;
+    assert $is_mod(compiled_module);
+    assert compiled_module::add(1, 2) == 3;
+    assert compiled_module::add("foo", "bar") == "foobar";
+}
