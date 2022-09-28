@@ -74,10 +74,14 @@ check-release: tests/compiled_module.so
 check:
 	@make check-debug
 
-install: ## Builds and installs the release binary.
-	@if [ ! -f ./out/release/pyro ]; then make release; fi
-	@if [ -f ./out/release/pyro ]; then printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"; fi
-	@if [ -f ./out/release/pyro ]; then cp ./out/release/pyro /usr/local/bin/pyro; fi
+install: ## Installs the release binary.
+	@if [ -f ./out/release/pyro ]; then \
+		printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"; \
+		cp ./out/release/pyro /usr/local/bin/pyro; \
+	else \
+		printf "\e[1;31m   Error\e[0m out/release/pyro not found\n"; \
+		exit 1; \
+	fi
 
 clean: ## Deletes all build artifacts.
 	rm -rf ./out/*
