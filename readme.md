@@ -16,7 +16,7 @@ def fib(n) {
 See the [documentation][1] for details.
 
 
-## Building Pyro
+## Build Pyro
 
 To build the Pyro binary run:
 
@@ -28,7 +28,7 @@ To install this binary as `/usr/local/bin/pyro` run:
     make install
 
 
-## Test Suite
+## Run Tests
 
 To build the release binary and run the test suite run:
 
