@@ -77,7 +77,11 @@ void mt64_seed_with_u64(MT64* mt, uint64_t seed) {
 void mt64_seed_with_u64_array(MT64* mt, uint64_t array[], size_t array_length) {
     mt64_seed_with_u64(mt, UINT64_C(19650218));
 
-    size_t i = 0;
+    if (array_length == 0) {
+        return;
+    }
+
+    size_t i = 1;
     size_t j = 0;
 
     uint64_t k = (N > array_length ? N : array_length);

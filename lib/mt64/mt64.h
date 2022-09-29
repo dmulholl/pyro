@@ -31,7 +31,7 @@ void mt64_seed_with_u64_array(MT64* mt, uint64_t array[], size_t array_length);
 
 // Seeds/re-seeds the generator's state vector.
 // Uses up to the first [312 * 8] values from the array.
-// The array must contain at least 8 bytes.
+// The array should contain at least 8 bytes.
 void mt64_seed_with_byte_array(MT64* mt, uint8_t array[], size_t array_length);
 
 // Generates a random integer on the closed interval [0, 2^64 - 1].
