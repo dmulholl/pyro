@@ -182,19 +182,19 @@ uint64_t mt64_gen_int(MT64* mt, uint64_t n) {
 
 
 // The divisor is 2^53 - 1.
-double mt64_gen_f64a(MT64* mt) {
+double mt64_gen_f64_cc(MT64* mt) {
     return (mt64_gen_u64(mt) >> 11) * (1.0/9007199254740991.0);
 }
 
 
 // The divisor is 2^53.
-double mt64_gen_f64b(MT64* mt) {
+double mt64_gen_f64_co(MT64* mt) {
     return (mt64_gen_u64(mt) >> 11) * (1.0/9007199254740992.0);
 }
 
 
 // The divisor is 2^52.
-double mt64_gen_f64c(MT64* mt) {
+double mt64_gen_f64_oo(MT64* mt) {
     return ((mt64_gen_u64(mt) >> 12) + 0.5) * (1.0/4503599627370496.0);
 }
 

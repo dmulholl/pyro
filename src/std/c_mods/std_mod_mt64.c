@@ -81,7 +81,7 @@ static Value mt64_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
-    return pyro_make_f64(mt64_gen_f64b(mt64));
+    return pyro_make_f64(mt64_gen_f64_co(mt64));
 }
 
 

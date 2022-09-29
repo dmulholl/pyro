@@ -7,7 +7,7 @@
 
 
 static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_f64(mt64_gen_f64b(&vm->mt64));
+    return pyro_make_f64(mt64_gen_f64_co(&vm->mt64));
 }
 
 

@@ -4,7 +4,9 @@
 // algorithm's inventors, Takuji Nishimura and Makoto Matsumoto, which was released under a
 // 3-clause BSD license.
 //
-// Ref: http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/emt.html (2021-07-08)
+// Ref: http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/emt64.html
+//
+// Version: 1.0.0
 
 #ifndef mt64_h
 #define mt64_h
@@ -34,23 +36,26 @@ void mt64_seed_with_u64_array(MT64* mt, uint64_t array[], size_t array_length);
 // The array should contain at least 8 bytes.
 void mt64_seed_with_byte_array(MT64* mt, uint8_t array[], size_t array_length);
 
-// Generates a random integer on the closed interval [0, 2^64 - 1].
+// Generates a uniformly-distributed random integer on the closed interval [0, 2^64 - 1].
 uint64_t mt64_gen_u64(MT64* mt);
 
-// Generates a random integer on the closed interval [0, 2^63 - 1].
+// Generates a uniformly-distributed random integer on the closed interval [0, 2^63 - 1].
 int64_t mt64_gen_i64(MT64* mt);
 
 // Generates a uniformly-distributed random integer on the half-open interval [0, n).
 uint64_t mt64_gen_int(MT64* mt, uint64_t n);
 
-// Generates a random double on the closed interval [0.0, 1.0] with 53 bits of precision.
-double mt64_gen_f64a(MT64* mt);
+// Generates a uniformly-distributed random double on the closed interval [0.0, 1.0]
+// with 53 bits of precision.
+double mt64_gen_f64_cc(MT64* mt);
 
-// Generates a random double on the half-open interval [0.0, 1.0) with 53 bits of precision.
-double mt64_gen_f64b(MT64* mt);
+// Generates a uniformly-distributed random double on the half-open interval [0.0, 1.0)
+// with 53 bits of precision.
+double mt64_gen_f64_co(MT64* mt);
 
-// Generates a random double on the open interval (0.0, 1.0) with 52 bits of precision.
-double mt64_gen_f64c(MT64* mt);
+// Generates a uniformly-distributed random double on the open interval (0.0, 1.0)
+// with 52 bits of precision.
+double mt64_gen_f64_oo(MT64* mt);
 
 // Generator test: verifies the 1st and 1000th output values for a known seed.
 bool mt64_test(void);
