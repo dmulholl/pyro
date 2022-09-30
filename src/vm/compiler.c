@@ -952,7 +952,7 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
 }
 
 
-static void parse_default_value_expression(Parser* parser) {
+static void parse_default_value_expression(Parser* parser, const char* value_type) {
     if (match(parser, TOKEN_TRUE)) {
         emit_byte(parser, OP_LOAD_TRUE);
     }
@@ -1011,9 +1011,10 @@ static void parse_default_value_expression(Parser* parser) {
 
     else {
         ERROR_AT_NEXT_TOKEN(
-            "unexpected token '%.*s', a default value must be a simple literal",
+            "unexpected token '%.*s', a default %s value must be a simple literal",
             parser->next_token.length,
-            parser->next_token.start
+            parser->next_token.start,
+            value_type
         );
     }
 }
@@ -2089,7 +2090,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
                 ERROR_AT_PREVIOUS_TOKEN("a variadic function cannot have default argument values");
             }
             parser->fn_compiler = fn_compiler.enclosing;
-            parse_default_value_expression(parser);
+            parse_default_value_expression(parser, "argument");
             parser->fn_compiler = &fn_compiler;
             default_value_count += 1;
         }
@@ -2183,7 +2184,7 @@ static void parse_field_declaration(Parser* parser, Access access) {
             if (access == STATIC) {
                 parse_expression(parser, true, true);
             } else {
-                parse_default_value_expression(parser);
+                parse_default_value_expression(parser, "field");
             }
         } else {
             emit_byte(parser, OP_LOAD_NULL);
