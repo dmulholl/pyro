@@ -9,6 +9,7 @@
 * [Examples](@root/examples//)
 * [Roadmap](@root/roadmap//)
 * [FAQ](@root/faq//)
+* [Building Pyro](@root/building//)
 * [Acknowledgements](@root/acknowledgements//)
 * [License](@root/license//)
 * [Github](https://github.com/dmulholl/pyro)

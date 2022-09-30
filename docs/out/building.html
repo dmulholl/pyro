@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro &mdash; Builtin Types</title>
+        <title>Building Pyro</title>
         <link rel="stylesheet" href="assets/fonts.css">
         <link rel="stylesheet" href="assets/graphite.css">
         <link rel="stylesheet" href="assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-builtins node">
+    <body class="node-building node">
         <header class="masthead">
             <h1><a href="index.html">Pyro</a></h1>
             
@@ -48,54 +48,75 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>Builtin Types</h1>
+                <h1>Building Pyro</h1>
+                
+                    <p class="subtitle">Notes for developers.</p>
                 
                 <hr>
             </header>
-            <p>
-Builtin types are part of the language itself &mdash; you don't need to import any libraries to use them.
-</p>
-<ul>
+            <ul class="stx-toc">
 <li>
-<a href="builtins/buffers.html">Byte Buffers</a>
+<a href="#building-pyro">Building Pyro</a>
 </li>
 <li>
-<a href="builtins/characters.html">Characters</a>
-</li>
-<li>
-<a href="builtins/errors.html">Errors</a>
-</li>
-<li>
-<a href="builtins/maps.html">Hash Maps</a>
-</li>
-<li>
-<a href="builtins/files.html">Files</a>
-</li>
-<li>
-<a href="builtins/iterators.html">Iterator Wrappers</a>
-</li>
-<li>
-<a href="builtins/modules.html">Modules</a>
-</li>
-<li>
-<a href="builtins/queues.html">Queues</a>
-</li>
-<li>
-<a href="builtins/sets.html">Sets</a>
-</li>
-<li>
-<a href="builtins/stacks.html">Stacks</a>
-</li>
-<li>
-<a href="builtins/strings.html">Strings</a>
-</li>
-<li>
-<a href="builtins/tuples.html">Tuples</a>
-</li>
-<li>
-<a href="builtins/vectors.html">Vectors</a>
+<a href="#testing-pyro">Testing Pyro</a>
 </li>
 </ul>
+<h3 id="building-pyro">
+Building Pyro
+</h3>
+<p>
+You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
+</p>
+<p>
+First, download the Pyro repository from Github and <code>cd</code> into the <code>pyro</code> directory:
+</p>
+<pre>
+$ git clone https://github.com/dmulholl/pyro.git
+$ cd pyro
+</pre>
+<p>
+To build the release binary run:
+</p>
+<pre>
+$ make release
+</pre>
+<p>
+The release binary will be created in a new <code>out/release</code> directory as <code>out/release/pyro</code>.
+</p>
+<p>
+To build the debug binary run:
+</p>
+<pre>
+$ make debug
+</pre>
+<p>
+The debug binary will be created in a new <code>out/debug</code> directory as <code>out/debug/pyro</code>.
+</p>
+<p>
+The debug binary is (much) slower than the release binary. It enables <code>assert</code> statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
+</p>
+<h3 id="testing-pyro">
+Testing Pyro
+</h3>
+<p>
+To build a new release binary and run the test suite run:
+</p>
+<pre>
+$ make check-release
+</pre>
+<p>
+To build a new debug binary and run the test suite run:
+</p>
+<pre>
+$ make check-debug
+</pre>
+<p>
+Alternatively, you can run the test suite using the <code>test</code> command directly, e.g.
+</p>
+<pre>
+pyro test tests/*.pyro
+</pre>
         </article>
         
     </body>

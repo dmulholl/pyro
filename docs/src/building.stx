@@ -1,0 +1,52 @@
+---
+title: Building Pyro
+subtitle: Notes for developers.
+meta_title: Building Pyro
+---
+
+[wsl]: https://docs.microsoft.com/en-us/windows/wsl/
+
+::: insert toc
+
+
+### Building Pyro
+
+You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
+
+First, download the Pyro repository from Github and `cd` into the `pyro` directory:
+
+::: code
+    $ git clone https://github.com/dmulholl/pyro.git
+    $ cd pyro
+
+To build the release binary run:
+
+::: code
+    $ make release
+
+The release binary will be created in a new `out/release` directory as `out/release/pyro`.
+
+To build the debug binary run:
+
+::: code
+    $ make debug
+
+The debug binary will be created in a new `out/debug` directory as `out/debug/pyro`.
+
+The debug binary is (much) slower than the release binary. It enables `assert` statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
+
+
+### Testing Pyro
+
+To build a new release binary and run the test suite run:
+
+    $ make check-release
+
+To build a new debug binary and run the test suite run:
+
+    $ make check-debug
+
+Alternatively, you can run the test suite using the `test` command directly, e.g.
+
+    pyro test tests/*.pyro
+
