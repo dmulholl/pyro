@@ -4,6 +4,7 @@
 #include "../inc/values.h"
 #include "../inc/objects.h"
 #include "../inc/heap.h"
+#include "../inc/stringify.h"
 
 // POSIX: popen(), pclose()
 #include <stdio.h>
@@ -31,6 +32,9 @@
 
 // POSIX: setenv()
 #include <stdlib.h>
+
+// POSIX: dlopen(), dlsym()
+#include <dlfcn.h>
 
 
 // If [path] is a symlink, stat() returns info about the target of the link.
@@ -409,5 +413,42 @@ bool pyro_exec_shell_cmd(
         close(child_stderr_pipe[0]);
         close(child_stderr_pipe[1]);
         return false;
+    }
+}
+
+
+void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name, ObjModule* module) {
+    void* handle = dlopen(path, RTLD_NOW);
+    if (!handle) {
+        pyro_panic(vm, "failed to load module: %s: %s", path, dlerror());
+        return;
+    }
+
+    typedef bool (*init_func_t)(PyroVM* vm, ObjModule* module);
+    init_func_t init_func;
+
+    char* init_func_name = pyro_sprintf(vm, "pyro_init_mod_%s", mod_name);
+    if (vm->halt_flag) {
+        return;
+    }
+
+    // The contortion on the left is to silence a compiler warning about converting an object
+    // pointer to a function pointer. The conversion is safe and is required by dlsym().
+    *(void**)(&init_func) = dlsym(handle, init_func_name);
+    FREE_ARRAY(vm, char, init_func_name, strlen(init_func_name) + 1);
+    if (!init_func) {
+        pyro_panic(vm, "failed to locate module initialization function: %s: %s", path, dlerror());
+        return;
+    }
+
+    bool okay = init_func(vm, module);
+    if (vm->halt_flag) {
+        return;
+    } else if (vm->memory_allocation_failed) {
+        pyro_panic(vm, "out of memory");
+        return;
+    } else if (!okay) {
+        pyro_panic(vm, "failed to initialize module: %s", path);
+        return;
     }
 }

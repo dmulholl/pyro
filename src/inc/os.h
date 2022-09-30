@@ -79,4 +79,8 @@ bool pyro_exec_shell_cmd(
     int* exit_code
 );
 
+// Attempts to load a dynamic library as a Pyro module. Can panic or set the exit flag.
+// Caller should check [vm->halt_flag] immediately on return.
+void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name, ObjModule* module);
+
 #endif
