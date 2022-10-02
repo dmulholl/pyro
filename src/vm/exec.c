@@ -248,13 +248,15 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 }
 
 
-static ObjModule* get_module(PyroVM* vm, Value* names, size_t name_count) {
+// Attempts to load the module identified by the [names] array. If the module has already been
+// imported, this will return the cached module object. Otherwise, it will attempt to import,
+// execute, and return the module. Note that this function will import ancestor modules along the
+// [names] path if they haven't already been imported, i.e. if the path is 'foo::bar::baz' this
+// function will first import 'foo' then 'foo::bar' then 'foo::bar::baz', returning 'baz'.
+static ObjModule* load_module(PyroVM* vm, Value* names, size_t name_count) {
     ObjMap* supermod_modules_map = vm->modules;
     Value module_value;
 
-    // This loop imports ancestor modules along the path if they haven't already been
-    // imported, i.e. if the path is foo::bar::baz this loop will first import foo then
-    // foo::bar then foo::bar::baz.
     for (uint8_t i = 0; i < name_count; i++) {
         Value name = names[i];
 
@@ -1018,7 +1020,7 @@ static void run(PyroVM* vm) {
                 uint8_t arg_count = READ_BYTE();
                 Value* args = vm->stack_top - arg_count;
 
-                ObjModule* module = get_module(vm, args, arg_count);
+                ObjModule* module = load_module(vm, args, arg_count);
                 if (vm->halt_flag) {
                     break;
                 }
@@ -1033,7 +1035,7 @@ static void run(PyroVM* vm) {
                 Value* args = vm->stack_top - arg_count;
 
                 ObjModule* current_module = frame->closure->module;
-                ObjModule* imported_module = get_module(vm, args, arg_count);
+                ObjModule* imported_module = load_module(vm, args, arg_count);
                 if (vm->halt_flag) {
                     break;
                 }
@@ -1075,7 +1077,7 @@ static void run(PyroVM* vm) {
                 uint8_t member_count = READ_BYTE();
                 Value* args = vm->stack_top - module_count - member_count;
 
-                ObjModule* module = get_module(vm, args, module_count);
+                ObjModule* module = load_module(vm, args, module_count);
                 if (vm->halt_flag) {
                     break;
                 }
