@@ -252,7 +252,8 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 // imported, this will return the cached module object. Otherwise, it will attempt to import,
 // execute, and return the module. Note that this function will import ancestor modules along the
 // [names] path if they haven't already been imported, i.e. if the path is 'foo::bar::baz' this
-// function will first import 'foo' then 'foo::bar' then 'foo::bar::baz', returning 'baz'.
+// function will first import 'foo' then 'foo::bar' then 'foo::bar::baz', returning 'baz'. This
+// function can call into Pyro code and can set the panic or exit flags.
 static ObjModule* load_module(PyroVM* vm, Value* names, size_t name_count) {
     ObjMap* supermod_modules_map = vm->modules;
     Value module_value;
