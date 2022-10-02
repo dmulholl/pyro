@@ -230,6 +230,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
             break;
 
         case 'w':
+            if (check_keyword(lexer, "with")) return TOKEN_WITH;
             if (check_keyword(lexer, "while")) return TOKEN_WHILE;
             break;
     }

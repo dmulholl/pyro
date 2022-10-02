@@ -2050,6 +2050,31 @@ static void parse_while_stmt(Parser* parser) {
 }
 
 
+static void parse_with_stmt(Parser* parser) {
+    if (!consume(parser, TOKEN_IDENTIFIER, "expected a variable name after 'with'")) {
+        return;
+    }
+    Token variable_name = parser->previous_token;
+
+    if (match(parser, TOKEN_COLON)) {
+        parse_type(parser);
+    }
+
+    if (!consume(parser, TOKEN_EQUAL, "expected '=' after variable name in 'with' statement")) {
+        return;
+    }
+
+    parse_expression(parser, true, true);
+    consume(parser, TOKEN_LEFT_BRACE, "expected '{' before 'with' statement body");
+
+    begin_scope(parser);
+    add_local(parser, variable_name);
+    mark_initialized(parser);
+    parse_block(parser);
+    end_scope(parser);
+}
+
+
 // This helper parses a function definition, i.e. the bit after the name that looks like (...){...}.
 // It emits the bytecode to create an ObjClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
@@ -2407,6 +2432,8 @@ static void parse_statement(Parser* parser) {
             parse_import_stmt(parser);
         } else if (match(parser, TOKEN_TYPEDEF)) {
             parse_typedef_stmt(parser);
+        } else if (match(parser, TOKEN_WITH)) {
+            parse_with_stmt(parser);
         } else {
             parse_expression_stmt(parser);
             parser->num_expression_statements++;

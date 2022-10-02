@@ -38,6 +38,7 @@ The following keywords are reserved for future use:
 * `await`
 * `case`
 * `catch`
+* `defer`
 * `enum`
 * `let`
 * `match`

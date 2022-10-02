@@ -58,7 +58,7 @@ typedef enum {
     TOKEN_SELF, TOKEN_STATIC, TOKEN_SUPER,
     TOKEN_TRUE, TOKEN_TRY, TOKEN_TYPEDEF,
     TOKEN_VAR,
-    TOKEN_WHILE,
+    TOKEN_WITH, TOKEN_WHILE,
 
     // Synthetic tokens.
     TOKEN_EOF,

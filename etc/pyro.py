@@ -27,7 +27,7 @@ class PyroLexer(RegexLexer):
             (r'(>>>|[.]{3})', Comment.Preproc),
 
             (r'(import|as)\b', Keyword.Namespace),
-            (r'(var|def|class|typedef|pub|pri|static)\b', Keyword.Declaration),
+            (r'(var|def|class|typedef|pub|pri|static|with)\b', Keyword.Declaration),
 
             (words((
                 'if', 'else', 'for', 'in', 'loop', 'while',
