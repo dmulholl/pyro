@@ -268,7 +268,7 @@ static void run(PyroVM* vm) {
 
     for (;;) {
         if (vm->halt_flag) {
-            return;
+            break;
         }
 
         // The last instruction may have changed the frame count or (this can lead to nasty bugs)
@@ -278,13 +278,13 @@ static void run(PyroVM* vm) {
         #ifdef PYRO_DEBUG_STRESS_GC
             pyro_collect_garbage(vm);
             if (vm->halt_flag) {
-                return;
+                break;
             }
         #else
             if (vm->bytes_allocated > vm->next_gc_threshold) {
                 pyro_collect_garbage(vm);
                 if (vm->halt_flag) {
-                    return;
+                    break;
                 }
             }
         #endif
@@ -626,7 +626,7 @@ static void run(PyroVM* vm) {
                     Value value = vm->stack_top[-i];
                     ObjStr* string = pyro_stringify_value(vm, value);
                     if (vm->halt_flag) {
-                        return;
+                        break;
                     }
                     int64_t n = pyro_stdout_write_f(vm, i > 1 ? "%s " : "%s\n", string->bytes);
                     if (n == -1) {
@@ -891,7 +891,7 @@ static void run(PyroVM* vm) {
                 ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, receiver, AS_OBJ(method));
                 if (!bound_method) {
                     pyro_panic(vm, "out of memory");
-                    return;
+                    break;
                 }
 
                 // Pop the receiver and replace it with the bound method.
@@ -995,21 +995,21 @@ static void run(PyroVM* vm) {
                     ObjModule* module_object = ObjModule_new(vm);
                     if (!module_object) {
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
                     module_value = pyro_make_obj(module_object);
 
                     pyro_push(vm, module_value);
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
                     pyro_pop(vm); // module_value
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
                         ObjMap_remove(supermod_modules_map, name, vm);
-                        return;
+                        break;
                     }
 
                     supermod_modules_map = module_object->submodules;
@@ -1038,22 +1038,26 @@ static void run(PyroVM* vm) {
                     ObjModule* module_object = ObjModule_new(vm);
                     if (!module_object) {
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
                     module_value = pyro_make_obj(module_object);
 
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
                         ObjMap_remove(supermod_modules_map, name, vm);
-                        return;
+                        break;
                     }
 
                     supermod_modules_map = module_object->submodules;
+                }
+
+                if (vm->halt_flag) {
+                    break;
                 }
 
                 ObjModule* current_module = frame->closure->module;
@@ -1071,19 +1075,19 @@ static void run(PyroVM* vm) {
 
                     if (ObjMap_contains(current_module->all_member_indexes, member_name, vm)) {
                         pyro_panic(vm, "the global variable '%s' already exists", AS_STR(member_name)->bytes);
-                        return;
+                        break;
                     }
 
                     size_t member_index_in_current_module = current_module->members->count;
                     if (!ObjVec_append(current_module->members, value, vm)) {
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
 
                     if (ObjMap_set(current_module->all_member_indexes, member_name, pyro_make_i64(member_index_in_current_module), vm) == 0) {
                         current_module->members->count--;
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
                 }
 
@@ -1110,24 +1114,28 @@ static void run(PyroVM* vm) {
                     ObjModule* module_object = ObjModule_new(vm);
                     if (!module_object) {
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
                     module_value = pyro_make_obj(module_object);
 
                     pyro_push(vm, module_value);
                     if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
                     pyro_pop(vm); // module_value
 
                     pyro_import_module(vm, i + 1, args, module_object);
                     if (vm->halt_flag) {
                         ObjMap_remove(supermod_modules_map, name, vm);
-                        return;
+                        break;
                     }
 
                     supermod_modules_map = module_object->submodules;
+                }
+
+                if (vm->halt_flag) {
+                    break;
                 }
 
                 ObjModule* module = AS_MOD(module_value);
@@ -1136,11 +1144,8 @@ static void run(PyroVM* vm) {
                     Value name = args[module_count + i];
                     Value member_index;
                     if (!ObjMap_get(module->all_member_indexes, name, &member_index, vm)) {
-                        pyro_panic(
-                            vm,
-                            "member '%s' not found in module", AS_STR(name)->bytes
-                        );
-                        return;
+                        pyro_panic(vm, "module has no member '%s'", AS_STR(name)->bytes);
+                        break;
                     }
                     args[i] = module->members->values[member_index.as.i64];
                 }
@@ -1776,7 +1781,7 @@ static void run(PyroVM* vm) {
                 if (vm->in_repl && !IS_NULL(value)) {
                     ObjStr* string = pyro_debugify_value(vm, value);
                     if (vm->halt_flag) {
-                        return;
+                        break;
                     }
                     pyro_stdout_write_f(vm, "%s\n", string->bytes);
                 }
@@ -1951,7 +1956,7 @@ static void run(PyroVM* vm) {
                 vm->try_depth--;
 
                 if (vm->exit_flag || vm->hard_panic) {
-                    return;
+                    break;
                 }
 
                 if (vm->panic_flag) {
@@ -1968,19 +1973,19 @@ static void run(PyroVM* vm) {
                     if (!err_str) {
                         vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
                     if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
                         vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
 
                     ObjErr* err = ObjErr_new(vm);
                     if (!err) {
                         vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
-                        return;
+                        break;
                     }
 
                     err->message = err_str;
@@ -1991,17 +1996,17 @@ static void run(PyroVM* vm) {
                         if (!source_key || !line_key) {
                             vm->hard_panic = true;
                             pyro_panic(vm, "out of memory");
-                            return;
+                            break;
                         }
                         if (ObjMap_set(err->details, pyro_make_obj(source_key), pyro_make_obj(vm->panic_source_id), vm) == 0) {
                             vm->hard_panic = true;
                             pyro_panic(vm, "out of memory");
-                            return;
+                            break;
                         }
                         if (ObjMap_set(err->details, pyro_make_obj(line_key), pyro_make_i64(vm->panic_line_number), vm) == 0) {
                             vm->hard_panic = true;
                             pyro_panic(vm, "out of memory");
-                            return;
+                            break;
                         }
                     }
 
