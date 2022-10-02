@@ -248,6 +248,46 @@ static void close_upvalues(PyroVM* vm, Value* addr) {
 }
 
 
+static ObjModule* get_module(PyroVM* vm, Value* names, size_t name_count) {
+    ObjMap* supermod_modules_map = vm->modules;
+    Value module_value;
+
+    // This loop imports ancestor modules along the path if they haven't already been
+    // imported, i.e. if the path is foo::bar::baz this loop will first import foo then
+    // foo::bar then foo::bar::baz.
+    for (uint8_t i = 0; i < name_count; i++) {
+        Value name = names[i];
+
+        if (ObjMap_get(supermod_modules_map, name, &module_value, vm)) {
+            supermod_modules_map = AS_MOD(module_value)->submodules;
+            continue;
+        }
+
+        ObjModule* module_object = ObjModule_new(vm);
+        if (!module_object) {
+            pyro_panic(vm, "out of memory");
+            return NULL;
+        }
+
+        module_value = pyro_make_obj(module_object);
+        if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
+            pyro_panic(vm, "out of memory");
+            return NULL;
+        }
+
+        pyro_import_module(vm, i + 1, names, module_object);
+        if (vm->halt_flag) {
+            ObjMap_remove(supermod_modules_map, name, vm);
+            return NULL;
+        }
+
+        supermod_modules_map = module_object->submodules;
+    }
+
+    return AS_MOD(module_value);
+}
+
+
 static void run(PyroVM* vm) {
     size_t frame_count_on_entry = vm->frame_count;
     assert(frame_count_on_entry >= 1);
@@ -973,95 +1013,30 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // The import path is stored on the stack as an array of [arg_count] strings.
             case OP_IMPORT_MODULE: {
-                // The import path is stored on the stack as an array of [arg_count] strings.
                 uint8_t arg_count = READ_BYTE();
                 Value* args = vm->stack_top - arg_count;
 
-                ObjMap* supermod_modules_map = vm->modules;
-                Value module_value;
-
-                // This loop imports ancestor modules along the path if they haven't already been
-                // imported, i.e. if the path is foo::bar::baz this loop will first import foo then
-                // foo::bar then foo::bar::baz.
-                for (uint8_t i = 0; i < arg_count; i++) {
-                    Value name = args[i];
-
-                    if (ObjMap_get(supermod_modules_map, name, &module_value, vm)) {
-                        supermod_modules_map = AS_MOD(module_value)->submodules;
-                        continue;
-                    }
-
-                    ObjModule* module_object = ObjModule_new(vm);
-                    if (!module_object) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                    module_value = pyro_make_obj(module_object);
-
-                    pyro_push(vm, module_value);
-                    if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                    pyro_pop(vm); // module_value
-
-                    pyro_import_module(vm, i + 1, args, module_object);
-                    if (vm->halt_flag) {
-                        ObjMap_remove(supermod_modules_map, name, vm);
-                        break;
-                    }
-
-                    supermod_modules_map = module_object->submodules;
-                }
-
-                vm->stack_top -= arg_count;
-                pyro_push(vm, module_value);
-                break;
-            }
-
-            case OP_IMPORT_ALL_MEMBERS: {
-                uint8_t module_count = READ_BYTE();
-                Value* args = vm->stack_top - module_count;
-
-                ObjMap* supermod_modules_map = vm->modules;
-                Value module_value;
-
-                for (uint8_t i = 0; i < module_count; i++) {
-                    Value name = args[i];
-
-                    if (ObjMap_get(supermod_modules_map, name, &module_value, vm)) {
-                        supermod_modules_map = AS_MOD(module_value)->submodules;
-                        continue;
-                    }
-
-                    ObjModule* module_object = ObjModule_new(vm);
-                    if (!module_object) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                    module_value = pyro_make_obj(module_object);
-
-                    if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-
-                    pyro_import_module(vm, i + 1, args, module_object);
-                    if (vm->halt_flag) {
-                        ObjMap_remove(supermod_modules_map, name, vm);
-                        break;
-                    }
-
-                    supermod_modules_map = module_object->submodules;
-                }
-
+                ObjModule* module = get_module(vm, args, arg_count);
                 if (vm->halt_flag) {
                     break;
                 }
 
+                vm->stack_top -= arg_count;
+                pyro_push(vm, pyro_make_obj(module));
+                break;
+            }
+
+            case OP_IMPORT_ALL_MEMBERS: {
+                uint8_t arg_count = READ_BYTE();
+                Value* args = vm->stack_top - arg_count;
+
                 ObjModule* current_module = frame->closure->module;
-                ObjModule* imported_module = AS_MOD(module_value);
+                ObjModule* imported_module = get_module(vm, args, arg_count);
+                if (vm->halt_flag) {
+                    break;
+                }
 
                 for (size_t i = 0; i < imported_module->pub_member_indexes->entry_array_count; i++) {
                     MapEntry* entry = &imported_module->pub_member_indexes->entry_array[i];
@@ -1091,7 +1066,7 @@ static void run(PyroVM* vm) {
                     }
                 }
 
-                vm->stack_top -= module_count;
+                vm->stack_top -= arg_count;
                 break;
             }
 
@@ -1100,45 +1075,10 @@ static void run(PyroVM* vm) {
                 uint8_t member_count = READ_BYTE();
                 Value* args = vm->stack_top - module_count - member_count;
 
-                ObjMap* supermod_modules_map = vm->modules;
-                Value module_value;
-
-                for (uint8_t i = 0; i < module_count; i++) {
-                    Value name = args[i];
-
-                    if (ObjMap_get(supermod_modules_map, name, &module_value, vm)) {
-                        supermod_modules_map = AS_MOD(module_value)->submodules;
-                        continue;
-                    }
-
-                    ObjModule* module_object = ObjModule_new(vm);
-                    if (!module_object) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                    module_value = pyro_make_obj(module_object);
-
-                    pyro_push(vm, module_value);
-                    if (ObjMap_set(supermod_modules_map, name, module_value, vm) == 0) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                    pyro_pop(vm); // module_value
-
-                    pyro_import_module(vm, i + 1, args, module_object);
-                    if (vm->halt_flag) {
-                        ObjMap_remove(supermod_modules_map, name, vm);
-                        break;
-                    }
-
-                    supermod_modules_map = module_object->submodules;
-                }
-
+                ObjModule* module = get_module(vm, args, module_count);
                 if (vm->halt_flag) {
                     break;
                 }
-
-                ObjModule* module = AS_MOD(module_value);
 
                 for (uint8_t i = 0; i < member_count; i++) {
                     Value name = args[module_count + i];
