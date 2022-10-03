@@ -1058,6 +1058,8 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_UNARY_MINUS:
         case OP_UNARY_PLUS:
         case OP_UNARY_TILDE:
+        case OP_START_WITH:
+        case OP_END_WITH:
             return 0;
 
         case OP_CALL:

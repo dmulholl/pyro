@@ -2065,13 +2065,14 @@ static void parse_with_stmt(Parser* parser) {
     }
 
     parse_expression(parser, true, true);
+    emit_byte(parser, OP_START_WITH);
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before 'with' statement body");
-
     begin_scope(parser);
     add_local(parser, variable_name);
     mark_initialized(parser);
     parse_block(parser);
     end_scope(parser);
+    emit_byte(parser, OP_END_WITH);
 }
 
 

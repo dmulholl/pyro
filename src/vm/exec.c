@@ -1997,6 +1997,14 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_START_WITH: {
+                break;
+            }
+
+            case OP_END_WITH: {
+                break;
+            }
+
             default:
                 vm->hard_panic = true;
                 pyro_panic(vm, "invalid opcode");
