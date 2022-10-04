@@ -310,7 +310,7 @@ static void run(PyroVM* vm) {
     #define READ_STRING() AS_STR(READ_CONSTANT())
 
     for (;;) {
-        if (vm->halt_flag) {
+        if (vm->halt_flag || vm->frame_count < frame_count_on_entry) {
             break;
         }
 
@@ -1756,10 +1756,6 @@ static void run(PyroVM* vm) {
                 pyro_push(vm, result);
 
                 vm->frame_count--;
-                if (vm->frame_count < frame_count_on_entry) {
-                    return;
-                }
-
                 break;
             }
 
