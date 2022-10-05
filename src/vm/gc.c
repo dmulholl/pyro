@@ -23,20 +23,20 @@ static void mark_object(PyroVM* vm, Obj* object) {
         );
     #endif
 
-    if (vm->grey_count == vm->grey_capacity) {
-        size_t new_capacity = GROW_CAPACITY(vm->grey_capacity);
-        Obj** new_array = REALLOCATE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity, new_capacity);
+    if (vm->grey_stack_count == vm->grey_stack_capacity) {
+        size_t new_capacity = GROW_CAPACITY(vm->grey_stack_capacity);
+        Obj** new_array = REALLOCATE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
         if (!new_array) {
             vm->hard_panic = true;
             pyro_panic(vm, "garbage collector: out of memory");
             return;
         }
-        vm->grey_capacity = new_capacity;
+        vm->grey_stack_capacity = new_capacity;
         vm->grey_stack = new_array;
     }
 
     object->is_marked = true;
-    vm->grey_stack[vm->grey_count++] = object;
+    vm->grey_stack[vm->grey_stack_count++] = object;
 }
 
 
@@ -146,6 +146,11 @@ static void mark_roots(PyroVM* vm) {
     // The VM's linked-list of open upvalues.
     for (ObjUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
         mark_object(vm, (Obj*)upvalue);
+    }
+
+    // Values on the 'with' stack with pending $end_with() method calls.
+    for (size_t i = 0; i < vm->with_stack_count; i++) {
+        mark_value(vm, vm->with_stack[i]);
     }
 }
 
@@ -320,8 +325,8 @@ static void blacken_object(PyroVM* vm, Obj* object) {
 
 
 static void trace_references(PyroVM* vm) {
-    while (vm->grey_count > 0) {
-        Obj* object = vm->grey_stack[--vm->grey_count];
+    while (vm->grey_stack_count > 0) {
+        Obj* object = vm->grey_stack[--vm->grey_stack_count];
         blacken_object(vm, object);
     }
 }
