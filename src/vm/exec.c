@@ -291,6 +291,39 @@ static ObjModule* load_module(PyroVM* vm, Value* names, size_t name_count) {
 }
 
 
+void call_end_with_method(PyroVM* vm, Value receiver) {
+    Value method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
+    if (IS_NULL(method)) {
+        return;
+    }
+
+    if (!pyro_push(vm, receiver)) {
+        vm->hard_panic = true;
+        return;
+    }
+
+    bool stashed_halt_flag = vm->halt_flag;
+    bool stashed_exit_flag = vm->exit_flag;
+    bool stashed_panic_flag = vm->panic_flag;
+
+    vm->halt_flag = false;
+    vm->exit_flag = false;
+    vm->panic_flag = false;
+
+    pyro_call_method(vm, method, 0);
+    if (vm->halt_flag) {
+        if (vm->panic_flag) {
+            vm->hard_panic = true;
+        }
+        return;
+    }
+
+    vm->halt_flag = stashed_halt_flag;
+    vm->exit_flag = stashed_exit_flag;
+    vm->panic_flag = stashed_panic_flag;
+}
+
+
 static void run(PyroVM* vm) {
     size_t frame_count_on_entry = vm->frame_count;
     assert(frame_count_on_entry >= 1);
@@ -1994,10 +2027,25 @@ static void run(PyroVM* vm) {
             }
 
             case OP_START_WITH: {
+                if (vm->with_stack_count == vm->with_stack_capacity) {
+                    size_t new_capacity = GROW_CAPACITY(vm->with_stack_capacity);
+                    Value* new_array = REALLOCATE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity, new_capacity);
+                    if (!new_array) {
+                        vm->hard_panic = true;
+                        pyro_panic(vm, "out of memory, unable to allocate 'with' stack");
+                        break;
+                    }
+                    vm->with_stack_capacity = new_capacity;
+                    vm->with_stack = new_array;
+                }
+                vm->with_stack[vm->with_stack_count++] = pyro_peek(vm, 0);
                 break;
             }
 
             case OP_END_WITH: {
+                Value receiver = vm->with_stack[vm->with_stack_count - 1];
+                call_end_with_method(vm, receiver);
+                vm->with_stack_count--;
                 break;
             }
 

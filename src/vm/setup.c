@@ -125,6 +125,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->with_stack = NULL;
     vm->with_stack_count = 0;
     vm->with_stack_capacity = 0;
+    vm->str_dollar_end_with = NULL;
 
     // Initialize the [frames] stack.
     vm->frames = ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
@@ -225,6 +226,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_module = ObjStr_new("module", vm);
     vm->str_tup = ObjStr_new("tup", vm);
     vm->str_err = ObjStr_new("err", vm);
+    vm->str_dollar_end_with = ObjStr_new("$end_with", vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

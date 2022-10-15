@@ -162,6 +162,7 @@ struct PyroVM {
     ObjStr* str_module;
     ObjStr* str_tup;
     ObjStr* str_err;
+    ObjStr* str_dollar_end_with;
 
     // The grey stack used by the garbage collector.
     Obj** grey_stack;

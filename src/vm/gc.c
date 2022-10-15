@@ -125,6 +125,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->str_module);
     mark_object(vm, (Obj*)vm->str_tup);
     mark_object(vm, (Obj*)vm->str_err);
+    mark_object(vm, (Obj*)vm->str_dollar_end_with);
 
     // Other object fields.
     mark_object(vm, (Obj*)vm->superglobals);
