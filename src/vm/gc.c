@@ -7,8 +7,8 @@
 
 
 // Marks an object as reachable. This sets the object's [is_marked] flag and pushes it onto the
-// grey stack. This function will hard panic if an attempt to (re)allocate memory for the grey
-// stack fails.
+// grey stack. This function will set the panic flag BUT NOT call pyro_panic() if an attempt to
+// allocate memory for the grey stack fails.
 static void mark_object(PyroVM* vm, Obj* object) {
     if (object == NULL || object->is_marked || vm->panic_flag) {
         return;
@@ -27,8 +27,7 @@ static void mark_object(PyroVM* vm, Obj* object) {
         size_t new_capacity = GROW_CAPACITY(vm->grey_stack_capacity);
         Obj** new_array = REALLOCATE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
         if (!new_array) {
-            vm->hard_panic = true;
-            pyro_panic(vm, "garbage collector: out of memory");
+            vm->panic_flag = true;
             return;
         }
         vm->grey_stack_capacity = new_capacity;
@@ -329,6 +328,9 @@ static void trace_references(PyroVM* vm) {
     while (vm->grey_stack_count > 0) {
         Obj* object = vm->grey_stack[--vm->grey_stack_count];
         blacken_object(vm, object);
+        if (vm->panic_flag) {
+            return;
+        }
     }
 }
 
@@ -356,7 +358,18 @@ static void sweep(PyroVM* vm) {
 }
 
 
+static void undo_mark_objects(PyroVM* vm) {
+    Obj* obj = vm->objects;
+    while (obj != NULL) {
+        obj->is_marked = false;
+        obj = obj->next;
+    }
+}
+
+
 void pyro_collect_garbage(PyroVM* vm) {
+    assert(vm->grey_stack_count == 0);
+
     if (vm->gc_disallows > 0 || vm->panic_flag) {
         return;
     }
@@ -366,17 +379,39 @@ void pyro_collect_garbage(PyroVM* vm) {
         size_t initial_bytes_allocated = vm->bytes_allocated;
     #endif
 
+    // If we make it to here, we're not in a panic state.
+    // - Attempt to mark every root object as reachable -- i.e. set the object's [is_marked] flag
+    //   and push it onto the grey stack.
+    // - This call can only fail (and set the panic flag) if an attempt to allocate memory for the
+    //   grey stack fails.
     mark_roots(vm);
     if (vm->panic_flag) {
+        vm->grey_stack_count = 0;
+        undo_mark_objects(vm);
+        pyro_panic(vm, "out of memory: failed to allocate memory for the garbage collector");
         return;
     }
 
+    // If we make it to here, we're not in a panic state.
+    // - Attempt to mark every object reachable from the root objects as reachable -- i.e. set the
+    //   object's [is_marked] flag.
+    // - This call can only fail (and set the panic flag) if an attempt to allocate memory for the
+    //   grey stack fails.
     trace_references(vm);
     if (vm->panic_flag) {
+        vm->grey_stack_count = 0;
+        undo_mark_objects(vm);
+        pyro_panic(vm, "out of memory: failed to allocate memory for the garbage collector");
         return;
     }
 
+    // If we make it to here, we've marked every reachable object as [is_marked] without panicking.
+    assert(vm->grey_stack_count == 0);
+
+    // Free every non-reachable object, i.e. every objeect with [is_marked == false].
     sweep(vm);
+
+    // Update the GC threshold.
     vm->next_gc_threshold = vm->bytes_allocated * PYRO_GC_HEAP_GROW_FACTOR;
 
     #ifdef PYRO_DEBUG_LOG_GC
