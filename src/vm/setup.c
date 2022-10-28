@@ -53,7 +53,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->grey_stack_count = 0;
     vm->grey_stack = NULL;
     vm->halt_flag = false;
-    vm->hard_panic = false;
     vm->import_roots = NULL;
     vm->in_repl = false;
     vm->main_module = NULL;
@@ -577,11 +576,6 @@ bool pyro_get_exit_flag(PyroVM* vm) {
 
 bool pyro_get_panic_flag(PyroVM* vm) {
     return vm->panic_flag;
-}
-
-
-bool pyro_get_hard_panic_flag(PyroVM* vm) {
-    return vm->hard_panic;
 }
 
 

@@ -72,9 +72,9 @@ void pyro_panic(PyroVM* vm, const char* format_string, ...) {
         vm->panic_line_number = line_number;
     }
 
-    // If we're inside a try expression and the panic is catchable, write the error message to the
-    // panic buffer so it can be returned by the try expression.
-    if (vm->try_depth > 0 && !vm->hard_panic) {
+    // If we're inside a try expression, write the error message to the panic buffer so it can be
+    // returned by the try expression.
+    if (vm->try_depth > 0) {
         va_list args;
         va_start(args, format_string);
 
@@ -142,9 +142,9 @@ void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, co
         vm->panic_source_id = vm->empty_string;
     }
 
-    // If we're inside a try expression and the panic is catchable, write the error message to the
-    // panic buffer so it can be returned by the try expression.
-    if (vm->try_depth > 0 && !vm->hard_panic) {
+    // If we're inside a try expression, write the error message to the panic buffer so it can be
+    // returned by the try expression.
+    if (vm->try_depth > 0) {
         va_list args;
         va_start(args, format_string);
         ObjBuf_best_effort_write_fv(vm->panic_buffer, vm, format_string, args);

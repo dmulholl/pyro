@@ -292,35 +292,35 @@ static ObjModule* load_module(PyroVM* vm, Value* names, size_t name_count) {
 
 
 void call_end_with_method(PyroVM* vm, Value receiver) {
-    Value method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
-    if (IS_NULL(method)) {
-        return;
-    }
+    /* Value method = pyro_get_method(vm, receiver, vm->str_dollar_end_with); */
+    /* if (IS_NULL(method)) { */
+    /*     return; */
+    /* } */
 
-    if (!pyro_push(vm, receiver)) {
-        vm->hard_panic = true;
-        return;
-    }
+    /* if (!pyro_push(vm, receiver)) { */
+    /*     vm->hard_panic = true; */
+    /*     return; */
+    /* } */
 
-    bool stashed_halt_flag = vm->halt_flag;
-    bool stashed_exit_flag = vm->exit_flag;
-    bool stashed_panic_flag = vm->panic_flag;
+    /* bool stashed_halt_flag = vm->halt_flag; */
+    /* bool stashed_exit_flag = vm->exit_flag; */
+    /* bool stashed_panic_flag = vm->panic_flag; */
 
-    vm->halt_flag = false;
-    vm->exit_flag = false;
-    vm->panic_flag = false;
+    /* vm->halt_flag = false; */
+    /* vm->exit_flag = false; */
+    /* vm->panic_flag = false; */
 
-    pyro_call_method(vm, method, 0);
-    if (vm->halt_flag) {
-        if (vm->panic_flag) {
-            vm->hard_panic = true;
-        }
-        return;
-    }
+    /* pyro_call_method(vm, method, 0); */
+    /* if (vm->halt_flag) { */
+    /*     if (vm->panic_flag) { */
+    /*         vm->hard_panic = true; */
+    /*     } */
+    /*     return; */
+    /* } */
 
-    vm->halt_flag = stashed_halt_flag;
-    vm->exit_flag = stashed_exit_flag;
-    vm->panic_flag = stashed_panic_flag;
+    /* vm->halt_flag = stashed_halt_flag; */
+    /* vm->exit_flag = stashed_exit_flag; */
+    /* vm->panic_flag = stashed_panic_flag; */
 }
 
 
@@ -1927,12 +1927,11 @@ static void run(PyroVM* vm) {
                 run(vm);
                 vm->try_depth--;
 
-                if (vm->exit_flag || vm->hard_panic) {
+                if (vm->exit_flag) {
                     break;
                 }
 
                 if (vm->panic_flag) {
-                    // Reset the VM.
                     vm->panic_flag = false;
                     vm->halt_flag = false;
                     vm->exit_code = 0;
@@ -1943,40 +1942,35 @@ static void run(PyroVM* vm) {
 
                     ObjStr* err_str = ObjBuf_to_str(vm->panic_buffer, vm);
                     if (!err_str) {
-                        vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
                     if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
-                        vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
 
                     ObjErr* err = ObjErr_new(vm);
                     if (!err) {
-                        vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
 
                     err->message = err_str;
 
+                    // TODO: can these strings.
                     if (vm->panic_source_id) {
                         ObjStr* source_key = ObjStr_new("source", vm);
-                        ObjStr* line_key = ObjStr_new("line_number", vm);
+                        ObjStr* line_key = ObjStr_new("line", vm);
                         if (!source_key || !line_key) {
-                            vm->hard_panic = true;
                             pyro_panic(vm, "out of memory");
                             break;
                         }
                         if (ObjMap_set(err->details, pyro_make_obj(source_key), pyro_make_obj(vm->panic_source_id), vm) == 0) {
-                            vm->hard_panic = true;
                             pyro_panic(vm, "out of memory");
                             break;
                         }
                         if (ObjMap_set(err->details, pyro_make_obj(line_key), pyro_make_i64(vm->panic_line_number), vm) == 0) {
-                            vm->hard_panic = true;
                             pyro_panic(vm, "out of memory");
                             break;
                         }
@@ -2031,8 +2025,7 @@ static void run(PyroVM* vm) {
                     size_t new_capacity = GROW_CAPACITY(vm->with_stack_capacity);
                     Value* new_array = REALLOCATE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity, new_capacity);
                     if (!new_array) {
-                        vm->hard_panic = true;
-                        pyro_panic(vm, "out of memory, unable to allocate 'with' stack");
+                        pyro_panic(vm, "out of memory: failed to allocate memory for the 'with' stack");
                         break;
                     }
                     vm->with_stack_capacity = new_capacity;
@@ -2050,7 +2043,6 @@ static void run(PyroVM* vm) {
             }
 
             default:
-                vm->hard_panic = true;
                 pyro_panic(vm, "invalid opcode");
                 break;
         }
@@ -2066,9 +2058,8 @@ static void run(PyroVM* vm) {
 void pyro_reset_vm(PyroVM* vm) {
     vm->memory_allocation_failed = false;
     vm->halt_flag = false;
-    vm->exit_flag = false;
     vm->panic_flag = false;
-    vm->hard_panic = false;
+    vm->exit_flag = false;
     vm->exit_code = 0;
     vm->stack_top = vm->stack;
     vm->frame_count = 0;

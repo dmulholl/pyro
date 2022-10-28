@@ -40,9 +40,6 @@ struct PyroVM {
     // Signals that a panic has occurred.
     bool panic_flag;
 
-    // Signals that the panic is unrecoverable, i.e. cannot be caught by a try expression.
-    bool hard_panic;
-
     // Exit signal, set by the $exit() function.
     bool exit_flag;
 
