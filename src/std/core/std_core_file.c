@@ -78,6 +78,18 @@ static Value file_close(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value file_end_with(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjFile* file = AS_FILE(args[-1]);
+
+    if (file->stream) {
+        fclose(file->stream);
+        file->stream = NULL;
+    }
+
+    return pyro_make_null();
+}
+
+
 static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
     ObjFile* file = AS_FILE(args[-1]);
 
@@ -354,4 +366,5 @@ void pyro_load_std_core_file(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_file, "write", file_write, -1);
     pyro_define_pub_method(vm, vm->class_file, "write_byte", file_write_byte, 1);
     pyro_define_pub_method(vm, vm->class_file, "lines", file_lines, 0);
+    pyro_define_pri_method(vm, vm->class_file, "$end_with", file_end_with, 0);
 }
