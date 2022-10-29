@@ -1932,16 +1932,17 @@ static void run(PyroVM* vm) {
                 }
 
                 if (vm->panic_flag) {
-                    vm->panic_flag = false;
                     vm->halt_flag = false;
+                    vm->panic_flag = false;
+                    vm->panic_count = 0;
                     vm->exit_code = 0;
                     vm->memory_allocation_failed = false;
                     vm->stack_top = stashed_stack_top - 1;
                     close_upvalues(vm, stashed_stack_top);
                     vm->frame_count = stashed_frame_count;
 
-                    ObjStr* err_str = ObjBuf_to_str(vm->panic_buffer, vm);
-                    if (!err_str) {
+                    ObjStr* error_message = ObjBuf_to_str(vm->panic_buffer, vm);
+                    if (!error_message) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
@@ -1955,27 +1956,7 @@ static void run(PyroVM* vm) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
-
-                    err->message = err_str;
-
-                    // TODO: can these strings.
-                    if (vm->panic_source_id) {
-                        ObjStr* source_key = ObjStr_new("source", vm);
-                        ObjStr* line_key = ObjStr_new("line", vm);
-                        if (!source_key || !line_key) {
-                            pyro_panic(vm, "out of memory");
-                            break;
-                        }
-                        if (ObjMap_set(err->details, pyro_make_obj(source_key), pyro_make_obj(vm->panic_source_id), vm) == 0) {
-                            pyro_panic(vm, "out of memory");
-                            break;
-                        }
-                        if (ObjMap_set(err->details, pyro_make_obj(line_key), pyro_make_i64(vm->panic_line_number), vm) == 0) {
-                            pyro_panic(vm, "out of memory");
-                            break;
-                        }
-                    }
-
+                    err->message = error_message;
                     pyro_push(vm, pyro_make_obj(err));
                 }
 
@@ -2059,6 +2040,7 @@ void pyro_reset_vm(PyroVM* vm) {
     vm->memory_allocation_failed = false;
     vm->halt_flag = false;
     vm->panic_flag = false;
+    vm->panic_count = 0;
     vm->exit_flag = false;
     vm->exit_code = 0;
     vm->stack_top = vm->stack;

@@ -39,6 +39,7 @@ struct PyroVM {
 
     // Signals that a panic has occurred.
     bool panic_flag;
+    size_t panic_count;
 
     // Exit signal, set by the $exit() function.
     bool exit_flag;
@@ -91,8 +92,6 @@ struct PyroVM {
 
     // Buffer for recording panic messages inside 'try' expressions.
     ObjBuf* panic_buffer;
-    ObjStr* panic_source_id;
-    size_t panic_line_number;
 
     // Interned string pool.
     ObjMap* strings;

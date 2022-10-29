@@ -136,7 +136,6 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->stderr_stream);
     mark_object(vm, (Obj*)vm->stdin_stream);
     mark_object(vm, (Obj*)vm->panic_buffer);
-    mark_object(vm, (Obj*)vm->panic_source_id);
 
     // Each CallFrame in the call stack has a pointer to an ObjClosure.
     for (size_t i = 0; i < vm->frame_count; i++) {

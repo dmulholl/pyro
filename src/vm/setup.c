@@ -64,8 +64,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->open_upvalues = NULL;
     vm->panic_buffer = NULL;
     vm->panic_flag = false;
-    vm->panic_line_number = 0;
-    vm->panic_source_id = NULL;
+    vm->panic_count = 0;
     vm->stderr_stream = NULL;
     vm->stdin_stream = NULL;
     vm->stdout_stream = NULL;
