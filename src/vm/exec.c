@@ -36,6 +36,7 @@ static void push_call_frame(PyroVM* vm, ObjClosure* closure, Value* frame_pointe
     frame->closure = closure;
     frame->ip = closure->fn->code;
     frame->fp = frame_pointer;
+    frame->with_stack_count_on_entry = vm->with_stack_count;
 }
 
 
@@ -1787,8 +1788,13 @@ static void run(PyroVM* vm) {
             }
 
             case OP_RETURN: {
-                Value result = pyro_pop(vm);
+                while (vm->with_stack_count > frame->with_stack_count_on_entry) {
+                    Value receiver = vm->with_stack[vm->with_stack_count - 1];
+                    call_end_with_method(vm, receiver);
+                    vm->with_stack_count--;
+                }
 
+                Value result = pyro_pop(vm);
                 close_upvalues(vm, frame->fp);
                 vm->stack_top = frame->fp;
                 pyro_push(vm, result);

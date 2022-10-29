@@ -33,7 +33,40 @@ def func() {
     with obj = Object() {
         assert global == 3;
     }
+    return "func";
 }
 
-func();
+assert func() == "func";
 assert global == 4;
+
+# Early returns.
+global = 0;
+
+def f1() {
+    with obj = Object() {
+        return "f1";
+    }
+}
+
+assert f1() == "f1";
+assert global == 1;
+
+def f2() {
+    with obj = Object() {
+        with obj = Object() {
+            return "f2";
+        }
+    }
+}
+
+assert f2() == "f2";
+assert global == 3;
+
+def f3() {
+    with obj = Object() {
+        return f2();
+    }
+}
+
+assert f3() == "f2";
+assert global == 6;

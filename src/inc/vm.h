@@ -16,6 +16,7 @@ typedef struct {
     ObjClosure* closure;
     uint8_t* ip;
     Value* fp;
+    size_t with_stack_count_on_entry;
 } CallFrame;
 
 struct PyroVM {
