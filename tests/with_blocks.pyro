@@ -70,3 +70,49 @@ def f3() {
 
 assert f3() == "f2";
 assert global == 6;
+
+# Panics.
+global = 0;
+
+with obj = Object() {
+    assert $is_err(try $panic("oh no!"));
+}
+
+assert global == 1;
+
+def f4() {
+    with obj = Object() {
+        $panic("on no!");
+    }
+}
+
+assert $is_err(try f4());
+assert global == 2;
+
+def f5() {
+    with obj = Object() {
+        f4();
+    }
+}
+
+assert $is_err(try f5());
+assert global == 4;
+
+def f6() {
+    with obj = Object() {
+        with obj = Object() {
+            f4();
+        }
+    }
+}
+
+assert $is_err(try f6());
+assert global == 7;
+
+def f7() {
+    assert $is_err(try f6());
+    return "f7";
+}
+
+assert f7() == "f7";
+assert global == 10;

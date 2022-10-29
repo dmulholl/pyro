@@ -293,8 +293,8 @@ static ObjModule* load_module(PyroVM* vm, Value* names, size_t name_count) {
 
 
 void call_end_with_method(PyroVM* vm, Value receiver) {
-    Value method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
-    if (IS_NULL(method)) {
+    Value end_with_method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
+    if (IS_NULL(end_with_method)) {
         return;
     }
 
@@ -310,7 +310,7 @@ void call_end_with_method(PyroVM* vm, Value receiver) {
     vm->exit_flag = false;
     vm->panic_flag = false;
 
-    pyro_call_method(vm, method, 0);
+    pyro_call_method(vm, end_with_method, 0);
     bool had_exit = vm->exit_flag;
     bool had_panic = vm->panic_flag;
 
@@ -331,6 +331,7 @@ void call_end_with_method(PyroVM* vm, Value receiver) {
 
 
 static void run(PyroVM* vm) {
+    size_t with_stack_count_on_entry = vm->with_stack_count;
     size_t frame_count_on_entry = vm->frame_count;
     assert(frame_count_on_entry >= 1);
 
@@ -2038,6 +2039,12 @@ static void run(PyroVM* vm) {
                 pyro_panic(vm, "invalid opcode");
                 break;
         }
+    }
+
+    while (vm->with_stack_count > with_stack_count_on_entry) {
+        Value receiver = vm->with_stack[vm->with_stack_count - 1];
+        call_end_with_method(vm, receiver);
+        vm->with_stack_count--;
     }
 
     #undef READ_BE_U16
