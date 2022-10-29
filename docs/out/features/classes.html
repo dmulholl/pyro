@@ -335,6 +335,18 @@ This method should return a string representation of the instance suitable for d
 </div>
 <div>
 <dt>
+<code>:$end_with()</code>
+</dt>
+<dd>
+<p>
+This method will be called when a <code>with</code> block exits.
+The method will be called even if the code in the <code>with</code> block panics or returns early.
+Can be used to run clean-up code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:$fmt(format_specifier: str) -&gt; str</code>
 </dt>
 <dd>

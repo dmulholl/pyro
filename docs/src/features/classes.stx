@@ -226,6 +226,13 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     This method should return a string representation of the instance suitable for debugging.
 
 
+[[ `:$end_with()` ]]
+
+    This method will be called when a `with` block exits.
+    The method will be called even if the code in the `with` block panics or returns early.
+    Can be used to run clean-up code.
+
+
 [[ `:$fmt(format_specifier: str) -> str` ]]
 
     This method should return a string representation of the instance formatted according to the `format_specifier` string.
