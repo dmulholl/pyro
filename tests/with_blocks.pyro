@@ -4,6 +4,8 @@ with foo = 123 {
     assert foo + 1 == 124;
 }
 
+assert $is_err(try foo);
+
 # Simple happy path.
 var global = 0;
 
