@@ -292,35 +292,40 @@ static ObjModule* load_module(PyroVM* vm, Value* names, size_t name_count) {
 
 
 void call_end_with_method(PyroVM* vm, Value receiver) {
-    /* Value method = pyro_get_method(vm, receiver, vm->str_dollar_end_with); */
-    /* if (IS_NULL(method)) { */
-    /*     return; */
-    /* } */
+    Value method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
+    if (IS_NULL(method)) {
+        return;
+    }
 
-    /* if (!pyro_push(vm, receiver)) { */
-    /*     vm->hard_panic = true; */
-    /*     return; */
-    /* } */
+    if (!pyro_push(vm, receiver)) {
+        return;
+    }
 
-    /* bool stashed_halt_flag = vm->halt_flag; */
-    /* bool stashed_exit_flag = vm->exit_flag; */
-    /* bool stashed_panic_flag = vm->panic_flag; */
+    bool stashed_halt_flag = vm->halt_flag;
+    bool stashed_exit_flag = vm->exit_flag;
+    bool stashed_panic_flag = vm->panic_flag;
 
-    /* vm->halt_flag = false; */
-    /* vm->exit_flag = false; */
-    /* vm->panic_flag = false; */
+    vm->halt_flag = false;
+    vm->exit_flag = false;
+    vm->panic_flag = false;
 
-    /* pyro_call_method(vm, method, 0); */
-    /* if (vm->halt_flag) { */
-    /*     if (vm->panic_flag) { */
-    /*         vm->hard_panic = true; */
-    /*     } */
-    /*     return; */
-    /* } */
+    pyro_call_method(vm, method, 0);
+    bool had_exit = vm->exit_flag;
+    bool had_panic = vm->panic_flag;
 
-    /* vm->halt_flag = stashed_halt_flag; */
-    /* vm->exit_flag = stashed_exit_flag; */
-    /* vm->panic_flag = stashed_panic_flag; */
+    vm->halt_flag = stashed_halt_flag;
+    vm->exit_flag = stashed_exit_flag;
+    vm->panic_flag = stashed_panic_flag;
+
+    if (had_exit) {
+        vm->halt_flag = true;
+        vm->exit_flag = true;
+    }
+
+    if (had_panic) {
+        vm->halt_flag = true;
+        vm->panic_flag = true;
+    }
 }
 
 

@@ -1,0 +1,39 @@
+# Test with-variable as local.
+with foo = 123 {
+    assert foo == 123;
+    assert foo + 1 == 124;
+}
+
+# Simple happy path.
+var global = 0;
+
+class Object {
+    def $end_with() {
+        global += 1;
+    }
+}
+
+with obj = Object() {
+    assert global == 0;
+}
+
+assert global == 1;
+
+with obj1 = Object() {
+    assert global == 1;
+    with obj2 = Object() {
+        assert global == 1;
+    }
+    assert global == 2;
+}
+
+assert global == 3;
+
+def func() {
+    with obj = Object() {
+        assert global == 3;
+    }
+}
+
+func();
+assert global == 4;
