@@ -12,6 +12,12 @@ def fib(n) {
     return fib(n - 1) + fib(n - 2);
 }
 ```
+To build the release binary run:
+
+    make release
+
+To run the test suite run:
+
+    make check
 
 See the [documentation][1] for details.
-
