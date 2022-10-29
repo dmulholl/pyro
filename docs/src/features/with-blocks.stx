@@ -1,0 +1,51 @@
+---
+title: With Blocks
+meta_title: Pyro &mdash; With Blocks
+---
+
+::: insert toc
+::: hr
+
+You can use a `with` block to ensure that clean-up code gets run, even if the code inside the `with` block panics or returns early.
+
+File objects have builtin support for `with` blocks, e.g.
+
+::: code pyro
+    with file = $file("filename.txt") {
+        do_stuff();
+    }
+
+The file object's `close()` method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
+
+
+### Syntax
+
+`with` blocks have the following syntax:
+
+    with <varname> = <expression> {
+        ...
+    }
+
+Inside the block, `varname` is a local variable.
+
+If `varname` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the block panics or returns early.
+
+
+### Custom Classes
+
+You can add support for `with` blocks to any object by defining an `$end_with()` method, e.g.
+
+::: code pyro
+    class Object {
+        pub var number = 123;
+
+        def $end_with() {
+            self.number = 0;
+        }
+    }
+
+    with obj = Object() {
+        obj.number = 456;
+    }
+
+Here the `$end_with()` method ensures that `obj.number` will be set to `0` when the `with` block exits, even if the code inside the `with` block panics or returns early.

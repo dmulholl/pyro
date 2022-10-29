@@ -30,6 +30,7 @@ The following keywords are reserved by the language and cannot be used as identi
 * `try`
 * `typedef`
 * `var`
+* `with`
 * `while`
 
 The following keywords are reserved for future use:
@@ -38,6 +39,7 @@ The following keywords are reserved for future use:
 * `await`
 * `case`
 * `catch`
+* `defer`
 * `enum`
 * `let`
 * `match`
@@ -46,4 +48,3 @@ The following keywords are reserved for future use:
 * `run`
 * `select`
 * `switch`
-* `with`

@@ -16,6 +16,7 @@ typedef struct {
     ObjClosure* closure;
     uint8_t* ip;
     Value* fp;
+    size_t with_stack_count_on_entry;
 } CallFrame;
 
 struct PyroVM {
@@ -39,9 +40,7 @@ struct PyroVM {
 
     // Signals that a panic has occurred.
     bool panic_flag;
-
-    // Signals that the panic is unrecoverable, i.e. cannot be caught by a try expression.
-    bool hard_panic;
+    size_t panic_count;
 
     // Exit signal, set by the $exit() function.
     bool exit_flag;
@@ -94,8 +93,6 @@ struct PyroVM {
 
     // Buffer for recording panic messages inside 'try' expressions.
     ObjBuf* panic_buffer;
-    ObjStr* panic_source_id;
-    size_t panic_line_number;
 
     // Interned string pool.
     ObjMap* strings;
@@ -162,11 +159,12 @@ struct PyroVM {
     ObjStr* str_module;
     ObjStr* str_tup;
     ObjStr* str_err;
+    ObjStr* str_dollar_end_with;
 
     // The grey stack used by the garbage collector.
-    size_t grey_count;
-    size_t grey_capacity;
     Obj** grey_stack;
+    size_t grey_stack_count;
+    size_t grey_stack_capacity;
 
     // The VM's current memory allocation measured in bytes.
     size_t bytes_allocated;
@@ -187,6 +185,11 @@ struct PyroVM {
 
     // Set to true if the VM executing in a REPL.
     bool in_repl;
+
+    // Stack of values with pending $end_with() method calls.
+    Value* with_stack;
+    size_t with_stack_count;
+    size_t with_stack_capacity;
 };
 
 

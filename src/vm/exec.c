@@ -36,6 +36,7 @@ static void push_call_frame(PyroVM* vm, ObjClosure* closure, Value* frame_pointe
     frame->closure = closure;
     frame->ip = closure->fn->code;
     frame->fp = frame_pointer;
+    frame->with_stack_count_on_entry = vm->with_stack_count;
 }
 
 
@@ -291,7 +292,46 @@ static ObjModule* load_module(PyroVM* vm, Value* names, size_t name_count) {
 }
 
 
+void call_end_with_method(PyroVM* vm, Value receiver) {
+    Value end_with_method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
+    if (IS_NULL(end_with_method)) {
+        return;
+    }
+
+    if (!pyro_push(vm, receiver)) {
+        return;
+    }
+
+    bool stashed_halt_flag = vm->halt_flag;
+    bool stashed_exit_flag = vm->exit_flag;
+    bool stashed_panic_flag = vm->panic_flag;
+
+    vm->halt_flag = false;
+    vm->exit_flag = false;
+    vm->panic_flag = false;
+
+    pyro_call_method(vm, end_with_method, 0);
+    bool had_exit = vm->exit_flag;
+    bool had_panic = vm->panic_flag;
+
+    vm->halt_flag = stashed_halt_flag;
+    vm->exit_flag = stashed_exit_flag;
+    vm->panic_flag = stashed_panic_flag;
+
+    if (had_exit) {
+        vm->halt_flag = true;
+        vm->exit_flag = true;
+    }
+
+    if (had_panic) {
+        vm->halt_flag = true;
+        vm->panic_flag = true;
+    }
+}
+
+
 static void run(PyroVM* vm) {
+    size_t with_stack_count_on_entry = vm->with_stack_count;
     size_t frame_count_on_entry = vm->frame_count;
     assert(frame_count_on_entry >= 1);
 
@@ -310,7 +350,7 @@ static void run(PyroVM* vm) {
     #define READ_STRING() AS_STR(READ_CONSTANT())
 
     for (;;) {
-        if (vm->halt_flag) {
+        if (vm->halt_flag || vm->frame_count < frame_count_on_entry) {
             break;
         }
 
@@ -1749,17 +1789,18 @@ static void run(PyroVM* vm) {
             }
 
             case OP_RETURN: {
-                Value result = pyro_pop(vm);
+                while (vm->with_stack_count > frame->with_stack_count_on_entry) {
+                    Value receiver = vm->with_stack[vm->with_stack_count - 1];
+                    call_end_with_method(vm, receiver);
+                    vm->with_stack_count--;
+                }
 
+                Value result = pyro_pop(vm);
                 close_upvalues(vm, frame->fp);
                 vm->stack_top = frame->fp;
                 pyro_push(vm, result);
 
                 vm->frame_count--;
-                if (vm->frame_count < frame_count_on_entry) {
-                    return;
-                }
-
                 break;
             }
 
@@ -1898,61 +1939,36 @@ static void run(PyroVM* vm) {
                 run(vm);
                 vm->try_depth--;
 
-                if (vm->exit_flag || vm->hard_panic) {
+                if (vm->exit_flag) {
                     break;
                 }
 
                 if (vm->panic_flag) {
-                    // Reset the VM.
-                    vm->panic_flag = false;
                     vm->halt_flag = false;
+                    vm->panic_flag = false;
+                    vm->panic_count = 0;
                     vm->exit_code = 0;
                     vm->memory_allocation_failed = false;
                     vm->stack_top = stashed_stack_top - 1;
                     close_upvalues(vm, stashed_stack_top);
                     vm->frame_count = stashed_frame_count;
 
-                    ObjStr* err_str = ObjBuf_to_str(vm->panic_buffer, vm);
-                    if (!err_str) {
-                        vm->hard_panic = true;
+                    ObjStr* error_message = ObjBuf_to_str(vm->panic_buffer, vm);
+                    if (!error_message) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
                     if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
-                        vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
 
                     ObjErr* err = ObjErr_new(vm);
                     if (!err) {
-                        vm->hard_panic = true;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
-
-                    err->message = err_str;
-
-                    if (vm->panic_source_id) {
-                        ObjStr* source_key = ObjStr_new("source", vm);
-                        ObjStr* line_key = ObjStr_new("line_number", vm);
-                        if (!source_key || !line_key) {
-                            vm->hard_panic = true;
-                            pyro_panic(vm, "out of memory");
-                            break;
-                        }
-                        if (ObjMap_set(err->details, pyro_make_obj(source_key), pyro_make_obj(vm->panic_source_id), vm) == 0) {
-                            vm->hard_panic = true;
-                            pyro_panic(vm, "out of memory");
-                            break;
-                        }
-                        if (ObjMap_set(err->details, pyro_make_obj(line_key), pyro_make_i64(vm->panic_line_number), vm) == 0) {
-                            vm->hard_panic = true;
-                            pyro_panic(vm, "out of memory");
-                            break;
-                        }
-                    }
-
+                    err->message = error_message;
                     pyro_push(vm, pyro_make_obj(err));
                 }
 
@@ -1997,11 +2013,38 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_START_WITH: {
+                if (vm->with_stack_count == vm->with_stack_capacity) {
+                    size_t new_capacity = GROW_CAPACITY(vm->with_stack_capacity);
+                    Value* new_array = REALLOCATE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity, new_capacity);
+                    if (!new_array) {
+                        pyro_panic(vm, "out of memory: failed to allocate memory for the 'with' stack");
+                        break;
+                    }
+                    vm->with_stack_capacity = new_capacity;
+                    vm->with_stack = new_array;
+                }
+                vm->with_stack[vm->with_stack_count++] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_END_WITH: {
+                Value receiver = vm->with_stack[vm->with_stack_count - 1];
+                call_end_with_method(vm, receiver);
+                vm->with_stack_count--;
+                break;
+            }
+
             default:
-                vm->hard_panic = true;
                 pyro_panic(vm, "invalid opcode");
                 break;
         }
+    }
+
+    while (vm->with_stack_count > with_stack_count_on_entry) {
+        Value receiver = vm->with_stack[vm->with_stack_count - 1];
+        call_end_with_method(vm, receiver);
+        vm->with_stack_count--;
     }
 
     #undef READ_BE_U16
@@ -2014,9 +2057,9 @@ static void run(PyroVM* vm) {
 void pyro_reset_vm(PyroVM* vm) {
     vm->memory_allocation_failed = false;
     vm->halt_flag = false;
-    vm->exit_flag = false;
     vm->panic_flag = false;
-    vm->hard_panic = false;
+    vm->panic_count = 0;
+    vm->exit_flag = false;
     vm->exit_code = 0;
     vm->stack_top = vm->stack;
     vm->frame_count = 0;

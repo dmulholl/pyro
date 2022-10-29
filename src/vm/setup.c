@@ -49,11 +49,10 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->exit_flag = false;
     vm->gc_disallows = 0;
     vm->superglobals = NULL;
-    vm->grey_capacity = 0;
-    vm->grey_count = 0;
+    vm->grey_stack_capacity = 0;
+    vm->grey_stack_count = 0;
     vm->grey_stack = NULL;
     vm->halt_flag = false;
-    vm->hard_panic = false;
     vm->import_roots = NULL;
     vm->in_repl = false;
     vm->main_module = NULL;
@@ -65,8 +64,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->open_upvalues = NULL;
     vm->panic_buffer = NULL;
     vm->panic_flag = false;
-    vm->panic_line_number = 0;
-    vm->panic_source_id = NULL;
+    vm->panic_count = 0;
     vm->stderr_stream = NULL;
     vm->stdin_stream = NULL;
     vm->stdout_stream = NULL;
@@ -122,6 +120,10 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_vec = NULL;
     vm->strings = NULL;
     vm->try_depth = 0;
+    vm->with_stack = NULL;
+    vm->with_stack_count = 0;
+    vm->with_stack_capacity = 0;
+    vm->str_dollar_end_with = NULL;
 
     // Initialize the [frames] stack.
     vm->frames = ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
@@ -222,6 +224,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_module = ObjStr_new("module", vm);
     vm->str_tup = ObjStr_new("tup", vm);
     vm->str_err = ObjStr_new("err", vm);
+    vm->str_dollar_end_with = ObjStr_new("$end_with", vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -274,8 +277,9 @@ void pyro_free_vm(PyroVM* vm) {
         object = next;
     }
 
-    FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_capacity);
+    FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity);
     FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
+    FREE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity);
 
     free(vm->stack);
     vm->bytes_allocated -= vm->stack_size;
@@ -571,11 +575,6 @@ bool pyro_get_exit_flag(PyroVM* vm) {
 
 bool pyro_get_panic_flag(PyroVM* vm) {
     return vm->panic_flag;
-}
-
-
-bool pyro_get_hard_panic_flag(PyroVM* vm) {
-    return vm->hard_panic;
 }
 
 

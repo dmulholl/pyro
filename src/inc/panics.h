@@ -10,7 +10,7 @@
 // - Prints the error message.
 void pyro_panic(PyroVM* vm, const char* format, ...);
 
-// This function triggers a custom panic for syntax errors. It's only used by the compiler.
-void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t source_line, const char* format, ...);
+// This function triggers a custom panic for syntax errors.
+void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t line_number, const char* format, ...);
 
 #endif

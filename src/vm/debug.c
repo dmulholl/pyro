@@ -320,6 +320,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_TRY", ip);
         case OP_UNPACK:
             return u8_instruction(vm, "OP_UNPACK", fn, ip);
+        case OP_START_WITH:
+            return atomic_instruction(vm, "OP_START_WITH", ip);
+        case OP_END_WITH:
+            return atomic_instruction(vm, "OP_END_WITH", ip);
         default:
             pyro_stdout_write_f(vm, "INVALID OPCODE [%d]\n", instruction);
             return ip + 1;

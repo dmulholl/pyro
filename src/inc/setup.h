@@ -32,9 +32,6 @@ bool pyro_get_exit_flag(PyroVM* vm);
 // Returns the VM's panic flag.
 bool pyro_get_panic_flag(PyroVM* vm);
 
-// Returns the status of the VM's hard panic flag.
-bool pyro_get_hard_panic_flag(PyroVM* vm);
-
 // This function sets the content of the global $args variable, a tuple of strings. Returns true
 // on success, false if memory could not be allocated for the tuple.
 bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args);

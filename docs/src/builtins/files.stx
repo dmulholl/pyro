@@ -3,6 +3,9 @@ title: Files
 meta_title: Pyro &mdash; Files
 ---
 
+::: insert toc
+::: hr
+
 A file object, `file`, is a wrapper around a readable or writable byte stream.
 
 [[ `$file(path: str) -> file` <br> `$file(path: str, mode: str) -> file` ]]
@@ -12,6 +15,10 @@ A file object, `file`, is a wrapper around a readable or writable byte stream.
     Panics on failure.
 
     If `mode` is not specified, it defaults to `"r"` --- i.e. open an existing file for reading.
+
+
+
+### Modes
 
 Mode options:
 
@@ -24,7 +31,22 @@ Mode options:
     `"w+"`  | Creates an empty file for both reading and writing. If the file already exists, its content will be erased.
     `"a+"`  | Opens a file for both reading and appending. The file will be created if it does not exist.
 
-Files have the following methods:
+
+
+### With Blocks
+
+File objects have builtin support for `with` blocks, e.g.
+
+::: code pyro
+    with file = $file("filename.txt") {
+        do_stuff();
+    }
+
+The file object's `close()` method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
+
+
+
+### Methods
 
 [[ `:close()` ]]
 
