@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; With Blocks</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-features-with-blocks node-features node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.8.28</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../building.html">Building Pyro</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>With Blocks</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#syntax">Syntax</a>
+</li>
+<li>
+<a href="#custom-classes">Custom Classes</a>
+</li>
+</ul>
+<hr>
+<p>
+You can use a <code>with</code> block to ensure that clean-up code gets run, even if the code inside the <code>with</code> block panics or returns early.
+</p>
+<p>
+File objects have builtin support for <code>with</code> blocks, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;filename.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">do_stuff</span><span class="p">();</span>
+<span class="p">}</span>
+</pre>
+<p>
+The file object's <code>close()</code> method will be called when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
+</p>
+<h3 id="syntax">
+Syntax
+</h3>
+<p>
+<code>with</code> blocks have the following syntax:
+</p>
+<pre>
+with &lt;varname&gt; = &lt;expression&gt; {
+    ...
+}
+</pre>
+<p>
+Inside the block, <code>varname</code> is a local variable.
+</p>
+<p>
+If <code>varname</code> has an <code>$end_with()</code> method, this method will be called when the <code>with</code> block exits, even if the code inside the block panics or returns early.
+</p>
+<h3 id="custom-classes">
+Custom Classes
+</h3>
+<p>
+You can add support for <code>with</code> blocks to any object by defining an <code>$end_with()</code> method, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$end_with</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">number</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">with</span> <span class="nx">obj</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">obj</span><span class="p">.</span><span class="nx">number</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Here the <code>$end_with()</code> method ensures that <code>obj.number</code> will be set to <code>0</code> when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
+</p>
+        </article>
+        
+    </body>
+</html>

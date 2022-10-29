@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.25</p>
+                <p class="version">Version 0.8.28</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -52,7 +52,19 @@
                 
                 <hr>
             </header>
-            <p>
+            <ul class="stx-toc">
+<li>
+<a href="#modes">Modes</a>
+</li>
+<li>
+<a href="#with-blocks">With Blocks</a>
+</li>
+<li>
+<a href="#methods">Methods</a>
+</li>
+</ul>
+<hr>
+<p>
 A file object, <code>file</code>, is a wrapper around a readable or writable byte stream.
 </p>
 <dl>
@@ -72,6 +84,9 @@ If <code>mode</code> is not specified, it defaults to <code>&quot;r&quot;</code>
 </dd>
 </div>
 </dl>
+<h3 id="modes">
+Modes
+</h3>
 <p>
 Mode options:
 </p>
@@ -127,9 +142,23 @@ Opens a file for both reading and appending. The file will be created if it does
 </tr>
 </tbody>
 </table>
+<h3 id="with-blocks">
+With Blocks
+</h3>
 <p>
-Files have the following methods:
+File objects have builtin support for <code>with</code> blocks, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;filename.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">do_stuff</span><span class="p">();</span>
+<span class="p">}</span>
+</pre>
+<p>
+The file object's <code>close()</code> method will be called when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
+</p>
+<h3 id="methods">
+Methods
+</h3>
 <dl>
 <div>
 <dt>

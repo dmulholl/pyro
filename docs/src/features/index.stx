@@ -12,6 +12,7 @@ meta_title: Pyro &mdash; Language Features
 * [Iterators](@root/features/iterators//)
 * [String Formatting](@root/features/formatting//)
 * [Type Annotations](@root/features/type-annotations//)
+* [With Blocks](@root/features/with-blocks//)
 
 ### Testing & Benchmarking
 
