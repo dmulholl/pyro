@@ -1,0 +1,106 @@
+# Assignment to a global.
+var global = 1;
+
+def a() {
+    global = 2;
+}
+
+a();
+assert global == 2;
+
+def b() {
+    def inner() {
+        global = 3;
+    }
+    inner();
+}
+
+b();
+assert global == 3;
+
+# Assignment to a module-level local.
+{
+    var local = 1;
+
+    def c() {
+        local = 2;
+    }
+
+    c();
+    assert local == 2;
+
+    def d() {
+        def inner() {
+            local = 3;
+        }
+        inner();
+    }
+
+    d();
+    assert local == 3;
+}
+
+# Assignment to a function local.
+def e() {
+    var local = 1;
+
+    def inner() {
+        local = 2;
+    }
+
+    inner();
+    assert local == 2;
+}
+
+e();
+
+def f() {
+    var local = 1;
+
+    def inner() {
+        def inner_inner() {
+            local = 2;
+        }
+        inner_inner();
+    }
+
+    inner();
+    assert local == 2;
+}
+
+f();
+
+def g() {
+    var local = 1;
+
+    def inner() {
+        local += 1;
+        return local;
+    }
+
+    return inner;
+}
+
+var g_inner = g();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert g_inner() == 2;
+
+def h() {
+    var local = 1;
+
+    def middle() {
+        def inner() {
+            local += 1;
+            return local;
+        }
+        return inner;
+    }
+
+    return middle;
+}
+
+var h_middle = h();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+var h_inner = h_middle();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert h_inner() == 2;
