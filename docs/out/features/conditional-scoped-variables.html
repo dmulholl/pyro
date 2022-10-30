@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Conditional Scoped Variables</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-features-conditional-scoped-variables node-features node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.8.31</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../installing.html">Install</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../building.html">Building Pyro</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Conditional Scoped Variables</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#syntax">Syntax</a>
+</li>
+<li>
+<a href="#unpacking">Unpacking</a>
+</li>
+</ul>
+<hr>
+<p>
+Pyro supports conditional-scoped variables inside <code>if</code> statements, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">if</span> <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_value</span><span class="p">();</span> <span class="nx">value</span> <span class="p">&gt;</span> <span class="mi">1000</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;very big value&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;big value&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;small value&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Here, <code>value</code> is a new local variable valid inside the scope of the <code>if</code> statement, including any <code>else if</code> or <code>else</code> clauses.
+</p>
+<h3 id="syntax">
+Syntax
+</h3>
+<p>
+The syntax is:
+</p>
+<pre>
+if var &lt;variable-declaration&gt;; &lt;expression&gt; {
+    ...
+}
+</pre>
+<h3 id="unpacking">
+Unpacking
+</h3>
+<p>
+You can use variable-unpacking syntax inside an <code>if</code> statement, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">if</span> <span class="kd">var</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">=</span> <span class="nx">get_location</span><span class="p">();</span> <span class="nx">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">y</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;correct location&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;incorrect location&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Here, <code>x</code> and <code>y</code> are new local variables valid inside the scope of the <code>if</code> statement, including any <code>else if</code> or <code>else</code> clauses.
+</p>
+        </article>
+        
+    </body>
+</html>

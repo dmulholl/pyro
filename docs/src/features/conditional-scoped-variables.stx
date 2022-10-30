@@ -1,0 +1,43 @@
+---
+title: Conditional Scoped Variables
+meta_title: Pyro &mdash; Conditional Scoped Variables
+---
+
+::: insert toc
+::: hr
+
+Pyro supports conditional-scoped variables inside `if` statements, e.g.
+
+::: code pyro
+    if var value = get_value(); value > 1000 {
+        echo "very big value";
+    } else if value > 100 {
+        echo "big value";
+    } else {
+        echo "small value";
+    }
+
+Here, `value` is a new local variable valid inside the scope of the `if` statement, including any `else if` or `else` clauses.
+
+
+### Syntax
+
+The syntax is:
+
+    if var <variable-declaration>; <expression> {
+        ...
+    }
+
+
+### Unpacking
+
+You can use variable-unpacking syntax inside an `if` statement, e.g.
+
+::: code pyro
+    if var (x, y) = get_location(); x == 1 && y == 2 {
+        echo "correct location";
+    } else {
+        echo "incorrect location";
+    }
+
+Here, `x` and `y` are new local variables valid inside the scope of the `if` statement, including any `else if` or `else` clauses.

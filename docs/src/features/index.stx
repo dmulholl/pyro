@@ -13,6 +13,7 @@ meta_title: Pyro &mdash; Language Features
 * [String Formatting](@root/features/formatting//)
 * [Type Annotations](@root/features/type-annotations//)
 * [With Blocks](@root/features/with-blocks//)
+* [Conditional Scoped Variables](@root/features/conditional-scoped-variables//)
 
 ### Testing & Benchmarking
 
