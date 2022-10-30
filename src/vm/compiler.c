@@ -1169,7 +1169,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             bool unpack_last_argument;
             uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
             if (unpack_last_argument) {
-                emit_u8_u8(parser, OP_CALL_WITH_UNPACK, arg_count);
+                emit_u8_u8(parser, OP_CALL_VALUE_WITH_UNPACK, arg_count);
             } else {
                 emit_u8_u8(parser, OP_CALL_VALUE, arg_count);
             }

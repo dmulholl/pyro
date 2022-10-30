@@ -93,8 +93,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BINARY_CARET", ip);
         case OP_CALL_VALUE:
             return u8_instruction(vm, "OP_CALL_VALUE", fn, ip);
-        case OP_CALL_WITH_UNPACK:
-            return u8_instruction(vm, "OP_CALL_WITH_UNPACK", fn, ip);
+        case OP_CALL_VALUE_WITH_UNPACK:
+            return u8_instruction(vm, "OP_CALL_VALUE_WITH_UNPACK", fn, ip);
         case OP_MAKE_CLASS:
             return constant_instruction(vm, "OP_MAKE_CLASS", fn, ip);
         case OP_CLOSE_UPVALUE:

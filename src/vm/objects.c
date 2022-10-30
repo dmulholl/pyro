@@ -1063,7 +1063,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
             return 0;
 
         case OP_CALL_VALUE:
-        case OP_CALL_WITH_UNPACK:
+        case OP_CALL_VALUE_WITH_UNPACK:
         case OP_ECHO:
         case OP_GET_LOCAL:
         case OP_GET_UPVALUE:
