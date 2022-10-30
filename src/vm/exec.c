@@ -440,7 +440,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_CALL_UNPACK_LAST_ARG: {
+            case OP_CALL_WITH_UNPACK: {
                 uint8_t arg_count = READ_BYTE();
                 Value last_arg = pyro_pop(vm);
                 arg_count--;
