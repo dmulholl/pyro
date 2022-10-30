@@ -26,7 +26,7 @@ typedef enum {
     OP_BINARY_STAR_STAR,
     OP_BREAK,
 
-    OP_CALL,
+    OP_CALL_VALUE,
     OP_CALL_WITH_UNPACK,
 
     OP_CALL_METHOD,

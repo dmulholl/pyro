@@ -1171,7 +1171,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             if (unpack_last_argument) {
                 emit_u8_u8(parser, OP_CALL_WITH_UNPACK, arg_count);
             } else {
-                emit_u8_u8(parser, OP_CALL, arg_count);
+                emit_u8_u8(parser, OP_CALL_VALUE, arg_count);
             }
         }
 

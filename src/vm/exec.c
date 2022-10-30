@@ -434,7 +434,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_CALL: {
+            case OP_CALL_VALUE: {
                 uint8_t arg_count = READ_BYTE();
                 call_value(vm, arg_count);
                 break;
