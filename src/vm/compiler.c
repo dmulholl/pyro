@@ -1741,6 +1741,14 @@ static void parse_block(Parser* parser) {
 
 
 static void parse_if_stmt(Parser* parser) {
+    // Push a new scope for condition-scoped variables.
+    begin_scope(parser);
+
+    // Parse condition-scoped variables as locals.
+    if (match(parser, TOKEN_VAR)) {
+        parse_var_declaration(parser, PRIVATE);
+    }
+
     // Parse the condition.
     parse_expression(parser, false, true);
     if (match_assignment_token(parser)) {
@@ -1780,6 +1788,9 @@ static void parse_if_stmt(Parser* parser) {
 
     // Backpatch the destination for the jump over the 'else' block.
     patch_jump(parser, jump_over_else);
+
+    // Pop the scope surrounding any condition-scoped variables.
+    end_scope(parser);
 }
 
 

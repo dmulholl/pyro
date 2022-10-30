@@ -1,0 +1,60 @@
+var global = 0;
+if var local = "foo"; local == "foo" {
+    global = 1;
+}
+assert global == 1;
+assert $is_err(try local);
+
+global = 0;
+if var local = "bar"; local == "foo" {
+    global = 1;
+}
+assert global == 0;
+assert $is_err(try local);
+
+global = 0;
+if var local = "bar"; local == "foo" {
+    global = 1;
+} else {
+    global = 2;
+}
+assert global == 2;
+assert $is_err(try local);
+
+global = 0;
+if var local = "bar"; local == "foo" {
+    global = 1;
+} else if local == "bar" {
+    global = 2;
+}
+assert global == 2;
+assert $is_err(try local);
+
+global = 0;
+if var local = "baz"; local == "foo" {
+    global = 1;
+} else if local == "bar" {
+    global = 2;
+} else {
+    global = 3;
+}
+assert global == 3;
+assert $is_err(try local);
+
+global = 0;
+if var (x, y) = $tup(1, 2); x == 1 && y == 2 {
+    global = 1;
+}
+assert global == 1;
+assert $is_err(try x);
+assert $is_err(try y);
+
+global = 0;
+if var (x, y) = $tup(2, 3); x == 1 && y == 2 {
+    global = 1;
+} else if x == 2 && y == 3 {
+    global = 2;
+}
+assert global == 2;
+assert $is_err(try x);
+assert $is_err(try y);
