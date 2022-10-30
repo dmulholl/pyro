@@ -1238,7 +1238,7 @@ static void run(PyroVM* vm) {
             }
 
             // The receiver value and [arg_count] arguments are sitting on top of the stack.
-            case OP_CALL_METHOD_UNPACK: {
+            case OP_CALL_METHOD_WITH_UNPACK: {
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
                 Value receiver = pyro_peek(vm, arg_count);

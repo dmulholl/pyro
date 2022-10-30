@@ -1230,7 +1230,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 bool unpack_last_argument;
                 uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
                 if (unpack_last_argument) {
-                    OpCode opcode = (last_token_type == TOKEN_SELF) ? OP_CALL_METHOD_UNPACK : OP_CALL_PUB_METHOD_UNPACK;
+                    OpCode opcode = (last_token_type == TOKEN_SELF) ? OP_CALL_METHOD_WITH_UNPACK : OP_CALL_PUB_METHOD_UNPACK;
                     emit_u8_u16be(parser, opcode, index);
                     emit_byte(parser, arg_count);
                 } else {
