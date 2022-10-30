@@ -461,7 +461,7 @@ static void run(PyroVM* vm) {
 
                 size_t total_args = (size_t)arg_count + value_count;
                 if (total_args > 255) {
-                    pyro_panic(vm, "too many arguments to unpack");
+                    pyro_panic(vm, "too many arguments (max: 255)");
                     break;
                 }
 
