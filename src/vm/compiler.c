@@ -1063,11 +1063,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_LEFT_PAREN)) {
         parse_expression(parser, can_assign_in_parens, can_assign_in_parens);
         if (match_assignment_token(parser) && !can_assign_in_parens) {
-            if (parser->fn_compiler->type == TYPE_TRY_EXPR) {
-                ERROR_AT_PREVIOUS_TOKEN("assignment is not allowed inside try expressions");
-            } else {
-                ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
-            }
+            ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
         }
         consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after expression");
     }
@@ -1268,7 +1264,7 @@ static void parse_try_expr(Parser* parser) {
     }
 
     begin_scope(parser);
-    parse_unary_expr(parser, false, false);
+    parse_unary_expr(parser, false, true);
     emit_byte(parser, OP_RETURN);
 
     ObjFn* fn = end_fn_compiler(parser);

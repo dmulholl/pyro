@@ -1,0 +1,87 @@
+# Assignment to a global.
+var global = 1;
+
+try (global = 2);
+assert global == 2;
+
+try (global = $panic("oh no!"));
+assert global == 2;
+
+# Assignment to a module-level local.
+{
+    var local = 1;
+
+    try (local = 2);
+    assert local == 2;
+
+    try (local = $panic("oh no!"));
+    assert local == 2;
+}
+
+# Assignment to a function local.
+def a() {
+    var local = 1;
+
+    try (local = 2);
+    assert local == 2;
+
+    try (local = $panic("oh no!"));
+    assert local == 2;
+}
+
+a();
+
+# Assignment to a function local in a closure.
+def b() {
+    var local = 1;
+
+    def inner() {
+        try (local = 2);
+    }
+
+    inner();
+    assert local == 2;
+}
+
+b();
+
+# Assignment to a function local in a returned closure.
+def c() {
+    var local = 1;
+
+    def inner() {
+        try (local += 1);
+        return local;
+    }
+
+    return inner;
+}
+
+var c_inner = c();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert c_inner() == 2;
+
+def d() {
+    var local = 1;
+
+    def middle() {
+        def inner() {
+            try (local += 1);
+            return local;
+        }
+        return inner;
+    }
+
+    return middle;
+}
+
+var d_middle = d();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+var d_inner = d_middle();
+assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert d_inner() == 2;
+
+# Check the return value.
+var foo = 123;
+assert try (foo = 456) == 456;
+assert $is_err(try (foo = $panic("oh no!")));
