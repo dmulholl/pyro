@@ -26,7 +26,7 @@ The file object's `close()` method will be called when the `with` block exits, e
         ...
     }
 
-Inside the block, `varname` is a local variable.
+Inside the block, `varname` is a new local variable.
 
 If `varname` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
 
