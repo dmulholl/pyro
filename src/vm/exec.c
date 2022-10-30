@@ -1358,7 +1358,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case OP_CALL_SUPER_METHOD_UNPACK: {
+            case OP_CALL_SUPER_METHOD_WITH_UNPACK: {
                 ObjClass* superclass = AS_CLASS(pyro_pop(vm));
                 ObjStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();

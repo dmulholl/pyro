@@ -1124,7 +1124,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
             if (unpack_last_argument) {
-                emit_byte(parser, OP_CALL_SUPER_METHOD_UNPACK);
+                emit_byte(parser, OP_CALL_SUPER_METHOD_WITH_UNPACK);
             } else {
                 emit_byte(parser, OP_CALL_SUPER_METHOD);
             }
