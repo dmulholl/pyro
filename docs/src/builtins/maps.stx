@@ -88,6 +88,8 @@ You can check if a map contains a key using the `in` operator:
         echo "found";
     }
 
+This is equivalent to calling the map's `:contains()` method.
+
 
 
 ### Key Types
