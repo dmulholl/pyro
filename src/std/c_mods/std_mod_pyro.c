@@ -4,6 +4,7 @@
 #include "../../inc/setup.h"
 #include "../../inc/panics.h"
 #include "../../inc/gc.h"
+#include "../../inc/stringify.h"
 
 
 static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {
@@ -56,6 +57,21 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
+static Value fn_address(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_OBJ(args[0])) {
+        return pyro_make_obj(vm->error);
+    }
+
+    Obj* object = AS_OBJ(args[0]);
+    ObjStr* string = pyro_sprintf_to_obj(vm, "0x%" PRIXPTR, (uintptr_t)object);
+    if (!string) {
+        return pyro_make_null();
+    }
+
+    return pyro_make_obj(string);
+}
+
+
 void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     ObjTup* version_tuple = ObjTup_new(5, vm);
     if (!version_tuple) {
@@ -80,4 +96,5 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     pyro_define_pub_member_fn(vm, module, "memory", fn_memory, 0);
     pyro_define_pub_member_fn(vm, module, "gc", fn_memory, 0);
     pyro_define_pub_member_fn(vm, module, "sizeof", fn_sizeof, 1);
+    pyro_define_pub_member_fn(vm, module, "address", fn_address, 1);
 }
