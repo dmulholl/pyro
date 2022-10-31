@@ -13,11 +13,12 @@ s3:add(-397);
 s3:add("foo");
 s3:add(10249);
 
-# Sets which compare as equal should have the same hash value.
+# Sets which are set-equivalent should have the same hash value.
 assert $hash(s1) == $hash(s2);
 assert $hash(s2) == $hash(s3);
 assert $hash(s3) == $hash(s1);
 
+# Sets which are set-equivalent should compare as equal.
 assert s1 == s2;
 assert s2 == s3;
 assert s3 == s1;
@@ -37,3 +38,15 @@ s4:add(789);
 assert s5 != s1;
 assert s5 != s2;
 assert s5 != s3;
+
+# Test equivalent sets as map keys.
+var map = {
+    s1 = "foo",
+    s5 = "bar",
+};
+
+assert map[s1] == "foo";
+assert map[s2] == "foo";
+assert map[s3] == "foo";
+assert $is_err(map[s4]);
+assert map[s5] == "bar";
