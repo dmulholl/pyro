@@ -479,6 +479,35 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
 }
 
 
+static Value set_is_equal_to(PyroVM* vm, size_t arg_count, Value* args) {
+    ObjMap* map1 = AS_MAP(args[-1]);
+
+    if (!IS_SET(args[0])) {
+        pyro_panic(vm, "is_equal_to(): invalid argument, expected a set");
+        return pyro_make_null();
+    }
+    ObjMap* map2 = AS_MAP(args[0]);
+
+    if (map1->live_entry_count != map2->live_entry_count) {
+        return pyro_make_bool(false);
+    }
+
+    for (size_t i = 0; i < map1->entry_array_count; i++) {
+        MapEntry* entry = &map1->entry_array[i];
+
+        if (IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+
+        if (!ObjMap_contains(map2, entry->key, vm)) {
+            return pyro_make_bool(false);
+        }
+    }
+
+    return pyro_make_bool(true);
+}
+
+
 void pyro_load_std_core_map(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$map", fn_map, 0);
@@ -526,4 +555,6 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_set, "is_superset_of", set_is_superset_of, 1);
     pyro_define_pub_method(vm, vm->class_set, "is_proper_superset_of", set_is_proper_superset_of, 1);
     pyro_define_pub_method(vm, vm->class_set, "clear", map_clear, 0);
+    pyro_define_pub_method(vm, vm->class_set, "is_equal_to", set_is_equal_to, 1);
+    pyro_define_pub_method(vm, vm->class_set, "$op_binary_equals_equals", set_is_equal_to, 1);
 }

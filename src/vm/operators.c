@@ -798,9 +798,13 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
 
         case VAL_OBJ: {
             switch (AS_OBJ(a)->type) {
+                case OBJ_STR:
+                    return a.as.obj == b.as.obj;
+
                 case OBJ_TUP:
                     return IS_TUP(b) && ObjTup_check_equal(AS_TUP(a), AS_TUP(b), vm);
-                case OBJ_INSTANCE: {
+
+                default: {
                     Value method = pyro_get_method(vm, a, vm->str_op_binary_equals_equals);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
@@ -813,8 +817,6 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
                     }
                     return a.as.obj == b.as.obj;
                 }
-                default:
-                    return a.as.obj == b.as.obj;
             }
         }
 

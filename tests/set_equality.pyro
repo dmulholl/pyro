@@ -1,0 +1,39 @@
+var s1 = $set();
+s1:add(10249);
+s1:add("foo");
+s1:add(-397);
+
+var s2 = $set();
+s2:add("foo");
+s2:add(10249);
+s2:add(-397);
+
+var s3 = $set();
+s3:add(-397);
+s3:add("foo");
+s3:add(10249);
+
+# Sets which compare as equal should have the same hash value.
+assert $hash(s1) == $hash(s2);
+assert $hash(s2) == $hash(s3);
+assert $hash(s3) == $hash(s1);
+
+assert s1 == s2;
+assert s2 == s3;
+assert s3 == s1;
+
+var s4 = $set();
+s4:add(123);
+
+assert s4 != s1;
+assert s4 != s2;
+assert s4 != s3;
+
+var s5 = $set();
+s4:add(123);
+s4:add(456);
+s4:add(789);
+
+assert s5 != s1;
+assert s5 != s2;
+assert s5 != s3;
