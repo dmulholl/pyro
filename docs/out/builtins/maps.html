@@ -183,10 +183,11 @@ Key Types
 <p>
 You can use any Pyro value as a key in a <code>map</code>.
 The only requirement is that key values which compare as equal using the <code>==</code> operator should also have the same hash value.
+This is true for all builtin types.
 </p>
 <p>
-Pyro checks for key equality using <code>==</code>.
-Note that <code>i64</code>, <code>f64</code>, and <code>char</code> values which are numerically equal compare as equal using <code>==</code>.
+Pyro checks for key equality using the <code>==</code> operator.
+Note that <code>i64</code>, <code>f64</code>, and <code>char</code> values which are numerically equal compare as equal using the <code>==</code> operator.
 This means that these values work interchangeably as map keys, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">

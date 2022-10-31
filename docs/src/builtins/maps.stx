@@ -94,9 +94,10 @@ You can check if a map contains a key using the `in` operator:
 
 You can use any Pyro value as a key in a `map`.
 The only requirement is that key values which compare as equal using the `==` operator should also have the same hash value.
+This is true for all builtin types.
 
-Pyro checks for key equality using `==`.
-Note that `i64`, `f64`, and `char` values which are numerically equal compare as equal using `==`.
+Pyro checks for key equality using the `==` operator.
+Note that `i64`, `f64`, and `char` values which are numerically equal compare as equal using the `==` operator.
 This means that these values work interchangeably as map keys, e.g.
 
 ::: code pyro

@@ -44,6 +44,8 @@ You can check if a set contains an item using the `in` operator:
         echo "found";
     }
 
+This is equivalent to calling the set's `:contains()` method.
+
 
 
 ### Set Operators
