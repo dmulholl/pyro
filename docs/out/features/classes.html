@@ -60,6 +60,9 @@
 <a href="#fields-and-methods">Fields and Methods</a>
 </li>
 <li>
+<a href="#bound-methods">Bound Methods</a>
+</li>
+<li>
 <a href="#public-private-members">Public/Private Members</a>
 </li>
 <li>
@@ -125,12 +128,31 @@ Call a method on an instance using the method access operator <code>:</code>, e.
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
 </pre>
+<h3 id="bound-methods">
+Bound Methods
+</h3>
 <p>
-Methods are bound to their instances and you can pass them around just like any other function:
+Methods are bound to their instances and you can pass them around just like any other value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">method</span> <span class="p">=</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">;</span>
-<span class="nx">method</span><span class="p">();</span> <span class="c1"># &quot;Dave is a pyro programmer.&quot;</span>
+<span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">get</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">set</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">value</span> <span class="p">=</span> <span class="nx">arg</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">object</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">setter</span> <span class="p">=</span> <span class="nx">object</span><span class="p">:</span><span class="nx">set</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">getter</span> <span class="p">=</span> <span class="nx">object</span><span class="p">:</span><span class="nx">get</span><span class="p">;</span>
+
+<span class="nx">setter</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">getter</span><span class="p">()</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <h3 id="public-private-members">
 Public/Private Members

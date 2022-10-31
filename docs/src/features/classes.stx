@@ -50,11 +50,31 @@ Call a method on an instance using the method access operator `:`, e.g.
 ::: code pyro
     dave:info();
 
-Methods are bound to their instances and you can pass them around just like any other function:
+
+
+### Bound Methods
+
+Methods are bound to their instances and you can pass them around just like any other value, e.g.
 
 ::: code pyro
-    var method = dave:info;
-    method(); # "Dave is a pyro programmer."
+    class Object {
+        var value = 0;
+
+        pub def get() {
+            return self.value;
+        }
+
+        pub def set(arg) {
+            self.value = arg;
+        }
+    }
+
+    var object = Object();
+    var setter = object:set;
+    var getter = object:get;
+
+    setter(123);
+    assert getter() == 123;
 
 
 
