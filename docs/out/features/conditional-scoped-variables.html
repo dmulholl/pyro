@@ -62,7 +62,15 @@
 </ul>
 <hr>
 <p>
-Pyro supports conditional-scoped variables inside <code>if</code> statements, e.g.
+Pyro supports conditional-scoped variable declarations inside <code>if</code> statements, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">if</span> <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_value</span><span class="p">();</span> <span class="nx">value</span> <span class="o">==</span> <span class="mi">123</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s">&quot;found value&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Here, <code>value</code> is a new local variable valid inside the scope of the <code>if</code> statement, including any <code>else if</code> or <code>else</code> clauses, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">if</span> <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_value</span><span class="p">();</span> <span class="nx">value</span> <span class="p">&gt;</span> <span class="mi">1000</span> <span class="p">{</span>
@@ -73,9 +81,6 @@ Pyro supports conditional-scoped variables inside <code>if</code> statements, e.
     <span class="k">echo</span> <span class="s">&quot;small value&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
-<p>
-Here, <code>value</code> is a new local variable valid inside the scope of the <code>if</code> statement, including any <code>else if</code> or <code>else</code> clauses.
-</p>
 <h3 id="syntax">
 Syntax
 </h3>
