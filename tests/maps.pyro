@@ -301,3 +301,14 @@ def $test_clear() {
     assert map["A"] == 1;
     assert map["B"] == 2;
 }
+
+
+def $test_numerically_equivalent_keys() {
+    var map = {
+        65 = "foo",
+        66 = "bar",
+    };
+
+    assert map['A'] == "foo";
+    assert map[66.0] == "bar";
+}
