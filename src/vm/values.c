@@ -142,7 +142,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                     return ObjTup_hash(vm, AS_TUP(value));
 
                 case OBJ_MAP_AS_SET: {
-                    uint64_t hash_of_set = 0;
+                    uint64_t hash = 0;
                     ObjMap* map = AS_MAP(value);
 
                     for (size_t i = 0; i < map->entry_array_count; i++) {
@@ -150,10 +150,10 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                         if (IS_TOMBSTONE(entry->key)) {
                             continue;
                         }
-                        hash_of_set ^= pyro_hash_value(vm, entry->key);
+                        hash ^= pyro_hash_value(vm, entry->key);
                     }
 
-                    return hash_of_set;
+                    return hash;
                 }
 
                 default: {
