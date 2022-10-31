@@ -97,6 +97,19 @@ Functions
 <dl>
 <div>
 <dt>
+<code>address(arg: any) -&gt; str|err</code>
+</dt>
+<dd>
+<p>
+Returns the memory address of <code>arg</code> as an uppercase hex-encoded string prefixed with <code>0x</code>, e.g. <code>0x600002FBE5B0</code>.
+</p>
+<p>
+Returns an <code>err</code> if <code>arg</code> is not a heap-allocated object.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>gc()</code>
 </dt>
 <dd>
