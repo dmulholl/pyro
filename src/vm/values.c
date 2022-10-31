@@ -121,7 +121,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
             return value.as.u64;
 
         case VAL_CHAR:
-            return value.as.u32;
+            return (uint64_t)value.as.u32;
 
         case VAL_F64:
             if (value.as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
@@ -137,9 +137,26 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
             switch (value.as.obj->type) {
                 case OBJ_STR:
                     return AS_STR(value)->hash;
+
                 case OBJ_TUP:
                     return ObjTup_hash(vm, AS_TUP(value));
-                case OBJ_INSTANCE: {
+
+                case OBJ_MAP_AS_SET: {
+                    uint64_t hash_of_set = 0;
+                    ObjMap* map = AS_MAP(value);
+
+                    for (size_t i = 0; i < map->entry_array_count; i++) {
+                        MapEntry* entry = &map->entry_array[i];
+                        if (IS_TOMBSTONE(entry->key)) {
+                            continue;
+                        }
+                        hash_of_set ^= pyro_hash_value(vm, entry->key);
+                    }
+
+                    return hash_of_set;
+                }
+
+                default: {
                     Value method = pyro_get_method(vm, value, vm->str_dollar_hash);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, value);
@@ -151,8 +168,6 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                     }
                     return (uint64_t)value.as.obj;
                 }
-                default:
-                    return (uint64_t)value.as.obj;
             }
 
         default:
