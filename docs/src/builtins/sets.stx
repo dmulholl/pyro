@@ -68,6 +68,8 @@ You can check if a set contains an item using the `in` operator:
 
 * `A > B` is `true` if `A` is a proper superset of `B`.
 
+Two sets `A` and `B` will compare as equal using the `==` operator, `A == B`, if they are set-equivalent, i.e. if they contain the same items in any order.
+
 
 
 ### Methods
@@ -105,6 +107,12 @@ You can check if a set contains an item using the `in` operator:
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the set is empty.
+
+[[ `:is_equal_to(other: set) -> bool` ]]
+
+    Returns `true` if `receiver` is set-equivalent to `other`, i.e. if the two sets contain the same items in any order.
+
+    Equivalent to `receiver == other`.
 
 [[ `:is_proper_subset_of(other: set) -> bool` ]]
 

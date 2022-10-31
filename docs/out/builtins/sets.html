@@ -151,6 +151,9 @@ Comparison Operators
 <code>A &gt; B</code> is <code>true</code> if <code>A</code> is a proper superset of <code>B</code>.
 </li>
 </ul>
+<p>
+Two sets <code>A</code> and <code>B</code> will compare as equal using the <code>==</code> operator, <code>A == B</code>, if they are set-equivalent, i.e. if they contain the same items in any order.
+</p>
 <h3 id="methods">
 Methods
 </h3>
@@ -229,6 +232,19 @@ Equivalent to <code>receiver &amp; other</code>.
 <dd>
 <p>
 Returns <code>true</code> if the set is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_equal_to(other: set) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>receiver</code> is set-equivalent to <code>other</code>, i.e. if the two sets contain the same items in any order.
+</p>
+<p>
+Equivalent to <code>receiver == other</code>.
 </p>
 </dd>
 </div>
