@@ -1,0 +1,26 @@
+import lib_with_assignment as lib;
+assert lib::value == 0;
+
+# Call the get/set functions directly on the module object.
+lib::set(1);
+assert lib::get() == 1;
+
+# Import the get/set functions into this module before calling them.
+var setter = lib::set;
+var getter = lib::get;
+setter(2);
+assert getter() == 2;
+
+# Call the make_closure() functions directly on the module object.
+setter = lib::make_setter();
+getter = lib::make_getter();
+setter(3);
+assert getter() == 3;
+
+# Import the make_closure() functions into this module before calling them.
+var make_setter = lib::make_setter;
+var make_getter = lib::make_getter;
+setter = make_setter();
+getter = make_getter();
+setter(4);
+assert getter() == 4;

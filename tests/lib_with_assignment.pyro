@@ -1,0 +1,23 @@
+pub var value = 0;
+
+pub def get() {
+    return value;
+}
+
+pub def set(arg) {
+    value = arg;
+}
+
+pub def make_getter() {
+    def closure() {
+        return value;
+    }
+    return closure;
+}
+
+pub def make_setter() {
+    def closure(arg) {
+        value = arg;
+    }
+    return closure;
+}
