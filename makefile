@@ -77,6 +77,7 @@ check:
 install: ## Installs the release binary.
 	@if [ -f ./out/release/pyro ]; then \
 		printf "\e[1;32m Copying\e[0m out/release/pyro --> /usr/local/bin/pyro\n"; \
+		rm -f /usr/local/bin/pyro; \
 		cp ./out/release/pyro /usr/local/bin/pyro; \
 	else \
 		printf "\e[1;31m   Error\e[0m out/release/pyro not found\n"; \
