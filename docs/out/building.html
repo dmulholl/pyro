@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Building Pyro</title>
+        <title>Building &amp; Installing Pyro</title>
         <link rel="stylesheet" href="assets/fonts.css">
         <link rel="stylesheet" href="assets/graphite.css">
         <link rel="stylesheet" href="assets/pygments.css">
@@ -30,7 +30,6 @@
                 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="quickstart.html">Quickstart</a></li>
-<li><a href="installing.html">Install</a></li>
 <li><a href="tour.html">Language Tour</a></li>
 <li><a href="features.html">Features</a></li>
 <li><a href="builtins.html">Builtin Types</a></li>
@@ -39,7 +38,7 @@
 <li><a href="examples.html">Examples</a></li>
 <li><a href="roadmap.html">Roadmap</a></li>
 <li><a href="faq.html">FAQ</a></li>
-<li><a href="building.html">Building Pyro</a></li>
+<li><a href="building.html">Building &amp; Installing</a></li>
 <li><a href="acknowledgements.html">Acknowledgements</a></li>
 <li><a href="license.html">License</a></li>
 <li><a href="https://github.com/dmulholl/pyro">Github</a></li>
@@ -48,22 +47,20 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>Building Pyro</h1>
-                
-                    <p class="subtitle">Notes for developers.</p>
+                <h1>Building &amp; Installing Pyro</h1>
                 
                 <hr>
             </header>
             <ul class="stx-toc">
 <li>
-<a href="#building-pyro">Building Pyro</a>
+<a href="#building-installing">Building &amp; Installing</a>
 </li>
 <li>
-<a href="#testing-pyro">Testing Pyro</a>
+<a href="#test-suite">Test Suite</a>
 </li>
 </ul>
-<h3 id="building-pyro">
-Building Pyro
+<h3 id="building-installing">
+Building &amp; Installing
 </h3>
 <p>
 You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
@@ -85,20 +82,37 @@ $ make release
 The release binary will be created in a new <code>out/release</code> directory as <code>out/release/pyro</code>.
 </p>
 <p>
-To build the debug binary run:
+To install the release binary run:
 </p>
 <pre>
-$ make debug
+$ make install
 </pre>
 <p>
-The debug binary will be created in a new <code>out/debug</code> directory as <code>out/debug/pyro</code>.
+This copies the <code>pyro</code> binary to the <code>/usr/local/bin/</code> directory.
+(You may need to run <code>sudo make install</code> to provide the proper permissions.)
 </p>
 <p>
-The debug binary is (much) slower than the release binary. It enables <code>assert</code> statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
+You can now run Pyro like any other installed binary:
 </p>
-<h3 id="testing-pyro">
-Testing Pyro
+<pre>
+$ pyro
+</pre>
+<p>
+Running Pyro without a script argument launches the REPL &mdash; an interactive environment where you can try running Pyro commands directly.
+Type <code>exit</code> or hit <code>Ctrl-D</code> to end the REPL session.
+</p>
+<p>
+To run a Pyro script, supply its filename to the binary:
+</p>
+<pre>
+$ pyro path/to/script.pyro
+</pre>
+<h3 id="test-suite">
+Test Suite
 </h3>
+<p>
+If you'd like to try hacking on Pyro's source code, you'll want to run the test suite after every change.
+</p>
 <p>
 To build a new release binary and run the test suite run:
 </p>
@@ -112,11 +126,17 @@ To build a new debug binary and run the test suite run:
 $ make check-debug
 </pre>
 <p>
-Alternatively, you can run the test suite using the <code>test</code> command directly, e.g.
+The debug binary is (much) slower than the release binary. It enables <code>assert</code> statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
+</p>
+<p>
+You can also run the test suite using the <code>test</code> command directly, e.g.
 </p>
 <pre>
-pyro test tests/*.pyro
+$ pyro test tests/*.pyro
 </pre>
+<p>
+You can learn more about the <code>test</code> command <a href="features/testing.html">here</a>.
+</p>
         </article>
         
     </body>

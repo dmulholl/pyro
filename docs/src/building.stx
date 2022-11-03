@@ -1,15 +1,12 @@
 ---
-title: Building Pyro
-subtitle: Notes for developers.
-meta_title: Building Pyro
+title: Building &amp; Installing Pyro
+meta_title: Building &amp; Installing Pyro
 ---
-
-[wsl]: https://docs.microsoft.com/en-us/windows/wsl/
 
 ::: insert toc
 
 
-### Building Pyro
+### Building & Installing
 
 You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
 
@@ -26,17 +23,32 @@ To build the release binary run:
 
 The release binary will be created in a new `out/release` directory as `out/release/pyro`.
 
-To build the debug binary run:
+To install the release binary run:
 
 ::: code
-    $ make debug
+    $ make install
 
-The debug binary will be created in a new `out/debug` directory as `out/debug/pyro`.
+This copies the `pyro` binary to the `/usr/local/bin/` directory.
+(You may need to run `sudo make install` to provide the proper permissions.)
 
-The debug binary is (much) slower than the release binary. It enables `assert` statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
+You can now run Pyro like any other installed binary:
+
+::: code
+    $ pyro
+
+Running Pyro without a script argument launches the REPL --- an interactive environment where you can try running Pyro commands directly.
+Type `exit` or hit `Ctrl-D` to end the REPL session.
+
+To run a Pyro script, supply its filename to the binary:
+
+::: code
+    $ pyro path/to/script.pyro
 
 
-### Testing Pyro
+
+### Test Suite
+
+If you'd like to try hacking on Pyro's source code, you'll want to run the test suite after every change.
 
 To build a new release binary and run the test suite run:
 
@@ -46,7 +58,10 @@ To build a new debug binary and run the test suite run:
 
     $ make check-debug
 
-Alternatively, you can run the test suite using the `test` command directly, e.g.
+The debug binary is (much) slower than the release binary. It enables `assert` statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
 
-    pyro test tests/*.pyro
+You can also run the test suite using the `test` command directly, e.g.
 
+    $ pyro test tests/*.pyro
+
+You can learn more about the `test` command [here](@root/features/testing//).

@@ -30,7 +30,6 @@
                 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="quickstart.html">Quickstart</a></li>
-<li><a href="installing.html">Install</a></li>
 <li><a href="tour.html">Language Tour</a></li>
 <li><a href="features.html">Features</a></li>
 <li><a href="builtins.html">Builtin Types</a></li>
@@ -39,7 +38,7 @@
 <li><a href="examples.html">Examples</a></li>
 <li><a href="roadmap.html">Roadmap</a></li>
 <li><a href="faq.html">FAQ</a></li>
-<li><a href="building.html">Building Pyro</a></li>
+<li><a href="building.html">Building &amp; Installing</a></li>
 <li><a href="acknowledgements.html">Acknowledgements</a></li>
 <li><a href="license.html">License</a></li>
 <li><a href="https://github.com/dmulholl/pyro">Github</a></li>
@@ -57,7 +56,10 @@
 <a href="#building-pyro">Building Pyro</a>
 </li>
 <li>
-<a href="#hello-world">Hello World</a>
+<a href="#run-the-repl">Run the REPL</a>
+</li>
+<li>
+<a href="#run-a-script">Run a Script</a>
 </li>
 <li>
 <a href="#installing-pyro">Installing Pyro</a>
@@ -71,23 +73,23 @@ You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BS
 (If you're on Windows, you can use the <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL</a> to try Pyro.)
 </p>
 <p>
-First, download the Pyro repository from Github:
+First, download the Pyro repository from Github and <code>cd</code> into the <code>pyro</code> directory:
 </p>
 <pre>
 $ git clone https://github.com/dmulholl/pyro.git
+$ cd pyro
 </pre>
 <p>
-<code>cd</code> into the <code>pyro</code> directory and run <code>make</code>:
+To build the release binary run:
 </p>
 <pre>
-$ cd pyro
-$ make
+$ make release
 </pre>
 <p>
-The <code>pyro</code> binary will be created in a new <code>out/release</code> directory as <code>out/release/pyro</code>.
+The release binary will be created in a new <code>out/release</code> directory as <code>out/release/pyro</code>.
 </p>
 <p>
-<code>cd</code> into the <code>out/release</code> directory and try running the binary with the <code>--help</code> flag to view the command line help:
+<code>cd</code> into the <code>out/release</code> directory and try running the Pyro binary with the <code>--help</code> flag to view the command line help:
 </p>
 <pre>
 $ ./pyro --help
@@ -111,8 +113,37 @@ Commands:
 Command Help:
   help &lt;command&gt;     Print the command's help text.
 </pre>
-<h3 id="hello-world">
-Hello World
+<h3 id="run-the-repl">
+Run the REPL
+</h3>
+<p>
+Running the Pyro binary without any arguments launches the REPL &mdash; an interactive environment where you can run Pyro commands directly.
+</p>
+<p>
+Try running the REPL:
+</p>
+<pre>
+$ ./pyro
+</pre>
+<p>
+At the prompt, type <code>echo &quot;hello world&quot;;</code> and hit return:
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world";
+hello world
+</pre>
+<p>
+Pyro statements normally end with a semicolon, <code>;</code>, but you can omit the semicolon after typing a single statement in the REPL:
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world"
+hello world
+</pre>
+<p>
+Type <code>exit</code> or hit <code>Ctrl-D</code> to end the REPL session.
+</p>
+<h3 id="run-a-script">
+Run a Script
 </h3>
 <p>
 Let's make a simple test script.
@@ -136,7 +167,7 @@ Take the <a href="tour.html">tour</a> if you'd like to learn more about the lang
 Installing Pyro
 </h3>
 <p>
-You can find instructions for installing Pyro <a href="installing.html">here</a>.
+You can find instructions for installing Pyro <a href="building.html">here</a>.
 </p>
         </article>
         

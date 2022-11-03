@@ -52,4 +52,4 @@ You don't need to use test functions for simple tests --- you can put `assert` s
 ::: code pyro
     assert "foo" + "bar" == "foobar";
 
-The `test` command will register the file as passing if it executes without panicking, or as failing if any of the `assert` statements fail.
+The `test` command will register the file as passing if it executes without panicking, or as failing if any of the `assert` statements at global-scope fail.

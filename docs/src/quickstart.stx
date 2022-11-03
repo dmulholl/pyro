@@ -13,20 +13,20 @@ meta_title: Pyro &mdash; Quickstart Tutorial
 You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
 (If you're on Windows, you can use the [WSL][] to try Pyro.)
 
-First, download the Pyro repository from Github:
+First, download the Pyro repository from Github and `cd` into the `pyro` directory:
 
 ::: code
     $ git clone https://github.com/dmulholl/pyro.git
+    $ cd pyro
 
-`cd` into the `pyro` directory and run `make`:
+To build the release binary run:
 
 ::: code
-    $ cd pyro
-    $ make
+    $ make release
 
-The `pyro` binary will be created in a new `out/release` directory as `out/release/pyro`.
+The release binary will be created in a new `out/release` directory as `out/release/pyro`.
 
-`cd` into the `out/release` directory and try running the binary with the `--help` flag to view the command line help:
+`cd` into the `out/release` directory and try running the Pyro binary with the `--help` flag to view the command line help:
 
 ::: code
     $ ./pyro --help
@@ -52,7 +52,32 @@ The `pyro` binary will be created in a new `out/release` directory as `out/relea
 
 
 
-### Hello World
+### Run the REPL
+
+Running the Pyro binary without any arguments launches the REPL --- an interactive environment where you can run Pyro commands directly.
+
+Try running the REPL:
+
+::: code
+    $ ./pyro
+
+At the prompt, type `echo "hello world";` and hit return:
+
+::: code
+    >>> echo "hello world";
+    hello world
+
+Pyro statements normally end with a semicolon, `;`, but you can omit the semicolon after typing a single statement in the REPL:
+
+::: code
+    >>> echo "hello world"
+    hello world
+
+Type `exit` or hit `Ctrl-D` to end the REPL session.
+
+
+
+### Run a Script
 
 Let's make a simple test script.
 Create a file called `hello.pyro` and add the following line to it:
@@ -73,4 +98,4 @@ Take the [tour](@root/tour//) if you'd like to learn more about the language.
 
 ### Installing Pyro
 
-You can find instructions for installing Pyro [here](@root/installing//).
+You can find instructions for installing Pyro [here](@root/building//).
