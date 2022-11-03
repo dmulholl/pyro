@@ -35,7 +35,7 @@ Some day I'll get around to implementing string interpolation for double-quoted 
 The syntax will be:
 
 ::: code pyro
-    "string with ${expr;fmt_spec} interpolations"
+    "string with ${<expr>;<fmt_spec>} interpolations"
 
 For example:
 
