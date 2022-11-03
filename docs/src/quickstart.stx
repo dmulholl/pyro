@@ -73,7 +73,7 @@ Pyro statements normally end with a semicolon, `;`, but you can omit the semicol
     >>> echo "hello world"
     hello world
 
-Type `exit` or hit `Ctrl-D` to end the REPL session.
+Hit `Ctrl-D` or type `exit` and hit return to end the REPL session.
 
 
 

@@ -70,10 +70,16 @@ Flags:
   -v, --verbose        Show error output.
 </pre>
 <p>
-You can specify multiple files to test, e.g.
+Specify a single file to test:
 </p>
 <pre>
-$ pyro test tests/*.pyro
+$ pyro test script.pyro
+</pre>
+<p>
+Specify multiple files to test:
+</p>
+<pre>
+$ pyro test directory/*.pyro
 </pre>
 <h3 id="test-functions">
 Test Functions
@@ -96,7 +102,10 @@ The syntax is:
 assert &lt;expression&gt;;
 </pre>
 <p>
-An <code>assert</code> statement passes if its operand expression evaluates as truthy or fails if it evaluates as falsey.
+An <code>assert</code> statement passes if its operand expression evaluates as <i>truthy</i> or fails if it evaluates as <i>falsey</i>.
+</p>
+<p>
+(In Pyro, the values <code>false</code>, <code>null</code>, and <code>err</code> are <i>falsey</i>; all other values are <i>truthy</i>.)
 </p>
 <p>
 Note that test functions take no arguments.

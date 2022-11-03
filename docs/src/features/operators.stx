@@ -61,25 +61,28 @@ The equality (`==`, `!=`) and comparison (`>`, `>=`, `<`, `<=`) operators each t
 
 ### Logical Operators
 
-The logical operators are `||` (OR), `&&` (AND), and `!` (NOT). They evaluate the truthiness of their operands.
+The logical operators are `||` (OR), `&&` (AND), and `!` (NOT). They evaluate the *truthiness* of their operands.
+
+(In Pyro, the values `false`, `null`, and `err` are *falsey*; all other values are *truthy*.)
 
 The logical operators `||` and `&&` are short-circuiting.
 
-The value of the logical-OR expression `a || b` is the value of the first operand if that operand is truthy, otherwise the value of the second operand.
+The value of the logical-OR expression `a || b` is the value of the first operand if that operand is *truthy*, otherwise the value of the second operand.
 
-This means you can use the `||` operator to swap in a default value in place of a falsey expression:
+This means you can use the `||` operator to swap in a default value in place of a *falsey* expression:
 
 ::: code pyro
     var foo = maybe_falsey() || "default";
 
-The value of the logical-AND expression `a && b` is the value of the first operand if that operand is falsey, otherwise the value of the second operand.
+The value of the logical-AND expression `a && b` is the value of the first operand if that operand is *falsey*, otherwise the value of the second operand.
 
 This means you can use the `&&` operator to conditionally chain a sequence of expressions:
 
 ::: code pyro
     func1() && func2() && func3();
 
-`func2()` will only be called if `func1()` returns a truthy value; `func3()` will only be called if `func2()` returns a truthy value.
+`func2()` will only be called if `func1()` returns a *truthy* value; `func3()` will only be called if `func2()` returns a *truthy* value.
+
 
 
 
@@ -90,7 +93,7 @@ The conditional or ternary operator takes three operands. It looks like this:
 ::: code pyro
     var foo = condition ? expr1 :| expr2;
 
-The value of the expression is `expr1` if `condition` evaluates as truthy, otherwise `expr2`.
+The value of the expression is `expr1` if `condition` evaluates as *truthy*, otherwise `expr2`.
 
 
 
@@ -99,9 +102,14 @@ The value of the expression is `expr1` if `condition` evaluates as truthy, other
 The null-coalescing operator `??` lets you swap in a default value in place of a `null`:
 
 ::: code pyro
-    var foo = maybe_null() ?? "default";
+    var value = maybe_null() ?? "default";
 
 The value of the expression `a ?? b` is the value of the first operand if that operand is not `null`, otherwise the value of the second operand.
+
+You can chain multiple `??` expressions, e.g.
+
+::: code pyro
+    var value = maybe_null() ?? get_fallback() ?? "default";
 
 
 
@@ -110,9 +118,14 @@ The value of the expression `a ?? b` is the value of the first operand if that o
 The error-coalescing operator `!!` lets you swap in a default value in place of an error:
 
 ::: code pyro
-    var foo = maybe_error() !! "default";
+    var value = maybe_error() !! "default";
 
-The value of the expression `a !! b` is the value of the first operand if that operand is not an `$err`, otherwise the value of the second operand.
+The value of the expression `a !! b` is the value of the first operand if that operand is not an `err`, otherwise the value of the second operand.
+
+You can chain multiple `!!` expressions, e.g.
+
+::: code pyro
+    var value = maybe_error() ?? get_fallback() ?? "default";
 
 
 

@@ -56,6 +56,9 @@
 <a href="#building-installing">Building &amp; Installing</a>
 </li>
 <li>
+<a href="#executable-scripts">Executable Scripts</a>
+</li>
+<li>
 <a href="#test-suite">Test Suite</a>
 </li>
 </ul>
@@ -89,7 +92,7 @@ $ make install
 </pre>
 <p>
 This copies the <code>pyro</code> binary to the <code>/usr/local/bin/</code> directory.
-(You may need to run <code>sudo make install</code> to provide the proper permissions.)
+(Depending on your operating system, you may need to run <code>sudo make install</code> to provide the proper permissions.)
 </p>
 <p>
 You can now run Pyro like any other installed binary:
@@ -98,8 +101,21 @@ You can now run Pyro like any other installed binary:
 $ pyro
 </pre>
 <p>
-Running Pyro without a script argument launches the REPL &mdash; an interactive environment where you can try running Pyro commands directly.
-Type <code>exit</code> or hit <code>Ctrl-D</code> to end the REPL session.
+Running Pyro without a script argument launches the REPL &mdash; an interactive environment where you can try running Pyro commands directly, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; 1 + 2;
+3
+</pre>
+<p>
+Pyro statements normally end with a semicolon, <code>;</code>, but you can omit the semicolon after typing a single statement in the REPL, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; 1 + 2
+3
+</pre>
+<p>
+Hit <code>Ctrl-D</code> or type <code>exit</code> and hit return to end the REPL session.
 </p>
 <p>
 To run a Pyro script, supply its filename to the binary:
@@ -107,6 +123,32 @@ To run a Pyro script, supply its filename to the binary:
 <pre>
 $ pyro path/to/script.pyro
 </pre>
+<h3 id="executable-scripts">
+Executable Scripts
+</h3>
+<p>
+To make a Pyro script executable, add a <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">shebang</a> line to the top of the file, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="c1">#!/usr/bin/env pyro</span>
+<span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Then make the script executable &mdash; e.g. for a file called <code>script.pyro</code>:
+</p>
+<pre>
+$ chmod +x ./script.pyro
+</pre>
+<p>
+You can now run the script directly as an executable, e.g.
+</p>
+<pre>
+$ ./script.pyro
+hello world
+</pre>
+<p>
+Note that the <code>.pyro</code> suffix is purely a convention &mdash; Pyro scripts don't require any special suffix or naming convention.
+</p>
 <h3 id="test-suite">
 Test Suite
 </h3>
@@ -129,7 +171,10 @@ $ make check-debug
 The debug binary is (much) slower than the release binary. It enables <code>assert</code> statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
 </p>
 <p>
-You can also run the test suite using the <code>test</code> command directly, e.g.
+If you'd like to try hacking on Pyro's source code, you should run the test suite with the debug binary after every change.
+</p>
+<p>
+You can also run Pyro's test suite using the <code>test</code> command directly, e.g.
 </p>
 <pre>
 $ pyro test tests/*.pyro
