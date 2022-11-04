@@ -58,7 +58,7 @@ The equality (`==`, `!=`) and comparison (`>`, `>=`, `<`, `<=`) operators each t
 * Sets are equal if they are set-equivalent, i.e. if they contain the same items in any order.
 * By default, all other objects are equal only if they are the same object.
 
-You can override the equality and comparison operators to customize their behaviour for user-defined types.
+You can override the equality and comparison operators to customize their behaviour for your own types.
 
 
 
