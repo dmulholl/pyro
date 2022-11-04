@@ -237,15 +237,15 @@ Mathematical Operators
 <tbody>
 <tr>
 <td>
-+
+<code>+</code>
 </td>
 <td>
-Addition (binary) or a no op (unary). Addition returns an integer if both operands are integers or a float if either or both are floats.
+Addition (binary) or a no-op (unary). Addition returns an integer if both operands are integers or a float if either or both are floats.
 </td>
 </tr>
 <tr>
 <td>
--
+<code>-</code>
 </td>
 <td>
 Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
@@ -253,7 +253,7 @@ Subtraction (binary) or negation (unary). Subtraction returns an integer if both
 </tr>
 <tr>
 <td>
-*
+<code>*</code>
 </td>
 <td>
 Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
@@ -261,7 +261,7 @@ Multiplication. Returns an integer if both operands are integers or a float if e
 </tr>
 <tr>
 <td>
-/
+<code>/</code>
 </td>
 <td>
 Floating-point division. Both operands will be converted to floats and the result will be a float.
@@ -269,7 +269,7 @@ Floating-point division. Both operands will be converted to floats and the resul
 </tr>
 <tr>
 <td>
-//
+<code>//</code>
 </td>
 <td>
 Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
@@ -277,7 +277,7 @@ Truncating division. Returns an integer if both operands are integers or a float
 </tr>
 <tr>
 <td>
-%
+<code>%</code>
 </td>
 <td>
 Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
@@ -285,7 +285,7 @@ Modulo/remainder operator. Returns an integer if both operands are integers or a
 </tr>
 <tr>
 <td>
-**
+<code>**</code>
 </td>
 <td>
 Power operator. Both operands are converted to floats and the result is a float.
@@ -320,7 +320,7 @@ By default, all other objects are equal only if they are the same object.
 </li>
 </ul>
 <p>
-You can override the equality and comparison operators to customize their behaviour for your own types.
+You can overload the equality and comparison operators to customize their behaviour for your own types.
 </p>
 <h3 id="logical-operators">
 Logical Operators
@@ -329,7 +329,7 @@ Logical Operators
 The logical operators are <code>||</code> (OR), <code>&amp;&amp;</code> (AND), and <code>!</code> (NOT). They evaluate the <i>truthiness</i> of their operands.
 </p>
 <p>
-(In Pyro, the values <code>false</code>, <code>null</code>, and <code>err</code> are <i>falsey</i>; all other values are <i>truthy</i>.)
+In Pyro, the values <code>false</code>, <code>null</code>, and <code>err</code> are <i>falsey</i>; all other values are <i>truthy</i>.
 </p>
 <p>
 The logical operators <code>||</code> and <code>&amp;&amp;</code> are short-circuiting.
@@ -338,16 +338,31 @@ The logical operators <code>||</code> and <code>&amp;&amp;</code> are short-circ
 The value of the logical-OR expression <code>a || b</code> is the value of the first operand if that operand is <i>truthy</i>, otherwise the value of the second operand.
 </p>
 <p>
-This means you can use the <code>||</code> operator to swap in a default value in place of a <i>falsey</i> expression:
+This means you can use the <code>||</code> operator to swap in a default value in place of a <i>falsey</i> expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
+Note that you can chain multiple <code>||</code> expressions, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+</pre>
+<p>
 The value of the logical-AND expression <code>a &amp;&amp; b</code> is the value of the first operand if that operand is <i>falsey</i>, otherwise the value of the second operand.
 </p>
 <p>
-This means you can use the <code>&amp;&amp;</code> operator to conditionally chain a sequence of expressions:
+This means you can use the <code>&amp;&amp;</code> operator to conditionally chain a sequence of expressions, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">func1</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">func2</span><span class="p">();</span>
+</pre>
+<p>
+<code>func2()</code> will only be called if <code>func1()</code> returns a <i>truthy</i> value.
+</p>
+<p>
+Note that you can chain multiple <code>&amp;&amp;</code> expressions, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">func1</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">func2</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">func3</span><span class="p">();</span>
@@ -407,11 +422,14 @@ You can chain multiple <code>!!</code> expressions, e.g.
 The Else-coalescing Operator
 </h3>
 <p>
-The value of an <code>else</code> expression is the value of its first operand if that value is not one of (<code>false</code>, <code>null</code>, <code>err</code>, <code>0</code>, <code>0.0</code>, or <code>&quot;&quot;</code>), otherwise the value of its second operand.
+The else-coalescing operator <code>else</code> lets you swap in a default value in place of a broadly-defined <i>falsey-ish</i> value:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_value</span><span class="p">()</span> <span class="k">else</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
+<p>
+The value of the expression <code>a else b</code> is the value of the first operand if that value is not one of (<code>false</code>, <code>null</code>, <code>err</code>, <code>0</code>, <code>0.0</code>, or <code>&quot;&quot;</code>), otherwise the value of the second operand.
+</p>
 <p>
 You can chain multiple <code>else</code> expressions, e.g.
 </p>

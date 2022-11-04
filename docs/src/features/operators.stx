@@ -36,13 +36,13 @@ Note that conditional expressions using the ternary operator `? :|` can't be nes
 
 ::: table
 
-    +       | Addition (binary) or a no op (unary). Addition returns an integer if both operands are integers or a float if either or both are floats.
-    -       | Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
-    *       | Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
-    /       | Floating-point division. Both operands will be converted to floats and the result will be a float.
-    //      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
-    %       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
-    **      | Power operator. Both operands are converted to floats and the result is a float.
+    `+`       | Addition (binary) or a no-op (unary). Addition returns an integer if both operands are integers or a float if either or both are floats.
+    `-`       | Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
+    `*`       | Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
+    `/`       | Floating-point division. Both operands will be converted to floats and the result will be a float.
+    `//`      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
+    `%`       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
+    `**`      | Power operator. Both operands are converted to floats and the result is a float.
 
 You can overload the mathematical operators to customize their behaviour for your own types.
 
@@ -58,7 +58,7 @@ The equality (`==`, `!=`) and comparison (`>`, `>=`, `<`, `<=`) operators each t
 * Sets are equal if they are set-equivalent, i.e. if they contain the same items in any order.
 * By default, all other objects are equal only if they are the same object.
 
-You can override the equality and comparison operators to customize their behaviour for your own types.
+You can overload the equality and comparison operators to customize their behaviour for your own types.
 
 
 
@@ -66,20 +66,32 @@ You can override the equality and comparison operators to customize their behavi
 
 The logical operators are `||` (OR), `&&` (AND), and `!` (NOT). They evaluate the *truthiness* of their operands.
 
-(In Pyro, the values `false`, `null`, and `err` are *falsey*; all other values are *truthy*.)
+In Pyro, the values `false`, `null`, and `err` are *falsey*; all other values are *truthy*.
 
 The logical operators `||` and `&&` are short-circuiting.
 
 The value of the logical-OR expression `a || b` is the value of the first operand if that operand is *truthy*, otherwise the value of the second operand.
 
-This means you can use the `||` operator to swap in a default value in place of a *falsey* expression:
+This means you can use the `||` operator to swap in a default value in place of a *falsey* expression, e.g.
 
 ::: code pyro
     var value = maybe_falsey() || "default";
 
+Note that you can chain multiple `||` expressions, e.g.
+
+::: code pyro
+    var value = maybe_falsey() || get_fallback() || "default";
+
 The value of the logical-AND expression `a && b` is the value of the first operand if that operand is *falsey*, otherwise the value of the second operand.
 
-This means you can use the `&&` operator to conditionally chain a sequence of expressions:
+This means you can use the `&&` operator to conditionally chain a sequence of expressions, e.g.
+
+::: code pyro
+    func1() && func2();
+
+`func2()` will only be called if `func1()` returns a *truthy* value.
+
+Note that you can chain multiple `&&` expressions, e.g.
 
 ::: code pyro
     func1() && func2() && func3();
@@ -133,17 +145,18 @@ You can chain multiple `!!` expressions, e.g.
 
 ### The Else-coalescing Operator
 
-The value of an `else` expression is the value of its first operand if that value is not one of (`false`, `null`, `err`, `0`, `0.0`, or `""`), otherwise the value of its second operand.
+The else-coalescing operator `else` lets you swap in a default value in place of a broadly-defined *falsey-ish* value:
 
 ::: code pyro
     var value = get_value() else "default";
+
+
+The value of the expression `a else b` is the value of the first operand if that value is not one of (`false`, `null`, `err`, `0`, `0.0`, or `""`), otherwise the value of the second operand.
 
 You can chain multiple `else` expressions, e.g.
 
 ::: code pyro
     var value = get_value() else get_fallback() else "default";
-
-
 
 
 
