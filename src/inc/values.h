@@ -120,7 +120,7 @@ static inline Value pyro_make_null() {
 // Macros for extracting object pointers from Value instances.
 #define AS_OBJ(value)               ((value).as.obj)
 #define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
-#define AS_FN(value)                ((ObjFn*)AS_OBJ(value))
+#define AS_FN(value)                ((ObjPyroFn*)AS_OBJ(value))
 #define AS_CLOSURE(value)           ((ObjClosure*)AS_OBJ(value))
 #define AS_CLASS(value)             ((ObjClass*)AS_OBJ(value))
 #define AS_INSTANCE(value)          ((ObjInstance*)AS_OBJ(value))

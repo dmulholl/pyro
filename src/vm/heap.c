@@ -81,11 +81,11 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         }
 
         case OBJ_FN: {
-            ObjFn* fn = (ObjFn*)object;
+            ObjPyroFn* fn = (ObjPyroFn*)object;
             FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
             FREE_ARRAY(vm, Value, fn->constants, fn->constants_capacity);
             FREE_ARRAY(vm, uint16_t, fn->bpl, fn->bpl_capacity);
-            FREE_OBJECT(vm, ObjFn, object);
+            FREE_OBJECT(vm, ObjPyroFn, object);
             break;
         }
 

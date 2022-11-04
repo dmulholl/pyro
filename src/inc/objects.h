@@ -230,26 +230,26 @@ typedef struct {
     size_t first_line_number;
     uint16_t* bpl;
     size_t bpl_capacity;
-} ObjFn;
+} ObjPyroFn;
 
-ObjFn* ObjFn_new(PyroVM* vm);
+ObjPyroFn* ObjPyroFn_new(PyroVM* vm);
 
 // Writes [byte] to the function's bytecode array. Returns [true] if the write succeeded, [false] if
 // the write failed because memory could not be allocated.
-bool ObjFn_write(ObjFn* fn, uint8_t byte, size_t line_number, PyroVM* vm);
+bool ObjPyroFn_write(ObjPyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm);
 
 // This method adds a value to the function's constant table and returns its index. If an identical
 // value is already present in the table it avoids adding a duplicate and returns the index of
 // the existing entry instead. Returns -1 if the operation failed because sufficient memory
 // could not be allocated for the constant table.
-int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm);
+int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, Value value, PyroVM* vm);
 
 // Returns the length in bytes of the arguments for the opcode at the specified index.
-size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip);
+size_t ObjPyroFn_opcode_argcount(ObjPyroFn* fn, size_t ip);
 
 // This method returns the source code line number corresponding to the bytecode instruction at
 // index [ip].
-size_t ObjFn_get_line_number(ObjFn* fn, size_t ip);
+size_t ObjPyroFn_get_line_number(ObjPyroFn* fn, size_t ip);
 
 /* ---------------- */
 /* Native Functions */
@@ -335,14 +335,14 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* slot);
 
 typedef struct {
     Obj obj;
-    ObjFn* fn;
+    ObjPyroFn* fn;
     ObjModule* module;
     ObjVec* default_values;
     ObjUpvalue** upvalues;
     size_t upvalue_count;
 } ObjClosure;
 
-ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* func, ObjModule* module);
+ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* func, ObjModule* module);
 
 /* ------------- */
 /* Bound Methods */

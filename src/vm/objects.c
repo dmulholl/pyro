@@ -95,7 +95,7 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm) {
 /* -------- */
 
 
-ObjClosure* ObjClosure_new(PyroVM* vm, ObjFn* fn, ObjModule* module) {
+ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* fn, ObjModule* module) {
     ObjClosure* closure = ALLOCATE_OBJECT(vm, ObjClosure, OBJ_CLOSURE);
     if (!closure) {
         return NULL;
@@ -904,8 +904,8 @@ ObjStr* ObjStr_esc_percents(const char* src, size_t length, PyroVM* vm) {
 /* -------------- */
 
 
-ObjFn* ObjFn_new(PyroVM* vm) {
-    ObjFn* fn = ALLOCATE_OBJECT(vm, ObjFn, OBJ_FN);
+ObjPyroFn* ObjPyroFn_new(PyroVM* vm) {
+    ObjPyroFn* fn = ALLOCATE_OBJECT(vm, ObjPyroFn, OBJ_FN);
     if (!fn) {
         return NULL;
     }
@@ -932,7 +932,7 @@ ObjFn* ObjFn_new(PyroVM* vm) {
 }
 
 
-bool ObjFn_write(ObjFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
+bool ObjPyroFn_write(ObjPyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
     if (fn->code_count == fn->code_capacity) {
         size_t new_capacity = GROW_CAPACITY(fn->code_capacity);
         uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity, new_capacity);
@@ -969,7 +969,7 @@ bool ObjFn_write(ObjFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
 }
 
 
-size_t ObjFn_get_line_number(ObjFn* fn, size_t ip) {
+size_t ObjPyroFn_get_line_number(ObjPyroFn* fn, size_t ip) {
     size_t offset = 0;
     size_t sum = 0;
 
@@ -985,7 +985,7 @@ size_t ObjFn_get_line_number(ObjFn* fn, size_t ip) {
 }
 
 
-int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
+int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, Value value, PyroVM* vm) {
     for (size_t i = 0; i < fn->constants_count; i++) {
         if (pyro_compare_eq_strict(value, fn->constants[i])) {
             return i;
@@ -1007,7 +1007,7 @@ int64_t ObjFn_add_constant(ObjFn* fn, Value value, PyroVM* vm) {
 }
 
 
-size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
+size_t ObjPyroFn_opcode_argcount(ObjPyroFn* fn, size_t ip) {
     switch (fn->code[ip]) {
         case OP_ASSERT:
         case OP_BINARY_AMP:
@@ -1121,14 +1121,14 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         // 2 bytes for the constant index, plus two for each upvalue.
         case OP_MAKE_CLOSURE: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
-            ObjFn* closure_fn = AS_FN(fn->constants[const_index]);
+            ObjPyroFn* closure_fn = AS_FN(fn->constants[const_index]);
             return 2 + closure_fn->upvalue_count * 2;
         }
 
         // 2 bytes for the constant index, 1 byte for the value count, plus two for each upvalue.
         case OP_MAKE_CLOSURE_WITH_DEF_ARGS: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
-            ObjFn* closure_fn = AS_FN(fn->constants[const_index]);
+            ObjPyroFn* closure_fn = AS_FN(fn->constants[const_index]);
             return 2 + 1 + closure_fn->upvalue_count * 2;
         }
 
@@ -1141,7 +1141,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
 
         default:
             assert(false);
-            fprintf(stderr, "Unhandled opcode in ObjFn_opcode_argcount().");
+            fprintf(stderr, "Unhandled opcode in ObjPyroFn_opcode_argcount().");
             exit(1);
     }
 }

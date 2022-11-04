@@ -8,12 +8,12 @@ static void print_stack_trace(PyroVM* vm) {
 
     for (size_t i = vm->frame_count; i > 0; i--) {
         CallFrame* frame = &vm->frames[i - 1];
-        ObjFn* fn = frame->closure->fn;
+        ObjPyroFn* fn = frame->closure->fn;
 
         size_t line_number = 1;
         if (frame->ip > fn->code) {
             size_t ip = frame->ip - fn->code - 1;
-            line_number = ObjFn_get_line_number(fn, ip);
+            line_number = ObjPyroFn_get_line_number(fn, ip);
         }
 
         pyro_stderr_write_f(vm, "%s:%zu\n", fn->source_id->bytes, line_number);
@@ -50,18 +50,18 @@ static void panic(
     size_t last_opcode_line_number = 0;
     if (vm->frame_count > 0) {
         CallFrame* current_frame = &vm->frames[vm->frame_count - 1];
-        ObjFn* current_fn = current_frame->closure->fn;
+        ObjPyroFn* current_fn = current_frame->closure->fn;
         last_opcode_source_id = current_fn->source_id;
         last_opcode_line_number = 1;
         if (current_frame->ip > current_fn->code) {
             size_t current_ip = current_frame->ip - current_fn->code - 1;
-            last_opcode_line_number = ObjFn_get_line_number(current_fn, current_ip);
+            last_opcode_line_number = ObjPyroFn_get_line_number(current_fn, current_ip);
         } else if (vm->frame_count > 1) {
             CallFrame* outer_frame = &vm->frames[vm->frame_count - 2];
-            ObjFn* outer_fn = outer_frame->closure->fn;
+            ObjPyroFn* outer_fn = outer_frame->closure->fn;
             size_t outer_ip = outer_frame->ip - outer_fn->code - 1;
             last_opcode_source_id = outer_fn->source_id;
-            last_opcode_line_number = ObjFn_get_line_number(outer_fn, outer_ip);
+            last_opcode_line_number = ObjPyroFn_get_line_number(outer_fn, outer_ip);
         }
     }
 

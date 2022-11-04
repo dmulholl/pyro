@@ -6,6 +6,6 @@
 #include "objects.h"
 
 // This function will panic and return NULL if a syntax error occurs or if memory allocation fails.
-ObjFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id);
+ObjPyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id);
 
 #endif

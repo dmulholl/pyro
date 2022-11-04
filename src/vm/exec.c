@@ -493,7 +493,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MAKE_CLOSURE: {
-                ObjFn* fn = AS_FN(READ_CONSTANT());
+                ObjPyroFn* fn = AS_FN(READ_CONSTANT());
                 ObjModule* module = frame->closure->module;
                 ObjClosure* closure = ObjClosure_new(vm, fn, module);
                 if (!closure) {
@@ -517,7 +517,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MAKE_CLOSURE_WITH_DEF_ARGS: {
-                ObjFn* fn = AS_FN(READ_CONSTANT());
+                ObjPyroFn* fn = AS_FN(READ_CONSTANT());
                 ObjModule* module = frame->closure->module;
                 ObjClosure* closure = ObjClosure_new(vm, fn, module);
                 if (!closure) {
@@ -2111,7 +2111,7 @@ void pyro_reset_vm(PyroVM* vm) {
 
 
 void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id) {
-    ObjFn* fn = pyro_compile(vm, code, code_length, source_id);
+    ObjPyroFn* fn = pyro_compile(vm, code, code_length, source_id);
     if (vm->halt_flag) {
         return;
     }
@@ -2210,7 +2210,7 @@ void pyro_exec_code_as_module(
     const char* source_id,
     ObjModule* module
 ) {
-    ObjFn* fn = pyro_compile(vm, code, code_length, source_id);
+    ObjPyroFn* fn = pyro_compile(vm, code, code_length, source_id);
     if (vm->halt_flag) {
         return;
     }
@@ -2255,7 +2255,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
         return;
     }
 
-    ObjFn* fn = pyro_compile(vm, fd.data, fd.size, path);
+    ObjPyroFn* fn = pyro_compile(vm, fd.data, fd.size, path);
     FREE_ARRAY(vm, char, fd.data, fd.size);
     if (vm->halt_flag) {
         return;
