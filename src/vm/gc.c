@@ -205,7 +205,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case OBJ_FILE:
             break;
 
-        case OBJ_FN: {
+        case OBJ_PYRO_FN: {
             ObjPyroFn* fn = (ObjPyroFn*)object;
             mark_object(vm, (Obj*)fn->name);
             mark_object(vm, (Obj*)fn->source_id);

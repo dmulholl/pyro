@@ -32,7 +32,7 @@ typedef enum {
     OBJ_CLOSURE,
     OBJ_ERR,
     OBJ_FILE,
-    OBJ_FN,
+    OBJ_PYRO_FN,
     OBJ_INSTANCE,
     OBJ_ITER,
     OBJ_MAP,
@@ -98,7 +98,7 @@ static inline Value pyro_make_null() {
 
 // Macros for checking if a Value instance is an object of a specific type.
 #define IS_STR(value)               pyro_is_obj_of_type(value, OBJ_STR)
-#define IS_FN(value)                pyro_is_obj_of_type(value, OBJ_FN)
+#define IS_FN(value)                pyro_is_obj_of_type(value, OBJ_PYRO_FN)
 #define IS_CLOSURE(value)           pyro_is_obj_of_type(value, OBJ_CLOSURE)
 #define IS_NATIVE_FN(value)         pyro_is_obj_of_type(value, OBJ_NATIVE_FN)
 #define IS_CLASS(value)             pyro_is_obj_of_type(value, OBJ_CLASS)

@@ -471,7 +471,7 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_FILE:
             return pyro_sprintf_to_obj(vm, "<file>");
 
-        case OBJ_FN:
+        case OBJ_PYRO_FN:
             return pyro_sprintf_to_obj(vm, "<fn>");
 
         case OBJ_BOUND_METHOD:
@@ -587,7 +587,7 @@ char* pyro_stringify_object_type(ObjType type) {
         case OBJ_CLASS: return "<class>";
         case OBJ_CLOSURE: return "<closure>";
         case OBJ_FILE: return "<file>";
-        case OBJ_FN: return "<fn>";
+        case OBJ_PYRO_FN: return "<fn>";
         case OBJ_INSTANCE: return "<instance>";
         case OBJ_MAP: return "<map>";
         case OBJ_MAP_AS_SET: return "<set>";

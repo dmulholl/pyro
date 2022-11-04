@@ -208,7 +208,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_FN: {
+        case OBJ_PYRO_FN: {
             ObjPyroFn* fn = (ObjPyroFn*)object;
             if (fn->name == NULL) {
                 pyro_stdout_write(vm, "<fn_obj>");

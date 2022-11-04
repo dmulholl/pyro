@@ -975,7 +975,7 @@ static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
                     return pyro_make_obj(vm->str_instance);
                 }
                 case OBJ_CLOSURE:
-                case OBJ_FN:
+                case OBJ_PYRO_FN:
                 case OBJ_NATIVE_FN:
                     return pyro_make_obj(vm->str_fn);
                 case OBJ_FILE:

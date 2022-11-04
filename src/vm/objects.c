@@ -905,7 +905,7 @@ ObjStr* ObjStr_esc_percents(const char* src, size_t length, PyroVM* vm) {
 
 
 ObjPyroFn* ObjPyroFn_new(PyroVM* vm) {
-    ObjPyroFn* fn = ALLOCATE_OBJECT(vm, ObjPyroFn, OBJ_FN);
+    ObjPyroFn* fn = ALLOCATE_OBJECT(vm, ObjPyroFn, OBJ_PYRO_FN);
     if (!fn) {
         return NULL;
     }
