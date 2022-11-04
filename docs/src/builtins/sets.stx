@@ -22,13 +22,24 @@ Alternatively, you can create a set by draining an iterator, e.g.
 
 
 
+### Set Literals
+
+You can create a set using literal syntax:
+
+::: code pyro
+    var set = {1, 2, 3};
+
+Note that the literal `{}` will create an empty map --- use `$set()` to create an empty set.
+
+
+
 ### Iterating
 
 Sets are iterable:
 
 ::: code pyro
-    for char in "supercalifragilistic":chars():to_set() {
-        echo char;
+    for item in {1, 2, 3} {
+        echo item;
     }
 
 
@@ -38,9 +49,9 @@ Sets are iterable:
 You can check if a set contains an item using the `in` operator:
 
 ::: code pyro
-    var set = "supercalifragilistic":chars():to_set();
+    var set = {"foo", "bar", "baz"};
 
-    if 'x' in set {
+    if "foo" in set {
         echo "found";
     }
 

@@ -53,6 +53,9 @@
             </header>
             <ul class="stx-toc">
 <li>
+<a href="#set-literals">Set Literals</a>
+</li>
+<li>
 <a href="#iterating">Iterating</a>
 </li>
 <li>
@@ -92,6 +95,18 @@ Alternatively, you can create a set by draining an iterator, e.g.
 <span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">set</span><span class="p">:</span><span class="nx">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">12</span><span class="p">;</span>
 </pre>
+<h3 id="set-literals">
+Set Literals
+</h3>
+<p>
+You can create a set using literal syntax:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
+</pre>
+<p>
+Note that the literal <code>{}</code> will create an empty map &mdash; use <code>$set()</code> to create an empty set.
+</p>
 <h3 id="iterating">
 Iterating
 </h3>
@@ -99,8 +114,8 @@ Iterating
 Sets are iterable:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">char</span><span class="p">;</span>
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <h3 id="containment">
@@ -110,9 +125,9 @@ Containment
 You can check if a set contains an item using the <code>in</code> operator:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="s">&quot;supercalifragilistic&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">to_set</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="p">{</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">};</span>
 
-<span class="k">if</span> <span class="sc">&#39;x&#39;</span> <span class="k">in</span> <span class="nx">set</span> <span class="p">{</span>
+<span class="k">if</span> <span class="s">&quot;foo&quot;</span> <span class="k">in</span> <span class="nx">set</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;found&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>

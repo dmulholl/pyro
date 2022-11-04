@@ -313,9 +313,15 @@ Strings are equal if they have the same content.
 Tuples are equal if they have the same length and their elements are equal.
 </li>
 <li>
-By default, other objects are equal only if they are the same object.
+Sets are equal if they are set-equivalent, i.e. if they contain the same items in any order.
+</li>
+<li>
+By default, all other objects are equal only if they are the same object.
 </li>
 </ul>
+<p>
+You can override the equality and comparison operators to customize their behaviour for user-defined types.
+</p>
 <h3 id="logical-operators">
 Logical Operators
 </h3>
@@ -359,7 +365,7 @@ The conditional or ternary operator takes three operands. It looks like this:
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">condition</span> <span class="o">?</span> <span class="nx">expr1</span> <span class="p">:</span><span class="o">|</span> <span class="nx">expr2</span><span class="p">;</span>
 </pre>
 <p>
-The value of the expression is <code>expr1</code> if <code>condition</code> evaluates as <i>truthy</i>, otherwise <code>expr2</code>.
+The value of the conditional expression is <code>expr1</code> if <code>condition</code> evaluates as <i>truthy</i>, otherwise <code>expr2</code>.
 </p>
 <h3 id="the-null-coalescing-operator">
 The Null-coalescing Operator
