@@ -276,3 +276,27 @@ def $test_clear() {
     set:clear();
     assert set:count() == 0;
 }
+
+
+def $test_set_literals() {
+    assert $is_map({});
+
+    var s1 = {1};
+    assert $is_set(s1);
+    assert s1:count() == 1;
+
+    var s2 = {1, 2};
+    assert $is_set(s2);
+    assert s2:count() == 2;
+
+    var s3 = {1, 2, 3};
+    assert $is_set(s3);
+    assert s3:count() == 3;
+
+    var s4 = {1, true, null, $err(), "foobar"};
+    assert $is_set(s4);
+    assert s4:count() == 5;
+
+    assert $is_err(try $exec(`{1, 2 = "foo"}`));
+    assert $is_err(try $exec(`{1 = "foo", 2}`));
+}

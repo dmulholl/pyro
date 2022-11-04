@@ -895,19 +895,36 @@ static uint32_t parse_char_literal(Parser* parser) {
 }
 
 
-static void parse_map_literal(Parser* parser) {
+static void parse_map_or_set_literal(Parser* parser) {
+    bool is_map = true;
     uint16_t count = 0;
+
     do {
         if (check(parser, TOKEN_RIGHT_BRACE)) {
             break;
         }
         parse_expression(parser, false, true);
-        consume(parser, TOKEN_EQUAL, "expected '=' after key");
-        parse_expression(parser, false, true);
+        if (count == 0) {
+            if (match(parser, TOKEN_EQUAL)) {
+                parse_expression(parser, false, true);
+            } else {
+                is_map = false;
+            }
+        } else if (is_map) {
+            consume(parser, TOKEN_EQUAL, "expected '=' after key");
+            parse_expression(parser, false, true);
+        }
         count++;
     } while (match(parser, TOKEN_COMMA));
-    consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after map literal");
-    emit_byte(parser, OP_MAKE_MAP);
+
+    if (is_map) {
+        consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after map literal");
+        emit_byte(parser, OP_MAKE_MAP);
+    } else {
+        consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after set literal");
+        emit_byte(parser, OP_MAKE_SET);
+    }
+
     emit_u16be(parser, count);
 }
 
@@ -1142,7 +1159,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     }
 
     else if (match(parser, TOKEN_LEFT_BRACE)) {
-        parse_map_literal(parser);
+        parse_map_or_set_literal(parser);
     }
 
     else {

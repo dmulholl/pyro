@@ -270,6 +270,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_BINARY_LESS_LESS", ip);
         case OP_MAKE_MAP:
             return u16_instruction(vm, "OP_MAKE_MAP", fn, ip);
+        case OP_MAKE_SET:
+            return u16_instruction(vm, "OP_MAKE_SET", fn, ip);
         case OP_MAKE_VEC:
             return u16_instruction(vm, "OP_MAKE_VEC", fn, ip);
         case OP_DEFINE_PRI_METHOD:

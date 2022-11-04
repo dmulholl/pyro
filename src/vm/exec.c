@@ -1649,6 +1649,28 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_MAKE_SET: {
+                uint16_t entry_count = READ_BE_U16();
+
+                ObjMap* map = ObjMap_new_as_set(vm);
+                if (!map) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                for (Value* slot = vm->stack_top - entry_count; slot < vm->stack_top; slot++) {
+                    if (!ObjMap_set(map, *slot, pyro_make_null(), vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= entry_count;
+                pyro_push(vm, pyro_make_obj(map));
+                break;
+            }
+
+
             case OP_MAKE_VEC: {
                 uint16_t item_count = READ_BE_U16();
 
