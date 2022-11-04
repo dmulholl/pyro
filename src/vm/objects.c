@@ -1096,6 +1096,7 @@ size_t ObjFn_opcode_argcount(ObjFn* fn, size_t ip) {
         case OP_JUMP_IF_ERR:
         case OP_JUMP_IF_FALSE:
         case OP_JUMP_IF_NOT_ERR:
+        case OP_JUMP_IF_NOT_KINDA_FALSEY:
         case OP_JUMP_IF_NOT_NULL:
         case OP_JUMP_IF_TRUE:
         case OP_LOAD_CONSTANT:

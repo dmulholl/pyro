@@ -1477,6 +1477,34 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // 'kinda-falsey' values are: false, null, err, 0, 0.0, "".
+            case OP_JUMP_IF_NOT_KINDA_FALSEY: {
+                uint16_t offset = READ_BE_U16();
+                Value value = pyro_peek(vm, 0);
+                bool is_kinda_falsey = false;
+
+                if (IS_BOOL(value) && value.as.boolean == false) {
+                    is_kinda_falsey = true;
+                } else if (IS_NULL(value)) {
+                    is_kinda_falsey = true;
+                } else if (IS_ERR(value)) {
+                    is_kinda_falsey = true;
+                } else if (IS_I64(value) && value.as.i64 == 0) {
+                    is_kinda_falsey = true;
+                } else if (IS_CHAR(value) && value.as.u32 == 0) {
+                    is_kinda_falsey = true;
+                } else if (IS_F64(value) && value.as.f64 == 0.0) {
+                    is_kinda_falsey = true;
+                } else if (IS_STR(value) && AS_STR(value)->length == 0) {
+                    is_kinda_falsey = true;
+                }
+
+                if (!is_kinda_falsey) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
             case OP_JUMP_IF_NOT_NULL: {
                 uint16_t offset = READ_BE_U16();
                 if (!IS_NULL(pyro_peek(vm, 0))) {

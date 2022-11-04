@@ -1,0 +1,60 @@
+# false -> result
+assert (null else "default") == "default";
+assert (false else "default") == "default";
+assert (0 else "default") == "default";
+assert ('\0' else "default") == "default";
+assert (0.0 else "default") == "default";
+assert ("" else "default") == "default";
+
+# true -> result
+assert (true else "default") == true;
+assert (123 else "default") == 123;
+assert ('A' else "default") == 'A';
+assert (1.0 else "default") == 1.0;
+assert ("foobar" else "default") == "foobar";
+
+# false, true -> result
+assert (null else "notnull" else "default") == "notnull";
+assert (false else true else "default") == true;
+assert (0 else 123 else "default") == 123;
+assert ('\0' else 'A' else "default") == 'A';
+assert (0.0 else 1.0 else "default") == 1.0;
+assert ("" else "foobar" else "default") == "foobar";
+
+# false, false -> result
+assert (null else null else "default") == "default";
+assert (false else false else "default") == "default";
+assert (0 else 0 else "default") == "default";
+assert ('\0' else '\0' else "default") == "default";
+assert (0.0 else 0.0 else "default") == "default";
+assert ("" else "" else "default") == "default";
+
+# true, false -> result
+assert ("notnull" else null else "default") == "notnull";
+assert (true else false else "default") == true;
+assert (123 else 0 else "default") == 123;
+assert ('A' else '\0' else "default") == 'A';
+assert (1.0 else 0.0 else "default") == 1.0;
+assert ("foobar" else "" else "default") == "foobar";
+
+# false, true -> result
+assert (null else "notnull" else "default") == "notnull";
+assert (false else true else "default") == true;
+assert (0 else 123 else "default") == 123;
+assert ('\0' else 'A' else "default") == 'A';
+assert (0.0 else 1.0 else "default") == 1.0;
+assert ("" else "foobar" else "default") == "foobar";
+
+class Object {
+}
+var obj = Object();
+
+assert (null else obj) == obj;
+assert (obj else null) == obj;
+
+assert (null else obj else "default") == obj;
+assert (null else "default" else obj) == "default";
+assert (obj else null else "default") == obj;
+assert (obj else "default" else null) == obj;
+assert ("default" else obj else null) == "default";
+assert ("default" else null else obj) == "default";

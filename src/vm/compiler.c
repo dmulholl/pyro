@@ -1437,6 +1437,11 @@ static void parse_logical_expr(Parser* parser, bool can_assign, bool can_assign_
             emit_byte(parser, OP_POP);
             parse_equality_expr(parser, false, can_assign_in_parens);
             patch_jump(parser, jump_to_end);
+        } else if (match(parser, TOKEN_ELSE)) {
+            size_t jump_to_end = emit_jump(parser, OP_JUMP_IF_NOT_KINDA_FALSEY);
+            emit_byte(parser, OP_POP);
+            parse_equality_expr(parser, false, can_assign_in_parens);
+            patch_jump(parser, jump_to_end);
         } else {
             break;
         }

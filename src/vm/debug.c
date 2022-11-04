@@ -226,6 +226,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjFn* fn, size_t ip) {
             return jump_instruction(vm, "OP_JUMP_IF_FALSE", 1, fn, ip);
         case OP_JUMP_IF_NOT_ERR:
             return jump_instruction(vm, "OP_JUMP_IF_NOT_ERR", 1, fn, ip);
+        case OP_JUMP_IF_NOT_KINDA_FALSEY:
+            return jump_instruction(vm, "OP_JUMP_IF_NOT_KINDA_FALSEY", 1, fn, ip);
         case OP_JUMP_IF_NOT_NULL:
             return jump_instruction(vm, "OP_JUMP_IF_NOT_NULL", 1, fn, ip);
         case OP_JUMP_IF_TRUE:
