@@ -79,13 +79,13 @@ $ pyro test script.pyro
 Specify multiple files to test:
 </p>
 <pre>
-$ pyro test directory/*.pyro
+$ pyro test *.pyro
 </pre>
 <h3 id="test-functions">
 Test Functions
 </h3>
 <p>
-For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose names begin with <code>$test_</code>. A test function passes if it executes without panicking.
+For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with <code>$test_</code>. A test function passes if it executes without panicking.
 </p>
 <p>
 You can use an <code>assert</code> statement to make a test function panic if the test fails, e.g.

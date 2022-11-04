@@ -29,7 +29,7 @@ You can create a set using literal syntax:
 ::: code pyro
     var set = {1, 2, 3};
 
-Note that the literal `{}` will create an empty map --- use `$set()` to create an empty set.
+Note that the empty literal `{}` will create an empty map --- use `$set()` to create an empty set.
 
 
 

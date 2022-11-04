@@ -25,12 +25,12 @@ Specify a single file to test:
 
 Specify multiple files to test:
 
-    $ pyro test directory/*.pyro
+    $ pyro test *.pyro
 
 
 ### Test Functions
 
-For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose names begin with `$test_`. A test function passes if it executes without panicking.
+For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with `$test_`. A test function passes if it executes without panicking.
 
 You can use an `assert` statement to make a test function panic if the test fails, e.g.
 

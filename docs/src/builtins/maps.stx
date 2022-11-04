@@ -27,6 +27,8 @@ You can create a map using literal syntax:
         "bar" = 456,
     };
 
+The empty literal `{}` will create an empty map.
+
 
 
 ### Indexing
