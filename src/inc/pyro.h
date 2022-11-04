@@ -28,7 +28,11 @@
 
 // Sets the initial capacity of the call-frame stack.
 #ifndef PYRO_INITIAL_CALL_FRAME_CAPACITY
-    #define PYRO_INITIAL_CALL_FRAME_CAPACITY 64
+    #ifdef DEBUG
+        #define PYRO_INITIAL_CALL_FRAME_CAPACITY 2
+    #else
+        #define PYRO_INITIAL_CALL_FRAME_CAPACITY 64
+    #endif
 #endif
 
 // Initial garbage collection threshold in bytes. Defaults to 4MB.
