@@ -47,6 +47,13 @@ assert foo:contains("beta") == true;
 assert foo:contains("undefined") == false;
 
 
+def $test_empty_literal() {
+    var map = {};
+    assert $is_map(map);
+    assert map:count() == 0;
+}
+
+
 def $test_literal() {
     var map = {
         "abc" = 123,

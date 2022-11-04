@@ -1630,21 +1630,15 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                // Push the map on the stack so it doesn't get gc'd while we're adding entries.
-                pyro_push(vm, pyro_make_obj(map));
-                if (entry_count == 0) {
-                    break;
-                }
-
                 // The entries are stored on the stack as [..][key][value][..] pairs.
-                for (Value* slot = vm->stack_top - entry_count * 2 - 1; slot < vm->stack_top - 1; slot += 2) {
-                    if (ObjMap_set(map, slot[0], slot[1], vm) == 0) {
+                for (Value* slot = vm->stack_top - entry_count * 2; slot < vm->stack_top; slot += 2) {
+                    if (!ObjMap_set(map, slot[0], slot[1], vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
                 }
 
-                vm->stack_top -= (entry_count * 2 + 1);
+                vm->stack_top -= (entry_count * 2);
                 pyro_push(vm, pyro_make_obj(map));
                 break;
             }
@@ -1669,7 +1663,6 @@ static void run(PyroVM* vm) {
                 pyro_push(vm, pyro_make_obj(map));
                 break;
             }
-
 
             case OP_MAKE_VEC: {
                 uint16_t item_count = READ_BE_U16();
