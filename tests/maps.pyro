@@ -314,8 +314,26 @@ def $test_numerically_equivalent_keys() {
     var map = {
         65 = "foo",
         66 = "bar",
+        67.0 = "baz",
+        68.1 = "bam",
+        'E' = "bop",
     };
 
+    assert map[65] == "foo";
+    assert map[65.0] == "foo";
     assert map['A'] == "foo";
+
+    assert map[66] == "bar";
     assert map[66.0] == "bar";
+    assert map['B'] == "bar";
+
+    assert map[67] == "baz";
+    assert map[67.0] == "baz";
+    assert map['C'] == "baz";
+
+    assert map[68.1] == "bam";
+
+    assert map[69] == "bop";
+    assert map[69.0] == "bop";
+    assert map['E'] == "bop";
 }
