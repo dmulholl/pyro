@@ -12,20 +12,20 @@ Operator precedence in the table below goes from high at the top to low at the b
 
 ::: table
 
-    Level            |   Operators                                |   Associativity
+    Level            |   Operators                                       |   Associativity
     -------------------------------------------------------------------------------
 
-    Call             |   `()` `[]` `.` `:` `::`                   |   Left
-    Power            |   `**`                                     |   Right
-    Unary            |   `!` `+` `-` `~` `try`                    |   Right
-    Bitwise          |   `&` <code>&#124;</code> `^` `>>` `<<`    |   Left
-    Multiplication   |   `*` `/` `//` `%`                         |   Left
-    Addition         |   `+` `-`                                  |   Left
-    Comparison       |   `>` `>=` `<` `<=` `in`                   |   Left
-    Equality         |   `==` `!=`                                |   Left
-    Logical          |   `&&` <code>&#124;&#124;</code> `??` `!!` |   Left
-    Conditional      |   <code>? :&#124;</code>                   |   None
-    Assignment       |   `=` `+=` `-=`                            |   Right
+    Call             |   `()` `[]` `.` `:` `::`                          |   Left
+    Power            |   `**`                                            |   Right
+    Unary            |   `!` `+` `-` `~` `try`                           |   Right
+    Bitwise          |   `&` <code>&#124;</code> `^` `>>` `<<`           |   Left
+    Multiplication   |   `*` `/` `//` `%`                                |   Left
+    Addition         |   `+` `-`                                         |   Left
+    Comparison       |   `>` `>=` `<` `<=` `in`                          |   Left
+    Equality         |   `==` `!=`                                       |   Left
+    Logical          |   `&&` <code>&#124;&#124;</code> `??` `!!` `else` |   Left
+    Conditional      |   <code>? :&#124;</code>                          |   None
+    Assignment       |   `=` `+=` `-=`                                   |   Right
 
 
 Note that conditional expressions using the ternary operator `? :|` can't be nested. (Checkmate, Satan.)
@@ -72,7 +72,7 @@ The value of the logical-OR expression `a || b` is the value of the first operan
 This means you can use the `||` operator to swap in a default value in place of a *falsey* expression:
 
 ::: code pyro
-    var foo = maybe_falsey() || "default";
+    var value = maybe_falsey() || "default";
 
 The value of the logical-AND expression `a && b` is the value of the first operand if that operand is *falsey*, otherwise the value of the second operand.
 
@@ -85,13 +85,12 @@ This means you can use the `&&` operator to conditionally chain a sequence of ex
 
 
 
-
 ### The Conditional Operator
 
 The conditional or ternary operator takes three operands. It looks like this:
 
 ::: code pyro
-    var foo = condition ? expr1 :| expr2;
+    var value = condition ? expr1 :| expr2;
 
 The value of the expression is `expr1` if `condition` evaluates as *truthy*, otherwise `expr2`.
 
@@ -126,6 +125,22 @@ You can chain multiple `!!` expressions, e.g.
 
 ::: code pyro
     var value = maybe_error() ?? get_fallback() ?? "default";
+
+
+
+### The Else-coalescing Operator
+
+The value of an `else` expression is the value of its first operand if that value is not one of (`false`, `null`, `err`, `0`, `0.0`, or `""`), otherwise the value of its second operand.
+
+::: code pyro
+    var value = get_value() else "default";
+
+You can chain multiple `else` expressions, e.g.
+
+::: code pyro
+    var value = get_value() else get_fallback() else "default";
+
+
 
 
 
