@@ -107,7 +107,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
             pyro_dump_value(vm, fn->constants[const_index]);
             pyro_stdout_write_f(vm, "\n");
 
-            ObjPyroFn* wrapped_fn = AS_FN(fn->constants[const_index]);
+            ObjPyroFn* wrapped_fn = AS_PYRO_FN(fn->constants[const_index]);
             for (size_t i = 0; i < wrapped_fn->upvalue_count; i++) {
                 int is_local = wrapped_fn->code[ip++];
                 int index = wrapped_fn->code[ip++];
@@ -124,7 +124,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
             pyro_dump_value(vm, fn->constants[const_index]);
             pyro_stdout_write_f(vm, "\n");
 
-            ObjPyroFn* wrapped_fn = AS_FN(fn->constants[const_index]);
+            ObjPyroFn* wrapped_fn = AS_PYRO_FN(fn->constants[const_index]);
             for (size_t i = 0; i < wrapped_fn->upvalue_count; i++) {
                 int is_local = wrapped_fn->code[ip++];
                 int index = wrapped_fn->code[ip++];

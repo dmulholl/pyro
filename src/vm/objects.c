@@ -1121,14 +1121,14 @@ size_t ObjPyroFn_opcode_argcount(ObjPyroFn* fn, size_t ip) {
         // 2 bytes for the constant index, plus two for each upvalue.
         case OP_MAKE_CLOSURE: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
-            ObjPyroFn* closure_fn = AS_FN(fn->constants[const_index]);
+            ObjPyroFn* closure_fn = AS_PYRO_FN(fn->constants[const_index]);
             return 2 + closure_fn->upvalue_count * 2;
         }
 
         // 2 bytes for the constant index, 1 byte for the value count, plus two for each upvalue.
         case OP_MAKE_CLOSURE_WITH_DEF_ARGS: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
-            ObjPyroFn* closure_fn = AS_FN(fn->constants[const_index]);
+            ObjPyroFn* closure_fn = AS_PYRO_FN(fn->constants[const_index]);
             return 2 + 1 + closure_fn->upvalue_count * 2;
         }
 

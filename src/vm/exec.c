@@ -493,7 +493,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MAKE_CLOSURE: {
-                ObjPyroFn* fn = AS_FN(READ_CONSTANT());
+                ObjPyroFn* fn = AS_PYRO_FN(READ_CONSTANT());
                 ObjModule* module = frame->closure->module;
                 ObjClosure* closure = ObjClosure_new(vm, fn, module);
                 if (!closure) {
@@ -517,7 +517,7 @@ static void run(PyroVM* vm) {
             }
 
             case OP_MAKE_CLOSURE_WITH_DEF_ARGS: {
-                ObjPyroFn* fn = AS_FN(READ_CONSTANT());
+                ObjPyroFn* fn = AS_PYRO_FN(READ_CONSTANT());
                 ObjModule* module = frame->closure->module;
                 ObjClosure* closure = ObjClosure_new(vm, fn, module);
                 if (!closure) {
