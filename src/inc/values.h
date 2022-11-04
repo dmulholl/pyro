@@ -98,7 +98,7 @@ static inline Value pyro_make_null() {
 
 // Macros for checking if a Value instance is an object of a specific type.
 #define IS_STR(value)               pyro_is_obj_of_type(value, OBJ_STR)
-#define IS_FN(value)                pyro_is_obj_of_type(value, OBJ_PYRO_FN)
+#define IS_PYRO_FN(value)           pyro_is_obj_of_type(value, OBJ_PYRO_FN)
 #define IS_CLOSURE(value)           pyro_is_obj_of_type(value, OBJ_CLOSURE)
 #define IS_NATIVE_FN(value)         pyro_is_obj_of_type(value, OBJ_NATIVE_FN)
 #define IS_CLASS(value)             pyro_is_obj_of_type(value, OBJ_CLASS)
@@ -120,7 +120,7 @@ static inline Value pyro_make_null() {
 // Macros for extracting object pointers from Value instances.
 #define AS_OBJ(value)               ((value).as.obj)
 #define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
-#define AS_PYRO_FN(value)                ((ObjPyroFn*)AS_OBJ(value))
+#define AS_PYRO_FN(value)           ((ObjPyroFn*)AS_OBJ(value))
 #define AS_CLOSURE(value)           ((ObjClosure*)AS_OBJ(value))
 #define AS_CLASS(value)             ((ObjClass*)AS_OBJ(value))
 #define AS_INSTANCE(value)          ((ObjInstance*)AS_OBJ(value))
