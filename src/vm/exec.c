@@ -2212,6 +2212,17 @@ static void run(PyroVM* vm) {
                         break;
                     }
                     err->message = error_message;
+
+                    if (!ObjMap_set(err->details, pyro_make_obj(vm->str_source), pyro_make_obj(vm->panic_source_id), vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (!ObjMap_set(err->details, pyro_make_obj(vm->str_line), pyro_make_i64(vm->panic_line_number), vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
                     pyro_push(vm, pyro_make_obj(err));
                 }
 

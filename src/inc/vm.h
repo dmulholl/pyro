@@ -38,12 +38,18 @@ struct PyroVM {
     // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;
 
-    // Signals that a panic has occurred.
-    bool panic_flag;
-    size_t panic_count;
-
     // Exit signal, set by the $exit() function.
     bool exit_flag;
+
+    // Panic signal, set by pyro_panic().
+    bool panic_flag;
+
+    // Incremented for every panic, if we have a sequence of panics.
+    size_t panic_count;
+
+    // Metadata for the [err] returned by a try-expression.
+    ObjStr* panic_source_id;
+    size_t panic_line_number;
 
     // Exit code, defaults to zero. If the $exit() function is called, this will be set to the
     // specified exit code. If a panic is raised, this will be set to a non-zero value.
@@ -160,6 +166,8 @@ struct PyroVM {
     ObjStr* str_tup;
     ObjStr* str_err;
     ObjStr* str_dollar_end_with;
+    ObjStr* str_source;
+    ObjStr* str_line;
 
     // The grey stack used by the garbage collector.
     Obj** grey_stack;

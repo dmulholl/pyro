@@ -118,12 +118,16 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_true = NULL;
     vm->str_tup = NULL;
     vm->str_vec = NULL;
+    vm->str_source = NULL;
+    vm->str_line = NULL;
     vm->strings = NULL;
     vm->try_depth = 0;
     vm->with_stack = NULL;
     vm->with_stack_count = 0;
     vm->with_stack_capacity = 0;
     vm->str_dollar_end_with = NULL;
+    vm->panic_source_id = NULL;
+    vm->panic_line_number = 0;
 
     // Initialize the [frames] stack.
     vm->frames = ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
@@ -218,6 +222,8 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_map = ObjStr_new("map", vm);
     vm->str_set = ObjStr_new("set", vm);
     vm->str_vec = ObjStr_new("vec", vm);
+    vm->str_source = ObjStr_new("source", vm);
+    vm->str_line = ObjStr_new("line", vm);
     vm->str_stack = ObjStr_new("stack", vm);
     vm->str_queue = ObjStr_new("queue", vm);
     vm->str_str = ObjStr_new("str", vm);

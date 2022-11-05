@@ -38,12 +38,6 @@ static void panic(
         return;
     }
 
-    // If we're inside a try expression, write the error message to the panic buffer.
-    if (vm->try_depth > 0) {
-        ObjBuf_best_effort_write_fv(vm->panic_buffer, vm, format_string, args);
-        return;
-    }
-
     // If we were executing Pyro code when the panic occured, determine the source ID and line
     // number of the last instruction.
     ObjStr* last_opcode_source_id = NULL;
@@ -63,6 +57,14 @@ static void panic(
             last_opcode_source_id = outer_fn->source_id;
             last_opcode_line_number = ObjPyroFn_get_line_number(outer_fn, outer_ip);
         }
+    }
+
+    // If we're inside a try expression, write the error message to the panic buffer.
+    if (vm->try_depth > 0) {
+        ObjBuf_best_effort_write_fv(vm->panic_buffer, vm, format_string, args);
+        vm->panic_source_id = last_opcode_source_id;
+        vm->panic_line_number = last_opcode_line_number;
+        return;
     }
 
     // Special handling for syntax errors.

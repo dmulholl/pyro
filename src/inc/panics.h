@@ -3,12 +3,12 @@
 
 #include "pyro.h"
 
-// Pyro follows a single-panic rule -- i.e. if a sequence of panics occurs, we only report the first
+// Pyro follows a SINGLE-PANIC rule -- i.e. if a sequence of panics occurs, we only report the first
 // panic. Ideally we would never have a sequence of panics, but this can happen if, for example, we
-// have a panic and then while exiting from that panic we execute clean-up code in three
-// $end_with() methods and the code in two of those methods also panics. In this case we only report
-// the original panic. Similarly, if a sequence of panics occurs inside a try-expression, the error
-// returned by the try-expression will record only the original panic.
+// have a panic and then while exiting from that panic we execute clean-up code in 3 $end_with()
+// methods and the code in 2 of those methods also panics. In this case we only report the original
+// panic. Similarly, if a sequence of panics occurs inside a try-expression, the error returned by
+// the try-expression will record only the original panic.
 
 // Triggers a panic. This function:
 //
