@@ -68,15 +68,6 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
 }
 
 
-uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup) {
-    uint64_t hash = 0;
-    for (size_t i = 0; i < tup->count; i++) {
-        hash ^= pyro_hash_value(vm, tup->values[i]);
-    }
-    return hash;
-}
-
-
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm) {
     if (a->count == b->count) {
         for (size_t i = 0; i < a->count; i++) {

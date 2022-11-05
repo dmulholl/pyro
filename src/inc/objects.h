@@ -367,7 +367,6 @@ typedef struct {
 } ObjTup;
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm);
-uint64_t ObjTup_hash(PyroVM* vm, ObjTup* tup);
 bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm);
 
 /* ------- */

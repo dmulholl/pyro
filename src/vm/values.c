@@ -107,8 +107,7 @@ bool pyro_compare_eq_strict(Value a, Value b) {
 }
 
 
-// Values which compare as equal should also hash as equal. This is why we cast floats that compare
-// equal to an integer to that integer first.
+// All builtin types follow the rule that values that compare as equal should also hash as equal.
 uint64_t pyro_hash_value(PyroVM* vm, Value value) {
     switch (value.type) {
         case VAL_NULL:
@@ -123,6 +122,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
         case VAL_CHAR:
             return (uint64_t)value.as.u32;
 
+        // If the f64 is numerically equal to an i64, cast to that i64 first.
         case VAL_F64:
             if (value.as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
                 && value.as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
@@ -138,8 +138,16 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                 case OBJ_STR:
                     return AS_STR(value)->hash;
 
-                case OBJ_TUP:
-                    return ObjTup_hash(vm, AS_TUP(value));
+                case OBJ_TUP: {
+                    uint64_t hash = 0;
+                    ObjTup* tup = AS_TUP(value);
+
+                    for (size_t i = 0; i < tup->count; i++) {
+                        hash ^= pyro_hash_value(vm, tup->values[i]);
+                    }
+
+                    return hash;
+                }
 
                 case OBJ_MAP_AS_SET: {
                     uint64_t hash = 0;
