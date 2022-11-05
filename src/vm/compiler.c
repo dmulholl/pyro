@@ -266,7 +266,9 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
 
 
 // Stores [value] in the current function's constant table and emits bytecode to load it onto the
-// top of the stack. Uses an optimized instruction set for loading small integer values.
+// top of the stack.
+// - Uses an optimized instruction set for loading small integer values.
+// - Uses an optimized instruction set for loading constants with small indexes.
 static void emit_load_value_from_constant_table(Parser* parser, Value value) {
     if (IS_I64(value) && value.as.i64 >= 0 && value.as.i64 <= 9) {
         switch (value.as.i64) {
@@ -285,8 +287,23 @@ static void emit_load_value_from_constant_table(Parser* parser, Value value) {
     }
 
     uint16_t index = add_value_to_constant_table(parser, value);
-    emit_byte(parser, OP_LOAD_CONSTANT);
-    emit_u16be(parser, index);
+
+    switch (index) {
+        case 0: emit_byte(parser, OP_LOAD_CONSTANT_0); break;
+        case 1: emit_byte(parser, OP_LOAD_CONSTANT_1); break;
+        case 2: emit_byte(parser, OP_LOAD_CONSTANT_2); break;
+        case 3: emit_byte(parser, OP_LOAD_CONSTANT_3); break;
+        case 4: emit_byte(parser, OP_LOAD_CONSTANT_4); break;
+        case 5: emit_byte(parser, OP_LOAD_CONSTANT_5); break;
+        case 6: emit_byte(parser, OP_LOAD_CONSTANT_6); break;
+        case 7: emit_byte(parser, OP_LOAD_CONSTANT_7); break;
+        case 8: emit_byte(parser, OP_LOAD_CONSTANT_8); break;
+        case 9: emit_byte(parser, OP_LOAD_CONSTANT_9); break;
+        default:
+            emit_byte(parser, OP_LOAD_CONSTANT);
+            emit_u16be(parser, index);
+            break;
+    }
 }
 
 

@@ -1598,6 +1598,56 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_LOAD_CONSTANT_0: {
+                pyro_push(vm, frame->closure->fn->constants[0]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_1: {
+                pyro_push(vm, frame->closure->fn->constants[1]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_2: {
+                pyro_push(vm, frame->closure->fn->constants[2]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_3: {
+                pyro_push(vm, frame->closure->fn->constants[3]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_4: {
+                pyro_push(vm, frame->closure->fn->constants[4]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_5: {
+                pyro_push(vm, frame->closure->fn->constants[5]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_6: {
+                pyro_push(vm, frame->closure->fn->constants[6]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_7: {
+                pyro_push(vm, frame->closure->fn->constants[7]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_8: {
+                pyro_push(vm, frame->closure->fn->constants[8]);
+                break;
+            }
+
+            case OP_LOAD_CONSTANT_9: {
+                pyro_push(vm, frame->closure->fn->constants[9]);
+                break;
+            }
+
             case OP_LOAD_FALSE:
                 pyro_push(vm, pyro_make_bool(false));
                 break;
