@@ -36,7 +36,7 @@ def do_string_stuff(a, b, sep):
     vec = []
 
     for i in range(10):
-        string += (a + b + sep)
+        string += ("foo" + a + b + sep + "bar")
         for element in string.split(sep):
             vec.append(element)
 
@@ -83,7 +83,7 @@ def benchmark():
     # Classes.
     for i in range(1000):
         foo = Foo(123)
-        foo.change_value(459)
+        foo.change_value(456)
         vec.append(foo.get_value())
         map[str(i)] = foo.get_value()
 
