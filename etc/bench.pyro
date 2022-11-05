@@ -37,6 +37,20 @@ def do_arithmetic(a, b, c, d) {
     return bam;
 }
 
+def do_string_stuff(a, b, sep) {
+    var string = "";
+    var vec = [];
+
+    for i in $range(10) {
+        string += (a + b + sep);
+        for element in string:split(sep) {
+            vec:append(element);
+        }
+    }
+
+    return vec;
+}
+
 def make_adder(n) {
     def adds_n(arg) {
         return arg + n;
@@ -151,6 +165,14 @@ def benchmark() {
     var new_map = $map();
     for (key, value) in map {
         new_map[key] = value;
+    }
+
+    # Do string stuff.
+    for i in $range(10) {
+        for j in $range(10) {
+            var result = do_string_stuff($str(i), $str(j), ":");
+            vec:append(result);
+        }
     }
 }
 

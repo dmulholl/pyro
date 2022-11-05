@@ -31,6 +31,17 @@ def do_arithmetic(a, b, c, d):
     bam = foo * 2 + bar * 3 + baz * 4
     return bam
 
+def do_string_stuff(a, b, sep):
+    string = ""
+    vec = []
+
+    for i in range(10):
+        string += (a + b + sep)
+        for element in string.split(sep):
+            vec.append(element)
+
+    return vec
+
 def make_adder(n):
     def adds_n(arg):
         return arg + n
@@ -128,6 +139,12 @@ def benchmark():
     new_map = {}
     for key, value in map.items():
         new_map[key] = value
+
+    # Do string stuff.
+    for i in range(10):
+        for j in range(10):
+            result = do_string_stuff(str(i), str(j), ":")
+            vec.append(result)
 
 # END TESTS --------------------------------------------------------------------
 
