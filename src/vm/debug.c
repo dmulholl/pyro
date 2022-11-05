@@ -388,6 +388,26 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_LOAD_CONSTANT_8", ip);
         case OP_LOAD_CONSTANT_9:
             return atomic_instruction(vm, "OP_LOAD_CONSTANT_9", ip);
+        case OP_CALL_VALUE_0:
+            return atomic_instruction(vm, "OP_CALL_VALUE_0", ip);
+        case OP_CALL_VALUE_1:
+            return atomic_instruction(vm, "OP_CALL_VALUE_1", ip);
+        case OP_CALL_VALUE_2:
+            return atomic_instruction(vm, "OP_CALL_VALUE_2", ip);
+        case OP_CALL_VALUE_3:
+            return atomic_instruction(vm, "OP_CALL_VALUE_3", ip);
+        case OP_CALL_VALUE_4:
+            return atomic_instruction(vm, "OP_CALL_VALUE_4", ip);
+        case OP_CALL_VALUE_5:
+            return atomic_instruction(vm, "OP_CALL_VALUE_5", ip);
+        case OP_CALL_VALUE_6:
+            return atomic_instruction(vm, "OP_CALL_VALUE_6", ip);
+        case OP_CALL_VALUE_7:
+            return atomic_instruction(vm, "OP_CALL_VALUE_7", ip);
+        case OP_CALL_VALUE_8:
+            return atomic_instruction(vm, "OP_CALL_VALUE_8", ip);
+        case OP_CALL_VALUE_9:
+            return atomic_instruction(vm, "OP_CALL_VALUE_9", ip);
         default:
             pyro_stdout_write_f(vm, "INVALID OPCODE [%d]\n", instruction);
             return ip + 1;

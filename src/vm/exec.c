@@ -440,6 +440,56 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_CALL_VALUE_0: {
+                call_value(vm, 0);
+                break;
+            }
+
+            case OP_CALL_VALUE_1: {
+                call_value(vm, 1);
+                break;
+            }
+
+            case OP_CALL_VALUE_2: {
+                call_value(vm, 2);
+                break;
+            }
+
+            case OP_CALL_VALUE_3: {
+                call_value(vm, 3);
+                break;
+            }
+
+            case OP_CALL_VALUE_4: {
+                call_value(vm, 4);
+                break;
+            }
+
+            case OP_CALL_VALUE_5: {
+                call_value(vm, 5);
+                break;
+            }
+
+            case OP_CALL_VALUE_6: {
+                call_value(vm, 6);
+                break;
+            }
+
+            case OP_CALL_VALUE_7: {
+                call_value(vm, 7);
+                break;
+            }
+
+            case OP_CALL_VALUE_8: {
+                call_value(vm, 8);
+                break;
+            }
+
+            case OP_CALL_VALUE_9: {
+                call_value(vm, 9);
+                break;
+            }
+
             case OP_CALL_VALUE_WITH_UNPACK: {
                 uint8_t arg_count = READ_BYTE();
                 Value last_arg = pyro_pop(vm);

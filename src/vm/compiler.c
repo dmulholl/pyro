@@ -1229,7 +1229,21 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             if (unpack_last_argument) {
                 emit_u8_u8(parser, OP_CALL_VALUE_WITH_UNPACK, arg_count);
             } else {
-                emit_u8_u8(parser, OP_CALL_VALUE, arg_count);
+                switch (arg_count) {
+                    case 0: emit_byte(parser, OP_CALL_VALUE_0); break;
+                    case 1: emit_byte(parser, OP_CALL_VALUE_1); break;
+                    case 2: emit_byte(parser, OP_CALL_VALUE_2); break;
+                    case 3: emit_byte(parser, OP_CALL_VALUE_3); break;
+                    case 4: emit_byte(parser, OP_CALL_VALUE_4); break;
+                    case 5: emit_byte(parser, OP_CALL_VALUE_5); break;
+                    case 6: emit_byte(parser, OP_CALL_VALUE_6); break;
+                    case 7: emit_byte(parser, OP_CALL_VALUE_7); break;
+                    case 8: emit_byte(parser, OP_CALL_VALUE_8); break;
+                    case 9: emit_byte(parser, OP_CALL_VALUE_9); break;
+                    default:
+                        emit_u8_u8(parser, OP_CALL_VALUE, arg_count);
+                        break;
+                }
             }
         }
 
