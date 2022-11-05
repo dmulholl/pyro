@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.35</p>
+                <p class="version">Version 0.8.41</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -53,7 +53,7 @@
             </header>
             <ul class="stx-toc">
 <li>
-<a href="#error-messages">Error Messages</a>
+<a href="#error-message">Error Message</a>
 </li>
 <li>
 <a href="#error-details">Error Details</a>
@@ -97,8 +97,8 @@ Alternatively, you can use the error-coalescing operator <code>!!</code> to supp
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
-<h3 id="error-messages">
-Error Messages
+<h3 id="error-message">
+Error Message
 </h3>
 <p>
 Stringifying an error returns its <code>message</code>:
@@ -121,6 +121,9 @@ You can index into this <code>details</code> map directly on the <code>err</code
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;disaster strikes!&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
+<p>
+The <code>details</code> map of an <code>err</code> object returned by a <code>try</code> expression contains <code>&quot;source&quot;</code> and <code>&quot;line&quot;</code> entries specifying the source ID and line number of the panic.
+</p>
 <h3 id="methods">
 Methods
 </h3>
