@@ -25,19 +25,20 @@ class Foo:
         return self.value
 
 def do_arithmetic(a, b, c, d):
-    foo = (((a * 137 + b * 17 + c * 23) / 31) * a) / (b + 1) + 2 * d
+    foo = (((a * 123 + b * 123.456 + c * 23) / 31) * a) / (b + 1) + 2.0 * d
     bar = ((foo * a) / (b + 1)) * c + 3 * d
     baz = foo + bar + a + b + c + d
     bam = foo * 2 + bar * 3 + baz * 4
     return bam
 
-def do_string_stuff(a, b, sep):
+def do_string_stuff(str_a, str_b, str_sep):
     string = ""
     vec = []
+    local = "xyz"
 
     for i in range(10):
-        string += ("foo" + a + b + sep + "bar")
-        for element in string.split(sep):
+        string += ("foo" + str_a + str_b + str_sep + "bar" + local)
+        for element in string.split(str_sep):
             vec.append(element)
 
     return vec
