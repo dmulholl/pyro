@@ -260,6 +260,46 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
             return atomic_instruction(vm, "OP_LOAD_I64_8", ip);
         case OP_LOAD_I64_9:
             return atomic_instruction(vm, "OP_LOAD_I64_9", ip);
+        case OP_GET_LOCAL_0:
+            return atomic_instruction(vm, "OP_GET_LOCAL_0", ip);
+        case OP_GET_LOCAL_1:
+            return atomic_instruction(vm, "OP_GET_LOCAL_1", ip);
+        case OP_GET_LOCAL_2:
+            return atomic_instruction(vm, "OP_GET_LOCAL_2", ip);
+        case OP_GET_LOCAL_3:
+            return atomic_instruction(vm, "OP_GET_LOCAL_3", ip);
+        case OP_GET_LOCAL_4:
+            return atomic_instruction(vm, "OP_GET_LOCAL_4", ip);
+        case OP_GET_LOCAL_5:
+            return atomic_instruction(vm, "OP_GET_LOCAL_5", ip);
+        case OP_GET_LOCAL_6:
+            return atomic_instruction(vm, "OP_GET_LOCAL_6", ip);
+        case OP_GET_LOCAL_7:
+            return atomic_instruction(vm, "OP_GET_LOCAL_7", ip);
+        case OP_GET_LOCAL_8:
+            return atomic_instruction(vm, "OP_GET_LOCAL_8", ip);
+        case OP_GET_LOCAL_9:
+            return atomic_instruction(vm, "OP_GET_LOCAL_9", ip);
+        case OP_SET_LOCAL_0:
+            return atomic_instruction(vm, "OP_SET_LOCAL_0", ip);
+        case OP_SET_LOCAL_1:
+            return atomic_instruction(vm, "OP_SET_LOCAL_1", ip);
+        case OP_SET_LOCAL_2:
+            return atomic_instruction(vm, "OP_SET_LOCAL_2", ip);
+        case OP_SET_LOCAL_3:
+            return atomic_instruction(vm, "OP_SET_LOCAL_3", ip);
+        case OP_SET_LOCAL_4:
+            return atomic_instruction(vm, "OP_SET_LOCAL_4", ip);
+        case OP_SET_LOCAL_5:
+            return atomic_instruction(vm, "OP_SET_LOCAL_5", ip);
+        case OP_SET_LOCAL_6:
+            return atomic_instruction(vm, "OP_SET_LOCAL_6", ip);
+        case OP_SET_LOCAL_7:
+            return atomic_instruction(vm, "OP_SET_LOCAL_7", ip);
+        case OP_SET_LOCAL_8:
+            return atomic_instruction(vm, "OP_SET_LOCAL_8", ip);
+        case OP_SET_LOCAL_9:
+            return atomic_instruction(vm, "OP_SET_LOCAL_9", ip);
         case OP_LOAD_NULL:
             return atomic_instruction(vm, "OP_LOAD_NULL", ip);
         case OP_LOAD_TRUE:

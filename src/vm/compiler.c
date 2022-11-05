@@ -231,7 +231,7 @@ static void emit_u8_u16be(Parser* parser, uint8_t u8_arg, uint16_t u16_arg) {
 // method this returns the object instance being initialized, otherwise it returns null.
 static void emit_naked_return(Parser* parser) {
     if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
-        emit_u8_u8(parser, OP_GET_LOCAL, 0);
+        emit_byte(parser, OP_GET_LOCAL_0);
     } else {
         emit_byte(parser, OP_LOAD_NULL);
     }
@@ -683,7 +683,21 @@ static uint8_t parse_argument_list(Parser* parser, bool* unpack_last_argument) {
 static void emit_load_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->fn_compiler, &name);
     if (local_index != -1) {
-        emit_u8_u8(parser, OP_GET_LOCAL, (uint8_t)local_index);
+        switch (local_index) {
+            case 0: emit_byte(parser, OP_GET_LOCAL_0); break;
+            case 1: emit_byte(parser, OP_GET_LOCAL_1); break;
+            case 2: emit_byte(parser, OP_GET_LOCAL_2); break;
+            case 3: emit_byte(parser, OP_GET_LOCAL_3); break;
+            case 4: emit_byte(parser, OP_GET_LOCAL_4); break;
+            case 5: emit_byte(parser, OP_GET_LOCAL_5); break;
+            case 6: emit_byte(parser, OP_GET_LOCAL_6); break;
+            case 7: emit_byte(parser, OP_GET_LOCAL_7); break;
+            case 8: emit_byte(parser, OP_GET_LOCAL_8); break;
+            case 9: emit_byte(parser, OP_GET_LOCAL_9); break;
+            default:
+                emit_u8_u8(parser, OP_GET_LOCAL, (uint8_t)local_index);
+                break;
+        }
         return;
     }
 
@@ -703,7 +717,21 @@ static void emit_load_named_variable(Parser* parser, Token name) {
 static void emit_store_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->fn_compiler, &name);
     if (local_index != -1) {
-        emit_u8_u8(parser, OP_SET_LOCAL, (uint8_t)local_index);
+        switch (local_index) {
+            case 0: emit_byte(parser, OP_SET_LOCAL_0); break;
+            case 1: emit_byte(parser, OP_SET_LOCAL_1); break;
+            case 2: emit_byte(parser, OP_SET_LOCAL_2); break;
+            case 3: emit_byte(parser, OP_SET_LOCAL_3); break;
+            case 4: emit_byte(parser, OP_SET_LOCAL_4); break;
+            case 5: emit_byte(parser, OP_SET_LOCAL_5); break;
+            case 6: emit_byte(parser, OP_SET_LOCAL_6); break;
+            case 7: emit_byte(parser, OP_SET_LOCAL_7); break;
+            case 8: emit_byte(parser, OP_SET_LOCAL_8); break;
+            case 9: emit_byte(parser, OP_SET_LOCAL_9); break;
+            default:
+                emit_u8_u8(parser, OP_SET_LOCAL, (uint8_t)local_index);
+                break;
+        }
         return;
     }
 

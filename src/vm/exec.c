@@ -923,6 +923,56 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case OP_GET_LOCAL_0: {
+                pyro_push(vm, frame->fp[0]);
+                break;
+            }
+
+            case OP_GET_LOCAL_1: {
+                pyro_push(vm, frame->fp[1]);
+                break;
+            }
+
+            case OP_GET_LOCAL_2: {
+                pyro_push(vm, frame->fp[2]);
+                break;
+            }
+
+            case OP_GET_LOCAL_3: {
+                pyro_push(vm, frame->fp[3]);
+                break;
+            }
+
+            case OP_GET_LOCAL_4: {
+                pyro_push(vm, frame->fp[4]);
+                break;
+            }
+
+            case OP_GET_LOCAL_5: {
+                pyro_push(vm, frame->fp[5]);
+                break;
+            }
+
+            case OP_GET_LOCAL_6: {
+                pyro_push(vm, frame->fp[6]);
+                break;
+            }
+
+            case OP_GET_LOCAL_7: {
+                pyro_push(vm, frame->fp[7]);
+                break;
+            }
+
+            case OP_GET_LOCAL_8: {
+                pyro_push(vm, frame->fp[8]);
+                break;
+            }
+
+            case OP_GET_LOCAL_9: {
+                pyro_push(vm, frame->fp[9]);
+                break;
+            }
+
             case OP_GET_MEMBER: {
                 Value member_name = READ_CONSTANT();
                 Value receiver = pyro_pop(vm);
@@ -1950,6 +2000,56 @@ static void run(PyroVM* vm) {
             case OP_SET_LOCAL: {
                 uint8_t index = READ_BYTE();
                 frame->fp[index] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_0: {
+                frame->fp[0] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_1: {
+                frame->fp[1] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_2: {
+                frame->fp[2] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_3: {
+                frame->fp[3] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_4: {
+                frame->fp[4] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_5: {
+                frame->fp[5] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_6: {
+                frame->fp[6] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_7: {
+                frame->fp[7] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_8: {
+                frame->fp[8] = pyro_peek(vm, 0);
+                break;
+            }
+
+            case OP_SET_LOCAL_9: {
+                frame->fp[9] = pyro_peek(vm, 0);
                 break;
             }
 

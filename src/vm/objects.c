@@ -1051,6 +1051,26 @@ size_t ObjPyroFn_opcode_argcount(ObjPyroFn* fn, size_t ip) {
         case OP_UNARY_TILDE:
         case OP_START_WITH:
         case OP_END_WITH:
+        case OP_GET_LOCAL_0:
+        case OP_GET_LOCAL_1:
+        case OP_GET_LOCAL_2:
+        case OP_GET_LOCAL_3:
+        case OP_GET_LOCAL_4:
+        case OP_GET_LOCAL_5:
+        case OP_GET_LOCAL_6:
+        case OP_GET_LOCAL_7:
+        case OP_GET_LOCAL_8:
+        case OP_GET_LOCAL_9:
+        case OP_SET_LOCAL_0:
+        case OP_SET_LOCAL_1:
+        case OP_SET_LOCAL_2:
+        case OP_SET_LOCAL_3:
+        case OP_SET_LOCAL_4:
+        case OP_SET_LOCAL_5:
+        case OP_SET_LOCAL_6:
+        case OP_SET_LOCAL_7:
+        case OP_SET_LOCAL_8:
+        case OP_SET_LOCAL_9:
             return 0;
 
         case OP_CALL_VALUE:
