@@ -401,14 +401,22 @@ bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm);
 int64_t ObjBuf_write_f(ObjBuf* buf, PyroVM* vm, const char* format_string, ...);
 int64_t ObjBuf_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
-// Writes a printf-style formatted string to the buffer. Returns true if the entire string can be
-// written to the buffer. Otherwise, writes as much as possible of the string to the buffer and
-// return false.
-bool ObjBuf_best_effort_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+// Writes a printf-style formatted string to the buffer. If sufficient memory cannot be allocated to
+// write the entire string, writes as much of the string as possible.
+void ObjBuf_try_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
-// Attempts to grow the buffer to *at least* the required capacity. Returns true on success, false
-// if memory allocation failed. In this case the buffer is unchanged.
+// Attempts to grow the buffer to at least the required capacity. Returns true on success, false
+// if memory allocation fails. In this case the buffer is unchanged.
 bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm);
+
+// Attempts to grow the buffer to at least the required capacity. If the buffer's capacity needs to
+// be increased, it will be increased to exactly the required capacity. Returns true on success,
+// false if memory allocation fails. In this case the buffer is unchanged.
+bool ObjBuf_grow_to_fit(ObjBuf* buf, size_t required_capacity, PyroVM* vm);
+
+// Attempts to grow the buffer's capacity by [n] bytes. Returns true on success, false if memory
+// allocation fails. In this case the buffer is unchanged.
+bool ObjBuf_grow_by_n_bytes(ObjBuf* buf, size_t n, PyroVM* vm);
 
 /* ----- */
 /* Files */

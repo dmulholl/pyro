@@ -1585,7 +1585,7 @@ bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
 
 
 // Attempts to grow the buffer to at least the required capacity. Returns true on success, false
-// if memory allocation failed. In this case the buffer is unchanged.
+// if memory allocation fails. In this case the buffer is unchanged.
 bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
     if (required_capacity > buf->capacity) {
         size_t new_capacity = GROW_CAPACITY(buf->capacity);
@@ -1599,6 +1599,37 @@ bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
         buf->capacity = new_capacity;
         buf->bytes = new_array;
     }
+    return true;
+}
+
+
+// Attempts to grow the buffer to at least the required capacity. If the buffer's capacity needs to
+// be increased, it will be increased to exactly the required capacity. Returns true on success,
+// false if memory allocation fails. In this case the buffer is unchanged.
+bool ObjBuf_grow_to_fit(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
+    if (required_capacity > buf->capacity) {
+        size_t new_capacity = required_capacity;
+        uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
+        if (!new_array) {
+            return false;
+        }
+        buf->capacity = new_capacity;
+        buf->bytes = new_array;
+    }
+    return true;
+}
+
+
+// Attempts to grow the buffer's capacity by [n] bytes. Returns true on success, false if memory
+// allocation fails. In this case the buffer is unchanged.
+bool ObjBuf_grow_by_n_bytes(ObjBuf* buf, size_t n, PyroVM* vm) {
+    size_t new_capacity = buf->capacity + n;
+    uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
+    if (!new_array) {
+        return false;
+    }
+    buf->capacity = new_capacity;
+    buf->bytes = new_array;
     return true;
 }
 
@@ -1686,33 +1717,48 @@ int64_t ObjBuf_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_l
 }
 
 
-bool ObjBuf_best_effort_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
-    // Determine the length of the string. (Doesn't include the terminating null.)
+void ObjBuf_try_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+    // Determine the length of the string we want to write. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
     va_list args_copy;
     va_copy(args_copy, args);
     int length = vsnprintf(NULL, 0, format_string, args_copy);
     va_end(args_copy);
 
-    if (length == 0) {
-        return true;
+    if (length <= 0) {
+        return;
     }
 
-    if (length < 0) {
-        return false;
-    }
-
+    // Determine the capacity we would need to write the entire string.
     size_t required_capacity = buf->count + (size_t)length + 1;
 
-    if (required_capacity <= buf->capacity || ObjBuf_grow(buf, required_capacity, vm)) {
+    // If we can write the entire string, write it.
+    if (buf->capacity >= required_capacity || ObjBuf_grow_to_fit(buf, required_capacity, vm)) {
         vsprintf((char*)&buf->bytes[buf->count], format_string, args);
         buf->count += length;
-        return true;
+        return;
     }
 
+    // Try to grow the buffer as much as possible.
+    while (buf->capacity < required_capacity) {
+        if (!ObjBuf_grow_by_n_bytes(buf, 128, vm)) {
+            break;
+        }
+    }
+
+    // Check again as the buffer may now be big enough to fit the entire string.
+    if (buf->capacity >= required_capacity) {
+        vsprintf((char*)&buf->bytes[buf->count], format_string, args);
+        buf->count += length;
+        return;
+    }
+
+    // The buffer is still too small. Write as much of the string as possible.
     size_t available_capacity = buf->capacity - buf->count;
-    vsnprintf((char*)&buf->bytes[buf->count], available_capacity, format_string, args);
-    return false;
+    if (available_capacity > 0) {
+        vsnprintf((char*)&buf->bytes[buf->count], available_capacity, format_string, args);
+        buf->count += (available_capacity - 1);
+    }
 }
 
 

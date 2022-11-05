@@ -61,7 +61,7 @@ static void panic(
 
     // If we're inside a try expression, write the error message to the panic buffer.
     if (vm->try_depth > 0) {
-        ObjBuf_best_effort_write_fv(vm->panic_buffer, vm, format_string, args);
+        ObjBuf_try_write_fv(vm->panic_buffer, vm, format_string, args);
         vm->panic_source_id = last_opcode_source_id;
         vm->panic_line_number = last_opcode_line_number;
         return;
