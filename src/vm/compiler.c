@@ -1261,6 +1261,9 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             consume(parser, TOKEN_IDENTIFIER, "expected a member name after '::'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             emit_u8_u16be(parser, OP_GET_MEMBER, index);
+            if (match_assignment_token(parser)) {
+                ERROR_AT_PREVIOUS_TOKEN("cannot assign to a module member from outside the module");
+            }
         }
 
         else {
