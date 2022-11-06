@@ -2201,10 +2201,6 @@ static void run(PyroVM* vm) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
-                    if (!ObjBuf_grow(vm->panic_buffer, 256, vm)) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
 
                     ObjErr* err = ObjErr_new(vm);
                     if (!err) {
