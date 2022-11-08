@@ -122,3 +122,29 @@ When calling a function, you can 'unpack' the final argument using a `*` if it's
     var numbers = [1, 2, 3];
     assert add(*numbers) == 6;
     assert add(1, 2, *numbers) == 9;
+
+
+
+### Trailing Commas
+
+Trailing commas are allowed in function definitions, e.g.
+
+::: code pyro
+    def add_args(
+        arg1,
+        arg2,
+        arg3,
+    ) {
+        return arg1 + arg2 + arg3;
+    }
+
+Trailing commas are also allowed in function calls, e.g
+
+::: code pyro
+    var result = add_args(
+        "foo",
+        "bar",
+        "baz",
+    );
+
+    assert result == "foobarbaz";

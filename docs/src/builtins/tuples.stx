@@ -15,6 +15,16 @@ A tuple, `tup`, is an immutable array of values.
     The arguments provide the tuple's values.
 
 
+Note that trailing commas are allowed in function calls, e.g
+
+::: code pyro
+    var tup = $tup(
+        "foo",
+        "bar",
+        "baz",
+    );
+
+
 
 ### Indexing
 
