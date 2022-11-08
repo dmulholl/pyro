@@ -2,21 +2,21 @@ import $std::prng;
 
 
 def $test_sequential_integers() {
-    var vec = $range(1000):to_vec();
+    var vec = $range(100):to_vec();
     vec:mergesort();
     assert vec:is_sorted();
 }
 
 
 def $test_reversed_sequential_integers() {
-    var vec = $range(1000):to_vec():reverse();
+    var vec = $range(100):to_vec():reverse();
     vec:mergesort();
     assert vec:is_sorted();
 }
 
 
 def $test_shuffled_sequential_integers() {
-    var vec = $range(1000):to_vec():shuffle();
+    var vec = $range(100):to_vec():shuffle();
     vec:mergesort();
     assert vec:is_sorted();
 }
@@ -25,7 +25,7 @@ def $test_shuffled_sequential_integers() {
 def $test_random_integers_with_duplicates() {
     var vec = $vec();
 
-    for i in $range(1000) {
+    for i in $range(100) {
         vec:append(prng::rand_int(10));
     }
 
@@ -100,7 +100,7 @@ def $test_custom_comparison_func_2() {
         return a < b;
     }
 
-    var vec = $range(1000):to_vec():shuffle();
+    var vec = $range(100):to_vec():shuffle();
     vec:mergesort(standard_sort);
     assert vec:is_sorted();
 }
@@ -111,7 +111,7 @@ def $test_custom_comparison_func_3() {
         return a > b;
     }
 
-    var vec = $range(1000):to_vec():shuffle();
+    var vec = $range(100):to_vec():shuffle();
     vec:mergesort(reverse_sort):reverse();
     assert vec:is_sorted();
 }
