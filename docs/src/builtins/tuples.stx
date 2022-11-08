@@ -48,6 +48,8 @@ You can check if a tuple contains an item using the `in` operator:
         echo "found";
     }
 
+This is equivalent to calling the tuple's `:contains()` method.
+
 
 
 ### Methods

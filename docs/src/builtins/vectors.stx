@@ -61,6 +61,8 @@ You can check if a vector contains an item using the `in` operator:
         echo "found";
     }
 
+This is equivalent to calling the vector's `:contains()` method.
+
 
 
 ### Methods
