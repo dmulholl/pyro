@@ -54,18 +54,19 @@ A comparison will panic if the elements are not comparable.
 
 ### Indexing
 
-You can index into a tuple to get (but not set) entries:
+You can index into a tuple to get (but not set) entries, e.g.
 
 ::: code pyro
     var tup = $tup("foo", "bar");
-
     assert tup[0] == "foo";
     assert tup[1] == "bar";
 
+Indices are zero-based. Indexing is equivalent to using the tuple's `:get()` method, e.g.
+
+::: code pyro
+    var tup = $tup("foo", "bar");
     assert tup:get(0) == "foo";
     assert tup:get(1) == "bar";
-
-Indices are zero-based. Indexing is equivalent to using the `:get()` method as shown.
 
 
 
