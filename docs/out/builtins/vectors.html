@@ -270,10 +270,16 @@ Returns <code>true</code> if the vector is empty.
 <p>
 Returns <code>true</code> if the vector is sorted in ascending order.
 </p>
-<p>
+<ul>
+<li>
 If a <code>callback</code> function is supplied it will be used to compare pairs of values.
-It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
-</p>
+It should accept two arguments, <code>a</code> and <code>b</code>, and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
+</li>
+<li>
+If no <code>callback</code> function is supplied, values will be compared using the <code>&lt;</code> operator.
+The method will panic if the values are not comparable.
+</li>
+</ul>
 </dd>
 </div>
 <div>
@@ -335,10 +341,16 @@ its return values will form the elements of the new vector.
 Sorts the vector in-place using a stable implementation of the mergesort algorithm.
 Returns the vector to allow chaining.
 </p>
-<p>
+<ul>
+<li>
 If a <code>callback</code> function is supplied it will be used to compare pairs of values.
-It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
-</p>
+It should accept two arguments, <code>a</code> and <code>b</code>, and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
+</li>
+<li>
+If no <code>callback</code> function is supplied, values will be compared using the <code>&lt;</code> operator.
+The method will panic if the values are not comparable.
+</li>
+</ul>
 <p>
 Use <code>:sort()</code> if you don't care about the underlying sorting algorithm.
 </p>
@@ -353,10 +365,16 @@ Use <code>:sort()</code> if you don't care about the underlying sorting algorith
 Sorts the vector in-place using the quicksort algorithm.
 Returns the vector to allow chaining.
 </p>
-<p>
+<ul>
+<li>
 If a <code>callback</code> function is supplied it will be used to compare pairs of values.
-It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
-</p>
+It should accept two arguments, <code>a</code> and <code>b</code>, and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
+</li>
+<li>
+If no <code>callback</code> function is supplied, values will be compared using the <code>&lt;</code> operator.
+The method will panic if the values are not comparable.
+</li>
+</ul>
 <p>
 Use <code>:sort()</code> if you don't care about the underlying sorting algorithm.
 </p>
@@ -484,10 +502,16 @@ Panics if either argument is out of range.
 Sorts the vector in-place using the default stable sorting algorithm.
 Returns the vector to allow chaining.
 </p>
-<p>
+<ul>
+<li>
 If a <code>callback</code> function is supplied it will be used to compare pairs of values.
-It should accept two arguments <code>a</code> and <code>b</code> and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
-</p>
+It should accept two arguments, <code>a</code> and <code>b</code>, and return <code>true</code> if <code>a &lt; b</code>, otherwise <code>false</code>.
+</li>
+<li>
+If no <code>callback</code> function is supplied, values will be compared using the <code>&lt;</code> operator.
+The method will panic if the values are not comparable.
+</li>
+</ul>
 </dd>
 </div>
 </dl>

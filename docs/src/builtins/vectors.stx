@@ -119,8 +119,11 @@ You can check if a vector contains an item using the `in` operator:
 
     Returns `true` if the vector is sorted in ascending order.
 
-    If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
+    * If a `callback` function is supplied it will be used to compare pairs of values.
+      It should accept two arguments, `a` and `b`, and return `true` if `a < b`, otherwise `false`.
+
+    * If no `callback` function is supplied, values will be compared using the `<` operator.
+      The method will panic if the values are not comparable.
 
 [[ `:iter() -> iter` ]]
 
@@ -151,8 +154,11 @@ You can check if a vector contains an item using the `in` operator:
     Sorts the vector in-place using a stable implementation of the mergesort algorithm.
     Returns the vector to allow chaining.
 
-    If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
+    * If a `callback` function is supplied it will be used to compare pairs of values.
+      It should accept two arguments, `a` and `b`, and return `true` if `a < b`, otherwise `false`.
+
+    * If no `callback` function is supplied, values will be compared using the `<` operator.
+      The method will panic if the values are not comparable.
 
     Use `:sort()` if you don't care about the underlying sorting algorithm.
 
@@ -161,8 +167,11 @@ You can check if a vector contains an item using the `in` operator:
     Sorts the vector in-place using the quicksort algorithm.
     Returns the vector to allow chaining.
 
-    If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
+    * If a `callback` function is supplied it will be used to compare pairs of values.
+      It should accept two arguments, `a` and `b`, and return `true` if `a < b`, otherwise `false`.
+
+    * If no `callback` function is supplied, values will be compared using the `<` operator.
+      The method will panic if the values are not comparable.
 
     Use `:sort()` if you don't care about the underlying sorting algorithm.
 
@@ -225,5 +234,8 @@ You can check if a vector contains an item using the `in` operator:
     Sorts the vector in-place using the default stable sorting algorithm.
     Returns the vector to allow chaining.
 
-    If a `callback` function is supplied it will be used to compare pairs of values.
-    It should accept two arguments `a` and `b` and return `true` if `a < b`, otherwise `false`.
+    * If a `callback` function is supplied it will be used to compare pairs of values.
+      It should accept two arguments, `a` and `b`, and return `true` if `a < b`, otherwise `false`.
+
+    * If no `callback` function is supplied, values will be compared using the `<` operator.
+      The method will panic if the values are not comparable.
