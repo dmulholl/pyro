@@ -24,6 +24,32 @@ Note that trailing commas are allowed in function calls, e.g
         "baz",
     );
 
+    assert tup == $tup("foo", "bar", "baz");
+
+
+
+### Equality
+
+Tuples compare as equal using the `==` operator if they have the same length and their elements are equal, e.g.
+
+::: code pyro
+    var foo = $tup("foo", 123);
+    var bar = $tup("foo", 123);
+    assert foo == bar;
+
+
+
+### Comparison
+
+
+You can compare tuples using the comparison operators, `<`, `<=`, `>`, `>=`, e.g.
+
+::: code pyro
+    assert $tup(1, 2, 3) < $tup(1, 2, 4);
+
+Tuples are compared lexicographically by element.
+A comparison will panic if the elements are not comparable.
+
 
 
 ### Indexing
