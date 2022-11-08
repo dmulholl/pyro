@@ -115,21 +115,35 @@ The empty literal <code>{}</code> will create an empty map.
 Indexing
 </h3>
 <p>
-You can index into a map to get or set entries:
+You can index into a map to get or set entries, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">map</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">map</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span><span class="s">&quot;foo&quot;</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span> <span class="p">=</span> <span class="mi">456</span><span class="p">};</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;bar&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 
-<span class="nx">map</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
-<span class="nx">map</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="nx">map</span><span class="p">[</span><span class="s">&quot;bar&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">789</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;bar&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
 </pre>
 <p>
-Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+Indexing is equivalent to using the map's <code>:get()</code> and <code>:set()</code> methods, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span><span class="s">&quot;foo&quot;</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span> <span class="p">=</span> <span class="mi">456</span><span class="p">};</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
+
+<span class="nx">map</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="p">=</span> <span class="mi">789</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="p">=</span> <span class="mi">789</span><span class="p">;</span>
+</pre>
 <p>
-If the map doesn't contain an entry corresponding to <code>key</code>, the expression <code>map[key]</code> will return an <code>err</code>.
+If the map doesn't contain an entry corresponding to <code>key</code>, the expression <code>map[key]</code> will return an <code>err</code>, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span><span class="s">&quot;foo&quot;</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span> <span class="p">=</span> <span class="mi">456</span><span class="p">};</span>
+<span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">map</span><span class="p">[</span><span class="s">&quot;baz&quot;</span><span class="p">]);</span>
+<span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">map</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;baz&quot;</span><span class="p">));</span>
+</pre>
 <h3 id="iterating">
 Iterating
 </h3>

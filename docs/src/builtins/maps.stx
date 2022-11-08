@@ -38,18 +38,32 @@ The empty literal `{}` will create an empty map.
 
 ### Indexing
 
-You can index into a map to get or set entries:
+You can index into a map to get or set entries, e.g.
 
 ::: code pyro
-    var value = map[key];
-    var value = map:get(key);
+    var map = {"foo" = 123, "bar" = 456};
+    assert map["foo"] == 123;
+    assert map["bar"] == 456;
 
-    map[key] = value;
-    map:set(key, value);
+    map["bar"] = 789;
+    assert map["bar"] == 789;
 
-Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+Indexing is equivalent to using the map's `:get()` and `:set()` methods, e.g.
 
-If the map doesn't contain an entry corresponding to `key`, the expression `map[key]` will return an `err`.
+::: code pyro
+    var map = {"foo" = 123, "bar" = 456};
+    assert map:get("foo") == 123;
+    assert map:get("bar") == 456;
+
+    map:set("bar") = 789;
+    assert map:get("bar") = 789;
+
+If the map doesn't contain an entry corresponding to `key`, the expression `map[key]` will return an `err`, e.g.
+
+::: code pyro
+    var map = {"foo" = 123, "bar" = 456};
+    assert $is_err(map["baz"]);
+    assert $is_err(map:get("baz"));
 
 
 
