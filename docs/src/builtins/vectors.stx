@@ -20,10 +20,19 @@ A vector, `vec`, is a dynamic array of values.
 
 ### Vector Literals
 
-You can create a vector using literal syntax:
+You can create a vector using literal syntax, e.g.
 
 ::: code pyro
     var vec = ["foo", "bar", "baz"];
+
+Trailing commas are allowed, e.g.
+
+::: code pyro
+    var vec = [
+        "foo",
+        "bar",
+        "baz",
+    ];
 
 
 

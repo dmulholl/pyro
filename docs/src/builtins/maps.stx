@@ -19,7 +19,12 @@ Pyro's `map` type preserves insertion order so when you iterate over a map you g
 
 ### Map Literals
 
-You can create a map using literal syntax:
+You can create a map using literal syntax, e.g.
+
+::: code pyro
+    var map = {"foo" = 123, "bar" = 456};
+
+Trailing commas are allowed, e.g.
 
 ::: code pyro
     var map = {

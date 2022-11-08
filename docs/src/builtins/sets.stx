@@ -24,10 +24,19 @@ Alternatively, you can create a set by draining an iterator, e.g.
 
 ### Set Literals
 
-You can create a set using literal syntax:
+You can create a set using literal syntax, e.g.
 
 ::: code pyro
     var set = {1, 2, 3};
+
+Trailing commas are allowed, e.g.
+
+::: code pyro
+    var set = {
+        1,
+        2,
+        3,
+    };
 
 Note that the empty literal `{}` will create an empty map --- use `$set()` to create an empty set.
 

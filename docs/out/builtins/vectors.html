@@ -99,10 +99,20 @@ If called with two arguments, creates a vector with the specified initial size a
 Vector Literals
 </h3>
 <p>
-You can create a vector using literal syntax:
+You can create a vector using literal syntax, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+</pre>
+<p>
+Trailing commas are allowed, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span>
+    <span class="s">&quot;foo&quot;</span><span class="p">,</span>
+    <span class="s">&quot;bar&quot;</span><span class="p">,</span>
+    <span class="s">&quot;baz&quot;</span><span class="p">,</span>
+<span class="p">];</span>
 </pre>
 <h3 id="indexing">
 Indexing

@@ -99,10 +99,20 @@ Alternatively, you can create a set by draining an iterator, e.g.
 Set Literals
 </h3>
 <p>
-You can create a set using literal syntax:
+You can create a set using literal syntax, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
+</pre>
+<p>
+Trailing commas are allowed, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">set</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">,</span>
+<span class="p">};</span>
 </pre>
 <p>
 Note that the empty literal <code>{}</code> will create an empty map &mdash; use <code>$set()</code> to create an empty set.
