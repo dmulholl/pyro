@@ -134,6 +134,12 @@ This means that these values work interchangeably as map keys, e.g.
 
 
 
+### Value Types
+
+You can use any Pyro value as a value in a `map`.
+
+
+
 ### Methods
 
 [[ `:clear()` ]]
