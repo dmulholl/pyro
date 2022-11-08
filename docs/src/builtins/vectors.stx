@@ -38,16 +38,25 @@ Trailing commas are allowed, e.g.
 
 ### Indexing
 
-You can index into a vector to get or set entries:
+You can index into a vector to get or set entries, e.g.
 
 ::: code pyro
-    var value = vec[index];
-    var value = vec:get(index);
+    var vec = ["foo", "bar"];
+    assert vec[0] == "foo";
+    assert vec[1] == "bar";
 
-    vec[index] = value;
-    vec:set(index, value);
+    vec[1] = "baz";
+    assert vec[1] == "baz";
 
-Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+Indices are zero-based. Indexing is equivalent to using the vector's `:get()` and `:set()` methods, e.g.
+
+::: code pyro
+    var vec = ["foo", "bar"];
+    assert vec:get(0) == "foo";
+    assert vec:get(1) == "bar";
+
+    vec:set(1, "baz");
+    assert vec:get(1) == "baz";
 
 
 
@@ -59,6 +68,7 @@ Vectors are iterable:
     for item in ["foo", "bar", "baz"] {
         echo item;
     }
+
 
 
 ### Containment

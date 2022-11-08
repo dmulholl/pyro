@@ -57,8 +57,13 @@ A comparison will panic if the elements are not comparable.
 You can index into a tuple to get (but not set) entries:
 
 ::: code pyro
-    var value = tup[index];
-    var value = tup:get(index);
+    var tup = $tup("foo", "bar");
+
+    assert tup[0] == "foo";
+    assert tup[1] == "bar";
+
+    assert tup:get(0) == "foo";
+    assert tup:get(1) == "bar";
 
 Indices are zero-based. Indexing is equivalent to using the `:get()` method as shown.
 
