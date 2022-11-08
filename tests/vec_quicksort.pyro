@@ -1,5 +1,6 @@
 import $std::prng;
 
+
 def $test_sequential_integers() {
     var vec = $range(1000):to_vec();
     vec:quicksort();
@@ -72,4 +73,56 @@ def $test_custom_comparison_func_2() {
     var vec = $range(1000):to_vec():shuffle();
     vec:quicksort(reverse_sort):reverse();
     assert vec:is_sorted();
+}
+
+
+def $test_mixed_number_types() {
+    var vec = [99, 123.456, 1.0, 'A', 2.5];
+    assert !vec:is_sorted();
+    vec:quicksort();
+    assert vec:is_sorted();
+    assert vec[0] == 1.0;
+    assert vec[1] == 2.5;
+    assert vec[2] == 'A';
+    assert vec[3] == 99;
+    assert vec[4] == 123.456;
+}
+
+
+def $test_class_with_custom_lt_operator() {
+    class Object {
+        pub var value;
+
+        def $init(value) {
+            self.value = value;
+        }
+
+        def $op_binary_less(other) {
+            return self.value < other.value;
+        }
+    }
+
+    var vec = [
+        Object(456),
+        Object(123),
+        Object(789),
+        Object(000),
+    ];
+
+    assert !vec:is_sorted();
+    vec:quicksort();
+    assert vec:is_sorted();
+    assert vec[0].value == 0;
+    assert vec[1].value == 123;
+    assert vec[2].value == 456;
+    assert vec[3].value == 789;
+
+    vec:append("xyz");
+    assert $is_err(try vec:quicksort());
+}
+
+
+def $test_non_comparable_types() {
+    var vec = [123, "foo"];
+    assert $is_err(try vec:quicksort());
 }

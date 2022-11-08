@@ -1,0 +1,169 @@
+import $std::prng;
+
+
+def $test_sequential_integers() {
+    var vec = $range(1000):to_vec();
+    vec:mergesort();
+    assert vec:is_sorted();
+}
+
+
+def $test_reversed_sequential_integers() {
+    var vec = $range(1000):to_vec():reverse();
+    vec:mergesort();
+    assert vec:is_sorted();
+}
+
+
+def $test_shuffled_sequential_integers() {
+    var vec = $range(1000):to_vec():shuffle();
+    vec:mergesort();
+    assert vec:is_sorted();
+}
+
+
+def $test_random_integers_with_duplicates() {
+    var vec = $vec();
+
+    for i in $range(1000) {
+        vec:append(prng::rand_int(10));
+    }
+
+    vec:mergesort();
+    assert vec:is_sorted();
+}
+
+
+def $test_strings() {
+    var vec = ["a", "aa", "aaa", "aaa", "ab", "abc", "abcd", "def", "zef", "zzz"];
+
+    vec:shuffle();
+    vec:mergesort();
+    assert vec:is_sorted();
+
+    assert vec[0] == "a";
+    assert vec[1] == "aa";
+    assert vec[2] == "aaa";
+    assert vec[3] == "aaa";
+    assert vec[4] == "ab";
+    assert vec[5] == "abc";
+    assert vec[6] == "abcd";
+    assert vec[7] == "def";
+    assert vec[8] == "zef";
+    assert vec[9] == "zzz";
+}
+
+
+def $test_stability_for_values_that_compare_equal() {
+    var vec = [100, 97, 200, 97.0, 300, 'a', 400, 'b', 500, 98.0, 600, 98, 700, 99.0, 'c', 99];
+    vec:mergesort();
+
+    assert $is_i64(vec[0]) && vec[0] == 97;     # 97
+    assert $is_f64(vec[1]) && vec[1] == 97;     # 97.0
+    assert $is_char(vec[2]) && vec[2] == 97;    # 'a'
+    assert $is_char(vec[3]) && vec[3] == 98;    # 'b'
+    assert $is_f64(vec[4]) && vec[4] == 98;     # 98.0
+    assert $is_i64(vec[5]) && vec[5] == 98;     # 98
+    assert $is_f64(vec[6]) && vec[6] == 99;     # 99.0
+    assert $is_char(vec[7]) && vec[7] == 99;    # 'c'
+    assert $is_i64(vec[8]) && vec[8] == 99;     # 99
+
+    assert vec[9] == 100;
+    assert vec[10] == 200;
+    assert vec[11] == 300;
+    assert vec[12] == 400;
+    assert vec[13] == 500;
+    assert vec[14] == 600;
+    assert vec[15] == 700;
+}
+
+
+def $test_custom_comparison_func_1() {
+    def always_false(a, b) {
+        return false;
+    }
+
+    var vec = [5, 2, 7, 7, 1, 3];
+    vec:mergesort(always_false);
+
+    assert vec[0] == 5;
+    assert vec[1] == 2;
+    assert vec[2] == 7;
+    assert vec[3] == 7;
+    assert vec[4] == 1;
+    assert vec[5] == 3;
+}
+
+
+def $test_custom_comparison_func_2() {
+    def standard_sort(a, b) {
+        return a < b;
+    }
+
+    var vec = $range(1000):to_vec():shuffle();
+    vec:mergesort(standard_sort);
+    assert vec:is_sorted();
+}
+
+
+def $test_custom_comparison_func_3() {
+    def reverse_sort(a, b) {
+        return a > b;
+    }
+
+    var vec = $range(1000):to_vec():shuffle();
+    vec:mergesort(reverse_sort):reverse();
+    assert vec:is_sorted();
+}
+
+
+def $test_mixed_number_types() {
+    var vec = [99, 123.456, 1.0, 'A', 2.5];
+    assert !vec:is_sorted();
+    vec:mergesort();
+    assert vec:is_sorted();
+    assert vec[0] == 1.0;
+    assert vec[1] == 2.5;
+    assert vec[2] == 'A';
+    assert vec[3] == 99;
+    assert vec[4] == 123.456;
+}
+
+
+def $test_class_with_custom_lt_operator() {
+    class Object {
+        pub var value;
+
+        def $init(value) {
+            self.value = value;
+        }
+
+        def $op_binary_less(other) {
+            return self.value < other.value;
+        }
+    }
+
+    var vec = [
+        Object(456),
+        Object(123),
+        Object(789),
+        Object(000),
+    ];
+
+    assert !vec:is_sorted();
+    vec:mergesort();
+    assert vec:is_sorted();
+    assert vec[0].value == 0;
+    assert vec[1].value == 123;
+    assert vec[2].value == 456;
+    assert vec[3].value == 789;
+
+    vec:append("xyz");
+    assert $is_err(try vec:mergesort());
+}
+
+
+def $test_non_comparable_types() {
+    var vec = [123, "foo"];
+    assert $is_err(try vec:mergesort());
+}
