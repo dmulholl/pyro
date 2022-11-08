@@ -140,6 +140,8 @@ You can also use the `in` operator to check if a string contains a `char`:
     assert 'b' in "foobar";
 
 
+This is equivalent to calling the string's `:contains()` method.
+
 
 
 ### Methods
