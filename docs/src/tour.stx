@@ -203,7 +203,7 @@ You can use the comparison operators (`<`, `<=`, `>`, `>=`) with any combination
 The comparison operators also work with strings:
 
 ::: code pyro
-    assert "abc" < "def"
+    assert "abc" < "def";
 
 Strings are compared lexicographically by byte value.
 
