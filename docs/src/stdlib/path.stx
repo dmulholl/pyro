@@ -20,11 +20,6 @@ This module contains filepath utilities.
     Changes the current working directory to `path`.
 
 
-[[ `chroot(path: str)` ]]
-
-    Changes the root directory of the current process to `path`.
-
-
 [[ `getcwd() -> str` ]]
 
     Returns the path of the current working directory.

@@ -224,7 +224,11 @@ bool pyro_chdir(const char* path) {
 
 
 bool pyro_chroot(const char* path) {
-    return chroot(path) == 0;
+    // Throwing different compilation errors on mac/linux as it isn't part of the official POSIX
+    // specification.
+    // Interacts badly with: #define _XOPEN_SOURCE 700
+    /* return chroot(path) == 0; */
+    return false;
 }
 
 
