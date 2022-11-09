@@ -18,7 +18,7 @@
 // POSIX: nftw()
 #include <ftw.h>
 
-// POSIX: getcwd(), chdir(), fork(), exec(), dup2(), read(), write()
+// POSIX: getcwd(), chdir(), chroot(), fork(), exec(), dup2(), read(), write()
 #include <unistd.h>
 
 // POSIX: waitpid()
@@ -94,17 +94,17 @@ char* pyro_basename(char* path) {
 
 
 // Returns 0 if successful, -1 if an error occurs.
-static int rmrf_callback(const char* path, const struct stat* s, int type, struct FTW* ftw_buf) {
+static int remove_callback(const char* path, const struct stat* s, int type, struct FTW* ftw_buf) {
     return remove(path);
 }
 
 
 // Returns 0 if successful, -1 if an error occurs.
-int pyro_rmrf(const char* path) {
+int pyro_remove(const char* path) {
     if (pyro_is_symlink(path) || pyro_is_file(path)) {
         return remove(path);
     } else if (pyro_is_dir(path)) {
-        return nftw(path, rmrf_callback, 64, FTW_DEPTH | FTW_PHYS);
+        return nftw(path, remove_callback, 64, FTW_DEPTH | FTW_PHYS);
     } else {
         return -1;
     }
@@ -218,8 +218,13 @@ bool pyro_setenv(const char* name, const char* value) {
 }
 
 
-bool pyro_cd(const char* path) {
+bool pyro_chdir(const char* path) {
     return chdir(path) == 0;
+}
+
+
+bool pyro_chroot(const char* path) {
+    return chroot(path) == 0;
 }
 
 

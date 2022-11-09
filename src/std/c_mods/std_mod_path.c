@@ -175,7 +175,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
+static Value fn_remove(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "rm(): invalid argument [path], expected a string");
         return pyro_make_null();
@@ -183,7 +183,7 @@ static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* path = AS_STR(args[0]);
 
-    if (pyro_rmrf(path->bytes) != 0) {
+    if (pyro_remove(path->bytes) != 0) {
         pyro_panic(vm, "rm(): unable to delete '%s'", path->bytes);
     }
 
@@ -191,10 +191,10 @@ static Value fn_rm(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
+static Value fn_getcwd(PyroVM* vm, size_t arg_count, Value* args) {
     char* cwd = pyro_getcwd();
     if (!cwd) {
-        pyro_panic(vm, "cwd(): out of memory");
+        pyro_panic(vm, "getcwd(): out of memory");
         return pyro_make_null();
     }
 
@@ -202,7 +202,7 @@ static Value fn_cwd(PyroVM* vm, size_t arg_count, Value* args) {
     free(cwd);
 
     if (!string) {
-        pyro_panic(vm, "cwd(): out of memory");
+        pyro_panic(vm, "getcwd(): out of memory");
         return pyro_make_null();
     }
 
@@ -261,15 +261,31 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_cd(PyroVM* vm, size_t arg_count, Value* args) {
+static Value fn_chdir(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
-        pyro_panic(vm, "cd(): invalid argument [path], expected a string");
+        pyro_panic(vm, "chdir(): invalid argument [path], expected a string");
         return pyro_make_null();
     }
 
     ObjStr* path = AS_STR(args[0]);
-    if (!pyro_cd(path->bytes)) {
-        pyro_panic(vm, "cd(): failed to change current working directory to '%s'", path->bytes);
+    if (!pyro_chdir(path->bytes)) {
+        pyro_panic(vm, "chdir(): failed to change the current working directory to '%s'", path->bytes);
+        return pyro_make_null();
+    }
+
+    return pyro_make_null();
+}
+
+
+static Value fn_chroot(PyroVM* vm, size_t arg_count, Value* args) {
+    if (!IS_STR(args[0])) {
+        pyro_panic(vm, "chroot(): invalid argument [path], expected a string");
+        return pyro_make_null();
+    }
+
+    ObjStr* path = AS_STR(args[0]);
+    if (!pyro_chroot(path->bytes)) {
+        pyro_panic(vm, "chroot(): failed to change root directory to '%s'", path->bytes);
         return pyro_make_null();
     }
 
@@ -285,9 +301,15 @@ void pyro_load_std_mod_path(PyroVM* vm, ObjModule* module) {
     pyro_define_pub_member_fn(vm, module, "dirname", fn_dirname, 1);
     pyro_define_pub_member_fn(vm, module, "basename", fn_basename, 1);
     pyro_define_pub_member_fn(vm, module, "join", fn_join, -1);
-    pyro_define_pub_member_fn(vm, module, "rm", fn_rm, 1);
-    pyro_define_pub_member_fn(vm, module, "cwd", fn_cwd, 0);
+    pyro_define_pub_member_fn(vm, module, "remove", fn_remove, 1);
     pyro_define_pub_member_fn(vm, module, "listdir", fn_listdir, 1);
     pyro_define_pub_member_fn(vm, module, "realpath", fn_realpath, 1);
-    pyro_define_pub_member_fn(vm, module, "cd", fn_cd, 1);
+    pyro_define_pub_member_fn(vm, module, "chdir", fn_chdir, 1);
+    pyro_define_pub_member_fn(vm, module, "chroot", fn_chroot, 1);
+    pyro_define_pub_member_fn(vm, module, "getcwd", fn_getcwd, 0);
+
+    // Deprecated.
+    pyro_define_pub_member_fn(vm, module, "cd", fn_chdir, 1);
+    pyro_define_pub_member_fn(vm, module, "cwd", fn_getcwd, 0);
+    pyro_define_pub_member_fn(vm, module, "rm", fn_remove, 1);
 }

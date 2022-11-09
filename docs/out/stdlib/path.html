@@ -71,7 +71,7 @@ Equivalent to POSIX <code>basename()</code>.
 </div>
 <div>
 <dt>
-<code>cd(path: str)</code>
+<code>chdir(path: str)</code>
 </dt>
 <dd>
 <p>
@@ -81,11 +81,21 @@ Changes the current working directory to <code>path</code>.
 </div>
 <div>
 <dt>
-<code>cwd() -&gt; str</code>
+<code>chroot(path: str)</code>
 </dt>
 <dd>
 <p>
-Returns the directory path of the current working directory.
+Changes the root directory of the current process to <code>path</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>getcwd() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the path of the current working directory.
 </p>
 </dd>
 </div>
@@ -182,7 +192,7 @@ Returns an <code>err</code> if the path cannot be resolved.
 </div>
 <div>
 <dt>
-<code>rm(path: str)</code>
+<code>remove(path: str)</code>
 </dt>
 <dd>
 <p>

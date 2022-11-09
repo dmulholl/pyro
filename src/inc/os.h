@@ -35,7 +35,7 @@ char* pyro_basename(char* path);
 // Deletes the symlink or file or directory at [path]. If [path] is a symlink, the link itself will
 // be deleted, not its target. If [path] is a directory, its content will be recursively deleted,
 // then the directory itself.
-int pyro_rmrf(const char* path);
+int pyro_remove(const char* path);
 
 // Suspends the calling thread for the requested duration.
 // Returns 0 if successful, -1 if an error occurs.
@@ -61,7 +61,10 @@ char* pyro_strdup(const char* source);
 bool pyro_setenv(const char* name, const char* value);
 
 // Wrapper for POSIX chdir(). Returns true on success, false on failure.
-bool pyro_cd(const char* path);
+bool pyro_chdir(const char* path);
+
+// Wrapper for POSIX chroot(). Returns true on success, false on failure.
+bool pyro_chroot(const char* path);
 
 // Executes [cmd] as a shell command, where [cmd] is a null-terminated string.
 // - If [input_length > 0], writes [input] to the command's standard input.

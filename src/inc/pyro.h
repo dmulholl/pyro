@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 8
-#define PYRO_VERSION_PATCH 43
+#define PYRO_VERSION_PATCH 44
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -57,9 +57,9 @@
 #endif
 
 // Defining this macro causes header files to expose definitions conforming to POSIX 2008.
-#ifndef _XOPEN_SOURCE
-    #define _XOPEN_SOURCE 700
-#endif
+/* #ifndef _XOPEN_SOURCE */
+/*     #define _XOPEN_SOURCE 700 */
+/* #endif */
 
 // C standard library -- no OS-dependent headers.
 #include <assert.h>

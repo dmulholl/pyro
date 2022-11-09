@@ -15,14 +15,19 @@ This module contains filepath utilities.
     Equivalent to POSIX `basename()`.
 
 
-[[ `cd(path: str)` ]]
+[[ `chdir(path: str)` ]]
 
     Changes the current working directory to `path`.
 
 
-[[ `cwd() -> str` ]]
+[[ `chroot(path: str)` ]]
 
-    Returns the directory path of the current working directory.
+    Changes the root directory of the current process to `path`.
+
+
+[[ `getcwd() -> str` ]]
+
+    Returns the path of the current working directory.
 
 
 [[ `dirname(path: str) -> str` ]]
@@ -75,7 +80,7 @@ This module contains filepath utilities.
     Returns an `err` if the path cannot be resolved.
 
 
-[[ `rm(path: str)` ]]
+[[ `remove(path: str)` ]]
 
     Deletes the symlink, file, or directory at `path`.
 
