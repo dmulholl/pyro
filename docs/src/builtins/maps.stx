@@ -55,7 +55,7 @@ Indexing is equivalent to using the map's `:get()` and `:set()` methods, e.g.
     assert map:get("foo") == 123;
     assert map:get("bar") == 456;
 
-    map:set("bar") = 789;
+    map:set("bar", 789);
     assert map:get("bar") = 789;
 
 If the map doesn't contain an entry corresponding to `key`, the expression `map[key]` will return an `err`, e.g.
