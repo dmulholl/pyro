@@ -21,16 +21,46 @@ A byte buffer, `buf`, is a dynamic array of bytes.
 
 ### Indexing
 
-You can index into a buffer to get or set byte values:
+You can index into a buffer to get or set byte values, e.g.
 
 ::: code pyro
-    var value = buf[index];
-    var value = buf:get(index);
+    var buf = $buf("foobar");
+    assert buf[0] == 102;
+    assert buf[1] == 111;
 
-    buf[index] = value;
-    buf:set(index, value);
+    buf[0] = 99;
+    assert buf[0] == 99;
+    assert $str(buf) == "coobar";
 
-Indices are zero-based. Indexing is equivalent to using the `:get()` and `:set()` methods as shown.
+Indices are zero-based. Indexing is equivalent to using the buffer's `:get()` and `:set()` methods, e.g.
+
+::: code pyro
+    var buf = $buf("foobar");
+    assert buf:get(0) == 102;
+    assert buf:get(1) == 111;
+
+    buf:set(0, 99);
+    assert buf[0] == 99;
+    assert $str(buf) == "coobar";
+
+
+
+### String Building
+
+Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the overhead of creating temporary strings along the way.
+
+::: code pyro
+    var buf = $buf();
+    buf:write("foo");
+    buf:write("bar");
+
+    var result = buf:to_str();
+    assert result == "foobar";
+    assert buf:is_empty();
+
+Calling the `:to_str()` method converts the content of the buffer into a string, leaving a valid but empty buffer object  behind.
+
+This is different from calling `$str(buf)` on a buffer, which returns a string contining a *copy* of the buffer's content, leaving the buffer itself unchanged.
 
 
 

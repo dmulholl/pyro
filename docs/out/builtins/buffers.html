@@ -56,6 +56,9 @@
 <a href="#indexing">Indexing</a>
 </li>
 <li>
+<a href="#string-building">String Building</a>
+</li>
+<li>
 <a href="#methods">Methods</a>
 </li>
 </ul>
@@ -90,17 +93,49 @@ If called with two arguments, creates a new buffer with the specified initial si
 Indexing
 </h3>
 <p>
-You can index into a buffer to get or set byte values:
+You can index into a buffer to get or set byte values, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">111</span><span class="p">;</span>
 
-<span class="nx">buf</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
-<span class="nx">buf</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">99</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">99</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;coobar&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Indices are zero-based. Indexing is equivalent to using the <code>:get()</code> and <code>:set()</code> methods as shown.
+Indices are zero-based. Indexing is equivalent to using the buffer's <code>:get()</code> and <code>:set()</code> methods, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">111</span><span class="p">;</span>
+
+<span class="nx">buf</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">99</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;coobar&quot;</span><span class="p">;</span>
+</pre>
+<h3 id="string-building">
+String Building
+</h3>
+<p>
+Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the overhead of creating temporary strings along the way.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">();</span>
+<span class="nx">buf</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="nx">buf</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">to_str</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">result</span> <span class="o">==</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">is_empty</span><span class="p">();</span>
+</pre>
+<p>
+Calling the <code>:to_str()</code> method converts the content of the buffer into a string, leaving a valid but empty buffer object  behind.
+</p>
+<p>
+This is different from calling <code>$str(buf)</code> on a buffer, which returns a string contining a <i>copy</i> of the buffer's content, leaving the buffer itself unchanged.
 </p>
 <h3 id="methods">
 Methods
