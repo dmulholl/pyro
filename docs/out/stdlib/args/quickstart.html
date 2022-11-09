@@ -52,9 +52,9 @@
                 <hr>
             </header>
             <p>
-Imagine we're building a utility for joining MP3 files, something like <a href="https://github.com/dmulholl/mp3cat">mp3cat</a>.
+Imagine we're building a utility for joining MP3 files.
 We want the user to supply the file names as a list of command line arguments.
-We also want to support an <code>--out/-o</code> option so the user can specify an output filename and a <code>--quiet/-q</code> flag for turning down the program's verbosity.
+We also want to support an <code>--out/-o</code> option so the user can specify an output filename and a <code>--quiet/-q</code> flag for tuning the program's verbosity.
 </p>
 <p>
 First we need to create an <code>ArgParser</code> instance:
@@ -86,7 +86,7 @@ That's it, we're done specifying our interface. Now we can parse the program's c
 <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span>
 </pre>
 <p>
-This will exit with a suitable error message if anything goes wrong. Now we can check if the <code>--quiet</code> flag was found:
+This will exit with a suitable error message for the user if anything goes wrong. Now we can check if the <code>--quiet</code> flag was found:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">if</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">found</span><span class="p">(</span><span class="s">&quot;quiet&quot;</span><span class="p">)</span> <span class="p">{</span>

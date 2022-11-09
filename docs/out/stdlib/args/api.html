@@ -237,10 +237,10 @@ Parses the program's command line arguments.
 </p>
 <ul>
 <li>
-If <code>.exit_on_error</code> is <code>true</code>, exits with an error message for the user if the command line arguments are invalid.
+If <code>exit_on_error</code> is <code>true</code>, exits with an error message for the user if the command line arguments are invalid.
 </li>
 <li>
-If <code>.exit_on_error</code> is <code>false</code>, returns an <code>err</code> if the command line arguments are invalid.
+If <code>exit_on_error</code> is <code>false</code>, returns an <code>err</code> if the command line arguments are invalid.
 </li>
 </ul>
 <p>
@@ -283,8 +283,15 @@ Returns <code>true</code> if the specified flag or option was found, <code>false
 <dd>
 <p>
 Returns the value of the specified option.
-Returns the option's default value if the option was not found.
 </p>
+<ul>
+<li>
+Returns the option's default value if the option was not found.
+</li>
+<li>
+If multiple values were found, returns the final value to be parsed.
+</li>
+</ul>
 </dd>
 </div>
 <div>
@@ -294,6 +301,7 @@ Returns the option's default value if the option was not found.
 <dd>
 <p>
 Returns the specified option's list of values.
+If the option was not found, the vector will be empty.
 </p>
 </dd>
 </div>

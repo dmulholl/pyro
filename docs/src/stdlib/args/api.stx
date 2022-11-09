@@ -25,7 +25,6 @@ You can customize an `ArgParser` using the methods below:
     Specifying a `helptext` string for a parser activates an automatic `--help` flag;
     also a `-h` shortcut unless registered by another option.
 
-
 [[ `:version() -> str?` <br> `:version(text: str) -> ArgParser` ]]
 
     Gets or sets the parser's version string.
@@ -37,13 +36,11 @@ You can customize an `ArgParser` using the methods below:
     Specifying a `version` string for a parser activates an automatic `--version` flag;
     also a `-v` shortcut unless registered by another option.
 
-
 [[ `:enable_help_command(enable: bool) -> ArgParser` ]]
 
     This boolean switch toggles support for an automatic `help` command that prints subcommand helptext. The value defaults to `false` but gets toggled automatically to `true` whenever a command is registered. You can use this switch to disable the feature if required.
 
     Returns the parser to enable chaining.
-
 
 [[ `:exit_on_error(enable: bool) -> ArgParser` ]]
 
@@ -69,7 +66,6 @@ You can register flags and options on an `ArgParser` using the methods below:
 
     Returns the parser to enable chaining.
 
-
 [[ `:option(name: str) -> ArgParser` <br> `:option(name: str, default: any) -> ArgParser` <br> `:option(name: str, default: any, parser: call(str) -> any) -> ArgParser` ]]
 
     Registers a new option.
@@ -94,8 +90,9 @@ Call the `:parse()` method on the root `ArgParser` instance to parse the program
 
     Parses the program's command line arguments.
 
-    * If `.exit_on_error` is `true`, exits with an error message for the user if the command line arguments are invalid.
-    * If `.exit_on_error` is `false`, returns an `err` if the command line arguments are invalid.
+    * If `exit_on_error` is `true`, exits with an error message for the user if the command line arguments are invalid.
+
+    * If `exit_on_error` is `false`, returns an `err` if the command line arguments are invalid.
 
     You only need to call this method on the root `ArgParser` instance; arguments for commands will be parsed automatically.
 
@@ -116,11 +113,14 @@ You can use any of a flag or option's registered aliases or shortcuts as the `na
 [[  `:value(name) -> any`  ]]
 
     Returns the value of the specified option.
-    Returns the option's default value if the option was not found.
+
+    * Returns the option's default value if the option was not found.
+    * If multiple values were found, returns the final value to be parsed.
 
 [[  `:values(name) -> vec`  ]]
 
     Returns the specified option's list of values.
+    If the option was not found, the vector will be empty.
 
 
 
