@@ -57,9 +57,9 @@
 #endif
 
 // Defining this macro causes header files to expose definitions conforming to POSIX 2008.
-/* #ifndef _XOPEN_SOURCE */
-/*     #define _XOPEN_SOURCE 700 */
-/* #endif */
+#ifndef _XOPEN_SOURCE
+    #define _XOPEN_SOURCE 700
+#endif
 
 // C standard library -- no OS-dependent headers.
 #include <assert.h>
