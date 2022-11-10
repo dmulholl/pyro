@@ -359,16 +359,24 @@ Tuples are equal if they have the same length and their elements are equal:
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
+Sets are equal if they are set-equivalent, i.e. contain the same items in any order:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">};</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
+</pre>
+<p>
 By default, other objects are equal only if they are the same object:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{}</span>
+<span class="kd">class</span> <span class="nx">Object</span> <span class="p">{}</span>
 
-<span class="kd">var</span> <span class="nx">foo1</span> <span class="p">=</span> <span class="nx">Foo</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">foo2</span> <span class="p">=</span> <span class="nx">Foo</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">obj1</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">obj2</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
 
-<span class="k">assert</span> <span class="nx">foo1</span> <span class="o">==</span> <span class="nx">foo1</span><span class="p">;</span>    <span class="c1"># True.</span>
-<span class="k">assert</span> <span class="nx">foo1</span> <span class="o">==</span> <span class="nx">foo2</span><span class="p">;</span>    <span class="c1"># False.</span>
+<span class="k">assert</span> <span class="nx">obj1</span> <span class="o">==</span> <span class="nx">obj1</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">obj1</span> <span class="o">!=</span> <span class="nx">obj2</span><span class="p">;</span>
 </pre>
 <p>
 You can overload the equality operator to customize its behaviour for your own types.
@@ -401,6 +409,9 @@ You can use the comparison operators directly on tuples:
 <p>
 Tuples are compared lexicographically by element.
 </p>
+<p>
+You can overload the comparison operators to add support for your own types.
+</p>
 <h3 id="printing">
 Printing
 </h3>
@@ -414,6 +425,9 @@ The <code>echo</code> statement prints to the standard output stream. It's usefu
 You can <code>echo</code> any value &mdash; <code>echo</code> stringifies its argument before printing it.
 (It's equivalent to calling <code>$str()</code> on the argument first and printing the result.)
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="mi">123</span><span class="p">;</span>
+</pre>
 <p>
 You can supply multiple arguments to <code>echo</code>, separated by commas.
 </p>
@@ -431,15 +445,26 @@ Pyro also has a family of <code>$print()</code>/<code>$println()</code> function
 <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">);</span>  <span class="c1"># &quot;foo and bar&quot;</span>
 <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>      <span class="c1"># &quot;123 and 456&quot;</span>
 </pre>
+<ul>
+<li>
 <p>
 Calling the <code>$print()</code> function with a single argument is equivalent to calling <code>$str()</code> on that argument first and printing the resulting string.
-Calling it with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
+</p>
+</li>
+<li>
+<p>
+Calling the <code>$print()</code> function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and printing the resulting string.
+</p>
+</li>
+</ul>
+<p>
+The only difference between <code>$print()</code> and <code>$println()</code> is that <code>$println()</code> adds a newline character to the output.
+</p>
+<p>
+Pyro also has <code>$eprint()</code> and <code>$eprintln()</code> functions which print to the standard error stream.
 </p>
 <p>
 See the <a href="features/formatting.html">string formatting</a> documentation for a detailed look at the <code>$fmt()</code> function and format strings.
-</p>
-<p>
-The only difference between <code>$print()</code> and <code>$println()</code> is that <code>$println()</code> automatically adds a newline character to the output.
 </p>
 <h3 id="loops">
 Loops
@@ -469,7 +494,7 @@ The <code>loop</code> statement also supports C-style loops with an initializer,
 <span class="p">}</span>
 </pre>
 <p>
-The <code>for</code> keyword in Pyro is reserved for looping over iterators:
+The <code>for</code> keyword in Pyro is used for looping over iterators:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
@@ -505,8 +530,15 @@ Conditional statements in Pyro look like this:
 <span class="p">}</span>
 </pre>
 <p>
-Conditional statements evaluate the truthiness of their conditions.
-As you'd expect, they support optional <code>else if</code> and <code>else</code> clauses:
+A conditional statement evaluates the <i>truthiness</i> of an expression. The syntax is:
+</p>
+<pre>
+if &lt;expression&gt; {
+    ...
+}
+</pre>
+<p>
+As you'd expect, conditional statements support optional <code>else if</code> and <code>else</code> clauses:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">if</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
@@ -517,6 +549,9 @@ As you'd expect, they support optional <code>else if</code> and <code>else</code
     <span class="k">echo</span> <span class="s">&quot;we&#39;re poor&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
+<p>
+Note that <code>if</code> statements support <a href="features/conditional-scoped-variables.html">conditional-scoped variables</a>.
+</p>
 <p>
 Pyro also has support for conditional expressions using the ternary operator <code>? :|</code>:
 </p>
@@ -538,7 +573,8 @@ Function definitions look like this:
 If you don't explicitly return a value from a function, its return value is <code>null</code>.
 </p>
 <p>
-Inner functions declared inside outer functions can capture the outer function's local variables, including its parameters:
+Pyro has full support for closures.
+An inner function declared inside an outer function can capture the outer function's local variables, including its parameters, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">make_adder</span><span class="p">(</span><span class="nx">increment</span><span class="p">)</span> <span class="p">{</span>
@@ -549,25 +585,28 @@ Inner functions declared inside outer functions can capture the outer function's
 <span class="p">}</span>
 
 <span class="kd">var</span> <span class="nx">adds_one</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="nx">adds_one</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>  <span class="c1"># 1</span>
-<span class="nx">adds_one</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>  <span class="c1"># 2</span>
+<span class="k">assert</span> <span class="nx">adds_one</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">adds_one</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">adds_two</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<span class="nx">adds_two</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>  <span class="c1"># 2;</span>
-<span class="nx">adds_two</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>  <span class="c1"># 3;</span>
+<span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <p>
 Functions are first-class citizens in Pyro, meaning you can pass them around just like any other value.
-You can also declare and use functions anonymously:
+You can also declare and use functions anonymously, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">add</span> <span class="p">=</span> <span class="kd">def</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>  <span class="c1"># 3</span>
-<span class="nx">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>  <span class="c1"># 7</span>
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span><span class="p">;</span>
 </pre>
+<p>
+You can find full documentation for Pyro's functions <a href="features/functions.html">here</a>.
+</p>
 <h3 id="classes">
 Classes
 </h3>

@@ -177,16 +177,23 @@ Tuples are equal if they have the same length and their elements are equal:
     var bar = $tup("foo", 123);
     assert foo == bar;
 
+Sets are equal if they are set-equivalent, i.e. contain the same items in any order:
+
+::: code pyro
+    var foo = {1, 2, 3};
+    var bar = {3, 2, 1};
+    assert foo == bar;
+
 By default, other objects are equal only if they are the same object:
 
 ::: code pyro
-    class Foo {}
+    class Object {}
 
-    var foo1 = Foo();
-    var foo2 = Foo();
+    var obj1 = Object();
+    var obj2 = Object();
 
-    assert foo1 == foo1;    # True.
-    assert foo1 == foo2;    # False.
+    assert obj1 == obj1;
+    assert obj1 != obj2;
 
 You can overload the equality operator to customize its behaviour for your own types.
 
@@ -214,6 +221,8 @@ You can use the comparison operators directly on tuples:
 
 Tuples are compared lexicographically by element.
 
+You can overload the comparison operators to add support for your own types.
+
 
 
 ### Printing
@@ -225,6 +234,9 @@ The `echo` statement prints to the standard output stream. It's useful for simpl
 
 You can `echo` any value --- `echo` stringifies its argument before printing it.
 (It's equivalent to calling `$str()` on the argument first and printing the result.)
+
+::: code pyro
+    echo 123;
 
 You can supply multiple arguments to `echo`, separated by commas.
 
@@ -240,12 +252,15 @@ Pyro also has a family of `$print()`/`$println()` functions with support for for
     $print("{} and {}", "foo", "bar");  # "foo and bar"
     $print("{} and {}", 123, 456);      # "123 and 456"
 
-Calling the `$print()` function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
-Calling it with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+(*) Calling the `$print()` function with a single argument is equivalent to calling `$str()` on that argument first and printing the resulting string.
+
+(*) Calling the `$print()` function with more than one argument is equivalent to calling `$fmt()` on those arguments first and printing the resulting string.
+
+The only difference between `$print()` and `$println()` is that `$println()` adds a newline character to the output.
+
+Pyro also has `$eprint()` and `$eprintln()` functions which print to the standard error stream.
 
 See the [string formatting](@root/features/formatting//) documentation for a detailed look at the `$fmt()` function and format strings.
-
-The only difference between `$print()` and `$println()` is that `$println()` automatically adds a newline character to the output.
 
 
 
@@ -273,7 +288,7 @@ The `loop` statement also supports C-style loops with an initializer, a conditio
         echo i;
     }
 
-The `for` keyword in Pyro is reserved for looping over iterators:
+The `for` keyword in Pyro is used for looping over iterators:
 
 ::: code pyro
     var vec = ["foo", "bar", "baz"];
@@ -306,8 +321,14 @@ Conditional statements in Pyro look like this:
         echo "we have lots of money";
     }
 
-Conditional statements evaluate the truthiness of their conditions.
-As you'd expect, they support optional `else if` and `else` clauses:
+A conditional statement evaluates the *truthiness* of an expression. The syntax is:
+
+::: code
+    if <expression> {
+        ...
+    }
+
+As you'd expect, conditional statements support optional `else if` and `else` clauses:
 
 ::: code pyro
     if money > 100 {
@@ -317,6 +338,8 @@ As you'd expect, they support optional `else if` and `else` clauses:
     } else {
         echo "we're poor";
     }
+
+Note that `if` statements support [conditional-scoped variables](@root/features/conditional-scoped-variables//).
 
 Pyro also has support for conditional expressions using the ternary operator `? :|`:
 
@@ -336,8 +359,8 @@ Function definitions look like this:
 
 If you don't explicitly return a value from a function, its return value is `null`.
 
-Inner functions declared inside outer functions can capture the outer function's local variables, including its parameters:
-
+Pyro has full support for closures.
+An inner function declared inside an outer function can capture the outer function's local variables, including its parameters, e.g.
 
 ::: code pyro
     def make_adder(increment) {
@@ -348,23 +371,25 @@ Inner functions declared inside outer functions can capture the outer function's
     }
 
     var adds_one = make_adder(1);
-    adds_one(0);  # 1
-    adds_one(1);  # 2
+    assert adds_one(0) == 1;
+    assert adds_one(1) == 2;
 
     var adds_two = make_adder(2);
-    adds_two(0);  # 2;
-    adds_two(1);  # 3;
+    assert adds_two(0) == 2;
+    assert adds_two(1) == 3;
 
 Functions are first-class citizens in Pyro, meaning you can pass them around just like any other value.
-You can also declare and use functions anonymously:
+You can also declare and use functions anonymously, e.g.
 
 ::: code pyro
     var add = def(a, b) {
         return a + b;
     };
 
-    add(1, 2);  # 3
-    add(3, 4);  # 7
+    assert add(1, 2) == 3;
+    assert add(3, 4) == 7;
+
+You can find full documentation for Pyro's functions [here](@root/features/functions//).
 
 
 
