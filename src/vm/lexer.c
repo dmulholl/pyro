@@ -460,7 +460,7 @@ Token pyro_next_token(Lexer* lexer) {
             lexer->vm,
             lexer->src_id,
             lexer->line,
-            "Unexpected character '%c' in input.",
+            "unexpected character '%c' in input",
             c
         );
     } else {
@@ -468,7 +468,7 @@ Token pyro_next_token(Lexer* lexer) {
             lexer->vm,
             lexer->src_id,
             lexer->line,
-            "Unexpected byte value (0x%02X) in input.",
+            "unexpected byte value (0x%02X) in input",
             c
         );
     }
