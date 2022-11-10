@@ -177,7 +177,7 @@ Tuples are equal if they have the same length and their elements are equal:
     var bar = $tup("foo", 123);
     assert foo == bar;
 
-Sets are equal if they are set-equivalent, i.e. contain the same items in any order:
+Sets are equal if they are set-equivalent, i.e. if they contain the same items in any order:
 
 ::: code pyro
     var foo = {1, 2, 3};

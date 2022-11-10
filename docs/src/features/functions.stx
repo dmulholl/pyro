@@ -50,7 +50,8 @@ You can declare and use functions anonymously:
 
 ### Closures
 
-An inner function declared inside an outer function can capture the outer function's local variables, including its parameters:
+Pyro has full support for closures.
+An inner function declared inside an outer function can capture the outer function's local variables, including its parameters, e.g.
 
 ::: code pyro
     def make_adder(increment) {
@@ -67,6 +68,23 @@ An inner function declared inside an outer function can capture the outer functi
     var adds_two = make_adder(2);
     assert adds_two(0) == 2;
     assert adds_two(1) == 3;
+
+Functions can also capture global variables, e.g.
+
+::: code pyro
+    var suffix = "_end";
+
+    def make_closure() {
+        return def(string) {
+            return string + suffix;
+        };
+    }
+
+    var adds_suffix = make_closure();
+    assert adds_suffix("foo") == "foo_end";
+
+    suffix = "_new_end";
+    assert adds_suffix("bar") == "bar_new_end";
 
 
 
