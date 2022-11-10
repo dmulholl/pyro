@@ -72,7 +72,7 @@ Indices are zero-based. Indexing is equivalent to using the tuple's `:get()` met
 
 ### Iterating
 
-Tuples are iterable:
+Tuples are iterable, e.g.
 
 ::: code pyro
     for item in $tup(123, 456, 789) {
@@ -83,7 +83,7 @@ Tuples are iterable:
 
 ### Containment
 
-You can check if a tuple contains an item using the `in` operator:
+You can check if a tuple contains an item using the `in` operator, e.g.
 
 ::: code pyro
     if 123 in $tup(123, 456, 789) {

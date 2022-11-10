@@ -43,7 +43,6 @@ The following keywords are reserved for future use:
 * `enum`
 * `let`
 * `match`
-* `or`
 * `reimport`
 * `run`
 * `select`

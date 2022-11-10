@@ -176,7 +176,8 @@ You can use any Pyro value as a value in a `map`.
 
 [[ `:remove(key: any)` ]]
 
-    Deletes the entry associated with `key` if it exists.
+    Deletes the entry for `key`, if it exists.
+    Does nothing if the map has no entry for `key`.
 
 [[ `:set(key: any, value: any)` ]]
 

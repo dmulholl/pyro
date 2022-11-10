@@ -64,14 +64,25 @@ Raw string literals ignore backslashed escapes. The only character a raw string 
 
 
 
+### Equality
+
+Strings compare as equal using the `==` operator if they have the same content, e.g.
+
+::: code pyro
+    var foo = "foobar";
+    var bar = "foobar";
+    assert foo == bar;
+
+
+
 ### Concatenating
 
-You can concatenate two strings using the `+` operator:
+You can concatenate two strings using the `+` operator, e.g.
 
 ::: code pyro
     assert "abc" + "def" == "abcdef";
 
-You can multiply a string by an integer `n` to produce a new string containing `n` copies of the original:
+You can multiply a string by an integer `n` to produce a new string containing `n` copies of the original, e.g.
 
 ::: code pyro
     assert "foo" * 3 == "foofoofoo"
@@ -123,7 +134,15 @@ You can index into a string to get (but not set) individual byte values. Each by
     assert "foo"[1] == "o";
     assert "foo"[2] == "o";
 
-Use the `:byte()` method to access individual byte values as integers or the `:char()` method to access individual UTF-8 encoded code points.
+Use the `:byte()` method to access individual byte values as integers, e.g.
+
+::: code pyro
+    assert "foo":byte(0) == 102;
+
+Use the `:char()` method to access individual UTF-8 encoded code points, e.g.
+
+::: code pyro
+    assert "foo":char(0) == 'f';
 
 
 

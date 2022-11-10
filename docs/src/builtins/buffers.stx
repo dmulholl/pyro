@@ -40,7 +40,7 @@ Indices are zero-based. Indexing is equivalent to using the buffer's `:get()` an
     assert buf:get(1) == 111;
 
     buf:set(0, 99);
-    assert buf[0] == 99;
+    assert buf:get(0) == 99;
     assert $str(buf) == "coobar";
 
 
@@ -60,7 +60,7 @@ Writing to a buffer and then converting it to a string is an efficient way of as
 
 Calling the `:to_str()` method converts the content of the buffer into a string, leaving a valid but empty buffer object  behind.
 
-This is different from calling `$str(buf)` on a buffer, which returns a string contining a *copy* of the buffer's content, leaving the buffer itself unchanged.
+(This is different from calling `$str(buf)` on a buffer, which returns a string contining a *copy* of the buffer's content, leaving the buffer itself unchanged.)
 
 
 
@@ -100,7 +100,7 @@ This is different from calling `$str(buf)` on a buffer, which returns a string c
 
 [[ `:write(arg: any) -> i64` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
 
-    Writes the content of a string or buffer to the buffer.
+    Appends the content of a string or buffer to the buffer.
 
     * If `arg` is a `str` or `buf`, its content will be written to the buffer directly.
     * Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.

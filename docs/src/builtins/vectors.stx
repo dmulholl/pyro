@@ -62,7 +62,7 @@ Indices are zero-based. Indexing is equivalent to using the vector's `:get()` an
 
 ### Iterating
 
-Vectors are iterable:
+Vectors are iterable, e.g.
 
 ::: code pyro
     for item in ["foo", "bar", "baz"] {
@@ -73,7 +73,7 @@ Vectors are iterable:
 
 ### Containment
 
-You can check if a vector contains an item using the `in` operator:
+You can check if a vector contains an item using the `in` operator, e.g.
 
 ::: code pyro
     if "foo" in ["foo", "bar", "baz"] {

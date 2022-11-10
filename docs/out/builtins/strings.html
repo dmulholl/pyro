@@ -56,6 +56,9 @@
 <a href="#string-literals">String Literals</a>
 </li>
 <li>
+<a href="#equality">Equality</a>
+</li>
+<li>
 <a href="#concatenating">Concatenating</a>
 </li>
 <li>
@@ -242,17 +245,28 @@ Raw string literals use backticks:
 <p>
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
 </p>
+<h3 id="equality">
+Equality
+</h3>
+<p>
+Strings compare as equal using the <code>==</code> operator if they have the same content, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
+</pre>
 <h3 id="concatenating">
 Concatenating
 </h3>
 <p>
-You can concatenate two strings using the <code>+</code> operator:
+You can concatenate two strings using the <code>+</code> operator, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="o">+</span> <span class="s">&quot;def&quot;</span> <span class="o">==</span> <span class="s">&quot;abcdef&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can multiply a string by an integer <code>n</code> to produce a new string containing <code>n</code> copies of the original:
+You can multiply a string by an integer <code>n</code> to produce a new string containing <code>n</code> copies of the original, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="s">&quot;foo&quot;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;foofoofoo&quot;</span>
@@ -320,8 +334,17 @@ You can index into a string to get (but not set) individual byte values. Each by
 <span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;o&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Use the <code>:byte()</code> method to access individual byte values as integers or the <code>:char()</code> method to access individual UTF-8 encoded code points.
+Use the <code>:byte()</code> method to access individual byte values as integers, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">byte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
+</pre>
+<p>
+Use the <code>:char()</code> method to access individual UTF-8 encoded code points, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">char</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;f&#39;</span><span class="p">;</span>
+</pre>
 <h3 id="containment">
 Containment
 </h3>

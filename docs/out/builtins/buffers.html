@@ -113,7 +113,7 @@ Indices are zero-based. Indexing is equivalent to using the buffer's <code>:get(
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">111</span><span class="p">;</span>
 
 <span class="nx">buf</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">99</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">99</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">99</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;coobar&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="string-building">
@@ -135,7 +135,7 @@ Writing to a buffer and then converting it to a string is an efficient way of as
 Calling the <code>:to_str()</code> method converts the content of the buffer into a string, leaving a valid but empty buffer object  behind.
 </p>
 <p>
-This is different from calling <code>$str(buf)</code> on a buffer, which returns a string contining a <i>copy</i> of the buffer's content, leaving the buffer itself unchanged.
+(This is different from calling <code>$str(buf)</code> on a buffer, which returns a string contining a <i>copy</i> of the buffer's content, leaving the buffer itself unchanged.)
 </p>
 <h3 id="methods">
 Methods
@@ -217,7 +217,7 @@ Note that calling <code>$str(buf)</code> on a buffer does something different &m
 </dt>
 <dd>
 <p>
-Writes the content of a string or buffer to the buffer.
+Appends the content of a string or buffer to the buffer.
 </p>
 <ul>
 <li>
