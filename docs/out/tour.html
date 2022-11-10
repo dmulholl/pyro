@@ -115,6 +115,9 @@ Pyro begs, borrows, and steals from every language I've ever used, but it drags 
 <li>
 <a href="#source-code">Source Code</a>
 </li>
+<li>
+<a href="#testing">Testing</a>
+</li>
 </ul>
 <h3 id="comments">
 Comments
@@ -799,6 +802,41 @@ Source Code
 <p>
 Source code outside of string literals is assumed to be UTF-8 encoded.
 String literals can contain arbitrary byte sequences including null bytes and invalid UTF-8.
+</p>
+<h3 id="testing">
+Testing
+</h3>
+<p>
+Pyro has builtin support for unit tests.
+</p>
+<p>
+Use the <code>assert</code> statement to test your code, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span><span class="p">;</span>
+</pre>
+<p>
+An <code>assert</code> statement will panic if its operand expression evaluates as <i>falsey</i>. The syntax is:
+</p>
+<pre>
+assert &lt;expression&gt;;
+</pre>
+<p>
+You can use the <code>test</code> command to run test functions, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$test_addition</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+You can find documentation for the <code>test</code> command <a href="features/testing.html">here</a>.
 </p>
         </article>
         

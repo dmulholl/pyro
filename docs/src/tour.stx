@@ -561,3 +561,34 @@ You can discard unwanted values by assigning them to the unnamed variable `_`, e
 
 Source code outside of string literals is assumed to be UTF-8 encoded.
 String literals can contain arbitrary byte sequences including null bytes and invalid UTF-8.
+
+
+
+### Testing
+
+Pyro has builtin support for unit tests.
+
+Use the `assert` statement to test your code, e.g.
+
+::: code pyro
+    def add(a, b) {
+        return a + b;
+    }
+
+    assert add(1, 2) == 3;
+    assert add(3, 4) == 7;
+
+An `assert` statement will panic if its operand expression evaluates as *falsey*. The syntax is:
+
+::: code
+    assert <expression>;
+
+You can use the `test` command to run test functions, e.g.
+
+::: code pyro
+    def $test_addition() {
+        assert add(1, 2) == 3;
+        assert add(3, 4) == 7;
+    }
+
+You can find documentation for the `test` command [here](@root/features/testing//).
