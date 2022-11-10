@@ -1,0 +1,27 @@
+var loop_closures = [];
+
+loop var i = 0; i < 3; i += 1 {
+    loop_closures:append(def() {
+        return i;
+    });
+}
+
+var loop_values = loop_closures:map(def(closure) { return closure(); });
+assert loop_values:count() == 3;
+assert loop_values[0] == 3;
+assert loop_values[1] == 3;
+assert loop_values[2] == 3;
+
+var for_closures = [];
+
+for i in $range(3) {
+    for_closures:append(def() {
+        return i;
+    });
+}
+
+var for_values = for_closures:map(def(closure) { return closure(); });
+assert for_values:count() == 3;
+assert for_values[0] == 0;
+assert for_values[1] == 1;
+assert for_values[2] == 2;
