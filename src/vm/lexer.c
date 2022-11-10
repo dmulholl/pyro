@@ -290,7 +290,7 @@ static Token read_raw_string(Lexer* lexer) {
             lexer->vm,
             lexer->src_id,
             start_line,
-            "Unterminated raw string literal, opened in line %zu.",
+            "unterminated raw string literal, opened in line %zu",
             start_line
         );
         return make_error_token(lexer);
@@ -321,7 +321,7 @@ static Token read_string(Lexer* lexer) {
             lexer->vm,
             lexer->src_id,
             start_line,
-            "Unterminated string literal, opened in line %zu.",
+            "unterminated string literal, opened in line %zu",
             start_line
         );
         return make_error_token(lexer);
@@ -350,7 +350,7 @@ static Token read_char_literal(Lexer* lexer) {
             lexer->vm,
             lexer->src_id,
             start_line,
-            "Unterminated character literal, opened in line %zu.",
+            "unterminated character literal, opened in line %zu",
             start_line
         );
         return make_error_token(lexer);
