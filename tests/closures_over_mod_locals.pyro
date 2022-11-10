@@ -1,0 +1,43 @@
+var get;
+var inc;
+var dec;
+var add;
+var sub;
+
+{
+    var local = 1;
+
+    get = def() {
+        return local;
+    };
+
+    inc = def() {
+        local += 1;
+    };
+
+    dec = def() {
+        local -= 1;
+    };
+
+    add = def(value) {
+        local += value;
+    };
+
+    sub = def(value) {
+        local -= value;
+    };
+}
+
+assert get() == 1;
+
+inc();
+assert get() == 2;
+
+dec();
+assert get() == 1;
+
+add(123);
+assert get() == 124;
+
+sub(123);
+assert get() == 1;
