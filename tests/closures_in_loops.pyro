@@ -1,3 +1,4 @@
+# Test closures in 'loop' statements.
 var loop_closures = [];
 
 loop var i = 0; i < 3; i += 1 {
@@ -12,6 +13,7 @@ assert loop_values[0] == 3;
 assert loop_values[1] == 3;
 assert loop_values[2] == 3;
 
+# Test closures in 'for' statements.
 var for_closures = [];
 
 for i in $range(3) {
@@ -25,3 +27,20 @@ assert for_values:count() == 3;
 assert for_values[0] == 0;
 assert for_values[1] == 1;
 assert for_values[2] == 2;
+
+# Test closures in 'while' statements.
+var i = 0;
+var while_closures = [];
+
+while i < 3 {
+    while_closures:append(def() {
+        return i;
+    });
+    i += 1;
+}
+
+var while_values = while_closures:map(def(closure) { return closure(); });
+assert while_values:count() == 3;
+assert while_values[0] == 3;
+assert while_values[1] == 3;
+assert while_values[2] == 3;
