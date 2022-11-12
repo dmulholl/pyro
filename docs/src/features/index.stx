@@ -14,6 +14,7 @@ meta_title: Pyro &mdash; Language Features
 * [Type Annotations](@root/features/type-annotations//)
 * [With Blocks](@root/features/with-blocks//)
 * [Conditional Scoped Variables](@root/features/conditional-scoped-variables//)
+* [Loop Closures](@root/features/loop-closures//)
 
 ### Testing & Benchmarking
 

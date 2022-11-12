@@ -1,0 +1,59 @@
+---
+title: Loop Closures
+meta_title: Pyro &mdash; Loop Closures
+---
+
+::: insert toc
+
+
+Pyro has two different kinds of loops, and the loop variables behave differently in each case.
+
+
+
+### C-Style Loops
+
+A C-style loop has a single loop variable that's shared by every iteration of the loop, e.g.
+
+::: code pyro
+    var closures = [];
+
+    loop var i = 0; i < 3; i += 1 {
+        closures:append(def() {
+            return i;
+        });
+    }
+
+    assert closures[0]() == 3;
+    assert closures[1]() == 3;
+    assert closures[2]() == 3;
+
+Each closure is capturing the same `i` variable.
+
+
+
+### For-In Loops
+
+Each iteration of a for-in loop has its own independent loop variable that can be independently captured, e.g.
+
+::: code pyro
+    var closures = [];
+
+    for i in $range(3) {
+        closures:append(def() {
+            return i;
+        });
+    }
+
+    assert closures[0]() == 0;
+    assert closures[1]() == 1;
+    assert closures[2]() == 2;
+
+Each closure is capturing a different `i` variable.
+
+
+
+### Rationale
+
+This distinction sounds complicated when stated explicitly but in practice it should be intuitive.
+It's designed to conform with programmers' intuitions of how loop-variables should behave.
+

@@ -41,6 +41,7 @@ The following keywords are reserved for future use:
 * `catch`
 * `defer`
 * `enum`
+* `guard`
 * `let`
 * `match`
 * `reimport`
