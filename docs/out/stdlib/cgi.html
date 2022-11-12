@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Standard Library &mdash; $std::cgi</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-stdlib-cgi node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.8.44</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../features.html">Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1><code>$std::cgi</code></h1>
+                
+                <hr>
+            </header>
+            <p>
+A utility module for writing CGI scripts in Pyro.
+</p>
+<ul class="stx-toc">
+<li>
+<a href="#functions">Functions</a>
+</li>
+<li>
+<a href="#requests">Requests</a>
+</li>
+<li>
+<a href="#responses">Responses</a>
+</li>
+</ul>
+<h3 id="functions">
+Functions
+</h3>
+<dl>
+<div>
+<dt>
+<code>url_decode(input: str -&gt; str|err</code>
+</dt>
+<dd>
+<p>
+Returns a new string containing the URL-decoded content of the input string.
+Returns an error if the input is invalid.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>url_encode(input: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a new string containing the URL-encoded content of the input string.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="requests">
+Requests
+</h3>
+<dl>
+<div>
+<dt>
+<code>Request() -&gt; Request</code>
+</dt>
+<dd>
+<p>
+Utility class for processing CGI requests.
+</p>
+<ul>
+<li>
+Automatically parses values from the request's query string.
+</li>
+<li>
+Automatically parses values from the request's form data if the <code>Content-Type</code> is <code>application/x-www-form-urlencoded</code>.
+</li>
+</ul>
+</dd>
+</div>
+</dl>
+<p>
+The <code>Request</code> class has the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:body() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the request's body as a string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:found(key) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if at least one value for <code>key</code> was found, where <code>key</code> is a query-string or form variable.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:json() -&gt; map|vec|str|i64|f64|bool|null|err</code>
+</dt>
+<dd>
+<p>
+Attempts to parse the request's body as JSON, returning the result.
+Returns an <code>err</code> if the body is not valid JSON.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:value(key) -&gt; str|err</code>
+</dt>
+<dd>
+<p>
+Returns the value for <code>key</code> where <code>key</code> is a query-string or form variable.
+</p>
+<ul>
+<li>
+Returns an <code>err</code> if <code>key</code> was not found.
+</li>
+<li>
+If multiple values were found for <code>key</code>, returns the final value to be parsed.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:values(key) -&gt; vec[str]</code>
+</dt>
+<dd>
+<p>
+Returns the list of values for <code>key</code> where <code>key</code> is a query-string or form variable.
+</p>
+<p>
+Returns an empty vector if <code>key</code> was not found.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="responses">
+Responses
+</h3>
+<dl>
+<div>
+<dt>
+<code>Response() -&gt; Response</code>
+</dt>
+<dd>
+<p>
+Utility class for processing CGI responses.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+The <code>Response</code> class has the following methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:add_header(header: str) -&gt; Response</code>
+</dt>
+<dd>
+<p>
+Adds a HTTP header to the response.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:make_301_redirect(url: str) -&gt; Response</code>
+</dt>
+<dd>
+<p>
+Adds the appropriate headers for a <code>301</code> (permanent) redirect to the specified URL.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:make_302_redirect(url: str) -&gt; Response</code>
+</dt>
+<dd>
+<p>
+Adds the appropriate headers for a <code>302</code> redirect to the specified URL.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:make_303_redirect(url: str) -&gt; Response</code>
+</dt>
+<dd>
+<p>
+Adds the appropriate headers for a <code>303</code> redirect to the specified URL.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:make_307_redirect(url: str) -&gt; Response</code>
+</dt>
+<dd>
+<p>
+Adds the appropriate headers for a <code>307</code> (temporary) redirect to the specified URL.
+</p>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:send()</code>
+</dt>
+<dd>
+<p>
+Writes the response to the standard output stream.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:write(arg: any) -&gt; Response</code> <br> <code>:write(format_string: str, arg1: any, arg2: any, ...) -&gt; Response</code>
+</dt>
+<dd>
+<p>
+Writes to the response's <code>body</code> buffer.
+</p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and writing the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and writing the resulting string.
+</li>
+</ul>
+<p>
+Returns <code>self</code> to allow chaining.
+</p>
+<p>
+You can call this method multiple times to keep appending content to the response.
+</p>
+<p>
+No data is sent until the <code>:send()</code> method is called.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+        
+    </body>
+</html>

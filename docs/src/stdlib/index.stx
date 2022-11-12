@@ -17,6 +17,10 @@ All standard library modules are submodules of the root module `$std`.
 
     A library for parsing command line arguments.
 
+[[ [cgi](@root/stdlib/cgi//) ]]
+
+    A utility module for writing CGI scripts in Pyro.
+
 [[ [email](@root/stdlib/email//) ]]
 
     A utility module for sending email.

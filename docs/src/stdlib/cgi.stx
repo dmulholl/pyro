@@ -1,0 +1,115 @@
+---
+title: <code>$std::cgi</code>
+meta_title: Pyro Standard Library &mdash; $std::cgi
+---
+
+A utility module for writing CGI scripts in Pyro.
+
+::: insert toc
+
+
+### Functions
+
+[[ `url_decode(input: str -> str|err` ]]
+
+    Returns a new string containing the URL-decoded content of the input string.
+    Returns an error if the input is invalid.
+
+[[ `url_encode(input: str) -> str` ]]
+
+    Returns a new string containing the URL-encoded content of the input string.
+
+
+### Requests
+
+[[ `Request() -> Request` ]]
+
+    Utility class for processing CGI requests.
+
+    * Automatically parses values from the request's query string.
+    * Automatically parses values from the request's form data if the `Content-Type` is `application/x-www-form-urlencoded`.
+
+The `Request` class has the following methods:
+
+[[ `:body() -> str` ]]
+
+    Returns the request's body as a string.
+
+[[ `:found(key) -> bool` ]]
+
+    Returns `true` if at least one value for `key` was found, where `key` is a query-string or form variable.
+
+[[ `:json() -> map|vec|str|i64|f64|bool|null|err` ]]
+
+   Attempts to parse the request's body as JSON, returning the result.
+   Returns an `err` if the body is not valid JSON.
+
+[[ `:value(key) -> str|err` ]]
+
+    Returns the value for `key` where `key` is a query-string or form variable.
+
+    * Returns an `err` if `key` was not found.
+    * If multiple values were found for `key`, returns the final value to be parsed.
+
+[[ `:values(key) -> vec[str]` ]]
+
+    Returns the list of values for `key` where `key` is a query-string or form variable.
+
+    Returns an empty vector if `key` was not found.
+
+
+
+### Responses
+
+[[ `Response() -> Response` ]]
+
+    Utility class for processing CGI responses.
+
+The `Response` class has the following methods:
+
+[[ `:add_header(header: str) -> Response` ]]
+
+    Adds a HTTP header to the response.
+
+    Returns `self` to allow chaining.
+
+[[ `:make_301_redirect(url: str) -> Response` ]]
+
+    Adds the appropriate headers for a `301` (permanent) redirect to the specified URL.
+
+    Returns `self` to allow chaining.
+
+[[ `:make_302_redirect(url: str) -> Response` ]]
+
+    Adds the appropriate headers for a `302` redirect to the specified URL.
+
+    Returns `self` to allow chaining.
+
+[[ `:make_303_redirect(url: str) -> Response` ]]
+
+    Adds the appropriate headers for a `303` redirect to the specified URL.
+
+    Returns `self` to allow chaining.
+
+[[ `:make_307_redirect(url: str) -> Response` ]]
+
+    Adds the appropriate headers for a `307` (temporary) redirect to the specified URL.
+
+    Returns `self` to allow chaining.
+
+[[ `:send()` ]]
+
+    Writes the response to the standard output stream.
+
+[[ `:write(arg: any) -> Response` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> Response` ]]
+
+    Writes to the response's `body` buffer.
+
+    * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
+    * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
+
+    Returns `self` to allow chaining.
+
+    You can call this method multiple times to keep appending content to the response.
+
+    No data is sent until the `:send()` method is called.

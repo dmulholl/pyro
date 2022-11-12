@@ -39,7 +39,7 @@ A utility module for sending email. Uses the system's `sendmail` command.
 
 ### Classes
 
-[[ `Email()` ]]
+[[ `Email() -> Email` ]]
 
     Creates a new `Email` object.
 

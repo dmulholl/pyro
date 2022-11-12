@@ -100,16 +100,16 @@ pub class Request {
         return try values:last();
     }
 
-    pub def values(key: str) -> vec[str]|err {
-        return self.data[key];
+    pub def values(key: str) -> vec[str] {
+        return self.data[key] !! [];
     }
 
     pub def data() -> map[str, vec[str]] {
         return self.data;
     }
 
-    pub def json() -> map|vec|str|i64|f64|bool|null {
-        return json::from_json(self:body());
+    pub def json() -> any {
+        return try json::from_json(self:body());
     }
 
     def unpack_url_encoded_string(input: str) {
@@ -117,8 +117,13 @@ pub class Request {
             if element:contains("=") {
                 var parts = element:split("=");
                 var key = url_decode(parts[0]);
+                if $is_err(key) {
+                    continue;
+                }
                 var value = url_decode(parts[1]);
-
+                if $is_err(value) {
+                    continue;
+                }
                 var values = self.data[key];
                 if $is_err(values) {
                     self.data[key] = [value];
