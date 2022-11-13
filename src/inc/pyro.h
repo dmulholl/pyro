@@ -85,5 +85,6 @@ typedef struct ObjMap ObjMap;
 typedef struct ObjVec ObjVec;
 typedef struct ObjClass ObjClass;
 typedef struct ObjModule ObjModule;
+typedef struct ObjFile ObjFile;
 
 #endif

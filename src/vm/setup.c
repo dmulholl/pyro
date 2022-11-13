@@ -66,7 +66,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->panic_flag = false;
     vm->panic_count = 0;
     vm->stderr_stream = NULL;
-    vm->stdin_stream = NULL;
+    vm->stdin_file = NULL;
     vm->stdout_stream = NULL;
     vm->str_bool = NULL;
     vm->str_buf = NULL;
@@ -244,7 +244,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->import_roots = ObjVec_new(vm);
     vm->stdout_stream = (Obj*)ObjFile_new(vm, stdout);
     vm->stderr_stream = (Obj*)ObjFile_new(vm, stderr);
-    vm->stdin_stream = (Obj*)ObjFile_new(vm, stdin);
+    vm->stdin_file = ObjFile_new(vm, stdin);
     vm->panic_buffer = ObjBuf_new_with_cap(256, vm);
 
     if (vm->memory_allocation_failed) {

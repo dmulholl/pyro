@@ -136,7 +136,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (Obj*)vm->import_roots);
     mark_object(vm, (Obj*)vm->stdout_stream);
     mark_object(vm, (Obj*)vm->stderr_stream);
-    mark_object(vm, (Obj*)vm->stdin_stream);
+    mark_object(vm, (Obj*)vm->stdin_file);
     mark_object(vm, (Obj*)vm->panic_buffer);
     mark_object(vm, (Obj*)vm->panic_source_id);
 

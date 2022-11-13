@@ -914,7 +914,7 @@ static Value fn_is_null(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 static Value fn_input(PyroVM* vm, size_t arg_count, Value* args) {
-    ObjFile* file = (ObjFile*)vm->stdin_stream;
+    ObjFile* file = vm->stdin_file;
 
     ObjStr* string = ObjFile_read_line(file, vm);
     if (vm->halt_flag) {
@@ -1114,7 +1114,7 @@ static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        if (!(IS_FILE(args[0]) || IS_BUF(args[0]))) {
+        if (!IS_FILE(args[0])) {
             pyro_panic(vm, "$stdout(): invalid argument, expected a file");
             return pyro_make_null();
         }
@@ -1136,7 +1136,7 @@ static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (arg_count == 1) {
-        if (!(IS_FILE(args[0]) || IS_BUF(args[0]))) {
+        if (!IS_FILE(args[0])) {
             pyro_panic(vm, "$stderr(): invalid argument, expected a file");
             return pyro_make_null();
         }
@@ -1151,8 +1151,8 @@ static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
-        if (vm->stdin_stream) {
-            return pyro_make_obj(vm->stdin_stream);
+        if (vm->stdin_file) {
+            return pyro_make_obj(vm->stdin_file);
         }
         return pyro_make_null();
     }
@@ -1162,7 +1162,7 @@ static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$stdin(): invalid argument, expected a file");
             return pyro_make_null();
         }
-        vm->stdin_stream = AS_OBJ(args[0]);
+        vm->stdin_file = AS_FILE(args[0]);
         return pyro_make_null();
     }
 

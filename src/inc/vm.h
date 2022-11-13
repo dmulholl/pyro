@@ -60,16 +60,15 @@ struct PyroVM {
 
     // The VM's standard output stream. This defaults to an ObjFile wrapping stdout.
     // This is the stream that the echo statement and $print() functions write to.
-    // The object can be either an ObjFile or an ObjBuf.
     Obj* stdout_stream;
 
     // The VM's standard error stream. This defaults to an ObjFile wrapping stderr.
     // This is the stream that panic messages are written to. It's also the stream that the
-    // $eprint() functions write to. The object can be either an ObjFile or an ObjBuf.
+    // $eprint() functions write to.
     Obj* stderr_stream;
 
     // The VM's standard input stream. This defaults to an ObjFile wrapping stdin.
-    Obj* stdin_stream;
+    ObjFile* stdin_file;
 
     // The call stack.
     CallFrame* frames;
