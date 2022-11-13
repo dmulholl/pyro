@@ -71,26 +71,31 @@ The <code>indent</code> argument specifies the number of spaces per level of ind
 </div>
 <div>
 <dt>
-<code>from_json(arg: str) -&gt; map|vec|str|i64|f64|bool|null</code>
+<code>from_json(arg: str) -&gt; map|vec|str|i64|f64|bool|null|err</code>
 </dt>
 <dd>
 <p>
 Unmarshalls the input JSON string.
 </p>
-<p>
-A JSON object is unmarshalled as a <code>map</code>, a JSON array is unmarshalled as a <code>vec</code>.
-</p>
-<p>
+<ul>
+<li>
+A JSON object is unmarshalled as a <code>map</code>.
+</li>
+<li>
+A JSON array is unmarshalled as a <code>vec</code>.
+</li>
+<li>
 Supports input with trailing commas and comments beginning with <code>//</code>.
-</p>
+</li>
+</ul>
 <p>
-Panics if <code>arg</code> isn't a valid JSON string.
+Returns an <code>err</code> if <code>arg</code> isn't a valid JSON string.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>to_json(arg: any, indent: i64 = 0) -&gt; str</code>
+<code>to_json(arg: any, indent: i64 = 0) -&gt; str|err</code>
 </dt>
 <dd>
 <p>
@@ -134,6 +139,9 @@ Any object whose field values can be marshalled as JSON.
 </ul>
 <p>
 Note that this function does not check for cycles in the input, e.g. a <code>vec</code> that contains itself.
+</p>
+<p>
+Returns an <code>err</code> if <code>arg</code> cannot be marshalled as JSON.
 </p>
 </dd>
 </div>

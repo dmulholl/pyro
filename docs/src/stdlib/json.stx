@@ -14,18 +14,18 @@ This module contains utility functions for working with JSON.
     The `indent` argument specifies the number of spaces per level of indentation.
 
 
-[[ `from_json(arg: str) -> map|vec|str|i64|f64|bool|null` ]]
+[[ `from_json(arg: str) -> map|vec|str|i64|f64|bool|null|err` ]]
 
     Unmarshalls the input JSON string.
 
-    A JSON object is unmarshalled as a `map`, a JSON array is unmarshalled as a `vec`.
+    * A JSON object is unmarshalled as a `map`.
+    * A JSON array is unmarshalled as a `vec`.
+    * Supports input with trailing commas and comments beginning with `//`.
 
-    Supports input with trailing commas and comments beginning with `//`.
-
-    Panics if `arg` isn't a valid JSON string.
+    Returns an `err` if `arg` isn't a valid JSON string.
 
 
-[[ `to_json(arg: any, indent: i64 = 0) -> str` ]]
+[[ `to_json(arg: any, indent: i64 = 0) -> str|err` ]]
 
     Marshalls the Pyro value `arg` to JSON, returning the result as a string.
     The `indent` argument specifies the number of spaces per level of indentation.
@@ -44,3 +44,5 @@ This module contains utility functions for working with JSON.
     * Any object whose field values can be marshalled as JSON.
 
     Note that this function does not check for cycles in the input, e.g. a `vec` that contains itself.
+
+    Returns an `err` if `arg` cannot be marshalled as JSON.

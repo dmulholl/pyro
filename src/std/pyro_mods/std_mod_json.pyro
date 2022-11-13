@@ -157,12 +157,12 @@ def marshall_value(buf: buf, value: any, indent: i64, current_indent: i64) {
 }
 
 
-pub def to_json(arg: any, indent: i64 = 0) -> str {
+pub def to_json(arg: any, indent: i64 = 0) -> str|err {
     var buf = $buf();
 
     var result = try marshall_value(buf, arg, indent, 0);
     if $is_err(result) {
-        $panic("to_json(): {}", result);
+        return $err("to_json(): {}", result);
     }
 
     return buf:to_str();
@@ -573,18 +573,18 @@ class Parser {
 }
 
 
-pub def from_json(arg: str) -> map|vec|str|i64|f64|bool|null {
+pub def from_json(arg: str) -> map|vec|str|i64|f64|bool|null|err {
     if !$is_str(arg) {
-        $panic("from_json(): invalid argument, expected a string: found {}", $type(arg));
+        return $err("from_json(): invalid argument, expected a string: found {}", $type(arg));
     }
 
     if arg:count() == 0 {
-        $panic("from_json(): invalid argument, empty string");
+        return $err("from_json(): invalid argument, empty string");
     }
 
     var result = try Parser(arg):parse();
     if $is_err(result) {
-        $panic("from_json(): {}", result);
+        return $err("from_json: {}", result);
     }
 
     return result;
