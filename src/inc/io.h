@@ -7,16 +7,15 @@
 // All these functions:
 // - Return the number of bytes written on success.
 // - Return -1 if an attempt to write to a file failed.
-// - Return -2 if an attempt to write to a buffer failed.
 
-// [stdout] functions are a no-op if [vm->stdout_stream] is NULL.
+// [stdout] functions are a no-op if [vm->stdout_file] is NULL.
 int64_t pyro_stdout_write(PyroVM* vm, const char* string);
 int64_t pyro_stdout_write_n(PyroVM* vm, const char* string, size_t count);
 int64_t pyro_stdout_write_s(PyroVM* vm, ObjStr* string);
 int64_t pyro_stdout_write_f(PyroVM* vm, const char* format_string, ...);
 int64_t pyro_stdout_write_fv(PyroVM* vm, const char* format_string, va_list args);
 
-// [stderr] functions are a no-op if [vm->stderr_stream] is NULL.
+// [stderr] functions are a no-op if [vm->stderr_file] is NULL.
 int64_t pyro_stderr_write(PyroVM* vm, const char* string);
 int64_t pyro_stderr_write_n(PyroVM* vm, const char* string, size_t count);
 int64_t pyro_stderr_write_s(PyroVM* vm, ObjStr* string);

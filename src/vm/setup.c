@@ -65,9 +65,9 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->panic_buffer = NULL;
     vm->panic_flag = false;
     vm->panic_count = 0;
-    vm->stderr_stream = NULL;
+    vm->stderr_file = NULL;
     vm->stdin_file = NULL;
-    vm->stdout_stream = NULL;
+    vm->stdout_file = NULL;
     vm->str_bool = NULL;
     vm->str_buf = NULL;
     vm->str_char = NULL;
@@ -242,8 +242,8 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->modules = ObjMap_new(vm);
     vm->main_module = ObjModule_new(vm);
     vm->import_roots = ObjVec_new(vm);
-    vm->stdout_stream = (Obj*)ObjFile_new(vm, stdout);
-    vm->stderr_stream = (Obj*)ObjFile_new(vm, stderr);
+    vm->stdout_file = ObjFile_new(vm, stdout);
+    vm->stderr_file = ObjFile_new(vm, stderr);
     vm->stdin_file = ObjFile_new(vm, stdin);
     vm->panic_buffer = ObjBuf_new_with_cap(256, vm);
 
@@ -586,7 +586,7 @@ bool pyro_get_panic_flag(PyroVM* vm) {
 
 bool pyro_set_stderr(PyroVM* vm, FILE* stream) {
     if (stream == NULL) {
-        vm->stderr_stream = NULL;
+        vm->stderr_file = NULL;
         return true;
     }
 
@@ -595,14 +595,14 @@ bool pyro_set_stderr(PyroVM* vm, FILE* stream) {
         return false;
     }
 
-    vm->stderr_stream = (Obj*)file;
+    vm->stderr_file = file;
     return true;
 }
 
 
 bool pyro_set_stdout(PyroVM* vm, FILE* stream) {
     if (stream == NULL) {
-        vm->stdout_stream = NULL;
+        vm->stdout_file = NULL;
         return true;
     }
 
@@ -611,7 +611,7 @@ bool pyro_set_stdout(PyroVM* vm, FILE* stream) {
         return false;
     }
 
-    vm->stdout_stream = (Obj*)file;
+    vm->stdout_file = file;
     return true;
 }
 
