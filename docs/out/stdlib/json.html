@@ -60,12 +60,15 @@ Functions
 <dl>
 <div>
 <dt>
-<code>format(json: str, indent: i64 = 2) -&gt; str</code>
+<code>format(json: str, indent: i64 = 2) -&gt; str|err</code>
 </dt>
 <dd>
 <p>
 Formats a string of JSON.
 The <code>indent</code> argument specifies the number of spaces per level of indentation.
+</p>
+<p>
+Returns an <code>err</code> if <code>arg</code> is not valid JSON.
 </p>
 </dd>
 </div>
