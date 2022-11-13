@@ -13,7 +13,7 @@ This module contains utility functions for working with JSON.
     Formats a string of JSON.
     The `indent` argument specifies the number of spaces per level of indentation.
 
-    Returns an `err` if `arg` is not valid JSON.
+    Returns an `err` if `json` is not valid JSON.
 
 
 [[ `from_json(arg: str) -> map|vec|str|i64|f64|bool|null|err` ]]
