@@ -666,12 +666,12 @@ pub def format(json: str, indent: i64 = 2) -> str {
 
     var value = try from_json(json);
     if $is_err(value) {
-        $panic("format(): invalid argument [json], not valid JSON: {}", value);
+        return $err("format(): argument [json] is not valid JSON: {}", value);
     }
 
     var result = try format_value(buf, value, indent, 0);
     if $is_err(result) {
-        $panic("format(): {}", result);
+        return $err("format(): {}", result);
     }
 
     return buf:to_str();

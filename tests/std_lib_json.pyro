@@ -86,6 +86,8 @@ var obj2 = Baz("A", "B", "C");
 assert to_json(obj1) == `{"foo": 1, "bar": 2, "baz": 3}`;
 assert to_json(obj2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
 
+assert $is_err(to_json($stdin()));
+
 # --------------------------- #
 #  Marshall to indented JSON  #
 # --------------------------- #
@@ -259,31 +261,31 @@ assert $is_vec(output7);
 assert output7[0]["foo"] == 123;
 assert output7[1]["baz"] == 987;
 
-assert $is_err(try from_json(``));
-assert $is_err(try from_json(`foo`));
-assert $is_err(try from_json(`&`));
-assert $is_err(try from_json("\x01"));
-assert $is_err(try from_json(`123.456.789`));
-assert $is_err(try from_json(`"`));
-assert $is_err(try from_json(`"foo`));
-assert $is_err(try from_json(`'foo'`));
-assert $is_err(try from_json(`123 456`));
+assert $is_err(from_json(``));
+assert $is_err(from_json(`foo`));
+assert $is_err(from_json(`&`));
+assert $is_err(from_json("\x01"));
+assert $is_err(from_json(`123.456.789`));
+assert $is_err(from_json(`"`));
+assert $is_err(from_json(`"foo`));
+assert $is_err(from_json(`'foo'`));
+assert $is_err(from_json(`123 456`));
 
 # ---------------- #
 #  Pretty Printer  #
 # ---------------- #
 
 var input = ``;
-assert $is_err(try format(input));
+assert $is_err(format(input));
 
 input = `[`;
-assert $is_err(try format(input));
+assert $is_err(format(input));
 
 input = `[1, 2, 3`;
-assert $is_err(try format(input));
+assert $is_err(format(input));
 
 input = `foo`;
-assert $is_err(try format(input));
+assert $is_err(format(input));
 
 input = `123`;
 assert format(input) == `123`;
