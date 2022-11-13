@@ -468,8 +468,21 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_UPVALUE:
             return pyro_sprintf_to_obj(vm, "<upvalue>");
 
-        case OBJ_FILE:
+        case OBJ_FILE: {
+            ObjFile* file = (ObjFile*)object;
+
+            if (file->stream == stdin) {
+                return pyro_sprintf_to_obj(vm, "<file STDIN>");
+            }
+            if (file->stream == stdout) {
+                return pyro_sprintf_to_obj(vm, "<file STDOUT>");
+            }
+            if (file->stream == stderr) {
+                return pyro_sprintf_to_obj(vm, "<file STDERR>");
+            }
+
             return pyro_sprintf_to_obj(vm, "<file>");
+        }
 
         case OBJ_PYRO_FN:
             return pyro_sprintf_to_obj(vm, "<fn>");
