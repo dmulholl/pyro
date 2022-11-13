@@ -1772,8 +1772,9 @@ ObjFile* ObjFile_new(PyroVM* vm, FILE* stream) {
     if (!file) {
         return NULL;
     }
-    file->stream = stream;
     file->obj.class = vm->class_file;
+    file->stream = stream;
+    file->path = NULL;
     return file;
 }
 

@@ -471,6 +471,18 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_FILE: {
             ObjFile* file = (ObjFile*)object;
 
+            if (file->stream == NULL) {
+                return pyro_sprintf_to_obj(vm, "<file CLOSED>");
+            }
+
+            if (file->path) {
+                ObjStr* path = make_debug_string_for_string(vm, file->path);
+                if (!path) {
+                    return NULL;
+                }
+                return pyro_sprintf_to_obj(vm, "<file %s>", path->bytes);
+            }
+
             if (file->stream == stdin) {
                 return pyro_sprintf_to_obj(vm, "<file STDIN>");
             }

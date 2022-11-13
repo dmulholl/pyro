@@ -424,7 +424,8 @@ bool ObjBuf_grow_by_n_bytes(ObjBuf* buf, size_t n, PyroVM* vm);
 
 typedef struct {
     Obj obj;
-    FILE* stream;
+    FILE* stream; // May be NULL.
+    ObjStr* path; // May be NULL.
 } ObjFile;
 
 ObjFile* ObjFile_new(PyroVM* vm, FILE* stream);

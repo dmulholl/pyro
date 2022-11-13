@@ -9,44 +9,57 @@
 
 
 static Value fn_file(PyroVM* vm, size_t arg_count, Value* args) {
-    const char* path;
-    const char* mode = "r";
-
     if (arg_count == 1) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$file(): invalid argument [path], expected a string");
             return pyro_make_null();
         }
-        path = AS_STR(args[0])->bytes;
-    } else if (arg_count == 2) {
+
+        FILE* stream = fopen(AS_STR(args[0])->bytes, "r");
+        if (!stream) {
+            pyro_panic(vm, "$file(): unable to open file '%s'", AS_STR(args[0])->bytes);
+            return pyro_make_null();
+        }
+
+        ObjFile* file = ObjFile_new(vm, stream);
+        if (!file) {
+            pyro_panic(vm, "$file(): out of memory");
+            return pyro_make_null();
+        }
+
+        file->path = AS_STR(args[0]);
+        return pyro_make_obj(file);
+    }
+
+    if (arg_count == 2) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$file(): invalid argument [path], expected a string");
             return pyro_make_null();
         }
-        path = AS_STR(args[0])->bytes;
+
         if (!IS_STR(args[1])) {
             pyro_panic(vm, "$file(): invalid argument [mode], expected a string");
             return pyro_make_null();
         }
-        mode = AS_STR(args[1])->bytes;
-    } else {
-        pyro_panic(vm, "$file(): expected 1 or 2 arguments, found %zu", arg_count);
-        return pyro_make_null();
+
+        FILE* stream = fopen(AS_STR(args[0])->bytes, AS_STR(args[1])->bytes);
+        if (!stream) {
+            pyro_panic(vm, "$file(): unable to open file '%s'", AS_STR(args[0])->bytes);
+            return pyro_make_null();
+        }
+
+        ObjFile* file = ObjFile_new(vm, stream);
+        if (!file) {
+            pyro_panic(vm, "$file(): out of memory");
+            return pyro_make_null();
+        }
+
+        file->path = AS_STR(args[0]);
+        return pyro_make_obj(file);
     }
 
-    FILE* stream = fopen(path, mode);
-    if (!stream) {
-        pyro_panic(vm, "$file(): unable to open file '%s'", path);
-        return pyro_make_null();
-    }
-
-    ObjFile* file = ObjFile_new(vm, stream);
-    if (!file) {
-        pyro_panic(vm, "$file(): out of memory");
-        return pyro_make_null();
-    }
-
-    return pyro_make_obj(file);
+    pyro_panic(vm, "$file(): expected 1 or 2 arguments, found %zu", arg_count);
+    return pyro_make_null();
 }
 
 
