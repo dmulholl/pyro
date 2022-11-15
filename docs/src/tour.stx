@@ -63,13 +63,13 @@ Both behave as you'd expect and support the usual range of numeric operations.
 
 ::: table
 
-    +       | Addition. Returns an integer if both operands are integers or a float if either or both are floats.
-    -       | Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
-    *       | Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
-    /       | Floating-point division. Both operands will be converted to floats and the result will be a float.
-    //      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
-    %       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
-    **      | Power operator. Both operands are converted to floats and the result is a float.
+    `+`       | Addition. Returns an integer if both operands are integers or a float if either or both are floats.
+    `-`       | Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
+    `*`       | Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
+    `/`       | Floating-point division. Both operands will be converted to floats and the result will be a float.
+    `//`      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
+    `%`       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
+    `**`      | Power operator. Both operands are converted to floats and the result is a float.
 
 Integer literals can use binary, octal, decimal, or hex notation:
 
@@ -201,33 +201,37 @@ You can overload the equality operator to customize its behaviour for your own t
 
 ### Comparisons
 
-You can use the comparison operators (`<`, `<=`, `>`, `>=`) with any combination of numerical types:
+You can use the comparison operators (`<`, `<=`, `>`, `>=`) with any combination of numerical types, e.g.
 
 ::: code pyro
     assert 2.0 > 1;
     assert 'a' > 42;
 
-The comparison operators also work with strings:
+The comparison operators also work with strings, e.g.
 
 ::: code pyro
     assert "abc" < "def";
 
-Strings are compared lexicographically by byte value.
+Strings are compared lexicographically by byte value, e.g.
 
-You can use the comparison operators directly on tuples:
+::: code pyro
+    assert "a" < "aa";
+    assert "aa" < "aaa";
+
+You can use the comparison operators directly on tuples, e.g.
 
 ::: code pyro
     assert $tup(1, 2, 3) < $tup(1, 2, 4);
 
 Tuples are compared lexicographically by element.
 
-You can overload the comparison operators to add support for your own types.
+You can overload the comparison operators to customize their behaviour for your own types
 
 
 
 ### Printing
 
-The `echo` statement prints to the standard output stream. It's useful for simple printing and debugging.
+The `echo` statement prints to the standard output stream. It's useful for simple printing and debugging, e.g.
 
 ::: code pyro
     echo "hello pyro";
@@ -238,14 +242,14 @@ You can `echo` any value --- `echo` stringifies its argument before printing it.
 ::: code pyro
     echo 123;
 
-You can supply multiple arguments to `echo`, separated by commas.
+You can supply multiple arguments to `echo`, separated by commas, e.g.
 
 ::: code pyro
     echo foo, 123, "bar";
 
 `echo` prints the stringified values separated by spaces.
 
-Pyro also has a family of `$print()`/`$println()` functions with support for format strings:
+Pyro also has a family of `$print()`/`$println()` functions with support for [format strings](@root/features/formatting//), e.g.
 
 ::: code pyro
     $print("hello pyro");               # "hello pyro"

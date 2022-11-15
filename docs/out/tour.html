@@ -182,7 +182,7 @@ Both behave as you'd expect and support the usual range of numeric operations.
 <tbody>
 <tr>
 <td>
-+
+<code>+</code>
 </td>
 <td>
 Addition. Returns an integer if both operands are integers or a float if either or both are floats.
@@ -190,7 +190,7 @@ Addition. Returns an integer if both operands are integers or a float if either 
 </tr>
 <tr>
 <td>
--
+<code>-</code>
 </td>
 <td>
 Subtraction (binary) or negation (unary). Subtraction returns an integer if both operands are integers or a float if either or both are floats.
@@ -198,7 +198,7 @@ Subtraction (binary) or negation (unary). Subtraction returns an integer if both
 </tr>
 <tr>
 <td>
-*
+<code>*</code>
 </td>
 <td>
 Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
@@ -206,7 +206,7 @@ Multiplication. Returns an integer if both operands are integers or a float if e
 </tr>
 <tr>
 <td>
-/
+<code>/</code>
 </td>
 <td>
 Floating-point division. Both operands will be converted to floats and the result will be a float.
@@ -214,7 +214,7 @@ Floating-point division. Both operands will be converted to floats and the resul
 </tr>
 <tr>
 <td>
-//
+<code>//</code>
 </td>
 <td>
 Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
@@ -222,7 +222,7 @@ Truncating division. Returns an integer if both operands are integers or a float
 </tr>
 <tr>
 <td>
-%
+<code>%</code>
 </td>
 <td>
 Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
@@ -230,7 +230,7 @@ Modulo/remainder operator. Returns an integer if both operands are integers or a
 </tr>
 <tr>
 <td>
-**
+<code>**</code>
 </td>
 <td>
 Power operator. Both operands are converted to floats and the result is a float.
@@ -388,23 +388,27 @@ You can overload the equality operator to customize its behaviour for your own t
 Comparisons
 </h3>
 <p>
-You can use the comparison operators (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>) with any combination of numerical types:
+You can use the comparison operators (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>) with any combination of numerical types, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="mf">2.0</span> <span class="p">&gt;</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">assert</span> <span class="sc">&#39;a&#39;</span> <span class="p">&gt;</span> <span class="mi">42</span><span class="p">;</span>
 </pre>
 <p>
-The comparison operators also work with strings:
+The comparison operators also work with strings, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Strings are compared lexicographically by byte value.
+Strings are compared lexicographically by byte value, e.g.
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;a&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aa&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;aa&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aaa&quot;</span><span class="p">;</span>
+</pre>
 <p>
-You can use the comparison operators directly on tuples:
+You can use the comparison operators directly on tuples, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">&lt;</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
@@ -413,13 +417,13 @@ You can use the comparison operators directly on tuples:
 Tuples are compared lexicographically by element.
 </p>
 <p>
-You can overload the comparison operators to add support for your own types.
+You can overload the comparison operators to customize their behaviour for your own types
 </p>
 <h3 id="printing">
 Printing
 </h3>
 <p>
-The <code>echo</code> statement prints to the standard output stream. It's useful for simple printing and debugging.
+The <code>echo</code> statement prints to the standard output stream. It's useful for simple printing and debugging, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">echo</span> <span class="s">&quot;hello pyro&quot;</span><span class="p">;</span>
@@ -432,7 +436,7 @@ You can <code>echo</code> any value &mdash; <code>echo</code> stringifies its ar
 <span class="k">echo</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
-You can supply multiple arguments to <code>echo</code>, separated by commas.
+You can supply multiple arguments to <code>echo</code>, separated by commas, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">echo</span> <span class="nx">foo</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">;</span>
@@ -441,7 +445,7 @@ You can supply multiple arguments to <code>echo</code>, separated by commas.
 <code>echo</code> prints the stringified values separated by spaces.
 </p>
 <p>
-Pyro also has a family of <code>$print()</code>/<code>$println()</code> functions with support for format strings:
+Pyro also has a family of <code>$print()</code>/<code>$println()</code> functions with support for <a href="features/formatting.html">format strings</a>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">$print</span><span class="p">(</span><span class="s">&quot;hello pyro&quot;</span><span class="p">);</span>               <span class="c1"># &quot;hello pyro&quot;</span>
