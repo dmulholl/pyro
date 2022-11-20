@@ -441,6 +441,58 @@ Classes are a big enough topic to deserve a page of their own which you can find
 
 
 
+### Vectors
+
+Pyro has a builtin vector type, `vec` --- a dynamic array similar to a `list` in Python. You can create a `vec` using a vector-literal, e.g.
+
+::: code pyro
+    var vec = ["foo", "bar"];
+
+Vectors use zero-based indices, e.g.
+
+::: code pyro
+    assert vec[0] == "foo";
+    assert vec[1] == "bar";
+
+You can index into a vector to get or set entries, e.g.
+
+::: code pyro
+    vec[0] = "baz";
+    assert vec[0] == "baz";
+
+You can add items to a vector using the `:append()` method, e.g.
+
+::: code pyro
+    vec:append("bam");
+    assert vec[2] == "bam";
+
+You can find a full description of Pyro's `vec` type [here](@root/builtins/vectors//).
+
+
+
+### Maps
+
+Pyro has a builtin map type, `map` --- an ordered hash-map similar to a `dict` in Python. You can create a `map` using a map-literal, e.g.
+
+::: code pyro
+    var map = {
+        "foo" = 123,
+        "bar" = 456,
+    };
+
+You can index into a `map` to get or set entries, e.g.
+
+::: code pyro
+    assert map["foo"] == 123;
+    assert map["bar"] == 456;
+
+    map["baz"] = 789;
+    assert map["baz"] == 789;
+
+You can find a full description of Pyro's map type [here](@root/builtins/maps//).
+
+
+
 ### Errors
 
 Pyro has a dedicated error type, `err`, which a function can return to indicate failure.
