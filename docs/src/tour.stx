@@ -142,13 +142,13 @@ Values which convert to `true` are **truthy**, values which convert to `false` a
 Uninitialized variables have the default value `null`.
 
 ::: code pyro
-    var foo;
-    assert foo == null;
+    var value;
+    assert value == null;
 
 You can use the null-coalescing operator `??` to supply a default value in place of a `null`:
 
 ::: code pyro
-    var foo = maybe_null() ?? "default";
+    var result = maybe_null() ?? "default";
 
 Functions which don't explicitly specify a return value have the return value `null`.
 
@@ -156,28 +156,30 @@ Functions which don't explicitly specify a return value have the return value `n
 
 ### Equality
 
-Numbers are equal if their values are numerically equal:
+The equality operator is `==`. Its inverse is `!=`.
+
+Numbers compare as equal using `==` if their values are numerically equal, e.g.
 
 ::: code pyro
     assert 1 == 1.0;
     assert 'a' == 97;
     assert 'b' == 98.0;
 
-Strings are equal if they have the same content:
+Strings compare as equal if they have the same content, e.g.
 
 ::: code pyro
     var foo = "foobar";
     var bar = "foobar";
     assert foo == bar;
 
-Tuples are equal if they have the same length and their elements are equal:
+Tuples compare as equal if they have the same length and their elements are equal, e.g.
 
 ::: code pyro
     var foo = $tup("foo", 123);
     var bar = $tup("foo", 123);
     assert foo == bar;
 
-Sets are equal if they are set-equivalent, i.e. if they contain the same items in any order:
+Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order:
 
 ::: code pyro
     var foo = {1, 2, 3};
@@ -519,7 +521,7 @@ An unhandled panic will result in the program exiting with an error message and 
 You can trap a panic using a `try` expression:
 
 ::: code pyro
-    var foo = try might_panic();
+    var result = try might_panic();
 
 A `try` expression returns the value of its operand if it evaluates without panicking or an `err` if it panics.
 

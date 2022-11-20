@@ -328,14 +328,14 @@ Nulls
 Uninitialized variables have the default value <code>null</code>.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">value</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
 </pre>
 <p>
 You can use the null-coalescing operator <code>??</code> to supply a default value in place of a <code>null</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Functions which don't explicitly specify a return value have the return value <code>null</code>.
@@ -344,7 +344,10 @@ Functions which don't explicitly specify a return value have the return value <c
 Equality
 </h3>
 <p>
-Numbers are equal if their values are numerically equal:
+The equality operator is <code>==</code>. Its inverse is <code>!=</code>.
+</p>
+<p>
+Numbers compare as equal using <code>==</code> if their values are numerically equal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">;</span>
@@ -352,7 +355,7 @@ Numbers are equal if their values are numerically equal:
 <span class="k">assert</span> <span class="sc">&#39;b&#39;</span> <span class="o">==</span> <span class="mf">98.0</span><span class="p">;</span>
 </pre>
 <p>
-Strings are equal if they have the same content:
+Strings compare as equal if they have the same content, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
@@ -360,7 +363,7 @@ Strings are equal if they have the same content:
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
-Tuples are equal if they have the same length and their elements are equal:
+Tuples compare as equal if they have the same length and their elements are equal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
@@ -368,7 +371,7 @@ Tuples are equal if they have the same length and their elements are equal:
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
-Sets are equal if they are set-equivalent, i.e. if they contain the same items in any order:
+Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
@@ -760,7 +763,7 @@ An unhandled panic will result in the program exiting with an error message and 
 You can trap a panic using a <code>try</code> expression:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
 </pre>
 <p>
 A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>err</code> if it panics.
