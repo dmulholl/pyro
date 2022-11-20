@@ -19,7 +19,7 @@ First, download the Pyro repository from Github and `cd` into the `pyro` directo
     $ git clone https://github.com/dmulholl/pyro.git
     $ cd pyro
 
-To build the release binary run:
+Build the release binary by running:
 
 ::: code
     $ make release

@@ -735,14 +735,14 @@ Errors
 Pyro has a dedicated error type, <code>err</code>, which a function can return to indicate failure.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">);</span>
 </pre>
 <p>
 You can check if a value is an <code>err</code> using the <code>$is_err(arg)</code> function.
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator <code>!!</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
 You can find a full description of the <code>err</code> type <a href="builtins/errors.html">here</a>.
@@ -773,7 +773,7 @@ A <code>try</code> expression returns the value of its operand if it evaluates w
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">);</span>  <span class="c1"># err</span>
 </pre>
 <p>
-Note that you can use the error-coalescing operator <code>!!</code> to provide a default value for a panicking expression:
+You can use the error-coalescing operator <code>!!</code> to provide a default value for a panicking expression:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0.5</span>

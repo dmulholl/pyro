@@ -134,7 +134,7 @@ To make a Pyro script executable, add a <a href="https://en.wikipedia.org/wiki/S
 <span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Then make the script executable &mdash; e.g. for a file called <code>script.pyro</code>:
+Then make the script file itself executable &mdash; e.g. for a file called <code>script.pyro</code>:
 </p>
 <pre>
 $ chmod +x ./script.pyro
@@ -172,7 +172,7 @@ The debug binary is (much) slower than the release binary. It enables <code>asse
 </p>
 <p>
 If you'd like to try hacking on Pyro's source code, you should run the test suite with the debug binary after every change.
-You can do this by running:
+You can do this by running the shortcut command:
 </p>
 <pre>
 $ make check
@@ -181,7 +181,7 @@ $ make check
 You can also run Pyro's test suite using the <code>test</code> command directly, e.g.
 </p>
 <pre>
-$ pyro test tests/*.pyro
+$ pyro test ./tests/*.pyro
 </pre>
 <p>
 You can learn more about the <code>test</code> command <a href="features/testing.html">here</a>.

@@ -498,13 +498,13 @@ You can find a full description of Pyro's map type [here](@root/builtins/maps//)
 Pyro has a dedicated error type, `err`, which a function can return to indicate failure.
 
 ::: code pyro
-    var foo = $err("oops!");
+    var err = $err("oops!");
 
 You can check if a value is an `err` using the `$is_err(arg)` function.
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`:
 
 ::: code pyro
-    var foo = might_fail() !! "default";
+    var result = might_fail() !! "default";
 
 You can find a full description of the `err` type [here](@root/builtins/errors//).
 
@@ -529,7 +529,7 @@ A `try` expression returns the value of its operand if it evaluates without pani
     var foo = try (1 / 2);  # 0.5
     var bar = try (1 / 0);  # err
 
-Note that you can use the error-coalescing operator `!!` to provide a default value for a panicking expression:
+You can use the error-coalescing operator `!!` to provide a default value for a panicking expression:
 
 ::: code pyro
     var foo = try (1 / 2) !! 0;  # 0.5

@@ -67,7 +67,7 @@ To make a Pyro script executable, add a [shebang][1] line to the top of the file
     #!/usr/bin/env pyro
     echo "hello world";
 
-Then make the script executable --- e.g. for a file called `script.pyro`:
+Then make the script file itself executable --- e.g. for a file called `script.pyro`:
 
 ::: code
     $ chmod +x ./script.pyro
@@ -97,12 +97,12 @@ To build a new debug binary and run the test suite run:
 The debug binary is (much) slower than the release binary. It enables `assert` statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
 
 If you'd like to try hacking on Pyro's source code, you should run the test suite with the debug binary after every change.
-You can do this by running:
+You can do this by running the shortcut command:
 
     $ make check
 
 You can also run Pyro's test suite using the `test` command directly, e.g.
 
-    $ pyro test tests/*.pyro
+    $ pyro test ./tests/*.pyro
 
 You can learn more about the `test` command [here](@root/features/testing//).
