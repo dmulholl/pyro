@@ -24,6 +24,33 @@ class Object:
     def get_value(self):
         return self.value
 
+    def unused_method_1(self):
+        return self.value + 1
+
+    def unused_method_2(self):
+        return self.value + 1
+
+    def unused_method_3(self):
+        return self.value + 1
+
+    def unused_method_4(self):
+        return self.value + 1
+
+    def unused_method_5(self):
+        return self.value + 1
+
+    def unused_method_6(self):
+        return self.value + 1
+
+    def unused_method_7(self):
+        return self.value + 1
+
+    def unused_method_8(self):
+        return self.value + 1
+
+    def unused_method_9(self):
+        return self.value + 1
+
 def do_arithmetic(a, b, c, d):
     foo = (((a * 123 + b * 123.456 + c * 23) / 31) * a) / (b + 1) + 2.0 * d
     bar = ((foo * a) / (b + 1)) * c + 3 * d

@@ -27,6 +27,42 @@ class Object {
     pub def get_value() {
         return self.value;
     }
+
+    pub def unused_method_1() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_2() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_3() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_4() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_5() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_6() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_7() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_8() {
+        return self.value + 1;
+    }
+
+    pub def unused_method_9() {
+        return self.value + 1;
+    }
 }
 
 def do_arithmetic(a, b, c, d) {
