@@ -88,7 +88,7 @@ def do_string_stuff(str_a, str_b, str_sep) {
     return vec;
 }
 
-def make_adder(n) {
+def make_adder_closure(n) {
     def adds_n(arg) {
         return arg + n;
     }
@@ -107,7 +107,7 @@ def fizzbuzz(n) {
     }
 }
 
-def benchmark() {
+def run_benchmark() {
     var vec = $vec();
     var map = $map();
 
@@ -170,7 +170,7 @@ def benchmark() {
 
     # Closures.
     for i in $range(1000) {
-        var func = make_adder(i);
+        var func = make_adder_closure(i);
         vec:append(func);
         vec:append(func(i));
         map[i] = func(i);
@@ -234,17 +234,17 @@ def benchmark() {
 # END TESTS --------------------------------------------------------------------
 
 def $time_benchmark() {
-    benchmark();
+    run_benchmark();
 }
 
 def $test_benchmark() {
-    benchmark();
+    run_benchmark();
 }
 
 def $main() {
     var start = $clock();
     for i in $range(num_runs) {
-        benchmark();
+        run_benchmark();
     }
     var runtime = $clock() - start;
     var average = runtime / num_runs;

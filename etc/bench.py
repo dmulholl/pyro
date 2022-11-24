@@ -70,7 +70,7 @@ def do_string_stuff(str_a, str_b, str_sep):
 
     return vec
 
-def make_adder(n):
+def make_adder_closure(n):
     def adds_n(arg):
         return arg + n
     return adds_n
@@ -85,7 +85,7 @@ def fizzbuzz(n):
     else:
         return n
 
-def benchmark():
+def run_benchmark():
     vec = list()
     map = dict()
 
@@ -139,7 +139,7 @@ def benchmark():
 
     # Closures.
     for i in range(1000):
-        func = make_adder(i)
+        func = make_adder_closure(i)
         vec.append(func)
         vec.append(func(i))
         map[i] = func(i)
@@ -194,7 +194,7 @@ def benchmark():
 def main():
     start = time.process_time()
     for i in range(num_runs):
-        benchmark()
+        run_benchmark()
     runtime = time.process_time() - start
     average = runtime / num_runs
     average_in_ms = average * 1000
