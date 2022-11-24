@@ -14,12 +14,12 @@ def fib(n):
         return n
     return fib(n - 1) + fib(n - 2)
 
-class Foo:
+class Object:
     def __init__(self, value):
-        self.value = value * 257 + 123
+        self.value = value * 456 + 789
 
     def change_value(self, arg):
-        self.value = self.value * arg
+        self.value += arg
 
     def get_value(self):
         return self.value
@@ -81,12 +81,27 @@ def benchmark():
                 vec.append(result)
                 map[f"{i}-{j}-{k}"] = result
 
-    # Classes.
+    # Initialize object in loop.
     for i in range(1000):
-        foo = Foo(123)
-        foo.change_value(456)
-        vec.append(foo.get_value())
-        map[str(i)] = foo.get_value()
+        obj = Object(123 + i)
+
+    # Modify field in loop.
+    obj1 = Object(456)
+    for i in range(1000):
+        obj1.value += i
+
+    # Call single method in loop.
+    obj2 = Object(789)
+    for i in range(1000):
+        obj2.change_value(i)
+
+    # Mixed field/method operations in loop.
+    for i in range(1000):
+        obj = Object(999 + i)
+        obj.value += i
+        obj.change_value(i)
+        vec.append(obj.get_value())
+        map[str(i)] = obj.get_value()
 
     # Strings.
     string = ""
@@ -109,7 +124,7 @@ def benchmark():
 
     # Vector getting and setting.
     for i in range(1000):
-        vec[i] = vec[i]
+        vec[i] = vec[i + 1]
 
     # Map getting and setting.
     for i in range(1000):
@@ -156,7 +171,7 @@ def main():
     runtime = time.process_time() - start
     average = runtime / num_runs
     average_in_ms = average * 1000
-    print(f"Average time: {average:0.6f} s  ::  {average_in_ms:0.3f} ms")
+    print(f"Average time: {average:0.6f} s :: {average_in_ms:0.3f} ms")
 
 if __name__ == "__main__":
     main()
