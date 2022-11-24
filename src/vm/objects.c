@@ -156,6 +156,10 @@ ObjClass* ObjClass_new(PyroVM* vm) {
     class->default_field_values = NULL;
     class->static_methods = NULL;
     class->static_fields = NULL;
+    class->all_instance_methods_cached_name = NULL;
+    class->all_instance_methods_cached_value = pyro_make_null();
+    class->pub_instance_methods_cached_name = NULL;
+    class->pub_instance_methods_cached_value = pyro_make_null();
 
     class->all_instance_methods = ObjMap_new(vm);
     class->pub_instance_methods = ObjMap_new(vm);

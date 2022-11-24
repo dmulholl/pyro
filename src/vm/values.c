@@ -45,11 +45,17 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
 
     ObjClass* class = pyro_get_class(vm, receiver);
     if (class) {
+        if (class->all_instance_methods_cached_name == method_name) {
+            return class->all_instance_methods_cached_value;
+        }
         Value method;
         if (ObjMap_get(class->all_instance_methods, pyro_make_obj(method_name), &method, vm)) {
+            class->all_instance_methods_cached_name = method_name;
+            class->all_instance_methods_cached_value = method;
             return method;
         }
     }
+
     return pyro_make_null();
 }
 
@@ -65,11 +71,17 @@ Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
 
     ObjClass* class = pyro_get_class(vm, receiver);
     if (class) {
+        if (class->pub_instance_methods_cached_name == method_name) {
+            return class->pub_instance_methods_cached_value;
+        }
         Value method;
         if (ObjMap_get(class->pub_instance_methods, pyro_make_obj(method_name), &method, vm)) {
+            class->pub_instance_methods_cached_name = method_name;
+            class->pub_instance_methods_cached_value = method;
             return method;
         }
     }
+
     return pyro_make_null();
 }
 

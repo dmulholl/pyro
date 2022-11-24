@@ -181,6 +181,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
 
         case OBJ_CLASS: {
+            // We don't need to mark the cached method names or values as they're in the maps.
             ObjClass* class = (ObjClass*)object;
             mark_object(vm, (Obj*)class->name);
             mark_object(vm, (Obj*)class->superclass);

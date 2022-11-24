@@ -299,6 +299,12 @@ struct ObjClass {
     // Static members.
     ObjMap* static_methods;
     ObjMap* static_fields;
+
+    // Cached results from the last method lookups.
+    ObjStr* all_instance_methods_cached_name;
+    Value all_instance_methods_cached_value;
+    ObjStr* pub_instance_methods_cached_name;
+    Value pub_instance_methods_cached_value;
 };
 
 ObjClass* ObjClass_new(PyroVM* vm);
