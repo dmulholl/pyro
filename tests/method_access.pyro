@@ -1,4 +1,4 @@
-class Foo {
+class Object {
     def foo() {
         return "foo";
     }
@@ -21,7 +21,7 @@ class Foo {
     }
 }
 
-var obj = Foo();
+var obj = Object();
 
 assert $is_err(try obj:foo);
 assert $is_err(try obj:foo());
@@ -34,3 +34,9 @@ assert obj:baz() == "baz";
 
 assert obj:bam() == "foo";
 assert obj:bof() == "bar";
+
+assert $is_err(try obj:foo);
+assert $is_err(try obj:foo());
+
+assert $is_err(try obj:bar);
+assert $is_err(try obj:bar());
