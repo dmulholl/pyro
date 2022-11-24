@@ -9,6 +9,7 @@
 * [Roadmap](@root/roadmap//)
 * [FAQ](@root/faq//)
 * [Building & Installing](@root/building//)
+* [The REPL](@root/repl//)
 * [Acknowledgements](@root/acknowledgements//)
 * [License](@root/license//)
 * [Github](https://github.com/dmulholl/pyro)
