@@ -10,13 +10,13 @@ meta_title: Pyro &mdash; The REPL
 
 Running the Pyro binary without a script argument launches the REPL --- an interactive environment where you can run Pyro statements directly, e.g.
 
-::: code
+::: code pyro
     >>> echo "hello world";
     hello world
 
 Pyro statements normally end with a semicolon, `;`, but you can omit the semicolon after typing a single statement in the REPL, e.g.
 
-::: code
+::: code pyro
     >>> echo "hello world"
     hello world
 
@@ -28,7 +28,7 @@ Hit `Ctrl-D` or type `exit` and hit return to end the REPL session.
 
 You can define and use variables in the REPL, just like in a script, e.g.
 
-::: code
+::: code pyro
     >>> var value = 123
     >>> echo value + 456
     579
@@ -39,13 +39,13 @@ You can define and use variables in the REPL, just like in a script, e.g.
 
 As a convenience, if the input statement is an expression that evaluates to any value other than `null`, the REPL automatically prints the `$debug()` string for the value, e.g.
 
-::: code
+::: code pyro
     >>> "foo" + "bar"
     "foobar"
 
 This is equivalent to running:
 
-::: code
+::: code pyro
     >>> echo $debug("foo" + "bar")
     "foobar"
 
@@ -55,13 +55,13 @@ This is equivalent to running:
 
 You can use the REPL as a simple calculator, e.g.
 
-::: code
+::: code pyro
     >>> 1 + 2
     3
 
 If the value of the expression is a floating-point number, you might be surprised by the output, e.g.
 
-::: code
+::: code pyro
     >>> 0.1 + 0.1
     0.20000000000000001
 
@@ -72,6 +72,7 @@ This is a feature, not a bug --- Pyro is showing you the value you actually have
 
 If you want a friendlier representation you can `echo` the value instead, e.g.
 
+::: code pyro
     >>> echo 0.1 + 0.1
     0.2
 

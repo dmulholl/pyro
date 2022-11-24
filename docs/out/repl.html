@@ -78,16 +78,16 @@ Running the REPL
 <p>
 Running the Pyro binary without a script argument launches the REPL &mdash; an interactive environment where you can run Pyro statements directly, e.g.
 </p>
-<pre>
-&gt;&gt;&gt; echo "hello world";
-hello world
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
+<span class="nx">hello</span> <span class="nx">world</span>
 </pre>
 <p>
 Pyro statements normally end with a semicolon, <code>;</code>, but you can omit the semicolon after typing a single statement in the REPL, e.g.
 </p>
-<pre>
-&gt;&gt;&gt; echo "hello world"
-hello world
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="s">&quot;hello world&quot;</span>
+<span class="nx">hello</span> <span class="nx">world</span>
 </pre>
 <p>
 Hit <code>Ctrl-D</code> or type <code>exit</code> and hit return to end the REPL session.
@@ -98,10 +98,10 @@ Variables
 <p>
 You can define and use variables in the REPL, just like in a script, e.g.
 </p>
-<pre>
-&gt;&gt;&gt; var value = 123
-&gt;&gt;&gt; echo value + 456
-579
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span>
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="nx">value</span> <span class="o">+</span> <span class="mi">456</span>
+<span class="mi">579</span>
 </pre>
 <h3 id="expression-statements">
 Expression Statements
@@ -109,16 +109,16 @@ Expression Statements
 <p>
 As a convenience, if the input statement is an expression that evaluates to any value other than <code>null</code>, the REPL automatically prints the <code>$debug()</code> string for the value, e.g.
 </p>
-<pre>
-&gt;&gt;&gt; "foo" + "bar"
-"foobar"
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="s">&quot;foo&quot;</span> <span class="o">+</span> <span class="s">&quot;bar&quot;</span>
+<span class="s">&quot;foobar&quot;</span>
 </pre>
 <p>
 This is equivalent to running:
 </p>
-<pre>
-&gt;&gt;&gt; echo $debug("foo" + "bar")
-"foobar"
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="s">&quot;foo&quot;</span> <span class="o">+</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span>
+<span class="s">&quot;foobar&quot;</span>
 </pre>
 <h3 id="floating-point-numbers">
 Floating-point Numbers
@@ -126,16 +126,16 @@ Floating-point Numbers
 <p>
 You can use the REPL as a simple calculator, e.g.
 </p>
-<pre>
-&gt;&gt;&gt; 1 + 2
-3
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="mi">3</span>
 </pre>
 <p>
 If the value of the expression is a floating-point number, you might be surprised by the output, e.g.
 </p>
-<pre>
-&gt;&gt;&gt; 0.1 + 0.1
-0.20000000000000001
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.1</span>
+<span class="mf">0.20000000000000001</span>
 </pre>
 <p>
 Pyro is showing you the <code>$debug()</code> output for the expression, and calling <code>$debug()</code> on a floating-point number rounds its value to 17 decimal digits of precision, then strips any trailing zeros after the decimal point.
@@ -147,9 +147,9 @@ This is a feature, not a bug &mdash; Pyro is showing you the value you actually 
 <p>
 If you want a friendlier representation you can <code>echo</code> the value instead, e.g.
 </p>
-<pre>
-&gt;&gt;&gt; echo 0.1 + 0.1
-0.2
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.1</span>
+<span class="mf">0.2</span>
 </pre>
 <p>
 <code>echo</code> calls <code>$str()</code> on its argument before printing it.
