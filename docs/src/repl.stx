@@ -1,0 +1,109 @@
+---
+title: The REPL
+meta_title: Pyro &mdash; The REPL
+---
+
+::: insert toc
+
+
+### Running the REPL
+
+Running the Pyro binary without a script argument launches the REPL --- an interactive environment where you can run Pyro statements directly, e.g.
+
+::: code
+    >>> echo "hello world";
+    hello world
+
+Pyro statements normally end with a semicolon, `;`, but you can omit the semicolon after typing a single statement in the REPL, e.g.
+
+::: code
+    >>> echo "hello world"
+    hello world
+
+Hit `Ctrl-D` or type `exit` and hit return to end the REPL session.
+
+
+
+### Variables
+
+You can define and use variables in the REPL, just like in a script, e.g.
+
+::: code
+    >>> var value = 123
+    >>> echo value + 456
+    579
+
+
+
+### Expression Statements
+
+As a convenience, if the input statement is an expression that evaluates to any value other than `null`, the REPL automatically prints the `$debug()` string for the value, e.g.
+
+::: code
+    >>> "foo" + "bar"
+    "foobar"
+
+This is equivalent to running:
+
+::: code
+    >>> echo $debug("foo" + "bar")
+    "foobar"
+
+
+
+### Floating-point Numbers
+
+You can use the REPL as a simple calculator, e.g.
+
+::: code
+    >>> 1 + 2
+    3
+
+If the value of the expression is a floating-point number, you might be surprised by the output, e.g.
+
+::: code
+    >>> 0.1 + 0.1
+    0.20000000000000001
+
+Pyro is showing you the `$debug()` output for the expression, and calling `$debug()` on a floating-point number rounds its value to 17 decimal digits of precision, then strips any trailing zeros after the decimal point.
+(17 is the minimum number of decimal digits required to guarantee that any two distinct 64-bit floats have distinct representations.)
+
+This is a feature, not a bug --- Pyro is showing you the value you actually have, not the value you expected!
+
+If you want a friendlier representation you can `echo` the value instead, e.g.
+
+    >>> echo 0.1 + 0.1
+    0.2
+
+`echo` calls `$str()` on its argument before printing it.
+For floating-point numbers, `$str()` rounds the value to 6 decimal digits of precision, then strips any trailing zeros after the decimal point.
+
+(Note that these are simply default precisions --- you can print a floating-point number to any level of precision using the `$fmt()` or `$print()` functions.)
+
+
+
+### Multi-line Input
+
+The REPL automatically handles multi-line input, e.g.
+
+::: code
+    >>> "foo
+    ··· bar"
+    "foo\nbar"
+
+You can define functions and classes over multiple lines, e.g.
+
+::: code
+    >>> def add(a, b) {
+    ···     return a + b;
+    ··· }
+    >>> add(1, 2)
+    3
+
+
+
+### Line Editing
+
+The REPL supports the standard set of emacs-style line editing commands, e.g. `Ctrl-A` to move to the start of the line, `Ctrl-E` to move to the end of the line, etc.
+
+You can scroll forwards and backwards through the line-editing history using the up/down arrow keys or, alternatively, `Ctrl-P` and `Ctrl-N`.

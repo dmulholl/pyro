@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; The REPL</title>
+        <link rel="stylesheet" href="assets/fonts.css">
+        <link rel="stylesheet" href="assets/graphite.css">
+        <link rel="stylesheet" href="assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-repl node">
+        <header class="masthead">
+            <h1><a href="index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.8.50</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="quickstart.html">Quickstart</a></li>
+<li><a href="tour.html">Language Tour</a></li>
+<li><a href="features.html">Features</a></li>
+<li><a href="builtins.html">Builtin Types</a></li>
+<li><a href="superglobals.html">Superglobals</a></li>
+<li><a href="stdlib.html">Standard Library</a></li>
+<li><a href="examples.html">Examples</a></li>
+<li><a href="roadmap.html">Roadmap</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="building.html">Building &amp; Installing</a></li>
+<li><a href="repl.html">The REPL</a></li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>The REPL</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#running-the-repl">Running the REPL</a>
+</li>
+<li>
+<a href="#variables">Variables</a>
+</li>
+<li>
+<a href="#expression-statements">Expression Statements</a>
+</li>
+<li>
+<a href="#floating-point-numbers">Floating-point Numbers</a>
+</li>
+<li>
+<a href="#multi-line-input">Multi-line Input</a>
+</li>
+<li>
+<a href="#line-editing">Line Editing</a>
+</li>
+</ul>
+<h3 id="running-the-repl">
+Running the REPL
+</h3>
+<p>
+Running the Pyro binary without a script argument launches the REPL &mdash; an interactive environment where you can run Pyro statements directly, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world";
+hello world
+</pre>
+<p>
+Pyro statements normally end with a semicolon, <code>;</code>, but you can omit the semicolon after typing a single statement in the REPL, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world"
+hello world
+</pre>
+<p>
+Hit <code>Ctrl-D</code> or type <code>exit</code> and hit return to end the REPL session.
+</p>
+<h3 id="variables">
+Variables
+</h3>
+<p>
+You can define and use variables in the REPL, just like in a script, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; var value = 123
+&gt;&gt;&gt; echo value + 456
+579
+</pre>
+<h3 id="expression-statements">
+Expression Statements
+</h3>
+<p>
+As a convenience, if the input statement is an expression that evaluates to any value other than <code>null</code>, the REPL automatically prints the <code>$debug()</code> string for the value, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; "foo" + "bar"
+"foobar"
+</pre>
+<p>
+This is equivalent to running:
+</p>
+<pre>
+&gt;&gt;&gt; echo $debug("foo" + "bar")
+"foobar"
+</pre>
+<h3 id="floating-point-numbers">
+Floating-point Numbers
+</h3>
+<p>
+You can use the REPL as a simple calculator, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; 1 + 2
+3
+</pre>
+<p>
+If the value of the expression is a floating-point number, you might be surprised by the output, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; 0.1 + 0.1
+0.20000000000000001
+</pre>
+<p>
+Pyro is showing you the <code>$debug()</code> output for the expression, and calling <code>$debug()</code> on a floating-point number rounds its value to 17 decimal digits of precision, then strips any trailing zeros after the decimal point.
+(17 is the minimum number of decimal digits required to guarantee that any two distinct 64-bit floats have distinct representations.)
+</p>
+<p>
+This is a feature, not a bug &mdash; Pyro is showing you the value you actually have, not the value you expected!
+</p>
+<p>
+If you want a friendlier representation you can <code>echo</code> the value instead, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; echo 0.1 + 0.1
+0.2
+</pre>
+<p>
+<code>echo</code> calls <code>$str()</code> on its argument before printing it.
+For floating-point numbers, <code>$str()</code> rounds the value to 6 decimal digits of precision, then strips any trailing zeros after the decimal point.
+</p>
+<p>
+(Note that these are simply default precisions &mdash; you can print a floating-point number to any level of precision using the <code>$fmt()</code> or <code>$print()</code> functions.)
+</p>
+<h3 id="multi-line-input">
+Multi-line Input
+</h3>
+<p>
+The REPL automatically handles multi-line input, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; "foo
+··· bar"
+"foo\nbar"
+</pre>
+<p>
+You can define functions and classes over multiple lines, e.g.
+</p>
+<pre>
+&gt;&gt;&gt; def add(a, b) {
+···     return a + b;
+··· }
+&gt;&gt;&gt; add(1, 2)
+3
+</pre>
+<h3 id="line-editing">
+Line Editing
+</h3>
+<p>
+The REPL supports the standard set of emacs-style line editing commands, e.g. <code>Ctrl-A</code> to move to the start of the line, <code>Ctrl-E</code> to move to the end of the line, etc.
+</p>
+<p>
+You can scroll forwards and backwards through the line-editing history using the up/down arrow keys or, alternatively, <code>Ctrl-P</code> and <code>Ctrl-N</code>.
+</p>
+        </article>
+        
+    </body>
+</html>
