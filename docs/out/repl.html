@@ -35,11 +35,11 @@
 <li><a href="builtins.html">Builtin Types</a></li>
 <li><a href="superglobals.html">Superglobals</a></li>
 <li><a href="stdlib.html">Standard Library</a></li>
+<li><a href="repl.html">The REPL</a></li>
 <li><a href="examples.html">Examples</a></li>
 <li><a href="roadmap.html">Roadmap</a></li>
 <li><a href="faq.html">FAQ</a></li>
 <li><a href="building.html">Building &amp; Installing</a></li>
-<li><a href="repl.html">The REPL</a></li>
 <li><a href="acknowledgements.html">Acknowledgements</a></li>
 <li><a href="license.html">License</a></li>
 <li><a href="https://github.com/dmulholl/pyro">Github</a></li>
@@ -142,17 +142,17 @@ Pyro is showing you the <code>$debug()</code> output for the expression, and cal
 (17 is the minimum number of decimal digits required to guarantee that any two distinct 64-bit floats have distinct representations.)
 </p>
 <p>
-This is a feature, not a bug &mdash; Pyro is showing you the value you actually have, not the value you expected!
+This is a feature, not a bug &mdash; <code>$debug()</code> shows you the value you actually have, not the value you expected!
 </p>
 <p>
-If you want a friendlier representation you can <code>echo</code> the value instead, e.g.
+If you want a friendlier representation, you can <code>echo</code> the value instead, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.1</span>
 <span class="mf">0.2</span>
 </pre>
 <p>
-<code>echo</code> calls <code>$str()</code> on its argument before printing it.
+<code>echo</code> calls <code>$str()</code> on its arguments before printing them.
 For floating-point numbers, <code>$str()</code> rounds the value to 6 decimal digits of precision, then strips any trailing zeros after the decimal point.
 </p>
 <p>
@@ -186,7 +186,7 @@ Line Editing
 The REPL supports the standard set of emacs-style line editing commands, e.g. <code>Ctrl-A</code> to move to the start of the line, <code>Ctrl-E</code> to move to the end of the line, etc.
 </p>
 <p>
-You can scroll forwards and backwards through the line-editing history using the up/down arrow keys or, alternatively, <code>Ctrl-P</code> and <code>Ctrl-N</code>.
+You can scroll backwards and forwards through the line-editing history using the up/down arrow keys or, alternatively, <code>Ctrl-P</code> and <code>Ctrl-N</code>.
 </p>
         </article>
         

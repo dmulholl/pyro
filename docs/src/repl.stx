@@ -68,15 +68,15 @@ If the value of the expression is a floating-point number, you might be surprise
 Pyro is showing you the `$debug()` output for the expression, and calling `$debug()` on a floating-point number rounds its value to 17 decimal digits of precision, then strips any trailing zeros after the decimal point.
 (17 is the minimum number of decimal digits required to guarantee that any two distinct 64-bit floats have distinct representations.)
 
-This is a feature, not a bug --- Pyro is showing you the value you actually have, not the value you expected!
+This is a feature, not a bug --- `$debug()` shows you the value you actually have, not the value you expected!
 
-If you want a friendlier representation you can `echo` the value instead, e.g.
+If you want a friendlier representation, you can `echo` the value instead, e.g.
 
 ::: code pyro
     >>> echo 0.1 + 0.1
     0.2
 
-`echo` calls `$str()` on its argument before printing it.
+`echo` calls `$str()` on its arguments before printing them.
 For floating-point numbers, `$str()` rounds the value to 6 decimal digits of precision, then strips any trailing zeros after the decimal point.
 
 (Note that these are simply default precisions --- you can print a floating-point number to any level of precision using the `$fmt()` or `$print()` functions.)
@@ -107,4 +107,4 @@ You can define functions and classes over multiple lines, e.g.
 
 The REPL supports the standard set of emacs-style line editing commands, e.g. `Ctrl-A` to move to the start of the line, `Ctrl-E` to move to the end of the line, etc.
 
-You can scroll forwards and backwards through the line-editing history using the up/down arrow keys or, alternatively, `Ctrl-P` and `Ctrl-N`.
+You can scroll backwards and forwards through the line-editing history using the up/down arrow keys or, alternatively, `Ctrl-P` and `Ctrl-N`.
