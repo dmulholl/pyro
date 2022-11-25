@@ -162,7 +162,7 @@ You can chain multiple `else` expressions, e.g.
 
 ### Assignment Operators
 
-An assignment expression returns the value assigned, e.g.
+An assignment expression, `a = b`, returns the value assigned, e.g.
 
 ::: code pyro
     var foo;
