@@ -10,6 +10,11 @@ assert Object:hello() == "hello";
 assert $is_err(try Object():hello());
 assert Object():instance_method() == "instance";
 assert $is_err(try Object:instance_method());
+assert $is_method(Object:hello);
+
+var method = Object:hello;
+assert $is_method(method);
+assert method() == "hello";
 
 class Child1 < Object {}
 assert Child1:hello() == "hello";

@@ -1,27 +1,60 @@
-# Methods implemented in Pyro.
-class Foo {
+# Bound instance methods implemented in Pyro.
+class Object {
     pub var number = 0;
 
     pub def get_number() {
         return self.number;
     }
+
+    pub def set_number(value) {
+        self.number = value;
+    }
 }
 
-var foo = Foo();
-assert foo:get_number() == 0;
+var obj = Object();
+assert obj:get_number() == 0;
 
-foo.number = 1;
-assert foo:get_number() == 1;
+obj.number = 1;
+assert obj:get_number() == 1;
 
-var method = foo:get_number;
-assert $is_method(method);
-assert method() == 1;
+var get_method = obj:get_number;
+assert $is_method(get_method);
+assert get_method() == 1;
 
-foo.number = 2;
-assert method() == 2;
+var set_method = obj:set_number;
+assert $is_method(set_method);
+set_method(2);
+assert get_method() == 2;
 
 
-# Methods implemented in C.
+# Bound static methods implemented in Pyro.
+class StaticClass {
+    static var number = 0;
+
+    static def get_number() {
+        return StaticClass.number;
+    }
+
+    static def set_number(value) {
+        StaticClass.number = value;
+    }
+}
+
+assert StaticClass:get_number() == 0;
+StaticClass:set_number(1);
+assert StaticClass:get_number() == 1;
+
+var static_get_method = StaticClass:get_number;
+assert $is_method(static_get_method);
+assert static_get_method() == 1;
+
+var static_set_method = StaticClass:set_number;
+assert $is_method(static_set_method);
+static_set_method(2);
+assert static_get_method() == 2;
+
+
+# Bound instance methods implemented in C.
 var string = "foobar";
 assert string:count() == 6;
 
