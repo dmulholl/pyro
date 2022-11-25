@@ -499,8 +499,19 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
         case OBJ_PYRO_FN:
             return pyro_sprintf_to_obj(vm, "<fn>");
 
-        case OBJ_BOUND_METHOD:
-            return pyro_sprintf_to_obj(vm, "<method>");
+        case OBJ_BOUND_METHOD: {
+            ObjBoundMethod* bound_method = (ObjBoundMethod*)object;
+            Obj* method = bound_method->method;
+
+            switch (method->type) {
+                case OBJ_NATIVE_FN:
+                    return pyro_sprintf_to_obj(vm, "<method %s>", ((ObjNativeFn*)method)->name->bytes);
+                case OBJ_CLOSURE:
+                    return pyro_sprintf_to_obj(vm, "<method %s>", ((ObjClosure*)method)->fn->name->bytes);
+                default:
+                    return pyro_sprintf_to_obj(vm, "<method>");
+            }
+        }
 
         case OBJ_ITER:
             return pyro_sprintf_to_obj(vm, "<iter>");
@@ -542,8 +553,8 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
         }
 
         case OBJ_NATIVE_FN: {
-            ObjNativeFn* native = (ObjNativeFn*)object;
-            return pyro_sprintf_to_obj(vm, "<fn %s>", native->name->bytes);
+            ObjNativeFn* fn = (ObjNativeFn*)object;
+            return pyro_sprintf_to_obj(vm, "<fn %s>", fn->name->bytes);
         }
 
         case OBJ_CLOSURE: {
