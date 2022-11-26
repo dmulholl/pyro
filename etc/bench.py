@@ -51,6 +51,9 @@ class Object:
     def unused_method_9(self):
         return self.value + 1
 
+class NoConstructorObject:
+    pass
+
 def do_arithmetic(a, b, c, d):
     foo = (((a * 123 + b * 123.456 + c * 23) / 31) * a) / (b + 1) + 2.0 * d
     bar = ((foo * a) / (b + 1)) * c + 3 * d
@@ -108,7 +111,12 @@ def run_benchmark():
                 vec.append(result)
                 map[f"{i}-{j}-{k}"] = result
 
-    # Initialize object in loop.
+    # Initialize object in loop (no constructor).
+    for i in range(1000):
+        obj = NoConstructorObject()
+        obj.value = i
+
+    # Initialize object in loop (with constructor).
     for i in range(1000):
         obj = Object(123 + i)
 
