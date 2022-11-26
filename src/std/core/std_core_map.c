@@ -515,9 +515,11 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_global_fn(vm, "$set", fn_set, -1);
     pyro_define_global_fn(vm, "$is_set", fn_is_set, 1);
 
-    // Map methods.
+    // Map methods -- private.
     pyro_define_pri_method(vm, vm->class_map, "$iter", map_iter, 0);
     pyro_define_pri_method(vm, vm->class_map, "$contains", map_contains, 1);
+
+    // Map methods -- public.
     pyro_define_pub_method(vm, vm->class_map, "count", map_count, 0);
     pyro_define_pub_method(vm, vm->class_map, "get", map_get, 1);
     pyro_define_pub_method(vm, vm->class_map, "set", map_set, 2);
@@ -530,7 +532,7 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_map, "is_empty", map_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_map, "clear", map_clear, 0);
 
-    // Set methods.
+    // Set methods -- private.
     pyro_define_pri_method(vm, vm->class_set, "$contains", map_contains, 1);
     pyro_define_pri_method(vm, vm->class_set, "$iter", map_keys, 0);
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_bar", set_union, 1);
@@ -541,6 +543,9 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_minus", set_difference, 1);
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_greater_equals", set_is_superset_of, 1);
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_greater", set_is_proper_superset_of, 1);
+    pyro_define_pri_method(vm, vm->class_set, "$op_binary_equals_equals", set_is_equal_to, 1);
+
+    // Set methods -- public.
     pyro_define_pub_method(vm, vm->class_set, "is_empty", map_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_set, "count", map_count, 0);
     pyro_define_pub_method(vm, vm->class_set, "remove", map_remove, 1);
@@ -556,5 +561,4 @@ void pyro_load_std_core_map(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_set, "is_proper_superset_of", set_is_proper_superset_of, 1);
     pyro_define_pub_method(vm, vm->class_set, "clear", map_clear, 0);
     pyro_define_pub_method(vm, vm->class_set, "is_equal_to", set_is_equal_to, 1);
-    pyro_define_pub_method(vm, vm->class_set, "$op_binary_equals_equals", set_is_equal_to, 1);
 }

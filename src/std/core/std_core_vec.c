@@ -597,9 +597,11 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_global_fn(vm, "$stack", fn_stack, 0);
     pyro_define_global_fn(vm, "$is_stack", fn_is_stack, 1);
 
-    // Vector methods.
+    // Vector methods -- private.
     pyro_define_pri_method(vm, vm->class_vec, "$iter", vec_iter, 0);
     pyro_define_pri_method(vm, vm->class_vec, "$contains", vec_contains, 1);
+
+    // Vector methods -- public.
     pyro_define_pub_method(vm, vm->class_vec, "count", vec_count, 0);
     pyro_define_pub_method(vm, vm->class_vec, "capacity", vec_capacity, 0);
     pyro_define_pub_method(vm, vm->class_vec, "append", vec_append, 1);
@@ -630,8 +632,10 @@ void pyro_load_std_core_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_vec, "random", vec_random, 0);
     pyro_define_pub_method(vm, vm->class_vec, "clear", vec_clear, 0);
 
-    // Stack methods.
+    // Stack methods -- private.
     pyro_define_pri_method(vm, vm->class_stack, "$iter", vec_iter, 0);
+
+    // Stack methods -- public.
     pyro_define_pub_method(vm, vm->class_stack, "count", vec_count, 0);
     pyro_define_pub_method(vm, vm->class_stack, "is_empty", vec_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_stack, "push", vec_append, 1);

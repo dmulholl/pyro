@@ -125,78 +125,108 @@ static void call_native_fn(PyroVM* vm, ObjNativeFn* fn, uint8_t arg_count) {
 static void call_value(PyroVM* vm, uint8_t arg_count) {
     Value callee = pyro_peek(vm, arg_count);
 
-    if (IS_OBJ(callee)) {
-        switch(AS_OBJ(callee)->type) {
-            case OBJ_BOUND_METHOD: {
-                ObjBoundMethod* bound = AS_BOUND_METHOD(callee);
-                vm->stack_top[-arg_count - 1] = bound->receiver;
+    if (!IS_OBJ(callee)) {
+        pyro_panic(vm, "value is not callable");
+        return;
+    }
 
-                if (bound->method->type == OBJ_NATIVE_FN) {
-                    call_native_fn(vm, (ObjNativeFn*)bound->method, arg_count);
-                } else {
-                    call_closure(vm, (ObjClosure*)bound->method, arg_count);
-                }
+    switch(AS_OBJ(callee)->type) {
+        case OBJ_BOUND_METHOD: {
+            ObjBoundMethod* bm = AS_BOUND_METHOD(callee);
+            vm->stack_top[-arg_count - 1] = bm->receiver;
 
-                return;
+            switch (bm->method->type) {
+                case OBJ_CLOSURE:
+                    call_closure(vm, (ObjClosure*)bm->method, arg_count);
+                    break;
+
+                case OBJ_NATIVE_FN:
+                    call_native_fn(vm, (ObjNativeFn*)bm->method, arg_count);
+                    break;
+
+                default:
+                    pyro_panic(vm, "invalid type for bound method");
+                    break;
             }
 
-            case OBJ_CLASS: {
-                ObjClass* class = AS_CLASS(callee);
-                ObjInstance* instance = ObjInstance_new(vm, class);
-                if (!instance) {
-                    pyro_panic(vm, "out of memory");
-                    return;
-                }
-                vm->stack_top[-arg_count - 1] = pyro_make_obj(instance);
+            return;
+        }
 
-                Value init_method;
-                if (ObjMap_get(class->all_instance_methods, pyro_make_obj(vm->str_dollar_init), &init_method, vm)) {
-                    if (IS_NATIVE_FN(init_method)) {
-                        call_native_fn(vm, AS_NATIVE_FN(init_method), arg_count);
-                    } else {
-                        call_closure(vm, AS_CLOSURE(init_method), arg_count);
-                    }
-                } else if (arg_count != 0) {
+        case OBJ_CLASS: {
+            ObjClass* class = AS_CLASS(callee);
+            ObjInstance* instance = ObjInstance_new(vm, class);
+            if (!instance) {
+                pyro_panic(vm, "out of memory");
+                return;
+            }
+            vm->stack_top[-arg_count - 1] = pyro_make_obj(instance);
+
+            if (IS_NULL(class->init_method)) {
+                if (arg_count > 0) {
                     pyro_panic(vm,
                         "%s(): expected 0 arguments for initializer, found %zu",
                         class->name->bytes,
                         arg_count
                     );
                 }
-
                 return;
             }
 
-            case OBJ_CLOSURE: {
-                call_closure(vm, AS_CLOSURE(callee), arg_count);
-                return;
+            switch (AS_OBJ(class->init_method)->type) {
+                case OBJ_CLOSURE:
+                    call_closure(vm, AS_CLOSURE(class->init_method), arg_count);
+                    break;
+
+                case OBJ_NATIVE_FN:
+                    call_native_fn(vm, AS_NATIVE_FN(class->init_method), arg_count);
+                    break;
+
+                default:
+                    pyro_panic(vm, "invalid type for init method");
+                    break;
             }
 
-            case OBJ_NATIVE_FN: {
-                call_native_fn(vm, AS_NATIVE_FN(callee), arg_count);
-                return;
-            }
-
-            case OBJ_INSTANCE: {
-                ObjClass* class = AS_OBJ(callee)->class;
-
-                Value call_method;
-                if (ObjMap_get(class->all_instance_methods, pyro_make_obj(vm->str_dollar_call), &call_method, vm)) {
-                    if (IS_NATIVE_FN(call_method)) {
-                        call_native_fn(vm, AS_NATIVE_FN(call_method), arg_count);
-                    } else {
-                        call_closure(vm, AS_CLOSURE(call_method), arg_count);
-                    }
-                } else {
-                    pyro_panic(vm, "object is not callable");
-                }
-
-                return;
-            }
-
-            default:
-                break;
+            return;
         }
+
+        case OBJ_CLOSURE: {
+            call_closure(vm, AS_CLOSURE(callee), arg_count);
+            return;
+        }
+
+        case OBJ_NATIVE_FN: {
+            call_native_fn(vm, AS_NATIVE_FN(callee), arg_count);
+            return;
+        }
+
+        case OBJ_INSTANCE: {
+            ObjClass* class = AS_OBJ(callee)->class;
+
+            Value call_method;
+            if (!ObjMap_get(class->all_instance_methods, pyro_make_obj(vm->str_dollar_call), &call_method, vm)) {
+                pyro_panic(vm, "object is not callable");
+                return;
+            }
+
+            switch (AS_OBJ(call_method)->type) {
+                case OBJ_CLOSURE:
+                    call_closure(vm, AS_CLOSURE(call_method), arg_count);
+                    break;
+
+                case OBJ_NATIVE_FN:
+                    call_native_fn(vm, AS_NATIVE_FN(call_method), arg_count);
+                    break;
+
+                default:
+                    pyro_panic(vm, "invalid type for $call method");
+                    break;
+            }
+
+            return;
+        }
+
+        default:
+            break;
     }
 
     pyro_panic(vm, "value is not callable");
@@ -1283,8 +1313,11 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
+                subclass->init_method = superclass->init_method;
                 subclass->superclass = superclass;
-                pyro_pop(vm); // the subclass
+
+                // Pop the subclass, leave the superclass behind as the [super] variable.
+                pyro_pop(vm);
                 break;
             }
 
@@ -1849,9 +1882,13 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                if (ObjMap_set(class->all_instance_methods, pyro_make_obj(name), method, vm) == 0) {
+                if (!ObjMap_set(class->all_instance_methods, pyro_make_obj(name), method, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
+                }
+
+                if (name == vm->str_dollar_init) {
+                    class->init_method = method;
                 }
 
                 // Pop the method but leave the class behind on the stack.
@@ -1873,13 +1910,17 @@ static void run(PyroVM* vm) {
                         break;
                     }
                 }
+                if (name->length > 0 && name->bytes[0] == '$') {
+                    pyro_panic(vm, "$-prefixed method cannot be declared public");
+                    break;
+                }
 
-                if (ObjMap_set(class->all_instance_methods, pyro_make_obj(name), method, vm) == 0) {
+                if (!ObjMap_set(class->all_instance_methods, pyro_make_obj(name), method, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                if (ObjMap_set(class->pub_instance_methods, pyro_make_obj(name), method, vm) == 0) {
+                if (!ObjMap_set(class->pub_instance_methods, pyro_make_obj(name), method, vm)) {
                     ObjMap_remove(class->all_instance_methods, pyro_make_obj(name), vm);
                     pyro_panic(vm, "out of memory");
                     break;

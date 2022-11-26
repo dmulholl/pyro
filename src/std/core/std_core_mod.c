@@ -74,9 +74,11 @@ static Value mod_iter(PyroVM* vm, size_t arg_count, Value* args) {
 
 
 void pyro_load_std_core_mod(PyroVM* vm) {
-    // Module methods.
+    // Methods -- private.
     pyro_define_pri_method(vm, vm->class_module, "$contains", mod_contains, 1);
     pyro_define_pri_method(vm, vm->class_module, "$iter", mod_iter, 0);
+
+    // Methods -- public.
     pyro_define_pub_method(vm, vm->class_module, "get", mod_get, 1);
     pyro_define_pub_method(vm, vm->class_module, "contains", mod_contains, 1);
     pyro_define_pub_method(vm, vm->class_module, "globals", mod_globals, 0);

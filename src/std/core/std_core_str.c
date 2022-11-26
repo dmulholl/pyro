@@ -1404,9 +1404,11 @@ void pyro_load_std_core_str(PyroVM* vm) {
     pyro_define_global_fn(vm, "$str", fn_str, 1);
     pyro_define_global_fn(vm, "$is_str", fn_is_str, 1);
 
-    // Methods.
+    // Methods -- private.
     pyro_define_pri_method(vm, vm->class_str, "$contains", str_contains, 1);
     pyro_define_pri_method(vm, vm->class_str, "$iter", str_iter, 0);
+
+    // Methods -- public.
     pyro_define_pub_method(vm, vm->class_str, "is_utf8", str_is_utf8, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_empty_or_utf8", str_is_empty_or_utf8, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii", str_is_ascii, 0);

@@ -81,8 +81,10 @@ void pyro_load_std_core_queue(PyroVM* vm) {
     pyro_define_global_fn(vm, "$queue", fn_queue, 0);
     pyro_define_global_fn(vm, "$is_queue", fn_is_queue, 1);
 
-    // Methods.
+    // Methods -- private.
     pyro_define_pri_method(vm, vm->class_queue, "$iter", queue_iter, 0);
+
+    // Methods -- public.
     pyro_define_pub_method(vm, vm->class_queue, "count", queue_count, 0);
     pyro_define_pub_method(vm, vm->class_queue, "enqueue", queue_enqueue, 1);
     pyro_define_pub_method(vm, vm->class_queue, "dequeue", queue_dequeue, 0);

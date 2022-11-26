@@ -461,9 +461,11 @@ void pyro_load_std_core_iter(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_iter", fn_is_iter, 1);
     pyro_define_global_fn(vm, "$range", fn_range, -1);
 
-    // Methods.
+    // Methods -- private.
     pyro_define_pri_method(vm, vm->class_iter, "$iter", iter_iter, 0);
     pyro_define_pri_method(vm, vm->class_iter, "$next", iter_next, 0);
+
+    // Methods -- public.
     pyro_define_pub_method(vm, vm->class_iter, "map", iter_map, 1);
     pyro_define_pub_method(vm, vm->class_iter, "filter", iter_filter, 1);
     pyro_define_pub_method(vm, vm->class_iter, "to_vec", iter_to_vec, 0);

@@ -305,6 +305,9 @@ struct ObjClass {
     Value all_instance_methods_cached_value;
     ObjStr* pub_instance_methods_cached_name;
     Value pub_instance_methods_cached_value;
+
+    // If the class has an $init() method, we cache it here to avoid map lookups.
+    Value init_method;
 };
 
 ObjClass* ObjClass_new(PyroVM* vm);

@@ -438,39 +438,43 @@ bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, Val
 
 
 bool pyro_define_pri_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity) {
-    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
-    if (!func_object) {
+    ObjNativeFn* fn_obj = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!fn_obj) {
         return false;
     }
-    return pyro_define_pri_member(vm, module, name, pyro_make_obj(func_object));
+    return pyro_define_pri_member(vm, module, name, pyro_make_obj(fn_obj));
 }
 
 
 bool pyro_define_pub_member_fn(PyroVM* vm, ObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity) {
-    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
-    if (!func_object) {
+    ObjNativeFn* fn_obj = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!fn_obj) {
         return false;
     }
-    return pyro_define_pub_member(vm, module, name, pyro_make_obj(func_object));
+    return pyro_define_pub_member(vm, module, name, pyro_make_obj(fn_obj));
 }
 
 
 bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity) {
+    if (strlen(name) == 0 || name[0] == '$') {
+        return false;
+    }
+
     ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
 
-    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
-    if (!func_object) {
+    ObjNativeFn* fn_obj = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!fn_obj) {
         return false;
     }
 
-    if (ObjMap_set(class->all_instance_methods, pyro_make_obj(name_string), pyro_make_obj(func_object), vm) == 0) {
+    if (!ObjMap_set(class->all_instance_methods, pyro_make_obj(name_string), pyro_make_obj(fn_obj), vm)) {
         return false;
     }
 
-    if (ObjMap_set(class->pub_instance_methods, pyro_make_obj(name_string), pyro_make_obj(func_object), vm) == 0) {
+    if (!ObjMap_set(class->pub_instance_methods, pyro_make_obj(name_string), pyro_make_obj(fn_obj), vm)) {
         ObjMap_remove(class->all_instance_methods, pyro_make_obj(name_string), vm);
         return false;
     }
@@ -485,13 +489,17 @@ bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
         return false;
     }
 
-    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
-    if (!func_object) {
+    ObjNativeFn* fn_obj = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!fn_obj) {
         return false;
     }
 
-    if (ObjMap_set(class->all_instance_methods, pyro_make_obj(name_string), pyro_make_obj(func_object), vm) == 0) {
+    if (!ObjMap_set(class->all_instance_methods, pyro_make_obj(name_string), pyro_make_obj(fn_obj), vm)) {
         return false;
+    }
+
+    if (name_string == vm->str_dollar_init) {
+        class->init_method = pyro_make_obj(fn_obj);
     }
 
     return true;
@@ -561,11 +569,11 @@ bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
 
 
 bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr, int arity) {
-    ObjNativeFn* func_object = ObjNativeFn_new(vm, fn_ptr, name, arity);
-    if (!func_object) {
+    ObjNativeFn* fn_obj = ObjNativeFn_new(vm, fn_ptr, name, arity);
+    if (!fn_obj) {
         return false;
     }
-    return pyro_define_global(vm, name, pyro_make_obj(func_object));
+    return pyro_define_global(vm, name, pyro_make_obj(fn_obj));
 }
 
 

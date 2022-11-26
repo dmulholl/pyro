@@ -368,7 +368,10 @@ void pyro_load_std_core_file(PyroVM* vm) {
     pyro_define_global_fn(vm, "$file", fn_file, -1);
     pyro_define_global_fn(vm, "$is_file", fn_is_file, 1);
 
-    // Methods.
+    // Methods -- private.
+    pyro_define_pri_method(vm, vm->class_file, "$end_with", file_end_with, 0);
+
+    // Methods -- public.
     pyro_define_pub_method(vm, vm->class_file, "close", file_close, 0);
     pyro_define_pub_method(vm, vm->class_file, "flush", file_flush, 0);
     pyro_define_pub_method(vm, vm->class_file, "read", file_read, 0);
@@ -379,5 +382,4 @@ void pyro_load_std_core_file(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_file, "write", file_write, -1);
     pyro_define_pub_method(vm, vm->class_file, "write_byte", file_write_byte, 1);
     pyro_define_pub_method(vm, vm->class_file, "lines", file_lines, 0);
-    pyro_define_pri_method(vm, vm->class_file, "$end_with", file_end_with, 0);
 }
