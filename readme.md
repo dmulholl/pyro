@@ -16,7 +16,7 @@ To build the release binary run:
 
     make release
 
-To run the test suite run:
+To build the debug binary and run the test suite run:
 
     make check
 
