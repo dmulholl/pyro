@@ -108,9 +108,9 @@ Read the content of a file into a string:
 This is a convenience function --- a `file` object provides more fine-grained control:
 
 ::: code pyro
-    var file = $file("input.txt", "r");
-    var string = file:read_string();
-    file:close();
+    with file = $file("input.txt", "r") {
+        echo file:read_string();
+    }
 
 
 
@@ -124,9 +124,9 @@ Write a string to a file:
 This is a convenience function --- a `file` object provides more fine-grained control:
 
 ::: code pyro
-    var file = $file("output.txt", "w");
-    file:write("Content for file...");
-    file:close();
+    with file = $file("output.txt", "w") {
+        file:write("Content for file...");
+    }
 
 
 

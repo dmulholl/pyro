@@ -52,7 +52,7 @@ Variables have lexical scope and declarations inside blocks will shadow outer de
 
 Identifier names (this includes variables, functions, and classes) should begin with an ASCII letter or an underscore and contain only ASCII letters, numbers, and underscores.
 
-Names beginning with a `$` symbol are `$pecial` --- this namespace is reserved by the language for builtin variables and functions.
+Names beginning with a `$` symbol are special --- this namespace is reserved by the language for builtin variables and functions.
 
 
 

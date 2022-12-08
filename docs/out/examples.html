@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.50</p>
+                <p class="version">Version 0.8.51</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -31,15 +31,15 @@
 <li><a href="index.html">Home</a></li>
 <li><a href="quickstart.html">Quickstart</a></li>
 <li><a href="tour.html">Language Tour</a></li>
-<li><a href="features.html">Features</a></li>
+<li><a href="building.html">Building &amp; Installing</a></li>
+<li><a href="repl.html">The REPL</a></li>
+<li><a href="features.html">Language Features</a></li>
 <li><a href="builtins.html">Builtin Types</a></li>
 <li><a href="superglobals.html">Superglobals</a></li>
 <li><a href="stdlib.html">Standard Library</a></li>
-<li><a href="repl.html">The REPL</a></li>
 <li><a href="examples.html">Examples</a></li>
 <li><a href="roadmap.html">Roadmap</a></li>
 <li><a href="faq.html">FAQ</a></li>
-<li><a href="building.html">Building &amp; Installing</a></li>
 <li><a href="acknowledgements.html">Acknowledgements</a></li>
 <li><a href="license.html">License</a></li>
 <li><a href="https://github.com/dmulholl/pyro">Github</a></li>
@@ -195,9 +195,9 @@ Read the content of a file into a string:
 This is a convenience function &mdash; a <code>file</code> object provides more fine-grained control:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">string</span> <span class="p">=</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
-<span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
+<span class="p">}</span>
 </pre>
 <h3 id="writing-to-a-file">
 Writing to a file
@@ -212,9 +212,9 @@ Write a string to a file:
 This is a convenience function &mdash; a <code>file</code> object provides more fine-grained control:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">);</span>
-<span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;Content for file...&quot;</span><span class="p">);</span>
-<span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;Content for file...&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 </pre>
 <h3 id="guessing-game">
 Guessing game

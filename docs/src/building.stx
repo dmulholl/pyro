@@ -101,7 +101,7 @@ You can do this by running the shortcut command:
 
     $ make check
 
-You can also run Pyro's test suite using the `test` command directly, e.g.
+You can also run Pyro's test suite directly using the `test` command, e.g.
 
     $ pyro test ./tests/*.pyro
 
