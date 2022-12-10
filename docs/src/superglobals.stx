@@ -12,7 +12,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 ### Variables
 
 
-[[ `$args: tup` ]]
+[[ `$args: tup[str]` ]]
 
     A tuple of strings containing the program's command line arguments.
 
