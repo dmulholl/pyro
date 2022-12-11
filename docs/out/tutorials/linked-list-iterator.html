@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Tutorials &mdash; Linked List Iterator</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-tutorials-linked-list-iterator node-tutorials node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.8.51</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Linked List Iterator</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#the-list">The List</a>
+</li>
+<li>
+<a href="#the-iterator">The Iterator</a>
+</li>
+<li>
+<a href="#making-the-list-iterable">Making the List Iterable</a>
+</li>
+<li>
+<a href="#iterator-wrappers">Iterator Wrappers</a>
+</li>
+</ul>
+<hr>
+<p>
+Pyro's <code>for</code> loops use a simple iterator protocol for iterating over sequences of values.
+We we can illustrate this protocol by creating a custom iterator for a linked list.
+</p>
+<p>
+First, we need a linked list.
+</p>
+<h3 id="the-list">
+The List
+</h3>
+<p>
+Our linked list will contain a chain of nodes. Each node will contain a value and a reference to the next node in the chain.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Node</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">next</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">value</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+If <code>.next</code> field is <code>null</code>, the node is the final node in the chain.
+</p>
+<p>
+Next we'll add a wrapper class that will let us add new nodes to the chain.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">List</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">first_node</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">last_node</span><span class="p">;</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">append</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="p">=</span> <span class="nx">Node</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="kc">self</span><span class="p">.</span><span class="nx">last_node</span> <span class="o">==</span> <span class="kc">null</span> <span class="p">{</span>
+            <span class="kc">self</span><span class="p">.</span><span class="nx">first_node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="kc">self</span><span class="p">.</span><span class="nx">last_node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kc">self</span><span class="p">.</span><span class="nx">last_node</span><span class="p">.</span><span class="nx">next</span> <span class="p">=</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">last_node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+We can use our <code>List</code> type like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">list</span> <span class="p">=</span> <span class="nx">List</span><span class="p">();</span>
+<span class="nx">list</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="nx">list</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">);</span>
+<span class="nx">list</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;baz&quot;</span><span class="p">);</span>
+</pre>
+<p>
+Right now, we can add nodes to the list but we have no way to access the values inside it.
+Let's fix that by making the list iterable.
+</p>
+<h3 id="the-iterator">
+The Iterator
+</h3>
+<p>
+An <i>iterator</i> is just a type with a <code>:$next()</code> method.
+This method should return either:
+</p>
+<ul>
+<li>
+the next value from a sequence, or
+</li>
+<li>
+an <code>err</code> if the sequence has been exhausted
+</li>
+</ul>
+<p>
+Here's an iterator class for our linked list:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">ListIterator</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">next_node</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">first_node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span> <span class="p">=</span> <span class="nx">first_node</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">$next</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span> <span class="o">==</span> <span class="kc">null</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">$err</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<h3 id="making-the-list-iterable">
+Making the List Iterable
+</h3>
+<p>
+A type is <i>iterable</i> if it has an <code>:$iter()</code> method that returns an iterator.
+We can make our <code>List</code> type iterable by adding the following method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$iter</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">ListIterator</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">first_node</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>
+That's it, our <code>List</code> type is now iterable and we can use it in <code>for</code> loops, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">list</span> <span class="p">=</span> <span class="nx">List</span><span class="p">();</span>
+<span class="nx">list</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="nx">list</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">);</span>
+<span class="nx">list</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;baz&quot;</span><span class="p">);</span>
+
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">list</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+This will print the output:
+</p>
+<pre>
+foo
+bar
+baz
+</pre>
+<h3 id="iterator-wrappers">
+Iterator Wrappers
+</h3>
+<p>
+Now that our <code>List</code> type is iterable, we can use it with Pyro's <a href="../builtins/iterators.html">iterator wrappers</a>.
+</p>
+<p>
+An iterator wrapper, <code>iter</code>, is a builtin type that can wrap any iterator or iterable to automatically add support for a set of chainable, lazily-evaluated utility methods, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="nx">$iter</span><span class="p">(</span><span class="nx">list</span><span class="p">):</span><span class="nx">to_vec</span><span class="p">();</span>
+<span class="k">echo</span> <span class="nx">vec</span><span class="p">;</span>
+</pre>
+<p>
+This will create a vector from our linked list, printing the output:
+</p>
+<pre>
+["foo", "bar", "baz"]
+</pre>
+<p>
+Iterator wrappers give our custom type automatic access to a set of powerful utility methods like <code>:map()</code> and <code>:filter()</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="nx">$iter</span><span class="p">(</span><span class="nx">list</span><span class="p">)</span>
+    <span class="p">:</span><span class="nx">filter</span><span class="p">(</span><span class="kd">def</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">value</span><span class="p">:</span><span class="nx">starts_with</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">);</span>
+    <span class="p">})</span>
+    <span class="p">:</span><span class="nx">map</span><span class="p">(</span><span class="kd">def</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">value</span><span class="p">:</span><span class="nx">to_ascii_upper</span><span class="p">();</span>
+    <span class="p">})</span>
+    <span class="p">:</span><span class="nx">to_vec</span><span class="p">();</span>
+
+<span class="k">echo</span> <span class="nx">vec</span><span class="p">;</span>
+</pre>
+<p>
+This will create a vector containing filtered, uppercased values from the original list, printing the output:
+</p>
+<pre>
+["BAR", "BAZ"]
+</pre>
+        </article>
+        
+    </body>
+</html>

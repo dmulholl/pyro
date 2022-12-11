@@ -8,6 +8,7 @@
 * [Superglobals](@root/superglobals//)
 * [Standard Library](@root/stdlib//)
 * [Examples](@root/examples//)
+* [Tutorials](@root/tutorials//)
 * [Roadmap](@root/roadmap//)
 * [FAQ](@root/faq//)
 * [Acknowledgements](@root/acknowledgements//)
