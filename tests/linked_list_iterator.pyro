@@ -55,14 +55,19 @@ var v1 = $vec();
 for item in list {
     v1:append(item);
 }
-
 assert v1:count() == 3;
 assert v1[0] == "foo";
 assert v1[1] == "bar";
 assert v1[2] == "baz";
 
-var v2 = $iter(list):to_vec();
+var v2 = $vec(list);
 assert v2:count() == 3;
 assert v2[0] == "foo";
 assert v2[1] == "bar";
 assert v2[2] == "baz";
+
+var v3 = $iter(list):to_vec();
+assert v3:count() == 3;
+assert v3[0] == "foo";
+assert v3[1] == "bar";
+assert v3[2] == "baz";
