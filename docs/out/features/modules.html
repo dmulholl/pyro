@@ -64,6 +64,9 @@
 <a href="#parents-children-siblings">Parents, Children, Siblings</a>
 </li>
 <li>
+<a href="#module-caching">Module Caching</a>
+</li>
+<li>
 <a href="#circular-imports">Circular Imports</a>
 </li>
 <li>
@@ -77,6 +80,9 @@
 </li>
 <li>
 <a href="#executing-module-directories">Executing Module Directories</a>
+</li>
+<li>
+<a href="#importing-files-strings">Importing Files/Strings</a>
 </li>
 </ul>
 <hr>
@@ -194,6 +200,34 @@ A child module can import its sibling &ndash; e.g. in <code>root/math/calc.pyro<
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
 </pre>
+<h3 id="module-caching">
+Module Caching
+</h3>
+<p>
+A module file is only executed the first time it's imported.
+The imported module is cached and any subsequent imports simply load the module object from the cache.
+</p>
+<p>
+Importing a submodule automatically executes and adds its ancestor modules to the cache if they haven't already been imported.
+For example, given the statement:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">foo</span><span class="p">::</span><span class="nx">bar</span><span class="p">::</span><span class="nx">baz</span><span class="p">;</span>
+</pre>
+<ul>
+<li>
+The module <code>foo</code> will be executed and added to the cache if it hasn't already been imported.
+</li>
+<li>
+The module <code>foo::bar</code> will be executed and added to the cache if it hasn't already been imported.
+</li>
+<li>
+The module <code>foo::bar::baz</code> will be executed and added to the cache if it hasn't already been imported.
+</li>
+</ul>
+<p>
+Only the final module name in the chain is declared as a variable in the importing scope &mdash; here <code>baz</code>.
+</p>
 <h3 id="circular-imports">
 Circular Imports
 </h3>
@@ -201,7 +235,7 @@ Circular Imports
 In general, circular imports are fine &mdash; module <code>foo</code> can import module <code>bar</code> and module <code>bar</code> can import module <code>foo</code>.
 </p>
 <p>
-Do be aware that trying to <i>use</i> a member from an imported module that hasn't finished initializing can result in a panic.
+Note that trying to <i>use</i> a member from an imported module that hasn't finished initializing can result in a panic.
 </p>
 <p>
 Note that you can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
@@ -325,6 +359,26 @@ $ pyro path/to/module/directory
 <p>
 Pyro executes the <code>self.pyro</code> file, then the <code>$main()</code> function if it finds one.
 </p>
+<h3 id="importing-files-strings">
+Importing Files/Strings
+</h3>
+<p>
+You can import any file as a module using the <code>$exec()</code> function, which executes a string of Pyro source code as a new module, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">source_code</span> <span class="p">=</span> <span class="nx">$read_file</span><span class="p">(</span><span class="s">&quot;path/to/file.pyro&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">module</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="nx">source_code</span><span class="p">);</span>
+</pre>
+<p>
+Unlike the <code>import</code> statement, this doesn't add the new module to the cache.
+</p>
+<p>
+You can also use the <code>$exec()</code> function to create a new module directly from a string, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">module</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">`pub def func() { return &quot;foobar&quot;; }`</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">module</span><span class="p">::</span><span class="nx">func</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+</pre>
         </article>
         
     </body>

@@ -84,7 +84,7 @@ Our linked list will contain a chain of nodes. Each node will contain a value an
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Node</span> <span class="p">{</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">value</span><span class="p">;</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">next</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">next_node</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
         <span class="kc">self</span><span class="p">.</span><span class="nx">value</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
@@ -92,7 +92,7 @@ Our linked list will contain a chain of nodes. Each node will contain a value an
 <span class="p">}</span>
 </pre>
 <p>
-If <code>.next</code> field is <code>null</code>, the node is the final node in the chain.
+If the <code>.next_node</code> field is <code>null</code>, the node is the final node in the chain.
 </p>
 <p>
 Next we'll add a wrapper class that will let us add new nodes to the chain.
@@ -111,7 +111,7 @@ Next we'll add a wrapper class that will let us add new nodes to the chain.
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="kc">self</span><span class="p">.</span><span class="nx">last_node</span><span class="p">.</span><span class="nx">next</span> <span class="p">=</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">last_node</span><span class="p">.</span><span class="nx">next_node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">;</span>
         <span class="kc">self</span><span class="p">.</span><span class="nx">last_node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -160,7 +160,7 @@ Here's an iterator class for our linked list:
             <span class="k">return</span> <span class="nx">$err</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next_node</span><span class="p">.</span><span class="nx">next_node</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>

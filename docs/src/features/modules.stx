@@ -21,6 +21,7 @@ Use the member access operator `::` to access a module's top-level variables, fu
 The imported module's name becomes a variable in the importing scope.
 
 
+
 ### Public/Private Members
 
 A module's top-level members (variables, functions, and classes) are private by default
@@ -40,6 +41,7 @@ A module's top-level members (variables, functions, and classes) are private by 
 
 * Public members can be accessed from inside or outside the module.
 * Private members can only be accessed from inside the module.
+
 
 
 ### Submodules
@@ -106,11 +108,32 @@ A child module can import its sibling -- e.g. in `root/math/calc.pyro`:
 
 
 
+### Module Caching
+
+A module file is only executed the first time it's imported.
+The imported module is cached and any subsequent imports simply load the module object from the cache.
+
+Importing a submodule automatically executes and adds its ancestor modules to the cache if they haven't already been imported.
+For example, given the statement:
+
+::: code pyro
+    import foo::bar::baz;
+
+* The module `foo` will be executed and added to the cache if it hasn't already been imported.
+
+* The module `foo::bar` will be executed and added to the cache if it hasn't already been imported.
+
+* The module `foo::bar::baz` will be executed and added to the cache if it hasn't already been imported.
+
+Only the final module name in the chain is declared as a variable in the importing scope --- here `baz`.
+
+
+
 ### Circular Imports
 
 In general, circular imports are fine --- module `foo` can import module `bar` and module `bar` can import module `foo`.
 
-Do be aware that trying to *use* a member from an imported module that hasn't finished initializing can result in a panic.
+Note that trying to *use* a member from an imported module that hasn't finished initializing can result in a panic.
 
 Note that you can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
 
@@ -203,3 +226,21 @@ You can execute a module directory if it contains a `self.pyro` file:
     $ pyro path/to/module/directory
 
 Pyro executes the `self.pyro` file, then the `$main()` function if it finds one.
+
+
+
+### Importing Files/Strings
+
+You can import any file as a module using the `$exec()` function, which executes a string of Pyro source code as a new module, e.g.
+
+::: code pyro
+    var source_code = $read_file("path/to/file.pyro");
+    var module = $exec(source_code);
+
+Unlike the `import` statement, this doesn't add the new module to the cache.
+
+You can also use the `$exec()` function to create a new module directly from a string, e.g.
+
+::: code pyro
+    var module = $exec(`pub def func() { return "foobar"; }`);
+    assert module::func() == "foobar";
