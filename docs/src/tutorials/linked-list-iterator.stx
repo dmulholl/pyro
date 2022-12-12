@@ -7,7 +7,7 @@ meta_title: Pyro Tutorials &mdash; Linked List Iterator
 ::: hr
 
 
-Pyro's `for` loops use a simple iterator protocol for iterating over sequences of values.
+Pyro's `for` loop uses a simple iterator protocol for iterating over sequences of values.
 We we can illustrate this protocol by creating a custom iterator for a linked list.
 
 First, we need a linked list.
