@@ -94,14 +94,15 @@ Assume we have a file called <code>math.pyro</code> containing math functions:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">;</span>
-
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <p>
-Use the member access operator <code>::</code> to access a module's top-level variables, functions, and classes.
+The imported module's name becomes a variable in the importing scope:
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+</pre>
 <p>
-The imported module's name becomes a variable in the importing scope.
+Use the member access operator <code>::</code> to access a module's top-level members &mdash; i.e. variables, functions, and classes.
 </p>
 <h3 id="public-private-members">
 Public/Private Members
@@ -138,7 +139,7 @@ Modules can contain submodules. Assume we have a directory called <code>math</co
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <p>
 The top-level module <code>math</code> can live alongside the directory that contains its submodules:

@@ -14,11 +14,12 @@ Assume we have a file called `math.pyro` containing math functions:
 ::: code pyro
     import math;
 
-    var foo = math::abs(-1);
+The imported module's name becomes a variable in the importing scope:
 
-Use the member access operator `::` to access a module's top-level variables, functions, and classes.
+::: code pyro
+    assert math::abs(-1) == 1;
 
-The imported module's name becomes a variable in the importing scope.
+Use the member access operator `::` to access a module's top-level members --- i.e. variables, functions, and classes.
 
 
 
@@ -51,7 +52,7 @@ Modules can contain submodules. Assume we have a directory called `math` contain
 ::: code pyro
     import math::trig;
 
-    var foo = trig::cos(1);
+    var value = trig::cos(1);
 
 The top-level module `math` can live alongside the directory that contains its submodules:
 
