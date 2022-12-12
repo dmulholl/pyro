@@ -21,14 +21,14 @@ Our linked list will contain a chain of nodes. Each node will contain a value an
 ::: code pyro
     class Node {
         pub var value;
-        pub var next;
+        pub var next_node;
 
         def $init(value) {
             self.value = value;
         }
     }
 
-If `.next` field is `null`, the node is the final node in the chain.
+If the `.next_node` field is `null`, the node is the final node in the chain.
 
 Next we'll add a wrapper class that will let us add new nodes to the chain.
 
@@ -46,7 +46,7 @@ Next we'll add a wrapper class that will let us add new nodes to the chain.
                 return;
             }
 
-            self.last_node.next = node;
+            self.last_node.next_node = node;
             self.last_node = node;
         }
     }
@@ -87,7 +87,7 @@ Here's an iterator class for our linked list:
                 return $err();
             }
             var value = self.next_node.value;
-            self.next_node = self.next_node.next;
+            self.next_node = self.next_node.next_node;
             return value;
         }
     }
