@@ -1610,7 +1610,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // 'kinda-falsey' values are: false, null, err, 0, 0.0, "".
+            // The set of 'kinda-falsey' values is: false, null, err, 0, 0.0, "".
             case OP_JUMP_IF_NOT_KINDA_FALSEY: {
                 uint16_t offset = READ_BE_U16();
                 Value value = pyro_peek(vm, 0);

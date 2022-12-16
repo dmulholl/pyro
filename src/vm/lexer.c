@@ -23,7 +23,7 @@ static bool is_digit_or_underscore(char c) {
 }
 
 
-static bool is_digit_or_plus_minus(char c) {
+static bool is_digit_or_plus_or_minus(char c) {
     if (c >= '0' && c <= '9') return true;
     if (c == '+' || c == '-') return true;
     return false;
@@ -263,7 +263,7 @@ static Token read_number(Lexer* lexer) {
         }
     }
 
-    if (peek(lexer) == 'e' && is_digit_or_plus_minus(peek_next(lexer))) {
+    if (peek(lexer) == 'e' && is_digit_or_plus_or_minus(peek_next(lexer))) {
         next_char(lexer);
         next_char(lexer);
         while (is_digit_or_underscore(peek(lexer))) {

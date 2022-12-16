@@ -328,7 +328,7 @@ static bool consume(Parser* parser, TokenType type, const char* error_message) {
 }
 
 
-// Returns true if the next token has type [type].
+// Returns true if the next token has type [type]. Does not advance the parser.
 static bool check(Parser* parser, TokenType type) {
     return parser->next_token.type == type;
 }
@@ -364,6 +364,7 @@ static bool match3(Parser* parser, TokenType type1, TokenType type2, TokenType t
 }
 
 
+// Returns true and advances the parser if the next token is one of: =, +=, -=.
 static bool match_assignment_token(Parser* parser) {
     if (match3(parser, TOKEN_EQUAL, TOKEN_PLUS_EQUAL, TOKEN_MINUS_EQUAL)) {
         return true;
