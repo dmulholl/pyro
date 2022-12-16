@@ -54,7 +54,7 @@
                 <hr>
             </header>
             <p>
-Pyro's <code>for</code> loop uses a simple iterator protocol:
+Pyro's <code>for</code> loop uses a simple iterator protocol for iterating over sequences of values:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">]</span> <span class="p">{</span>
@@ -63,7 +63,10 @@ Pyro's <code>for</code> loop uses a simple iterator protocol:
 </pre>
 <p>
 An object is <i>iterable</i> if it has an <code>:$iter()</code> method.
-This method should return an <i>iterator</i> &mdash; an object with a <code>:$next()</code> method which returns either the next item from the sequence or an <code>err</code> if the sequence has been exhausted.
+This method should return an <i>iterator</i> &mdash; an object with a <code>:$next()</code> method which returns either the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
+</p>
+<p>
+You can find a tutorial on implementing the iterator protocol for custom types <a href="../tutorials/linked-list-iterator.html">here</a>.
 </p>
 <h3 id="example">
 Example
