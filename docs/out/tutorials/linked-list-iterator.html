@@ -55,7 +55,7 @@
             </header>
             <ul class="stx-toc">
 <li>
-<a href="#the-list">The List</a>
+<a href="#the-linked-list">The Linked List</a>
 </li>
 <li>
 <a href="#the-iterator">The Iterator</a>
@@ -75,8 +75,8 @@ We we can illustrate this protocol by creating a custom iterator for a linked li
 <p>
 First, we need a linked list.
 </p>
-<h3 id="the-list">
-The List
+<h3 id="the-linked-list">
+The Linked List
 </h3>
 <p>
 Our linked list will contain a chain of nodes. Each node will contain a value and a reference to the next node in the chain.
@@ -133,7 +133,7 @@ Let's fix that by making the list iterable.
 The Iterator
 </h3>
 <p>
-An <i>iterator</i> is just a type with a <code>:$next()</code> method.
+An <i>iterator</i> is just an object with a <code>:$next()</code> method.
 This method should return either:
 </p>
 <ul>
