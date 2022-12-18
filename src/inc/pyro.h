@@ -57,6 +57,8 @@
 #endif
 
 // Defining this macro causes header files to expose definitions conforming to POSIX 2008.
+// This macro must be defined *before* the standard library headers are imorted.
+// Ref: https://man7.org/linux/man-pages/man7/feature_test_macros.7.html
 #ifndef _XOPEN_SOURCE
     #define _XOPEN_SOURCE 700
 #endif
