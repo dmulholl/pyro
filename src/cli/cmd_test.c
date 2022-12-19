@@ -109,7 +109,8 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
             exit(1);
         }
 
-        printf("[  TEST  ]  %s", path);
+        printf("[  ····  ]  %s", path);
+        fflush(stdout);
 
         size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
         PyroVM* vm = pyro_new_vm(stack_size);
