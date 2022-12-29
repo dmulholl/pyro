@@ -644,13 +644,13 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                size_t member_index = module->members->count;
+                size_t new_member_index = module->members->count;
                 if (!ObjVec_append(module->members, pyro_peek(vm, 0), vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(member_index), vm) == 0) {
+                if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(new_member_index), vm) == 0) {
                     module->members->count--;
                     pyro_panic(vm, "out of memory");
                     break;
@@ -674,19 +674,19 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                size_t member_index = module->members->count;
+                size_t new_member_index = module->members->count;
                 if (!ObjVec_append(module->members, pyro_peek(vm, 0), vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(member_index), vm) == 0) {
+                if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(new_member_index), vm) == 0) {
                     module->members->count--;
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                if (ObjMap_set(module->pub_member_indexes, name, pyro_make_i64(member_index), vm) == 0) {
+                if (ObjMap_set(module->pub_member_indexes, name, pyro_make_i64(new_member_index), vm) == 0) {
                     ObjMap_remove(module->all_member_indexes, name, vm);
                     module->members->count--;
                     pyro_panic(vm, "out of memory");
@@ -712,13 +712,13 @@ static void run(PyroVM* vm) {
                         break;
                     }
 
-                    size_t member_index = module->members->count;
+                    size_t new_member_index = module->members->count;
                     if (!ObjVec_append(module->members, pyro_peek(vm, count - 1 - i), vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
 
-                    if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(member_index), vm) == 0) {
+                    if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(new_member_index), vm) == 0) {
                         module->members->count--;
                         pyro_panic(vm, "out of memory");
                         break;
@@ -745,19 +745,19 @@ static void run(PyroVM* vm) {
                         break;
                     }
 
-                    size_t member_index = module->members->count;
+                    size_t new_member_index = module->members->count;
                     if (!ObjVec_append(module->members, pyro_peek(vm, count - 1 - i), vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
 
-                    if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(member_index), vm) == 0) {
+                    if (ObjMap_set(module->all_member_indexes, name, pyro_make_i64(new_member_index), vm) == 0) {
                         module->members->count--;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
 
-                    if (ObjMap_set(module->pub_member_indexes, name, pyro_make_i64(member_index), vm) == 0) {
+                    if (ObjMap_set(module->pub_member_indexes, name, pyro_make_i64(new_member_index), vm) == 0) {
                         ObjMap_remove(module->all_member_indexes, name, vm);
                         module->members->count--;
                         pyro_panic(vm, "out of memory");
