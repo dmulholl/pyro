@@ -30,7 +30,7 @@ Our linked list will contain a chain of nodes. Each node will contain a value an
 
 If the `.next_node` field is `null`, the node is the final node in the chain.
 
-Next we'll add a wrapper class that will let us add new nodes to the chain.
+Next we'll create a wrapper `List` class that will let us add new nodes to the chain.
 
 ::: code pyro
     class List {
@@ -129,7 +129,7 @@ This will print the output:
 
 Now that our `List` type is iterable, we can use it with Pyro's [iterator wrappers](@root/builtins/iterators//).
 
-An iterator wrapper, `iter`, is a builtin type that can wrap any iterator or iterable to automatically add support for a set of chainable, lazily-evaluated utility methods, e.g.
+An iterator wrapper, `iter`, is a builtin type that can wrap any *iterator* or *iterable* to automatically add support for a set of chainable, lazily-evaluated utility methods, e.g.
 
 ::: code pyro
     var vec = $iter(list):to_vec();

@@ -95,7 +95,7 @@ Our linked list will contain a chain of nodes. Each node will contain a value an
 If the <code>.next_node</code> field is <code>null</code>, the node is the final node in the chain.
 </p>
 <p>
-Next we'll add a wrapper class that will let us add new nodes to the chain.
+Next we'll create a wrapper <code>List</code> class that will let us add new nodes to the chain.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">List</span> <span class="p">{</span>
@@ -205,7 +205,7 @@ Iterator Wrappers
 Now that our <code>List</code> type is iterable, we can use it with Pyro's <a href="../builtins/iterators.html">iterator wrappers</a>.
 </p>
 <p>
-An iterator wrapper, <code>iter</code>, is a builtin type that can wrap any iterator or iterable to automatically add support for a set of chainable, lazily-evaluated utility methods, e.g.
+An iterator wrapper, <code>iter</code>, is a builtin type that can wrap any <i>iterator</i> or <i>iterable</i> to automatically add support for a set of chainable, lazily-evaluated utility methods, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="nx">$iter</span><span class="p">(</span><span class="nx">list</span><span class="p">):</span><span class="nx">to_vec</span><span class="p">();</span>
