@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.51</p>
+                <p class="version">Version 0.8.53</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -371,7 +371,10 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </dt>
 <dd>
 <p>
-Sets the logger's logging level.
+Sets the logging level.
+Messages will only be logged if their level is greater than or equal to this logging level.
+</p>
+<p>
 The default logging level is <code>INFO</code>.
 </p>
 </dd>
@@ -382,8 +385,8 @@ The default logging level is <code>INFO</code>.
 </dt>
 <dd>
 <p>
-Sets the logger's timestamp format string.
-The default format string is <code>&quot;[%Y-%m-%d %H:%M:%S]&quot;</code>.
+Sets the timestamp format for the logger.
+The default format string is <code>&quot;%Y-%m-%d %H:%M:%S&quot;</code>.
 </p>
 <p>
 The format string can include any format specifiers supported by the C standard library's <code>strftime()</code> function.

@@ -158,14 +158,16 @@ Use a `Logger` instance to customize the output format and destination.
 
 [[ `:level(log_level: i64)` ]]
 
-    Sets the logger's logging level.
+    Sets the logging level.
+    Messages will only be logged if their level is greater than or equal to this logging level.
+
     The default logging level is `INFO`.
 
 
 [[ `:timestamp(format_string: str)` ]]
 
-    Sets the logger's timestamp format string.
-    The default format string is `"\[%Y-%m-%d %H:%M:%S]"`.
+    Sets the timestamp format for the logger.
+    The default format string is `"%Y-%m-%d %H:%M:%S"`.
 
     The format string can include any format specifiers supported by the C standard library's `strftime()` function.
 
