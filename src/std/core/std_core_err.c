@@ -14,35 +14,35 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
     ObjErr* err = ObjErr_new(vm);
     if (err == NULL) {
         pyro_panic(vm, "$err(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 0) {
-        return pyro_make_obj(err);
+        return pyro_obj(err);
     } else if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         err->message = string;
-        return pyro_make_obj(err);
+        return pyro_obj(err);
     } else {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$err(): invalid argument [format_string], expected a string");
-            return pyro_make_null();
+            return pyro_null();
         }
         Value formatted = pyro_fn_fmt(vm, arg_count, args);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         err->message = AS_STR(formatted);
-        return pyro_make_obj(err);
+        return pyro_obj(err);
     }
 }
 
 
 static Value fn_is_err(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_ERR(args[0]));
+    return pyro_bool(IS_ERR(args[0]));
 }
 
 
@@ -51,7 +51,7 @@ static Value err_set(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_set(err->details, args[0], args[1], vm) == 0) {
         pyro_panic(vm, "err:set(): out of memory");
     }
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -61,19 +61,19 @@ static Value err_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_get(err->details, args[0], &value, vm)) {
         return value;
     }
-    return pyro_make_obj(vm->error);
+    return pyro_obj(vm->error);
 }
 
 
 static Value err_message(PyroVM* vm, size_t arg_count, Value* args) {
     ObjErr* err = AS_ERR(args[-1]);
-    return pyro_make_obj(err->message);
+    return pyro_obj(err->message);
 }
 
 
 static Value err_details(PyroVM* vm, size_t arg_count, Value* args) {
     ObjErr* err = AS_ERR(args[-1]);
-    return pyro_make_obj(err->details);
+    return pyro_obj(err->details);
 }
 
 

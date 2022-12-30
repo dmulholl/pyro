@@ -14,25 +14,25 @@ static Value fn_char(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_I64(args[0])) {
         int64_t arg = args[0].as.i64;
         if (arg >= 0 && arg <= UINT32_MAX) {
-            return pyro_make_char((uint32_t)arg);
+            return pyro_char((uint32_t)arg);
         } else {
             pyro_panic(vm, "$char(): invalid argument, integer is out of range");
-            return pyro_make_null();
+            return pyro_null();
         }
     }
 
     pyro_panic(vm, "$char(): invalid argument");
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 static Value fn_is_char(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_CHAR(args[0]));
+    return pyro_bool(IS_CHAR(args[0]));
 }
 
 
 static Value char_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
-    return args[-1].as.u32 > 127 ? pyro_make_bool(false) : pyro_make_bool(true);
+    return args[-1].as.u32 > 127 ? pyro_bool(false) : pyro_bool(true);
 }
 
 
@@ -44,30 +44,30 @@ static Value char_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
         case '\n':
         case '\v':
         case '\f':
-            return pyro_make_bool(true);
+            return pyro_bool(true);
         default:
-            return pyro_make_bool(false);
+            return pyro_bool(false);
     }
 }
 
 
 static Value char_is_unicode_ws(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(pyro_is_unicode_whitespace(args[-1].as.u32));
+    return pyro_bool(pyro_is_unicode_whitespace(args[-1].as.u32));
 }
 
 
 static Value char_is_ascii_decimal(PyroVM* vm, size_t arg_count, Value* args) {
-    return (args[-1].as.u32 < '0' || args[-1].as.u32 > '9') ? pyro_make_bool(false) : pyro_make_bool(true);
+    return (args[-1].as.u32 < '0' || args[-1].as.u32 > '9') ? pyro_bool(false) : pyro_bool(true);
 }
 
 
 static Value char_is_ascii_octal(PyroVM* vm, size_t arg_count, Value* args) {
-    return (args[-1].as.u32 < '0' || args[-1].as.u32 > '7') ? pyro_make_bool(false) : pyro_make_bool(true);
+    return (args[-1].as.u32 < '0' || args[-1].as.u32 > '7') ? pyro_bool(false) : pyro_bool(true);
 }
 
 
 static Value char_is_ascii_hex(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(isxdigit(args[-1].as.u32));
+    return pyro_bool(isxdigit(args[-1].as.u32));
 }
 
 

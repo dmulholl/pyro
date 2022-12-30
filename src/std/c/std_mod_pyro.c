@@ -8,13 +8,13 @@
 
 
 static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_i64((int64_t)vm->bytes_allocated);
+    return pyro_i64((int64_t)vm->bytes_allocated);
 }
 
 
 static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_collect_garbage(vm);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -24,16 +24,16 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
             case OBJ_VEC:
             case OBJ_VEC_AS_STACK: {
                 ObjVec* vec = AS_VEC(args[0]);
-                return pyro_make_i64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
+                return pyro_i64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
             }
             case OBJ_TUP: {
                 ObjTup* tup = AS_TUP(args[0]);
-                return pyro_make_i64(sizeof(ObjTup) + sizeof(Value) * tup->count);
+                return pyro_i64(sizeof(ObjTup) + sizeof(Value) * tup->count);
             }
             case OBJ_MAP:
             case OBJ_MAP_AS_SET: {
                 ObjMap* map = AS_MAP(args[0]);
-                return pyro_make_i64(
+                return pyro_i64(
                     sizeof(ObjMap) +
                     sizeof(MapEntry) * map->entry_array_capacity +
                     sizeof(int64_t) * map->index_array_capacity
@@ -41,34 +41,34 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
             }
             case OBJ_QUEUE: {
                 ObjQueue* queue = AS_QUEUE(args[0]);
-                return pyro_make_i64(sizeof(ObjQueue) + sizeof(QueueItem) * queue->count);
+                return pyro_i64(sizeof(ObjQueue) + sizeof(QueueItem) * queue->count);
             }
             case OBJ_BUF: {
                 ObjBuf* buf = AS_BUF(args[0]);
-                return pyro_make_i64(sizeof(ObjBuf) + sizeof(uint8_t) * buf->capacity);
+                return pyro_i64(sizeof(ObjBuf) + sizeof(uint8_t) * buf->capacity);
             }
             default: {
-                return pyro_make_i64(-1);
+                return pyro_i64(-1);
             }
         }
     } else {
-        return pyro_make_i64(sizeof(Value));
+        return pyro_i64(sizeof(Value));
     }
 }
 
 
 static Value fn_address(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_OBJ(args[0])) {
-        return pyro_make_obj(vm->error);
+        return pyro_obj(vm->error);
     }
 
     Obj* object = AS_OBJ(args[0]);
     ObjStr* string = pyro_sprintf_to_obj(vm, "0x%" PRIXPTR, (uintptr_t)object);
     if (!string) {
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_obj(string);
+    return pyro_obj(string);
 }
 
 
@@ -77,12 +77,12 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
     if (!version_tuple) {
         return;
     }
-    version_tuple->values[0] = pyro_make_i64(PYRO_VERSION_MAJOR);
-    version_tuple->values[1] = pyro_make_i64(PYRO_VERSION_MINOR);
-    version_tuple->values[2] = pyro_make_i64(PYRO_VERSION_PATCH);
-    version_tuple->values[3] = pyro_make_obj(ObjStr_new(PYRO_VERSION_LABEL, vm));
-    version_tuple->values[4] = pyro_make_obj(ObjStr_new(PYRO_VERSION_BUILD, vm));
-    pyro_define_pub_member(vm, module, "version_tuple", pyro_make_obj(version_tuple));
+    version_tuple->values[0] = pyro_i64(PYRO_VERSION_MAJOR);
+    version_tuple->values[1] = pyro_i64(PYRO_VERSION_MINOR);
+    version_tuple->values[2] = pyro_i64(PYRO_VERSION_PATCH);
+    version_tuple->values[3] = pyro_obj(ObjStr_new(PYRO_VERSION_LABEL, vm));
+    version_tuple->values[4] = pyro_obj(ObjStr_new(PYRO_VERSION_BUILD, vm));
+    pyro_define_pub_member(vm, module, "version_tuple", pyro_obj(version_tuple));
 
     char* version_c_string = pyro_get_version_string();
     if (version_c_string) {
@@ -90,7 +90,7 @@ void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
         if (!version_pyro_string) {
             return;
         }
-        pyro_define_pub_member(vm, module, "version_string", pyro_make_obj(version_pyro_string));
+        pyro_define_pub_member(vm, module, "version_string", pyro_obj(version_pyro_string));
     }
 
     pyro_define_pub_member_fn(vm, module, "memory", fn_memory, 0);

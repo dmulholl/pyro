@@ -13,26 +13,26 @@ static Value fn_map(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = ObjMap_new(vm);
     if (!map) {
         pyro_panic(vm, "$map(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_obj(map);
+    return pyro_obj(map);
 }
 
 
 static Value fn_is_map(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_MAP(args[0]));
+    return pyro_bool(IS_MAP(args[0]));
 }
 
 
 static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return pyro_make_i64(map->live_entry_count);
+    return pyro_i64(map->live_entry_count);
 }
 
 
 static Value map_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return pyro_make_bool(map->live_entry_count == 0);
+    return pyro_bool(map->live_entry_count == 0);
 }
 
 
@@ -41,7 +41,7 @@ static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_set(map, args[0], args[1], vm) == 0) {
         pyro_panic(vm, "set(): out of memory");
     }
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -51,19 +51,19 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
     if (ObjMap_get(map, args[0], &value, vm)) {
         return value;
     }
-    return pyro_make_obj(vm->error);
+    return pyro_obj(vm->error);
 }
 
 
 static Value map_remove(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return pyro_make_bool(ObjMap_remove(map, args[0], vm));
+    return pyro_bool(ObjMap_remove(map, args[0], vm));
 }
 
 
 static Value map_contains(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    return pyro_make_bool(ObjMap_contains(map, args[0], vm));
+    return pyro_bool(ObjMap_contains(map, args[0], vm));
 }
 
 
@@ -72,9 +72,9 @@ static Value map_copy(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* copy = ObjMap_copy(map, vm);
     if (!copy) {
         pyro_panic(vm, "copy(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_obj(copy);
+    return pyro_obj(copy);
 }
 
 
@@ -83,9 +83,9 @@ static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "keys(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
@@ -94,9 +94,9 @@ static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_VALUES, vm);
     if (!iter) {
         pyro_panic(vm, "values(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
@@ -105,16 +105,16 @@ static Value map_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_ENTRIES, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
 static Value map_clear(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjMap_clear(map, vm);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -123,28 +123,28 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
         ObjMap* map = ObjMap_new_as_set(vm);
         if (!map) {
             pyro_panic(vm, "$set(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_obj(map);
+        return pyro_obj(map);
     }
 
     if (arg_count > 1) {
         pyro_panic(vm, "$set(): expected 0 or 1 arguments, found %zu", arg_count);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     // Does the object have an :$iter() method?
     Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
     if (IS_NULL(iter_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], argument is not iterable");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     // Call the object's :$iter() method to get an iterator.
     pyro_push(vm, args[0]); // receiver for the $iter() method call
     Value iterator = pyro_call_method(vm, iter_method, 0);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
     pyro_push(vm, iterator); // protect from GC
 
@@ -152,30 +152,30 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     Value next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
     if (IS_NULL(next_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], :$iter() returns an object with no :$next() method");
-        return pyro_make_null();
+        return pyro_null();
     }
     pyro_push(vm, next_method); // protect from GC
 
     ObjMap* map = ObjMap_new_as_set(vm);
     if (!map) {
         pyro_panic(vm, "$set(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    pyro_push(vm, pyro_make_obj(map)); // protect from GC
+    pyro_push(vm, pyro_obj(map)); // protect from GC
 
     while (true) {
         pyro_push(vm, iterator); // receiver for the :$next() method call
         Value next_value = pyro_call_method(vm, next_method, 0);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         if (IS_ERR(next_value)) {
             break;
         }
         pyro_push(vm, next_value); // protect from GC
-        if (ObjMap_set(map, next_value, pyro_make_null(), vm) == 0) {
+        if (ObjMap_set(map, next_value, pyro_null(), vm) == 0) {
             pyro_panic(vm, "$set(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
         pyro_pop(vm); // next_value
     }
@@ -183,21 +183,21 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     pyro_pop(vm); // map
     pyro_pop(vm); // next_method
     pyro_pop(vm); // iterator
-    return pyro_make_obj(map);
+    return pyro_obj(map);
 }
 
 
 static Value fn_is_set(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_SET(args[0]));
+    return pyro_bool(IS_SET(args[0]));
 }
 
 
 static Value set_add(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    if (ObjMap_set(map, args[0], pyro_make_null(), vm) == 0) {
+    if (ObjMap_set(map, args[0], pyro_null(), vm) == 0) {
         pyro_panic(vm, "add(): out of memory");
     }
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -206,14 +206,14 @@ static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "union(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     ObjMap* new_map = ObjMap_new_as_set(vm);
     if (!new_map) {
         pyro_panic(vm, "union(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -223,9 +223,9 @@ static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
             continue;
         }
 
-        if (ObjMap_set(new_map, entry->key, pyro_make_null(), vm) == 0) {
+        if (ObjMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
             pyro_panic(vm, "union(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
     }
 
@@ -236,13 +236,13 @@ static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
             continue;
         }
 
-        if (ObjMap_set(new_map, entry->key, pyro_make_null(), vm) == 0) {
+        if (ObjMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
             pyro_panic(vm, "union(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
     }
 
-    return pyro_make_obj(new_map);
+    return pyro_obj(new_map);
 }
 
 
@@ -251,14 +251,14 @@ static Value set_intersection(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "intersection(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     ObjMap* new_map = ObjMap_new_as_set(vm);
     if (!new_map) {
         pyro_panic(vm, "intersection(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -269,14 +269,14 @@ static Value set_intersection(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (ObjMap_contains(map2, entry->key, vm)) {
-            if (ObjMap_set(new_map, entry->key, pyro_make_null(), vm) == 0) {
+            if (ObjMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
                 pyro_panic(vm, "intersection(): out of memory");
-                return pyro_make_null();
+                return pyro_null();
             }
         }
     }
 
-    return pyro_make_obj(new_map);
+    return pyro_obj(new_map);
 }
 
 
@@ -285,14 +285,14 @@ static Value set_difference(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "difference(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     ObjMap* new_map = ObjMap_new_as_set(vm);
     if (!new_map) {
         pyro_panic(vm, "difference(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -303,14 +303,14 @@ static Value set_difference(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
-            if (ObjMap_set(new_map, entry->key, pyro_make_null(), vm) == 0) {
+            if (ObjMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
                 pyro_panic(vm, "difference(): out of memory");
-                return pyro_make_null();
+                return pyro_null();
             }
         }
     }
 
-    return pyro_make_obj(new_map);
+    return pyro_obj(new_map);
 }
 
 
@@ -319,14 +319,14 @@ static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args)
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "symmetric_difference(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     ObjMap* new_map = ObjMap_new_as_set(vm);
     if (!new_map) {
         pyro_panic(vm, "symmetric_difference(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -337,9 +337,9 @@ static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args)
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
-            if (ObjMap_set(new_map, entry->key, pyro_make_null(), vm) == 0) {
+            if (ObjMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
-                return pyro_make_null();
+                return pyro_null();
             }
         }
     }
@@ -352,14 +352,14 @@ static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args)
         }
 
         if (!ObjMap_contains(map1, entry->key, vm)) {
-            if (ObjMap_set(new_map, entry->key, pyro_make_null(), vm) == 0) {
+            if (ObjMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
-                return pyro_make_null();
+                return pyro_null();
             }
         }
     }
 
-    return pyro_make_obj(new_map);
+    return pyro_obj(new_map);
 }
 
 
@@ -368,12 +368,12 @@ static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "is_subset_of(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count <= map2->live_entry_count)) {
-        return pyro_make_bool(false);
+        return pyro_bool(false);
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -384,11 +384,11 @@ static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
-            return pyro_make_bool(false);
+            return pyro_bool(false);
         }
     }
 
-    return pyro_make_bool(true);
+    return pyro_bool(true);
 }
 
 
@@ -397,12 +397,12 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "is_proper_subset_of(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count < map2->live_entry_count)) {
-        return pyro_make_bool(false);
+        return pyro_bool(false);
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -413,11 +413,11 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
-            return pyro_make_bool(false);
+            return pyro_bool(false);
         }
     }
 
-    return pyro_make_bool(true);
+    return pyro_bool(true);
 }
 
 
@@ -426,12 +426,12 @@ static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "is_superset_of(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count >= map2->live_entry_count)) {
-        return pyro_make_bool(false);
+        return pyro_bool(false);
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
@@ -442,11 +442,11 @@ static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (!ObjMap_contains(map1, entry->key, vm)) {
-            return pyro_make_bool(false);
+            return pyro_bool(false);
         }
     }
 
-    return pyro_make_bool(true);
+    return pyro_bool(true);
 }
 
 
@@ -455,12 +455,12 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "is_proper_superset_of(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (!(map1->live_entry_count > map2->live_entry_count)) {
-        return pyro_make_bool(false);
+        return pyro_bool(false);
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
@@ -471,11 +471,11 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
         }
 
         if (!ObjMap_contains(map1, entry->key, vm)) {
-            return pyro_make_bool(false);
+            return pyro_bool(false);
         }
     }
 
-    return pyro_make_bool(true);
+    return pyro_bool(true);
 }
 
 
@@ -484,12 +484,12 @@ static Value set_is_equal_to(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_SET(args[0])) {
         pyro_panic(vm, "is_equal_to(): invalid argument, expected a set");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjMap* map2 = AS_MAP(args[0]);
 
     if (map1->live_entry_count != map2->live_entry_count) {
-        return pyro_make_bool(false);
+        return pyro_bool(false);
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -500,11 +500,11 @@ static Value set_is_equal_to(PyroVM* vm, size_t arg_count, Value* args) {
         }
 
         if (!ObjMap_contains(map2, entry->key, vm)) {
-            return pyro_make_bool(false);
+            return pyro_bool(false);
         }
     }
 
-    return pyro_make_bool(true);
+    return pyro_bool(true);
 }
 
 

@@ -37,10 +37,10 @@ ObjClass* pyro_get_class(PyroVM* vm, Value value) {
 Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
     if (IS_CLASS(receiver)) {
         Value method;
-        if (ObjMap_get(AS_CLASS(receiver)->static_methods, pyro_make_obj(method_name), &method, vm)) {
+        if (ObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjClass* class = pyro_get_class(vm, receiver);
@@ -49,24 +49,24 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
             return class->all_instance_methods_cached_value;
         }
         Value method;
-        if (ObjMap_get(class->all_instance_methods, pyro_make_obj(method_name), &method, vm)) {
+        if (ObjMap_get(class->all_instance_methods, pyro_obj(method_name), &method, vm)) {
             class->all_instance_methods_cached_name = method_name;
             class->all_instance_methods_cached_value = method;
             return method;
         }
     }
 
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
     if (IS_CLASS(receiver)) {
         Value method;
-        if (ObjMap_get(AS_CLASS(receiver)->static_methods, pyro_make_obj(method_name), &method, vm)) {
+        if (ObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjClass* class = pyro_get_class(vm, receiver);
@@ -75,14 +75,14 @@ Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
             return class->pub_instance_methods_cached_value;
         }
         Value method;
-        if (ObjMap_get(class->pub_instance_methods, pyro_make_obj(method_name), &method, vm)) {
+        if (ObjMap_get(class->pub_instance_methods, pyro_obj(method_name), &method, vm)) {
             class->pub_instance_methods_cached_name = method_name;
             class->pub_instance_methods_cached_value = method;
             return method;
         }
     }
 
-    return pyro_make_null();
+    return pyro_null();
 }
 
 

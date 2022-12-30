@@ -306,7 +306,7 @@ ObjModule* pyro_define_module_1(PyroVM* vm, const char* name) {
         return NULL;
     }
 
-    if (ObjMap_set(vm->modules, pyro_make_obj(name_string), pyro_make_obj(module), vm) == 0) {
+    if (ObjMap_set(vm->modules, pyro_obj(name_string), pyro_obj(module), vm) == 0) {
         return NULL;
     }
 
@@ -321,7 +321,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
     }
 
     Value parent_module;
-    if (!ObjMap_get(vm->modules, pyro_make_obj(parent_string), &parent_module, vm)) {
+    if (!ObjMap_get(vm->modules, pyro_obj(parent_string), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -330,13 +330,13 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
     if (!name_string) {
         return NULL;
     }
-    Value name_value = pyro_make_obj(name_string);
+    Value name_value = pyro_obj(name_string);
 
     ObjModule* module_object = ObjModule_new(vm);
     if (!module_object) {
         return NULL;
     }
-    Value module_value = pyro_make_obj(module_object);
+    Value module_value = pyro_obj(module_object);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
         return NULL;
@@ -353,7 +353,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     }
 
     Value grandparent_module;
-    if (!ObjMap_get(vm->modules, pyro_make_obj(grandparent_string), &grandparent_module, vm)) {
+    if (!ObjMap_get(vm->modules, pyro_obj(grandparent_string), &grandparent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -364,7 +364,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     }
 
     Value parent_module;
-    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, pyro_make_obj(parent_string), &parent_module, vm)) {
+    if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, pyro_obj(parent_string), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -373,13 +373,13 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     if (!name_string) {
         return NULL;
     }
-    Value name_value = pyro_make_obj(name_string);
+    Value name_value = pyro_obj(name_string);
 
     ObjModule* module_object = ObjModule_new(vm);
     if (!module_object) {
         return NULL;
     }
-    Value module_value = pyro_make_obj(module_object);
+    Value module_value = pyro_obj(module_object);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
         return NULL;
@@ -394,14 +394,14 @@ bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Val
     if (!name_string) {
         return false;
     }
-    Value name_value = pyro_make_obj(name_string);
+    Value name_value = pyro_obj(name_string);
 
     size_t member_index = module->members->count;
     if (!ObjVec_append(module->members, value, vm)) {
         return false;
     }
 
-    if (ObjMap_set(module->all_member_indexes, name_value, pyro_make_i64(member_index), vm) == 0) {
+    if (ObjMap_set(module->all_member_indexes, name_value, pyro_i64(member_index), vm) == 0) {
         module->members->count--;
         return false;
     }
@@ -415,19 +415,19 @@ bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, Val
     if (!name_string) {
         return false;
     }
-    Value name_value = pyro_make_obj(name_string);
+    Value name_value = pyro_obj(name_string);
 
     size_t member_index = module->members->count;
     if (!ObjVec_append(module->members, value, vm)) {
         return false;
     }
 
-    if (ObjMap_set(module->all_member_indexes, name_value, pyro_make_i64(member_index), vm) == 0) {
+    if (ObjMap_set(module->all_member_indexes, name_value, pyro_i64(member_index), vm) == 0) {
         module->members->count--;
         return false;
     }
 
-    if (ObjMap_set(module->pub_member_indexes, name_value, pyro_make_i64(member_index), vm) == 0) {
+    if (ObjMap_set(module->pub_member_indexes, name_value, pyro_i64(member_index), vm) == 0) {
         ObjMap_remove(module->all_member_indexes, name_value, vm);
         module->members->count--;
         return false;
@@ -442,7 +442,7 @@ bool pyro_define_pri_member_fn(PyroVM* vm, ObjModule* module, const char* name, 
     if (!fn_obj) {
         return false;
     }
-    return pyro_define_pri_member(vm, module, name, pyro_make_obj(fn_obj));
+    return pyro_define_pri_member(vm, module, name, pyro_obj(fn_obj));
 }
 
 
@@ -451,7 +451,7 @@ bool pyro_define_pub_member_fn(PyroVM* vm, ObjModule* module, const char* name, 
     if (!fn_obj) {
         return false;
     }
-    return pyro_define_pub_member(vm, module, name, pyro_make_obj(fn_obj));
+    return pyro_define_pub_member(vm, module, name, pyro_obj(fn_obj));
 }
 
 
@@ -470,12 +470,12 @@ bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
         return false;
     }
 
-    if (!ObjMap_set(class->all_instance_methods, pyro_make_obj(name_string), pyro_make_obj(fn_obj), vm)) {
+    if (!ObjMap_set(class->all_instance_methods, pyro_obj(name_string), pyro_obj(fn_obj), vm)) {
         return false;
     }
 
-    if (!ObjMap_set(class->pub_instance_methods, pyro_make_obj(name_string), pyro_make_obj(fn_obj), vm)) {
-        ObjMap_remove(class->all_instance_methods, pyro_make_obj(name_string), vm);
+    if (!ObjMap_set(class->pub_instance_methods, pyro_obj(name_string), pyro_obj(fn_obj), vm)) {
+        ObjMap_remove(class->all_instance_methods, pyro_obj(name_string), vm);
         return false;
     }
 
@@ -494,12 +494,12 @@ bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
         return false;
     }
 
-    if (!ObjMap_set(class->all_instance_methods, pyro_make_obj(name_string), pyro_make_obj(fn_obj), vm)) {
+    if (!ObjMap_set(class->all_instance_methods, pyro_obj(name_string), pyro_obj(fn_obj), vm)) {
         return false;
     }
 
     if (name_string == vm->str_dollar_init) {
-        class->init_method = pyro_make_obj(fn_obj);
+        class->init_method = pyro_obj(fn_obj);
     }
 
     return true;
@@ -518,13 +518,13 @@ bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value 
         return false;
     }
 
-    if (ObjMap_set(class->all_field_indexes, pyro_make_obj(name_string), pyro_make_i64(field_index), vm) == 0) {
+    if (ObjMap_set(class->all_field_indexes, pyro_obj(name_string), pyro_i64(field_index), vm) == 0) {
         class->default_field_values->count--;
         return false;
     }
 
-    if (ObjMap_set(class->pub_field_indexes, pyro_make_obj(name_string), pyro_make_i64(field_index), vm) == 0) {
-        ObjMap_remove(class->all_field_indexes, pyro_make_obj(name_string), vm);
+    if (ObjMap_set(class->pub_field_indexes, pyro_obj(name_string), pyro_i64(field_index), vm) == 0) {
+        ObjMap_remove(class->all_field_indexes, pyro_obj(name_string), vm);
         class->default_field_values->count--;
         return false;
     }
@@ -545,7 +545,7 @@ bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value 
         return false;
     }
 
-    if (ObjMap_set(class->all_field_indexes, pyro_make_obj(name_string), pyro_make_i64(field_index), vm) == 0) {
+    if (ObjMap_set(class->all_field_indexes, pyro_obj(name_string), pyro_i64(field_index), vm) == 0) {
         class->default_field_values->count--;
         return false;
     }
@@ -560,7 +560,7 @@ bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
         return false;
     }
 
-    if (ObjMap_set(vm->superglobals, pyro_make_obj(name_string), value, vm) == 0) {
+    if (ObjMap_set(vm->superglobals, pyro_obj(name_string), value, vm) == 0) {
         return false;
     }
 
@@ -573,7 +573,7 @@ bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr
     if (!fn_obj) {
         return false;
     }
-    return pyro_define_global(vm, name, pyro_make_obj(fn_obj));
+    return pyro_define_global(vm, name, pyro_obj(fn_obj));
 }
 
 
@@ -635,10 +635,10 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
         if (!string) {
             return false;
         }
-        tup->values[i] = pyro_make_obj(string);
+        tup->values[i] = pyro_obj(string);
     }
 
-    pyro_define_global(vm, "$args", pyro_make_obj(tup));
+    pyro_define_global(vm, "$args", pyro_obj(tup));
     return true;
 }
 
@@ -653,7 +653,7 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
         return false;
     }
 
-    return ObjVec_append(vm->import_roots, pyro_make_obj(string), vm);
+    return ObjVec_append(vm->import_roots, pyro_obj(string), vm);
 }
 
 

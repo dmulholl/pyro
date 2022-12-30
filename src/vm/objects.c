@@ -62,7 +62,7 @@ ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
     tup->obj.class = vm->class_tup;
     tup->count = count;
     for (size_t i = 0; i < count; i++) {
-        tup->values[i] = pyro_make_null();
+        tup->values[i] = pyro_null();
     }
     return tup;
 }
@@ -130,7 +130,7 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
         return NULL;
     }
     upvalue->location = addr;
-    upvalue->closed = pyro_make_null();
+    upvalue->closed = pyro_null();
     upvalue->next = NULL;
     return upvalue;
 }
@@ -157,10 +157,10 @@ ObjClass* ObjClass_new(PyroVM* vm) {
     class->static_methods = NULL;
     class->static_fields = NULL;
     class->all_instance_methods_cached_name = NULL;
-    class->all_instance_methods_cached_value = pyro_make_null();
+    class->all_instance_methods_cached_value = pyro_null();
     class->pub_instance_methods_cached_name = NULL;
-    class->pub_instance_methods_cached_value = pyro_make_null();
-    class->init_method = pyro_make_null();
+    class->pub_instance_methods_cached_value = pyro_null();
+    class->init_method = pyro_null();
 
     class->all_instance_methods = ObjMap_new(vm);
     class->pub_instance_methods = ObjMap_new(vm);
@@ -569,7 +569,7 @@ bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
         return false;
     }
 
-    map->entry_array[*slot].key = pyro_make_tombstone();
+    map->entry_array[*slot].key = pyro_tombstone();
     *slot = TOMBSTONE;
     map->live_entry_count--;
     return true;
@@ -611,7 +611,7 @@ static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t 
     string->bytes = bytes;
     string->obj.class = vm->class_str;
 
-    if (ObjMap_set(vm->strings, pyro_make_obj(string), pyro_make_null(), vm) == 0) {
+    if (ObjMap_set(vm->strings, pyro_obj(string), pyro_null(), vm) == 0) {
         return NULL;
     }
 
@@ -1387,7 +1387,7 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove last item from empty vector");
-        return pyro_make_null();
+        return pyro_null();
     }
     vec->count--;
     return vec->values[vec->count];
@@ -1397,7 +1397,7 @@ Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
 Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove first item from empty vector");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (vec->count == 1) {
@@ -1417,7 +1417,7 @@ Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
 Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
     if (index >= vec->count) {
         pyro_panic(vm, "index is out of range");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (vec->count == 1) {
@@ -1886,7 +1886,7 @@ ObjIter* ObjIter_empty(PyroVM* vm) {
 Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
     switch (iter->iter_type) {
         case ITER_EMPTY: {
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_VEC: {
@@ -1896,7 +1896,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 Value result = vec->values[iter->next_index - 1];
                 return result;
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_TUP: {
@@ -1905,7 +1905,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->next_index++;
                 return tup->values[iter->next_index - 1];
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_QUEUE: {
@@ -1914,7 +1914,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->next_queue_item = iter->next_queue_item->next;
                 return next_value;
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_STR: {
@@ -1923,12 +1923,12 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 ObjStr* new_str = ObjStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
                 if (!new_str) {
                     pyro_panic(vm, "out of memory");
-                    return pyro_make_obj(vm->error);
+                    return pyro_obj(vm->error);
                 }
                 iter->next_index++;
-                return pyro_make_obj(new_str);
+                return pyro_obj(new_str);
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_STR_BYTES: {
@@ -1936,9 +1936,9 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             if (iter->next_index < str->length) {
                 int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
                 iter->next_index++;
-                return pyro_make_i64(byte_value);
+                return pyro_i64(byte_value);
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_STR_CHARS: {
@@ -1949,7 +1949,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 Utf8CodePoint cp;
                 if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
                     iter->next_index += cp.length;
-                    return pyro_make_char(cp.value);
+                    return pyro_char(cp.value);
                 }
                 pyro_panic(
                     vm,
@@ -1957,7 +1957,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                     iter->next_index
                 );
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_MAP_KEYS: {
@@ -1970,7 +1970,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 }
                 return entry->key;
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_MAP_VALUES: {
@@ -1983,7 +1983,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 }
                 return entry->value;
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_MAP_ENTRIES: {
@@ -1998,14 +1998,14 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 ObjTup* tup = ObjTup_new(2, vm);
                 if (!tup) {
                     pyro_panic(vm, "out of memory");
-                    return pyro_make_obj(vm->error);
+                    return pyro_obj(vm->error);
                 }
 
                 tup->values[0] = entry->key;
                 tup->values[1] = entry->value;
-                return pyro_make_obj(tup);
+                return pyro_obj(tup);
             }
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_FUNC_MAP: {
@@ -2015,11 +2015,11 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 return next_value;
             }
 
-            pyro_push(vm, pyro_make_obj(iter->callback));
+            pyro_push(vm, pyro_obj(iter->callback));
             pyro_push(vm, next_value);
             Value result = pyro_call_function(vm, 1);
             if (vm->halt_flag) {
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
             return result;
@@ -2034,11 +2034,11 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                     return next_value;
                 }
 
-                pyro_push(vm, pyro_make_obj(iter->callback));
+                pyro_push(vm, pyro_obj(iter->callback));
                 pyro_push(vm, next_value);
                 Value result = pyro_call_function(vm, 1);
                 if (vm->halt_flag) {
-                    return pyro_make_obj(vm->error);
+                    return pyro_obj(vm->error);
                 }
 
                 if (pyro_is_truthy(result)) {
@@ -2057,22 +2057,22 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             ObjTup* tup = ObjTup_new(2, vm);
             if (!tup) {
                 pyro_panic(vm, "out of memory");
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
-            tup->values[0] = pyro_make_i64(iter->next_enum);
+            tup->values[0] = pyro_i64(iter->next_enum);
             tup->values[1] = next_value;
             iter->next_enum++;
 
-            return pyro_make_obj(tup);
+            return pyro_obj(tup);
         }
 
         case ITER_GENERIC: {
-            Value next_method = pyro_get_method(vm, pyro_make_obj(iter->source), vm->str_dollar_next);
-            pyro_push(vm, pyro_make_obj(iter->source));
+            Value next_method = pyro_get_method(vm, pyro_obj(iter->source), vm->str_dollar_next);
+            pyro_push(vm, pyro_obj(iter->source));
             Value result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
             return result;
         }
@@ -2082,34 +2082,34 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 if (iter->range_next < iter->range_stop) {
                     int64_t range_next = iter->range_next;
                     iter->range_next += iter->range_step;
-                    return pyro_make_i64(range_next);
+                    return pyro_i64(range_next);
                 }
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
             if (iter->range_step < 0) {
                 if (iter->range_next > iter->range_stop) {
                     int64_t range_next = iter->range_next;
                     iter->range_next += iter->range_step;
-                    return pyro_make_i64(range_next);
+                    return pyro_i64(range_next);
                 }
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         case ITER_STR_LINES: {
             // If the source is NULL, the iterator has been exhausted.
             if (iter->source == NULL) {
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
             ObjStr* str = (ObjStr*)iter->source;
 
             // If we're at the end of the string, set the source to NULL and return an empty string.
             if (iter->next_index == str->length) {
                 iter->source = NULL;
-                return pyro_make_obj(vm->empty_string);
+                return pyro_obj(vm->empty_string);
             }
 
             // Points to the byte *after* the last byte in the string.
@@ -2138,7 +2138,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             ObjStr* next_line = ObjStr_copy_raw(line_start, line_end - line_start, vm);
             if (!next_line) {
                 pyro_panic(vm, "out of memory");
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
             // If the string ends with a linebreak, we have one more (empty) string to return. This
@@ -2148,33 +2148,33 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
                 iter->source = NULL;
             }
 
-            return pyro_make_obj(next_line);
+            return pyro_obj(next_line);
         }
 
         case ITER_FILE_LINES: {
             // If the source is NULL, the iterator has been exhausted.
             if (iter->source == NULL) {
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
             ObjFile* file = (ObjFile*)iter->source;
             ObjStr* next_line = ObjFile_read_line(file, vm);
             if (vm->halt_flag) {
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
             // A NULL return value means the file has been exhausted.
             if (!next_line) {
                 iter->source = NULL;
-                return pyro_make_obj(vm->error);
+                return pyro_obj(vm->error);
             }
 
-            return pyro_make_obj(next_line);
+            return pyro_obj(next_line);
         }
 
         default:
             assert(false);
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
     }
 }
 
@@ -2185,7 +2185,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
         pyro_panic(vm, "out of memory");
         return NULL;
     }
-    pyro_push(vm, pyro_make_obj(buf)); // Protect from GC in case we call into Pyro code.
+    pyro_push(vm, pyro_obj(buf)); // Protect from GC in case we call into Pyro code.
 
     bool is_first_item = true;
 

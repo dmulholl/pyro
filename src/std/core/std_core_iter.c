@@ -11,7 +11,7 @@
 
 
 static Value fn_is_iter(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_ITER(args[0]));
+    return pyro_bool(IS_ITER(args[0]));
 }
 
 
@@ -25,9 +25,9 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
         ObjIter* iter = ObjIter_new(AS_OBJ(args[0]), ITER_GENERIC, vm);
         if (!iter) {
             pyro_panic(vm, "$iter(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_obj(iter);
+        return pyro_obj(iter);
     }
 
     // If the argument is iterable, call its :iter() method.
@@ -36,7 +36,7 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_push(vm, args[0]);
         Value result = pyro_call_method(vm, iter_method, 0);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
 
         if (IS_ITER(result)) {
@@ -48,15 +48,15 @@ static Value fn_iter(PyroVM* vm, size_t arg_count, Value* args) {
             ObjIter* iter = ObjIter_new(AS_OBJ(result), ITER_GENERIC, vm);
             if (!iter) {
                 pyro_panic(vm, "$iter(): out of memory");
-                return pyro_make_null();
+                return pyro_null();
             }
             pyro_pop(vm);
-            return pyro_make_obj(iter);
+            return pyro_obj(iter);
         }
     }
 
     pyro_panic(vm, "$iter(): invalid argument [arg], expected an iterator or an iterable object");
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -76,17 +76,17 @@ static Value iter_map(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_OBJ(args[0])) {
         pyro_panic(vm, "map(): invalid argument [callback], expected a callable");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_FUNC_MAP, vm);
     if (!new_iter) {
         pyro_panic(vm, "map(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     new_iter->callback = AS_OBJ(args[0]);
-    return pyro_make_obj(new_iter);
+    return pyro_obj(new_iter);
 }
 
 
@@ -95,17 +95,17 @@ static Value iter_filter(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_OBJ(args[0])) {
         pyro_panic(vm, "filter(): invalid argument [callback], expected a callable");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_FUNC_FILTER, vm);
     if (!new_iter) {
         pyro_panic(vm, "filter(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     new_iter->callback = AS_OBJ(args[0]);
-    return pyro_make_obj(new_iter);
+    return pyro_obj(new_iter);
 }
 
 
@@ -115,14 +115,14 @@ static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = ObjVec_new(vm);
     if (!vec) {
         pyro_panic(vm, "to_vec(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    pyro_push(vm, pyro_make_obj(vec));
+    pyro_push(vm, pyro_obj(vec));
 
     while (true) {
         Value next_value = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         if (IS_ERR(next_value)) {
             break;
@@ -131,13 +131,13 @@ static Value iter_to_vec(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_push(vm, next_value);
         if (!ObjVec_append(vec, next_value, vm)) {
             pyro_panic(vm, "to_vec(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
         pyro_pop(vm); // next_value
     }
 
     pyro_pop(vm); // vec
-    return pyro_make_obj(vec);
+    return pyro_obj(vec);
 }
 
 
@@ -146,21 +146,21 @@ static Value iter_join(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (arg_count == 0) {
         ObjStr* result = ObjIter_join(iter, "", 0, vm);
-        return vm->halt_flag ? pyro_make_null() : pyro_make_obj(result);
+        return vm->halt_flag ? pyro_null() : pyro_obj(result);
     }
 
     if (arg_count == 1) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "join(): invalid argument [sep], expected a string");
-            return pyro_make_null();
+            return pyro_null();
         }
         ObjStr* sep = AS_STR(args[0]);
         ObjStr* result = ObjIter_join(iter, sep->bytes, sep->length, vm);
-        return vm->halt_flag ? pyro_make_null() : pyro_make_obj(result);
+        return vm->halt_flag ? pyro_null() : pyro_obj(result);
     }
 
     pyro_panic(vm, "join(): expected 0 or 1 arguments, found %zu", arg_count);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -170,29 +170,29 @@ static Value iter_to_set(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = ObjMap_new_as_set(vm);
     if (!map) {
         pyro_panic(vm, "to_set(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    pyro_push(vm, pyro_make_obj(map));
+    pyro_push(vm, pyro_obj(map));
 
     while (true) {
         Value next_value = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         if (IS_ERR(next_value)) {
             break;
         }
 
         pyro_push(vm, next_value);
-        if (ObjMap_set(map, next_value, pyro_make_null(), vm) == 0) {
+        if (ObjMap_set(map, next_value, pyro_null(), vm) == 0) {
             pyro_panic(vm, "to_set(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
         pyro_pop(vm); // next_value
     }
 
     pyro_pop(vm); // map
-    return pyro_make_obj(map);
+    return pyro_obj(map);
 }
 
 
@@ -202,7 +202,7 @@ static Value iter_enumerate(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* new_iter = ObjIter_new((Obj*)src_iter, ITER_ENUM, vm);
     if (!new_iter) {
         pyro_panic(vm, "enumerate(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 0) {
@@ -212,14 +212,14 @@ static Value iter_enumerate(PyroVM* vm, size_t arg_count, Value* args) {
             new_iter->next_enum = args[0].as.i64;
         } else {
             pyro_panic(vm, "enumerate(): invalid argument [start_index], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
     } else {
         pyro_panic(vm, "enumerate(): expected 0 or 1 arguments, found %zu", arg_count);
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_obj(new_iter);
+    return pyro_obj(new_iter);
 }
 
 
@@ -229,7 +229,7 @@ static Value fn_range(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 1) {
         if (!IS_I64(args[0])) {
             pyro_panic(vm, "$range(): invalid argument [stop], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         start = 0;
         stop = args[0].as.i64;
@@ -237,11 +237,11 @@ static Value fn_range(PyroVM* vm, size_t arg_count, Value* args) {
     } else if (arg_count == 2) {
         if (!IS_I64(args[0])) {
             pyro_panic(vm, "$range(): invalid argument [start], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         if (!IS_I64(args[1])) {
             pyro_panic(vm, "$range(): invalid argument [stop], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         start = args[0].as.i64;
         stop = args[1].as.i64;
@@ -249,35 +249,35 @@ static Value fn_range(PyroVM* vm, size_t arg_count, Value* args) {
     } else if (arg_count == 3) {
         if (!IS_I64(args[0])) {
             pyro_panic(vm, "$range(): invalid argument [start], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         if (!IS_I64(args[1])) {
             pyro_panic(vm, "$range(): invalid argument [stop], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         if (!IS_I64(args[2])) {
             pyro_panic(vm, "$range(): invalid argument [step], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         start = args[0].as.i64;
         stop = args[1].as.i64;
         step = args[2].as.i64;
     } else {
         pyro_panic(vm, "$range(): expected 1, 2, or 3 arguments, found %zu", arg_count);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjIter* iter = ObjIter_new(NULL, ITER_RANGE, vm);
     if (!iter) {
         pyro_panic(vm, "$range(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     iter->range_next = start;
     iter->range_stop = stop;
     iter->range_step = step;
 
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
@@ -286,15 +286,15 @@ static Value iter_skip_first(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "skip_first(): invalid argument [n], expected an integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t num_to_skip = args[0].as.i64;
     if (num_to_skip == 0) {
-        return pyro_make_obj(iter);
+        return pyro_obj(iter);
     } else if (num_to_skip < 0) {
         pyro_panic(vm, "skip_first(): invalid argument [n], expected a positive integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t num_skipped = 0;
@@ -302,7 +302,7 @@ static Value iter_skip_first(PyroVM* vm, size_t arg_count, Value* args) {
     while (num_skipped < num_to_skip) {
         Value result = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         } else if (IS_ERR(result)) {
             pyro_panic(
                 vm,
@@ -310,12 +310,12 @@ static Value iter_skip_first(PyroVM* vm, size_t arg_count, Value* args) {
                 num_to_skip,
                 num_skipped
             );
-            return pyro_make_null();
+            return pyro_null();
         }
         num_skipped++;
     }
 
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
@@ -324,28 +324,28 @@ static Value iter_skip_last(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "skip_last(): invalid argument [n], expected an integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t num_to_skip = args[0].as.i64;
     if (num_to_skip == 0) {
-        return pyro_make_obj(iter);
+        return pyro_obj(iter);
     } else if (num_to_skip < 0) {
         pyro_panic(vm, "skip_last(): invalid argument [n], expected a positive integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjVec* vec = ObjVec_new(vm);
     if (!vec) {
         pyro_panic(vm, "skip_last(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    pyro_push(vm, pyro_make_obj(vec));
+    pyro_push(vm, pyro_obj(vec));
 
     while (true) {
         Value value = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         if (IS_ERR(value)) {
             break;
@@ -354,7 +354,7 @@ static Value iter_skip_last(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_push(vm, value);
         if (!ObjVec_append(vec, value, vm)) {
             pyro_panic(vm, "skip_last(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
         pyro_pop(vm); // value
     }
@@ -366,7 +366,7 @@ static Value iter_skip_last(PyroVM* vm, size_t arg_count, Value* args) {
             num_to_skip,
             vec->count
         );
-        return pyro_make_null();
+        return pyro_null();
     }
 
     vec->count -= num_to_skip;
@@ -374,11 +374,11 @@ static Value iter_skip_last(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* new_iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
     if (!new_iter) {
         pyro_panic(vm, "skip_last(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     pyro_pop(vm); // vec
-    return pyro_make_obj(new_iter);
+    return pyro_obj(new_iter);
 }
 
 
@@ -389,26 +389,26 @@ static Value iter_count(PyroVM* vm, size_t arg_count, Value* args) {
     while (true) {
         Value result = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         } else if (IS_ERR(result)) {
             break;
         }
         count++;
     }
 
-    return pyro_make_i64(count);
+    return pyro_i64(count);
 }
 
 
 static Value iter_sum(PyroVM* vm, size_t arg_count, Value* args) {
     ObjIter* iter = AS_ITER(args[-1]);
     bool is_first_item = true;
-    Value sum = pyro_make_null();
+    Value sum = pyro_null();
 
     while (true) {
         Value item = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         } else if (IS_ERR(item)) {
             break;
         }
@@ -418,7 +418,7 @@ static Value iter_sum(PyroVM* vm, size_t arg_count, Value* args) {
         } else {
             sum = pyro_op_binary_plus(vm, sum, item);
             if (vm->halt_flag) {
-                return pyro_make_null();
+                return pyro_null();
             }
         }
 
@@ -437,7 +437,7 @@ static Value iter_reduce(PyroVM* vm, size_t arg_count, Value* args) {
     while (true) {
         Value item = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         } else if (IS_ERR(item)) {
             break;
         }
@@ -447,7 +447,7 @@ static Value iter_reduce(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_push(vm, item);
         accumulator = pyro_call_function(vm, 2);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
     }
 

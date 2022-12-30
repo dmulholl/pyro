@@ -7,28 +7,28 @@
 
 
 static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_f64(mt64_gen_f64_co(&vm->mt64));
+    return pyro_f64(mt64_gen_f64_co(&vm->mt64));
 }
 
 
 static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_i64(mt64_gen_int(&vm->mt64, (uint64_t)args[0].as.i64));
+    return pyro_i64(mt64_gen_int(&vm->mt64, (uint64_t)args[0].as.i64));
 }
 
 
 static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "rand_int_in_range(): invalid argument [lower], expected an integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (!IS_I64(args[1])) {
         pyro_panic(vm, "rand_int_in_range(): invalid argument [upper], expected an integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t lower = args[0].as.i64;
@@ -37,7 +37,7 @@ static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 
     // Select a random integer from the range [lower, upper).
     int64_t rand_int = lower + (int64_t)mt64_gen_int(&vm->mt64, delta);
-    return pyro_make_i64(rand_int);
+    return pyro_i64(rand_int);
 }
 
 

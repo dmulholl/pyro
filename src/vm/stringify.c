@@ -163,7 +163,7 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
-    pyro_push(vm, pyro_make_obj(buf)); // Protect from GC in case we call into Pyro code.
+    pyro_push(vm, pyro_obj(buf)); // Protect from GC in case we call into Pyro code.
 
     if (!ObjBuf_append_byte(buf, '(', vm)) {
         pyro_panic(vm, "out of memory");
@@ -213,7 +213,7 @@ static ObjStr* stringify_vector(PyroVM* vm, ObjVec* vec) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
-    pyro_push(vm, pyro_make_obj(buf)); // Protect from GC in case we call into Pyro code.
+    pyro_push(vm, pyro_obj(buf)); // Protect from GC in case we call into Pyro code.
 
     if (!ObjBuf_append_byte(buf, '[', vm)) {
         pyro_panic(vm, "out of memory");
@@ -263,7 +263,7 @@ static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
-    pyro_push(vm, pyro_make_obj(buf)); // Protect from GC in case we call into Pyro code.
+    pyro_push(vm, pyro_obj(buf)); // Protect from GC in case we call into Pyro code.
 
     if (!ObjBuf_append_byte(buf, '{', vm)) {
         pyro_panic(vm, "out of memory");
@@ -336,7 +336,7 @@ static ObjStr* stringify_map_as_set(PyroVM* vm, ObjMap* map) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
-    pyro_push(vm, pyro_make_obj(buf)); // Protect from GC in case we call into Pyro code.
+    pyro_push(vm, pyro_obj(buf)); // Protect from GC in case we call into Pyro code.
 
     if (!ObjBuf_append_byte(buf, '{', vm)) {
         pyro_panic(vm, "out of memory");
@@ -394,7 +394,7 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
-    pyro_push(vm, pyro_make_obj(buf)); // Protect from GC in case we call into Pyro code.
+    pyro_push(vm, pyro_obj(buf)); // Protect from GC in case we call into Pyro code.
 
     if (!ObjBuf_append_byte(buf, '[', vm)) {
         pyro_panic(vm, "out of memory");
@@ -444,9 +444,9 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
-    Value method = pyro_get_method(vm, pyro_make_obj(object), vm->str_dollar_str);
+    Value method = pyro_get_method(vm, pyro_obj(object), vm->str_dollar_str);
     if (!IS_NULL(method)) {
-        pyro_push(vm, pyro_make_obj(object));
+        pyro_push(vm, pyro_obj(object));
         Value result = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
             return NULL;
@@ -1020,7 +1020,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
             return NULL;
         }
         pyro_push(vm, value);
-        pyro_push(vm, pyro_make_obj(format_string_object));
+        pyro_push(vm, pyro_obj(format_string_object));
         Value result = pyro_call_method(vm, method, 1);
         if (vm->halt_flag) {
             return NULL;

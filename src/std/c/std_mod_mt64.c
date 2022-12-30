@@ -9,7 +9,7 @@
 
 
 static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(mt64_test());
+    return pyro_bool(mt64_test());
 }
 
 
@@ -25,7 +25,7 @@ static Value mt64_init_method(PyroVM* vm, size_t arg_count, Value* args) {
     MT64* mt64 = malloc(sizeof(MT64));
     if (!mt64) {
         pyro_panic(vm, "$std::mt64::MT4:$init(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
     mt64_init(mt64);
 
@@ -33,12 +33,12 @@ static Value mt64_init_method(PyroVM* vm, size_t arg_count, Value* args) {
     if (!resource) {
         free(mt64);
         pyro_panic(vm, "$std::mt64::MT4:$init(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     vm->bytes_allocated += sizeof(MT64);
-    instance->fields[0] = pyro_make_obj(resource);
-    return pyro_make_obj(instance);
+    instance->fields[0] = pyro_obj(resource);
+    return pyro_obj(instance);
 }
 
 
@@ -47,7 +47,7 @@ static Value mt64_seed_with_hash(PyroVM* vm, size_t arg_count, Value* args) {
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
     mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -74,14 +74,14 @@ static Value mt64_seed_with_array(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "seed_with_array(): invalid argument, expected a string or buffer");
     }
 
-    return pyro_make_null();
+    return pyro_null();
 }
 
 static Value mt64_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
-    return pyro_make_f64(mt64_gen_f64_co(mt64));
+    return pyro_f64(mt64_gen_f64_co(mt64));
 }
 
 
@@ -92,10 +92,10 @@ static Value mt64_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "rand_int(): invalid argument, expected a positive integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_i64(mt64_gen_int(mt64, (uint64_t)args[0].as.i64));
+    return pyro_i64(mt64_gen_int(mt64, (uint64_t)args[0].as.i64));
 }
 
 
@@ -106,7 +106,7 @@ static Value mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_I64(args[0]) || !IS_I64(args[1])) {
         pyro_panic(vm, "rand_int_in_range(): invalid argument, expected an integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t lower = args[0].as.i64;
@@ -115,7 +115,7 @@ static Value mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
 
     // Select a random integer from the range [lower, upper).
     int64_t rand_int = lower + (int64_t)mt64_gen_int(mt64, delta);
-    return pyro_make_i64(rand_int);
+    return pyro_i64(rand_int);
 }
 
 
@@ -127,9 +127,9 @@ void pyro_load_std_mod_mt64(PyroVM* vm, ObjModule* module) {
         return;
     }
     mt64_class->name = ObjStr_new("MT64", vm);
-    pyro_define_pub_member(vm, module, "MT64", pyro_make_obj(mt64_class));
+    pyro_define_pub_member(vm, module, "MT64", pyro_obj(mt64_class));
 
-    pyro_define_pub_field(vm, mt64_class, "generator", pyro_make_null());
+    pyro_define_pub_field(vm, mt64_class, "generator", pyro_null());
 
     pyro_define_pri_method(vm, mt64_class, "$init", mt64_init_method, 0);
     pyro_define_pub_method(vm, mt64_class, "seed_with_hash", mt64_seed_with_hash, 1);

@@ -13,21 +13,21 @@ static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = ObjTup_new(arg_count, vm);
     if (tup == NULL) {
         pyro_panic(vm, "$tup(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
     memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
-    return pyro_make_obj(tup);
+    return pyro_obj(tup);
 }
 
 
 static Value fn_is_tup(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_TUP(args[0]));
+    return pyro_bool(IS_TUP(args[0]));
 }
 
 
 static Value tup_count(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = AS_TUP(args[-1]);
-    return pyro_make_i64(tup->count);
+    return pyro_i64(tup->count);
 }
 
 
@@ -39,10 +39,10 @@ static Value tup_get(PyroVM* vm, size_t arg_count, Value* args) {
             return tup->values[index];
         }
         pyro_panic(vm, "get(): invalid argument [index], integer is out of range");
-        return pyro_make_null();
+        return pyro_null();
     }
     pyro_panic(vm, "get(): invalid argument [index], expected an integer");
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -50,9 +50,9 @@ static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* tup = AS_TUP(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)tup, ITER_TUP, vm);
     if (!iter) {
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
@@ -61,12 +61,12 @@ static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!(arg_count == 1 || arg_count == 2)) {
         pyro_panic(vm, "slice(): expected 1 or 2 arguments, found %zu", arg_count);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "slice(): invalid argument [start_index], expected an integer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     size_t start_index;
@@ -76,22 +76,22 @@ static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
         start_index = (size_t)((int64_t)tup->count + args[0].as.i64);
     } else {
         pyro_panic(vm, "slice(): invalid argument [start_index], integer (%d) is out of range", args[0].as.i64);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     size_t length = tup->count - start_index;
     if (arg_count == 2) {
         if (!IS_I64(args[1])) {
             pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         if (args[1].as.i64 < 0) {
             pyro_panic(vm, "slice(): invalid argument [length], expected a positive integer");
-            return pyro_make_null();
+            return pyro_null();
         }
         if (start_index + (size_t)args[1].as.i64 > tup->count) {
             pyro_panic(vm, "slice(): invalid argument [length], integer (%d) is out of range", args[1].as.i64);
-            return pyro_make_null();
+            return pyro_null();
         }
         length = (size_t)args[1].as.i64;
     }
@@ -99,15 +99,15 @@ static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
     ObjTup* new_tup = ObjTup_new(length, vm);
     if (!new_tup) {
         pyro_panic(vm, "slice(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (length == 0) {
-        return pyro_make_obj(new_tup);
+        return pyro_obj(new_tup);
     }
 
     memcpy(new_tup->values, &tup->values[start_index], sizeof(Value) * length);
-    return pyro_make_obj(new_tup);
+    return pyro_obj(new_tup);
 }
 
 
@@ -116,11 +116,11 @@ static Value tup_contains(PyroVM* vm, size_t arg_count, Value* args) {
 
     for (size_t i = 0; i < tup->count; i++) {
         if (pyro_op_compare_eq(vm, tup->values[i], args[0])) {
-            return pyro_make_bool(true);
+            return pyro_bool(true);
         }
     }
 
-    return pyro_make_bool(false);
+    return pyro_bool(false);
 }
 
 

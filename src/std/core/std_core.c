@@ -15,12 +15,12 @@
 static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count < 2) {
         pyro_panic(vm, "$fmt(): expected 2 or more arguments, found %zu", arg_count);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$fmt(): invalid argument [format_string], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjStr* fmt_str = AS_STR(args[0]);
@@ -42,7 +42,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             if (!new_array) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 pyro_panic(vm, "$fmt(): out of memory");
-                return pyro_make_null();
+                return pyro_null();
             }
             out_capacity = new_capacity;
             out_buffer = new_array;
@@ -64,14 +64,14 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
                 if (fmt_spec_count == 15) {
                     FREE_ARRAY(vm, char, out_buffer, out_capacity);
                     pyro_panic(vm, "$fmt(): invalid format specifier, too many characters");
-                    return pyro_make_null();
+                    return pyro_null();
                 }
                 fmt_spec_buffer[fmt_spec_count++] = fmt_str->bytes[fmt_str_index++];
             }
             if (fmt_str_index == fmt_str->length) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 pyro_panic(vm, "$fmt(): missing '}' in format string");
-                return pyro_make_null();
+                return pyro_null();
             }
             fmt_str_index++;
             fmt_spec_buffer[fmt_spec_count] = '\0';
@@ -79,7 +79,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             if (next_arg_index == arg_count) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 pyro_panic(vm, "$fmt(): too few arguments for format string");
-                return pyro_make_null();
+                return pyro_null();
             }
             Value arg = args[next_arg_index++];
 
@@ -91,20 +91,20 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             }
             if (vm->halt_flag) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                return pyro_make_null();
+                return pyro_null();
             }
 
             if (out_count + formatted->length + 1 > out_capacity) {
                 size_t new_capacity = out_count + formatted->length + 1;
 
-                pyro_push(vm, pyro_make_obj(formatted));
+                pyro_push(vm, pyro_obj(formatted));
                 char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
                 pyro_pop(vm);
 
                 if (!new_array) {
                     FREE_ARRAY(vm, char, out_buffer, out_capacity);
                     pyro_panic(vm, "$fmt(): out of memory");
-                    return pyro_make_null();
+                    return pyro_null();
                 }
 
                 out_capacity = new_capacity;
@@ -130,54 +130,54 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
     if (!string) {
         FREE_ARRAY(vm, char, out_buffer, out_capacity);
         pyro_panic(vm, "$fmt(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_obj(string);
+    return pyro_obj(string);
 }
 
 
 static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         pyro_panic(vm, "$eprint(): expected 1 or more arguments, found 0");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         int64_t result = pyro_stderr_write_s(vm, string);
         if (result == -1) {
             pyro_panic(vm, "$eprint(): unable to write to the standard error stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result == -2) {
             pyro_panic(vm, "$eprint(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_i64(result);
+        return pyro_i64(result);
     }
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$eprint(): invalid argument [format_string], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     Value formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t result = pyro_stderr_write_s(vm, AS_STR(formatted));
     if (result == -1) {
         pyro_panic(vm, "$eprint(): unable to write to the standard error stream");
-        return pyro_make_null();
+        return pyro_null();
     } else if (result == -2) {
         pyro_panic(vm, "$eprint(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_i64(result);
+    return pyro_i64(result);
 }
 
 
@@ -186,109 +186,109 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         int64_t result = pyro_stderr_write_n(vm, "\n", 1);
         if (result == -1) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result == -2) {
             pyro_panic(vm, "$eprintln(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_i64(result);
+        return pyro_i64(result);
     }
 
     if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         int64_t result1 = pyro_stderr_write_s(vm, string);
         if (result1 == -1) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result1 == -2) {
             pyro_panic(vm, "$eprintln(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
         int64_t result2 = pyro_stderr_write_n(vm, "\n", 1);
         if (result2 == -1) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result2 == -2) {
             pyro_panic(vm, "$eprintln(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_i64(result1 + result2);
+        return pyro_i64(result1 + result2);
     }
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$eprintln(): invalid argument [format_string], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     Value formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t result1 = pyro_stderr_write_s(vm, AS_STR(formatted));
     if (result1 == -1) {
         pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-        return pyro_make_null();
+        return pyro_null();
     } else if (result1 == -2) {
         pyro_panic(vm, "$eprintln(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
     int64_t result2 = pyro_stderr_write_n(vm, "\n", 1);
     if (result2 == -1) {
         pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-        return pyro_make_null();
+        return pyro_null();
     } else if (result2 == -2) {
         pyro_panic(vm, "$eprintln(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_i64(result1 + result2);
+    return pyro_i64(result1 + result2);
 }
 
 
 static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         pyro_panic(vm, "$print(): expected 1 or more arguments, found 0");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         int64_t result = pyro_stdout_write_s(vm, string);
         if (result == -1) {
             pyro_panic(vm, "$print(): unable to write to the standard output stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result == -2) {
             pyro_panic(vm, "$print(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_i64(result);
+        return pyro_i64(result);
     }
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$print(): invalid argument [format_string], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     Value formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t result = pyro_stdout_write_s(vm, AS_STR(formatted));
     if (result == -1) {
         pyro_panic(vm, "$print(): unable to write to the standard output stream");
-        return pyro_make_null();
+        return pyro_null();
     } else if (result == -2) {
         pyro_panic(vm, "$print(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_i64(result);
+    return pyro_i64(result);
 }
 
 
@@ -297,183 +297,183 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         int64_t result = pyro_stdout_write_n(vm, "\n", 1);
         if (result == -1) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result == -2) {
             pyro_panic(vm, "$println(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_i64(result);
+        return pyro_i64(result);
     }
 
     if (arg_count == 1) {
         ObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
         int64_t result1 = pyro_stdout_write_s(vm, string);
         if (result1 == -1) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result1 == -2) {
             pyro_panic(vm, "$println(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
         int64_t result2 = pyro_stdout_write_n(vm, "\n", 1);
         if (result2 == -1) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
-            return pyro_make_null();
+            return pyro_null();
         } else if (result2 == -2) {
             pyro_panic(vm, "$println(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_i64(result1 + result2);
+        return pyro_i64(result1 + result2);
     }
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$println(): invalid argument [format_string], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     Value formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
 
     int64_t result1 = pyro_stdout_write_s(vm, AS_STR(formatted));
     if (result1 == -1) {
         pyro_panic(vm, "$println(): unable to write to the standard output stream");
-        return pyro_make_null();
+        return pyro_null();
     } else if (result1 == -2) {
         pyro_panic(vm, "$println(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
     int64_t result2 = pyro_stdout_write_n(vm, "\n", 1);
     if (result2 == -1) {
         pyro_panic(vm, "$println(): unable to write to the standard output stream");
-        return pyro_make_null();
+        return pyro_null();
     } else if (result2 == -2) {
         pyro_panic(vm, "$println(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_i64(result1 + result2);
+    return pyro_i64(result1 + result2);
 }
 
 
 static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "$exit(): invalid argument [code], expected an integer");
-        return pyro_make_null();
+        return pyro_null();
     }
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = args[0].as.i64;
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         pyro_panic(vm, "$panic(): expected 1 or more arguments, found 0");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 1) {
         ObjStr* panic_message = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
 
         ObjStr* escaped_panic_message = ObjStr_esc_percents(panic_message->bytes, panic_message->length, vm);
         if (!escaped_panic_message) {
             pyro_panic(vm, "$panic(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
 
         pyro_panic(vm, escaped_panic_message->bytes);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$panic(): invalid argument [format_string], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     Value formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjStr* panic_message = AS_STR(formatted);
 
     ObjStr* escaped_panic_message = ObjStr_esc_percents(panic_message->bytes, panic_message->length, vm);
     if (!escaped_panic_message) {
         pyro_panic(vm, "$panic(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     pyro_panic(vm, escaped_panic_message->bytes);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 static Value fn_is_mod(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_MOD(args[0]));
+    return pyro_bool(IS_MOD(args[0]));
 }
 
 
 static Value fn_is_obj(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_OBJ(args[0]));
+    return pyro_bool(IS_OBJ(args[0]));
 }
 
 
 static Value fn_clock(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_f64((double)clock() / CLOCKS_PER_SEC);
+    return pyro_f64((double)clock() / CLOCKS_PER_SEC);
 }
 
 
 static Value fn_is_nan(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_F64(args[0]) && isnan(args[0].as.f64));
+    return pyro_bool(IS_F64(args[0]) && isnan(args[0].as.f64));
 }
 
 
 static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_F64(args[0]) && isinf(args[0].as.f64));
+    return pyro_bool(IS_F64(args[0]) && isinf(args[0].as.f64));
 }
 
 
 static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
         case VAL_I64:
-            return pyro_make_f64((double)args[0].as.i64);
+            return pyro_f64((double)args[0].as.i64);
 
         case VAL_F64:
             return args[0];
 
         case VAL_CHAR:
-            return pyro_make_f64((double)args[0].as.u32);
+            return pyro_f64((double)args[0].as.u32);
 
         case VAL_OBJ: {
             if (IS_STR(args[0])) {
                 ObjStr* string = AS_STR(args[0]);
                 double value;
                 if (pyro_parse_string_as_float(string->bytes, string->length, &value)) {
-                    return pyro_make_f64(value);
+                    return pyro_f64(value);
                 }
                 pyro_panic(vm, "$f64(): invalid argument, unable to parse string");
-                return pyro_make_null();
+                return pyro_null();
             }
             pyro_panic(vm, "$f64(): invalid argument");
-            return pyro_make_null();
+            return pyro_null();
         }
 
         default:
             pyro_panic(vm, "$f64(): invalid argument");
-            return pyro_make_null();
+            return pyro_null();
     }
 }
 
 
 static Value fn_is_f64(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_F64(args[0]));
+    return pyro_bool(IS_F64(args[0]));
 }
 
 
@@ -483,16 +483,16 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
             return args[0];
 
         case VAL_CHAR:
-            return pyro_make_i64((int64_t)args[0].as.u32);
+            return pyro_i64((int64_t)args[0].as.u32);
 
         case VAL_F64: {
             if (args[0].as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
                 && args[0].as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
             ) {
-                return pyro_make_i64((int64_t)args[0].as.f64);
+                return pyro_i64((int64_t)args[0].as.f64);
             }
             pyro_panic(vm, "$i64(): invalid argument, floating-point value is out-of-range");
-            return pyro_make_null();
+            return pyro_null();
         }
 
         case VAL_OBJ: {
@@ -500,50 +500,50 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
                 ObjStr* string = AS_STR(args[0]);
                 int64_t value;
                 if (pyro_parse_string_as_int(string->bytes, string->length, &value)) {
-                    return pyro_make_i64(value);
+                    return pyro_i64(value);
                 }
                 pyro_panic(vm, "$i64(): invalid argument, unable to parse string");
-                return pyro_make_null();
+                return pyro_null();
             }
             pyro_panic(vm, "$i64(): invalid argument");
-            return pyro_make_null();
+            return pyro_null();
         }
 
         default:
             pyro_panic(vm, "$i64(): invalid argument");
-            return pyro_make_null();
+            return pyro_null();
     }
 }
 
 
 static Value fn_is_i64(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_I64(args[0]));
+    return pyro_bool(IS_I64(args[0]));
 }
 
 
 static Value fn_bool(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(pyro_is_truthy(args[0]));
+    return pyro_bool(pyro_is_truthy(args[0]));
 }
 
 
 static Value fn_is_bool(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_BOOL(args[0]));
+    return pyro_bool(IS_BOOL(args[0]));
 }
 
 
 static Value fn_has_method(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$has_method(): invalid argument [method_name], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_bool(pyro_has_method(vm, args[0], AS_STR(args[1])));
+    return pyro_bool(pyro_has_method(vm, args[0], AS_STR(args[1])));
 }
 
 
 static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$has_field(): invalid argument [field_name], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
     Value field_name = args[1];
 
@@ -551,39 +551,39 @@ static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
         ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         Value field_index;
         if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
-            return pyro_make_bool(true);
+            return pyro_bool(true);
         }
     }
 
-    return pyro_make_bool(false);
+    return pyro_bool(false);
 }
 
 
 static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_INSTANCE(args[0]));
+    return pyro_bool(IS_INSTANCE(args[0]));
 }
 
 
 static Value fn_is_instance_of(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_CLASS(args[1])) {
         pyro_panic(vm, "$is_instance_of(): invalid argument [class], expected a class object");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjClass* target_class = AS_CLASS(args[1]);
 
     if (!IS_INSTANCE(args[0])) {
-        return pyro_make_bool(false);
+        return pyro_bool(false);
     }
     ObjClass* instance_class = AS_INSTANCE(args[0])->obj.class;
 
     while (instance_class != NULL) {
         if (instance_class == target_class) {
-            return pyro_make_bool(true);
+            return pyro_bool(true);
         }
         instance_class = instance_class->superclass;
     }
 
-    return pyro_make_bool(false);
+    return pyro_bool(false);
 }
 
 
@@ -594,14 +594,14 @@ static Value fn_shell_shortcut(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$(): invalid argument [cmd], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (!pyro_exec_shell_cmd(vm, AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_obj(out_str);
+    return pyro_obj(out_str);
 }
 
 
@@ -613,15 +613,15 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 1) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
-            return pyro_make_null();
+            return pyro_null();
         }
         if (!pyro_exec_shell_cmd(vm, AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
-            return pyro_make_null();
+            return pyro_null();
         }
     } else if (arg_count == 2) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
-            return pyro_make_null();
+            return pyro_null();
         }
         if (IS_STR(args[1])) {
             if (!pyro_exec_shell_cmd(
@@ -633,7 +633,7 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
                 &err_str,
                 &exit_code
             )) {
-                return pyro_make_null();
+                return pyro_null();
             }
         } else if (IS_BUF(args[1])) {
             if (!pyro_exec_shell_cmd(
@@ -645,50 +645,50 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
                 &err_str,
                 &exit_code
             )) {
-                return pyro_make_null();
+                return pyro_null();
             }
         } else {
             pyro_panic(vm, "$shell(): invalid argument [input], expected a string or buffer");
-            return pyro_make_null();
+            return pyro_null();
         }
     } else {
         pyro_panic(vm, "$shell(): expected 1 or 2 arguments, found %zu", arg_count);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     ObjTup* tup = ObjTup_new(3, vm);
     if (!tup) {
         pyro_panic(vm, "$shell(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    tup->values[0] = pyro_make_i64(exit_code);
-    tup->values[1] = pyro_make_obj(out_str);
-    tup->values[2] = pyro_make_obj(err_str);
+    tup->values[0] = pyro_i64(exit_code);
+    tup->values[1] = pyro_obj(out_str);
+    tup->values[2] = pyro_obj(err_str);
 
-    return pyro_make_obj(tup);
+    return pyro_obj(tup);
 }
 
 
 static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* string = pyro_debugify_value(vm, args[0]);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
-    return pyro_make_obj(string);
+    return pyro_obj(string);
 }
 
 
 static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$read_file(): invalid argument [path], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     FILE* stream = fopen(AS_STR(args[0])->bytes, "r");
     if (!stream) {
         pyro_panic(vm, "$read_file(): unable to open file '%s'", AS_STR(args[0])->bytes);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     size_t count = 0;
@@ -703,7 +703,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "$read_file(): out of memory");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
                 fclose(stream);
-                return pyro_make_null();
+                return pyro_null();
             }
             capacity = new_capacity;
             array = new_array;
@@ -716,7 +716,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "$read_file(): I/O read error");
                 FREE_ARRAY(vm, uint8_t, array, capacity);
                 fclose(stream);
-                return pyro_make_null();
+                return pyro_null();
             }
             break;
         }
@@ -735,29 +735,29 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
         pyro_panic(vm, "$read_file(): out of memory");
         FREE_ARRAY(vm, uint8_t, array, capacity);
         fclose(stream);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     fclose(stream);
-    return pyro_make_obj(string);
+    return pyro_obj(string);
 }
 
 
 static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$write_file(): invalid argument [path], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (!IS_STR(args[1]) && !IS_BUF(args[1])) {
         pyro_panic(vm, "$write_file(): invalid argument [content], expected a string or buffer");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     FILE* stream = fopen(AS_STR(args[0])->bytes, "w");
     if (!stream) {
         pyro_panic(vm, "$write_file(): unable to open file '%s'", AS_STR(args[0])->bytes);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (IS_BUF(args[1])) {
@@ -766,10 +766,10 @@ static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
         if (n < buf->count) {
             pyro_panic(vm, "$write_file(): I/O write error");
             fclose(stream);
-            return pyro_make_null();
+            return pyro_null();
         }
         fclose(stream);
-        return pyro_make_i64((int64_t)n);
+        return pyro_i64((int64_t)n);
     }
 
     ObjStr* string = AS_STR(args[1]);
@@ -777,15 +777,15 @@ static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
     if (n < string->length) {
         pyro_panic(vm, "$write_file(): I/O write error");
         fclose(stream);
-        return pyro_make_null();
+        return pyro_null();
     }
     fclose(stream);
-    return pyro_make_i64((int64_t)n);
+    return pyro_i64((int64_t)n);
 }
 
 
 static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_i64((int64_t)pyro_hash_value(vm, args[0]));
+    return pyro_i64((int64_t)pyro_hash_value(vm, args[0]));
 }
 
 
@@ -798,64 +798,64 @@ static Value fn_sleep(PyroVM* vm, size_t arg_count, Value* args) {
         time_in_seconds = args[0].as.f64;
     } else {
         pyro_panic(vm, "$sleep(): invalid argument [time_in_seconds], expected a positive number");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (pyro_sleep(time_in_seconds) != 0) {
         pyro_panic(vm, "$sleep(): OS error");
     }
 
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 static Value fn_is_callable(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_CLOSURE(args[0])) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     } else if (IS_NATIVE_FN(args[0])) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     } else if (IS_CLASS(args[0])) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     } else if (IS_BOUND_METHOD(args[0])) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     } else if (IS_INSTANCE(args[0]) && pyro_has_method(vm, args[0], vm->str_dollar_call)) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     }
-    return pyro_make_bool(false);
+    return pyro_bool(false);
 }
 
 
 static Value fn_is_class(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_CLASS(args[0])) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     }
-    return pyro_make_bool(false);
+    return pyro_bool(false);
 }
 
 
 static Value fn_is_pyro_func(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_CLOSURE(args[0])) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     }
-    return pyro_make_bool(false);
+    return pyro_bool(false);
 }
 
 
 static Value fn_is_native_func(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_NATIVE_FN(args[0])) {
-        return pyro_make_bool(true);
+        return pyro_bool(true);
     }
-    return pyro_make_bool(false);
+    return pyro_bool(false);
 }
 
 
 static Value fn_is_iterable(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(pyro_has_method(vm, args[0], vm->str_dollar_iter));
+    return pyro_bool(pyro_has_method(vm, args[0], vm->str_dollar_iter));
 }
 
 
 static Value fn_is_iterator(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(pyro_has_method(vm, args[0], vm->str_dollar_next));
+    return pyro_bool(pyro_has_method(vm, args[0], vm->str_dollar_next));
 }
 
 
@@ -864,52 +864,52 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 1) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$env(): invalid argument [name], expected a string");
-            return pyro_make_null();
+            return pyro_null();
         }
 
         ObjStr* name = AS_STR(args[0]);
         char* value = getenv(name->bytes);
         if (!value) {
-            return pyro_make_obj(vm->error);
+            return pyro_obj(vm->error);
         }
 
         ObjStr* string = ObjStr_new(value, vm);
         if (!string) {
             pyro_panic(vm, "$env(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
 
-        return pyro_make_obj(string);
+        return pyro_obj(string);
     }
 
     // Note: setenv() is a POSIX function, not part of the C standard library.
     if (arg_count == 2) {
         if (!IS_STR(args[0])) {
             pyro_panic(vm, "$env(): invalid argument [name], expected a string");
-            return pyro_make_null();
+            return pyro_null();
         }
 
         ObjStr* name = AS_STR(args[0]);
         ObjStr* value = pyro_stringify_value(vm, args[1]);
         if (vm->halt_flag) {
-            return pyro_make_null();
+            return pyro_null();
         }
 
         if (!pyro_setenv(name->bytes, value->bytes)) {
             pyro_panic(vm, "$env(): failed to set environment variable '%s'", name->bytes);
-            return pyro_make_null();
+            return pyro_null();
         }
 
-        return pyro_make_null();
+        return pyro_null();
     }
 
     pyro_panic(vm, "$env(): expected 1 or 2 arguments, found %zu", arg_count);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 static Value fn_is_null(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_NULL(args[0]));
+    return pyro_bool(IS_NULL(args[0]));
 }
 
 
@@ -918,94 +918,94 @@ static Value fn_input(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* string = ObjFile_read_line(file, vm);
     if (vm->halt_flag) {
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return string ? pyro_make_obj(string) : pyro_make_null();
+    return string ? pyro_obj(string) : pyro_null();
 }
 
 
 static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$exec(): invalid argument [code], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjStr* code = AS_STR(args[0]);
 
     ObjModule* module = ObjModule_new(vm);
     if (!module) {
         pyro_panic(vm, "$exec(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
     // Push the module onto the stack to keep it safe from the garbage collector.
-    if (!pyro_push(vm, pyro_make_obj(module))) { return pyro_make_null(); }
+    if (!pyro_push(vm, pyro_obj(module))) { return pyro_null(); }
     pyro_exec_code_as_module(vm, code->bytes, code->length, "<exec>", module);
     pyro_pop(vm);
 
-    return pyro_make_obj(module);
+    return pyro_obj(module);
 }
 
 
 static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
         case VAL_BOOL:
-            return pyro_make_obj(vm->str_bool);
+            return pyro_obj(vm->str_bool);
         case VAL_NULL:
-            return pyro_make_obj(vm->str_null);
+            return pyro_obj(vm->str_null);
         case VAL_I64:
-            return pyro_make_obj(vm->str_i64);
+            return pyro_obj(vm->str_i64);
         case VAL_F64:
-            return pyro_make_obj(vm->str_f64);
+            return pyro_obj(vm->str_f64);
         case VAL_CHAR:
-            return pyro_make_obj(vm->str_char);
+            return pyro_obj(vm->str_char);
         case VAL_OBJ: {
             switch (AS_OBJ(args[0])->type) {
                 case OBJ_BOUND_METHOD:
-                    return pyro_make_obj(vm->str_method);
+                    return pyro_obj(vm->str_method);
                 case OBJ_BUF:
-                    return pyro_make_obj(vm->str_buf);
+                    return pyro_obj(vm->str_buf);
                 case OBJ_CLASS:
-                    return pyro_make_obj(vm->str_class);
+                    return pyro_obj(vm->str_class);
                 case OBJ_INSTANCE: {
                     ObjStr* class_name = AS_OBJ(args[0])->class->name;
                     if (class_name) {
-                        return pyro_make_obj(class_name);
+                        return pyro_obj(class_name);
                     }
-                    return pyro_make_obj(vm->str_instance);
+                    return pyro_obj(vm->str_instance);
                 }
                 case OBJ_CLOSURE:
                 case OBJ_PYRO_FN:
                 case OBJ_NATIVE_FN:
-                    return pyro_make_obj(vm->str_fn);
+                    return pyro_obj(vm->str_fn);
                 case OBJ_FILE:
-                    return pyro_make_obj(vm->str_file);
+                    return pyro_obj(vm->str_file);
                 case OBJ_ITER:
-                    return pyro_make_obj(vm->str_iter);
+                    return pyro_obj(vm->str_iter);
                 case OBJ_MAP:
-                    return pyro_make_obj(vm->str_map);
+                    return pyro_obj(vm->str_map);
                 case OBJ_MAP_AS_SET:
-                    return pyro_make_obj(vm->str_set);
+                    return pyro_obj(vm->str_set);
                 case OBJ_VEC:
-                    return pyro_make_obj(vm->str_vec);
+                    return pyro_obj(vm->str_vec);
                 case OBJ_VEC_AS_STACK:
-                    return pyro_make_obj(vm->str_stack);
+                    return pyro_obj(vm->str_stack);
                 case OBJ_QUEUE:
-                    return pyro_make_obj(vm->str_queue);
+                    return pyro_obj(vm->str_queue);
                 case OBJ_STR:
-                    return pyro_make_obj(vm->str_str);
+                    return pyro_obj(vm->str_str);
                 case OBJ_MODULE:
-                    return pyro_make_obj(vm->str_module);
+                    return pyro_obj(vm->str_module);
                 case OBJ_TUP:
-                    return pyro_make_obj(vm->str_tup);
+                    return pyro_obj(vm->str_tup);
                 case OBJ_ERR:
-                    return pyro_make_obj(vm->str_err);
+                    return pyro_obj(vm->str_err);
                 default:
-                    return pyro_make_obj(vm->empty_string);
+                    return pyro_obj(vm->empty_string);
             }
         }
         default:
-            return pyro_make_obj(vm->empty_string);
+            return pyro_obj(vm->empty_string);
     }
 }
 
@@ -1015,22 +1015,22 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
 
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$method(): invalid argument [method_name], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
     ObjStr* method_name = AS_STR(args[1]);
 
     Value method = pyro_get_method(vm, obj, method_name);
     if (IS_NULL(method)) {
-        return pyro_make_obj(vm->error);
+        return pyro_obj(vm->error);
     }
 
     ObjBoundMethod* bound_method = ObjBoundMethod_new(vm, obj, AS_OBJ(method));
     if (!bound_method) {
         pyro_panic(vm, "$method(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_obj(bound_method);
+    return pyro_obj(bound_method);
 }
 
 
@@ -1040,25 +1040,25 @@ static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
         ObjIter* iter = ObjIter_empty(vm);
         if (!iter) {
             pyro_panic(vm, "$methods(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_obj(iter);
+        return pyro_obj(iter);
     }
 
     ObjIter* iter = ObjIter_new((Obj*)class->pub_instance_methods, ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "$methods(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
 static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$field(): invalid argument [field_name], expected a string");
-        return pyro_make_null();
+        return pyro_null();
     }
     Value field_name = args[1];
 
@@ -1070,7 +1070,7 @@ static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
         }
     }
 
-    return pyro_make_obj(vm->error);
+    return pyro_obj(vm->error);
 }
 
 
@@ -1080,94 +1080,94 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
         ObjIter* iter = ObjIter_empty(vm);
         if (!iter) {
             pyro_panic(vm, "$fields(): out of memory");
-            return pyro_make_null();
+            return pyro_null();
         }
-        return pyro_make_obj(iter);
+        return pyro_obj(iter);
     }
 
     ObjIter* iter = ObjIter_new((Obj*)class->pub_field_indexes, ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "$fields(): out of memory");
-        return pyro_make_null();
+        return pyro_null();
     }
 
-    return pyro_make_obj(iter);
+    return pyro_obj(iter);
 }
 
 
 static Value fn_is_func(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_CLOSURE(args[0]) || IS_NATIVE_FN(args[0]));
+    return pyro_bool(IS_CLOSURE(args[0]) || IS_NATIVE_FN(args[0]));
 }
 
 
 static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
-    return pyro_make_bool(IS_BOUND_METHOD(args[0]));
+    return pyro_bool(IS_BOUND_METHOD(args[0]));
 }
 
 
 static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         if (vm->stdout_file) {
-            return pyro_make_obj(vm->stdout_file);
+            return pyro_obj(vm->stdout_file);
         }
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 1) {
         if (!IS_FILE(args[0])) {
             pyro_panic(vm, "$stdout(): invalid argument, expected a file");
-            return pyro_make_null();
+            return pyro_null();
         }
         vm->stdout_file = AS_FILE(args[0]);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     pyro_panic(vm, "$stdout(): expected 0 or 1 arguments, found %zu", arg_count);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         if (vm->stderr_file) {
-            return pyro_make_obj(vm->stderr_file);
+            return pyro_obj(vm->stderr_file);
         }
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 1) {
         if (!IS_FILE(args[0])) {
             pyro_panic(vm, "$stderr(): invalid argument, expected a file");
-            return pyro_make_null();
+            return pyro_null();
         }
         vm->stderr_file = AS_FILE(args[0]);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     pyro_panic(vm, "$stderr(): expected 0 or 1 arguments, found %zu", arg_count);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
 static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
     if (arg_count == 0) {
         if (vm->stdin_file) {
-            return pyro_make_obj(vm->stdin_file);
+            return pyro_obj(vm->stdin_file);
         }
-        return pyro_make_null();
+        return pyro_null();
     }
 
     if (arg_count == 1) {
         if (!IS_FILE(args[0])) {
             pyro_panic(vm, "$stdin(): invalid argument, expected a file");
-            return pyro_make_null();
+            return pyro_null();
         }
         vm->stdin_file = AS_FILE(args[0]);
-        return pyro_make_null();
+        return pyro_null();
     }
 
     pyro_panic(vm, "$stdin(): expected 0 or 1 arguments, found %zu", arg_count);
-    return pyro_make_null();
+    return pyro_null();
 }
 
 
@@ -1183,11 +1183,11 @@ Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
 void pyro_load_std_core(PyroVM* vm) {
     pyro_define_module_1(vm, "$std");
-    pyro_define_global(vm, "$roots", pyro_make_obj(vm->import_roots));
+    pyro_define_global(vm, "$roots", pyro_obj(vm->import_roots));
 
     ObjTup* args = ObjTup_new(0, vm);
     if (args) {
-        pyro_define_global(vm, "$args", pyro_make_obj(args));
+        pyro_define_global(vm, "$args", pyro_obj(args));
     }
 
     pyro_define_global_fn(vm, "$", fn_shell_shortcut, 1);
