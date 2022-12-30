@@ -58,31 +58,37 @@ struct Obj {
     bool is_marked;
 };
 
-// Inline functions for creating Value instance.
+// Converts a C boolean into a Pyro boolean.
 static inline Value pyro_make_bool(bool value) {
     return (Value){VAL_BOOL, {.boolean = value}};
 }
 
+// Converts a C integer into a Pyro i64.
 static inline Value pyro_make_i64(int64_t value) {
     return (Value){VAL_I64, {.i64 = value}};
 }
 
+// Converts a C double into a Pyro f64.
 static inline Value pyro_make_f64(double value) {
     return (Value){VAL_F64, {.f64 = value}};
 }
 
+// Converts a C integer into a Pyro char.
 static inline Value pyro_make_char(uint32_t value) {
     return (Value){VAL_CHAR, {.u32 = value}};
 }
 
+// Converts a C pointer into a Pyro object.
 static inline Value pyro_make_obj(void* value) {
     return (Value){VAL_OBJ, {.obj = (Obj*)value}};
 }
 
+// Creates a Pyro tombstone value.
 static inline Value pyro_make_tombstone() {
     return (Value){VAL_TOMBSTONE, {.i64 = 0}};
 }
 
+// Creates a Pyro null value.
 static inline Value pyro_make_null() {
     return (Value){VAL_NULL, {.i64 = 0}};
 }
