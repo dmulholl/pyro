@@ -58,27 +58,27 @@ struct Obj {
     bool is_marked;
 };
 
-// Converts a C boolean into a Pyro boolean.
+// Converts a C boolean to a Pyro value.
 static inline Value pyro_bool(bool value) {
     return (Value){VAL_BOOL, {.boolean = value}};
 }
 
-// Converts a C integer into a Pyro i64.
+// Converts a C integer to a Pyro value.
 static inline Value pyro_i64(int64_t value) {
     return (Value){VAL_I64, {.i64 = value}};
 }
 
-// Converts a C double into a Pyro f64.
+// Converts a C double to a Pyro value.
 static inline Value pyro_f64(double value) {
     return (Value){VAL_F64, {.f64 = value}};
 }
 
-// Converts a C integer into a Pyro char.
+// Converts a C integer to a Pyro value.
 static inline Value pyro_char(uint32_t value) {
     return (Value){VAL_CHAR, {.u32 = value}};
 }
 
-// Converts a C pointer into a Pyro object.
+// Converts a C pointer to a Pyro value.
 static inline Value pyro_obj(void* value) {
     return (Value){VAL_OBJ, {.obj = (Obj*)value}};
 }
