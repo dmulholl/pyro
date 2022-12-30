@@ -61,7 +61,7 @@ static void write_msg(
 
     if (file) {
         if (file->stream) {
-            int result = fprintf(file->stream, "%s  %5s  %s\n", timestamp_buffer, level, message->bytes);
+            int result = fprintf(file->stream, "[%s]  [%5s]  %s\n", timestamp_buffer, level, message->bytes);
             if (result < 0) {
                 pyro_panic(vm, "%s(): failed to write log message to file", fn_name);
             }
@@ -69,7 +69,7 @@ static void write_msg(
             pyro_panic(vm, "%s(): unable to write to log file, file has been closed", fn_name);
         }
     } else {
-        int64_t result = pyro_stderr_write_f(vm, "%s  %5s  %s\n", timestamp_buffer, level, message->bytes);
+        int64_t result = pyro_stderr_write_f(vm, "[%s]  [%5s]  %s\n", timestamp_buffer, level, message->bytes);
         if (result < 0) {
             pyro_panic(vm, "%s(): failed to write log message to standard error stream", fn_name);
         }
@@ -78,31 +78,31 @@ static void write_msg(
 
 
 static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
-    write_msg(vm, "debug", "[%Y-%m-%d %H:%M:%S]", "DEBUG", NULL, arg_count, args);
+    write_msg(vm, "debug", "%Y-%m-%d %H:%M:%S", "DEBUG", NULL, arg_count, args);
     return pyro_make_null();
 }
 
 
 static Value fn_info(PyroVM* vm, size_t arg_count, Value* args) {
-    write_msg(vm, "info", "[%Y-%m-%d %H:%M:%S]", "INFO", NULL, arg_count, args);
+    write_msg(vm, "info", "%Y-%m-%d %H:%M:%S", "INFO", NULL, arg_count, args);
     return pyro_make_null();
 }
 
 
 static Value fn_warn(PyroVM* vm, size_t arg_count, Value* args) {
-    write_msg(vm, "warn", "[%Y-%m-%d %H:%M:%S]", "WARN", NULL, arg_count, args);
+    write_msg(vm, "warn", "%Y-%m-%d %H:%M:%S", "WARN", NULL, arg_count, args);
     return pyro_make_null();
 }
 
 
 static Value fn_error(PyroVM* vm, size_t arg_count, Value* args) {
-    write_msg(vm, "error", "[%Y-%m-%d %H:%M:%S]", "ERROR", NULL, arg_count, args);
+    write_msg(vm, "error", "%Y-%m-%d %H:%M:%S", "ERROR", NULL, arg_count, args);
     return pyro_make_null();
 }
 
 
 static Value fn_fatal(PyroVM* vm, size_t arg_count, Value* args) {
-    write_msg(vm, "fatal", "[%Y-%m-%d %H:%M:%S]", "FATAL", NULL, arg_count, args);
+    write_msg(vm, "fatal", "%Y-%m-%d %H:%M:%S", "FATAL", NULL, arg_count, args);
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = 1;
@@ -248,7 +248,7 @@ void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
     pyro_define_pub_member(vm, module, "Logger", pyro_make_obj(logger_class));
 
     pyro_define_pub_field(vm, logger_class, "level", pyro_make_i64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_pub_field(vm, logger_class, "timestamp", pyro_make_obj(ObjStr_new("[%Y-%m-%d %H:%M:%S]", vm)));
+    pyro_define_pub_field(vm, logger_class, "timestamp", pyro_make_obj(ObjStr_new("%Y-%m-%d %H:%M:%S", vm)));
     pyro_define_pub_field(vm, logger_class, "file", pyro_make_null());
 
     pyro_define_pub_method(vm, logger_class, "level", logger_level, 1);
