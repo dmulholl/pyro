@@ -55,8 +55,9 @@ typedef enum {
     PYRO_OBJECT_VEC_AS_STACK,
 } PyroObjectType;
 
-// The VM maintains a linked list of all heap-allocated objects using the [next] pointers.
-// Not every object has an associated class so [class] can be NULL.
+// Base type for all heap-allocated objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
+// The VM maintains a linked list of all heap-allocated objects using the [.next] pointers.
+// Not every object has an associated class so [.class] can be NULL.
 struct Obj {
     Obj* next;
     ObjClass* class;
