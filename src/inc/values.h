@@ -3,6 +3,8 @@
 
 #include "pyro.h"
 
+// Type-set for Pyro's fundamental [Value] type. Every [Value] has a [.type] field with
+// one of these enum values.
 typedef enum {
     VAL_BOOL,       // A Pyro boolean, true or false.
     VAL_NULL,       // A Pyro null.
@@ -13,6 +15,8 @@ typedef enum {
     VAL_TOMBSTONE,  // Used internally by the map implementation.
 } ValueType;
 
+// Tagged union for Pyro's fundamental [Value] type. Every value in Pyro is a [Value], e.g.
+// variables, vector entries, map keys, map values, etc.
 typedef struct {
     ValueType type;
     union {
@@ -25,6 +29,8 @@ typedef struct {
     } as;
 } Value;
 
+// Type-set for heap-allocated Pyro objects, i.e. Pyro values with type [VAL_OBJ].
+// Every [Obj] has a [.type] field with one of these enum values.
 typedef enum {
     OBJ_BOUND_METHOD,
     OBJ_BUF,
