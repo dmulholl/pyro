@@ -21,17 +21,17 @@ static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
 static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
     if (IS_OBJ(args[0])) {
         switch (AS_OBJ(args[0])->type) {
-            case OBJ_VEC:
-            case OBJ_VEC_AS_STACK: {
+            case PYRO_OBJECT_VEC:
+            case PYRO_OBJECT_VEC_AS_STACK: {
                 ObjVec* vec = AS_VEC(args[0]);
                 return pyro_i64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
             }
-            case OBJ_TUP: {
+            case PYRO_OBJECT_TUP: {
                 ObjTup* tup = AS_TUP(args[0]);
                 return pyro_i64(sizeof(ObjTup) + sizeof(Value) * tup->count);
             }
-            case OBJ_MAP:
-            case OBJ_MAP_AS_SET: {
+            case PYRO_OBJECT_MAP:
+            case PYRO_OBJECT_MAP_AS_SET: {
                 ObjMap* map = AS_MAP(args[0]);
                 return pyro_i64(
                     sizeof(ObjMap) +
@@ -39,11 +39,11 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
                     sizeof(int64_t) * map->index_array_capacity
                 );
             }
-            case OBJ_QUEUE: {
+            case PYRO_OBJECT_QUEUE: {
                 ObjQueue* queue = AS_QUEUE(args[0]);
                 return pyro_i64(sizeof(ObjQueue) + sizeof(QueueItem) * queue->count);
             }
-            case OBJ_BUF: {
+            case PYRO_OBJECT_BUF: {
                 ObjBuf* buf = AS_BUF(args[0]);
                 return pyro_i64(sizeof(ObjBuf) + sizeof(uint8_t) * buf->capacity);
             }

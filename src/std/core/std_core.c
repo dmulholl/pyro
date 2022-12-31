@@ -961,44 +961,44 @@ static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
             return pyro_obj(vm->str_char);
         case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(args[0])->type) {
-                case OBJ_BOUND_METHOD:
+                case PYRO_OBJECT_BOUND_METHOD:
                     return pyro_obj(vm->str_method);
-                case OBJ_BUF:
+                case PYRO_OBJECT_BUF:
                     return pyro_obj(vm->str_buf);
-                case OBJ_CLASS:
+                case PYRO_OBJECT_CLASS:
                     return pyro_obj(vm->str_class);
-                case OBJ_INSTANCE: {
+                case PYRO_OBJECT_INSTANCE: {
                     ObjStr* class_name = AS_OBJ(args[0])->class->name;
                     if (class_name) {
                         return pyro_obj(class_name);
                     }
                     return pyro_obj(vm->str_instance);
                 }
-                case OBJ_CLOSURE:
-                case OBJ_PYRO_FN:
-                case OBJ_NATIVE_FN:
+                case PYRO_OBJECT_CLOSURE:
+                case PYRO_OBJECT_PYRO_FN:
+                case PYRO_OBJECT_NATIVE_FN:
                     return pyro_obj(vm->str_fn);
-                case OBJ_FILE:
+                case PYRO_OBJECT_FILE:
                     return pyro_obj(vm->str_file);
-                case OBJ_ITER:
+                case PYRO_OBJECT_ITER:
                     return pyro_obj(vm->str_iter);
-                case OBJ_MAP:
+                case PYRO_OBJECT_MAP:
                     return pyro_obj(vm->str_map);
-                case OBJ_MAP_AS_SET:
+                case PYRO_OBJECT_MAP_AS_SET:
                     return pyro_obj(vm->str_set);
-                case OBJ_VEC:
+                case PYRO_OBJECT_VEC:
                     return pyro_obj(vm->str_vec);
-                case OBJ_VEC_AS_STACK:
+                case PYRO_OBJECT_VEC_AS_STACK:
                     return pyro_obj(vm->str_stack);
-                case OBJ_QUEUE:
+                case PYRO_OBJECT_QUEUE:
                     return pyro_obj(vm->str_queue);
-                case OBJ_STR:
+                case PYRO_OBJECT_STR:
                     return pyro_obj(vm->str_str);
-                case OBJ_MODULE:
+                case PYRO_OBJECT_MODULE:
                     return pyro_obj(vm->str_module);
-                case OBJ_TUP:
+                case PYRO_OBJECT_TUP:
                     return pyro_obj(vm->str_tup);
-                case OBJ_ERR:
+                case PYRO_OBJECT_ERR:
                     return pyro_obj(vm->str_err);
                 default:
                     return pyro_obj(vm->empty_string);

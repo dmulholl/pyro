@@ -170,17 +170,17 @@ static void blacken_object(PyroVM* vm, Obj* object) {
     mark_object(vm, (Obj*)object->class);
 
     switch (object->type) {
-        case OBJ_BOUND_METHOD: {
+        case PYRO_OBJECT_BOUND_METHOD: {
             ObjBoundMethod* bound = (ObjBoundMethod*)object;
             mark_value(vm, bound->receiver);
             mark_object(vm, (Obj*)bound->method);
             break;
         }
 
-        case OBJ_BUF:
+        case PYRO_OBJECT_BUF:
             break;
 
-        case OBJ_CLASS: {
+        case PYRO_OBJECT_CLASS: {
             // We don't need to mark the cached method names or values as they're in the maps.
             ObjClass* class = (ObjClass*)object;
             mark_object(vm, (Obj*)class->name);
@@ -195,7 +195,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_CLOSURE: {
+        case PYRO_OBJECT_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             mark_object(vm, (Obj*)closure->fn);
             mark_object(vm, (Obj*)closure->module);
@@ -206,13 +206,13 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_FILE: {
+        case PYRO_OBJECT_FILE: {
             ObjFile* file = (ObjFile*)object;
             mark_object(vm, (Obj*)file->path);
             break;
         }
 
-        case OBJ_PYRO_FN: {
+        case PYRO_OBJECT_PYRO_FN: {
             ObjPyroFn* fn = (ObjPyroFn*)object;
             mark_object(vm, (Obj*)fn->name);
             mark_object(vm, (Obj*)fn->source_id);
@@ -222,7 +222,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_INSTANCE: {
+        case PYRO_OBJECT_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             int num_fields = instance->obj.class->default_field_values->count;
             for (int i = 0; i < num_fields; i++) {
@@ -231,14 +231,14 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_ITER: {
+        case PYRO_OBJECT_ITER: {
             ObjIter* iter = (ObjIter*)object;
             mark_object(vm, (Obj*)iter->source);
             mark_object(vm, (Obj*)iter->callback);
             break;
         }
 
-        case OBJ_MAP: {
+        case PYRO_OBJECT_MAP: {
             ObjMap* map = (ObjMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
                 MapEntry* entry = &map->entry_array[i];
@@ -251,7 +251,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MAP_AS_SET: {
+        case PYRO_OBJECT_MAP_AS_SET: {
             ObjMap* map = (ObjMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
                 MapEntry* entry = &map->entry_array[i];
@@ -263,7 +263,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MODULE: {
+        case PYRO_OBJECT_MODULE: {
             ObjModule* module = (ObjModule*)object;
             mark_object(vm, (Obj*)module->submodules);
             mark_object(vm, (Obj*)module->members);
@@ -272,13 +272,13 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_NATIVE_FN: {
+        case PYRO_OBJECT_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
             mark_object(vm, (Obj*)native->name);
             break;
         }
 
-        case OBJ_QUEUE: {
+        case PYRO_OBJECT_QUEUE: {
             ObjQueue* queue = (ObjQueue*)object;
             QueueItem* next_item = queue->head;
             while (next_item) {
@@ -288,10 +288,10 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_STR:
+        case PYRO_OBJECT_STR:
             break;
 
-        case OBJ_TUP: {
+        case PYRO_OBJECT_TUP: {
             ObjTup* tup = (ObjTup*)object;
             for (size_t i = 0; i < tup->count; i++) {
                 mark_value(vm, tup->values[i]);
@@ -299,14 +299,14 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_UPVALUE: {
+        case PYRO_OBJECT_UPVALUE: {
             ObjUpvalue* upvalue = (ObjUpvalue*)object;
             mark_value(vm, upvalue->closed);
             break;
         }
 
-        case OBJ_VEC_AS_STACK:
-        case OBJ_VEC: {
+        case PYRO_OBJECT_VEC_AS_STACK:
+        case PYRO_OBJECT_VEC: {
             ObjVec* vec = (ObjVec*)object;
             for (size_t i = 0; i < vec->count; i++) {
                 mark_value(vm, vec->values[i]);
@@ -314,17 +314,17 @@ static void blacken_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MAP_AS_WEAKREF:
+        case PYRO_OBJECT_MAP_AS_WEAKREF:
             break;
 
-        case OBJ_ERR: {
+        case PYRO_OBJECT_ERR: {
             ObjErr* err = (ObjErr*)object;
             mark_object(vm, (Obj*)err->message);
             mark_object(vm, (Obj*)err->details);
             break;
         }
 
-        case OBJ_RESOURCE_POINTER:
+        case PYRO_OBJECT_RESOURCE_POINTER:
             break;
     }
 }

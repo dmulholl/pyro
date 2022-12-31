@@ -131,16 +131,16 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
     }
 
     switch(AS_OBJ(callee)->type) {
-        case OBJ_BOUND_METHOD: {
+        case PYRO_OBJECT_BOUND_METHOD: {
             ObjBoundMethod* bm = AS_BOUND_METHOD(callee);
             vm->stack_top[-arg_count - 1] = bm->receiver;
 
             switch (bm->method->type) {
-                case OBJ_CLOSURE:
+                case PYRO_OBJECT_CLOSURE:
                     call_closure(vm, (ObjClosure*)bm->method, arg_count);
                     break;
 
-                case OBJ_NATIVE_FN:
+                case PYRO_OBJECT_NATIVE_FN:
                     call_native_fn(vm, (ObjNativeFn*)bm->method, arg_count);
                     break;
 
@@ -152,7 +152,7 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
             return;
         }
 
-        case OBJ_CLASS: {
+        case PYRO_OBJECT_CLASS: {
             ObjClass* class = AS_CLASS(callee);
             ObjInstance* instance = ObjInstance_new(vm, class);
             if (!instance) {
@@ -173,11 +173,11 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
             }
 
             switch (AS_OBJ(class->init_method)->type) {
-                case OBJ_CLOSURE:
+                case PYRO_OBJECT_CLOSURE:
                     call_closure(vm, AS_CLOSURE(class->init_method), arg_count);
                     break;
 
-                case OBJ_NATIVE_FN:
+                case PYRO_OBJECT_NATIVE_FN:
                     call_native_fn(vm, AS_NATIVE_FN(class->init_method), arg_count);
                     break;
 
@@ -189,17 +189,17 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
             return;
         }
 
-        case OBJ_CLOSURE: {
+        case PYRO_OBJECT_CLOSURE: {
             call_closure(vm, AS_CLOSURE(callee), arg_count);
             return;
         }
 
-        case OBJ_NATIVE_FN: {
+        case PYRO_OBJECT_NATIVE_FN: {
             call_native_fn(vm, AS_NATIVE_FN(callee), arg_count);
             return;
         }
 
-        case OBJ_INSTANCE: {
+        case PYRO_OBJECT_INSTANCE: {
             ObjClass* class = AS_OBJ(callee)->class;
 
             Value call_method;
@@ -209,11 +209,11 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
             }
 
             switch (AS_OBJ(call_method)->type) {
-                case OBJ_CLOSURE:
+                case PYRO_OBJECT_CLOSURE:
                     call_closure(vm, AS_CLOSURE(call_method), arg_count);
                     break;
 
-                case OBJ_NATIVE_FN:
+                case PYRO_OBJECT_NATIVE_FN:
                     call_native_fn(vm, AS_NATIVE_FN(call_method), arg_count);
                     break;
 

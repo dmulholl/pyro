@@ -32,27 +32,27 @@ typedef struct {
 // Type-set for heap-allocated Pyro objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
 // Every [Obj] has a [.type] field with one of these enum values.
 typedef enum {
-    OBJ_BOUND_METHOD,
-    OBJ_BUF,
-    OBJ_CLASS,
-    OBJ_CLOSURE,
-    OBJ_ERR,
-    OBJ_FILE,
-    OBJ_PYRO_FN,
-    OBJ_INSTANCE,
-    OBJ_ITER,
-    OBJ_MAP,
-    OBJ_MAP_AS_SET,
-    OBJ_MAP_AS_WEAKREF,
-    OBJ_MODULE,
-    OBJ_NATIVE_FN,
-    OBJ_QUEUE,
-    OBJ_RESOURCE_POINTER,
-    OBJ_STR,
-    OBJ_TUP,
-    OBJ_UPVALUE,
-    OBJ_VEC,
-    OBJ_VEC_AS_STACK,
+    PYRO_OBJECT_BOUND_METHOD,
+    PYRO_OBJECT_BUF,
+    PYRO_OBJECT_CLASS,
+    PYRO_OBJECT_CLOSURE,
+    PYRO_OBJECT_ERR,
+    PYRO_OBJECT_FILE,
+    PYRO_OBJECT_PYRO_FN,
+    PYRO_OBJECT_INSTANCE,
+    PYRO_OBJECT_ITER,
+    PYRO_OBJECT_MAP,
+    PYRO_OBJECT_MAP_AS_SET,
+    PYRO_OBJECT_MAP_AS_WEAKREF,
+    PYRO_OBJECT_MODULE,
+    PYRO_OBJECT_NATIVE_FN,
+    PYRO_OBJECT_QUEUE,
+    PYRO_OBJECT_RESOURCE_POINTER,
+    PYRO_OBJECT_STR,
+    PYRO_OBJECT_TUP,
+    PYRO_OBJECT_UPVALUE,
+    PYRO_OBJECT_VEC,
+    PYRO_OBJECT_VEC_AS_STACK,
 } PyroObjectType;
 
 // The VM maintains a linked list of all heap-allocated objects using the [next] pointers.
@@ -109,25 +109,25 @@ static inline Value pyro_null() {
 #define IS_CHAR(value)              ((value).type == PYRO_VALUE_CHAR)
 
 // Macros for checking if a Value instance is an object of a specific type.
-#define IS_STR(value)               pyro_is_obj_of_type(value, OBJ_STR)
-#define IS_PYRO_FN(value)           pyro_is_obj_of_type(value, OBJ_PYRO_FN)
-#define IS_CLOSURE(value)           pyro_is_obj_of_type(value, OBJ_CLOSURE)
-#define IS_NATIVE_FN(value)         pyro_is_obj_of_type(value, OBJ_NATIVE_FN)
-#define IS_CLASS(value)             pyro_is_obj_of_type(value, OBJ_CLASS)
-#define IS_INSTANCE(value)          pyro_is_obj_of_type(value, OBJ_INSTANCE)
-#define IS_BOUND_METHOD(value)      pyro_is_obj_of_type(value, OBJ_BOUND_METHOD)
-#define IS_MAP(value)               pyro_is_obj_of_type(value, OBJ_MAP)
-#define IS_TUP(value)               pyro_is_obj_of_type(value, OBJ_TUP)
-#define IS_MOD(value)               pyro_is_obj_of_type(value, OBJ_MODULE)
-#define IS_VEC(value)               pyro_is_obj_of_type(value, OBJ_VEC)
-#define IS_BUF(value)               pyro_is_obj_of_type(value, OBJ_BUF)
-#define IS_FILE(value)              pyro_is_obj_of_type(value, OBJ_FILE)
-#define IS_ITER(value)              pyro_is_obj_of_type(value, OBJ_ITER)
-#define IS_STACK(value)             pyro_is_obj_of_type(value, OBJ_VEC_AS_STACK)
-#define IS_SET(value)               pyro_is_obj_of_type(value, OBJ_MAP_AS_SET)
-#define IS_QUEUE(value)             pyro_is_obj_of_type(value, OBJ_QUEUE)
-#define IS_RESOURSE_POINTER(value)  pyro_is_obj_of_type(value, OBJ_RESOURCE_POINTER)
-#define IS_ERR(value)               pyro_is_obj_of_type(value, OBJ_ERR)
+#define IS_STR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_STR)
+#define IS_PYRO_FN(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_PYRO_FN)
+#define IS_CLOSURE(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_CLOSURE)
+#define IS_NATIVE_FN(value)         pyro_is_obj_of_type(value, PYRO_OBJECT_NATIVE_FN)
+#define IS_CLASS(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_CLASS)
+#define IS_INSTANCE(value)          pyro_is_obj_of_type(value, PYRO_OBJECT_INSTANCE)
+#define IS_BOUND_METHOD(value)      pyro_is_obj_of_type(value, PYRO_OBJECT_BOUND_METHOD)
+#define IS_MAP(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MAP)
+#define IS_TUP(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_TUP)
+#define IS_MOD(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MODULE)
+#define IS_VEC(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_VEC)
+#define IS_BUF(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_BUF)
+#define IS_FILE(value)              pyro_is_obj_of_type(value, PYRO_OBJECT_FILE)
+#define IS_ITER(value)              pyro_is_obj_of_type(value, PYRO_OBJECT_ITER)
+#define IS_STACK(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_VEC_AS_STACK)
+#define IS_SET(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MAP_AS_SET)
+#define IS_QUEUE(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_QUEUE)
+#define IS_RESOURSE_POINTER(value)  pyro_is_obj_of_type(value, PYRO_OBJECT_RESOURCE_POINTER)
+#define IS_ERR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_ERR)
 
 // Macros for extracting object pointers from Value instances.
 #define AS_OBJ(value)               ((value).as.obj)

@@ -15,7 +15,7 @@ bool pyro_is_truthy(Value value) {
         case PYRO_VALUE_NULL:
             return false;
         case PYRO_VALUE_OBJ:
-            return value.as.obj->type != OBJ_ERR;
+            return value.as.obj->type != PYRO_OBJECT_ERR;
         default:
             return true;
     }
@@ -147,10 +147,10 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
 
         case PYRO_VALUE_OBJ:
             switch (value.as.obj->type) {
-                case OBJ_STR:
+                case PYRO_OBJECT_STR:
                     return AS_STR(value)->hash;
 
-                case OBJ_TUP: {
+                case PYRO_OBJECT_TUP: {
                     uint64_t hash = 0;
                     ObjTup* tup = AS_TUP(value);
 
@@ -161,7 +161,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                     return hash;
                 }
 
-                case OBJ_MAP_AS_SET: {
+                case PYRO_OBJECT_MAP_AS_SET: {
                     uint64_t hash = 0;
                     ObjMap* map = AS_MAP(value);
 
@@ -198,17 +198,17 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
 
 static void pyro_dump_object(PyroVM* vm, Obj* object) {
     switch (object->type) {
-        case OBJ_STR: {
+        case PYRO_OBJECT_STR: {
             ObjStr* string = (ObjStr*)object;
             pyro_stdout_write_f(vm, "\"%s\"", string->bytes);
             break;
         }
 
-        case OBJ_BOUND_METHOD:
+        case PYRO_OBJECT_BOUND_METHOD:
             pyro_stdout_write(vm, "<method>");
             break;
 
-        case OBJ_CLASS: {
+        case PYRO_OBJECT_CLASS: {
             ObjClass* class = (ObjClass*)object;
             if (class->name == NULL) {
                 pyro_stdout_write(vm, "<class>");
@@ -218,7 +218,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_CLOSURE: {
+        case PYRO_OBJECT_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             if (closure->fn->name == NULL) {
                 pyro_stdout_write(vm, "<fn>");
@@ -228,7 +228,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_PYRO_FN: {
+        case PYRO_OBJECT_PYRO_FN: {
             ObjPyroFn* fn = (ObjPyroFn*)object;
             if (fn->name == NULL) {
                 pyro_stdout_write(vm, "<fn_obj>");
@@ -238,70 +238,70 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_INSTANCE: {
+        case PYRO_OBJECT_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             pyro_stdout_write_f(vm, "<instance %s>", instance->obj.class->name->bytes);
             break;
         }
 
-        case OBJ_MAP: {
+        case PYRO_OBJECT_MAP: {
             pyro_stdout_write(vm, "<map>");
             break;
         }
 
-        case OBJ_MAP_AS_SET: {
+        case PYRO_OBJECT_MAP_AS_SET: {
             pyro_stdout_write(vm, "<set>");
             break;
         }
 
-        case OBJ_MODULE: {
+        case PYRO_OBJECT_MODULE: {
             pyro_stdout_write(vm, "<module>");
             break;
         }
 
-        case OBJ_NATIVE_FN: {
+        case PYRO_OBJECT_NATIVE_FN: {
             ObjNativeFn* native = (ObjNativeFn*)object;
             pyro_stdout_write_f(vm, "<fn_nat %s>", native->name->bytes);
             break;
         }
 
-        case OBJ_ERR:
+        case PYRO_OBJECT_ERR:
             pyro_stdout_write(vm, "<err>");
             break;
 
-        case OBJ_TUP:
+        case PYRO_OBJECT_TUP:
             pyro_stdout_write(vm, "<tup>");
             break;
 
-        case OBJ_UPVALUE:
+        case PYRO_OBJECT_UPVALUE:
             pyro_stdout_write(vm, "<upvalue>");
             break;
 
-        case OBJ_VEC:
+        case PYRO_OBJECT_VEC:
             pyro_stdout_write(vm, "<vec>");
             break;
 
-        case OBJ_VEC_AS_STACK:
+        case PYRO_OBJECT_VEC_AS_STACK:
             pyro_stdout_write(vm, "<stack>");
             break;
 
-        case OBJ_FILE:
+        case PYRO_OBJECT_FILE:
             pyro_stdout_write(vm, "<file>");
             break;
 
-        case OBJ_BUF:
+        case PYRO_OBJECT_BUF:
             pyro_stdout_write(vm, "<buf>");
             break;
 
-        case OBJ_QUEUE:
+        case PYRO_OBJECT_QUEUE:
             pyro_stdout_write(vm, "<queue>");
             break;
 
-        case OBJ_ITER:
+        case PYRO_OBJECT_ITER:
             pyro_stdout_write(vm, "<iter>");
             break;
 
-        case OBJ_MAP_AS_WEAKREF:
+        case PYRO_OBJECT_MAP_AS_WEAKREF:
             pyro_stdout_write(vm, "<weakref map>");
             break;
 

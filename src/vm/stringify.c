@@ -459,16 +459,16 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
     }
 
     switch (object->type) {
-        case OBJ_STR:
+        case PYRO_OBJECT_STR:
             return (ObjStr*)object;
 
-        case OBJ_MODULE:
+        case PYRO_OBJECT_MODULE:
             return pyro_sprintf_to_obj(vm, "<module>");
 
-        case OBJ_UPVALUE:
+        case PYRO_OBJECT_UPVALUE:
             return pyro_sprintf_to_obj(vm, "<upvalue>");
 
-        case OBJ_FILE: {
+        case PYRO_OBJECT_FILE: {
             ObjFile* file = (ObjFile*)object;
 
             if (file->stream == NULL) {
@@ -496,32 +496,32 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return pyro_sprintf_to_obj(vm, "<file>");
         }
 
-        case OBJ_PYRO_FN:
+        case PYRO_OBJECT_PYRO_FN:
             return pyro_sprintf_to_obj(vm, "<fn>");
 
-        case OBJ_BOUND_METHOD: {
+        case PYRO_OBJECT_BOUND_METHOD: {
             ObjBoundMethod* bound_method = (ObjBoundMethod*)object;
             Obj* method = bound_method->method;
 
             switch (method->type) {
-                case OBJ_NATIVE_FN:
+                case PYRO_OBJECT_NATIVE_FN:
                     return pyro_sprintf_to_obj(vm, "<method %s>", ((ObjNativeFn*)method)->name->bytes);
-                case OBJ_CLOSURE:
+                case PYRO_OBJECT_CLOSURE:
                     return pyro_sprintf_to_obj(vm, "<method %s>", ((ObjClosure*)method)->fn->name->bytes);
                 default:
                     return pyro_sprintf_to_obj(vm, "<method>");
             }
         }
 
-        case OBJ_ITER:
+        case PYRO_OBJECT_ITER:
             return pyro_sprintf_to_obj(vm, "<iter>");
 
-        case OBJ_QUEUE: {
+        case PYRO_OBJECT_QUEUE: {
             ObjQueue* queue = (ObjQueue*)object;
             return stringify_queue(vm, queue);
         }
 
-        case OBJ_BUF: {
+        case PYRO_OBJECT_BUF: {
             ObjBuf* buf = (ObjBuf*)object;
             ObjStr* string = ObjStr_copy_raw((char*)buf->bytes, buf->count, vm);
             if (!string) {
@@ -531,38 +531,38 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return string;
         }
 
-        case OBJ_TUP: {
+        case PYRO_OBJECT_TUP: {
             ObjTup* tup = (ObjTup*)object;
             return stringify_tuple(vm, tup);
         }
 
-        case OBJ_VEC_AS_STACK:
-        case OBJ_VEC: {
+        case PYRO_OBJECT_VEC_AS_STACK:
+        case PYRO_OBJECT_VEC: {
             ObjVec* vec = (ObjVec*)object;
             return stringify_vector(vm, vec);
         }
 
-        case OBJ_MAP: {
+        case PYRO_OBJECT_MAP: {
             ObjMap* map = (ObjMap*)object;
             return stringify_map(vm, map);
         }
 
-        case OBJ_MAP_AS_SET: {
+        case PYRO_OBJECT_MAP_AS_SET: {
             ObjMap* map = (ObjMap*)object;
             return stringify_map_as_set(vm, map);
         }
 
-        case OBJ_NATIVE_FN: {
+        case PYRO_OBJECT_NATIVE_FN: {
             ObjNativeFn* fn = (ObjNativeFn*)object;
             return pyro_sprintf_to_obj(vm, "<fn %s>", fn->name->bytes);
         }
 
-        case OBJ_CLOSURE: {
+        case PYRO_OBJECT_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             return pyro_sprintf_to_obj(vm, "<fn %s>", closure->fn->name->bytes);
         }
 
-        case OBJ_CLASS: {
+        case PYRO_OBJECT_CLASS: {
             ObjClass* class = (ObjClass*)object;
             if (class->name) {
                 return pyro_sprintf_to_obj(vm, "<class %s>", class->name->bytes);
@@ -570,7 +570,7 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return pyro_sprintf_to_obj(vm, "<class>");
         }
 
-        case OBJ_INSTANCE: {
+        case PYRO_OBJECT_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             if (instance->obj.class->name) {
                 return pyro_sprintf_to_obj(vm, "<instance %s>", instance->obj.class->name->bytes);
@@ -578,7 +578,7 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
             return pyro_sprintf_to_obj(vm, "<instance>");
         }
 
-        case OBJ_ERR: {
+        case PYRO_OBJECT_ERR: {
             ObjErr* err = (ObjErr*)object;
             return err->message;
         }
@@ -618,26 +618,26 @@ ObjStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
 
 char* pyro_stringify_object_type(PyroObjectType type) {
     switch (type) {
-        case OBJ_BOUND_METHOD: return "<method>";
-        case OBJ_BUF: return "<buf>";
-        case OBJ_CLASS: return "<class>";
-        case OBJ_CLOSURE: return "<closure>";
-        case OBJ_FILE: return "<file>";
-        case OBJ_PYRO_FN: return "<fn>";
-        case OBJ_INSTANCE: return "<instance>";
-        case OBJ_MAP: return "<map>";
-        case OBJ_MAP_AS_SET: return "<set>";
-        case OBJ_MAP_AS_WEAKREF: return "<weakref map>";
-        case OBJ_MODULE: return "<module>";
-        case OBJ_NATIVE_FN: return "<native fn>";
-        case OBJ_STR: return "<str>";
-        case OBJ_TUP: return "<tup>";
-        case OBJ_UPVALUE: return "<upvalue>";
-        case OBJ_VEC: return "<vec>";
-        case OBJ_VEC_AS_STACK: return "<stack>";
-        case OBJ_ITER: return "<iter>";
-        case OBJ_QUEUE: return "<queue>";
-        case OBJ_ERR: return "<err>";
+        case PYRO_OBJECT_BOUND_METHOD: return "<method>";
+        case PYRO_OBJECT_BUF: return "<buf>";
+        case PYRO_OBJECT_CLASS: return "<class>";
+        case PYRO_OBJECT_CLOSURE: return "<closure>";
+        case PYRO_OBJECT_FILE: return "<file>";
+        case PYRO_OBJECT_PYRO_FN: return "<fn>";
+        case PYRO_OBJECT_INSTANCE: return "<instance>";
+        case PYRO_OBJECT_MAP: return "<map>";
+        case PYRO_OBJECT_MAP_AS_SET: return "<set>";
+        case PYRO_OBJECT_MAP_AS_WEAKREF: return "<weakref map>";
+        case PYRO_OBJECT_MODULE: return "<module>";
+        case PYRO_OBJECT_NATIVE_FN: return "<native fn>";
+        case PYRO_OBJECT_STR: return "<str>";
+        case PYRO_OBJECT_TUP: return "<tup>";
+        case PYRO_OBJECT_UPVALUE: return "<upvalue>";
+        case PYRO_OBJECT_VEC: return "<vec>";
+        case PYRO_OBJECT_VEC_AS_STACK: return "<stack>";
+        case PYRO_OBJECT_ITER: return "<iter>";
+        case PYRO_OBJECT_QUEUE: return "<queue>";
+        case PYRO_OBJECT_ERR: return "<err>";
         default: assert(false); return "<unknown>";
     }
 }

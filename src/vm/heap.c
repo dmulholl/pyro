@@ -41,31 +41,31 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         pyro_realloc(vm, pointer, sizeof(type), 0)
 
     switch(object->type) {
-        case OBJ_BOUND_METHOD: {
+        case PYRO_OBJECT_BOUND_METHOD: {
             FREE_OBJECT(vm, ObjBoundMethod, object);
             break;
         }
 
-        case OBJ_BUF: {
+        case PYRO_OBJECT_BUF: {
             ObjBuf* buf = (ObjBuf*)object;
             PYRO_FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
             FREE_OBJECT(vm, ObjBuf, object);
             break;
         }
 
-        case OBJ_CLASS: {
+        case PYRO_OBJECT_CLASS: {
             FREE_OBJECT(vm, ObjClass, object);
             break;
         }
 
-        case OBJ_CLOSURE: {
+        case PYRO_OBJECT_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
             PYRO_FREE_ARRAY(vm, ObjUpvalue*, closure->upvalues, closure->upvalue_count);
             FREE_OBJECT(vm, ObjClosure, object);
             break;
         }
 
-        case OBJ_FILE: {
+        case PYRO_OBJECT_FILE: {
             ObjFile* file = (ObjFile*)object;
             if (file->stream) {
                 if (file->stream == stdin) {
@@ -80,7 +80,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_PYRO_FN: {
+        case PYRO_OBJECT_PYRO_FN: {
             ObjPyroFn* fn = (ObjPyroFn*)object;
             PYRO_FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
             PYRO_FREE_ARRAY(vm, Value, fn->constants, fn->constants_capacity);
@@ -89,21 +89,21 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_INSTANCE: {
+        case PYRO_OBJECT_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             int num_fields = instance->obj.class->default_field_values->count;
             pyro_realloc(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(Value), 0);
             break;
         }
 
-        case OBJ_ITER: {
+        case PYRO_OBJECT_ITER: {
             FREE_OBJECT(vm, ObjIter, object);
             break;
         }
 
-        case OBJ_MAP_AS_WEAKREF:
-        case OBJ_MAP_AS_SET:
-        case OBJ_MAP: {
+        case PYRO_OBJECT_MAP_AS_WEAKREF:
+        case PYRO_OBJECT_MAP_AS_SET:
+        case PYRO_OBJECT_MAP: {
             ObjMap* map = (ObjMap*)object;
             PYRO_FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
             PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
@@ -111,17 +111,17 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_MODULE: {
+        case PYRO_OBJECT_MODULE: {
             FREE_OBJECT(vm, ObjModule, object);
             break;
         }
 
-        case OBJ_NATIVE_FN: {
+        case PYRO_OBJECT_NATIVE_FN: {
             FREE_OBJECT(vm, ObjNativeFn, object);
             break;
         }
 
-        case OBJ_QUEUE: {
+        case PYRO_OBJECT_QUEUE: {
             ObjQueue* queue = (ObjQueue*)object;
             QueueItem* next_item = queue->head;
             while (next_item) {
@@ -133,7 +133,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_RESOURCE_POINTER: {
+        case PYRO_OBJECT_RESOURCE_POINTER: {
             ObjResourcePointer* resource = (ObjResourcePointer*)object;
             if (resource->callback) {
                 resource->callback(vm, resource->pointer);
@@ -142,7 +142,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_STR: {
+        case PYRO_OBJECT_STR: {
             ObjStr* string = (ObjStr*)object;
             ObjMap_remove(vm->strings, pyro_obj(string), vm);
             PYRO_FREE_ARRAY(vm, char, string->bytes, string->length + 1);
@@ -150,26 +150,26 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
             break;
         }
 
-        case OBJ_TUP: {
+        case PYRO_OBJECT_TUP: {
             ObjTup* tup = (ObjTup*)object;
             pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);
             break;
         }
 
-        case OBJ_UPVALUE: {
+        case PYRO_OBJECT_UPVALUE: {
             FREE_OBJECT(vm, ObjUpvalue, object);
             break;
         }
 
-        case OBJ_VEC_AS_STACK:
-        case OBJ_VEC: {
+        case PYRO_OBJECT_VEC_AS_STACK:
+        case PYRO_OBJECT_VEC: {
             ObjVec* vec = (ObjVec*)object;
             PYRO_FREE_ARRAY(vm, Value, vec->values, vec->capacity);
             FREE_OBJECT(vm, ObjVec, object);
             break;
         }
 
-        case OBJ_ERR: {
+        case PYRO_OBJECT_ERR: {
             FREE_OBJECT(vm, ObjErr, object);
             break;
         }

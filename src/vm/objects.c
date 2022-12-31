@@ -54,7 +54,7 @@ static Obj* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
 
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
-    ObjTup* tup = ALLOCATE_FLEX_OBJECT(vm, ObjTup, OBJ_TUP, count, Value);
+    ObjTup* tup = ALLOCATE_FLEX_OBJECT(vm, ObjTup, PYRO_OBJECT_TUP, count, Value);
     if (!tup) {
         return NULL;
     }
@@ -87,7 +87,7 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm) {
 
 
 ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* fn, ObjModule* module) {
-    ObjClosure* closure = ALLOCATE_OBJECT(vm, ObjClosure, OBJ_CLOSURE);
+    ObjClosure* closure = ALLOCATE_OBJECT(vm, ObjClosure, PYRO_OBJECT_CLOSURE);
     if (!closure) {
         return NULL;
     }
@@ -125,7 +125,7 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* fn, ObjModule* module) {
 
 
 ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
-    ObjUpvalue* upvalue = ALLOCATE_OBJECT(vm, ObjUpvalue, OBJ_UPVALUE);
+    ObjUpvalue* upvalue = ALLOCATE_OBJECT(vm, ObjUpvalue, PYRO_OBJECT_UPVALUE);
     if (!upvalue) {
         return NULL;
     }
@@ -142,7 +142,7 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
 
 
 ObjClass* ObjClass_new(PyroVM* vm) {
-    ObjClass* class = ALLOCATE_OBJECT(vm, ObjClass, OBJ_CLASS);
+    ObjClass* class = ALLOCATE_OBJECT(vm, ObjClass, PYRO_OBJECT_CLASS);
     if (!class) {
         return NULL;
     }
@@ -186,7 +186,7 @@ ObjClass* ObjClass_new(PyroVM* vm) {
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
     size_t num_fields = class->default_field_values->count;
 
-    ObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, ObjInstance, OBJ_INSTANCE, num_fields, Value);
+    ObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, ObjInstance, PYRO_OBJECT_INSTANCE, num_fields, Value);
     if (!instance) {
         return NULL;
     }
@@ -354,7 +354,7 @@ static bool resize_index_array(ObjMap* map, PyroVM* vm) {
 
 
 ObjMap* ObjMap_new(PyroVM* vm) {
-    ObjMap* map = ALLOCATE_OBJECT(vm, ObjMap, OBJ_MAP);
+    ObjMap* map = ALLOCATE_OBJECT(vm, ObjMap, PYRO_OBJECT_MAP);
     if (!map) {
         return NULL;
     }
@@ -391,7 +391,7 @@ ObjMap* ObjMap_new_as_set(PyroVM* vm) {
     if (!map) {
         return NULL;
     }
-    map->obj.type = OBJ_MAP_AS_SET;
+    map->obj.type = PYRO_OBJECT_MAP_AS_SET;
     map->obj.class = vm->class_set;
     return map;
 }
@@ -402,7 +402,7 @@ ObjMap* ObjMap_new_as_weakref(PyroVM* vm) {
     if (!map) {
         return NULL;
     }
-    map->obj.type = OBJ_MAP_AS_WEAKREF;
+    map->obj.type = PYRO_OBJECT_MAP_AS_WEAKREF;
     return map;
 }
 
@@ -601,7 +601,7 @@ bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm) {
 // strings pool. Returns NULL if the attempt to allocate memory for the object fails -- in this
 // case the input array is not altered or freed.
 static ObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t hash) {
-    ObjStr* string = ALLOCATE_OBJECT(vm, ObjStr, OBJ_STR);
+    ObjStr* string = ALLOCATE_OBJECT(vm, ObjStr, PYRO_OBJECT_STR);
     if (!string) {
         return NULL;
     }
@@ -901,7 +901,7 @@ ObjStr* ObjStr_esc_percents(const char* src, size_t length, PyroVM* vm) {
 
 
 ObjPyroFn* ObjPyroFn_new(PyroVM* vm) {
-    ObjPyroFn* fn = ALLOCATE_OBJECT(vm, ObjPyroFn, OBJ_PYRO_FN);
+    ObjPyroFn* fn = ALLOCATE_OBJECT(vm, ObjPyroFn, PYRO_OBJECT_PYRO_FN);
     if (!fn) {
         return NULL;
     }
@@ -1194,7 +1194,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* na
         return NULL;
     }
 
-    ObjNativeFn* func = ALLOCATE_OBJECT(vm, ObjNativeFn, OBJ_NATIVE_FN);
+    ObjNativeFn* func = ALLOCATE_OBJECT(vm, ObjNativeFn, PYRO_OBJECT_NATIVE_FN);
     if (!func) {
         return NULL;
     }
@@ -1212,7 +1212,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* na
 
 
 ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method) {
-    ObjBoundMethod* bound = ALLOCATE_OBJECT(vm, ObjBoundMethod, OBJ_BOUND_METHOD);
+    ObjBoundMethod* bound = ALLOCATE_OBJECT(vm, ObjBoundMethod, PYRO_OBJECT_BOUND_METHOD);
     if (!bound) {
         return NULL;
     }
@@ -1228,7 +1228,7 @@ ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method) {
 
 
 ObjModule* ObjModule_new(PyroVM* vm) {
-    ObjModule* module = ALLOCATE_OBJECT(vm, ObjModule, OBJ_MODULE);
+    ObjModule* module = ALLOCATE_OBJECT(vm, ObjModule, PYRO_OBJECT_MODULE);
     if (!module) {
         return NULL;
     }
@@ -1269,7 +1269,7 @@ ObjModule* ObjModule_new(PyroVM* vm) {
 
 
 ObjVec* ObjVec_new(PyroVM* vm) {
-    ObjVec* vec = ALLOCATE_OBJECT(vm, ObjVec, OBJ_VEC);
+    ObjVec* vec = ALLOCATE_OBJECT(vm, ObjVec, PYRO_OBJECT_VEC);
     if (!vec) {
         return NULL;
     }
@@ -1294,7 +1294,7 @@ ObjVec* ObjVec_new_as_stack(PyroVM* vm) {
     if (!stack) {
         return NULL;
     }
-    stack->obj.type = OBJ_VEC_AS_STACK;
+    stack->obj.type = PYRO_OBJECT_VEC_AS_STACK;
     stack->obj.class = vm->class_stack;
     return stack;
 }
@@ -1478,7 +1478,7 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) 
 
 
 ObjBuf* ObjBuf_new(PyroVM* vm) {
-    ObjBuf* buf = ALLOCATE_OBJECT(vm, ObjBuf, OBJ_BUF);
+    ObjBuf* buf = ALLOCATE_OBJECT(vm, ObjBuf, PYRO_OBJECT_BUF);
     if (!buf) {
         return NULL;
     }
@@ -1773,7 +1773,7 @@ void ObjBuf_try_write_fv(ObjBuf* buf, PyroVM* vm, const char* format_string, va_
 
 
 ObjFile* ObjFile_new(PyroVM* vm, FILE* stream) {
-    ObjFile* file = ALLOCATE_OBJECT(vm, ObjFile, OBJ_FILE);
+    ObjFile* file = ALLOCATE_OBJECT(vm, ObjFile, PYRO_OBJECT_FILE);
     if (!file) {
         return NULL;
     }
@@ -1860,7 +1860,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
 
 
 ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
-    ObjIter* iter = ALLOCATE_OBJECT(vm, ObjIter, OBJ_ITER);
+    ObjIter* iter = ALLOCATE_OBJECT(vm, ObjIter, PYRO_OBJECT_ITER);
     if (!iter) {
         return NULL;
     }
@@ -2237,7 +2237,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
 
 
 ObjQueue* ObjQueue_new(PyroVM* vm) {
-    ObjQueue* queue = ALLOCATE_OBJECT(vm, ObjQueue, OBJ_QUEUE);
+    ObjQueue* queue = ALLOCATE_OBJECT(vm, ObjQueue, PYRO_OBJECT_QUEUE);
     if (!queue) {
         return NULL;
     }
@@ -2312,7 +2312,7 @@ bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm) {
 
 
 ObjResourcePointer* ObjResourcePointer_new(void* pointer, pyro_free_rp_callback_t callback, PyroVM* vm) {
-    ObjResourcePointer* resource = ALLOCATE_OBJECT(vm, ObjResourcePointer, OBJ_RESOURCE_POINTER);
+    ObjResourcePointer* resource = ALLOCATE_OBJECT(vm, ObjResourcePointer, PYRO_OBJECT_RESOURCE_POINTER);
     if (!resource) {
         return NULL;
     }
@@ -2329,7 +2329,7 @@ ObjResourcePointer* ObjResourcePointer_new(void* pointer, pyro_free_rp_callback_
 
 
 ObjErr* ObjErr_new(PyroVM* vm) {
-    ObjErr* err = ALLOCATE_OBJECT(vm, ObjErr, OBJ_ERR);
+    ObjErr* err = ALLOCATE_OBJECT(vm, ObjErr, PYRO_OBJECT_ERR);
     if (!err) {
         return NULL;
     }
