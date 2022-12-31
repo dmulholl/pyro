@@ -66,7 +66,7 @@
 </ul>
 <hr>
 <p>
-A simple logging library. Logging levels are, in order:
+A simple logging library. Logging levels, in increasing order of severity, are:
 </p>
 <ul>
 <li>
@@ -87,7 +87,7 @@ A simple logging library. Logging levels are, in order:
 </ul>
 <p>
 A set of convenience functions are available for logging to the standard error stream.
-Use a <code>Logger</code> instance to customize the output format and destination.
+Use a <code>Logger</code> instance to customize the timestamp format and destination file.
 </p>
 <h3 id="constants">
 Constants
@@ -100,26 +100,6 @@ Constants
 <dd>
 <p>
 Log-level <code>DEBUG</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>INFO: i64</code>
-</dt>
-<dd>
-<p>
-Log-level <code>INFO</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>WARN: i64</code>
-</dt>
-<dd>
-<p>
-Log-level <code>WARN</code>.
 </p>
 </dd>
 </div>
@@ -143,6 +123,26 @@ Log-level <code>FATAL</code>.
 </p>
 </dd>
 </div>
+<div>
+<dt>
+<code>INFO: i64</code>
+</dt>
+<dd>
+<p>
+Log-level <code>INFO</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>WARN: i64</code>
+</dt>
+<dd>
+<p>
+Log-level <code>WARN</code>.
+</p>
+</dd>
+</div>
 </dl>
 <h3 id="functions">
 Functions
@@ -155,42 +155,6 @@ Functions
 <dd>
 <p>
 A convenience function for writing a <code>DEBUG</code> log message to the standard error stream.
-</p>
-<ul>
-<li>
-Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
-</li>
-<li>
-Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
-</li>
-</ul>
-</dd>
-</div>
-<div>
-<dt>
-<code>info(arg: any)</code> <br> <code>info(format_string: str, arg1: any, arg2: any, ...)</code>
-</dt>
-<dd>
-<p>
-A convenience function for writing an <code>INFO</code> log message to the standard error stream.
-</p>
-<ul>
-<li>
-Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
-</li>
-<li>
-Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
-</li>
-</ul>
-</dd>
-</div>
-<div>
-<dt>
-<code>warn(arg: any)</code> <br> <code>warn(format_string: str, arg1: any, arg2: any, ...)</code>
-</dt>
-<dd>
-<p>
-A convenience function for writing a <code>WARN</code> log message to the standard error stream.
 </p>
 <ul>
 <li>
@@ -230,6 +194,42 @@ A convenience function for writing a <code>FATAL</code> log message to the stand
 </p>
 <p>
 This will cause the program to exit with a non-zero status code.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>info(arg: any)</code> <br> <code>info(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+A convenience function for writing an <code>INFO</code> log message to the standard error stream.
+</p>
+<ul>
+<li>
+Calling this function with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>warn(arg: any)</code> <br> <code>warn(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+A convenience function for writing a <code>WARN</code> log message to the standard error stream.
 </p>
 <ul>
 <li>
@@ -292,47 +292,11 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </div>
 <div>
 <dt>
-<code>:info(arg: any)</code> <br> <code>:info(format_string: str, arg1: any, arg2: any, ...)</code>
-</dt>
-<dd>
-<p>
-Writes a <code>INFO</code> level log message to the logger's output file.
-</p>
-<ul>
-<li>
-Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
-</li>
-<li>
-Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
-</li>
-</ul>
-</dd>
-</div>
-<div>
-<dt>
-<code>:warn(arg: any)</code> <br> <code>:warn(format_string: str, arg1: any, arg2: any, ...)</code>
-</dt>
-<dd>
-<p>
-Writes a <code>WARN</code> level log message to the logger's output file.
-</p>
-<ul>
-<li>
-Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
-</li>
-<li>
-Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
-</li>
-</ul>
-</dd>
-</div>
-<div>
-<dt>
 <code>:error(arg: any)</code> <br> <code>:error(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
-Writes a <code>ERROR</code> level log message to the logger's output file.
+Writes an <code>ERROR</code> level log message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -354,6 +318,35 @@ Writes a <code>FATAL</code> level log message to the logger's output file.
 </p>
 <p>
 This will cause the program to exit with a non-zero status code.
+</p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:file(output_file: file)</code>
+</dt>
+<dd>
+<p>
+Sets the logger's output file.
+The default output file is the standard error stream.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:info(arg: any)</code> <br> <code>:info(format_string: str, arg1: any, arg2: any, ...)</code>
+</dt>
+<dd>
+<p>
+Writes an <code>INFO</code> level log message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -395,13 +388,20 @@ The format string can include any format specifiers supported by the C standard 
 </div>
 <div>
 <dt>
-<code>:file(output_file: file)</code>
+<code>:warn(arg: any)</code> <br> <code>:warn(format_string: str, arg1: any, arg2: any, ...)</code>
 </dt>
 <dd>
 <p>
-Sets the logger's output file.
-The default output file is the standard error stream.
+Writes a <code>WARN</code> level log message to the logger's output file.
 </p>
+<ul>
+<li>
+Calling this method with a single argument is equivalent to calling <code>$str()</code> on that argument first and logging the resulting string.
+</li>
+<li>
+Calling this method with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and logging the resulting string.
+</li>
+</ul>
 </dd>
 </div>
 </dl>
