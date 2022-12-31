@@ -1859,7 +1859,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
 /* --------- */
 
 
-ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
+ObjIter* ObjIter_new(Obj* source, PyroIterType iter_type, PyroVM* vm) {
     ObjIter* iter = ALLOCATE_OBJECT(vm, ObjIter, PYRO_OBJECT_ITER);
     if (!iter) {
         return NULL;

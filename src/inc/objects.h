@@ -494,12 +494,12 @@ typedef enum {
     PYRO_ITER_STR_LINES,
     PYRO_ITER_TUP,
     PYRO_ITER_VEC,
-} IterType;
+} PyroIterType;
 
 typedef struct {
     Obj obj;
     Obj* source;
-    IterType iter_type;
+    PyroIterType iter_type;
     size_t next_index;
     int64_t next_enum;
     int64_t range_next;
@@ -510,7 +510,7 @@ typedef struct {
 } ObjIter;
 
 // Creates a new iterator. Returns NULL if the attempt to allocate memory fails.
-ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm);
+ObjIter* ObjIter_new(Obj* source, PyroIterType iter_type, PyroVM* vm);
 
 // Creates a new empty iterator. Returns NULL if the attempt to allocate memory fails.
 ObjIter* ObjIter_empty(PyroVM* vm);
