@@ -231,11 +231,11 @@ static void emit_u8_u16be(Parser* parser, uint8_t u8_arg, uint16_t u16_arg) {
 // method this returns the object instance being initialized, otherwise it returns null.
 static void emit_naked_return(Parser* parser) {
     if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
-        emit_byte(parser, OP_GET_LOCAL_0);
+        emit_byte(parser, PYRO_OPCODE_GET_LOCAL_0);
     } else {
-        emit_byte(parser, OP_LOAD_NULL);
+        emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
     }
-    emit_byte(parser, OP_RETURN);
+    emit_byte(parser, PYRO_OPCODE_RETURN);
 }
 
 
@@ -272,16 +272,16 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
 static void emit_load_value_from_constant_table(Parser* parser, Value value) {
     if (IS_I64(value) && value.as.i64 >= 0 && value.as.i64 <= 9) {
         switch (value.as.i64) {
-            case 0: emit_byte(parser, OP_LOAD_I64_0); return;
-            case 1: emit_byte(parser, OP_LOAD_I64_1); return;
-            case 2: emit_byte(parser, OP_LOAD_I64_2); return;
-            case 3: emit_byte(parser, OP_LOAD_I64_3); return;
-            case 4: emit_byte(parser, OP_LOAD_I64_4); return;
-            case 5: emit_byte(parser, OP_LOAD_I64_5); return;
-            case 6: emit_byte(parser, OP_LOAD_I64_6); return;
-            case 7: emit_byte(parser, OP_LOAD_I64_7); return;
-            case 8: emit_byte(parser, OP_LOAD_I64_8); return;
-            case 9: emit_byte(parser, OP_LOAD_I64_9); return;
+            case 0: emit_byte(parser, PYRO_OPCODE_LOAD_I64_0); return;
+            case 1: emit_byte(parser, PYRO_OPCODE_LOAD_I64_1); return;
+            case 2: emit_byte(parser, PYRO_OPCODE_LOAD_I64_2); return;
+            case 3: emit_byte(parser, PYRO_OPCODE_LOAD_I64_3); return;
+            case 4: emit_byte(parser, PYRO_OPCODE_LOAD_I64_4); return;
+            case 5: emit_byte(parser, PYRO_OPCODE_LOAD_I64_5); return;
+            case 6: emit_byte(parser, PYRO_OPCODE_LOAD_I64_6); return;
+            case 7: emit_byte(parser, PYRO_OPCODE_LOAD_I64_7); return;
+            case 8: emit_byte(parser, PYRO_OPCODE_LOAD_I64_8); return;
+            case 9: emit_byte(parser, PYRO_OPCODE_LOAD_I64_9); return;
             default: return;
         }
     }
@@ -289,18 +289,18 @@ static void emit_load_value_from_constant_table(Parser* parser, Value value) {
     uint16_t index = add_value_to_constant_table(parser, value);
 
     switch (index) {
-        case 0: emit_byte(parser, OP_LOAD_CONSTANT_0); break;
-        case 1: emit_byte(parser, OP_LOAD_CONSTANT_1); break;
-        case 2: emit_byte(parser, OP_LOAD_CONSTANT_2); break;
-        case 3: emit_byte(parser, OP_LOAD_CONSTANT_3); break;
-        case 4: emit_byte(parser, OP_LOAD_CONSTANT_4); break;
-        case 5: emit_byte(parser, OP_LOAD_CONSTANT_5); break;
-        case 6: emit_byte(parser, OP_LOAD_CONSTANT_6); break;
-        case 7: emit_byte(parser, OP_LOAD_CONSTANT_7); break;
-        case 8: emit_byte(parser, OP_LOAD_CONSTANT_8); break;
-        case 9: emit_byte(parser, OP_LOAD_CONSTANT_9); break;
+        case 0: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_0); break;
+        case 1: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_1); break;
+        case 2: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_2); break;
+        case 3: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_3); break;
+        case 4: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_4); break;
+        case 5: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_5); break;
+        case 6: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_6); break;
+        case 7: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_7); break;
+        case 8: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_8); break;
+        case 9: emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT_9); break;
         default:
-            emit_byte(parser, OP_LOAD_CONSTANT);
+            emit_byte(parser, PYRO_OPCODE_LOAD_CONSTANT);
             emit_u16be(parser, index);
             break;
     }
@@ -546,7 +546,7 @@ static void define_variable(Parser* parser, uint16_t index, Access access) {
         mark_initialized(parser);
         return;
     }
-    OpCode opcode = (access == PUBLIC) ? OP_DEFINE_PUB_GLOBAL : OP_DEFINE_PRI_GLOBAL;
+    OpCode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBAL : PYRO_OPCODE_DEFINE_PRI_GLOBAL;
     emit_byte(parser, opcode);
     emit_u16be(parser, index);
 }
@@ -557,7 +557,7 @@ static void define_variables(Parser* parser, uint16_t* indexes, size_t count, Ac
         mark_initialized_multi(parser, count);
         return;
     }
-    OpCode opcode = (access == PUBLIC) ? OP_DEFINE_PUB_GLOBALS : OP_DEFINE_PRI_GLOBALS;
+    OpCode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBALS : PYRO_OPCODE_DEFINE_PRI_GLOBALS;
     emit_u8_u8(parser, opcode, count);
     for (size_t i = 0; i < count; i++) {
         emit_u16be(parser, indexes[i]);
@@ -615,9 +615,9 @@ static int discard_locals(Parser* parser, int depth) {
 
     while (local_count > 0 && parser->fn_compiler->locals[local_count - 1].depth >= depth) {
         if (parser->fn_compiler->locals[local_count - 1].is_captured) {
-            emit_byte(parser, OP_CLOSE_UPVALUE);
+            emit_byte(parser, PYRO_OPCODE_CLOSE_UPVALUE);
         } else {
-            emit_byte(parser, OP_POP);
+            emit_byte(parser, PYRO_OPCODE_POP);
         }
         local_count--;
     }
@@ -702,18 +702,18 @@ static void emit_load_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->fn_compiler, &name);
     if (local_index != -1) {
         switch (local_index) {
-            case 0: emit_byte(parser, OP_GET_LOCAL_0); break;
-            case 1: emit_byte(parser, OP_GET_LOCAL_1); break;
-            case 2: emit_byte(parser, OP_GET_LOCAL_2); break;
-            case 3: emit_byte(parser, OP_GET_LOCAL_3); break;
-            case 4: emit_byte(parser, OP_GET_LOCAL_4); break;
-            case 5: emit_byte(parser, OP_GET_LOCAL_5); break;
-            case 6: emit_byte(parser, OP_GET_LOCAL_6); break;
-            case 7: emit_byte(parser, OP_GET_LOCAL_7); break;
-            case 8: emit_byte(parser, OP_GET_LOCAL_8); break;
-            case 9: emit_byte(parser, OP_GET_LOCAL_9); break;
+            case 0: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_0); break;
+            case 1: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_1); break;
+            case 2: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_2); break;
+            case 3: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_3); break;
+            case 4: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_4); break;
+            case 5: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_5); break;
+            case 6: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_6); break;
+            case 7: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_7); break;
+            case 8: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_8); break;
+            case 9: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_9); break;
             default:
-                emit_u8_u8(parser, OP_GET_LOCAL, (uint8_t)local_index);
+                emit_u8_u8(parser, PYRO_OPCODE_GET_LOCAL, (uint8_t)local_index);
                 break;
         }
         return;
@@ -721,12 +721,12 @@ static void emit_load_named_variable(Parser* parser, Token name) {
 
     int upvalue_index = resolve_upvalue(parser, parser->fn_compiler, &name);
     if (upvalue_index != -1) {
-        emit_u8_u8(parser, OP_GET_UPVALUE, (uint8_t)upvalue_index);
+        emit_u8_u8(parser, PYRO_OPCODE_GET_UPVALUE, (uint8_t)upvalue_index);
         return;
     }
 
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
-    emit_byte(parser, OP_GET_GLOBAL);
+    emit_byte(parser, PYRO_OPCODE_GET_GLOBAL);
     emit_u16be(parser, const_index);
 }
 
@@ -736,18 +736,18 @@ static void emit_store_named_variable(Parser* parser, Token name) {
     int local_index = resolve_local(parser, parser->fn_compiler, &name);
     if (local_index != -1) {
         switch (local_index) {
-            case 0: emit_byte(parser, OP_SET_LOCAL_0); break;
-            case 1: emit_byte(parser, OP_SET_LOCAL_1); break;
-            case 2: emit_byte(parser, OP_SET_LOCAL_2); break;
-            case 3: emit_byte(parser, OP_SET_LOCAL_3); break;
-            case 4: emit_byte(parser, OP_SET_LOCAL_4); break;
-            case 5: emit_byte(parser, OP_SET_LOCAL_5); break;
-            case 6: emit_byte(parser, OP_SET_LOCAL_6); break;
-            case 7: emit_byte(parser, OP_SET_LOCAL_7); break;
-            case 8: emit_byte(parser, OP_SET_LOCAL_8); break;
-            case 9: emit_byte(parser, OP_SET_LOCAL_9); break;
+            case 0: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_0); break;
+            case 1: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_1); break;
+            case 2: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_2); break;
+            case 3: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_3); break;
+            case 4: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_4); break;
+            case 5: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_5); break;
+            case 6: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_6); break;
+            case 7: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_7); break;
+            case 8: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_8); break;
+            case 9: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_9); break;
             default:
-                emit_u8_u8(parser, OP_SET_LOCAL, (uint8_t)local_index);
+                emit_u8_u8(parser, PYRO_OPCODE_SET_LOCAL, (uint8_t)local_index);
                 break;
         }
         return;
@@ -755,12 +755,12 @@ static void emit_store_named_variable(Parser* parser, Token name) {
 
     int upvalue_index = resolve_upvalue(parser, parser->fn_compiler, &name);
     if (upvalue_index != -1) {
-        emit_u8_u8(parser, OP_SET_UPVALUE, (uint8_t)upvalue_index);
+        emit_u8_u8(parser, PYRO_OPCODE_SET_UPVALUE, (uint8_t)upvalue_index);
         return;
     }
 
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
-    emit_byte(parser, OP_SET_GLOBAL);
+    emit_byte(parser, PYRO_OPCODE_SET_GLOBAL);
     emit_u16be(parser, const_index);
 }
 
@@ -965,10 +965,10 @@ static void parse_map_or_set_literal(Parser* parser) {
 
     if (is_map) {
         consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after map literal");
-        emit_byte(parser, OP_MAKE_MAP);
+        emit_byte(parser, PYRO_OPCODE_MAKE_MAP);
     } else {
         consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after set literal");
-        emit_byte(parser, OP_MAKE_SET);
+        emit_byte(parser, PYRO_OPCODE_MAKE_SET);
     }
 
     emit_u16be(parser, count);
@@ -985,7 +985,7 @@ static void parse_vec_literal(Parser* parser) {
         count++;
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' after vector literal");
-    emit_byte(parser, OP_MAKE_VEC);
+    emit_byte(parser, PYRO_OPCODE_MAKE_VEC);
     emit_u16be(parser, count);
 }
 
@@ -1000,13 +1000,13 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
     } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
         emit_load_named_variable(parser, name);
         parse_expression(parser, true, true);
-        emit_byte(parser, OP_BINARY_PLUS);
+        emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
         emit_store_named_variable(parser, name);
 
     } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
         emit_load_named_variable(parser, name);
         parse_expression(parser, true, true);
-        emit_byte(parser, OP_BINARY_MINUS);
+        emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
         emit_store_named_variable(parser, name);
 
     } else {
@@ -1017,15 +1017,15 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
 
 static void parse_default_value_expression(Parser* parser, const char* value_type) {
     if (match(parser, TOKEN_TRUE)) {
-        emit_byte(parser, OP_LOAD_TRUE);
+        emit_byte(parser, PYRO_OPCODE_LOAD_TRUE);
     }
 
     else if (match(parser, TOKEN_FALSE)) {
-        emit_byte(parser, OP_LOAD_FALSE);
+        emit_byte(parser, PYRO_OPCODE_LOAD_FALSE);
     }
 
     else if (match(parser, TOKEN_NULL)) {
-        emit_byte(parser, OP_LOAD_NULL);
+        emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
     }
 
     else if (match(parser, TOKEN_INT)) {
@@ -1087,15 +1087,15 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     TokenType token_type = parser->next_token.type;
 
     if (match(parser, TOKEN_TRUE)) {
-        emit_byte(parser, OP_LOAD_TRUE);
+        emit_byte(parser, PYRO_OPCODE_LOAD_TRUE);
     }
 
     else if (match(parser, TOKEN_FALSE)) {
-        emit_byte(parser, OP_LOAD_FALSE);
+        emit_byte(parser, PYRO_OPCODE_LOAD_FALSE);
     }
 
     else if (match(parser, TOKEN_NULL)) {
-        emit_byte(parser, OP_LOAD_NULL);
+        emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
     }
 
     else if (match(parser, TOKEN_INT)) {
@@ -1183,15 +1183,15 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
             if (unpack_last_argument) {
-                emit_byte(parser, OP_CALL_SUPER_METHOD_WITH_UNPACK);
+                emit_byte(parser, PYRO_OPCODE_CALL_SUPER_METHOD_WITH_UNPACK);
             } else {
-                emit_byte(parser, OP_CALL_SUPER_METHOD);
+                emit_byte(parser, PYRO_OPCODE_CALL_SUPER_METHOD);
             }
             emit_u16be(parser, index);
             emit_byte(parser, arg_count);
         } else {
             emit_load_named_variable(parser, syntoken("super"));   // load the superclass
-            emit_byte(parser, OP_GET_SUPER_METHOD);
+            emit_byte(parser, PYRO_OPCODE_GET_SUPER_METHOD);
             emit_u16be(parser, index);
         }
     }
@@ -1228,21 +1228,21 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             bool unpack_last_argument;
             uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
             if (unpack_last_argument) {
-                emit_u8_u8(parser, OP_CALL_VALUE_WITH_UNPACK, arg_count);
+                emit_u8_u8(parser, PYRO_OPCODE_CALL_VALUE_WITH_UNPACK, arg_count);
             } else {
                 switch (arg_count) {
-                    case 0: emit_byte(parser, OP_CALL_VALUE_0); break;
-                    case 1: emit_byte(parser, OP_CALL_VALUE_1); break;
-                    case 2: emit_byte(parser, OP_CALL_VALUE_2); break;
-                    case 3: emit_byte(parser, OP_CALL_VALUE_3); break;
-                    case 4: emit_byte(parser, OP_CALL_VALUE_4); break;
-                    case 5: emit_byte(parser, OP_CALL_VALUE_5); break;
-                    case 6: emit_byte(parser, OP_CALL_VALUE_6); break;
-                    case 7: emit_byte(parser, OP_CALL_VALUE_7); break;
-                    case 8: emit_byte(parser, OP_CALL_VALUE_8); break;
-                    case 9: emit_byte(parser, OP_CALL_VALUE_9); break;
+                    case 0: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_0); break;
+                    case 1: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_1); break;
+                    case 2: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_2); break;
+                    case 3: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_3); break;
+                    case 4: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_4); break;
+                    case 5: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_5); break;
+                    case 6: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_6); break;
+                    case 7: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_7); break;
+                    case 8: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_8); break;
+                    case 9: emit_byte(parser, PYRO_OPCODE_CALL_VALUE_9); break;
                     default:
-                        emit_u8_u8(parser, OP_CALL_VALUE, arg_count);
+                        emit_u8_u8(parser, PYRO_OPCODE_CALL_VALUE, arg_count);
                         break;
                 }
             }
@@ -1253,43 +1253,43 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' after index");
             if (can_assign && match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_SET_INDEX);
+                emit_byte(parser, PYRO_OPCODE_SET_INDEX);
             } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
-                emit_byte(parser, OP_DUP_2);
-                emit_byte(parser, OP_GET_INDEX);
+                emit_byte(parser, PYRO_OPCODE_DUP_2);
+                emit_byte(parser, PYRO_OPCODE_GET_INDEX);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_BINARY_PLUS);
-                emit_byte(parser, OP_SET_INDEX);
+                emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
+                emit_byte(parser, PYRO_OPCODE_SET_INDEX);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
-                emit_byte(parser, OP_DUP_2);
-                emit_byte(parser, OP_GET_INDEX);
+                emit_byte(parser, PYRO_OPCODE_DUP_2);
+                emit_byte(parser, PYRO_OPCODE_GET_INDEX);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_BINARY_MINUS);
-                emit_byte(parser, OP_SET_INDEX);
+                emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
+                emit_byte(parser, PYRO_OPCODE_SET_INDEX);
             } else {
-                emit_byte(parser, OP_GET_INDEX);
+                emit_byte(parser, PYRO_OPCODE_GET_INDEX);
             }
         }
 
         else if (match(parser, TOKEN_DOT)) {
-            OpCode get_opcode = (last_token_type == TOKEN_SELF) ? OP_GET_FIELD : OP_GET_PUB_FIELD;
-            OpCode set_opcode = (last_token_type == TOKEN_SELF) ? OP_SET_FIELD : OP_SET_PUB_FIELD;
+            OpCode get_opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_GET_FIELD : PYRO_OPCODE_GET_PUB_FIELD;
+            OpCode set_opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_SET_FIELD : PYRO_OPCODE_SET_PUB_FIELD;
             consume(parser, TOKEN_IDENTIFIER, "expected a field name after '.'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (can_assign && match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
                 emit_u8_u16be(parser, set_opcode, index);
             } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
-                emit_byte(parser, OP_DUP);
+                emit_byte(parser, PYRO_OPCODE_DUP);
                 emit_u8_u16be(parser, get_opcode, index);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_BINARY_PLUS);
+                emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
                 emit_u8_u16be(parser, set_opcode, index);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
-                emit_byte(parser, OP_DUP);
+                emit_byte(parser, PYRO_OPCODE_DUP);
                 emit_u8_u16be(parser, get_opcode, index);
                 parse_expression(parser, true, true);
-                emit_byte(parser, OP_BINARY_MINUS);
+                emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
                 emit_u8_u16be(parser, set_opcode, index);
             } else {
                 emit_u8_u16be(parser, get_opcode, index);
@@ -1303,16 +1303,16 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 bool unpack_last_argument;
                 uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
                 if (unpack_last_argument) {
-                    OpCode opcode = (last_token_type == TOKEN_SELF) ? OP_CALL_METHOD_WITH_UNPACK : OP_CALL_PUB_METHOD_WITH_UNPACK;
+                    OpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD_WITH_UNPACK : PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK;
                     emit_u8_u16be(parser, opcode, index);
                     emit_byte(parser, arg_count);
                 } else {
-                    OpCode opcode = (last_token_type == TOKEN_SELF) ? OP_CALL_METHOD : OP_CALL_PUB_METHOD;
+                    OpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD : PYRO_OPCODE_CALL_PUB_METHOD;
                     emit_u8_u16be(parser, opcode, index);
                     emit_byte(parser, arg_count);
                 }
             } else {
-                OpCode opcode = (last_token_type == TOKEN_SELF) ? OP_GET_METHOD : OP_GET_PUB_METHOD;
+                OpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_GET_METHOD : PYRO_OPCODE_GET_PUB_METHOD;
                 emit_u8_u16be(parser, opcode, index);
             }
         }
@@ -1320,7 +1320,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         else if (match(parser, TOKEN_COLON_COLON)) {
             consume(parser, TOKEN_IDENTIFIER, "expected a member name after '::'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
-            emit_u8_u16be(parser, OP_GET_MEMBER, index);
+            emit_u8_u16be(parser, PYRO_OPCODE_GET_MEMBER, index);
             if (match_assignment_token(parser)) {
                 ERROR_AT_PREVIOUS_TOKEN("cannot assign to a module member from outside the module");
             }
@@ -1345,10 +1345,10 @@ static void parse_try_expr(Parser* parser) {
 
     begin_scope(parser);
     parse_unary_expr(parser, false, true);
-    emit_byte(parser, OP_RETURN);
+    emit_byte(parser, PYRO_OPCODE_RETURN);
 
     ObjPyroFn* fn = end_fn_compiler(parser);
-    emit_u8_u16be(parser, OP_MAKE_CLOSURE, add_value_to_constant_table(parser, pyro_obj(fn)));
+    emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE, add_value_to_constant_table(parser, pyro_obj(fn)));
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, fn_compiler.upvalues[i].is_local ? 1 : 0);
@@ -1361,7 +1361,7 @@ static void parse_power_expr(Parser* parser, bool can_assign, bool can_assign_in
     parse_call_expr(parser, can_assign, can_assign_in_parens);
     if (match(parser, TOKEN_STAR_STAR)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
-        emit_byte(parser, OP_BINARY_STAR_STAR);
+        emit_byte(parser, PYRO_OPCODE_BINARY_STAR_STAR);
     }
 }
 
@@ -1369,19 +1369,19 @@ static void parse_power_expr(Parser* parser, bool can_assign, bool can_assign_in
 static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     if (match(parser, TOKEN_MINUS)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
-        emit_byte(parser, OP_UNARY_MINUS);
+        emit_byte(parser, PYRO_OPCODE_UNARY_MINUS);
     } else if (match(parser, TOKEN_PLUS)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
-        emit_byte(parser, OP_UNARY_PLUS);
+        emit_byte(parser, PYRO_OPCODE_UNARY_PLUS);
     } else if (match(parser, TOKEN_BANG)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
-        emit_byte(parser, OP_UNARY_BANG);
+        emit_byte(parser, PYRO_OPCODE_UNARY_BANG);
     } else if (match(parser, TOKEN_TRY)) {
         parse_try_expr(parser);
-        emit_byte(parser, OP_TRY);
+        emit_byte(parser, PYRO_OPCODE_TRY);
     } else if (match(parser, TOKEN_TILDE)) {
         parse_unary_expr(parser, false, can_assign_in_parens);
-        emit_byte(parser, OP_UNARY_TILDE);
+        emit_byte(parser, PYRO_OPCODE_UNARY_TILDE);
     } else {
         parse_power_expr(parser, can_assign, can_assign_in_parens);
     }
@@ -1393,19 +1393,19 @@ static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_
     while (true) {
         if (match(parser, TOKEN_CARET)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_CARET);
+            emit_byte(parser, PYRO_OPCODE_BINARY_CARET);
         } else if (match(parser, TOKEN_AMP)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_AMP);
+            emit_byte(parser, PYRO_OPCODE_BINARY_AMP);
         } else if (match(parser, TOKEN_BAR)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_BAR);
+            emit_byte(parser, PYRO_OPCODE_BINARY_BAR);
         } else if (match(parser, TOKEN_LESS_LESS)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_LESS_LESS);
+            emit_byte(parser, PYRO_OPCODE_BINARY_LESS_LESS);
         } else if (match(parser, TOKEN_GREATER_GREATER)) {
             parse_unary_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_GREATER_GREATER);
+            emit_byte(parser, PYRO_OPCODE_BINARY_GREATER_GREATER);
         } else {
             break;
         }
@@ -1418,16 +1418,16 @@ static void parse_multiplicative_expr(Parser* parser, bool can_assign, bool can_
     while (true) {
         if (match(parser, TOKEN_STAR)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_STAR);
+            emit_byte(parser, PYRO_OPCODE_BINARY_STAR);
         } else if (match(parser, TOKEN_SLASH)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_SLASH);
+            emit_byte(parser, PYRO_OPCODE_BINARY_SLASH);
         } else if (match(parser, TOKEN_SLASH_SLASH)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_SLASH_SLASH);
+            emit_byte(parser, PYRO_OPCODE_BINARY_SLASH_SLASH);
         } else if (match(parser, TOKEN_PERCENT)) {
             parse_bitwise_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_PERCENT);
+            emit_byte(parser, PYRO_OPCODE_BINARY_PERCENT);
         } else {
             break;
         }
@@ -1440,10 +1440,10 @@ static void parse_additive_expr(Parser* parser, bool can_assign, bool can_assign
     while (true) {
         if (match(parser, TOKEN_PLUS)) {
             parse_multiplicative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_PLUS);
+            emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
         } else if (match(parser, TOKEN_MINUS)) {
             parse_multiplicative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_MINUS);
+            emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
         } else {
             break;
         }
@@ -1456,19 +1456,19 @@ static void parse_comparative_expr(Parser* parser, bool can_assign, bool can_ass
     while (true) {
         if (match(parser, TOKEN_GREATER)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_GREATER);
+            emit_byte(parser, PYRO_OPCODE_BINARY_GREATER);
         } else if (match(parser, TOKEN_GREATER_EQUAL)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_GREATER_EQUAL);
+            emit_byte(parser, PYRO_OPCODE_BINARY_GREATER_EQUAL);
         } else if (match(parser, TOKEN_LESS)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_LESS);
+            emit_byte(parser, PYRO_OPCODE_BINARY_LESS);
         } else if (match(parser, TOKEN_LESS_EQUAL)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_LESS_EQUAL);
+            emit_byte(parser, PYRO_OPCODE_BINARY_LESS_EQUAL);
         } else if (match(parser, TOKEN_IN)) {
             parse_additive_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_IN);
+            emit_byte(parser, PYRO_OPCODE_BINARY_IN);
         } else {
             break;
         }
@@ -1481,10 +1481,10 @@ static void parse_equality_expr(Parser* parser, bool can_assign, bool can_assign
     while (true) {
         if (match(parser, TOKEN_EQUAL_EQUAL)) {
             parse_comparative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_EQUAL_EQUAL);
+            emit_byte(parser, PYRO_OPCODE_BINARY_EQUAL_EQUAL);
         } else if (match(parser, TOKEN_BANG_EQUAL)) {
             parse_comparative_expr(parser, false, can_assign_in_parens);
-            emit_byte(parser, OP_BINARY_BANG_EQUAL);
+            emit_byte(parser, PYRO_OPCODE_BINARY_BANG_EQUAL);
         } else {
             break;
         }
@@ -1498,28 +1498,28 @@ static void parse_logical_expr(Parser* parser, bool can_assign, bool can_assign_
     parse_equality_expr(parser, can_assign, can_assign_in_parens);
     while (true) {
         if (match(parser, TOKEN_AMP_AMP)) {
-            size_t jump_to_end = emit_jump(parser, OP_JUMP_IF_FALSE);
-            emit_byte(parser, OP_POP);
+            size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_FALSE);
+            emit_byte(parser, PYRO_OPCODE_POP);
             parse_equality_expr(parser, false, can_assign_in_parens);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_BAR_BAR)) {
-            size_t jump_to_end = emit_jump(parser, OP_JUMP_IF_TRUE);
-            emit_byte(parser, OP_POP);
+            size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_TRUE);
+            emit_byte(parser, PYRO_OPCODE_POP);
             parse_equality_expr(parser, false, can_assign_in_parens);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_HOOK_HOOK)) {
-            size_t jump_to_end = emit_jump(parser, OP_JUMP_IF_NOT_NULL);
-            emit_byte(parser, OP_POP);
+            size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_NOT_NULL);
+            emit_byte(parser, PYRO_OPCODE_POP);
             parse_equality_expr(parser, false, can_assign_in_parens);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_BANG_BANG)) {
-            size_t jump_to_end = emit_jump(parser, OP_JUMP_IF_NOT_ERR);
-            emit_byte(parser, OP_POP);
+            size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_NOT_ERR);
+            emit_byte(parser, PYRO_OPCODE_POP);
             parse_equality_expr(parser, false, can_assign_in_parens);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_ELSE)) {
-            size_t jump_to_end = emit_jump(parser, OP_JUMP_IF_NOT_KINDA_FALSEY);
-            emit_byte(parser, OP_POP);
+            size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY);
+            emit_byte(parser, PYRO_OPCODE_POP);
             parse_equality_expr(parser, false, can_assign_in_parens);
             patch_jump(parser, jump_to_end);
         } else {
@@ -1532,13 +1532,13 @@ static void parse_logical_expr(Parser* parser, bool can_assign, bool can_assign_
 static void parse_conditional_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
     parse_logical_expr(parser, can_assign, can_assign_in_parens);
     if (match(parser, TOKEN_HOOK)) {
-        size_t jump_to_false_branch = emit_jump(parser, OP_JUMP_IF_FALSE);
-        emit_byte(parser, OP_POP);
+        size_t jump_to_false_branch = emit_jump(parser, PYRO_OPCODE_JUMP_IF_FALSE);
+        emit_byte(parser, PYRO_OPCODE_POP);
         parse_logical_expr(parser, false, can_assign_in_parens);
-        size_t jump_to_end = emit_jump(parser, OP_JUMP);
+        size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP);
         consume(parser, TOKEN_COLON_BAR, "expected ':|' after condition");
         patch_jump(parser, jump_to_false_branch);
-        emit_byte(parser, OP_POP);
+        emit_byte(parser, PYRO_OPCODE_POP);
         parse_logical_expr(parser, false, can_assign_in_parens);
         patch_jump(parser, jump_to_end);
     }
@@ -1631,7 +1631,7 @@ static void parse_echo_stmt(Parser* parser) {
         ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'echo' (max: 255)");
     }
     consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
-    emit_u8_u8(parser, OP_ECHO, count);
+    emit_u8_u8(parser, PYRO_OPCODE_ECHO, count);
 }
 
 
@@ -1645,7 +1645,7 @@ static void parse_assert_stmt(Parser* parser) {
         return;
     }
     consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
-    emit_byte(parser, OP_ASSERT);
+    emit_byte(parser, PYRO_OPCODE_ASSERT);
 }
 
 
@@ -1661,7 +1661,7 @@ static void parse_typedef_stmt(Parser* parser) {
 static void parse_expression_stmt(Parser* parser) {
     parse_expression(parser, true, true);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
-    emit_byte(parser, OP_POP);
+    emit_byte(parser, PYRO_OPCODE_POP);
 }
 
 
@@ -1684,7 +1684,7 @@ static void parse_unpacking_declaration(Parser* parser, Access access) {
     consume(parser, TOKEN_EQUAL, "expected '=' after variable list");
 
     parse_expression(parser, true, true);
-    emit_u8_u8(parser, OP_UNPACK, count);
+    emit_u8_u8(parser, PYRO_OPCODE_UNPACK, count);
 
     define_variables(parser, indexes, count, access);
 }
@@ -1702,7 +1702,7 @@ static void parse_var_declaration(Parser* parser, Access access) {
             if (match(parser, TOKEN_EQUAL)) {
                 parse_expression(parser, true, true);
             } else {
-                emit_byte(parser, OP_LOAD_NULL);
+                emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
             }
             define_variable(parser, index, access);
         }
@@ -1720,7 +1720,7 @@ static void parse_import_stmt(Parser* parser) {
     // Read the first module name.
     if (!consume(parser, TOKEN_IDENTIFIER, "expected a module name after 'import'")) return;
     uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
-    emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
+    emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, module_index);
     Token module_name = parser->previous_token;
     int module_count = 1;
 
@@ -1740,7 +1740,7 @@ static void parse_import_stmt(Parser* parser) {
             do {
                 if (!consume(parser, TOKEN_IDENTIFIER, "expected member name in import statement")) return;
                 member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous_token);
-                emit_u8_u16be(parser, OP_LOAD_CONSTANT, member_indexes[member_count]);
+                emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, member_indexes[member_count]);
                 member_names[member_count] = parser->previous_token;
                 member_count++;
                 if (member_count > 16) {
@@ -1753,7 +1753,7 @@ static void parse_import_stmt(Parser* parser) {
         }
         if (!consume(parser, TOKEN_IDENTIFIER, "expected module name in import statement")) return;
         module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
-        emit_u8_u16be(parser, OP_LOAD_CONSTANT, module_index);
+        emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, module_index);
         module_name = parser->previous_token;
         module_count++;
     }
@@ -1764,14 +1764,14 @@ static void parse_import_stmt(Parser* parser) {
     }
 
     if (member_count == -1) {
-        emit_byte(parser, OP_IMPORT_ALL_MEMBERS);
+        emit_byte(parser, PYRO_OPCODE_IMPORT_ALL_MEMBERS);
         emit_byte(parser, module_count);
         return;
     } else if (member_count == 0) {
-        emit_byte(parser, OP_IMPORT_MODULE);
+        emit_byte(parser, PYRO_OPCODE_IMPORT_MODULE);
         emit_byte(parser, module_count);
     } else {
-        emit_byte(parser, OP_IMPORT_NAMED_MEMBERS);
+        emit_byte(parser, PYRO_OPCODE_IMPORT_NAMED_MEMBERS);
         emit_byte(parser, module_count);
         emit_byte(parser, member_count);
     }
@@ -1845,7 +1845,7 @@ static void parse_if_stmt(Parser* parser) {
     }
 
     // Jump over the 'then' block if the condition is false.
-    size_t jump_over_then = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
+    size_t jump_over_then = emit_jump(parser, PYRO_OPCODE_POP_JUMP_IF_FALSE);
 
     // Emit the bytecode for the 'then' block.
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' after condition in 'if' statement");
@@ -1854,7 +1854,7 @@ static void parse_if_stmt(Parser* parser) {
     end_scope(parser);
 
     // At the end of the 'then' block, unconditionally jump over the 'else' block.
-    size_t jump_over_else = emit_jump(parser, OP_JUMP);
+    size_t jump_over_else = emit_jump(parser, PYRO_OPCODE_JUMP);
 
     // Backpatch the destination for the jump over the 'then' block.
     patch_jump(parser, jump_over_then);
@@ -1881,7 +1881,7 @@ static void parse_if_stmt(Parser* parser) {
 
 // Emits an instruction to jump backwards in the bytecode to the index identified by [start_index].
 static void emit_loop(Parser* parser, size_t start_index) {
-    emit_byte(parser, OP_JUMP_BACK);
+    emit_byte(parser, PYRO_OPCODE_JUMP_BACK);
 
     size_t offset = parser->fn_compiler->fn->code_count - start_index + 2;
     if (offset > UINT16_MAX) {
@@ -1925,7 +1925,7 @@ static void parse_for_in_stmt(Parser* parser) {
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before the loop body");
 
     // Replace the object on top of the stack with the result of calling :$iter() on it.
-    emit_byte(parser, OP_GET_ITERATOR);
+    emit_byte(parser, PYRO_OPCODE_GET_ITERATOR);
     add_local(parser, syntoken("*iterator*"));
 
     // This is the point in the bytecode the loop will jump back to.
@@ -1936,12 +1936,12 @@ static void parse_for_in_stmt(Parser* parser) {
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
 
-    emit_byte(parser, OP_GET_NEXT_FROM_ITERATOR);
-    size_t exit_jump_index = emit_jump(parser, OP_JUMP_IF_ERR);
+    emit_byte(parser, PYRO_OPCODE_GET_NEXT_FROM_ITERATOR);
+    size_t exit_jump_index = emit_jump(parser, PYRO_OPCODE_JUMP_IF_ERR);
 
     begin_scope(parser);
     if (variable_count > 1) {
-        emit_u8_u8(parser, OP_UNPACK, variable_count);
+        emit_u8_u8(parser, PYRO_OPCODE_UNPACK, variable_count);
     }
     for (size_t i = 0; i < variable_count; i++) {
         add_local(parser, loop_variables[i]);
@@ -1957,15 +1957,15 @@ static void parse_for_in_stmt(Parser* parser) {
     patch_jump(parser, exit_jump_index);
 
     // Pop the error object that caused the loop to exit.
-    emit_byte(parser, OP_POP);
+    emit_byte(parser, PYRO_OPCODE_POP);
 
     // If there were any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
         ObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
-            if (fn->code[ip] == OP_BREAK) {
-                fn->code[ip] = OP_JUMP;
+            if (fn->code[ip] == PYRO_OPCODE_BREAK) {
+                fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
                 ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
@@ -2008,16 +2008,16 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         loop_has_condition = true;
         parse_expression(parser, false, true);
         consume(parser, TOKEN_SEMICOLON, "expected ';' after loop condition");
-        exit_jump_index = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
+        exit_jump_index = emit_jump(parser, PYRO_OPCODE_POP_JUMP_IF_FALSE);
     }
 
     // Parse the (optional) increment clause.
     if (!match(parser, TOKEN_LEFT_BRACE)) {
-        size_t body_jump_index = emit_jump(parser, OP_JUMP);
+        size_t body_jump_index = emit_jump(parser, PYRO_OPCODE_JUMP);
 
         size_t increment_index = parser->fn_compiler->fn->code_count;
         parse_expression(parser, true, true);
-        emit_byte(parser, OP_POP);
+        emit_byte(parser, PYRO_OPCODE_POP);
         consume(parser, TOKEN_LEFT_BRACE, "expected '{' before loop body");
 
         emit_loop(parser, loop.start_index);
@@ -2043,8 +2043,8 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         size_t ip = loop.start_index;
         ObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
-            if (fn->code[ip] == OP_BREAK) {
-                fn->code[ip] = OP_JUMP;
+            if (fn->code[ip] == PYRO_OPCODE_BREAK) {
+                fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
                 ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
@@ -2080,8 +2080,8 @@ static void parse_infinite_loop_stmt(Parser* parser) {
         size_t ip = loop.start_index;
         ObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
-            if (fn->code[ip] == OP_BREAK) {
-                fn->code[ip] = OP_JUMP;
+            if (fn->code[ip] == PYRO_OPCODE_BREAK) {
+                fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
                 ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
@@ -2110,7 +2110,7 @@ static void parse_while_stmt(Parser* parser) {
         );
         return;
     }
-    size_t exit_jump_index = emit_jump(parser, OP_POP_JUMP_IF_FALSE);
+    size_t exit_jump_index = emit_jump(parser, PYRO_OPCODE_POP_JUMP_IF_FALSE);
 
     // Emit the bytecode for the block.
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before loop body");
@@ -2129,8 +2129,8 @@ static void parse_while_stmt(Parser* parser) {
         size_t ip = loop.start_index;
         ObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
-            if (fn->code[ip] == OP_BREAK) {
-                fn->code[ip] = OP_JUMP;
+            if (fn->code[ip] == PYRO_OPCODE_BREAK) {
+                fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
                 ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
@@ -2160,10 +2160,10 @@ static void parse_with_stmt(Parser* parser) {
     parse_expression(parser, true, true);
     add_local(parser, variable_name);
     mark_initialized(parser);
-    emit_byte(parser, OP_START_WITH);
+    emit_byte(parser, PYRO_OPCODE_START_WITH);
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before 'with' statement body");
     parse_block(parser);
-    emit_byte(parser, OP_END_WITH);
+    emit_byte(parser, PYRO_OPCODE_END_WITH);
     end_scope(parser);
 }
 
@@ -2243,10 +2243,10 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
     // Emit the bytecode to load the function onto the stack as an ObjClosure.
     if (default_value_count > 0) {
-        emit_u8_u16be(parser, OP_MAKE_CLOSURE_WITH_DEF_ARGS, index);
+        emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS, index);
         emit_byte(parser, default_value_count);
     } else {
-        emit_u8_u16be(parser, OP_MAKE_CLOSURE, index);
+        emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE, index);
     }
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
@@ -2280,11 +2280,11 @@ static void parse_method_declaration(Parser* parser, Access access) {
     parse_function_definition(parser, type, parser->previous_token);
 
     if (access == PUBLIC) {
-        emit_u8_u16be(parser, OP_DEFINE_PUB_METHOD, index);
+        emit_u8_u16be(parser, PYRO_OPCODE_DEFINE_PUB_METHOD, index);
     } else if (access == PRIVATE) {
-        emit_u8_u16be(parser, OP_DEFINE_PRI_METHOD, index);
+        emit_u8_u16be(parser, PYRO_OPCODE_DEFINE_PRI_METHOD, index);
     } else {
-        emit_u8_u16be(parser, OP_DEFINE_STATIC_METHOD, index);
+        emit_u8_u16be(parser, PYRO_OPCODE_DEFINE_STATIC_METHOD, index);
     }
 }
 
@@ -2305,15 +2305,15 @@ static void parse_field_declaration(Parser* parser, Access access) {
                 parse_default_value_expression(parser, "field");
             }
         } else {
-            emit_byte(parser, OP_LOAD_NULL);
+            emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
         }
 
         if (access == PUBLIC) {
-            emit_u8_u16be(parser, OP_DEFINE_PUB_FIELD, index);
+            emit_u8_u16be(parser, PYRO_OPCODE_DEFINE_PUB_FIELD, index);
         } else if (access == PRIVATE) {
-            emit_u8_u16be(parser, OP_DEFINE_PRI_FIELD, index);
+            emit_u8_u16be(parser, PYRO_OPCODE_DEFINE_PRI_FIELD, index);
         } else {
-            emit_u8_u16be(parser, OP_DEFINE_STATIC_FIELD, index);
+            emit_u8_u16be(parser, PYRO_OPCODE_DEFINE_STATIC_FIELD, index);
         }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "expected ';' after field declaration");
@@ -2327,7 +2327,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
     declare_variable(parser, parser->previous_token);
 
-    emit_u8_u16be(parser, OP_MAKE_CLASS, index);
+    emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLASS, index);
     define_variable(parser, index, access);
 
     // Push a new class compiler onto the implicit linked-list stack.
@@ -2348,7 +2348,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
         define_variable(parser, 0, PRIVATE);
 
         emit_load_named_variable(parser, class_name);
-        emit_byte(parser, OP_INHERIT);
+        emit_byte(parser, PYRO_OPCODE_INHERIT);
         class_compiler.has_superclass = true;
     }
 
@@ -2395,7 +2395,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
         }
     }
     consume(parser, TOKEN_RIGHT_BRACE, "unexpected token, expected '}' after class body");
-    emit_byte(parser, OP_POP); // pop the class object
+    emit_byte(parser, PYRO_OPCODE_POP); // pop the class object
 
     if (class_compiler.has_superclass) {
         end_scope(parser);
@@ -2419,7 +2419,7 @@ static void parse_return_stmt(Parser* parser) {
         }
         parse_expression(parser, true, true);
         consume(parser, TOKEN_SEMICOLON, "expected ';' after return value");
-        emit_byte(parser, OP_RETURN);
+        emit_byte(parser, PYRO_OPCODE_RETURN);
     }
 }
 
@@ -2432,7 +2432,7 @@ static void parse_break_stmt(Parser* parser) {
     parser->fn_compiler->loop_compiler->had_break = true;
 
     discard_locals(parser, parser->fn_compiler->loop_compiler->start_depth + 1);
-    emit_jump(parser, OP_BREAK);
+    emit_jump(parser, PYRO_OPCODE_BREAK);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after 'break'");
 }
 
@@ -2591,8 +2591,8 @@ static ObjPyroFn* compile(PyroVM* vm, const char* src_code, size_t src_len, cons
     // If the code consisted of a single expression statement, we might want to print the value of
     // the expression if we're running inside a REPL.
     if (parser.num_statements == 1 && parser.num_expression_statements == 1) {
-        assert(fn->code[fn->code_count - 3] == OP_POP);
-        fn->code[fn->code_count - 3] = OP_POP_ECHO_IN_REPL;
+        assert(fn->code[fn->code_count - 3] == PYRO_OPCODE_POP);
+        fn->code[fn->code_count - 3] = PYRO_OPCODE_POP_ECHO_IN_REPL;
     }
 
     return fn;
