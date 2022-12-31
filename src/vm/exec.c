@@ -20,7 +20,7 @@
 // local variable (for instance methods, this will be 'self').
 static void push_call_frame(PyroVM* vm, ObjClosure* closure, Value* frame_pointer) {
     if (vm->frame_count == vm->frame_capacity) {
-        size_t new_capacity = GROW_CAPACITY(vm->frame_capacity);
+        size_t new_capacity = PYRO_GROW_CAPACITY(vm->frame_capacity);
         CallFrame* new_array = REALLOCATE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity, new_capacity);
         if (!new_array) {
             pyro_panic(vm, "out of memory");
@@ -2306,7 +2306,7 @@ static void run(PyroVM* vm) {
 
             case OP_START_WITH: {
                 if (vm->with_stack_count == vm->with_stack_capacity) {
-                    size_t new_capacity = GROW_CAPACITY(vm->with_stack_capacity);
+                    size_t new_capacity = PYRO_GROW_CAPACITY(vm->with_stack_capacity);
                     Value* new_array = REALLOCATE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity, new_capacity);
                     if (!new_array) {
                         pyro_panic(vm, "out of memory: failed to allocate memory for the 'with' stack");

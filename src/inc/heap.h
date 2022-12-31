@@ -6,7 +6,7 @@
 #include "objects.h"
 
 // Increase the capacity of an array.
-#define GROW_CAPACITY(capacity) \
+#define PYRO_GROW_CAPACITY(capacity) \
     ((capacity) < 8 ? 8 : (capacity) * 2)
 
 // Heap-allocate memory for a new array of [type] with space for [capacity] elements.

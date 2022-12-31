@@ -289,7 +289,7 @@ static ObjStr* find_string(ObjMap* map, const char* string, size_t length, uint6
 // opportunity to eliminate any tombstones from the entry array so when this function returns
 // the map contains no tombstone entries.)
 static bool resize_index_array(ObjMap* map, PyroVM* vm) {
-    size_t new_index_array_capacity = GROW_CAPACITY(map->index_array_capacity);
+    size_t new_index_array_capacity = PYRO_GROW_CAPACITY(map->index_array_capacity);
 
     int64_t* new_index_array = ALLOCATE_ARRAY(vm, int64_t, new_index_array_capacity);
     if (!new_index_array) {
@@ -446,7 +446,7 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
 // index of the new entry.
 static int64_t append_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
     if (map->entry_array_count == map->entry_array_capacity) {
-        size_t new_entry_array_capacity = GROW_CAPACITY(map->entry_array_capacity);
+        size_t new_entry_array_capacity = PYRO_GROW_CAPACITY(map->entry_array_capacity);
         MapEntry* new_entry_array = REALLOCATE_ARRAY(
             vm,
             MapEntry,
@@ -930,7 +930,7 @@ ObjPyroFn* ObjPyroFn_new(PyroVM* vm) {
 
 bool ObjPyroFn_write(ObjPyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
     if (fn->code_count == fn->code_capacity) {
-        size_t new_capacity = GROW_CAPACITY(fn->code_capacity);
+        size_t new_capacity = PYRO_GROW_CAPACITY(fn->code_capacity);
         uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity, new_capacity);
         if (!new_array) {
             return false;
@@ -989,7 +989,7 @@ int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, Value value, PyroVM* vm) {
     }
 
     if (fn->constants_count == fn->constants_capacity) {
-        size_t new_capacity = GROW_CAPACITY(fn->constants_capacity);
+        size_t new_capacity = PYRO_GROW_CAPACITY(fn->constants_capacity);
         Value* new_array = REALLOCATE_ARRAY(vm, Value, fn->constants, fn->constants_capacity, new_capacity);
         if (!new_array) {
             return -1;
@@ -1361,7 +1361,7 @@ ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm) {
 
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm) {
     if (vec->count == vec->capacity) {
-        size_t new_capacity = GROW_CAPACITY(vec->capacity);
+        size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
         Value* new_array = REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             return false;
@@ -1454,7 +1454,7 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) 
     }
 
     if (vec->count == vec->capacity) {
-        size_t new_capacity = GROW_CAPACITY(vec->capacity);
+        size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
         Value* new_array = REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             pyro_panic(vm, "out of memory");
@@ -1593,9 +1593,9 @@ bool ObjBuf_append_hex_escaped_byte(ObjBuf* buf, uint8_t byte, PyroVM* vm) {
 // if memory allocation fails. In this case the buffer is unchanged.
 bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
     if (required_capacity > buf->capacity) {
-        size_t new_capacity = GROW_CAPACITY(buf->capacity);
+        size_t new_capacity = PYRO_GROW_CAPACITY(buf->capacity);
         while (new_capacity < required_capacity) {
-            new_capacity = GROW_CAPACITY(new_capacity);
+            new_capacity = PYRO_GROW_CAPACITY(new_capacity);
         }
         uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
         if (!new_array) {
@@ -1791,7 +1791,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
 
     while (true) {
         if (count + 1 > capacity) {
-            size_t new_capacity = GROW_CAPACITY(capacity);
+            size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 FREE_ARRAY(vm, uint8_t, array, capacity);

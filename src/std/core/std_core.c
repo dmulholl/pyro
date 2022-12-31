@@ -37,7 +37,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (fmt_str_index < fmt_str->length) {
         if (out_count + 2 > out_capacity) {
-            size_t new_capacity = GROW_CAPACITY(out_capacity);
+            size_t new_capacity = PYRO_GROW_CAPACITY(out_capacity);
             char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
             if (!new_array) {
                 FREE_ARRAY(vm, char, out_buffer, out_capacity);
@@ -697,7 +697,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (true) {
         if (count + 1 > capacity) {
-            size_t new_capacity = GROW_CAPACITY(capacity);
+            size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 pyro_panic(vm, "$read_file(): out of memory");

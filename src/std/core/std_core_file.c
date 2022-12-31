@@ -112,7 +112,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (true) {
         if (count + 1 > capacity) {
-            size_t new_capacity = GROW_CAPACITY(capacity);
+            size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 pyro_panic(vm, "read(): out of memory");
@@ -161,7 +161,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (true) {
         if (count + 1 > capacity) {
-            size_t new_capacity = GROW_CAPACITY(capacity);
+            size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 pyro_panic(vm, "read_string(): out of memory");
