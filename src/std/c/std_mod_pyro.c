@@ -35,7 +35,7 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
                 ObjMap* map = AS_MAP(args[0]);
                 return pyro_i64(
                     sizeof(ObjMap) +
-                    sizeof(MapEntry) * map->entry_array_capacity +
+                    sizeof(PyroMapEntry) * map->entry_array_capacity +
                     sizeof(int64_t) * map->index_array_capacity
                 );
             }

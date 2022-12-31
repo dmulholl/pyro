@@ -43,7 +43,7 @@ static Value mod_globals(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < mod->pub_member_indexes->entry_array_count; i++) {
-        MapEntry* entry = &mod->pub_member_indexes->entry_array[i];
+        PyroMapEntry* entry = &mod->pub_member_indexes->entry_array[i];
         if (IS_TOMBSTONE(entry->key)) {
             continue;
         }

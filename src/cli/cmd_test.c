@@ -42,7 +42,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
         bool had_failed_test_func = false;
 
         for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
-            MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
+            PyroMapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
             if (IS_TOMBSTONE(entry->key)) {
                 continue;
             }
@@ -136,7 +136,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
         bool had_failed_test_func = false;
 
         for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
-            MapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
+            PyroMapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
             if (IS_TOMBSTONE(entry->key)) {
                 continue;
             }

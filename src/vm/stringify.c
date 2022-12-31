@@ -273,7 +273,7 @@ static ObjStr* stringify_map(PyroVM* vm, ObjMap* map) {
     bool is_first_entry = true;
 
     for (size_t i = 0; i < map->entry_array_count; i++) {
-        MapEntry* entry = &map->entry_array[i];
+        PyroMapEntry* entry = &map->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -346,7 +346,7 @@ static ObjStr* stringify_map_as_set(PyroVM* vm, ObjMap* map) {
     bool is_first_entry = true;
 
     for (size_t i = 0; i < map->entry_array_count; i++) {
-        MapEntry* entry = &map->entry_array[i];
+        PyroMapEntry* entry = &map->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;

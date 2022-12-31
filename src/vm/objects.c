@@ -225,7 +225,7 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
 // Note that [index_array] must have a non-zero length before this function is called.
 static int64_t* find_entry(
     PyroVM* vm,
-    MapEntry* entry_array,
+    PyroMapEntry* entry_array,
     int64_t* index_array,
     size_t index_array_capacity,
     Value key
@@ -373,7 +373,7 @@ ObjMap* ObjMap_new(PyroVM* vm) {
 
 
 void ObjMap_clear(ObjMap* map, PyroVM* vm) {
-    PYRO_FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
+    PYRO_FREE_ARRAY(vm, PyroMapEntry, map->entry_array, map->entry_array_capacity);
     PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
     map->entry_array = NULL;
     map->entry_array_count = 0;
@@ -413,15 +413,15 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
         return NULL;
     }
 
-    MapEntry* entry_array = PYRO_ALLOCATE_ARRAY(vm, MapEntry, src->entry_array_capacity);
+    PyroMapEntry* entry_array = PYRO_ALLOCATE_ARRAY(vm, PyroMapEntry, src->entry_array_capacity);
     if (!entry_array) {
         return NULL;
     }
-    memcpy(entry_array, src->entry_array, sizeof(MapEntry) * src->entry_array_count);
+    memcpy(entry_array, src->entry_array, sizeof(PyroMapEntry) * src->entry_array_count);
 
     int64_t* index_array = PYRO_ALLOCATE_ARRAY(vm, int64_t, src->index_array_capacity);
     if (!index_array) {
-        PYRO_FREE_ARRAY(vm, MapEntry, entry_array, src->entry_array_capacity);
+        PYRO_FREE_ARRAY(vm, PyroMapEntry, entry_array, src->entry_array_capacity);
         return NULL;
     }
     memcpy(index_array, src->index_array, sizeof(int64_t) * src->index_array_capacity);
@@ -447,9 +447,9 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
 static int64_t append_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
     if (map->entry_array_count == map->entry_array_capacity) {
         size_t new_entry_array_capacity = PYRO_GROW_CAPACITY(map->entry_array_capacity);
-        MapEntry* new_entry_array = PYRO_REALLOCATE_ARRAY(
+        PyroMapEntry* new_entry_array = PYRO_REALLOCATE_ARRAY(
             vm,
-            MapEntry,
+            PyroMapEntry,
             map->entry_array,
             map->entry_array_capacity,
             new_entry_array_capacity
@@ -578,7 +578,7 @@ bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
 
 bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->entry_array_count; i++) {
-        MapEntry* entry = &src->entry_array[i];
+        PyroMapEntry* entry = &src->entry_array[i];
         if (IS_TOMBSTONE(entry->key)) {
             continue;
         }
@@ -1963,7 +1963,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
         case PYRO_ITER_MAP_KEYS: {
             ObjMap* map = (ObjMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
-                MapEntry* entry = &map->entry_array[iter->next_index];
+                PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
                 if (IS_TOMBSTONE(entry->key)) {
                     continue;
@@ -1976,7 +1976,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
         case PYRO_ITER_MAP_VALUES: {
             ObjMap* map = (ObjMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
-                MapEntry* entry = &map->entry_array[iter->next_index];
+                PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
                 if (IS_TOMBSTONE(entry->key)) {
                     continue;
@@ -1989,7 +1989,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
         case PYRO_ITER_MAP_ENTRIES: {
             ObjMap* map = (ObjMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
-                MapEntry* entry = &map->entry_array[iter->next_index];
+                PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
                 if (IS_TOMBSTONE(entry->key)) {
                     continue;

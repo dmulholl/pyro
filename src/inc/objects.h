@@ -70,7 +70,7 @@ ObjStr* ObjStr_esc_percents(const char* src, size_t length, PyroVM* vm);
 typedef struct {
     Value key;
     Value value;
-} MapEntry;
+} PyroMapEntry;
 
 // A linear-probing hash map. New entries are appended to [entry_array] so iterating over this
 // array returns the entries in insertion order.
@@ -84,7 +84,7 @@ struct ObjMap {
     // This array is the map's data store -- new entries are appended to this array so iterating
     // over it preserves insertion order. [entry_array_count] includes both live entries and
     // tombstones.
-    MapEntry* entry_array;
+    PyroMapEntry* entry_array;
     size_t entry_array_capacity;
     size_t entry_array_count;
 

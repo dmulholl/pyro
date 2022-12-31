@@ -241,7 +241,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case PYRO_OBJECT_MAP: {
             ObjMap* map = (ObjMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
-                MapEntry* entry = &map->entry_array[i];
+                PyroMapEntry* entry = &map->entry_array[i];
                 if (IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
@@ -254,7 +254,7 @@ static void blacken_object(PyroVM* vm, Obj* object) {
         case PYRO_OBJECT_MAP_AS_SET: {
             ObjMap* map = (ObjMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
-                MapEntry* entry = &map->entry_array[i];
+                PyroMapEntry* entry = &map->entry_array[i];
                 if (IS_TOMBSTONE(entry->key)) {
                     continue;
                 }

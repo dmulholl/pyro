@@ -166,7 +166,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                     ObjMap* map = AS_MAP(value);
 
                     for (size_t i = 0; i < map->entry_array_count; i++) {
-                        MapEntry* entry = &map->entry_array[i];
+                        PyroMapEntry* entry = &map->entry_array[i];
                         if (IS_TOMBSTONE(entry->key)) {
                             continue;
                         }

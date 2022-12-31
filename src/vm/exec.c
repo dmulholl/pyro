@@ -1212,7 +1212,7 @@ static void run(PyroVM* vm) {
                 }
 
                 for (size_t i = 0; i < imported_module->pub_member_indexes->entry_array_count; i++) {
-                    MapEntry* entry = &imported_module->pub_member_indexes->entry_array[i];
+                    PyroMapEntry* entry = &imported_module->pub_member_indexes->entry_array[i];
                     if (IS_TOMBSTONE(entry->key)) {
                         continue;
                     }

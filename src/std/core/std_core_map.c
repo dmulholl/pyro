@@ -217,7 +217,7 @@ static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
-        MapEntry* entry = &map1->entry_array[i];
+        PyroMapEntry* entry = &map1->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -230,7 +230,7 @@ static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
-        MapEntry* entry = &map2->entry_array[i];
+        PyroMapEntry* entry = &map2->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -262,7 +262,7 @@ static Value set_intersection(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
-        MapEntry* entry = &map1->entry_array[i];
+        PyroMapEntry* entry = &map1->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -296,7 +296,7 @@ static Value set_difference(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
-        MapEntry* entry = &map1->entry_array[i];
+        PyroMapEntry* entry = &map1->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -330,7 +330,7 @@ static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args)
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
-        MapEntry* entry = &map1->entry_array[i];
+        PyroMapEntry* entry = &map1->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -345,7 +345,7 @@ static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args)
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
-        MapEntry* entry = &map2->entry_array[i];
+        PyroMapEntry* entry = &map2->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -377,7 +377,7 @@ static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
-        MapEntry* entry = &map1->entry_array[i];
+        PyroMapEntry* entry = &map1->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -406,7 +406,7 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
-        MapEntry* entry = &map1->entry_array[i];
+        PyroMapEntry* entry = &map1->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -435,7 +435,7 @@ static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
-        MapEntry* entry = &map2->entry_array[i];
+        PyroMapEntry* entry = &map2->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -464,7 +464,7 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
     }
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
-        MapEntry* entry = &map2->entry_array[i];
+        PyroMapEntry* entry = &map2->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;
@@ -493,7 +493,7 @@ static Value set_is_equal_to(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
-        MapEntry* entry = &map1->entry_array[i];
+        PyroMapEntry* entry = &map1->entry_array[i];
 
         if (IS_TOMBSTONE(entry->key)) {
             continue;

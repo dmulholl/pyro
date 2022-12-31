@@ -105,7 +105,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case PYRO_OBJECT_MAP_AS_SET:
         case PYRO_OBJECT_MAP: {
             ObjMap* map = (ObjMap*)object;
-            PYRO_FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
+            PYRO_FREE_ARRAY(vm, PyroMapEntry, map->entry_array, map->entry_array_capacity);
             PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
             FREE_OBJECT(vm, ObjMap, object);
             break;
