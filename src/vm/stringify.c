@@ -90,7 +90,7 @@ static ObjStr* make_debug_string_for_buf(PyroVM* vm, ObjBuf* buf) {
 
 
 // Returns a quoted, escaped string. Panics and returns NULL if memory allocation fails.
-static ObjStr* make_debug_string_for_char(PyroVM* vm, Value value) {
+static ObjStr* make_debug_string_for_char(PyroVM* vm, PyroValue value) {
     uint8_t utf8_buffer[4];
     size_t count = pyro_write_utf8_codepoint(value.as.u32, utf8_buffer);
 
@@ -171,7 +171,7 @@ static ObjStr* stringify_tuple(PyroVM* vm, ObjTup* tup) {
     }
 
     for (size_t i = 0; i < tup->count; i++) {
-        Value item = tup->values[i];
+        PyroValue item = tup->values[i];
         ObjStr* item_string = pyro_debugify_value(vm, item);
         if (vm->halt_flag) {
             return NULL;
@@ -221,7 +221,7 @@ static ObjStr* stringify_vector(PyroVM* vm, ObjVec* vec) {
     }
 
     for (size_t i = 0; i < vec->count; i++) {
-        Value item = vec->values[i];
+        PyroValue item = vec->values[i];
         ObjStr* item_string = pyro_debugify_value(vm, item);
         if (vm->halt_flag) {
             return NULL;
@@ -444,10 +444,10 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
-    Value method = pyro_get_method(vm, pyro_obj(object), vm->str_dollar_str);
+    PyroValue method = pyro_get_method(vm, pyro_obj(object), vm->str_dollar_str);
     if (!IS_NULL(method)) {
         pyro_push(vm, pyro_obj(object));
-        Value result = pyro_call_method(vm, method, 0);
+        PyroValue result = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -712,7 +712,7 @@ ObjStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...) {
 }
 
 
-ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
+ObjStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_BOOL:
             return value.as.boolean ? vm->str_true : vm->str_false;
@@ -746,11 +746,11 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
 }
 
 
-ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
-    Value method = pyro_get_method(vm, value, vm->str_dollar_debug);
+ObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
+    PyroValue method = pyro_get_method(vm, value, vm->str_dollar_debug);
     if (!IS_NULL(method)) {
         pyro_push(vm, value);
-        Value result = pyro_call_method(vm, method, 0);
+        PyroValue result = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -804,7 +804,7 @@ ObjStr* pyro_debugify_value(PyroVM* vm, Value value) {
 }
 
 
-static ObjStr* format_i64(PyroVM* vm, Value value, const char* format_string) {
+static ObjStr* format_i64(PyroVM* vm, PyroValue value, const char* format_string) {
     char buffer[24] = {'%'};
     size_t buffer_count = 1;
 
@@ -841,7 +841,7 @@ static ObjStr* format_i64(PyroVM* vm, Value value, const char* format_string) {
 }
 
 
-static ObjStr* format_char(PyroVM* vm, Value value, const char* format_string) {
+static ObjStr* format_char(PyroVM* vm, PyroValue value, const char* format_string) {
     char buffer[24] = {'%'};
     size_t buffer_count = 1;
 
@@ -878,7 +878,7 @@ static ObjStr* format_char(PyroVM* vm, Value value, const char* format_string) {
 }
 
 
-static ObjStr* format_f64(PyroVM* vm, Value value, const char* format_string) {
+static ObjStr* format_f64(PyroVM* vm, PyroValue value, const char* format_string) {
     char buffer[24] = {'%'};
 
     size_t format_string_length = strlen(format_string);
@@ -986,7 +986,7 @@ static ObjStr* format_str_obj(PyroVM* vm, ObjStr* string, const char* format_str
 }
 
 
-ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
+ObjStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_string) {
     if (IS_I64(value)) {
         if (format_string[0] == '%') {
             return pyro_sprintf_to_obj(vm, format_string, value.as.i64);
@@ -1012,7 +1012,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
         return format_str_obj(vm, AS_STR(value), format_string);
     }
 
-    Value method = pyro_get_method(vm, value, vm->str_dollar_fmt);
+    PyroValue method = pyro_get_method(vm, value, vm->str_dollar_fmt);
     if (!IS_NULL(method)) {
         ObjStr* format_string_object = ObjStr_new(format_string, vm);
         if (!format_string_object) {
@@ -1021,7 +1021,7 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string) {
         }
         pyro_push(vm, value);
         pyro_push(vm, pyro_obj(format_string_object));
-        Value result = pyro_call_method(vm, method, 1);
+        PyroValue result = pyro_call_method(vm, method, 1);
         if (vm->halt_flag) {
             return NULL;
         }

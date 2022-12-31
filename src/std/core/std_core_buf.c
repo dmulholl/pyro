@@ -6,7 +6,7 @@
 #include "../../inc/panics.h"
 
 
-static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         ObjBuf* buf = ObjBuf_new(vm);
         if (!buf) {
@@ -58,18 +58,18 @@ static Value fn_buf(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_buf(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_BUF(args[0]));
 }
 
 
-static Value buf_count(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
     return pyro_i64(buf->count);
 }
 
 
-static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
     uint8_t byte_value;
 
@@ -100,7 +100,7 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-/* static Value buf_write_be_u16(PyroVM* vm, size_t arg_count, Value* args) { */
+/* static PyroValue buf_write_be_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
 /*     ObjBuf* buf = AS_BUF(args[-1]); */
 
 /*     if (!IS_I64(args[0])) { */
@@ -130,7 +130,7 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 /* } */
 
 
-/* static Value buf_write_le_u16(PyroVM* vm, size_t arg_count, Value* args) { */
+/* static PyroValue buf_write_le_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
 /*     ObjBuf* buf = AS_BUF(args[-1]); */
 
 /*     if (!IS_I64(args[0])) { */
@@ -160,7 +160,7 @@ static Value buf_write_byte(PyroVM* vm, size_t arg_count, Value* args) {
 /* } */
 
 
-static Value buf_to_str(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_to_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
     ObjStr* string = ObjBuf_to_str(buf, vm);
     if (!string) {
@@ -171,7 +171,7 @@ static Value buf_to_str(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value buf_get(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
@@ -186,7 +186,7 @@ static Value buf_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value buf_set(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
 
     if (!IS_I64(args[0])) {
@@ -225,7 +225,7 @@ static Value buf_set(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
 
     if (arg_count == 0) {
@@ -261,7 +261,7 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_null();
     }
 
-    Value formatted = pyro_fn_fmt(vm, arg_count, args);
+    PyroValue formatted = pyro_fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -277,13 +277,13 @@ static Value buf_write(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value buf_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
     return pyro_bool(buf->count == 0);
 }
 
 
-static Value buf_clear(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue buf_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjBuf* buf = AS_BUF(args[-1]);
     ObjBuf_clear(buf, vm);
     return pyro_null();

@@ -22,7 +22,7 @@ void pyro_load_std_core_mod(PyroVM* vm);
 void pyro_load_std_core_char(PyroVM* vm);
 
 // The format function is defined in std_core.c but used by a number of builtin types.
-Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args);
+PyroValue pyro_fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args);
 
 // Standard library modules.
 void pyro_load_std_mod_math(PyroVM* vm, ObjModule* module);

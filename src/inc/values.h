@@ -3,7 +3,7 @@
 
 #include "pyro.h"
 
-// Type-set for Pyro's fundamental [Value] type. Every [Value] has a [.type] field with
+// Type-set for Pyro's fundamental [PyroValue] type. Every [PyroValue] has a [.type] field with
 // one of these enum values.
 typedef enum {
     PYRO_VALUE_BOOL,       // A Pyro boolean, true or false.
@@ -15,7 +15,7 @@ typedef enum {
     PYRO_VALUE_TOMBSTONE,  // Used internally by the map implementation.
 } PyroValueType;
 
-// Tagged union for Pyro's fundamental [Value] type. Every value in Pyro is a [Value], e.g.
+// Tagged union for Pyro's fundamental [PyroValue] type. Every value in Pyro is a [PyroValue], e.g.
 // variables, vector entries, map keys, map values, etc.
 typedef struct {
     PyroValueType type;
@@ -27,7 +27,7 @@ typedef struct {
         uint32_t u32;
         Obj* obj;
     } as;
-} Value;
+} PyroValue;
 
 // Type-set for heap-allocated Pyro objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
 // Every [Obj] has a [.type] field with one of these enum values.
@@ -65,41 +65,41 @@ struct Obj {
 };
 
 // Converts a C boolean to a Pyro value.
-static inline Value pyro_bool(bool value) {
-    return (Value){PYRO_VALUE_BOOL, {.boolean = value}};
+static inline PyroValue pyro_bool(bool value) {
+    return (PyroValue){PYRO_VALUE_BOOL, {.boolean = value}};
 }
 
 // Converts a C integer to a Pyro value.
-static inline Value pyro_i64(int64_t value) {
-    return (Value){PYRO_VALUE_I64, {.i64 = value}};
+static inline PyroValue pyro_i64(int64_t value) {
+    return (PyroValue){PYRO_VALUE_I64, {.i64 = value}};
 }
 
 // Converts a C double to a Pyro value.
-static inline Value pyro_f64(double value) {
-    return (Value){PYRO_VALUE_F64, {.f64 = value}};
+static inline PyroValue pyro_f64(double value) {
+    return (PyroValue){PYRO_VALUE_F64, {.f64 = value}};
 }
 
 // Converts a C integer to a Pyro value.
-static inline Value pyro_char(uint32_t value) {
-    return (Value){PYRO_VALUE_CHAR, {.u32 = value}};
+static inline PyroValue pyro_char(uint32_t value) {
+    return (PyroValue){PYRO_VALUE_CHAR, {.u32 = value}};
 }
 
 // Converts a C pointer to a Pyro value.
-static inline Value pyro_obj(void* value) {
-    return (Value){PYRO_VALUE_OBJ, {.obj = (Obj*)value}};
+static inline PyroValue pyro_obj(void* value) {
+    return (PyroValue){PYRO_VALUE_OBJ, {.obj = (Obj*)value}};
 }
 
 // Creates a Pyro tombstone value.
-static inline Value pyro_tombstone() {
-    return (Value){PYRO_VALUE_TOMBSTONE, {.i64 = 0}};
+static inline PyroValue pyro_tombstone() {
+    return (PyroValue){PYRO_VALUE_TOMBSTONE, {.i64 = 0}};
 }
 
 // Creates a Pyro null value.
-static inline Value pyro_null() {
-    return (Value){PYRO_VALUE_NULL, {.i64 = 0}};
+static inline PyroValue pyro_null() {
+    return (PyroValue){PYRO_VALUE_NULL, {.i64 = 0}};
 }
 
-// Macros for checking the type of a Value instance.
+// Macros for checking the type of a PyroValue instance.
 #define IS_BOOL(value)              ((value).type == PYRO_VALUE_BOOL)
 #define IS_NULL(value)              ((value).type == PYRO_VALUE_NULL)
 #define IS_I64(value)               ((value).type == PYRO_VALUE_I64)
@@ -108,7 +108,7 @@ static inline Value pyro_null() {
 #define IS_TOMBSTONE(value)         ((value).type == PYRO_VALUE_TOMBSTONE)
 #define IS_CHAR(value)              ((value).type == PYRO_VALUE_CHAR)
 
-// Macros for checking if a Value instance is an object of a specific type.
+// Macros for checking if a PyroValue instance is an object of a specific type.
 #define IS_STR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_STR)
 #define IS_PYRO_FN(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_PYRO_FN)
 #define IS_CLOSURE(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_CLOSURE)
@@ -129,7 +129,7 @@ static inline Value pyro_null() {
 #define IS_RESOURSE_POINTER(value)  pyro_is_obj_of_type(value, PYRO_OBJECT_RESOURCE_POINTER)
 #define IS_ERR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_ERR)
 
-// Macros for extracting object pointers from Value instances.
+// Macros for extracting object pointers from PyroValue instances.
 #define AS_OBJ(value)               ((value).as.obj)
 #define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
 #define AS_PYRO_FN(value)           ((ObjPyroFn*)AS_OBJ(value))
@@ -150,31 +150,31 @@ static inline Value pyro_null() {
 #define AS_ERR(value)               ((ObjErr*)AS_OBJ(value))
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
-ObjClass* pyro_get_class(PyroVM* vm, Value value);
+ObjClass* pyro_get_class(PyroVM* vm, PyroValue value);
 
 // Returns the named method if it exists, otherwise NULL.
-Value pyro_get_method(PyroVM* vm, Value value, ObjStr* method_name);
-Value pyro_get_pub_method(PyroVM* vm, Value value, ObjStr* method_name);
+PyroValue pyro_get_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
+PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
 
 // Returns true if the named method exists.
-bool pyro_has_method(PyroVM* vm, Value value, ObjStr* method_name);
-bool pyro_has_pub_method(PyroVM* vm, Value value, ObjStr* method_name);
+bool pyro_has_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
+bool pyro_has_pub_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
 
 // Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
 // Pyro code.
-void pyro_dump_value(PyroVM* vm, Value value);
+void pyro_dump_value(PyroVM* vm, PyroValue value);
 
 // Returns the value's 64-bit hash.
-uint64_t pyro_hash_value(PyroVM* vm, Value value);
+uint64_t pyro_hash_value(PyroVM* vm, PyroValue value);
 
 // Checks for strict equality -- same type, same value/object.
-bool pyro_compare_eq_strict(Value a, Value b);
+bool pyro_compare_eq_strict(PyroValue a, PyroValue b);
 
 // Returns true if the value is truthy.
-bool pyro_is_truthy(Value value);
+bool pyro_is_truthy(PyroValue value);
 
 // True if [value] is an object of the specified type.
-static inline bool pyro_is_obj_of_type(Value value, PyroObjectType type) {
+static inline bool pyro_is_obj_of_type(PyroValue value, PyroObjectType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 

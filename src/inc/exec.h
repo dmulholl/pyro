@@ -60,7 +60,7 @@ void pyro_try_compile_file(PyroVM* vm, const char* path);
 //  3. Call this function.
 //  4. Check [vm->halt_flag].
 //
-Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
+PyroValue pyro_call_method(PyroVM* vm, PyroValue method, uint8_t arg_count);
 
 // Calls a value as a function, where the value contains one of:
 //
@@ -86,7 +86,7 @@ Value pyro_call_method(PyroVM* vm, Value method, uint8_t arg_count);
 //  3. Call this function.
 //  4. Check [vm->halt_flag].
 //
-Value pyro_call_function(PyroVM* vm, uint8_t arg_count);
+PyroValue pyro_call_function(PyroVM* vm, uint8_t arg_count);
 
 // Call this function to reset the VM after a panic.
 // - Resets the flags, the stack pointer, and the frame pointer.

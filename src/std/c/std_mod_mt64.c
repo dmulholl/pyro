@@ -8,7 +8,7 @@
 #include "../../../lib/mt64/mt64.h"
 
 
-static Value fn_test(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_test(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(mt64_test());
 }
 
@@ -19,7 +19,7 @@ static void mt64_free_callback(PyroVM* vm, void* pointer) {
 }
 
 
-static Value mt64_init_method(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mt64_init_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     MT64* mt64 = malloc(sizeof(MT64));
@@ -42,7 +42,7 @@ static Value mt64_init_method(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value mt64_seed_with_hash(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mt64_seed_with_hash(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
@@ -51,7 +51,7 @@ static Value mt64_seed_with_hash(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value mt64_seed_with_array(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mt64_seed_with_array(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
@@ -77,7 +77,7 @@ static Value mt64_seed_with_array(PyroVM* vm, size_t arg_count, Value* args) {
     return pyro_null();
 }
 
-static Value mt64_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mt64_rand_float(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
@@ -85,7 +85,7 @@ static Value mt64_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value mt64_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mt64_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
@@ -99,7 +99,7 @@ static Value mt64_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
     ObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;

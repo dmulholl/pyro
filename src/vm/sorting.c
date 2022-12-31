@@ -6,8 +6,8 @@
 #include "../inc/panics.h"
 
 
-static void swap(Value* a, Value* b) {
-    Value temp = *a;
+static void swap(PyroValue* a, PyroValue* b) {
+    PyroValue temp = *a;
     *a = *b;
     *b = temp;
 }
@@ -20,7 +20,7 @@ static void swap(Value* a, Value* b) {
 
 // Fisher-Yates/Durstenfeld shuffling: we iterate over the array and at each index choose randomly
 // from the remaining unshuffled entries, i.e. for each i we choose j from the interval [i, count).
-void pyro_shuffle(PyroVM* vm, Value* values, size_t count) {
+void pyro_shuffle(PyroVM* vm, PyroValue* values, size_t count) {
     for (size_t i = 0; i < count; i++) {
         size_t j = i + mt64_gen_int(&vm->mt64, count - i);
         swap(&values[i], &values[j]);
@@ -34,7 +34,7 @@ void pyro_shuffle(PyroVM* vm, Value* values, size_t count) {
 
 
 // Sorts the slice array[low..high] where the indices are inclusive.
-static void insertion_sort_slice(PyroVM* vm, Value* array, size_t low, size_t high) {
+static void insertion_sort_slice(PyroVM* vm, PyroValue* array, size_t low, size_t high) {
     for (size_t i = low + 1; i <= high; i++) {
         for (size_t j = i; j > low; j--) {
             bool item_j_is_less_than_previous = pyro_op_compare_lt(vm, array[j], array[j - 1]);
@@ -52,13 +52,13 @@ static void insertion_sort_slice(PyroVM* vm, Value* array, size_t low, size_t hi
 
 
 // Sorts the slice array[low..high] where the indices are inclusive.
-static void insertion_sort_slice_with_cb(PyroVM* vm, Value* array, size_t low, size_t high, Value callback) {
+static void insertion_sort_slice_with_cb(PyroVM* vm, PyroValue* array, size_t low, size_t high, PyroValue callback) {
     for (size_t i = low + 1; i <= high; i++) {
         for (size_t j = i; j > low; j--) {
             pyro_push(vm, callback);
             pyro_push(vm, array[j]);
             pyro_push(vm, array[j - 1]);
-            Value item_j_is_less_than_previous = pyro_call_function(vm, 2);
+            PyroValue item_j_is_less_than_previous = pyro_call_function(vm, 2);
 
             if (vm->halt_flag) {
                 return;
@@ -90,15 +90,15 @@ static void insertion_sort_slice_with_cb(PyroVM* vm, Value* array, size_t low, s
 
 
 // Partitions the slice array[low..high] where the indices are inclusive.
-static size_t partition_slice_with_cb(PyroVM* vm, Value* array, size_t low, size_t high, Value callback) {
-    Value pivot = array[high];
+static size_t partition_slice_with_cb(PyroVM* vm, PyroValue* array, size_t low, size_t high, PyroValue callback) {
+    PyroValue pivot = array[high];
     size_t i = low;
 
     for (size_t j = low; j < high; j++) {
         pyro_push(vm, callback);
         pyro_push(vm, array[j]);
         pyro_push(vm, pivot);
-        Value item_j_is_less_than_pivot = pyro_call_function(vm, 2);
+        PyroValue item_j_is_less_than_pivot = pyro_call_function(vm, 2);
 
         if (vm->halt_flag) {
             return 0;
@@ -121,8 +121,8 @@ static size_t partition_slice_with_cb(PyroVM* vm, Value* array, size_t low, size
 
 
 // Partitions the slice array[low..high] where the indices are inclusive.
-static size_t partition_slice(PyroVM* vm, Value* array, size_t low, size_t high) {
-    Value pivot = array[high];
+static size_t partition_slice(PyroVM* vm, PyroValue* array, size_t low, size_t high) {
+    PyroValue pivot = array[high];
     size_t i = low;
 
     for (size_t j = low; j < high; j++) {
@@ -143,7 +143,7 @@ static size_t partition_slice(PyroVM* vm, Value* array, size_t low, size_t high)
 
 
 // Sorts the slice array[low..high] where the indices are inclusive.
-static void quicksort_slice_with_cb(PyroVM* vm, Value* array, size_t low, size_t high, Value callback) {
+static void quicksort_slice_with_cb(PyroVM* vm, PyroValue* array, size_t low, size_t high, PyroValue callback) {
     if (vm->halt_flag) {
         return;
     }
@@ -166,7 +166,7 @@ static void quicksort_slice_with_cb(PyroVM* vm, Value* array, size_t low, size_t
 
 
 // Sorts the slice array[low..high] where the indices are inclusive.
-static void quicksort_slice(PyroVM* vm, Value* array, size_t low, size_t high) {
+static void quicksort_slice(PyroVM* vm, PyroValue* array, size_t low, size_t high) {
     if (vm->halt_flag) {
         return;
     }
@@ -188,7 +188,7 @@ static void quicksort_slice(PyroVM* vm, Value* array, size_t low, size_t high) {
 }
 
 
-void pyro_quicksort_with_callback(PyroVM* vm, Value* values, size_t count, Value callback) {
+void pyro_quicksort_with_callback(PyroVM* vm, PyroValue* values, size_t count, PyroValue callback) {
     if (count > 1) {
         pyro_shuffle(vm, values, count);
         quicksort_slice_with_cb(vm, values, 0, count - 1, callback);
@@ -196,7 +196,7 @@ void pyro_quicksort_with_callback(PyroVM* vm, Value* values, size_t count, Value
 }
 
 
-void pyro_quicksort(PyroVM* vm, Value* values, size_t count) {
+void pyro_quicksort(PyroVM* vm, PyroValue* values, size_t count) {
     if (count > 1) {
         pyro_shuffle(vm, values, count);
         quicksort_slice(vm, values, 0, count - 1);
@@ -210,7 +210,7 @@ void pyro_quicksort(PyroVM* vm, Value* values, size_t count) {
 
 
 // Merges the sorted slices array[low..mid] and array[mid+1..high]. Indices are inclusive.
-static void merge(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t mid, size_t high) {
+static void merge(PyroVM* vm, PyroValue* array, PyroValue* aux_array, size_t low, size_t mid, size_t high) {
     if (vm->halt_flag) {
         return;
     }
@@ -219,7 +219,7 @@ static void merge(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t
     size_t j = mid + 1;
 
     // Copy the slice from [array] to [aux_array].
-    memcpy(&aux_array[low], &array[low], sizeof(Value) * (high - low + 1));
+    memcpy(&aux_array[low], &array[low], sizeof(PyroValue) * (high - low + 1));
 
     for (size_t k = low; k <= high; k++) {
         if (i > mid) {
@@ -253,12 +253,12 @@ static void merge(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t
 // Merges the sorted slices array[low..mid] and array[mid+1..high]. Indices are inclusive.
 static void merge_with_cb(
     PyroVM* vm,
-    Value* array,
-    Value* aux_array,
+    PyroValue* array,
+    PyroValue* aux_array,
     size_t low,
     size_t mid,
     size_t high,
-    Value callback
+    PyroValue callback
 ) {
     if (vm->halt_flag) {
         return;
@@ -268,7 +268,7 @@ static void merge_with_cb(
     size_t j = mid + 1;
 
     // Copy the slice from [array] to [aux_array].
-    memcpy(&aux_array[low], &array[low], sizeof(Value) * (high - low + 1));
+    memcpy(&aux_array[low], &array[low], sizeof(PyroValue) * (high - low + 1));
 
     for (size_t k = low; k <= high; k++) {
         if (i > mid) {
@@ -286,7 +286,7 @@ static void merge_with_cb(
         pyro_push(vm, callback);
         pyro_push(vm, aux_array[j]);
         pyro_push(vm, aux_array[i]);
-        Value item_j_is_less_than_item_i = pyro_call_function(vm, 2);
+        PyroValue item_j_is_less_than_item_i = pyro_call_function(vm, 2);
 
         if (vm->halt_flag) {
             return;
@@ -311,11 +311,11 @@ static void merge_with_cb(
 // Sorts the slice array[low..high] where the indices are inclusive.
 static void mergesort_slice_with_cb(
     PyroVM* vm,
-    Value* array,
-    Value* aux_array,
+    PyroValue* array,
+    PyroValue* aux_array,
     size_t low,
     size_t high,
-    Value callback
+    PyroValue callback
 ) {
     // Use insertion sort for small slices.
     if (high <= low + 10) {
@@ -333,7 +333,7 @@ static void mergesort_slice_with_cb(
 
 
 // Sorts the slice array[low..high] where the indices are inclusive.
-static void mergesort_slice(PyroVM* vm, Value* array, Value* aux_array, size_t low, size_t high) {
+static void mergesort_slice(PyroVM* vm, PyroValue* array, PyroValue* aux_array, size_t low, size_t high) {
     // Use insertion sort for small slices.
     if (high <= low + 10) {
         insertion_sort_slice(vm, array, low, high);
@@ -349,35 +349,35 @@ static void mergesort_slice(PyroVM* vm, Value* array, Value* aux_array, size_t l
 }
 
 
-void pyro_mergesort_with_callback(PyroVM* vm, Value* values, size_t count, Value callback) {
+void pyro_mergesort_with_callback(PyroVM* vm, PyroValue* values, size_t count, PyroValue callback) {
     if (count < 2) {
         return;
     }
 
-    Value* aux_array = PYRO_ALLOCATE_ARRAY(vm, Value, count);
+    PyroValue* aux_array = PYRO_ALLOCATE_ARRAY(vm, PyroValue, count);
     if (!aux_array) {
         pyro_panic(vm, "out of memory");
         return;
     }
 
     mergesort_slice_with_cb(vm, values, aux_array, 0, count - 1, callback);
-    PYRO_FREE_ARRAY(vm, Value, aux_array, count);
+    PYRO_FREE_ARRAY(vm, PyroValue, aux_array, count);
 }
 
 
-void pyro_mergesort(PyroVM* vm, Value* values, size_t count) {
+void pyro_mergesort(PyroVM* vm, PyroValue* values, size_t count) {
     if (count < 2) {
         return;
     }
 
-    Value* aux_array = PYRO_ALLOCATE_ARRAY(vm, Value, count);
+    PyroValue* aux_array = PYRO_ALLOCATE_ARRAY(vm, PyroValue, count);
     if (!aux_array) {
         pyro_panic(vm, "out of memory");
         return;
     }
 
     mergesort_slice(vm, values, aux_array, 0, count - 1);
-    PYRO_FREE_ARRAY(vm, Value, aux_array, count);
+    PYRO_FREE_ARRAY(vm, PyroValue, aux_array, count);
 }
 
 
@@ -386,14 +386,14 @@ void pyro_mergesort(PyroVM* vm, Value* values, size_t count) {
 /* --------- */
 
 
-bool pyro_is_sorted(PyroVM* vm, Value* values, size_t count) {
+bool pyro_is_sorted(PyroVM* vm, PyroValue* values, size_t count) {
     if (count < 2) {
         return true;
     }
 
     for (size_t i = 0; i < count - 1; i++) {
-        Value a = values[i];
-        Value b = values[i + 1];
+        PyroValue a = values[i];
+        PyroValue b = values[i + 1];
 
         bool b_is_less_than_a = pyro_op_compare_lt(vm, b, a);
         if (vm->halt_flag) {
@@ -409,19 +409,19 @@ bool pyro_is_sorted(PyroVM* vm, Value* values, size_t count) {
 }
 
 
-bool pyro_is_sorted_with_callback(PyroVM* vm, Value* values, size_t count, Value callback) {
+bool pyro_is_sorted_with_callback(PyroVM* vm, PyroValue* values, size_t count, PyroValue callback) {
     if (count < 2) {
         return true;
     }
 
     for (size_t i = 0; i < count - 1; i++) {
-        Value a = values[i];
-        Value b = values[i + 1];
+        PyroValue a = values[i];
+        PyroValue b = values[i + 1];
 
         pyro_push(vm, callback);
         pyro_push(vm, b);
         pyro_push(vm, a);
-        Value b_is_less_than_a = pyro_call_function(vm, 2);
+        PyroValue b_is_less_than_a = pyro_call_function(vm, 2);
 
         if (vm->halt_flag) {
             return false;

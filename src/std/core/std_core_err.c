@@ -10,7 +10,7 @@
 #include "../../inc/stringify.h"
 
 
-static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjErr* err = ObjErr_new(vm);
     if (err == NULL) {
         pyro_panic(vm, "$err(): out of memory");
@@ -31,7 +31,7 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
             pyro_panic(vm, "$err(): invalid argument [format_string], expected a string");
             return pyro_null();
         }
-        Value formatted = pyro_fn_fmt(vm, arg_count, args);
+        PyroValue formatted = pyro_fn_fmt(vm, arg_count, args);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -41,12 +41,12 @@ static Value fn_err(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_err(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_ERR(args[0]));
 }
 
 
-static Value err_set(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue err_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjErr* err = AS_ERR(args[-1]);
     if (ObjMap_set(err->details, args[0], args[1], vm) == 0) {
         pyro_panic(vm, "err:set(): out of memory");
@@ -55,9 +55,9 @@ static Value err_set(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value err_get(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue err_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjErr* err = AS_ERR(args[-1]);
-    Value value;
+    PyroValue value;
     if (ObjMap_get(err->details, args[0], &value, vm)) {
         return value;
     }
@@ -65,13 +65,13 @@ static Value err_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value err_message(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue err_message(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjErr* err = AS_ERR(args[-1]);
     return pyro_obj(err->message);
 }
 
 
-static Value err_details(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue err_details(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjErr* err = AS_ERR(args[-1]);
     return pyro_obj(err->details);
 }

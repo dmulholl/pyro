@@ -9,10 +9,10 @@
 #include "../../inc/exec.h"
 
 
-static Value mod_get(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mod_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjModule* mod = AS_MOD(args[-1]);
 
-    Value member_index;
+    PyroValue member_index;
     if (!ObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
         return pyro_obj(vm->error);
     }
@@ -21,10 +21,10 @@ static Value mod_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value mod_contains(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mod_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjModule* mod = AS_MOD(args[-1]);
 
-    Value member_index;
+    PyroValue member_index;
     if (ObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
         return pyro_bool(true);
     }
@@ -33,7 +33,7 @@ static Value mod_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value mod_globals(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjModule* mod = AS_MOD(args[-1]);
 
     ObjMap* new_map = ObjMap_new(vm);
@@ -47,9 +47,9 @@ static Value mod_globals(PyroVM* vm, size_t arg_count, Value* args) {
         if (IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        Value member_name = entry->key;
-        Value member_index = entry->value;
-        Value member_value = mod->members->values[member_index.as.i64];
+        PyroValue member_name = entry->key;
+        PyroValue member_index = entry->value;
+        PyroValue member_value = mod->members->values[member_index.as.i64];
         if (ObjMap_set(new_map, member_name, member_value, vm) == 0) {
             pyro_panic(vm, "globals(): out of memory");
             return pyro_null();
@@ -60,7 +60,7 @@ static Value mod_globals(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value mod_iter(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue mod_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjModule* mod = AS_MOD(args[-1]);
 
     ObjIter* iter = ObjIter_new((Obj*)mod->pub_member_indexes, PYRO_ITER_MAP_KEYS, vm);

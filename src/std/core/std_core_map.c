@@ -9,7 +9,7 @@
 #include "../../inc/exec.h"
 
 
-static Value fn_map(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = ObjMap_new(vm);
     if (!map) {
         pyro_panic(vm, "$map(): out of memory");
@@ -19,24 +19,24 @@ static Value fn_map(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_map(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_MAP(args[0]));
 }
 
 
-static Value map_count(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     return pyro_i64(map->live_entry_count);
 }
 
 
-static Value map_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     return pyro_bool(map->live_entry_count == 0);
 }
 
 
-static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     if (ObjMap_set(map, args[0], args[1], vm) == 0) {
         pyro_panic(vm, "set(): out of memory");
@@ -45,9 +45,9 @@ static Value map_set(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    Value value;
+    PyroValue value;
     if (ObjMap_get(map, args[0], &value, vm)) {
         return value;
     }
@@ -55,19 +55,19 @@ static Value map_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_remove(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_remove(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     return pyro_bool(ObjMap_remove(map, args[0], vm));
 }
 
 
-static Value map_contains(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     return pyro_bool(ObjMap_contains(map, args[0], vm));
 }
 
 
-static Value map_copy(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_copy(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjMap* copy = ObjMap_copy(map, vm);
     if (!copy) {
@@ -78,7 +78,7 @@ static Value map_copy(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_keys(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)map, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
@@ -89,7 +89,7 @@ static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)map, PYRO_ITER_MAP_VALUES, vm);
     if (!iter) {
@@ -100,7 +100,7 @@ static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_iter(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)map, PYRO_ITER_MAP_ENTRIES, vm);
     if (!iter) {
@@ -111,14 +111,14 @@ static Value map_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value map_clear(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue map_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     ObjMap_clear(map, vm);
     return pyro_null();
 }
 
 
-static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         ObjMap* map = ObjMap_new_as_set(vm);
         if (!map) {
@@ -134,7 +134,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     // Does the object have an :$iter() method?
-    Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
+    PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
     if (IS_NULL(iter_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], argument is not iterable");
         return pyro_null();
@@ -142,14 +142,14 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
 
     // Call the object's :$iter() method to get an iterator.
     pyro_push(vm, args[0]); // receiver for the $iter() method call
-    Value iterator = pyro_call_method(vm, iter_method, 0);
+    PyroValue iterator = pyro_call_method(vm, iter_method, 0);
     if (vm->halt_flag) {
         return pyro_null();
     }
     pyro_push(vm, iterator); // protect from GC
 
     // Get the iterator's :$next() method.
-    Value next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
+    PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
     if (IS_NULL(next_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], :$iter() returns an object with no :$next() method");
         return pyro_null();
@@ -165,7 +165,7 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (true) {
         pyro_push(vm, iterator); // receiver for the :$next() method call
-        Value next_value = pyro_call_method(vm, next_method, 0);
+        PyroValue next_value = pyro_call_method(vm, next_method, 0);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -187,12 +187,12 @@ static Value fn_set(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_set(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_SET(args[0]));
 }
 
 
-static Value set_add(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_add(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map = AS_MAP(args[-1]);
     if (ObjMap_set(map, args[0], pyro_null(), vm) == 0) {
         pyro_panic(vm, "add(): out of memory");
@@ -201,7 +201,7 @@ static Value set_add(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -246,7 +246,7 @@ static Value set_union(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value set_intersection(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -280,7 +280,7 @@ static Value set_intersection(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value set_difference(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -314,7 +314,7 @@ static Value set_difference(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -363,7 +363,7 @@ static Value set_symmetric_difference(PyroVM* vm, size_t arg_count, Value* args)
 }
 
 
-static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_is_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -392,7 +392,7 @@ static Value set_is_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_is_proper_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -421,7 +421,7 @@ static Value set_is_proper_subset_of(PyroVM* vm, size_t arg_count, Value* args) 
 }
 
 
-static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_is_superset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -450,7 +450,7 @@ static Value set_is_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_is_proper_superset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {
@@ -479,7 +479,7 @@ static Value set_is_proper_superset_of(PyroVM* vm, size_t arg_count, Value* args
 }
 
 
-static Value set_is_equal_to(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjMap* map1 = AS_MAP(args[-1]);
 
     if (!IS_SET(args[0])) {

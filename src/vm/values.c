@@ -8,7 +8,7 @@
 #include "../inc/io.h"
 
 
-bool pyro_is_truthy(Value value) {
+bool pyro_is_truthy(PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_BOOL:
             return value.as.boolean;
@@ -22,7 +22,7 @@ bool pyro_is_truthy(Value value) {
 }
 
 
-ObjClass* pyro_get_class(PyroVM* vm, Value value) {
+ObjClass* pyro_get_class(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_CHAR:
             return vm->class_char;
@@ -34,9 +34,9 @@ ObjClass* pyro_get_class(PyroVM* vm, Value value) {
 }
 
 
-Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, ObjStr* method_name) {
     if (IS_CLASS(receiver)) {
-        Value method;
+        PyroValue method;
         if (ObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
@@ -48,7 +48,7 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
         if (class->all_instance_methods_cached_name == method_name) {
             return class->all_instance_methods_cached_value;
         }
-        Value method;
+        PyroValue method;
         if (ObjMap_get(class->all_instance_methods, pyro_obj(method_name), &method, vm)) {
             class->all_instance_methods_cached_name = method_name;
             class->all_instance_methods_cached_value = method;
@@ -60,9 +60,9 @@ Value pyro_get_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
 }
 
 
-Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, ObjStr* method_name) {
     if (IS_CLASS(receiver)) {
-        Value method;
+        PyroValue method;
         if (ObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
@@ -74,7 +74,7 @@ Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
         if (class->pub_instance_methods_cached_name == method_name) {
             return class->pub_instance_methods_cached_value;
         }
-        Value method;
+        PyroValue method;
         if (ObjMap_get(class->pub_instance_methods, pyro_obj(method_name), &method, vm)) {
             class->pub_instance_methods_cached_name = method_name;
             class->pub_instance_methods_cached_value = method;
@@ -86,17 +86,17 @@ Value pyro_get_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
 }
 
 
-bool pyro_has_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+bool pyro_has_method(PyroVM* vm, PyroValue receiver, ObjStr* method_name) {
     return !IS_NULL(pyro_get_method(vm, receiver, method_name));
 }
 
 
-bool pyro_has_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
+bool pyro_has_pub_method(PyroVM* vm, PyroValue receiver, ObjStr* method_name) {
     return !IS_NULL(pyro_get_pub_method(vm, receiver, method_name));
 }
 
 
-bool pyro_compare_eq_strict(Value a, Value b) {
+bool pyro_compare_eq_strict(PyroValue a, PyroValue b) {
     if (a.type == b.type) {
         switch (a.type) {
             case PYRO_VALUE_BOOL:
@@ -120,7 +120,7 @@ bool pyro_compare_eq_strict(Value a, Value b) {
 
 
 // All builtin types follow the rule that values that compare as equal should also hash as equal.
-uint64_t pyro_hash_value(PyroVM* vm, Value value) {
+uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_NULL:
             return 123;
@@ -177,10 +177,10 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                 }
 
                 default: {
-                    Value method = pyro_get_method(vm, value, vm->str_dollar_hash);
+                    PyroValue method = pyro_get_method(vm, value, vm->str_dollar_hash);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, value);
-                        Value result = pyro_call_method(vm, method, 0);
+                        PyroValue result = pyro_call_method(vm, method, 0);
                         if (vm->halt_flag) {
                             return 0;
                         }
@@ -312,7 +312,7 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
 }
 
 
-void pyro_dump_value(PyroVM* vm, Value value) {
+void pyro_dump_value(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_BOOL:
             pyro_stdout_write_f(vm, "%s", value.as.boolean ? "true" : "false");

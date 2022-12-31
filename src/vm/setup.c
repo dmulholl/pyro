@@ -15,14 +15,14 @@ PyroVM* pyro_new_vm(size_t stack_size) {
         return NULL;
     }
 
-    Value* stack = malloc(stack_size);
+    PyroValue* stack = malloc(stack_size);
     if (!stack) {
         free(vm);
         return NULL;
     }
     vm->stack = stack;
     vm->stack_top = stack;
-    vm->stack_max = stack + (stack_size/sizeof(Value));
+    vm->stack_max = stack + (stack_size/sizeof(PyroValue));
     vm->stack_size = stack_size;
 
     // Initialize or zero-out all fields before attempting to allocate memory.
@@ -285,7 +285,7 @@ void pyro_free_vm(PyroVM* vm) {
 
     PYRO_FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity);
     PYRO_FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
-    PYRO_FREE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity);
+    PYRO_FREE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity);
 
     free(vm->stack);
     vm->bytes_allocated -= vm->stack_size;
@@ -320,7 +320,7 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
         return NULL;
     }
 
-    Value parent_module;
+    PyroValue parent_module;
     if (!ObjMap_get(vm->modules, pyro_obj(parent_string), &parent_module, vm)) {
         assert(false);
         return NULL;
@@ -330,13 +330,13 @@ ObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name
     if (!name_string) {
         return NULL;
     }
-    Value name_value = pyro_obj(name_string);
+    PyroValue name_value = pyro_obj(name_string);
 
     ObjModule* module_object = ObjModule_new(vm);
     if (!module_object) {
         return NULL;
     }
-    Value module_value = pyro_obj(module_object);
+    PyroValue module_value = pyro_obj(module_object);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
         return NULL;
@@ -352,7 +352,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
         return NULL;
     }
 
-    Value grandparent_module;
+    PyroValue grandparent_module;
     if (!ObjMap_get(vm->modules, pyro_obj(grandparent_string), &grandparent_module, vm)) {
         assert(false);
         return NULL;
@@ -363,7 +363,7 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
         return NULL;
     }
 
-    Value parent_module;
+    PyroValue parent_module;
     if (!ObjMap_get(AS_MOD(grandparent_module)->submodules, pyro_obj(parent_string), &parent_module, vm)) {
         assert(false);
         return NULL;
@@ -373,13 +373,13 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
     if (!name_string) {
         return NULL;
     }
-    Value name_value = pyro_obj(name_string);
+    PyroValue name_value = pyro_obj(name_string);
 
     ObjModule* module_object = ObjModule_new(vm);
     if (!module_object) {
         return NULL;
     }
-    Value module_value = pyro_obj(module_object);
+    PyroValue module_value = pyro_obj(module_object);
 
     if (ObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
         return NULL;
@@ -389,12 +389,12 @@ ObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char*
 }
 
 
-bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
+bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, PyroValue value) {
     ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
-    Value name_value = pyro_obj(name_string);
+    PyroValue name_value = pyro_obj(name_string);
 
     size_t member_index = module->members->count;
     if (!ObjVec_append(module->members, value, vm)) {
@@ -410,12 +410,12 @@ bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Val
 }
 
 
-bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, Value value) {
+bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, PyroValue value) {
     ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;
     }
-    Value name_value = pyro_obj(name_string);
+    PyroValue name_value = pyro_obj(name_string);
 
     size_t member_index = module->members->count;
     if (!ObjVec_append(module->members, value, vm)) {
@@ -506,7 +506,7 @@ bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
 }
 
 
-bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
+bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, PyroValue default_value) {
     size_t field_index = class->default_field_values->count;
 
     ObjStr* name_string = ObjStr_new(name, vm);
@@ -533,7 +533,7 @@ bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value 
 }
 
 
-bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value) {
+bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, PyroValue default_value) {
     size_t field_index = class->default_field_values->count;
 
     ObjStr* name_string = ObjStr_new(name, vm);
@@ -554,7 +554,7 @@ bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value 
 }
 
 
-bool pyro_define_global(PyroVM* vm, const char* name, Value value) {
+bool pyro_define_global(PyroVM* vm, const char* name, PyroValue value) {
     ObjStr* name_string = ObjStr_new(name, vm);
     if (!name_string) {
         return false;

@@ -10,7 +10,7 @@
 #include "../../inc/exec.h"
 
 
-static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* string = pyro_stringify_value(vm, args[0]);
     if (vm->halt_flag) {
         return pyro_null();
@@ -19,18 +19,18 @@ static Value fn_str(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_str(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_STR(args[0]));
 }
 
 
-static Value str_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     return pyro_bool(str->length == 0);
 }
 
 
-static Value str_iter(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR, vm);
     if (!iter) {
@@ -41,13 +41,13 @@ static Value str_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_byte_count(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_byte_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     return pyro_i64(str->length);
 }
 
 
-static Value str_byte(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
@@ -62,7 +62,7 @@ static Value str_byte(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR_BYTES, vm);
     if (!iter) {
@@ -73,7 +73,7 @@ static Value str_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_lines(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR_LINES, vm);
     if (!iter) {
@@ -84,7 +84,7 @@ static Value str_lines(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(false);
@@ -100,7 +100,7 @@ static Value str_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(true);
@@ -109,7 +109,7 @@ static Value str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(false);
@@ -133,7 +133,7 @@ static Value str_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(true);
@@ -142,7 +142,7 @@ static Value str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, Value* args)
 }
 
 
-static Value str_is_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(false);
@@ -169,7 +169,7 @@ static Value str_is_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(true);
@@ -178,7 +178,7 @@ static Value str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) 
 }
 
 
-static Value str_chars(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR_CHARS, vm);
     if (!iter) {
@@ -189,7 +189,7 @@ static Value str_chars(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_char(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_I64(args[0])) {
@@ -229,7 +229,7 @@ static Value str_char(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_char_count(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_char_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     size_t byte_index = 0;
@@ -253,7 +253,7 @@ static Value str_char_count(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_utf8(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_utf8(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(false);
@@ -277,7 +277,7 @@ static Value str_is_utf8(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(true);
@@ -286,7 +286,7 @@ static Value str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_to_ascii_upper(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_obj(str);
@@ -316,7 +316,7 @@ static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_to_ascii_lower(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_obj(str);
@@ -346,7 +346,7 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_starts_with(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_starts_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -368,7 +368,7 @@ static Value str_starts_with(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_ends_with(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_ends_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -390,7 +390,7 @@ static Value str_ends_with(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_prefix(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_prefix(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -417,7 +417,7 @@ static Value str_strip_prefix(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_suffix(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_suffix(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -444,7 +444,7 @@ static Value str_strip_suffix(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -479,7 +479,7 @@ static Value str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -514,7 +514,7 @@ static Value str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_bytes(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -557,7 +557,7 @@ static Value str_strip_bytes(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_obj(str);
@@ -594,7 +594,7 @@ static Value str_strip_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_obj(str);
@@ -635,7 +635,7 @@ static Value str_strip_utf8_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_chars(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -689,7 +689,7 @@ static Value str_strip_chars(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_suffix_chars(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -733,7 +733,7 @@ static Value str_strip_suffix_chars(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip_prefix_chars(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip_prefix_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -777,7 +777,7 @@ static Value str_strip_prefix_chars(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_strip(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_strip(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         return str_strip_ascii_ws(vm, arg_count, args);
     } else if (arg_count == 1) {
@@ -793,7 +793,7 @@ static Value str_strip(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_match(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_match(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -820,7 +820,7 @@ static Value str_match(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -884,7 +884,7 @@ static Value str_replace(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (arg_count == 0 || arg_count > 2) {
@@ -928,7 +928,7 @@ static Value str_index_of(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     char* target;
@@ -964,7 +964,7 @@ static Value str_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     ObjVec* vec = ObjVec_new(vm);
@@ -1036,7 +1036,7 @@ static Value str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         return str_split_on_ascii_ws(vm, arg_count, args);
     } else if (arg_count > 1) {
@@ -1109,7 +1109,7 @@ static Value str_split(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_split_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     ObjVec* vec = ObjVec_new(vm);
@@ -1180,7 +1180,7 @@ static Value str_split_lines(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_to_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_obj(str);
@@ -1211,7 +1211,7 @@ static Value str_to_hex(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_slice(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     if (!(arg_count == 1 || arg_count == 2)) {
@@ -1265,11 +1265,11 @@ static Value str_slice(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
 
     // Does the argument have an :$iter() method?
-    Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
+    PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
     if (IS_NULL(iter_method)) {
         pyro_panic(vm, "join(): invalid argument [items], expected an iterable object");
         return pyro_null();
@@ -1277,14 +1277,14 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
 
     // Call the :$iter() method to get an iterator.
     pyro_push(vm, args[0]); // receiver for the :$iter() method call
-    Value iterator = pyro_call_method(vm, iter_method, 0);
+    PyroValue iterator = pyro_call_method(vm, iter_method, 0);
     if (vm->halt_flag) {
         return pyro_null();
     }
     pyro_push(vm, iterator); // protect from GC
 
     // Get the iterator's :$next() method.
-    Value next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
+    PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
     if (IS_NULL(next_method)) {
         pyro_panic(vm, "join(): invalid argument [items], iterator has no :$next() method");
         return pyro_null();
@@ -1302,7 +1302,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
 
     while (true) {
         pyro_push(vm, iterator); // receiver for the :$next() method call
-        Value next_value = pyro_call_method(vm, next_method, 0);
+        PyroValue next_value = pyro_call_method(vm, next_method, 0);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -1348,7 +1348,7 @@ static Value str_join(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_ascii_decimal(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_ascii_decimal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(false);
@@ -1365,7 +1365,7 @@ static Value str_is_ascii_decimal(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_ascii_octal(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_ascii_octal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(false);
@@ -1382,7 +1382,7 @@ static Value str_is_ascii_octal(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value str_is_ascii_hex(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue str_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
     if (str->length == 0) {
         return pyro_bool(false);

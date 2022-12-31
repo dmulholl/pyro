@@ -12,7 +12,7 @@
 #include "../../inc/exec.h"
 
 
-static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count < 2) {
         pyro_panic(vm, "$fmt(): expected 2 or more arguments, found %zu", arg_count);
         return pyro_null();
@@ -81,7 +81,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_panic(vm, "$fmt(): too few arguments for format string");
                 return pyro_null();
             }
-            Value arg = args[next_arg_index++];
+            PyroValue arg = args[next_arg_index++];
 
             ObjStr* formatted;
             if (fmt_spec_count == 0) {
@@ -137,7 +137,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_eprint(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         pyro_panic(vm, "$eprint(): expected 1 or more arguments, found 0");
         return pyro_null();
@@ -164,7 +164,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_null();
     }
 
-    Value formatted = fn_fmt(vm, arg_count, args);
+    PyroValue formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -181,7 +181,7 @@ static Value fn_eprint(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_eprintln(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         int64_t result = pyro_stderr_write_n(vm, "\n", 1);
         if (result == -1) {
@@ -223,7 +223,7 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_null();
     }
 
-    Value formatted = fn_fmt(vm, arg_count, args);
+    PyroValue formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -248,7 +248,7 @@ static Value fn_eprintln(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_print(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         pyro_panic(vm, "$print(): expected 1 or more arguments, found 0");
         return pyro_null();
@@ -275,7 +275,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_null();
     }
 
-    Value formatted = fn_fmt(vm, arg_count, args);
+    PyroValue formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -292,7 +292,7 @@ static Value fn_print(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_println(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         int64_t result = pyro_stdout_write_n(vm, "\n", 1);
         if (result == -1) {
@@ -334,7 +334,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_null();
     }
 
-    Value formatted = fn_fmt(vm, arg_count, args);
+    PyroValue formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -359,7 +359,7 @@ static Value fn_println(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_exit(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "$exit(): invalid argument [code], expected an integer");
         return pyro_null();
@@ -371,7 +371,7 @@ static Value fn_exit(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         pyro_panic(vm, "$panic(): expected 1 or more arguments, found 0");
         return pyro_null();
@@ -398,7 +398,7 @@ static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_null();
     }
 
-    Value formatted = fn_fmt(vm, arg_count, args);
+    PyroValue formatted = fn_fmt(vm, arg_count, args);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -415,32 +415,32 @@ static Value fn_panic(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_mod(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_mod(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_MOD(args[0]));
 }
 
 
-static Value fn_is_obj(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_obj(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_OBJ(args[0]));
 }
 
 
-static Value fn_clock(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_clock(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_f64((double)clock() / CLOCKS_PER_SEC);
 }
 
 
-static Value fn_is_nan(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_nan(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_F64(args[0]) && isnan(args[0].as.f64));
 }
 
 
-static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_inf(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_F64(args[0]) && isinf(args[0].as.f64));
 }
 
 
-static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_f64(PyroVM* vm, size_t arg_count, PyroValue* args) {
     switch (args[0].type) {
         case PYRO_VALUE_I64:
             return pyro_f64((double)args[0].as.i64);
@@ -472,12 +472,12 @@ static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_f64(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_f64(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_F64(args[0]));
 }
 
 
-static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_i64(PyroVM* vm, size_t arg_count, PyroValue* args) {
     switch (args[0].type) {
         case PYRO_VALUE_I64:
             return args[0];
@@ -516,22 +516,22 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_i64(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_i64(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_I64(args[0]));
 }
 
 
-static Value fn_bool(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_bool(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(pyro_is_truthy(args[0]));
 }
 
 
-static Value fn_is_bool(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_bool(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_BOOL(args[0]));
 }
 
 
-static Value fn_has_method(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_has_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$has_method(): invalid argument [method_name], expected a string");
         return pyro_null();
@@ -540,16 +540,16 @@ static Value fn_has_method(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_has_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$has_field(): invalid argument [field_name], expected a string");
         return pyro_null();
     }
-    Value field_name = args[1];
+    PyroValue field_name = args[1];
 
     if (IS_INSTANCE(args[0])) {
         ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
-        Value field_index;
+        PyroValue field_index;
         if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
             return pyro_bool(true);
         }
@@ -559,12 +559,12 @@ static Value fn_has_field(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_instance(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_instance(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_INSTANCE(args[0]));
 }
 
 
-static Value fn_is_instance_of(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_instance_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_CLASS(args[1])) {
         pyro_panic(vm, "$is_instance_of(): invalid argument [class], expected a class object");
         return pyro_null();
@@ -587,7 +587,7 @@ static Value fn_is_instance_of(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_shell_shortcut(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* out_str;
     ObjStr* err_str;
     int exit_code;
@@ -605,7 +605,7 @@ static Value fn_shell_shortcut(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* out_str;
     ObjStr* err_str;
     int exit_code;
@@ -670,7 +670,7 @@ static Value fn_shell(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* string = pyro_debugify_value(vm, args[0]);
     if (vm->halt_flag) {
         return pyro_null();
@@ -679,7 +679,7 @@ static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_read_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$read_file(): invalid argument [path], expected a string");
         return pyro_null();
@@ -743,7 +743,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_write_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$write_file(): invalid argument [path], expected a string");
         return pyro_null();
@@ -784,12 +784,12 @@ static Value fn_write_file(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_hash(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_hash(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_i64((int64_t)pyro_hash_value(vm, args[0]));
 }
 
 
-static Value fn_sleep(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_sleep(PyroVM* vm, size_t arg_count, PyroValue* args) {
     double time_in_seconds;
 
     if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
@@ -809,7 +809,7 @@ static Value fn_sleep(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_callable(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_callable(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (IS_CLOSURE(args[0])) {
         return pyro_bool(true);
     } else if (IS_NATIVE_FN(args[0])) {
@@ -825,7 +825,7 @@ static Value fn_is_callable(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_class(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_class(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (IS_CLASS(args[0])) {
         return pyro_bool(true);
     }
@@ -833,7 +833,7 @@ static Value fn_is_class(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_pyro_func(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_pyro_func(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (IS_CLOSURE(args[0])) {
         return pyro_bool(true);
     }
@@ -841,7 +841,7 @@ static Value fn_is_pyro_func(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_native_func(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_native_func(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (IS_NATIVE_FN(args[0])) {
         return pyro_bool(true);
     }
@@ -849,17 +849,17 @@ static Value fn_is_native_func(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_iterable(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_iterable(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(pyro_has_method(vm, args[0], vm->str_dollar_iter));
 }
 
 
-static Value fn_is_iterator(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_iterator(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(pyro_has_method(vm, args[0], vm->str_dollar_next));
 }
 
 
-static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
     // Note: getenv() is part of the C standard library.
     if (arg_count == 1) {
         if (!IS_STR(args[0])) {
@@ -908,12 +908,12 @@ static Value fn_env(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_null(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_null(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_NULL(args[0]));
 }
 
 
-static Value fn_input(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_input(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjFile* file = vm->stdin_file;
 
     ObjStr* string = ObjFile_read_line(file, vm);
@@ -925,7 +925,7 @@ static Value fn_input(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "$exec(): invalid argument [code], expected a string");
         return pyro_null();
@@ -947,7 +947,7 @@ static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
     switch (args[0].type) {
         case PYRO_VALUE_BOOL:
             return pyro_obj(vm->str_bool);
@@ -1010,8 +1010,8 @@ static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
-    Value obj = args[0];
+static PyroValue fn_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroValue obj = args[0];
 
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$method(): invalid argument [method_name], expected a string");
@@ -1019,7 +1019,7 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
     }
     ObjStr* method_name = AS_STR(args[1]);
 
-    Value method = pyro_get_method(vm, obj, method_name);
+    PyroValue method = pyro_get_method(vm, obj, method_name);
     if (IS_NULL(method)) {
         return pyro_obj(vm->error);
     }
@@ -1034,7 +1034,7 @@ static Value fn_method(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_methods(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjClass* class = pyro_get_class(vm, args[0]);
     if (!class) {
         ObjIter* iter = ObjIter_empty(vm);
@@ -1055,16 +1055,16 @@ static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[1])) {
         pyro_panic(vm, "$field(): invalid argument [field_name], expected a string");
         return pyro_null();
     }
-    Value field_name = args[1];
+    PyroValue field_name = args[1];
 
     if (IS_INSTANCE(args[0])) {
         ObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
-        Value field_index;
+        PyroValue field_index;
         if (ObjMap_get(field_index_map, field_name, &field_index, vm)) {
             return AS_INSTANCE(args[0])->fields[field_index.as.i64];
         }
@@ -1074,7 +1074,7 @@ static Value fn_field(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_fields(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjClass* class = pyro_get_class(vm, args[0]);
     if (!class) {
         ObjIter* iter = ObjIter_empty(vm);
@@ -1095,17 +1095,17 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_func(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_func(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_CLOSURE(args[0]) || IS_NATIVE_FN(args[0]));
 }
 
 
-static Value fn_is_method(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_BOUND_METHOD(args[0]));
 }
 
 
-static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_stdout(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         if (vm->stdout_file) {
             return pyro_obj(vm->stdout_file);
@@ -1127,7 +1127,7 @@ static Value fn_stdout(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_stderr(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         if (vm->stderr_file) {
             return pyro_obj(vm->stderr_file);
@@ -1149,7 +1149,7 @@ static Value fn_stderr(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_stdin(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         if (vm->stdin_file) {
             return pyro_obj(vm->stdin_file);
@@ -1176,7 +1176,7 @@ static Value fn_stdin(PyroVM* vm, size_t arg_count, Value* args) {
 /* -------- */
 
 
-Value pyro_fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
+PyroValue pyro_fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return fn_fmt(vm, arg_count, args);
 }
 

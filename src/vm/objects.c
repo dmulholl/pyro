@@ -54,7 +54,7 @@ static Obj* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
 
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm) {
-    ObjTup* tup = ALLOCATE_FLEX_OBJECT(vm, ObjTup, PYRO_OBJECT_TUP, count, Value);
+    ObjTup* tup = ALLOCATE_FLEX_OBJECT(vm, ObjTup, PYRO_OBJECT_TUP, count, PyroValue);
     if (!tup) {
         return NULL;
     }
@@ -124,7 +124,7 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* fn, ObjModule* module) {
 /* -------- */
 
 
-ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* addr) {
+ObjUpvalue* ObjUpvalue_new(PyroVM* vm, PyroValue* addr) {
     ObjUpvalue* upvalue = ALLOCATE_OBJECT(vm, ObjUpvalue, PYRO_OBJECT_UPVALUE);
     if (!upvalue) {
         return NULL;
@@ -186,14 +186,14 @@ ObjClass* ObjClass_new(PyroVM* vm) {
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class) {
     size_t num_fields = class->default_field_values->count;
 
-    ObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, ObjInstance, PYRO_OBJECT_INSTANCE, num_fields, Value);
+    ObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, ObjInstance, PYRO_OBJECT_INSTANCE, num_fields, PyroValue);
     if (!instance) {
         return NULL;
     }
 
     instance->obj.class = class;
     if (num_fields > 0) {
-        memcpy(instance->fields, class->default_field_values->values, sizeof(Value) * num_fields);
+        memcpy(instance->fields, class->default_field_values->values, sizeof(PyroValue) * num_fields);
     }
 
     return instance;
@@ -228,7 +228,7 @@ static int64_t* find_entry(
     PyroMapEntry* entry_array,
     int64_t* index_array,
     size_t index_array_capacity,
-    Value key
+    PyroValue key
 ) {
     // Capacity is always a power of 2 so we can use bitwise-AND as a fast modulo operator, i.e.
     // this is equivalent to: i = key_hash % index_array_capacity.
@@ -444,7 +444,7 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
 // This function appends a new entry to the map's entry array. It returns -1 if memory could not
 // be allocated for the new entry -- in this case the map is unchanged. Otherwise it returns the
 // index of the new entry.
-static int64_t append_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
+static int64_t append_entry(ObjMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->entry_array_count == map->entry_array_capacity) {
         size_t new_entry_array_capacity = PYRO_GROW_CAPACITY(map->entry_array_capacity);
         PyroMapEntry* new_entry_array = PYRO_REALLOCATE_ARRAY(
@@ -469,7 +469,7 @@ static int64_t append_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
 }
 
 
-int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
+int ObjMap_set(ObjMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->index_array_capacity == 0) {
         if (!resize_index_array(map, vm)) {
             return 0;
@@ -514,7 +514,7 @@ int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm) {
 }
 
 
-bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
+bool ObjMap_update_entry(ObjMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -530,7 +530,7 @@ bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
 }
 
 
-bool ObjMap_get(ObjMap* map, Value key, Value* value, PyroVM* vm) {
+bool ObjMap_get(ObjMap* map, PyroValue key, PyroValue* value, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -545,7 +545,7 @@ bool ObjMap_get(ObjMap* map, Value key, Value* value, PyroVM* vm) {
 }
 
 
-bool ObjMap_contains(ObjMap* map, Value key, PyroVM* vm) {
+bool ObjMap_contains(ObjMap* map, PyroValue key, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -559,7 +559,7 @@ bool ObjMap_contains(ObjMap* map, Value key, PyroVM* vm) {
 }
 
 
-bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm) {
+bool ObjMap_remove(ObjMap* map, PyroValue key, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -981,7 +981,7 @@ size_t ObjPyroFn_get_line_number(ObjPyroFn* fn, size_t ip) {
 }
 
 
-int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, Value value, PyroVM* vm) {
+int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, PyroValue value, PyroVM* vm) {
     for (size_t i = 0; i < fn->constants_count; i++) {
         if (pyro_compare_eq_strict(value, fn->constants[i])) {
             return i;
@@ -990,7 +990,7 @@ int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, Value value, PyroVM* vm) {
 
     if (fn->constants_count == fn->constants_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(fn->constants_capacity);
-        Value* new_array = PYRO_REALLOCATE_ARRAY(vm, Value, fn->constants, fn->constants_capacity, new_capacity);
+        PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, fn->constants, fn->constants_capacity, new_capacity);
         if (!new_array) {
             return -1;
         }
@@ -1211,7 +1211,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* na
 /* ------------- */
 
 
-ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method) {
+ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, PyroValue receiver, Obj* method) {
     ObjBoundMethod* bound = ALLOCATE_OBJECT(vm, ObjBoundMethod, PYRO_OBJECT_BOUND_METHOD);
     if (!bound) {
         return NULL;
@@ -1282,7 +1282,7 @@ ObjVec* ObjVec_new(PyroVM* vm) {
 
 
 void ObjVec_clear(ObjVec* vec, PyroVM* vm) {
-    PYRO_FREE_ARRAY(vm, Value, vec->values, vec->capacity);
+    PYRO_FREE_ARRAY(vm, PyroValue, vec->values, vec->capacity);
     vec->count = 0;
     vec->capacity = 0;
     vec->values = NULL;
@@ -1310,7 +1310,7 @@ ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
         return vec;
     }
 
-    Value* value_array = PYRO_ALLOCATE_ARRAY(vm, Value, capacity);
+    PyroValue* value_array = PYRO_ALLOCATE_ARRAY(vm, PyroValue, capacity);
     if (!value_array) {
         return NULL;
     }
@@ -1322,7 +1322,7 @@ ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
 }
 
 
-ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm) {
+ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, PyroValue fill_value, PyroVM* vm) {
     ObjVec* vec = ObjVec_new(vm);
     if (!vec) {
         return NULL;
@@ -1332,7 +1332,7 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
         return vec;
     }
 
-    Value* value_array = PYRO_ALLOCATE_ARRAY(vm, Value, capacity);
+    PyroValue* value_array = PYRO_ALLOCATE_ARRAY(vm, PyroValue, capacity);
     if (!value_array) {
         return NULL;
     }
@@ -1354,15 +1354,15 @@ ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm) {
     if (!vec) {
         return NULL;
     }
-    memcpy(vec->values, src->values, sizeof(Value) * src->count);
+    memcpy(vec->values, src->values, sizeof(PyroValue) * src->count);
     return vec;
 }
 
 
-bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm) {
+bool ObjVec_append(ObjVec* vec, PyroValue value, PyroVM* vm) {
     if (vec->count == vec->capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
-        Value* new_array = PYRO_REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
+        PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             return false;
         }
@@ -1384,7 +1384,7 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm) {
 }
 
 
-Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
+PyroValue ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove last item from empty vector");
         return pyro_null();
@@ -1394,7 +1394,7 @@ Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm) {
 }
 
 
-Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
+PyroValue ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove first item from empty vector");
         return pyro_null();
@@ -1405,16 +1405,16 @@ Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm) {
         return vec->values[0];
     }
 
-    Value output = vec->values[0];
+    PyroValue output = vec->values[0];
 
     vec->count--;
-    memmove(vec->values, &vec->values[1], sizeof(Value) * vec->count);
+    memmove(vec->values, &vec->values[1], sizeof(PyroValue) * vec->count);
 
     return output;
 }
 
 
-Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
+PyroValue ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
     if (index >= vec->count) {
         pyro_panic(vm, "index is out of range");
         return pyro_null();
@@ -1430,9 +1430,9 @@ Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
         return vec->values[vec->count];
     }
 
-    Value output = vec->values[index];
+    PyroValue output = vec->values[index];
 
-    size_t bytes_to_move = sizeof(Value) * (vec->count - index - 1);
+    size_t bytes_to_move = sizeof(PyroValue) * (vec->count - index - 1);
     memmove(&vec->values[index], &vec->values[index + 1], bytes_to_move);
     vec->count--;
 
@@ -1440,7 +1440,7 @@ Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm) {
 }
 
 
-void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) {
+void ObjVec_insert_at_index(ObjVec* vec, size_t index, PyroValue value, PyroVM* vm) {
     if (index > vec->count) {
         pyro_panic(vm, "index is out of range");
         return;
@@ -1455,7 +1455,7 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) 
 
     if (vec->count == vec->capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
-        Value* new_array = PYRO_REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
+        PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             pyro_panic(vm, "out of memory");
             return;
@@ -1464,7 +1464,7 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) 
         vec->values = new_array;
     }
 
-    size_t bytes_to_move = sizeof(Value) * (vec->count - index);
+    size_t bytes_to_move = sizeof(PyroValue) * (vec->count - index);
     memmove(&vec->values[index + 1], &vec->values[index], bytes_to_move);
 
     vec->values[index] = value;
@@ -1883,7 +1883,7 @@ ObjIter* ObjIter_empty(PyroVM* vm) {
 }
 
 
-Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
+PyroValue ObjIter_next(ObjIter* iter, PyroVM* vm) {
     switch (iter->iter_type) {
         case PYRO_ITER_EMPTY: {
             return pyro_obj(vm->error);
@@ -1893,7 +1893,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             ObjVec* vec = (ObjVec*)iter->source;
             if (iter->next_index < vec->count) {
                 iter->next_index++;
-                Value result = vec->values[iter->next_index - 1];
+                PyroValue result = vec->values[iter->next_index - 1];
                 return result;
             }
             return pyro_obj(vm->error);
@@ -1910,7 +1910,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_QUEUE: {
             if (iter->next_queue_item) {
-                Value next_value = iter->next_queue_item->value;
+                PyroValue next_value = iter->next_queue_item->value;
                 iter->next_queue_item = iter->next_queue_item->next;
                 return next_value;
             }
@@ -2010,14 +2010,14 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_FUNC_MAP: {
             ObjIter* src_iter = (ObjIter*)iter->source;
-            Value next_value = ObjIter_next(src_iter, vm);
+            PyroValue next_value = ObjIter_next(src_iter, vm);
             if (IS_ERR(next_value)) {
                 return next_value;
             }
 
             pyro_push(vm, pyro_obj(iter->callback));
             pyro_push(vm, next_value);
-            Value result = pyro_call_function(vm, 1);
+            PyroValue result = pyro_call_function(vm, 1);
             if (vm->halt_flag) {
                 return pyro_obj(vm->error);
             }
@@ -2029,14 +2029,14 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             ObjIter* src_iter = (ObjIter*)iter->source;
 
             while (true) {
-                Value next_value = ObjIter_next(src_iter, vm);
+                PyroValue next_value = ObjIter_next(src_iter, vm);
                 if (IS_ERR(next_value)) {
                     return next_value;
                 }
 
                 pyro_push(vm, pyro_obj(iter->callback));
                 pyro_push(vm, next_value);
-                Value result = pyro_call_function(vm, 1);
+                PyroValue result = pyro_call_function(vm, 1);
                 if (vm->halt_flag) {
                     return pyro_obj(vm->error);
                 }
@@ -2049,7 +2049,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_ENUM: {
             ObjIter* src_iter = (ObjIter*)iter->source;
-            Value next_value = ObjIter_next(src_iter, vm);
+            PyroValue next_value = ObjIter_next(src_iter, vm);
             if (IS_ERR(next_value)) {
                 return next_value;
             }
@@ -2068,9 +2068,9 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_GENERIC: {
-            Value next_method = pyro_get_method(vm, pyro_obj(iter->source), vm->str_dollar_next);
+            PyroValue next_method = pyro_get_method(vm, pyro_obj(iter->source), vm->str_dollar_next);
             pyro_push(vm, pyro_obj(iter->source));
-            Value result = pyro_call_method(vm, next_method, 0);
+            PyroValue result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
                 return pyro_obj(vm->error);
             }
@@ -2190,7 +2190,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
     bool is_first_item = true;
 
     while (true) {
-        Value next_value = ObjIter_next(iter, vm);
+        PyroValue next_value = ObjIter_next(iter, vm);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -2263,7 +2263,7 @@ void ObjQueue_clear(ObjQueue* queue, PyroVM* vm) {
 
 
 // Add the new item to the end of the linked list.
-bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm) {
+bool ObjQueue_enqueue(ObjQueue* queue, PyroValue value, PyroVM* vm) {
     QueueItem* item = pyro_realloc(vm, NULL, 0, sizeof(QueueItem));
     if (!item) {
         return false;
@@ -2285,7 +2285,7 @@ bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm) {
 
 
 // Remove the item at the front of the linked list.
-bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm) {
+bool ObjQueue_dequeue(ObjQueue* queue, PyroValue* value, PyroVM* vm) {
     if (queue->count == 0) {
         return false;
     }

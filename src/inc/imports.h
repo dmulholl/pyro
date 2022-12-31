@@ -14,6 +14,6 @@
 // This function can set the panic or exit flags. It will panic if the module cannot be found, if
 // the module code contains syntax errors, if the VM runs out of memory, or if executing the code
 // results in a panic.
-void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module);
+void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, ObjModule* module);
 
 #endif

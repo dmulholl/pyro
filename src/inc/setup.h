@@ -44,7 +44,7 @@ bool pyro_add_import_root(PyroVM* vm, const char* path);
 
 // Creates a new VM-level global variable. Returns true on success, false if memory could not be
 // allocated.
-bool pyro_define_global(PyroVM* vm, const char* name, Value value);
+bool pyro_define_global(PyroVM* vm, const char* name, PyroValue value);
 
 // Creates a new VM-level global variable pointing to a native function. Returns true on success,
 // false if memory could not be allocated.
@@ -52,11 +52,11 @@ bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr
 
 // Adds a new public member to [module], i.e. creates a module-level global variable called [name]
 // with initial value [value]. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, Value value);
+bool pyro_define_pub_member(PyroVM* vm, ObjModule* module, const char* name, PyroValue value);
 
 // Adds a new private member to [module], i.e. creates a module-level global variable called [name]
 // with initial value [value]. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, Value value);
+bool pyro_define_pri_member(PyroVM* vm, ObjModule* module, const char* name, PyroValue value);
 
 // Convenience function for adding a new public member to [module] where the value is a native
 // function. Returns true on success, false if memory could not be allocated.
@@ -73,10 +73,10 @@ bool pyro_define_pub_method(PyroVM* vm, ObjClass* class, const char* name, pyro_
 bool pyro_define_pri_method(PyroVM* vm, ObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new public field to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value);
+bool pyro_define_pub_field(PyroVM* vm, ObjClass* class, const char* name, PyroValue default_value);
 
 // Adds a new private field to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, Value default_value);
+bool pyro_define_pri_field(PyroVM* vm, ObjClass* class, const char* name, PyroValue default_value);
 
 // Creates a new top-level module. Returns the module or NULL if memory allocation fails.
 ObjModule* pyro_define_module_1(PyroVM* vm, const char* name);

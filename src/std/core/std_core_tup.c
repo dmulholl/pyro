@@ -9,29 +9,29 @@
 #include "../../inc/operators.h"
 
 
-static Value fn_tup(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_tup(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjTup* tup = ObjTup_new(arg_count, vm);
     if (tup == NULL) {
         pyro_panic(vm, "$tup(): out of memory");
         return pyro_null();
     }
-    memcpy(tup->values, (void*)args, sizeof(Value) * arg_count);
+    memcpy(tup->values, (void*)args, sizeof(PyroValue) * arg_count);
     return pyro_obj(tup);
 }
 
 
-static Value fn_is_tup(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_tup(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_TUP(args[0]));
 }
 
 
-static Value tup_count(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue tup_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjTup* tup = AS_TUP(args[-1]);
     return pyro_i64(tup->count);
 }
 
 
-static Value tup_get(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue tup_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjTup* tup = AS_TUP(args[-1]);
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
@@ -46,7 +46,7 @@ static Value tup_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue tup_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjTup* tup = AS_TUP(args[-1]);
     ObjIter* iter = ObjIter_new((Obj*)tup, PYRO_ITER_TUP, vm);
     if (!iter) {
@@ -56,7 +56,7 @@ static Value tup_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue tup_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjTup* tup = AS_TUP(args[-1]);
 
     if (!(arg_count == 1 || arg_count == 2)) {
@@ -106,12 +106,12 @@ static Value tup_slice(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_obj(new_tup);
     }
 
-    memcpy(new_tup->values, &tup->values[start_index], sizeof(Value) * length);
+    memcpy(new_tup->values, &tup->values[start_index], sizeof(PyroValue) * length);
     return pyro_obj(new_tup);
 }
 
 
-static Value tup_contains(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue tup_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjTup* tup = AS_TUP(args[-1]);
 
     for (size_t i = 0; i < tup->count; i++) {

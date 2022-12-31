@@ -47,9 +47,9 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
                 continue;
             }
 
-            Value member_name = entry->key;
-            Value member_index = entry->value;
-            Value member_value = vm->main_module->members->values[member_index.as.i64];
+            PyroValue member_name = entry->key;
+            PyroValue member_index = entry->value;
+            PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
             if (IS_CLOSURE(member_value)) {
                 ObjStr* name = AS_STR(member_name);
@@ -141,9 +141,9 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
                 continue;
             }
 
-            Value member_name = entry->key;
-            Value member_index = entry->value;
-            Value member_value = vm->main_module->members->values[member_index.as.i64];
+            PyroValue member_name = entry->key;
+            PyroValue member_index = entry->value;
+            PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
             if (IS_CLOSURE(member_value)) {
                 ObjStr* name = AS_STR(member_name);

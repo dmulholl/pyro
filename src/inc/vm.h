@@ -15,7 +15,7 @@
 typedef struct {
     ObjClosure* closure;
     uint8_t* ip;
-    Value* fp;
+    PyroValue* fp;
     size_t with_stack_count_on_entry;
 } CallFrame;
 
@@ -76,9 +76,9 @@ struct PyroVM {
     size_t frame_capacity;
 
     // The value stack.
-    Value* stack;
-    Value* stack_top;
-    Value* stack_max;
+    PyroValue* stack;
+    PyroValue* stack_top;
+    PyroValue* stack_max;
     size_t stack_size;
 
     // 64-bit Mersenne Twister PRNG.
@@ -194,7 +194,7 @@ struct PyroVM {
     bool in_repl;
 
     // Stack of values with pending $end_with() method calls.
-    Value* with_stack;
+    PyroValue* with_stack;
     size_t with_stack_count;
     size_t with_stack_capacity;
 };
@@ -202,12 +202,12 @@ struct PyroVM {
 
 // Peeks at a value on the stack without popping it. Pass [distance = 0] to peek at the value on
 // top of the stack, [distance = 1] to peek at the value below that, etc.
-static inline Value pyro_peek(PyroVM* vm, int distance) {
+static inline PyroValue pyro_peek(PyroVM* vm, int distance) {
     return vm->stack_top[-1 - distance];
 }
 
 // Pushes a value onto the stack. Panics if the stack overflows.
-static inline bool pyro_push(PyroVM* vm, Value value) {
+static inline bool pyro_push(PyroVM* vm, PyroValue value) {
     if (vm->stack_top == vm->stack_max) {
         pyro_panic(vm, "stack overflow");
         return false;
@@ -218,7 +218,7 @@ static inline bool pyro_push(PyroVM* vm, Value value) {
 }
 
 // Pops the top value from the stack.
-static inline Value pyro_pop(PyroVM* vm) {
+static inline PyroValue pyro_pop(PyroVM* vm) {
     vm->stack_top--;
     return *vm->stack_top;
 }

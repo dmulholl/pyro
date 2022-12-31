@@ -9,7 +9,7 @@
 #include "../../inc/stringify.h"
 
 
-static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_exists(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "exists(): invalid argument [path], expected a string");
         return pyro_null();
@@ -18,7 +18,7 @@ static Value fn_exists(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "is_file(): invalid argument [path], expected a string");
         return pyro_null();
@@ -27,7 +27,7 @@ static Value fn_is_file(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_dir(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_dir(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "is_dir(): invalid argument [path], expected a string");
         return pyro_null();
@@ -36,7 +36,7 @@ static Value fn_is_dir(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_symlink(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_symlink(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "is_symlink(): invalid argument [path], expected a string");
         return pyro_null();
@@ -45,7 +45,7 @@ static Value fn_is_symlink(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_dirname(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_dirname(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "dirname(): invalid argument [path], expected a string");
         return pyro_null();
@@ -77,7 +77,7 @@ static Value fn_dirname(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_basename(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_basename(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "basename(): invalid argument [path], expected a string");
         return pyro_null();
@@ -109,7 +109,7 @@ static Value fn_basename(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count < 2) {
         pyro_panic(vm, "join(): expected at least 2 arguments");
         return pyro_null();
@@ -175,7 +175,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_remove(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_remove(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "rm(): invalid argument [path], expected a string");
         return pyro_null();
@@ -191,7 +191,7 @@ static Value fn_remove(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_getcwd(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_getcwd(PyroVM* vm, size_t arg_count, PyroValue* args) {
     char* cwd = pyro_getcwd();
     if (!cwd) {
         pyro_panic(vm, "getcwd(): out of memory");
@@ -210,7 +210,7 @@ static Value fn_getcwd(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_listdir(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "listdir(): invalid argument [path], expected a string");
         return pyro_null();
@@ -225,7 +225,7 @@ static Value fn_listdir(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_realpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "realpath(): invalid argument [path], expected a string");
         return pyro_null();
@@ -261,7 +261,7 @@ static Value fn_realpath(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_chdir(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_chdir(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "chdir(): invalid argument [path], expected a string");
         return pyro_null();
@@ -277,7 +277,7 @@ static Value fn_chdir(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_chroot(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_chroot(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "chroot(): invalid argument [path], expected a string");
         return pyro_null();

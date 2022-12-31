@@ -83,7 +83,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case PYRO_OBJECT_PYRO_FN: {
             ObjPyroFn* fn = (ObjPyroFn*)object;
             PYRO_FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
-            PYRO_FREE_ARRAY(vm, Value, fn->constants, fn->constants_capacity);
+            PYRO_FREE_ARRAY(vm, PyroValue, fn->constants, fn->constants_capacity);
             PYRO_FREE_ARRAY(vm, uint16_t, fn->bpl, fn->bpl_capacity);
             FREE_OBJECT(vm, ObjPyroFn, object);
             break;
@@ -92,7 +92,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case PYRO_OBJECT_INSTANCE: {
             ObjInstance* instance = (ObjInstance*)object;
             int num_fields = instance->obj.class->default_field_values->count;
-            pyro_realloc(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(Value), 0);
+            pyro_realloc(vm, instance, sizeof(ObjInstance) + num_fields * sizeof(PyroValue), 0);
             break;
         }
 
@@ -152,7 +152,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case PYRO_OBJECT_TUP: {
             ObjTup* tup = (ObjTup*)object;
-            pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(Value), 0);
+            pyro_realloc(vm, tup, sizeof(ObjTup) + tup->count * sizeof(PyroValue), 0);
             break;
         }
 
@@ -164,7 +164,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case PYRO_OBJECT_VEC_AS_STACK:
         case PYRO_OBJECT_VEC: {
             ObjVec* vec = (ObjVec*)object;
-            PYRO_FREE_ARRAY(vm, Value, vec->values, vec->capacity);
+            PYRO_FREE_ARRAY(vm, PyroValue, vec->values, vec->capacity);
             FREE_OBJECT(vm, ObjVec, object);
             break;
         }

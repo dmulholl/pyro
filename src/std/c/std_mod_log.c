@@ -21,7 +21,7 @@ static void write_msg(
     const char* level,
     ObjFile* file,
     size_t arg_count,
-    Value* args
+    PyroValue* args
 ) {
     if (arg_count == 0) {
         pyro_panic(vm, "%s(): expected 1 or more arguments, found 0", fn_name);
@@ -39,7 +39,7 @@ static void write_msg(
             pyro_panic(vm, "%s(): invalid argument [format_string], expected a string", fn_name);
             return;
         }
-        Value formatted = pyro_fn_fmt(vm, arg_count, args);
+        PyroValue formatted = pyro_fn_fmt(vm, arg_count, args);
         if (vm->halt_flag) {
             return;
         }
@@ -77,31 +77,31 @@ static void write_msg(
 }
 
 
-static Value fn_debug(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     write_msg(vm, "debug", "%Y-%m-%d %H:%M:%S", "DEBUG", NULL, arg_count, args);
     return pyro_null();
 }
 
 
-static Value fn_info(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
     write_msg(vm, "info", "%Y-%m-%d %H:%M:%S", "INFO", NULL, arg_count, args);
     return pyro_null();
 }
 
 
-static Value fn_warn(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
     write_msg(vm, "warn", "%Y-%m-%d %H:%M:%S", "WARN", NULL, arg_count, args);
     return pyro_null();
 }
 
 
-static Value fn_error(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
     write_msg(vm, "error", "%Y-%m-%d %H:%M:%S", "ERROR", NULL, arg_count, args);
     return pyro_null();
 }
 
 
-static Value fn_fatal(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     write_msg(vm, "fatal", "%Y-%m-%d %H:%M:%S", "FATAL", NULL, arg_count, args);
     vm->halt_flag = true;
     vm->exit_flag = true;
@@ -110,7 +110,7 @@ static Value fn_fatal(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_debug(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
@@ -125,7 +125,7 @@ static Value logger_debug(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_info(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
@@ -140,7 +140,7 @@ static Value logger_info(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_warn(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
@@ -155,7 +155,7 @@ static Value logger_warn(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_error(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
@@ -170,7 +170,7 @@ static Value logger_error(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_fatal(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
@@ -188,7 +188,7 @@ static Value logger_fatal(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_level(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_level(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     if (!IS_I64(args[0])) {
@@ -201,7 +201,7 @@ static Value logger_level(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_timestamp(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_timestamp(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     if (!IS_STR(args[0])) {
@@ -214,7 +214,7 @@ static Value logger_timestamp(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value logger_file(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue logger_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjInstance* instance = AS_INSTANCE(args[-1]);
 
     if (!IS_FILE(args[0])) {

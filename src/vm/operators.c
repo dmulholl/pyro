@@ -12,7 +12,7 @@
 
 // Returns [a] + [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -62,11 +62,11 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
                 }
 
                 case PYRO_OBJECT_INSTANCE: {
-                    Value method = pyro_get_method(vm, a, vm->str_op_binary_plus);
+                    PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_plus);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
                         pyro_push(vm, b);
-                        Value result = pyro_call_method(vm, method, 1);
+                        PyroValue result = pyro_call_method(vm, method, 1);
                         return result;
                     } else {
                         pyro_panic(vm, "invalid operand types to '+'");
@@ -110,7 +110,7 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] - [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_minus(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -137,11 +137,11 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_minus);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_minus);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '-'");
@@ -154,7 +154,7 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] * [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -194,11 +194,11 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
                     return pyro_null();
                 }
             } else if (IS_INSTANCE(a)) {
-                Value method = pyro_get_method(vm, a, vm->str_op_binary_star);
+                PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_star);
                 if (!IS_NULL(method)) {
                     pyro_push(vm, a);
                     pyro_push(vm, b);
-                    Value result = pyro_call_method(vm, method, 1);
+                    PyroValue result = pyro_call_method(vm, method, 1);
                     return result;
                 } else {
                     pyro_panic(vm, "invalid operand types to '*'");
@@ -234,7 +234,7 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] / [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_slash(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -281,11 +281,11 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_slash);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_slash);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '/'");
@@ -298,7 +298,7 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] | [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_bar(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_bar(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -311,11 +311,11 @@ Value pyro_op_binary_bar(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_bar);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_bar);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '|'");
@@ -328,7 +328,7 @@ Value pyro_op_binary_bar(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] & [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_amp(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_amp(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -341,11 +341,11 @@ Value pyro_op_binary_amp(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_amp);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_amp);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '&'");
@@ -358,7 +358,7 @@ Value pyro_op_binary_amp(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] ^ [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_caret(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_caret(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -371,11 +371,11 @@ Value pyro_op_binary_caret(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_caret);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_caret);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '^'");
@@ -388,7 +388,7 @@ Value pyro_op_binary_caret(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] % [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_percent(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -435,11 +435,11 @@ Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_percent);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_percent);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '%%'");
@@ -452,7 +452,7 @@ Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] ** [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_star_star(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -479,11 +479,11 @@ Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_star_star);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_star_star);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '**'");
@@ -496,7 +496,7 @@ Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
 
 // Returns [a] // [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b) {
+PyroValue pyro_op_binary_slash_slash(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -543,11 +543,11 @@ Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, a, vm->str_op_binary_slash_slash);
+            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_slash_slash);
             if (!IS_NULL(method)) {
                 pyro_push(vm, a);
                 pyro_push(vm, b);
-                Value result = pyro_call_method(vm, method, 1);
+                PyroValue result = pyro_call_method(vm, method, 1);
                 return result;
             } else {
                 pyro_panic(vm, "invalid operand types to '//'");
@@ -560,13 +560,13 @@ Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b) {
 
 // Returns true if [a] is in [b].
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_in(PyroVM* vm, Value a, Value b) {
-    Value method = pyro_get_method(vm, b, vm->str_dollar_contains);
+bool pyro_op_in(PyroVM* vm, PyroValue a, PyroValue b) {
+    PyroValue method = pyro_get_method(vm, b, vm->str_dollar_contains);
 
     if (!IS_NULL(method)) {
         pyro_push(vm, b);
         pyro_push(vm, a);
-        Value result = pyro_call_method(vm, method, 1);
+        PyroValue result = pyro_call_method(vm, method, 1);
         if (vm->halt_flag) {
             return false;
         }
@@ -585,7 +585,7 @@ bool pyro_op_in(PyroVM* vm, Value a, Value b) {
 /* ----------------- */
 
 
-Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
+PyroValue pyro_op_unary_plus(PyroVM* vm, PyroValue operand) {
     switch (operand.type) {
         case PYRO_VALUE_I64:
             return operand;
@@ -595,10 +595,10 @@ Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
 
         case PYRO_VALUE_OBJ: {
             if (IS_INSTANCE(operand)) {
-                Value method = pyro_get_method(vm, operand, vm->str_op_unary_plus);
+                PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_plus);
                 if (!IS_NULL(method)) {
                     pyro_push(vm, operand);
-                    Value result = pyro_call_method(vm, method, 0);
+                    PyroValue result = pyro_call_method(vm, method, 0);
                     return result;
                 } else {
                     pyro_panic(vm, "invalid operand type for unary '+'");
@@ -617,7 +617,7 @@ Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
 }
 
 
-Value pyro_op_unary_minus(PyroVM* vm, Value operand) {
+PyroValue pyro_op_unary_minus(PyroVM* vm, PyroValue operand) {
     switch (operand.type) {
         case PYRO_VALUE_I64:
             return pyro_i64(-operand.as.i64);
@@ -627,10 +627,10 @@ Value pyro_op_unary_minus(PyroVM* vm, Value operand) {
 
         case PYRO_VALUE_OBJ: {
             if (IS_INSTANCE(operand)) {
-                Value method = pyro_get_method(vm, operand, vm->str_op_unary_minus);
+                PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_minus);
                 if (!IS_NULL(method)) {
                     pyro_push(vm, operand);
-                    Value result = pyro_call_method(vm, method, 0);
+                    PyroValue result = pyro_call_method(vm, method, 0);
                     return result;
                 } else {
                     pyro_panic(vm, "invalid operand type for unary '-'");
@@ -752,7 +752,7 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
 
 // Returns true if [a] == [b].
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
+bool pyro_op_compare_eq(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -805,11 +805,11 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
                     return IS_TUP(b) && ObjTup_check_equal(AS_TUP(a), AS_TUP(b), vm);
 
                 default: {
-                    Value method = pyro_get_method(vm, a, vm->str_op_binary_equals_equals);
+                    PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_equals_equals);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
                         pyro_push(vm, b);
-                        Value result = pyro_call_method(vm, method, 1);
+                        PyroValue result = pyro_call_method(vm, method, 1);
                         if (vm->halt_flag) {
                             return false;
                         }
@@ -837,7 +837,7 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
 
 // Returns true if [a] < [b]. Panics if the values are not comparable.
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
+bool pyro_op_compare_lt(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -901,11 +901,11 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
                     return false;
                 }
                 default: {
-                    Value method = pyro_get_method(vm, a, vm->str_op_binary_less);
+                    PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_less);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
                         pyro_push(vm, b);
-                        Value result = pyro_call_method(vm, method, 1);
+                        PyroValue result = pyro_call_method(vm, method, 1);
                         if (vm->halt_flag) {
                             return false;
                         }
@@ -926,7 +926,7 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
 
 // Returns true if [a] <= [b]. Panics if the values are not comparable.
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
+bool pyro_op_compare_le(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -998,11 +998,11 @@ bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
                     return false;
                 }
                 default: {
-                    Value method = pyro_get_method(vm, a, vm->str_op_binary_less_equals);
+                    PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_less_equals);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
                         pyro_push(vm, b);
-                        Value result = pyro_call_method(vm, method, 1);
+                        PyroValue result = pyro_call_method(vm, method, 1);
                         if (vm->halt_flag) {
                             return false;
                         }
@@ -1024,7 +1024,7 @@ bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
 
 // Returns true if [a] > [b]. Panics if the values are not comparable.
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
+bool pyro_op_compare_gt(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -1088,11 +1088,11 @@ bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
                     return false;
                 }
                 default: {
-                    Value method = pyro_get_method(vm, a, vm->str_op_binary_greater);
+                    PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_greater);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
                         pyro_push(vm, b);
-                        Value result = pyro_call_method(vm, method, 1);
+                        PyroValue result = pyro_call_method(vm, method, 1);
                         if (vm->halt_flag) {
                             return false;
                         }
@@ -1113,7 +1113,7 @@ bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
 
 // Returns true if [a] >= [b]. Panics if the values are not comparable.
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
+bool pyro_op_compare_ge(PyroVM* vm, PyroValue a, PyroValue b) {
     switch (a.type) {
         case PYRO_VALUE_I64: {
             switch (b.type) {
@@ -1185,11 +1185,11 @@ bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
                     return false;
                 }
                 default: {
-                    Value method = pyro_get_method(vm, a, vm->str_op_binary_greater_equals);
+                    PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_greater_equals);
                     if (!IS_NULL(method)) {
                         pyro_push(vm, a);
                         pyro_push(vm, b);
-                        Value result = pyro_call_method(vm, method, 1);
+                        PyroValue result = pyro_call_method(vm, method, 1);
                         if (vm->halt_flag) {
                             return false;
                         }
@@ -1213,7 +1213,7 @@ bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
 /* ----------------- */
 
 
-Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
+PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
     if (!IS_OBJ(receiver)) {
         pyro_panic(vm, "value does not support [] indexing");
         return pyro_null();
@@ -1222,7 +1222,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
     switch (AS_OBJ(receiver)->type) {
         case PYRO_OBJECT_MAP: {
             ObjMap* map = AS_MAP(receiver);
-            Value value;
+            PyroValue value;
             if (ObjMap_get(map, key, &value, vm)) {
                 return value;
             }
@@ -1277,7 +1277,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, receiver, vm->str_dollar_get_index);
+            PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_get_index);
             if (!IS_NULL(method)) {
                 pyro_push(vm, receiver);
                 pyro_push(vm, key);
@@ -1290,7 +1290,7 @@ Value pyro_op_get_index(PyroVM* vm, Value receiver, Value key) {
 }
 
 
-Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
+PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroValue value) {
     if (!IS_OBJ(receiver)) {
         pyro_panic(vm, "value does not support [] indexing");
         return pyro_null();
@@ -1321,7 +1321,7 @@ Value pyro_op_set_index(PyroVM* vm, Value receiver, Value key, Value value) {
         }
 
         default: {
-            Value method = pyro_get_method(vm, receiver, vm->str_dollar_set_index);
+            PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_set_index);
             if (!IS_NULL(method)) {
                 pyro_push(vm, receiver);
                 pyro_push(vm, key);

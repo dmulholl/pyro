@@ -10,7 +10,7 @@
 #include "../../inc/exec.h"
 
 
-static Value fn_char(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (IS_I64(args[0])) {
         int64_t arg = args[0].as.i64;
         if (arg >= 0 && arg <= UINT32_MAX) {
@@ -26,17 +26,17 @@ static Value fn_char(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_char(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_CHAR(args[0]));
 }
 
 
-static Value char_is_ascii(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue char_is_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return args[-1].as.u32 > 127 ? pyro_bool(false) : pyro_bool(true);
 }
 
 
-static Value char_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue char_is_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     switch (args[-1].as.u32) {
         case ' ':
         case '\t':
@@ -51,22 +51,22 @@ static Value char_is_ascii_ws(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value char_is_unicode_ws(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue char_is_unicode_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(pyro_is_unicode_whitespace(args[-1].as.u32));
 }
 
 
-static Value char_is_ascii_decimal(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue char_is_ascii_decimal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return (args[-1].as.u32 < '0' || args[-1].as.u32 > '9') ? pyro_bool(false) : pyro_bool(true);
 }
 
 
-static Value char_is_ascii_octal(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue char_is_ascii_octal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return (args[-1].as.u32 < '0' || args[-1].as.u32 > '7') ? pyro_bool(false) : pyro_bool(true);
 }
 
 
-static Value char_is_ascii_hex(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue char_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(isxdigit(args[-1].as.u32));
 }
 

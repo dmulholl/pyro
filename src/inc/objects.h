@@ -68,8 +68,8 @@ ObjStr* ObjStr_esc_percents(const char* src, size_t length, PyroVM* vm);
 /* ---- */
 
 typedef struct {
-    Value key;
-    Value value;
+    PyroValue key;
+    PyroValue value;
 } PyroMapEntry;
 
 // A linear-probing hash map. New entries are appended to [entry_array] so iterating over this
@@ -106,18 +106,18 @@ struct ObjMap {
 ObjMap* ObjMap_new(PyroVM* vm);
 ObjMap* ObjMap_new_as_weakref(PyroVM* vm);
 ObjMap* ObjMap_new_as_set(PyroVM* vm);
-bool ObjMap_get(ObjMap* map, Value key, Value* value, PyroVM* vm);
-bool ObjMap_contains(ObjMap* map, Value key, PyroVM* vm);
+bool ObjMap_get(ObjMap* map, PyroValue key, PyroValue* value, PyroVM* vm);
+bool ObjMap_contains(ObjMap* map, PyroValue key, PyroVM* vm);
 void ObjMap_clear(ObjMap* map, PyroVM* vm);
 
 // Removes an entry from the map. Returns true if the map contained an entry for [key].
-bool ObjMap_remove(ObjMap* map, Value key, PyroVM* vm);
+bool ObjMap_remove(ObjMap* map, PyroValue key, PyroVM* vm);
 
 // Adds a new entry to the map or updates an existing entry.
 // - Returns 0 if the entry was not added because additional memory could not be allocated.
 // - Returns 1 if a new entry was successfully added to the map.
 // - Returns 2 if an existing entry was successfully updated.
-int ObjMap_set(ObjMap* map, Value key, Value value, PyroVM* vm);
+int ObjMap_set(ObjMap* map, PyroValue key, PyroValue value, PyroVM* vm);
 
 // Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false] if
 // the operation failed because memory could not be allocated for the new entries. The operation
@@ -126,7 +126,7 @@ bool ObjMap_copy_entries(ObjMap* src, ObjMap* dst, PyroVM* vm);
 
 // Attempts to update an existing entry. Returns [true] if successful, [false] if no corresponding
 // entry was found.
-bool ObjMap_update_entry(ObjMap* map, Value key, Value value, PyroVM* vm);
+bool ObjMap_update_entry(ObjMap* map, PyroValue key, PyroValue value, PyroVM* vm);
 
 // Creates a new map object by copying [src]. Returns NULL if sufficient memory cannot be allocated
 // for the copy.
@@ -140,17 +140,17 @@ struct ObjVec {
     Obj obj;
     size_t count;
     size_t capacity;
-    Value* values;
+    PyroValue* values;
 };
 
 ObjVec* ObjVec_new(PyroVM* vm);
 ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm);
-ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* vm);
+ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, PyroValue fill_value, PyroVM* vm);
 ObjVec* ObjVec_new_as_stack(PyroVM* vm);
 void ObjVec_clear(ObjVec* vec, PyroVM* vm);
 
 // Returns true if the value was successfully appended, false if memory allocation failed.
-bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm);
+bool ObjVec_append(ObjVec* vec, PyroValue value, PyroVM* vm);
 
 // Returns a copy of the [src] vector. Returns NULL if memory cannot be allocated for the copy.
 ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm);
@@ -161,19 +161,19 @@ bool ObjVec_copy_entries(ObjVec* src, ObjVec* dst, PyroVM* vm);
 
 // Removes and returns the last item from the vector. Panics and returns NULL_VAL if the vector
 // is emtpy.
-Value ObjVec_remove_last(ObjVec* vec, PyroVM* vm);
+PyroValue ObjVec_remove_last(ObjVec* vec, PyroVM* vm);
 
 // Removes and returns the first item from the vector. Panics and returns NULL_VAL if the vector
 // is emtpy.
-Value ObjVec_remove_first(ObjVec* vec, PyroVM* vm);
+PyroValue ObjVec_remove_first(ObjVec* vec, PyroVM* vm);
 
 // Removes and returns the item at [index]. Panics and returns NULL_VAL if the index is out of
 // range.
-Value ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm);
+PyroValue ObjVec_remove_at_index(ObjVec* vec, size_t index, PyroVM* vm);
 
 // Inserts [value] at [index], where [index] is less than or equal to the vector's item count.
 // Panics if [index] is out of range or if memory allocation fails.
-void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm);
+void ObjVec_insert_at_index(ObjVec* vec, size_t index, PyroValue value, PyroVM* vm);
 
 /* ------- */
 /* Modules */
@@ -220,7 +220,7 @@ typedef struct {
     size_t code_capacity;
 
     // The function's constant table, stored as a dynamic array of values.
-    Value* constants;
+    PyroValue* constants;
     size_t constants_count;
     size_t constants_capacity;
 
@@ -242,7 +242,7 @@ bool ObjPyroFn_write(ObjPyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm
 // value is already present in the table it avoids adding a duplicate and returns the index of
 // the existing entry instead. Returns -1 if the operation failed because sufficient memory
 // could not be allocated for the constant table.
-int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, Value value, PyroVM* vm);
+int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, PyroValue value, PyroVM* vm);
 
 // Returns the length in bytes of the arguments for the opcode at the specified index.
 size_t ObjPyroFn_opcode_argcount(ObjPyroFn* fn, size_t ip);
@@ -256,7 +256,7 @@ size_t ObjPyroFn_get_line_number(ObjPyroFn* fn, size_t ip);
 /* ---------------- */
 
 // Signature definition for Pyro functions and methods natively implemented in C.
-typedef Value (*pyro_native_fn_t)(PyroVM* vm, size_t arg_count, Value* args);
+typedef PyroValue (*pyro_native_fn_t)(PyroVM* vm, size_t arg_count, PyroValue* args);
 
 // [arity = -1] means that the function accepts a variable number of arguments.
 typedef struct {
@@ -302,12 +302,12 @@ struct ObjClass {
 
     // Cached results from the last method lookups.
     ObjStr* all_instance_methods_cached_name;
-    Value all_instance_methods_cached_value;
+    PyroValue all_instance_methods_cached_value;
     ObjStr* pub_instance_methods_cached_name;
-    Value pub_instance_methods_cached_value;
+    PyroValue pub_instance_methods_cached_value;
 
     // If the class has an $init() method, we cache it here to avoid map lookups.
-    Value init_method;
+    PyroValue init_method;
 };
 
 ObjClass* ObjClass_new(PyroVM* vm);
@@ -318,7 +318,7 @@ ObjClass* ObjClass_new(PyroVM* vm);
 
 typedef struct {
     Obj obj;
-    Value fields[];
+    PyroValue fields[];
 } ObjInstance;
 
 ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class);
@@ -331,12 +331,12 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class);
 // variables still on the stack.
 typedef struct ObjUpvalue {
     Obj obj;
-    Value* location;
-    Value closed;
+    PyroValue* location;
+    PyroValue closed;
     struct ObjUpvalue* next;
 } ObjUpvalue;
 
-ObjUpvalue* ObjUpvalue_new(PyroVM* vm, Value* slot);
+ObjUpvalue* ObjUpvalue_new(PyroVM* vm, PyroValue* slot);
 
 /* -------- */
 /* Closures */
@@ -359,11 +359,11 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* func, ObjModule* module);
 
 typedef struct {
     Obj obj;
-    Value receiver;
+    PyroValue receiver;
     Obj* method; // ObjClosure or ObjNativeFn
 } ObjBoundMethod;
 
-ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method);
+ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, PyroValue receiver, Obj* method);
 
 /* ------ */
 /* Tuples */
@@ -372,7 +372,7 @@ ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, Value receiver, Obj* method);
 typedef struct {
     Obj obj;
     size_t count;
-    Value values[];
+    PyroValue values[];
 } ObjTup;
 
 ObjTup* ObjTup_new(size_t count, PyroVM* vm);
@@ -449,7 +449,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm);
 /* ------ */
 
 typedef struct QueueItem {
-    Value value;
+    PyroValue value;
     struct QueueItem* next;
 } QueueItem;
 
@@ -464,10 +464,10 @@ typedef struct {
 ObjQueue* ObjQueue_new(PyroVM* vm);
 
 // Returns true if the value was successfully enqueued, false if memory allocation failed.
-bool ObjQueue_enqueue(ObjQueue* queue, Value value, PyroVM* vm);
+bool ObjQueue_enqueue(ObjQueue* queue, PyroValue value, PyroVM* vm);
 
 // Returns true if a value was successfully dequeued, false if the queue was empty.
-bool ObjQueue_dequeue(ObjQueue* queue, Value* value, PyroVM* vm);
+bool ObjQueue_dequeue(ObjQueue* queue, PyroValue* value, PyroVM* vm);
 
 // Clears all entries from the queue.
 void ObjQueue_clear(ObjQueue* queue, PyroVM* vm);
@@ -518,7 +518,7 @@ ObjIter* ObjIter_empty(PyroVM* vm);
 // Returns the next item from the sequence or an [err] if the sequence has been exhausted.
 // Note that this method may call into Pyro code and can panic or set the exit flag. Check
 // [vm->halt_flag] before relying on the return value.
-Value ObjIter_next(ObjIter* iter, PyroVM* vm);
+PyroValue ObjIter_next(ObjIter* iter, PyroVM* vm);
 
 // Stringifies the elements returned by the iterator and joins them into a string, separated by
 // [sep]. This method can call into Pyro code and can panic or set the exit flag. Check

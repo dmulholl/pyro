@@ -7,28 +7,28 @@
 #include "../../inc/stringify.h"
 
 
-static Value fn_memory(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_memory(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_i64((int64_t)vm->bytes_allocated);
 }
 
 
-static Value fn_gc(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_gc(PyroVM* vm, size_t arg_count, PyroValue* args) {
     pyro_collect_garbage(vm);
     return pyro_null();
 }
 
 
-static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (IS_OBJ(args[0])) {
         switch (AS_OBJ(args[0])->type) {
             case PYRO_OBJECT_VEC:
             case PYRO_OBJECT_VEC_AS_STACK: {
                 ObjVec* vec = AS_VEC(args[0]);
-                return pyro_i64(sizeof(ObjVec) + sizeof(Value) * vec->capacity);
+                return pyro_i64(sizeof(ObjVec) + sizeof(PyroValue) * vec->capacity);
             }
             case PYRO_OBJECT_TUP: {
                 ObjTup* tup = AS_TUP(args[0]);
-                return pyro_i64(sizeof(ObjTup) + sizeof(Value) * tup->count);
+                return pyro_i64(sizeof(ObjTup) + sizeof(PyroValue) * tup->count);
             }
             case PYRO_OBJECT_MAP:
             case PYRO_OBJECT_MAP_AS_SET: {
@@ -52,12 +52,12 @@ static Value fn_sizeof(PyroVM* vm, size_t arg_count, Value* args) {
             }
         }
     } else {
-        return pyro_i64(sizeof(Value));
+        return pyro_i64(sizeof(PyroValue));
     }
 }
 
 
-static Value fn_address(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_OBJ(args[0])) {
         return pyro_obj(vm->error);
     }

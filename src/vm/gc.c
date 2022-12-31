@@ -40,7 +40,7 @@ static void mark_object(PyroVM* vm, Obj* object) {
 
 
 // Marks a value as reachable.
-static void mark_value(PyroVM* vm, Value value) {
+static void mark_value(PyroVM* vm, PyroValue value) {
     if (IS_OBJ(value)) {
         mark_object(vm, AS_OBJ(value));
     }
@@ -51,7 +51,7 @@ static void mark_value(PyroVM* vm, Value value) {
 // without going through another object.)
 static void mark_roots(PyroVM* vm) {
     // Local variables and temporary values on the stack.
-    for (Value* slot = vm->stack; slot < vm->stack_top; slot++) {
+    for (PyroValue* slot = vm->stack; slot < vm->stack_top; slot++) {
         mark_value(vm, *slot);
     }
 

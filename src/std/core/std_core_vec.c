@@ -11,7 +11,7 @@
 #include "../../inc/exec.h"
 
 
-static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         ObjVec* vec = ObjVec_new(vm);
         if (!vec) {
@@ -23,7 +23,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
     else if (arg_count == 1) {
         // Does the object have an :$iter() method?
-        Value iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
+        PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
         if (IS_NULL(iter_method)) {
             pyro_panic(vm, "$vec(): invalid argument [arg], expected an iterable object");
             return pyro_null();
@@ -31,14 +31,14 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
         // Call the object's :$iter() method to get an iterator.
         pyro_push(vm, args[0]); // receiver for the $iter() method call
-        Value iterator = pyro_call_method(vm, iter_method, 0);
+        PyroValue iterator = pyro_call_method(vm, iter_method, 0);
         if (vm->halt_flag) {
             return pyro_null();
         }
         pyro_push(vm, iterator); // protect from GC
 
         // Get the iterator's :$next() method.
-        Value next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
+        PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
         if (IS_NULL(next_method)) {
             pyro_panic(vm, "$vec(): invalid argument [arg], iterator has no :$next() method");
             return pyro_null();
@@ -54,7 +54,7 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
 
         while (true) {
             pyro_push(vm, iterator); // receiver for the :$next() method call
-            Value next_value = pyro_call_method(vm, next_method, 0);
+            PyroValue next_value = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
                 return pyro_null();
             }
@@ -96,24 +96,24 @@ static Value fn_vec(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_vec(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_VEC(args[0]));
 }
 
 
-static Value vec_count(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     return pyro_i64(vec->count);
 }
 
 
-static Value vec_capacity(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_capacity(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     return pyro_i64(vec->capacity);
 }
 
 
-static Value vec_append(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_append(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (!ObjVec_append(vec, args[0], vm)) {
         pyro_panic(vm, "append(): out of memory");
@@ -122,7 +122,7 @@ static Value vec_append(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_get(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
@@ -137,7 +137,7 @@ static Value vec_get(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_set(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
@@ -153,18 +153,18 @@ static Value vec_set(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_reverse(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (vec->count < 2) {
         return pyro_obj(vec);
     }
 
-    Value* low = &vec->values[0];
-    Value* high = &vec->values[vec->count - 1];
+    PyroValue* low = &vec->values[0];
+    PyroValue* high = &vec->values[vec->count - 1];
 
     while (low < high) {
-        Value temp = *low;
+        PyroValue temp = *low;
         *low = *high;
         *high = temp;
         low++;
@@ -175,7 +175,7 @@ static Value vec_reverse(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_sort(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (arg_count == 0) {
@@ -193,7 +193,7 @@ static Value vec_sort(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_mergesort(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_mergesort(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (arg_count == 0) {
@@ -211,7 +211,7 @@ static Value vec_mergesort(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_quicksort(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (arg_count == 0) {
@@ -229,14 +229,14 @@ static Value vec_quicksort(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_shuffle(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_shuffle(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     pyro_shuffle(vm, vec->values, vec->count);
     return pyro_obj(vec);
 }
 
 
-static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_copy(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     ObjVec* copy = ObjVec_copy(vec, vm);
     if (!copy) {
@@ -247,7 +247,7 @@ static Value vec_copy(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     for (size_t i = 0; i < vec->count; i++) {
@@ -260,7 +260,7 @@ static Value vec_contains(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     for (size_t i = 0; i < vec->count; i++) {
@@ -273,7 +273,7 @@ static Value vec_index_of(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     ObjVec* new_vec = ObjVec_new_with_cap(vec->count, vm);
@@ -286,7 +286,7 @@ static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the map function
         pyro_push(vm, vec->values[i]); // push the argument for the map function
-        Value result = pyro_call_function(vm, 1);
+        PyroValue result = pyro_call_function(vm, 1);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -299,7 +299,7 @@ static Value vec_map(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     ObjVec* new_vec = ObjVec_new(vm);
@@ -312,7 +312,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
     for (size_t i = 0; i < vec->count; i++) {
         pyro_push(vm, args[0]); // push the filter function
         pyro_push(vm, vec->values[i]); // push the argument for the filter function
-        Value result = pyro_call_function(vm, 1);
+        PyroValue result = pyro_call_function(vm, 1);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -329,7 +329,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     ObjIter* iter = ObjIter_new((Obj*)vec, PYRO_ITER_VEC, vm);
@@ -342,19 +342,19 @@ static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_remove_last(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_remove_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     return ObjVec_remove_last(vec, vm);
 }
 
 
-static Value vec_remove_first(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_remove_first(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     return ObjVec_remove_first(vec, vm);
 }
 
 
-static Value vec_remove_at_index(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_remove_at_index(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (!IS_I64(args[0])) {
@@ -371,7 +371,7 @@ static Value vec_remove_at_index(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_remove_random(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_remove_random(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (vec->count == 0) {
@@ -384,7 +384,7 @@ static Value vec_remove_random(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_random(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_random(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (vec->count == 0) {
@@ -397,7 +397,7 @@ static Value vec_random(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_insert_at_index(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_insert_at_index(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (!IS_I64(args[0])) {
@@ -415,7 +415,7 @@ static Value vec_insert_at_index(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_first(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_first(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (vec->count > 0) {
         return vec->values[0];
@@ -425,7 +425,7 @@ static Value vec_first(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_last(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (vec->count > 0) {
         return vec->values[vec->count - 1];
@@ -435,13 +435,13 @@ static Value vec_last(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     return pyro_bool(vec->count == 0);
 }
 
 
-static Value fn_stack(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_stack(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = ObjVec_new_as_stack(vm);
     if (!vec) {
         pyro_panic(vm, "$stack(): out of memory");
@@ -451,12 +451,12 @@ static Value fn_stack(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_is_stack(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_is_stack(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(IS_STACK(args[0]));
 }
 
 
-static Value stack_pop(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue stack_pop(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     if (vec->count == 0) {
         pyro_panic(vm, "pop(): stack is empty");
@@ -467,7 +467,7 @@ static Value stack_pop(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (!(arg_count == 1 || arg_count == 2)) {
@@ -518,14 +518,14 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     pyro_push(vm, pyro_obj(new_vec));
-    Value* new_array = PYRO_ALLOCATE_ARRAY(vm, Value, length);
+    PyroValue* new_array = PYRO_ALLOCATE_ARRAY(vm, PyroValue, length);
     if (!new_array) {
         pyro_panic(vm, "slice(): out of memory");
         return pyro_null();
     }
     pyro_pop(vm); // new_vec
 
-    memcpy(new_array, &vec->values[start_index], sizeof(Value) * length);
+    memcpy(new_array, &vec->values[start_index], sizeof(PyroValue) * length);
     new_vec->values = new_array;
     new_vec->capacity = length;
     new_vec->count = length;
@@ -534,7 +534,7 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_is_sorted(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     if (arg_count == 0) {
@@ -550,7 +550,7 @@ static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
     ObjIter* iter = ObjIter_new((Obj*)vec, PYRO_ITER_VEC, vm);
@@ -583,7 +583,7 @@ static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value vec_clear(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue vec_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjVec* vec = AS_VEC(args[-1]);
     ObjVec_clear(vec, vm);
     return pyro_null();

@@ -6,12 +6,12 @@
 #include "../../../lib/mt64/mt64.h"
 
 
-static Value fn_rand_float(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_rand_float(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_f64(mt64_gen_f64_co(&vm->mt64));
 }
 
 
-static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
         return pyro_null();
@@ -20,7 +20,7 @@ static Value fn_rand_int(PyroVM* vm, size_t arg_count, Value* args) {
 }
 
 
-static Value fn_rand_int_in_range(PyroVM* vm, size_t arg_count, Value* args) {
+static PyroValue fn_rand_int_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "rand_int_in_range(): invalid argument [lower], expected an integer");
         return pyro_null();

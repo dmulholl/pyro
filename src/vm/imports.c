@@ -98,12 +98,12 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
 }
 
 
-void try_load_compiled_module(PyroVM* vm, const char* path, Value name, ObjModule* module) {
+void try_load_compiled_module(PyroVM* vm, const char* path, PyroValue name, ObjModule* module) {
     pyro_load_dyn_lib_as_mod(vm, path, AS_STR(name)->bytes, module);
 }
 
 
-void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* module) {
+void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, ObjModule* module) {
     if (arg_count == 2 && strcmp(AS_STR(args[0])->bytes, "$std") == 0) {
         try_load_stdlib_module(vm, AS_STR(args[1]), module);
         return;
