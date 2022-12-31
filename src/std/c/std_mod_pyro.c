@@ -20,19 +20,19 @@ static PyroValue fn_gc(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (PYRO_IS_OBJ(args[0])) {
-        switch (AS_OBJ(args[0])->type) {
+        switch (PYRO_AS_OBJ(args[0])->type) {
             case PYRO_OBJECT_VEC:
             case PYRO_OBJECT_VEC_AS_STACK: {
-                PyroObjVec* vec = AS_VEC(args[0]);
+                PyroObjVec* vec = PYRO_AS_VEC(args[0]);
                 return pyro_i64(sizeof(PyroObjVec) + sizeof(PyroValue) * vec->capacity);
             }
             case PYRO_OBJECT_TUP: {
-                PyroObjTup* tup = AS_TUP(args[0]);
+                PyroObjTup* tup = PYRO_AS_TUP(args[0]);
                 return pyro_i64(sizeof(PyroObjTup) + sizeof(PyroValue) * tup->count);
             }
             case PYRO_OBJECT_MAP:
             case PYRO_OBJECT_MAP_AS_SET: {
-                PyroObjMap* map = AS_MAP(args[0]);
+                PyroObjMap* map = PYRO_AS_MAP(args[0]);
                 return pyro_i64(
                     sizeof(PyroObjMap) +
                     sizeof(PyroMapEntry) * map->entry_array_capacity +
@@ -40,11 +40,11 @@ static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 );
             }
             case PYRO_OBJECT_QUEUE: {
-                PyroObjQueue* queue = AS_QUEUE(args[0]);
+                PyroObjQueue* queue = PYRO_AS_QUEUE(args[0]);
                 return pyro_i64(sizeof(PyroObjQueue) + sizeof(QueueItem) * queue->count);
             }
             case PYRO_OBJECT_BUF: {
-                PyroObjBuf* buf = AS_BUF(args[0]);
+                PyroObjBuf* buf = PYRO_AS_BUF(args[0]);
                 return pyro_i64(sizeof(PyroObjBuf) + sizeof(uint8_t) * buf->capacity);
             }
             default: {
@@ -62,7 +62,7 @@ static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(vm->error);
     }
 
-    PyroObj* object = AS_OBJ(args[0]);
+    PyroObj* object = PYRO_AS_OBJ(args[0]);
     PyroObjStr* string = pyro_sprintf_to_obj(vm, "0x%" PRIXPTR, (uintptr_t)object);
     if (!string) {
         return pyro_null();

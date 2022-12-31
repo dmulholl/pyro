@@ -26,13 +26,13 @@ static PyroValue fn_is_tup(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue tup_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjTup* tup = AS_TUP(args[-1]);
+    PyroObjTup* tup = PYRO_AS_TUP(args[-1]);
     return pyro_i64(tup->count);
 }
 
 
 static PyroValue tup_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjTup* tup = AS_TUP(args[-1]);
+    PyroObjTup* tup = PYRO_AS_TUP(args[-1]);
     if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < tup->count) {
@@ -47,7 +47,7 @@ static PyroValue tup_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue tup_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjTup* tup = AS_TUP(args[-1]);
+    PyroObjTup* tup = PYRO_AS_TUP(args[-1]);
     PyroObjIter* iter = PyroObjIter_new((PyroObj*)tup, PYRO_ITER_TUP, vm);
     if (!iter) {
         return pyro_null();
@@ -57,7 +57,7 @@ static PyroValue tup_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue tup_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjTup* tup = AS_TUP(args[-1]);
+    PyroObjTup* tup = PYRO_AS_TUP(args[-1]);
 
     if (!(arg_count == 1 || arg_count == 2)) {
         pyro_panic(vm, "slice(): expected 1 or 2 arguments, found %zu", arg_count);
@@ -112,7 +112,7 @@ static PyroValue tup_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue tup_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjTup* tup = AS_TUP(args[-1]);
+    PyroObjTup* tup = PYRO_AS_TUP(args[-1]);
 
     for (size_t i = 0; i < tup->count; i++) {
         if (pyro_op_compare_eq(vm, tup->values[i], args[0])) {

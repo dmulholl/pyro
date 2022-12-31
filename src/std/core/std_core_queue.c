@@ -24,13 +24,13 @@ static PyroValue fn_is_queue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = AS_QUEUE(args[-1]);
+    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
     return pyro_i64(queue->count);
 }
 
 
 static PyroValue queue_enqueue(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = AS_QUEUE(args[-1]);
+    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
     if (!PyroObjQueue_enqueue(queue, args[0], vm)) {
         pyro_panic(vm, "enqueue(): out of memory");
     }
@@ -39,7 +39,7 @@ static PyroValue queue_enqueue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_dequeue(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = AS_QUEUE(args[-1]);
+    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
     PyroValue value;
     if (!PyroObjQueue_dequeue(queue, &value, vm)) {
         pyro_panic(vm, "dequeue(): cannot dequeue from empty queue");
@@ -50,13 +50,13 @@ static PyroValue queue_dequeue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = AS_QUEUE(args[-1]);
+    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
     return pyro_bool(queue->count == 0);
 }
 
 
 static PyroValue queue_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = AS_QUEUE(args[-1]);
+    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
 
     PyroObjIter* iter = PyroObjIter_new((PyroObj*)queue, PYRO_ITER_QUEUE, vm);
     if (!iter) {
@@ -70,7 +70,7 @@ static PyroValue queue_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = AS_QUEUE(args[-1]);
+    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
     PyroObjQueue_clear(queue, vm);
     return pyro_null();
 }

@@ -22,7 +22,7 @@ static PyroValue fn_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // If the argument is an iterator, wrap it in an PyroObjIter instance.
     if (PYRO_IS_OBJ(args[0]) && pyro_has_method(vm, args[0], vm->str_dollar_next)) {
-        PyroObjIter* iter = PyroObjIter_new(AS_OBJ(args[0]), PYRO_ITER_GENERIC, vm);
+        PyroObjIter* iter = PyroObjIter_new(PYRO_AS_OBJ(args[0]), PYRO_ITER_GENERIC, vm);
         if (!iter) {
             pyro_panic(vm, "$iter(): out of memory");
             return pyro_null();
@@ -45,7 +45,7 @@ static PyroValue fn_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
         if (PYRO_IS_OBJ(result) && pyro_has_method(vm, result, vm->str_dollar_next)) {
             pyro_push(vm, result);
-            PyroObjIter* iter = PyroObjIter_new(AS_OBJ(result), PYRO_ITER_GENERIC, vm);
+            PyroObjIter* iter = PyroObjIter_new(PYRO_AS_OBJ(result), PYRO_ITER_GENERIC, vm);
             if (!iter) {
                 pyro_panic(vm, "$iter(): out of memory");
                 return pyro_null();
@@ -66,13 +66,13 @@ static PyroValue iter_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_next(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
     return PyroObjIter_next(iter, vm);
 }
 
 
 static PyroValue iter_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* src_iter = AS_ITER(args[-1]);
+    PyroObjIter* src_iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_OBJ(args[0])) {
         pyro_panic(vm, "map(): invalid argument [callback], expected a callable");
@@ -85,13 +85,13 @@ static PyroValue iter_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    new_iter->callback = AS_OBJ(args[0]);
+    new_iter->callback = PYRO_AS_OBJ(args[0]);
     return pyro_obj(new_iter);
 }
 
 
 static PyroValue iter_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* src_iter = AS_ITER(args[-1]);
+    PyroObjIter* src_iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_OBJ(args[0])) {
         pyro_panic(vm, "filter(): invalid argument [callback], expected a callable");
@@ -104,13 +104,13 @@ static PyroValue iter_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    new_iter->callback = AS_OBJ(args[0]);
+    new_iter->callback = PYRO_AS_OBJ(args[0]);
     return pyro_obj(new_iter);
 }
 
 
 static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
 
     PyroObjVec* vec = PyroObjVec_new(vm);
     if (!vec) {
@@ -142,7 +142,7 @@ static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
 
     if (arg_count == 0) {
         PyroObjStr* result = PyroObjIter_join(iter, "", 0, vm);
@@ -154,7 +154,7 @@ static PyroValue iter_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "join(): invalid argument [sep], expected a string");
             return pyro_null();
         }
-        PyroObjStr* sep = AS_STR(args[0]);
+        PyroObjStr* sep = PYRO_AS_STR(args[0]);
         PyroObjStr* result = PyroObjIter_join(iter, sep->bytes, sep->length, vm);
         return vm->halt_flag ? pyro_null() : pyro_obj(result);
     }
@@ -165,7 +165,7 @@ static PyroValue iter_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
 
     PyroObjMap* map = PyroObjMap_new_as_set(vm);
     if (!map) {
@@ -197,7 +197,7 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_enumerate(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* src_iter = AS_ITER(args[-1]);
+    PyroObjIter* src_iter = PYRO_AS_ITER(args[-1]);
 
     PyroObjIter* new_iter = PyroObjIter_new((PyroObj*)src_iter, PYRO_ITER_ENUM, vm);
     if (!new_iter) {
@@ -282,7 +282,7 @@ static PyroValue fn_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_skip_first(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "skip_first(): invalid argument [n], expected an integer");
@@ -320,7 +320,7 @@ static PyroValue iter_skip_first(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 
 static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "skip_last(): invalid argument [n], expected an integer");
@@ -383,7 +383,7 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
     int64_t count = 0;
 
     while (true) {
@@ -401,7 +401,7 @@ static PyroValue iter_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_sum(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
     bool is_first_item = true;
     PyroValue sum = pyro_null();
 
@@ -430,7 +430,7 @@ static PyroValue iter_sum(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_reduce(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = AS_ITER(args[-1]);
+    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
     PyroValue callback = args[0];
     PyroValue accumulator = args[1];
 

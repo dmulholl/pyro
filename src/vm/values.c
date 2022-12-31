@@ -27,7 +27,7 @@ PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value) {
         case PYRO_VALUE_CHAR:
             return vm->class_char;
         case PYRO_VALUE_OBJ:
-            return AS_OBJ(value)->class;
+            return PYRO_AS_OBJ(value)->class;
         default:
             return NULL;
     }
@@ -37,7 +37,7 @@ PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value) {
 PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
     if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
-        if (PyroObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroObjMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
         return pyro_null();
@@ -63,7 +63,7 @@ PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_nam
 PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
     if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
-        if (PyroObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroObjMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
         return pyro_null();
@@ -148,11 +148,11 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
         case PYRO_VALUE_OBJ:
             switch (value.as.obj->type) {
                 case PYRO_OBJECT_STR:
-                    return AS_STR(value)->hash;
+                    return PYRO_AS_STR(value)->hash;
 
                 case PYRO_OBJECT_TUP: {
                     uint64_t hash = 0;
-                    PyroObjTup* tup = AS_TUP(value);
+                    PyroObjTup* tup = PYRO_AS_TUP(value);
 
                     for (size_t i = 0; i < tup->count; i++) {
                         hash ^= pyro_hash_value(vm, tup->values[i]);
@@ -163,7 +163,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
 
                 case PYRO_OBJECT_MAP_AS_SET: {
                     uint64_t hash = 0;
-                    PyroObjMap* map = AS_MAP(value);
+                    PyroObjMap* map = PYRO_AS_MAP(value);
 
                     for (size_t i = 0; i < map->entry_array_count; i++) {
                         PyroMapEntry* entry = &map->entry_array[i];
@@ -331,7 +331,7 @@ void pyro_dump_value(PyroVM* vm, PyroValue value) {
             break;
 
         case PYRO_VALUE_OBJ:
-            pyro_dump_object(vm, AS_OBJ(value));
+            pyro_dump_object(vm, PYRO_AS_OBJ(value));
             break;
 
         default:

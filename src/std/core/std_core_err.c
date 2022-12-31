@@ -35,7 +35,7 @@ static PyroValue fn_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (vm->halt_flag) {
             return pyro_null();
         }
-        err->message = AS_STR(formatted);
+        err->message = PYRO_AS_STR(formatted);
         return pyro_obj(err);
     }
 }
@@ -47,7 +47,7 @@ static PyroValue fn_is_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue err_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjErr* err = AS_ERR(args[-1]);
+    PyroObjErr* err = PYRO_AS_ERR(args[-1]);
     if (PyroObjMap_set(err->details, args[0], args[1], vm) == 0) {
         pyro_panic(vm, "err:set(): out of memory");
     }
@@ -56,7 +56,7 @@ static PyroValue err_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue err_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjErr* err = AS_ERR(args[-1]);
+    PyroObjErr* err = PYRO_AS_ERR(args[-1]);
     PyroValue value;
     if (PyroObjMap_get(err->details, args[0], &value, vm)) {
         return value;
@@ -66,13 +66,13 @@ static PyroValue err_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue err_message(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjErr* err = AS_ERR(args[-1]);
+    PyroObjErr* err = PYRO_AS_ERR(args[-1]);
     return pyro_obj(err->message);
 }
 
 
 static PyroValue err_details(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjErr* err = AS_ERR(args[-1]);
+    PyroObjErr* err = PYRO_AS_ERR(args[-1]);
     return pyro_obj(err->details);
 }
 

@@ -455,7 +455,7 @@ static PyroObjStr* stringify_object(PyroVM* vm, PyroObj* object) {
             pyro_panic(vm, "invalid return type for :$str(), expected a string");
             return NULL;
         }
-        return AS_STR(result);
+        return PYRO_AS_STR(result);
     }
 
     switch (object->type) {
@@ -738,7 +738,7 @@ PyroObjStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
         }
 
         case PYRO_VALUE_OBJ:
-            return stringify_object(vm, AS_OBJ(value));
+            return stringify_object(vm, PYRO_AS_OBJ(value));
 
         default:
             return pyro_sprintf_to_obj(vm, "<value>");
@@ -758,11 +758,11 @@ PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
             pyro_panic(vm, "invalid return type for :$debug(), expected a string");
             return NULL;
         }
-        return AS_STR(result);
+        return PYRO_AS_STR(result);
     }
 
     if (PYRO_IS_STR(value)) {
-        PyroObjStr* string = make_debug_string_for_string(vm, AS_STR(value));
+        PyroObjStr* string = make_debug_string_for_string(vm, PYRO_AS_STR(value));
         if (!string) {
             return NULL;
         }
@@ -770,7 +770,7 @@ PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     }
 
     if (PYRO_IS_BUF(value)) {
-        PyroObjStr* string = make_debug_string_for_buf(vm, AS_BUF(value));
+        PyroObjStr* string = make_debug_string_for_buf(vm, PYRO_AS_BUF(value));
         if (!string) {
             return NULL;
         }
@@ -786,7 +786,7 @@ PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     }
 
     if (PYRO_IS_ERR(value)) {
-        PyroObjErr* err = AS_ERR(value);
+        PyroObjErr* err = PYRO_AS_ERR(value);
         PyroObjStr* debug_message = make_debug_string_for_string(vm, err->message);
         if (!debug_message) {
             return NULL;
@@ -1009,7 +1009,7 @@ PyroObjStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_st
     }
 
     if (PYRO_IS_STR(value)) {
-        return format_str_obj(vm, AS_STR(value), format_string);
+        return format_str_obj(vm, PYRO_AS_STR(value), format_string);
     }
 
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_fmt);
@@ -1029,7 +1029,7 @@ PyroObjStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_st
             pyro_panic(vm, "invalid return type for :$fmt(), expected a string");
             return NULL;
         }
-        return AS_STR(result);
+        return PYRO_AS_STR(result);
     }
 
     pyro_panic(vm, "no handler for format specifier '%s'", format_string);

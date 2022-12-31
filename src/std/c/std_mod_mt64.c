@@ -20,7 +20,7 @@ static void mt64_free_callback(PyroVM* vm, void* pointer) {
 
 
 static PyroValue mt64_init_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
     MT64* mt64 = malloc(sizeof(MT64));
     if (!mt64) {
@@ -43,8 +43,8 @@ static PyroValue mt64_init_method(PyroVM* vm, size_t arg_count, PyroValue* args)
 
 
 static PyroValue mt64_seed_with_hash(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
-    PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
+    PyroObjInstance* instance = PYRO_AS_INSTANCE(args[-1]);
+    PyroObjResourcePointer* resource = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
     mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
     return pyro_null();
@@ -52,19 +52,19 @@ static PyroValue mt64_seed_with_hash(PyroVM* vm, size_t arg_count, PyroValue* ar
 
 
 static PyroValue mt64_seed_with_array(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
-    PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
+    PyroObjInstance* instance = PYRO_AS_INSTANCE(args[-1]);
+    PyroObjResourcePointer* resource = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
 
     if (PYRO_IS_STR(args[0])) {
-        PyroObjStr* string = AS_STR(args[0]);
+        PyroObjStr* string = PYRO_AS_STR(args[0]);
         if (string->length < 8) {
             mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
         } else {
             mt64_seed_with_byte_array(mt64, (uint8_t*)string->bytes, string->length);
         }
     } else if (PYRO_IS_BUF(args[0])) {
-        PyroObjBuf* buf = AS_BUF(args[0]);
+        PyroObjBuf* buf = PYRO_AS_BUF(args[0]);
         if (buf->count < 8) {
             mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
         } else {
@@ -78,16 +78,16 @@ static PyroValue mt64_seed_with_array(PyroVM* vm, size_t arg_count, PyroValue* a
 }
 
 static PyroValue mt64_rand_float(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
-    PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
+    PyroObjInstance* instance = PYRO_AS_INSTANCE(args[-1]);
+    PyroObjResourcePointer* resource = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
     return pyro_f64(mt64_gen_f64_co(mt64));
 }
 
 
 static PyroValue mt64_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
-    PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
+    PyroObjInstance* instance = PYRO_AS_INSTANCE(args[-1]);
+    PyroObjResourcePointer* resource = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
 
     if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
@@ -100,8 +100,8 @@ static PyroValue mt64_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
-    PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
+    PyroObjInstance* instance = PYRO_AS_INSTANCE(args[-1]);
+    PyroObjResourcePointer* resource = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
 
     if (!PYRO_IS_I64(args[0]) || !PYRO_IS_I64(args[1])) {

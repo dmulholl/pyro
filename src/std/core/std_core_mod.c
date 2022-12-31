@@ -10,7 +10,7 @@
 
 
 static PyroValue mod_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = PYRO_AS_MOD(args[-1]);
 
     PyroValue member_index;
     if (!PyroObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
@@ -22,7 +22,7 @@ static PyroValue mod_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue mod_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = PYRO_AS_MOD(args[-1]);
 
     PyroValue member_index;
     if (PyroObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
@@ -34,7 +34,7 @@ static PyroValue mod_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = PYRO_AS_MOD(args[-1]);
 
     PyroObjMap* new_map = PyroObjMap_new(vm);
     if (!new_map) {
@@ -61,7 +61,7 @@ static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue mod_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = PYRO_AS_MOD(args[-1]);
 
     PyroObjIter* iter = PyroObjIter_new((PyroObj*)mod->pub_member_indexes, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {

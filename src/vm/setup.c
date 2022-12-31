@@ -338,7 +338,7 @@ PyroObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* 
     }
     PyroValue module_value = pyro_obj(module_object);
 
-    if (PyroObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
+    if (PyroObjMap_set(PYRO_AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
         return NULL;
     }
 
@@ -364,7 +364,7 @@ PyroObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const c
     }
 
     PyroValue parent_module;
-    if (!PyroObjMap_get(AS_MOD(grandparent_module)->submodules, pyro_obj(parent_string), &parent_module, vm)) {
+    if (!PyroObjMap_get(PYRO_AS_MOD(grandparent_module)->submodules, pyro_obj(parent_string), &parent_module, vm)) {
         assert(false);
         return NULL;
     }
@@ -381,7 +381,7 @@ PyroObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const c
     }
     PyroValue module_value = pyro_obj(module_object);
 
-    if (PyroObjMap_set(AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
+    if (PyroObjMap_set(PYRO_AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
         return NULL;
     }
 

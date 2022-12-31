@@ -15,9 +15,9 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        FILE* stream = fopen(AS_STR(args[0])->bytes, "r");
+        FILE* stream = fopen(PYRO_AS_STR(args[0])->bytes, "r");
         if (!stream) {
-            pyro_panic(vm, "$file(): unable to open file '%s'", AS_STR(args[0])->bytes);
+            pyro_panic(vm, "$file(): unable to open file '%s'", PYRO_AS_STR(args[0])->bytes);
             return pyro_null();
         }
 
@@ -27,7 +27,7 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        file->path = AS_STR(args[0]);
+        file->path = PYRO_AS_STR(args[0]);
         return pyro_obj(file);
     }
 
@@ -42,9 +42,9 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        FILE* stream = fopen(AS_STR(args[0])->bytes, AS_STR(args[1])->bytes);
+        FILE* stream = fopen(PYRO_AS_STR(args[0])->bytes, PYRO_AS_STR(args[1])->bytes);
         if (!stream) {
-            pyro_panic(vm, "$file(): unable to open file '%s'", AS_STR(args[0])->bytes);
+            pyro_panic(vm, "$file(): unable to open file '%s'", PYRO_AS_STR(args[0])->bytes);
             return pyro_null();
         }
 
@@ -54,7 +54,7 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        file->path = AS_STR(args[0]);
+        file->path = PYRO_AS_STR(args[0]);
         return pyro_obj(file);
     }
 
@@ -69,7 +69,7 @@ static PyroValue fn_is_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_flush(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     if (file->stream) {
         fflush(file->stream);
@@ -80,7 +80,7 @@ static PyroValue file_flush(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_close(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     if (file->stream) {
         fclose(file->stream);
@@ -92,7 +92,7 @@ static PyroValue file_close(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     if (file->stream) {
         fclose(file->stream);
@@ -104,7 +104,7 @@ static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     size_t count = 0;
     size_t capacity = 0;
@@ -153,7 +153,7 @@ static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     size_t count = 0;
     size_t capacity = 0;
@@ -204,7 +204,7 @@ static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args)
 
 
 static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "read_bytes(): invalid argument [n], expected a non-negative integer");
@@ -234,7 +234,7 @@ static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 
 static PyroValue file_read_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     if (feof(file->stream)) {
         return pyro_null();
@@ -258,7 +258,7 @@ static PyroValue file_read_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_read_line(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     PyroObjStr* string = PyroObjFile_read_line(file, vm);
     if (vm->halt_flag) {
@@ -270,7 +270,7 @@ static PyroValue file_read_line(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
     PyroObjIter* iter = PyroObjIter_new((PyroObj*)file, PYRO_ITER_FILE_LINES, vm);
     if (!iter) {
         pyro_panic(vm, "lines(): out of memory");
@@ -281,7 +281,7 @@ static PyroValue file_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
 
     if (arg_count == 0) {
         pyro_panic(vm, "write(): expected 1 or more arguments, found 0");
@@ -290,7 +290,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     if (arg_count == 1) {
         if (PYRO_IS_BUF(args[0])) {
-            PyroObjBuf* buf = AS_BUF(args[0]);
+            PyroObjBuf* buf = PYRO_AS_BUF(args[0]);
             size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, file->stream);
             if (n < buf->count) {
                 pyro_panic(vm, "write(): I/O write error");
@@ -320,7 +320,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (vm->halt_flag) {
         return pyro_null();
     }
-    PyroObjStr* string = AS_STR(formatted);
+    PyroObjStr* string = PYRO_AS_STR(formatted);
 
     size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
 
@@ -333,7 +333,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = AS_FILE(args[-1]);
+    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
     uint8_t byte;
 
     if (PYRO_IS_I64(args[0])) {

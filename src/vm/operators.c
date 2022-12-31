@@ -39,17 +39,17 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue a, PyroValue b) {
         }
 
         case PYRO_VALUE_OBJ: {
-            switch (AS_OBJ(a)->type) {
+            switch (PYRO_AS_OBJ(a)->type) {
                 case PYRO_OBJECT_STR: {
                     if (PYRO_IS_STR(b)) {
-                        PyroObjStr* result = PyroObjStr_concat(AS_STR(a), AS_STR(b), vm);
+                        PyroObjStr* result = PyroObjStr_concat(PYRO_AS_STR(a), PYRO_AS_STR(b), vm);
                         if (!result) {
                             pyro_panic(vm, "out of memory");
                             return pyro_null();
                         }
                         return pyro_obj(result);
                     } else if (PYRO_IS_CHAR(b)) {
-                        PyroObjStr* result = PyroObjStr_append_codepoint_as_utf8(AS_STR(a), b.as.u32, vm);
+                        PyroObjStr* result = PyroObjStr_append_codepoint_as_utf8(PYRO_AS_STR(a), b.as.u32, vm);
                         if (!result) {
                             pyro_panic(vm, "out of memory");
                             return pyro_null();
@@ -89,7 +89,7 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue a, PyroValue b) {
                 }
                 return pyro_obj(result);
             } else if (PYRO_IS_STR(b)) {
-                PyroObjStr* result = PyroObjStr_prepend_codepoint_as_utf8(AS_STR(b), a.as.u32, vm);
+                PyroObjStr* result = PyroObjStr_prepend_codepoint_as_utf8(PYRO_AS_STR(b), a.as.u32, vm);
                 if (!result) {
                     pyro_panic(vm, "out of memory");
                     return pyro_null();
@@ -183,7 +183,7 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue a, PyroValue b) {
         case PYRO_VALUE_OBJ: {
             if (PYRO_IS_STR(a)) {
                 if (PYRO_IS_I64(b) && b.as.i64 >= 0) {
-                    PyroObjStr* result = PyroObjStr_concat_n_copies(AS_STR(a), b.as.i64, vm);
+                    PyroObjStr* result = PyroObjStr_concat_n_copies(PYRO_AS_STR(a), b.as.i64, vm);
                     if (!result) {
                         pyro_panic(vm, "out of memory");
                         return pyro_null();
@@ -797,12 +797,12 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue a, PyroValue b) {
         }
 
         case PYRO_VALUE_OBJ: {
-            switch (AS_OBJ(a)->type) {
+            switch (PYRO_AS_OBJ(a)->type) {
                 case PYRO_OBJECT_STR:
                     return a.as.obj == b.as.obj;
 
                 case PYRO_OBJECT_TUP:
-                    return PYRO_IS_TUP(b) && PyroObjTup_check_equal(AS_TUP(a), AS_TUP(b), vm);
+                    return PYRO_IS_TUP(b) && PyroObjTup_check_equal(PYRO_AS_TUP(a), PYRO_AS_TUP(b), vm);
 
                 default: {
                     PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_equals_equals);
@@ -885,17 +885,17 @@ bool pyro_op_compare_lt(PyroVM* vm, PyroValue a, PyroValue b) {
         }
 
         case PYRO_VALUE_OBJ: {
-            switch (AS_OBJ(a)->type) {
+            switch (PYRO_AS_OBJ(a)->type) {
                 case PYRO_OBJECT_STR: {
                     if (PYRO_IS_STR(b)) {
-                        return compare_strings(AS_STR(a), AS_STR(b)) == -1;
+                        return compare_strings(PYRO_AS_STR(a), PYRO_AS_STR(b)) == -1;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
                 }
                 case PYRO_OBJECT_TUP: {
                     if (PYRO_IS_TUP(b)) {
-                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) == -1;
+                        return compare_tuples(vm, PYRO_AS_TUP(a), PYRO_AS_TUP(b)) == -1;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
@@ -982,17 +982,17 @@ bool pyro_op_compare_le(PyroVM* vm, PyroValue a, PyroValue b) {
         }
 
         case PYRO_VALUE_OBJ: {
-            switch (AS_OBJ(a)->type) {
+            switch (PYRO_AS_OBJ(a)->type) {
                 case PYRO_OBJECT_STR: {
                     if (PYRO_IS_STR(b)) {
-                        return compare_strings(AS_STR(a), AS_STR(b)) <= 0;
+                        return compare_strings(PYRO_AS_STR(a), PYRO_AS_STR(b)) <= 0;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
                 }
                 case PYRO_OBJECT_TUP: {
                     if (PYRO_IS_TUP(b)) {
-                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) <= 0;
+                        return compare_tuples(vm, PYRO_AS_TUP(a), PYRO_AS_TUP(b)) <= 0;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
@@ -1072,17 +1072,17 @@ bool pyro_op_compare_gt(PyroVM* vm, PyroValue a, PyroValue b) {
         }
 
         case PYRO_VALUE_OBJ: {
-            switch (AS_OBJ(a)->type) {
+            switch (PYRO_AS_OBJ(a)->type) {
                 case PYRO_OBJECT_STR: {
                     if (PYRO_IS_STR(b)) {
-                        return compare_strings(AS_STR(a), AS_STR(b)) == 1;
+                        return compare_strings(PYRO_AS_STR(a), PYRO_AS_STR(b)) == 1;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
                 }
                 case PYRO_OBJECT_TUP: {
                     if (PYRO_IS_TUP(b)) {
-                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) == 1;
+                        return compare_tuples(vm, PYRO_AS_TUP(a), PYRO_AS_TUP(b)) == 1;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
@@ -1169,17 +1169,17 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue a, PyroValue b) {
         }
 
         case PYRO_VALUE_OBJ: {
-            switch (AS_OBJ(a)->type) {
+            switch (PYRO_AS_OBJ(a)->type) {
                 case PYRO_OBJECT_STR: {
                     if (PYRO_IS_STR(b)) {
-                        return compare_strings(AS_STR(a), AS_STR(b)) >= 0;
+                        return compare_strings(PYRO_AS_STR(a), PYRO_AS_STR(b)) >= 0;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
                 }
                 case PYRO_OBJECT_TUP: {
                     if (PYRO_IS_TUP(b)) {
-                        return compare_tuples(vm, AS_TUP(a), AS_TUP(b)) >= 0;
+                        return compare_tuples(vm, PYRO_AS_TUP(a), PYRO_AS_TUP(b)) >= 0;
                     }
                     pyro_panic(vm, "values are not comparable");
                     return false;
@@ -1219,9 +1219,9 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         return pyro_null();
     }
 
-    switch (AS_OBJ(receiver)->type) {
+    switch (PYRO_AS_OBJ(receiver)->type) {
         case PYRO_OBJECT_MAP: {
-            PyroObjMap* map = AS_MAP(receiver);
+            PyroObjMap* map = PYRO_AS_MAP(receiver);
             PyroValue value;
             if (PyroObjMap_get(map, key, &value, vm)) {
                 return value;
@@ -1230,7 +1230,7 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         }
 
         case PYRO_OBJECT_STR: {
-            PyroObjStr* str = AS_STR(receiver);
+            PyroObjStr* str = PYRO_AS_STR(receiver);
             if (PYRO_IS_I64(key)) {
                 int64_t index = key.as.i64;
                 if (index >= 0 && (size_t)index < str->length) {
@@ -1249,7 +1249,7 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         }
 
         case PYRO_OBJECT_VEC: {
-            PyroObjVec* vec = AS_VEC(receiver);
+            PyroObjVec* vec = PYRO_AS_VEC(receiver);
             if (PYRO_IS_I64(key)) {
                 int64_t index = key.as.i64;
                 if (index >= 0 && (size_t)index < vec->count) {
@@ -1263,7 +1263,7 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         }
 
         case PYRO_OBJECT_TUP: {
-            PyroObjTup* tup = AS_TUP(receiver);
+            PyroObjTup* tup = PYRO_AS_TUP(receiver);
             if (PYRO_IS_I64(key)) {
                 int64_t index = key.as.i64;
                 if (index >= 0 && (size_t)index < tup->count) {
@@ -1296,9 +1296,9 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
         return pyro_null();
     }
 
-    switch (AS_OBJ(receiver)->type) {
+    switch (PYRO_AS_OBJ(receiver)->type) {
         case PYRO_OBJECT_MAP: {
-            PyroObjMap* map = AS_MAP(receiver);
+            PyroObjMap* map = PYRO_AS_MAP(receiver);
             if (PyroObjMap_set(map, key, value, vm) == 0) {
                 pyro_panic(vm, "out of memory");
             }
@@ -1306,7 +1306,7 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
         }
 
         case PYRO_OBJECT_VEC: {
-            PyroObjVec* vec = AS_VEC(receiver);
+            PyroObjVec* vec = PYRO_AS_VEC(receiver);
             if (PYRO_IS_I64(key)) {
                 int64_t index = key.as.i64;
                 if (index >= 0 && (size_t)index < vec->count) {

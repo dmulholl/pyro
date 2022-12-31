@@ -99,18 +99,18 @@ static void try_load_stdlib_module(PyroVM* vm, PyroObjStr* name, PyroObjModule* 
 
 
 void try_load_compiled_module(PyroVM* vm, const char* path, PyroValue name, PyroObjModule* module) {
-    pyro_load_dyn_lib_as_mod(vm, path, AS_STR(name)->bytes, module);
+    pyro_load_dyn_lib_as_mod(vm, path, PYRO_AS_STR(name)->bytes, module);
 }
 
 
 void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroObjModule* module) {
-    if (arg_count == 2 && strcmp(AS_STR(args[0])->bytes, "$std") == 0) {
-        try_load_stdlib_module(vm, AS_STR(args[1]), module);
+    if (arg_count == 2 && strcmp(PYRO_AS_STR(args[0])->bytes, "$std") == 0) {
+        try_load_stdlib_module(vm, PYRO_AS_STR(args[1]), module);
         return;
     }
 
     for (size_t i = 0; i < vm->import_roots->count; i++) {
-        PyroObjStr* base = AS_STR(vm->import_roots->values[i]);
+        PyroObjStr* base = PYRO_AS_STR(vm->import_roots->values[i]);
         if (base->length == 0) {
             pyro_panic(vm, "invalid import root (empty string)");
             return;
@@ -130,7 +130,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroObjM
         // - BASE/foo/bar/baz/self.pyro
         size_t path_capacity = base_has_trailing_slash ? base->length : base->length + 1;
         for (uint8_t j = 0; j < arg_count; j++) {
-            path_capacity += AS_STR(args[j])->length + 1;
+            path_capacity += PYRO_AS_STR(args[j])->length + 1;
         }
         path_capacity += strlen("self.pyro");
 
@@ -153,7 +153,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroObjM
 
         // Given 'import foo::bar::baz', assemble path = BASE/foo/bar/baz/
         for (uint8_t j = 0; j < arg_count; j++) {
-            PyroObjStr* name = AS_STR(args[j]);
+            PyroObjStr* name = PYRO_AS_STR(args[j]);
             memcpy(path + path_count, name->bytes, name->length);
             path_count += name->length;
             path[path_count++] = '/';
@@ -222,6 +222,6 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroObjM
     pyro_panic(
         vm,
         "unable to locate module '%s'",
-        AS_STR(args[arg_count - 1])->bytes
+        PYRO_AS_STR(args[arg_count - 1])->bytes
     );
 }

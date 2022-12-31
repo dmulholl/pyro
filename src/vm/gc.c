@@ -42,7 +42,7 @@ static void mark_object(PyroVM* vm, PyroObj* object) {
 // Marks a value as reachable.
 static void mark_value(PyroVM* vm, PyroValue value) {
     if (PYRO_IS_OBJ(value)) {
-        mark_object(vm, AS_OBJ(value));
+        mark_object(vm, PYRO_AS_OBJ(value));
     }
 }
 

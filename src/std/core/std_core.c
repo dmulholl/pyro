@@ -23,7 +23,7 @@ static PyroValue fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* fmt_str = AS_STR(args[0]);
+    PyroObjStr* fmt_str = PYRO_AS_STR(args[0]);
 
     char fmt_spec_buffer[16];
     size_t fmt_spec_count = 0;
@@ -169,7 +169,7 @@ static PyroValue fn_eprint(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    int64_t result = pyro_stderr_write_s(vm, AS_STR(formatted));
+    int64_t result = pyro_stderr_write_s(vm, PYRO_AS_STR(formatted));
     if (result == -1) {
         pyro_panic(vm, "$eprint(): unable to write to the standard error stream");
         return pyro_null();
@@ -228,7 +228,7 @@ static PyroValue fn_eprintln(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    int64_t result1 = pyro_stderr_write_s(vm, AS_STR(formatted));
+    int64_t result1 = pyro_stderr_write_s(vm, PYRO_AS_STR(formatted));
     if (result1 == -1) {
         pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
         return pyro_null();
@@ -280,7 +280,7 @@ static PyroValue fn_print(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    int64_t result = pyro_stdout_write_s(vm, AS_STR(formatted));
+    int64_t result = pyro_stdout_write_s(vm, PYRO_AS_STR(formatted));
     if (result == -1) {
         pyro_panic(vm, "$print(): unable to write to the standard output stream");
         return pyro_null();
@@ -339,7 +339,7 @@ static PyroValue fn_println(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    int64_t result1 = pyro_stdout_write_s(vm, AS_STR(formatted));
+    int64_t result1 = pyro_stdout_write_s(vm, PYRO_AS_STR(formatted));
     if (result1 == -1) {
         pyro_panic(vm, "$println(): unable to write to the standard output stream");
         return pyro_null();
@@ -402,7 +402,7 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (vm->halt_flag) {
         return pyro_null();
     }
-    PyroObjStr* panic_message = AS_STR(formatted);
+    PyroObjStr* panic_message = PYRO_AS_STR(formatted);
 
     PyroObjStr* escaped_panic_message = PyroObjStr_esc_percents(panic_message->bytes, panic_message->length, vm);
     if (!escaped_panic_message) {
@@ -453,7 +453,7 @@ static PyroValue fn_f64(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
         case PYRO_VALUE_OBJ: {
             if (PYRO_IS_STR(args[0])) {
-                PyroObjStr* string = AS_STR(args[0]);
+                PyroObjStr* string = PYRO_AS_STR(args[0]);
                 double value;
                 if (pyro_parse_string_as_float(string->bytes, string->length, &value)) {
                     return pyro_f64(value);
@@ -497,7 +497,7 @@ static PyroValue fn_i64(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
         case PYRO_VALUE_OBJ: {
             if (PYRO_IS_STR(args[0])) {
-                PyroObjStr* string = AS_STR(args[0]);
+                PyroObjStr* string = PYRO_AS_STR(args[0]);
                 int64_t value;
                 if (pyro_parse_string_as_int(string->bytes, string->length, &value)) {
                     return pyro_i64(value);
@@ -536,7 +536,7 @@ static PyroValue fn_has_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "$has_method(): invalid argument [method_name], expected a string");
         return pyro_null();
     }
-    return pyro_bool(pyro_has_method(vm, args[0], AS_STR(args[1])));
+    return pyro_bool(pyro_has_method(vm, args[0], PYRO_AS_STR(args[1])));
 }
 
 
@@ -548,7 +548,7 @@ static PyroValue fn_has_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroValue field_name = args[1];
 
     if (PYRO_IS_INSTANCE(args[0])) {
-        PyroObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
+        PyroObjMap* field_index_map = PYRO_AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         PyroValue field_index;
         if (PyroObjMap_get(field_index_map, field_name, &field_index, vm)) {
             return pyro_bool(true);
@@ -569,12 +569,12 @@ static PyroValue fn_is_instance_of(PyroVM* vm, size_t arg_count, PyroValue* args
         pyro_panic(vm, "$is_instance_of(): invalid argument [class], expected a class object");
         return pyro_null();
     }
-    PyroObjClass* target_class = AS_CLASS(args[1]);
+    PyroObjClass* target_class = PYRO_AS_CLASS(args[1]);
 
     if (!PYRO_IS_INSTANCE(args[0])) {
         return pyro_bool(false);
     }
-    PyroObjClass* instance_class = AS_INSTANCE(args[0])->obj.class;
+    PyroObjClass* instance_class = PYRO_AS_INSTANCE(args[0])->obj.class;
 
     while (instance_class != NULL) {
         if (instance_class == target_class) {
@@ -597,7 +597,7 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
         return pyro_null();
     }
 
-    if (!pyro_exec_shell_cmd(vm, AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
+    if (!pyro_exec_shell_cmd(vm, PYRO_AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
         return pyro_null();
     }
 
@@ -615,7 +615,7 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
             return pyro_null();
         }
-        if (!pyro_exec_shell_cmd(vm, AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
+        if (!pyro_exec_shell_cmd(vm, PYRO_AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
             return pyro_null();
         }
     } else if (arg_count == 2) {
@@ -626,9 +626,9 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (PYRO_IS_STR(args[1])) {
             if (!pyro_exec_shell_cmd(
                 vm,
-                AS_STR(args[0])->bytes,
-                (uint8_t*)AS_STR(args[1])->bytes,
-                AS_STR(args[1])->length,
+                PYRO_AS_STR(args[0])->bytes,
+                (uint8_t*)PYRO_AS_STR(args[1])->bytes,
+                PYRO_AS_STR(args[1])->length,
                 &out_str,
                 &err_str,
                 &exit_code
@@ -638,9 +638,9 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
         } else if (PYRO_IS_BUF(args[1])) {
             if (!pyro_exec_shell_cmd(
                 vm,
-                AS_STR(args[0])->bytes,
-                AS_BUF(args[1])->bytes,
-                AS_BUF(args[1])->count,
+                PYRO_AS_STR(args[0])->bytes,
+                PYRO_AS_BUF(args[1])->bytes,
+                PYRO_AS_BUF(args[1])->count,
                 &out_str,
                 &err_str,
                 &exit_code
@@ -685,9 +685,9 @@ static PyroValue fn_read_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    FILE* stream = fopen(AS_STR(args[0])->bytes, "r");
+    FILE* stream = fopen(PYRO_AS_STR(args[0])->bytes, "r");
     if (!stream) {
-        pyro_panic(vm, "$read_file(): unable to open file '%s'", AS_STR(args[0])->bytes);
+        pyro_panic(vm, "$read_file(): unable to open file '%s'", PYRO_AS_STR(args[0])->bytes);
         return pyro_null();
     }
 
@@ -754,14 +754,14 @@ static PyroValue fn_write_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    FILE* stream = fopen(AS_STR(args[0])->bytes, "w");
+    FILE* stream = fopen(PYRO_AS_STR(args[0])->bytes, "w");
     if (!stream) {
-        pyro_panic(vm, "$write_file(): unable to open file '%s'", AS_STR(args[0])->bytes);
+        pyro_panic(vm, "$write_file(): unable to open file '%s'", PYRO_AS_STR(args[0])->bytes);
         return pyro_null();
     }
 
     if (PYRO_IS_BUF(args[1])) {
-        PyroObjBuf* buf = AS_BUF(args[1]);
+        PyroObjBuf* buf = PYRO_AS_BUF(args[1]);
         size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, stream);
         if (n < buf->count) {
             pyro_panic(vm, "$write_file(): I/O write error");
@@ -772,7 +772,7 @@ static PyroValue fn_write_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_i64((int64_t)n);
     }
 
-    PyroObjStr* string = AS_STR(args[1]);
+    PyroObjStr* string = PYRO_AS_STR(args[1]);
     size_t n = fwrite(string->bytes, sizeof(char), string->length, stream);
     if (n < string->length) {
         pyro_panic(vm, "$write_file(): I/O write error");
@@ -867,7 +867,7 @@ static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroObjStr* name = AS_STR(args[0]);
+        PyroObjStr* name = PYRO_AS_STR(args[0]);
         char* value = getenv(name->bytes);
         if (!value) {
             return pyro_obj(vm->error);
@@ -889,7 +889,7 @@ static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroObjStr* name = AS_STR(args[0]);
+        PyroObjStr* name = PYRO_AS_STR(args[0]);
         PyroObjStr* value = pyro_stringify_value(vm, args[1]);
         if (vm->halt_flag) {
             return pyro_null();
@@ -930,7 +930,7 @@ static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "$exec(): invalid argument [code], expected a string");
         return pyro_null();
     }
-    PyroObjStr* code = AS_STR(args[0]);
+    PyroObjStr* code = PYRO_AS_STR(args[0]);
 
     PyroObjModule* module = PyroObjModule_new(vm);
     if (!module) {
@@ -960,7 +960,7 @@ static PyroValue fn_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
         case PYRO_VALUE_CHAR:
             return pyro_obj(vm->str_char);
         case PYRO_VALUE_OBJ: {
-            switch (AS_OBJ(args[0])->type) {
+            switch (PYRO_AS_OBJ(args[0])->type) {
                 case PYRO_OBJECT_BOUND_METHOD:
                     return pyro_obj(vm->str_method);
                 case PYRO_OBJECT_BUF:
@@ -968,7 +968,7 @@ static PyroValue fn_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 case PYRO_OBJECT_CLASS:
                     return pyro_obj(vm->str_class);
                 case PYRO_OBJECT_INSTANCE: {
-                    PyroObjStr* class_name = AS_OBJ(args[0])->class->name;
+                    PyroObjStr* class_name = PYRO_AS_OBJ(args[0])->class->name;
                     if (class_name) {
                         return pyro_obj(class_name);
                     }
@@ -1017,14 +1017,14 @@ static PyroValue fn_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "$method(): invalid argument [method_name], expected a string");
         return pyro_null();
     }
-    PyroObjStr* method_name = AS_STR(args[1]);
+    PyroObjStr* method_name = PYRO_AS_STR(args[1]);
 
     PyroValue method = pyro_get_method(vm, obj, method_name);
     if (PYRO_IS_NULL(method)) {
         return pyro_obj(vm->error);
     }
 
-    PyroObjBoundMethod* bound_method = PyroObjBoundMethod_new(vm, obj, AS_OBJ(method));
+    PyroObjBoundMethod* bound_method = PyroObjBoundMethod_new(vm, obj, PYRO_AS_OBJ(method));
     if (!bound_method) {
         pyro_panic(vm, "$method(): out of memory");
         return pyro_null();
@@ -1063,10 +1063,10 @@ static PyroValue fn_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroValue field_name = args[1];
 
     if (PYRO_IS_INSTANCE(args[0])) {
-        PyroObjMap* field_index_map = AS_INSTANCE(args[0])->obj.class->all_field_indexes;
+        PyroObjMap* field_index_map = PYRO_AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         PyroValue field_index;
         if (PyroObjMap_get(field_index_map, field_name, &field_index, vm)) {
-            return AS_INSTANCE(args[0])->fields[field_index.as.i64];
+            return PYRO_AS_INSTANCE(args[0])->fields[field_index.as.i64];
         }
     }
 
@@ -1118,7 +1118,7 @@ static PyroValue fn_stdout(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "$stdout(): invalid argument, expected a file");
             return pyro_null();
         }
-        vm->stdout_file = AS_FILE(args[0]);
+        vm->stdout_file = PYRO_AS_FILE(args[0]);
         return pyro_null();
     }
 
@@ -1140,7 +1140,7 @@ static PyroValue fn_stderr(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "$stderr(): invalid argument, expected a file");
             return pyro_null();
         }
-        vm->stderr_file = AS_FILE(args[0]);
+        vm->stderr_file = PYRO_AS_FILE(args[0]);
         return pyro_null();
     }
 
@@ -1162,7 +1162,7 @@ static PyroValue fn_stdin(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "$stdin(): invalid argument, expected a file");
             return pyro_null();
         }
-        vm->stdin_file = AS_FILE(args[0]);
+        vm->stdin_file = PYRO_AS_FILE(args[0]);
         return pyro_null();
     }
 

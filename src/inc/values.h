@@ -131,24 +131,24 @@ static inline PyroValue pyro_null() {
 #define PYRO_IS_ERR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_ERR)
 
 // Macros for extracting object pointers from PyroValue instances.
-#define AS_OBJ(value)               ((value).as.obj)
-#define AS_STR(value)               ((PyroObjStr*)AS_OBJ(value))
-#define AS_PYRO_FN(value)           ((PyroObjPyroFn*)AS_OBJ(value))
-#define AS_CLOSURE(value)           ((PyroObjClosure*)AS_OBJ(value))
-#define AS_CLASS(value)             ((PyroObjClass*)AS_OBJ(value))
-#define AS_INSTANCE(value)          ((PyroObjInstance*)AS_OBJ(value))
-#define AS_BOUND_METHOD(value)      ((PyroObjBoundMethod*)AS_OBJ(value))
-#define AS_MAP(value)               ((PyroObjMap*)AS_OBJ(value))
-#define AS_TUP(value)               ((PyroObjTup*)AS_OBJ(value))
-#define AS_NATIVE_FN(value)         ((PyroObjNativeFn*)AS_OBJ(value))
-#define AS_MOD(value)               ((PyroObjModule*)AS_OBJ(value))
-#define AS_VEC(value)               ((PyroObjVec*)AS_OBJ(value))
-#define AS_BUF(value)               ((PyroObjBuf*)AS_OBJ(value))
-#define AS_FILE(value)              ((PyroObjFile*)AS_OBJ(value))
-#define AS_ITER(value)              ((PyroObjIter*)AS_OBJ(value))
-#define AS_QUEUE(value)             ((PyroObjQueue*)AS_OBJ(value))
-#define AS_RESOURCE_POINTER(value)  ((PyroObjResourcePointer*)AS_OBJ(value))
-#define AS_ERR(value)               ((PyroObjErr*)AS_OBJ(value))
+#define PYRO_AS_OBJ(value)               ((value).as.obj)
+#define PYRO_AS_STR(value)               ((PyroObjStr*)PYRO_AS_OBJ(value))
+#define PYRO_AS_PYRO_FN(value)           ((PyroObjPyroFn*)PYRO_AS_OBJ(value))
+#define PYRO_AS_CLOSURE(value)           ((PyroObjClosure*)PYRO_AS_OBJ(value))
+#define PYRO_AS_CLASS(value)             ((PyroObjClass*)PYRO_AS_OBJ(value))
+#define PYRO_AS_INSTANCE(value)          ((PyroObjInstance*)PYRO_AS_OBJ(value))
+#define PYRO_AS_BOUND_METHOD(value)      ((PyroObjBoundMethod*)PYRO_AS_OBJ(value))
+#define PYRO_AS_MAP(value)               ((PyroObjMap*)PYRO_AS_OBJ(value))
+#define PYRO_AS_TUP(value)               ((PyroObjTup*)PYRO_AS_OBJ(value))
+#define PYRO_AS_NATIVE_FN(value)         ((PyroObjNativeFn*)PYRO_AS_OBJ(value))
+#define PYRO_AS_MOD(value)               ((PyroObjModule*)PYRO_AS_OBJ(value))
+#define PYRO_AS_VEC(value)               ((PyroObjVec*)PYRO_AS_OBJ(value))
+#define PYRO_AS_BUF(value)               ((PyroObjBuf*)PYRO_AS_OBJ(value))
+#define PYRO_AS_FILE(value)              ((PyroObjFile*)PYRO_AS_OBJ(value))
+#define PYRO_AS_ITER(value)              ((PyroObjIter*)PYRO_AS_OBJ(value))
+#define PYRO_AS_QUEUE(value)             ((PyroObjQueue*)PYRO_AS_OBJ(value))
+#define PYRO_AS_RESOURCE_POINTER(value)  ((PyroObjResourcePointer*)PYRO_AS_OBJ(value))
+#define PYRO_AS_ERR(value)               ((PyroObjErr*)PYRO_AS_OBJ(value))
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
 PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value);
@@ -176,7 +176,7 @@ bool pyro_is_truthy(PyroValue value);
 
 // True if [value] is an object of the specified type.
 static inline bool pyro_is_obj_of_type(PyroValue value, PyroObjectType type) {
-    return PYRO_IS_OBJ(value) && AS_OBJ(value)->type == type;
+    return PYRO_IS_OBJ(value) && PYRO_AS_OBJ(value)->type == type;
 }
 
 #endif
