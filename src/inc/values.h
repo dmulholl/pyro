@@ -13,12 +13,12 @@ typedef enum {
     VAL_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
     VAL_OBJ,        // A pointer to a heap-allocated object.
     VAL_TOMBSTONE,  // Used internally by the map implementation.
-} ValueType;
+} PyroValueType;
 
 // Tagged union for Pyro's fundamental [Value] type. Every value in Pyro is a [Value], e.g.
 // variables, vector entries, map keys, map values, etc.
 typedef struct {
-    ValueType type;
+    PyroValueType type;
     union {
         bool boolean;
         double f64;
