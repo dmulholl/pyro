@@ -10,10 +10,10 @@
 
 
 static PyroValue mod_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = AS_MOD(args[-1]);
 
     PyroValue member_index;
-    if (!ObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
+    if (!PyroObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
         return pyro_obj(vm->error);
     }
 
@@ -22,10 +22,10 @@ static PyroValue mod_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue mod_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = AS_MOD(args[-1]);
 
     PyroValue member_index;
-    if (ObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
+    if (PyroObjMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
         return pyro_bool(true);
     }
 
@@ -34,9 +34,9 @@ static PyroValue mod_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = AS_MOD(args[-1]);
 
-    ObjMap* new_map = ObjMap_new(vm);
+    PyroObjMap* new_map = PyroObjMap_new(vm);
     if (!new_map) {
         pyro_panic(vm, "globals(): out of memory");
         return pyro_null();
@@ -50,7 +50,7 @@ static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
         PyroValue member_name = entry->key;
         PyroValue member_index = entry->value;
         PyroValue member_value = mod->members->values[member_index.as.i64];
-        if (ObjMap_set(new_map, member_name, member_value, vm) == 0) {
+        if (PyroObjMap_set(new_map, member_name, member_value, vm) == 0) {
             pyro_panic(vm, "globals(): out of memory");
             return pyro_null();
         }
@@ -61,9 +61,9 @@ static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue mod_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjModule* mod = AS_MOD(args[-1]);
+    PyroObjModule* mod = AS_MOD(args[-1]);
 
-    ObjIter* iter = ObjIter_new((PyroObj*)mod->pub_member_indexes, PYRO_ITER_MAP_KEYS, vm);
+    PyroObjIter* iter = PyroObjIter_new((PyroObj*)mod->pub_member_indexes, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_null();

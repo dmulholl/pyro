@@ -6,8 +6,8 @@
 #include "../../../lib/sqlite/sqlite3.h"
 
 
-void pyro_load_std_mod_sqlite(PyroVM* vm, ObjModule* module) {
-    ObjStr* version = ObjStr_new(SQLITE_VERSION, vm);
+void pyro_load_std_mod_sqlite(PyroVM* vm, PyroObjModule* module) {
+    PyroObjStr* version = PyroObjStr_new(SQLITE_VERSION, vm);
     if (!version) {
         return;
     }

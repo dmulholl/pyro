@@ -81,7 +81,7 @@ typedef struct LoopCompiler {
 
 typedef struct FnCompiler {
     struct FnCompiler* enclosing;
-    ObjPyroFn* fn;
+    PyroObjPyroFn* fn;
     FnType type;
     Local locals[256];      // 256 as we use a single byte argument to index locals
     int local_count;        // how many local variables are in scope
@@ -199,7 +199,7 @@ static bool lexemes_are_equal(Token* a, Token* b) {
 // Appends a single byte to the current function's bytecode. All writes to the bytecode go through
 // this function.
 static void emit_byte(Parser* parser, uint8_t byte) {
-    if (!ObjPyroFn_write(parser->fn_compiler->fn, byte, parser->previous_token.line, parser->vm)) {
+    if (!PyroObjPyroFn_write(parser->fn_compiler->fn, byte, parser->previous_token.line, parser->vm)) {
         parser->had_memory_error = true;
     }
 }
@@ -241,7 +241,7 @@ static void emit_naked_return(Parser* parser) {
 
 // Adds the value to the current function's constant table and returns its index.
 static uint16_t add_value_to_constant_table(Parser* parser, PyroValue value) {
-    int64_t index = ObjPyroFn_add_constant(parser->fn_compiler->fn, value, parser->vm);
+    int64_t index = PyroObjPyroFn_add_constant(parser->fn_compiler->fn, value, parser->vm);
     if (index < 0) {
         parser->had_memory_error = true;
         return 0;
@@ -256,7 +256,7 @@ static uint16_t add_value_to_constant_table(Parser* parser, PyroValue value) {
 // Takes an identifier token and adds its lexeme to the constant table as a string.
 // Returns its index in the constant table.
 static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name) {
-    ObjStr* string = ObjStr_copy_raw(name->start, name->length, parser->vm);
+    PyroObjStr* string = PyroObjStr_copy_raw(name->start, name->length, parser->vm);
     if (!string) {
         parser->had_memory_error = true;
         return 0;
@@ -388,21 +388,21 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType typ
 
     // Assign to NULL first as the function initializer can trigger the GC.
     fn_compiler->fn = NULL;
-    fn_compiler->fn = ObjPyroFn_new(parser->vm);
+    fn_compiler->fn = PyroObjPyroFn_new(parser->vm);
     if (!fn_compiler->fn) {
         parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
         return false;
     }
 
-    fn_compiler->fn->name = ObjStr_copy_raw(name.start, name.length, parser->vm);
+    fn_compiler->fn->name = PyroObjStr_copy_raw(name.start, name.length, parser->vm);
     if (!fn_compiler->fn->name) {
         parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
         return false;
     }
 
-    fn_compiler->fn->source_id = ObjStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
+    fn_compiler->fn->source_id = PyroObjStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
     if (!fn_compiler->fn->source_id) {
         parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
@@ -426,9 +426,9 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType typ
 }
 
 
-static ObjPyroFn* end_fn_compiler(Parser* parser) {
+static PyroObjPyroFn* end_fn_compiler(Parser* parser) {
     emit_naked_return(parser);
-    ObjPyroFn* fn = parser->fn_compiler->fn;
+    PyroObjPyroFn* fn = parser->fn_compiler->fn;
 
     #ifdef PYRO_DEBUG_DUMP_BYTECODE
         if (!parser->had_syntax_error) {
@@ -1056,14 +1056,14 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
     else if (match(parser, TOKEN_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
-        ObjStr* string = ObjStr_copy_raw(start, length, parser->vm);
+        PyroObjStr* string = PyroObjStr_copy_raw(start, length, parser->vm);
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
-        ObjStr* string = ObjStr_copy_esc(start, length, parser->vm);
+        PyroObjStr* string = PyroObjStr_copy_esc(start, length, parser->vm);
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
@@ -1134,14 +1134,14 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     else if (match(parser, TOKEN_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
-        ObjStr* string = ObjStr_copy_raw(start, length, parser->vm);
+        PyroObjStr* string = PyroObjStr_copy_raw(start, length, parser->vm);
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
-        ObjStr* string = ObjStr_copy_esc(start, length, parser->vm);
+        PyroObjStr* string = PyroObjStr_copy_esc(start, length, parser->vm);
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
@@ -1347,7 +1347,7 @@ static void parse_try_expr(Parser* parser) {
     parse_unary_expr(parser, false, true);
     emit_byte(parser, PYRO_OPCODE_RETURN);
 
-    ObjPyroFn* fn = end_fn_compiler(parser);
+    PyroObjPyroFn* fn = end_fn_compiler(parser);
     emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE, add_value_to_constant_table(parser, pyro_obj(fn)));
 
     for (size_t i = 0; i < fn->upvalue_count; i++) {
@@ -1962,13 +1962,13 @@ static void parse_for_in_stmt(Parser* parser) {
     // If there were any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjPyroFn* fn = parser->fn_compiler->fn;
+        PyroObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
                 fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
-                ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
+                ip += 1 + PyroObjPyroFn_opcode_argcount(fn, ip);
             }
         }
     }
@@ -2041,13 +2041,13 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     // If there were any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjPyroFn* fn = parser->fn_compiler->fn;
+        PyroObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
                 fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
-                ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
+                ip += 1 + PyroObjPyroFn_opcode_argcount(fn, ip);
             }
         }
     }
@@ -2078,13 +2078,13 @@ static void parse_infinite_loop_stmt(Parser* parser) {
     // If we found any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjPyroFn* fn = parser->fn_compiler->fn;
+        PyroObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
                 fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
-                ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
+                ip += 1 + PyroObjPyroFn_opcode_argcount(fn, ip);
             }
         }
     }
@@ -2127,13 +2127,13 @@ static void parse_while_stmt(Parser* parser) {
     // If we found any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
         size_t ip = loop.start_index;
-        ObjPyroFn* fn = parser->fn_compiler->fn;
+        PyroObjPyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
                 fn->code[ip] = PYRO_OPCODE_JUMP;
                 patch_jump(parser, ip + 1);
             } else {
-                ip += 1 + ObjPyroFn_opcode_argcount(fn, ip);
+                ip += 1 + PyroObjPyroFn_opcode_argcount(fn, ip);
             }
         }
     }
@@ -2169,7 +2169,7 @@ static void parse_with_stmt(Parser* parser) {
 
 
 // This helper parses a function definition, i.e. the bit after the name that looks like (...){...}.
-// It emits the bytecode to create an ObjClosure and leave it on top of the stack.
+// It emits the bytecode to create an PyroObjClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
     FnCompiler fn_compiler;
     if (!init_fn_compiler(parser, &fn_compiler, type, name)) {
@@ -2236,12 +2236,12 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     parse_block(parser);
 
     // Create the function object.
-    ObjPyroFn* fn = end_fn_compiler(parser);
+    PyroObjPyroFn* fn = end_fn_compiler(parser);
 
     // Add the function to the current function's constant table.
     uint16_t index = add_value_to_constant_table(parser, pyro_obj(fn));
 
-    // Emit the bytecode to load the function onto the stack as an ObjClosure.
+    // Emit the bytecode to load the function onto the stack as an PyroObjClosure.
     if (default_value_count > 0) {
         emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS, index);
         emit_byte(parser, default_value_count);
@@ -2542,7 +2542,7 @@ static void parse_statement(Parser* parser) {
 /* -------------------- */
 
 
-static ObjPyroFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+static PyroObjPyroFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     Parser parser;
     parser.fn_compiler = NULL;
     parser.class_compiler = NULL;
@@ -2586,7 +2586,7 @@ static ObjPyroFn* compile(PyroVM* vm, const char* src_code, size_t src_len, cons
         }
     }
 
-    ObjPyroFn* fn = end_fn_compiler(&parser);
+    PyroObjPyroFn* fn = end_fn_compiler(&parser);
 
     // If the code consisted of a single expression statement, we might want to print the value of
     // the expression if we're running inside a REPL.
@@ -2601,9 +2601,9 @@ static ObjPyroFn* compile(PyroVM* vm, const char* src_code, size_t src_len, cons
 
 // This wrappper disables the garbage collector during compilation.
 // TODO: this wrapper isn't needed any more.
-ObjPyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+PyroObjPyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     vm->gc_disallows++;
-    ObjPyroFn* fn = compile(vm, src_code, src_len, src_id);
+    PyroObjPyroFn* fn = compile(vm, src_code, src_len, src_id);
     vm->gc_disallows--;
     return fn;
 }

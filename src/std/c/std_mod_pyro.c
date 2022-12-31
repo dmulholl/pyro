@@ -23,29 +23,29 @@ static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
         switch (AS_OBJ(args[0])->type) {
             case PYRO_OBJECT_VEC:
             case PYRO_OBJECT_VEC_AS_STACK: {
-                ObjVec* vec = AS_VEC(args[0]);
-                return pyro_i64(sizeof(ObjVec) + sizeof(PyroValue) * vec->capacity);
+                PyroObjVec* vec = AS_VEC(args[0]);
+                return pyro_i64(sizeof(PyroObjVec) + sizeof(PyroValue) * vec->capacity);
             }
             case PYRO_OBJECT_TUP: {
-                ObjTup* tup = AS_TUP(args[0]);
-                return pyro_i64(sizeof(ObjTup) + sizeof(PyroValue) * tup->count);
+                PyroObjTup* tup = AS_TUP(args[0]);
+                return pyro_i64(sizeof(PyroObjTup) + sizeof(PyroValue) * tup->count);
             }
             case PYRO_OBJECT_MAP:
             case PYRO_OBJECT_MAP_AS_SET: {
-                ObjMap* map = AS_MAP(args[0]);
+                PyroObjMap* map = AS_MAP(args[0]);
                 return pyro_i64(
-                    sizeof(ObjMap) +
+                    sizeof(PyroObjMap) +
                     sizeof(PyroMapEntry) * map->entry_array_capacity +
                     sizeof(int64_t) * map->index_array_capacity
                 );
             }
             case PYRO_OBJECT_QUEUE: {
-                ObjQueue* queue = AS_QUEUE(args[0]);
-                return pyro_i64(sizeof(ObjQueue) + sizeof(QueueItem) * queue->count);
+                PyroObjQueue* queue = AS_QUEUE(args[0]);
+                return pyro_i64(sizeof(PyroObjQueue) + sizeof(QueueItem) * queue->count);
             }
             case PYRO_OBJECT_BUF: {
-                ObjBuf* buf = AS_BUF(args[0]);
-                return pyro_i64(sizeof(ObjBuf) + sizeof(uint8_t) * buf->capacity);
+                PyroObjBuf* buf = AS_BUF(args[0]);
+                return pyro_i64(sizeof(PyroObjBuf) + sizeof(uint8_t) * buf->capacity);
             }
             default: {
                 return pyro_i64(-1);
@@ -63,7 +63,7 @@ static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     PyroObj* object = AS_OBJ(args[0]);
-    ObjStr* string = pyro_sprintf_to_obj(vm, "0x%" PRIXPTR, (uintptr_t)object);
+    PyroObjStr* string = pyro_sprintf_to_obj(vm, "0x%" PRIXPTR, (uintptr_t)object);
     if (!string) {
         return pyro_null();
     }
@@ -72,21 +72,21 @@ static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module) {
-    ObjTup* version_tuple = ObjTup_new(5, vm);
+void pyro_load_std_mod_pyro(PyroVM* vm, PyroObjModule* module) {
+    PyroObjTup* version_tuple = PyroObjTup_new(5, vm);
     if (!version_tuple) {
         return;
     }
     version_tuple->values[0] = pyro_i64(PYRO_VERSION_MAJOR);
     version_tuple->values[1] = pyro_i64(PYRO_VERSION_MINOR);
     version_tuple->values[2] = pyro_i64(PYRO_VERSION_PATCH);
-    version_tuple->values[3] = pyro_obj(ObjStr_new(PYRO_VERSION_LABEL, vm));
-    version_tuple->values[4] = pyro_obj(ObjStr_new(PYRO_VERSION_BUILD, vm));
+    version_tuple->values[3] = pyro_obj(PyroObjStr_new(PYRO_VERSION_LABEL, vm));
+    version_tuple->values[4] = pyro_obj(PyroObjStr_new(PYRO_VERSION_BUILD, vm));
     pyro_define_pub_member(vm, module, "version_tuple", pyro_obj(version_tuple));
 
     char* version_c_string = pyro_get_version_string();
     if (version_c_string) {
-        ObjStr* version_pyro_string = ObjStr_new(version_c_string, vm);
+        PyroObjStr* version_pyro_string = PyroObjStr_new(version_c_string, vm);
         if (!version_pyro_string) {
             return;
         }

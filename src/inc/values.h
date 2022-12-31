@@ -60,7 +60,7 @@ typedef enum {
 // Not every object has an associated class so [.class] can be NULL.
 struct PyroObj {
     PyroObj* next;
-    ObjClass* class;
+    PyroObjClass* class;
     PyroObjectType type;
     bool is_marked;
 };
@@ -132,34 +132,34 @@ static inline PyroValue pyro_null() {
 
 // Macros for extracting object pointers from PyroValue instances.
 #define AS_OBJ(value)               ((value).as.obj)
-#define AS_STR(value)               ((ObjStr*)AS_OBJ(value))
-#define AS_PYRO_FN(value)           ((ObjPyroFn*)AS_OBJ(value))
-#define AS_CLOSURE(value)           ((ObjClosure*)AS_OBJ(value))
-#define AS_CLASS(value)             ((ObjClass*)AS_OBJ(value))
-#define AS_INSTANCE(value)          ((ObjInstance*)AS_OBJ(value))
-#define AS_BOUND_METHOD(value)      ((ObjBoundMethod*)AS_OBJ(value))
-#define AS_MAP(value)               ((ObjMap*)AS_OBJ(value))
-#define AS_TUP(value)               ((ObjTup*)AS_OBJ(value))
-#define AS_NATIVE_FN(value)         ((ObjNativeFn*)AS_OBJ(value))
-#define AS_MOD(value)               ((ObjModule*)AS_OBJ(value))
-#define AS_VEC(value)               ((ObjVec*)AS_OBJ(value))
-#define AS_BUF(value)               ((ObjBuf*)AS_OBJ(value))
-#define AS_FILE(value)              ((ObjFile*)AS_OBJ(value))
-#define AS_ITER(value)              ((ObjIter*)AS_OBJ(value))
-#define AS_QUEUE(value)             ((ObjQueue*)AS_OBJ(value))
-#define AS_RESOURCE_POINTER(value)  ((ObjResourcePointer*)AS_OBJ(value))
-#define AS_ERR(value)               ((ObjErr*)AS_OBJ(value))
+#define AS_STR(value)               ((PyroObjStr*)AS_OBJ(value))
+#define AS_PYRO_FN(value)           ((PyroObjPyroFn*)AS_OBJ(value))
+#define AS_CLOSURE(value)           ((PyroObjClosure*)AS_OBJ(value))
+#define AS_CLASS(value)             ((PyroObjClass*)AS_OBJ(value))
+#define AS_INSTANCE(value)          ((PyroObjInstance*)AS_OBJ(value))
+#define AS_BOUND_METHOD(value)      ((PyroObjBoundMethod*)AS_OBJ(value))
+#define AS_MAP(value)               ((PyroObjMap*)AS_OBJ(value))
+#define AS_TUP(value)               ((PyroObjTup*)AS_OBJ(value))
+#define AS_NATIVE_FN(value)         ((PyroObjNativeFn*)AS_OBJ(value))
+#define AS_MOD(value)               ((PyroObjModule*)AS_OBJ(value))
+#define AS_VEC(value)               ((PyroObjVec*)AS_OBJ(value))
+#define AS_BUF(value)               ((PyroObjBuf*)AS_OBJ(value))
+#define AS_FILE(value)              ((PyroObjFile*)AS_OBJ(value))
+#define AS_ITER(value)              ((PyroObjIter*)AS_OBJ(value))
+#define AS_QUEUE(value)             ((PyroObjQueue*)AS_OBJ(value))
+#define AS_RESOURCE_POINTER(value)  ((PyroObjResourcePointer*)AS_OBJ(value))
+#define AS_ERR(value)               ((PyroObjErr*)AS_OBJ(value))
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
-ObjClass* pyro_get_class(PyroVM* vm, PyroValue value);
+PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value);
 
 // Returns the named method if it exists, otherwise NULL.
-PyroValue pyro_get_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
-PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
+PyroValue pyro_get_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
+PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
 
 // Returns true if the named method exists.
-bool pyro_has_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
-bool pyro_has_pub_method(PyroVM* vm, PyroValue value, ObjStr* method_name);
+bool pyro_has_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
+bool pyro_has_pub_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
 
 // Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
 // Pyro code.

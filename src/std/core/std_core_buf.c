@@ -8,7 +8,7 @@
 
 static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
-        ObjBuf* buf = ObjBuf_new(vm);
+        PyroObjBuf* buf = PyroObjBuf_new(vm);
         if (!buf) {
             pyro_panic(vm, "$buf(): out of memory");
             return pyro_null();
@@ -18,7 +18,7 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     else if (arg_count == 1) {
         if (IS_STR(args[0])) {
-            ObjBuf* buf = ObjBuf_new_from_string(AS_STR(args[0]), vm);
+            PyroObjBuf* buf = PyroObjBuf_new_from_string(AS_STR(args[0]), vm);
             if (!buf) {
                 pyro_panic(vm, "$buf(): out of memory");
                 return pyro_null();
@@ -41,7 +41,7 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 pyro_panic(vm, "$buf(): invalid argument [fill_value], argument is out of range");
                 return pyro_null();
             }
-            ObjBuf* buf = ObjBuf_new_with_cap_and_fill((size_t)args[0].as.i64, fill_value, vm);
+            PyroObjBuf* buf = PyroObjBuf_new_with_cap_and_fill((size_t)args[0].as.i64, fill_value, vm);
             if (!buf) {
                 pyro_panic(vm, "$buf(): out of memory");
                 return pyro_null();
@@ -64,13 +64,13 @@ static PyroValue fn_is_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue buf_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
     return pyro_i64(buf->count);
 }
 
 
 static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
     uint8_t byte_value;
 
     if (IS_I64(args[0])) {
@@ -92,7 +92,7 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    if (!ObjBuf_append_byte(buf, byte_value, vm)) {
+    if (!PyroObjBuf_append_byte(buf, byte_value, vm)) {
         pyro_panic(vm, "write_byte(): out of memory");
     }
 
@@ -101,7 +101,7 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 /* static PyroValue buf_write_be_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
-/*     ObjBuf* buf = AS_BUF(args[-1]); */
+/*     PyroObjBuf* buf = AS_BUF(args[-1]); */
 
 /*     if (!IS_I64(args[0])) { */
 /*         pyro_panic(vm, "$write_be_u16(): invalid argument"); */
@@ -117,11 +117,11 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 /*     uint8_t byte1 = (value >> 8) & 0xFF;    // MSB */
 /*     uint8_t byte2 = value & 0xFF;           // LSB */
 
-/*     if (!ObjBuf_append_byte(buf, byte1, vm)) { */
+/*     if (!PyroObjBuf_append_byte(buf, byte1, vm)) { */
 /*         return pyro_bool(false); */
 /*     } */
 
-/*     if (!ObjBuf_append_byte(buf, byte2, vm)) { */
+/*     if (!PyroObjBuf_append_byte(buf, byte2, vm)) { */
 /*         buf->count--; */
 /*         return pyro_bool(false); */
 /*     } */
@@ -131,7 +131,7 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 /* static PyroValue buf_write_le_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
-/*     ObjBuf* buf = AS_BUF(args[-1]); */
+/*     PyroObjBuf* buf = AS_BUF(args[-1]); */
 
 /*     if (!IS_I64(args[0])) { */
 /*         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :write_be_u16()."); */
@@ -147,11 +147,11 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 /*     uint8_t byte1 = (value >> 8) & 0xFF;    // MSB */
 /*     uint8_t byte2 = value & 0xFF;           // LSB */
 
-/*     if (!ObjBuf_append_byte(buf, byte2, vm)) { */
+/*     if (!PyroObjBuf_append_byte(buf, byte2, vm)) { */
 /*         return pyro_bool(false); */
 /*     } */
 
-/*     if (!ObjBuf_append_byte(buf, byte1, vm)) { */
+/*     if (!PyroObjBuf_append_byte(buf, byte1, vm)) { */
 /*         buf->count--; */
 /*         return pyro_bool(false); */
 /*     } */
@@ -161,8 +161,8 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue buf_to_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
-    ObjStr* string = ObjBuf_to_str(buf, vm);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjStr* string = PyroObjBuf_to_str(buf, vm);
     if (!string) {
         pyro_panic(vm, "to_str(): out of memory");
         return pyro_null();
@@ -172,7 +172,7 @@ static PyroValue buf_to_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
     if (IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < buf->count) {
@@ -187,7 +187,7 @@ static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "set(): invalid argument [index], expected an integer");
@@ -226,7 +226,7 @@ static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
 
     if (arg_count == 0) {
         pyro_panic(vm, "write(): expected 1 or more arguments, found 0");
@@ -235,19 +235,19 @@ static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     if (arg_count == 1) {
         if (IS_BUF(args[0])) {
-            ObjBuf* src_buf = AS_BUF(args[0]);
-            if (!ObjBuf_append_bytes(buf, src_buf->count, src_buf->bytes, vm)) {
+            PyroObjBuf* src_buf = AS_BUF(args[0]);
+            if (!PyroObjBuf_append_bytes(buf, src_buf->count, src_buf->bytes, vm)) {
                 pyro_panic(vm, "write(): out of memory");
                 return pyro_null();
             }
             return pyro_i64((int64_t)src_buf->count);
         } else {
-            ObjStr* string = pyro_stringify_value(vm, args[0]);
+            PyroObjStr* string = pyro_stringify_value(vm, args[0]);
             if (vm->halt_flag) {
                 return pyro_null();
             }
             pyro_push(vm, pyro_obj(string));
-            if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+            if (!PyroObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
                 pyro_panic(vm, "write(): out of memory");
                 return pyro_null();
             }
@@ -265,10 +265,10 @@ static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (vm->halt_flag) {
         return pyro_null();
     }
-    ObjStr* string = AS_STR(formatted);
+    PyroObjStr* string = AS_STR(formatted);
 
     pyro_push(vm, formatted);
-    if (!ObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+    if (!PyroObjBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
         pyro_panic(vm, "write(): out of memory");
     }
     pyro_pop(vm);
@@ -278,14 +278,14 @@ static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue buf_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
     return pyro_bool(buf->count == 0);
 }
 
 
 static PyroValue buf_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjBuf* buf = AS_BUF(args[-1]);
-    ObjBuf_clear(buf, vm);
+    PyroObjBuf* buf = AS_BUF(args[-1]);
+    PyroObjBuf_clear(buf, vm);
     return pyro_null();
 }
 

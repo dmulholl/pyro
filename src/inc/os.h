@@ -47,7 +47,7 @@ char* pyro_getcwd(void);
 
 // Reads directory entries into a vector. Skips '.' and '..'. Panics if there was a memory-
 // allocation or I/O read error.
-ObjVec* pyro_listdir(PyroVM* vm, const char* path);
+PyroObjVec* pyro_listdir(PyroVM* vm, const char* path);
 
 // Wrapper for POSIX realpath(). Returns NULL on failure, a freshly allocated string on success.
 // If the return value is non-NULL, the caller should free it using free().
@@ -77,13 +77,13 @@ bool pyro_exec_shell_cmd(
     const char* cmd,
     const uint8_t* input,
     size_t input_length,
-    ObjStr** output,
-    ObjStr** error,
+    PyroObjStr** output,
+    PyroObjStr** error,
     int* exit_code
 );
 
 // Attempts to load a dynamic library as a Pyro module. Can panic or set the exit flag.
 // Caller should check [vm->halt_flag] immediately on return.
-void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name, ObjModule* module);
+void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name, PyroObjModule* module);
 
 #endif

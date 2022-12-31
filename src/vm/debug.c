@@ -12,7 +12,7 @@ static size_t atomic_instruction(PyroVM* vm, const char* name, size_t ip) {
 
 
 // An instruction with a two-byte argument which indexes into the constants table.
-static size_t constant_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, size_t ip) {
+static size_t constant_instruction(PyroVM* vm, const char* name, PyroObjPyroFn* fn, size_t ip) {
     uint16_t index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
     pyro_stdout_write_f(vm, "%-32s %4d    ", name, index);
     pyro_dump_value(vm, fn->constants[index]);
@@ -22,7 +22,7 @@ static size_t constant_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, 
 
 
 // An instruction with a one-byte argument representing a uint8_t.
-static size_t u8_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, size_t ip) {
+static size_t u8_instruction(PyroVM* vm, const char* name, PyroObjPyroFn* fn, size_t ip) {
     uint8_t arg = fn->code[ip + 1];
     pyro_stdout_write_f(vm, "%-32s %4d\n", name, arg);
     return ip + 2;
@@ -30,7 +30,7 @@ static size_t u8_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, size_t
 
 
 // An instruction with two one-byte arguments each representing a uint8_t.
-static size_t u8_x2_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, size_t ip) {
+static size_t u8_x2_instruction(PyroVM* vm, const char* name, PyroObjPyroFn* fn, size_t ip) {
     uint8_t arg1 = fn->code[ip + 1];
     uint8_t arg2 = fn->code[ip + 2];
     pyro_stdout_write_f(vm, "%-32s %4d %4d\n", name, arg1, arg2);
@@ -39,7 +39,7 @@ static size_t u8_x2_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, siz
 
 
 // An instruction with a two-byte argument representing a uint16_t in big-endian format.
-static size_t u16_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, size_t ip) {
+static size_t u16_instruction(PyroVM* vm, const char* name, PyroObjPyroFn* fn, size_t ip) {
     uint16_t arg = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
     pyro_stdout_write_f(vm, "%-32s %4d\n", name, arg);
     return ip + 3;
@@ -47,7 +47,7 @@ static size_t u16_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, size_
 
 
 // A jump instruction with a 2-byte argument.
-static size_t jump_instruction(PyroVM* vm, const char* name, int sign, ObjPyroFn* fn, size_t ip) {
+static size_t jump_instruction(PyroVM* vm, const char* name, int sign, PyroObjPyroFn* fn, size_t ip) {
     uint16_t offset = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
     pyro_stdout_write_f(vm, "%-32s %4d -> %d\n", name, ip, ip + 3 + sign * offset);
     return ip + 3;
@@ -55,7 +55,7 @@ static size_t jump_instruction(PyroVM* vm, const char* name, int sign, ObjPyroFn
 
 
 // A method-invoking instruction.
-static size_t invoke_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, size_t ip) {
+static size_t invoke_instruction(PyroVM* vm, const char* name, PyroObjPyroFn* fn, size_t ip) {
     uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
     uint8_t arg_count = fn->code[ip + 3];
     pyro_stdout_write_f(vm, "%-32s %4d    ", name, const_index);
@@ -66,12 +66,12 @@ static size_t invoke_instruction(PyroVM* vm, const char* name, ObjPyroFn* fn, si
 
 
 // Returns the index of the next instruction, if there is one.
-size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
+size_t pyro_disassemble_instruction(PyroVM* vm, PyroObjPyroFn* fn, size_t ip) {
     pyro_stdout_write_f(vm, "%04d ", ip);
-    if (ip > 0 && ObjPyroFn_get_line_number(fn, ip) == ObjPyroFn_get_line_number(fn, ip - 1)) {
+    if (ip > 0 && PyroObjPyroFn_get_line_number(fn, ip) == PyroObjPyroFn_get_line_number(fn, ip - 1)) {
         pyro_stdout_write_f(vm, "   |    ");
     } else {
-        pyro_stdout_write_f(vm, "%4zu    ", ObjPyroFn_get_line_number(fn, ip));
+        pyro_stdout_write_f(vm, "%4zu    ", PyroObjPyroFn_get_line_number(fn, ip));
     }
 
     uint8_t instruction = fn->code[ip];
@@ -107,7 +107,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
             pyro_dump_value(vm, fn->constants[const_index]);
             pyro_stdout_write_f(vm, "\n");
 
-            ObjPyroFn* wrapped_fn = AS_PYRO_FN(fn->constants[const_index]);
+            PyroObjPyroFn* wrapped_fn = AS_PYRO_FN(fn->constants[const_index]);
             for (size_t i = 0; i < wrapped_fn->upvalue_count; i++) {
                 int is_local = wrapped_fn->code[ip++];
                 int index = wrapped_fn->code[ip++];
@@ -124,7 +124,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
             pyro_dump_value(vm, fn->constants[const_index]);
             pyro_stdout_write_f(vm, "\n");
 
-            ObjPyroFn* wrapped_fn = AS_PYRO_FN(fn->constants[const_index]);
+            PyroObjPyroFn* wrapped_fn = AS_PYRO_FN(fn->constants[const_index]);
             for (size_t i = 0; i < wrapped_fn->upvalue_count; i++) {
                 int is_local = wrapped_fn->code[ip++];
                 int index = wrapped_fn->code[ip++];
@@ -415,7 +415,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, ObjPyroFn* fn, size_t ip) {
 }
 
 
-void pyro_disassemble_function(PyroVM* vm, ObjPyroFn* fn) {
+void pyro_disassemble_function(PyroVM* vm, PyroObjPyroFn* fn) {
     pyro_stdout_write_f(vm, "\x1B[1;32mconstants\x1B[0m %s\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
 
     for (size_t i = 0; i < fn->constants_count; i++) {

@@ -56,7 +56,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
             if (IS_CLOSURE(member_value)) {
-                ObjStr* name = AS_STR(member_name);
+                PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                     if (name->length > max_name_length) {
                         max_name_length = name->length;
@@ -76,7 +76,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
             if (IS_CLOSURE(member_value)) {
-                ObjStr* name = AS_STR(member_name);
+                PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                     double start_time = clock();
 

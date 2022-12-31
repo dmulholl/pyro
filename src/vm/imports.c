@@ -7,7 +7,7 @@
 #include "../inc/std_lib.h"
 
 
-static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) {
+static void try_load_stdlib_module(PyroVM* vm, PyroObjStr* name, PyroObjModule* module) {
     if (strcmp(name->bytes, "math") == 0) {
         pyro_load_std_mod_math(vm, module);
         if (vm->memory_allocation_failed) {
@@ -98,19 +98,19 @@ static void try_load_stdlib_module(PyroVM* vm, ObjStr* name, ObjModule* module) 
 }
 
 
-void try_load_compiled_module(PyroVM* vm, const char* path, PyroValue name, ObjModule* module) {
+void try_load_compiled_module(PyroVM* vm, const char* path, PyroValue name, PyroObjModule* module) {
     pyro_load_dyn_lib_as_mod(vm, path, AS_STR(name)->bytes, module);
 }
 
 
-void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, ObjModule* module) {
+void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroObjModule* module) {
     if (arg_count == 2 && strcmp(AS_STR(args[0])->bytes, "$std") == 0) {
         try_load_stdlib_module(vm, AS_STR(args[1]), module);
         return;
     }
 
     for (size_t i = 0; i < vm->import_roots->count; i++) {
-        ObjStr* base = AS_STR(vm->import_roots->values[i]);
+        PyroObjStr* base = AS_STR(vm->import_roots->values[i]);
         if (base->length == 0) {
             pyro_panic(vm, "invalid import root (empty string)");
             return;
@@ -153,7 +153,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, ObjModul
 
         // Given 'import foo::bar::baz', assemble path = BASE/foo/bar/baz/
         for (uint8_t j = 0; j < arg_count; j++) {
-            ObjStr* name = AS_STR(args[j]);
+            PyroObjStr* name = AS_STR(args[j]);
             memcpy(path + path_count, name->bytes, name->length);
             path_count += name->length;
             path[path_count++] = '/';

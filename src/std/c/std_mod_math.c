@@ -241,7 +241,7 @@ static PyroValue fn_floor(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_math(PyroVM* vm, ObjModule* module) {
+void pyro_load_std_mod_math(PyroVM* vm, PyroObjModule* module) {
     pyro_define_pub_member(vm, module, "PI", pyro_f64(PYRO_PI));
     pyro_define_pub_member(vm, module, "E", pyro_f64(PYRO_E));
     pyro_define_pub_member(vm, module, "NAN", pyro_f64(NAN));

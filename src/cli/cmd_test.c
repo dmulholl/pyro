@@ -52,7 +52,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
             if (IS_CLOSURE(member_value)) {
-                ObjStr* name = AS_STR(member_name);
+                PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                     pyro_reset_vm(vm);
                     pyro_push(vm, member_value);
@@ -146,7 +146,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
             if (IS_CLOSURE(member_value)) {
-                ObjStr* name = AS_STR(member_name);
+                PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                     pyro_reset_vm(vm);
                     pyro_push(vm, member_value);

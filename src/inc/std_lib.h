@@ -25,13 +25,13 @@ void pyro_load_std_core_char(PyroVM* vm);
 PyroValue pyro_fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args);
 
 // Standard library modules.
-void pyro_load_std_mod_math(PyroVM* vm, ObjModule* module);
-void pyro_load_std_mod_mt64(PyroVM* vm, ObjModule* module);
-void pyro_load_std_mod_prng(PyroVM* vm, ObjModule* module);
-void pyro_load_std_mod_pyro(PyroVM* vm, ObjModule* module);
-void pyro_load_std_mod_path(PyroVM* vm, ObjModule* module);
-void pyro_load_std_mod_sqlite(PyroVM* vm, ObjModule* module);
-void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module);
+void pyro_load_std_mod_math(PyroVM* vm, PyroObjModule* module);
+void pyro_load_std_mod_mt64(PyroVM* vm, PyroObjModule* module);
+void pyro_load_std_mod_prng(PyroVM* vm, PyroObjModule* module);
+void pyro_load_std_mod_pyro(PyroVM* vm, PyroObjModule* module);
+void pyro_load_std_mod_path(PyroVM* vm, PyroObjModule* module);
+void pyro_load_std_mod_sqlite(PyroVM* vm, PyroObjModule* module);
+void pyro_load_std_mod_log(PyroVM* vm, PyroObjModule* module);
 
 // Embedded source code for modules written in Pyro.
 extern unsigned char std_mod_args_pyro[];

@@ -19,7 +19,7 @@ static void write_msg(
     const char* fn_name,
     const char* timestamp_format,
     const char* level,
-    ObjFile* file,
+    PyroObjFile* file,
     size_t arg_count,
     PyroValue* args
 ) {
@@ -28,7 +28,7 @@ static void write_msg(
         return;
     }
 
-    ObjStr* message;
+    PyroObjStr* message;
     if (arg_count == 1) {
         message = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
@@ -111,11 +111,11 @@ static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
-    ObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
+    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_DEBUG >= log_level) {
         write_msg(vm, "debug", timestamp_format->bytes, "DEBUG", file, arg_count, args);
@@ -126,11 +126,11 @@ static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
-    ObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
+    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_INFO >= log_level) {
         write_msg(vm, "info", timestamp_format->bytes, "INFO", file, arg_count, args);
@@ -141,11 +141,11 @@ static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
-    ObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
+    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_WARN >= log_level) {
         write_msg(vm, "warn", timestamp_format->bytes, "WARN", file, arg_count, args);
@@ -156,11 +156,11 @@ static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
-    ObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
+    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_ERROR >= log_level) {
         write_msg(vm, "error", timestamp_format->bytes, "ERROR", file, arg_count, args);
@@ -171,11 +171,11 @@ static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     int64_t log_level = instance->fields[0].as.i64;
-    ObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    ObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
+    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_FATAL >= log_level) {
         write_msg(vm, "fatal", timestamp_format->bytes, "FATAL", file, arg_count, args);
@@ -189,7 +189,7 @@ static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue logger_level(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     if (!IS_I64(args[0])) {
         pyro_panic(vm, "level(): invalid argument [level], expected an integer");
@@ -202,7 +202,7 @@ static PyroValue logger_level(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue logger_timestamp(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     if (!IS_STR(args[0])) {
         pyro_panic(vm, "timestamp(): invalid argument [format_string], expected a string");
@@ -215,7 +215,7 @@ static PyroValue logger_timestamp(PyroVM* vm, size_t arg_count, PyroValue* args)
 
 
 static PyroValue logger_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjInstance* instance = AS_INSTANCE(args[-1]);
+    PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
     if (!IS_FILE(args[0])) {
         pyro_panic(vm, "file(): invalid argument [file], expected a file");
@@ -227,7 +227,7 @@ static PyroValue logger_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
+void pyro_load_std_mod_log(PyroVM* vm, PyroObjModule* module) {
     pyro_define_pub_member_fn(vm, module, "debug", fn_debug, -1);
     pyro_define_pub_member_fn(vm, module, "info", fn_info, -1);
     pyro_define_pub_member_fn(vm, module, "warn", fn_warn, -1);
@@ -240,15 +240,15 @@ void pyro_load_std_mod_log(PyroVM* vm, ObjModule* module) {
     pyro_define_pub_member(vm, module, "ERROR", pyro_i64(PYRO_STD_LOG_LEVEL_ERROR));
     pyro_define_pub_member(vm, module, "FATAL", pyro_i64(PYRO_STD_LOG_LEVEL_FATAL));
 
-    ObjClass* logger_class = ObjClass_new(vm);
+    PyroObjClass* logger_class = PyroObjClass_new(vm);
     if (!logger_class) {
         return;
     }
-    logger_class->name = ObjStr_new("Logger", vm);
+    logger_class->name = PyroObjStr_new("Logger", vm);
     pyro_define_pub_member(vm, module, "Logger", pyro_obj(logger_class));
 
     pyro_define_pub_field(vm, logger_class, "level", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_pub_field(vm, logger_class, "timestamp", pyro_obj(ObjStr_new("%Y-%m-%d %H:%M:%S", vm)));
+    pyro_define_pub_field(vm, logger_class, "timestamp", pyro_obj(PyroObjStr_new("%Y-%m-%d %H:%M:%S", vm)));
     pyro_define_pub_field(vm, logger_class, "file", pyro_null());
 
     pyro_define_pub_method(vm, logger_class, "level", logger_level, 1);

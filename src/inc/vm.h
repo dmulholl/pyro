@@ -13,7 +13,7 @@
 // - [ip] is the instruction pointer -- it points to the next bytecode instruction to be executed.
 // - [fp] is the frame pointer -- it points to slot zero on the value stack for the function call.
 typedef struct {
-    ObjClosure* closure;
+    PyroObjClosure* closure;
     uint8_t* ip;
     PyroValue* fp;
     size_t with_stack_count_on_entry;
@@ -21,19 +21,19 @@ typedef struct {
 
 struct PyroVM {
     // Class objects for builtin types.
-    ObjClass* class_str;
-    ObjClass* class_map;
-    ObjClass* class_tup;
-    ObjClass* class_vec;
-    ObjClass* class_buf;
-    ObjClass* class_file;
-    ObjClass* class_iter;
-    ObjClass* class_stack;
-    ObjClass* class_set;
-    ObjClass* class_queue;
-    ObjClass* class_err;
-    ObjClass* class_module;
-    ObjClass* class_char;
+    PyroObjClass* class_str;
+    PyroObjClass* class_map;
+    PyroObjClass* class_tup;
+    PyroObjClass* class_vec;
+    PyroObjClass* class_buf;
+    PyroObjClass* class_file;
+    PyroObjClass* class_iter;
+    PyroObjClass* class_stack;
+    PyroObjClass* class_set;
+    PyroObjClass* class_queue;
+    PyroObjClass* class_err;
+    PyroObjClass* class_module;
+    PyroObjClass* class_char;
 
     // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;
@@ -48,7 +48,7 @@ struct PyroVM {
     size_t panic_count;
 
     // Metadata for the [err] returned by a try-expression.
-    ObjStr* panic_source_id;
+    PyroObjStr* panic_source_id;
     size_t panic_line_number;
 
     // Exit code, defaults to zero. If the $exit() function is called, this will be set to the
@@ -58,17 +58,17 @@ struct PyroVM {
     // Counts the number of nested 'try' expressions.
     size_t try_depth;
 
-    // The VM's standard output stream. This defaults to an ObjFile wrapping stdout.
+    // The VM's standard output stream. This defaults to an PyroObjFile wrapping stdout.
     // This is the stream that the echo statement and $print() functions write to.
-    ObjFile* stdout_file;
+    PyroObjFile* stdout_file;
 
-    // The VM's standard error stream. This defaults to an ObjFile wrapping stderr.
+    // The VM's standard error stream. This defaults to an PyroObjFile wrapping stderr.
     // - This is the stream that panic messages are written to.
     // - It's also the stream that the $eprint() functions write to.
-    ObjFile* stderr_file;
+    PyroObjFile* stderr_file;
 
-    // The VM's standard input stream. This defaults to an ObjFile wrapping stdin.
-    ObjFile* stdin_file;
+    // The VM's standard input stream. This defaults to an PyroObjFile wrapping stdin.
+    PyroObjFile* stdin_file;
 
     // The call stack.
     CallFrame* frames;
@@ -85,88 +85,88 @@ struct PyroVM {
     MT64 mt64;
 
     // Stores global functions and variables, available in all modules.
-    ObjMap* superglobals;
+    PyroObjMap* superglobals;
 
     // The tree of imported modules.
-    ObjMap* modules;
+    PyroObjMap* modules;
 
     // The main module is the context in which script files and the REPL execute.
-    ObjModule* main_module;
+    PyroObjModule* main_module;
 
     // Root directories to check when attempting to import modules.
-    ObjVec* import_roots;
+    PyroObjVec* import_roots;
 
     // Buffer for recording panic messages inside 'try' expressions.
-    ObjBuf* panic_buffer;
+    PyroObjBuf* panic_buffer;
 
     // Interned string pool.
-    ObjMap* strings;
+    PyroObjMap* strings;
 
     // Linked list of open upvalues pointing to variables still on the stack.
-    ObjUpvalue* open_upvalues;
+    PyroObjUpvalue* open_upvalues;
 
     // Linked list of all heap-allocated objects.
     PyroObj* objects;
 
     // Canned objects.
-    ObjStr* empty_string;
-    ObjErr* error;
+    PyroObjStr* empty_string;
+    PyroObjErr* error;
 
     // String constants.
-    ObjStr* str_dollar_init;
-    ObjStr* str_dollar_str;
-    ObjStr* str_true;
-    ObjStr* str_false;
-    ObjStr* str_null;
-    ObjStr* str_dollar_fmt;
-    ObjStr* str_dollar_iter;
-    ObjStr* str_dollar_next;
-    ObjStr* str_dollar_get_index;
-    ObjStr* str_dollar_set_index;
-    ObjStr* str_dollar_debug;
-    ObjStr* str_op_binary_equals_equals;
-    ObjStr* str_op_binary_less;
-    ObjStr* str_op_binary_less_equals;
-    ObjStr* str_op_binary_greater;
-    ObjStr* str_op_binary_greater_equals;
-    ObjStr* str_op_binary_plus;
-    ObjStr* str_op_binary_minus;
-    ObjStr* str_op_binary_bar;
-    ObjStr* str_op_binary_amp;
-    ObjStr* str_op_binary_star;
-    ObjStr* str_op_binary_slash;
-    ObjStr* str_op_binary_caret;
-    ObjStr* str_op_binary_percent;
-    ObjStr* str_op_binary_star_star;
-    ObjStr* str_op_binary_slash_slash;
-    ObjStr* str_dollar_hash;
-    ObjStr* str_dollar_call;
-    ObjStr* str_op_unary_plus;
-    ObjStr* str_op_unary_minus;
-    ObjStr* str_dollar_contains;
-    ObjStr* str_bool;
-    ObjStr* str_i64;
-    ObjStr* str_f64;
-    ObjStr* str_char;
-    ObjStr* str_method;
-    ObjStr* str_buf;
-    ObjStr* str_class;
-    ObjStr* str_fn;
-    ObjStr* str_instance;
-    ObjStr* str_file;
-    ObjStr* str_iter;
-    ObjStr* str_map;
-    ObjStr* str_set;
-    ObjStr* str_vec;
-    ObjStr* str_stack;
-    ObjStr* str_queue;
-    ObjStr* str_str;
-    ObjStr* str_module;
-    ObjStr* str_tup;
-    ObjStr* str_err;
-    ObjStr* str_dollar_end_with;
-    ObjStr* str_source;
-    ObjStr* str_line;
+    PyroObjStr* str_dollar_init;
+    PyroObjStr* str_dollar_str;
+    PyroObjStr* str_true;
+    PyroObjStr* str_false;
+    PyroObjStr* str_null;
+    PyroObjStr* str_dollar_fmt;
+    PyroObjStr* str_dollar_iter;
+    PyroObjStr* str_dollar_next;
+    PyroObjStr* str_dollar_get_index;
+    PyroObjStr* str_dollar_set_index;
+    PyroObjStr* str_dollar_debug;
+    PyroObjStr* str_op_binary_equals_equals;
+    PyroObjStr* str_op_binary_less;
+    PyroObjStr* str_op_binary_less_equals;
+    PyroObjStr* str_op_binary_greater;
+    PyroObjStr* str_op_binary_greater_equals;
+    PyroObjStr* str_op_binary_plus;
+    PyroObjStr* str_op_binary_minus;
+    PyroObjStr* str_op_binary_bar;
+    PyroObjStr* str_op_binary_amp;
+    PyroObjStr* str_op_binary_star;
+    PyroObjStr* str_op_binary_slash;
+    PyroObjStr* str_op_binary_caret;
+    PyroObjStr* str_op_binary_percent;
+    PyroObjStr* str_op_binary_star_star;
+    PyroObjStr* str_op_binary_slash_slash;
+    PyroObjStr* str_dollar_hash;
+    PyroObjStr* str_dollar_call;
+    PyroObjStr* str_op_unary_plus;
+    PyroObjStr* str_op_unary_minus;
+    PyroObjStr* str_dollar_contains;
+    PyroObjStr* str_bool;
+    PyroObjStr* str_i64;
+    PyroObjStr* str_f64;
+    PyroObjStr* str_char;
+    PyroObjStr* str_method;
+    PyroObjStr* str_buf;
+    PyroObjStr* str_class;
+    PyroObjStr* str_fn;
+    PyroObjStr* str_instance;
+    PyroObjStr* str_file;
+    PyroObjStr* str_iter;
+    PyroObjStr* str_map;
+    PyroObjStr* str_set;
+    PyroObjStr* str_vec;
+    PyroObjStr* str_stack;
+    PyroObjStr* str_queue;
+    PyroObjStr* str_str;
+    PyroObjStr* str_module;
+    PyroObjStr* str_tup;
+    PyroObjStr* str_err;
+    PyroObjStr* str_dollar_end_with;
+    PyroObjStr* str_source;
+    PyroObjStr* str_line;
 
     // The grey stack used by the garbage collector.
     PyroObj** grey_stack;

@@ -26,11 +26,11 @@ void pyro_exec_code_as_module(
     const char* code,
     size_t code_length,
     const char* source_id,
-    ObjModule* module
+    PyroObjModule* module
 );
 
 // Executes a file in the context of the specified module.
-void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, ObjModule* module);
+void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, PyroObjModule* module);
 
 // Runs the $main() function if it is defined in the main module.
 void pyro_run_main_func(PyroVM* vm);
@@ -41,8 +41,8 @@ void pyro_try_compile_file(PyroVM* vm, const char* path);
 // Calls a value as a method on a receiver, where [method] is a value returned by pyro_get_method()
 // containing one of:
 //
-// - ObjNativeFn
-// - ObjClosure
+// - PyroObjNativeFn
+// - PyroObjClosure
 //
 // Returns the value returned by the method.
 //
@@ -64,11 +64,11 @@ PyroValue pyro_call_method(PyroVM* vm, PyroValue method, uint8_t arg_count);
 
 // Calls a value as a function, where the value contains one of:
 //
-// - ObjNativeFn
-// - ObjClosure
-// - ObjBoundMethod
-// - ObjClass
-// - ObjInstance
+// - PyroObjNativeFn
+// - PyroObjClosure
+// - PyroObjBoundMethod
+// - PyroObjClass
+// - PyroObjInstance
 //
 // Returns the value returned by the function.
 //

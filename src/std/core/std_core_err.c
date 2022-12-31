@@ -11,7 +11,7 @@
 
 
 static PyroValue fn_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjErr* err = ObjErr_new(vm);
+    PyroObjErr* err = PyroObjErr_new(vm);
     if (err == NULL) {
         pyro_panic(vm, "$err(): out of memory");
         return pyro_null();
@@ -20,7 +20,7 @@ static PyroValue fn_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         return pyro_obj(err);
     } else if (arg_count == 1) {
-        ObjStr* string = pyro_stringify_value(vm, args[0]);
+        PyroObjStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -47,8 +47,8 @@ static PyroValue fn_is_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue err_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjErr* err = AS_ERR(args[-1]);
-    if (ObjMap_set(err->details, args[0], args[1], vm) == 0) {
+    PyroObjErr* err = AS_ERR(args[-1]);
+    if (PyroObjMap_set(err->details, args[0], args[1], vm) == 0) {
         pyro_panic(vm, "err:set(): out of memory");
     }
     return pyro_null();
@@ -56,9 +56,9 @@ static PyroValue err_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue err_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjErr* err = AS_ERR(args[-1]);
+    PyroObjErr* err = AS_ERR(args[-1]);
     PyroValue value;
-    if (ObjMap_get(err->details, args[0], &value, vm)) {
+    if (PyroObjMap_get(err->details, args[0], &value, vm)) {
         return value;
     }
     return pyro_obj(vm->error);
@@ -66,13 +66,13 @@ static PyroValue err_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue err_message(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjErr* err = AS_ERR(args[-1]);
+    PyroObjErr* err = AS_ERR(args[-1]);
     return pyro_obj(err->message);
 }
 
 
 static PyroValue err_details(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    ObjErr* err = AS_ERR(args[-1]);
+    PyroObjErr* err = AS_ERR(args[-1]);
     return pyro_obj(err->details);
 }
 
