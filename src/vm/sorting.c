@@ -354,7 +354,7 @@ void pyro_mergesort_with_callback(PyroVM* vm, Value* values, size_t count, Value
         return;
     }
 
-    Value* aux_array = ALLOCATE_ARRAY(vm, Value, count);
+    Value* aux_array = PYRO_ALLOCATE_ARRAY(vm, Value, count);
     if (!aux_array) {
         pyro_panic(vm, "out of memory");
         return;
@@ -370,7 +370,7 @@ void pyro_mergesort(PyroVM* vm, Value* values, size_t count) {
         return;
     }
 
-    Value* aux_array = ALLOCATE_ARRAY(vm, Value, count);
+    Value* aux_array = PYRO_ALLOCATE_ARRAY(vm, Value, count);
     if (!aux_array) {
         pyro_panic(vm, "out of memory");
         return;

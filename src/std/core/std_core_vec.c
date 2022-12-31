@@ -518,7 +518,7 @@ static Value vec_slice(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     pyro_push(vm, pyro_obj(new_vec));
-    Value* new_array = ALLOCATE_ARRAY(vm, Value, length);
+    Value* new_array = PYRO_ALLOCATE_ARRAY(vm, Value, length);
     if (!new_array) {
         pyro_panic(vm, "slice(): out of memory");
         return pyro_null();

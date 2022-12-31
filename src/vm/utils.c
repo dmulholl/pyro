@@ -26,7 +26,7 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
         return true;
     }
 
-    char* file_data = ALLOCATE_ARRAY(vm, char, file_size);
+    char* file_data = PYRO_ALLOCATE_ARRAY(vm, char, file_size);
     if (file_data == NULL) {
         pyro_panic(vm, "insufficient memory to read file '%s'", path);
         return false;

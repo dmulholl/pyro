@@ -138,7 +138,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         path_capacity += 1;
 
         // Allocate the path buffer.
-        char* path = ALLOCATE_ARRAY(vm, char, path_capacity);
+        char* path = PYRO_ALLOCATE_ARRAY(vm, char, path_capacity);
         if (!path) {
             pyro_panic(vm, "out of memory");
             return;

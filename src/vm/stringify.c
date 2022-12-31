@@ -660,7 +660,7 @@ char* pyro_sprintf(PyroVM* vm, const char* format_string, ...) {
         return NULL;
     }
 
-    char* array = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* array = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!array) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -691,7 +691,7 @@ ObjStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...) {
         return NULL;
     }
 
-    char* array = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* array = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!array) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -950,7 +950,7 @@ static ObjStr* format_str_obj(PyroVM* vm, ObjStr* string, const char* format_str
         return string;
     }
 
-    char* array = ALLOCATE_ARRAY(vm, char, target_length + 1);
+    char* array = PYRO_ALLOCATE_ARRAY(vm, char, target_length + 1);
     if (!array) {
         pyro_panic(vm, "out of memory");
         return NULL;

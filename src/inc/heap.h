@@ -10,15 +10,15 @@
     ((capacity) < 8 ? 8 : (capacity) * 2)
 
 // Heap-allocate memory for a new array of [type] with space for [capacity] elements.
-#define ALLOCATE_ARRAY(vm, type, capacity) \
+#define PYRO_ALLOCATE_ARRAY(vm, type, capacity) \
     (type*)pyro_realloc(vm, NULL, 0, sizeof(type) * (capacity))
 
-// Resize an existing heap-allocated array. Equivalent to ALLOCATE_ARRAY() if [pointer = NULL]
+// Resize an existing heap-allocated array. Equivalent to PYRO_ALLOCATE_ARRAY() if [pointer = NULL]
 // and [old_capacity = 0].
 #define PYRO_REALLOCATE_ARRAY(vm, type, pointer, old_capacity, new_capacity) \
     (type*)pyro_realloc(vm, pointer, sizeof(type) * (old_capacity), sizeof(type) * (new_capacity))
 
-// Free an array allocated using ALLOCATE_ARRAY() or PYRO_REALLOCATE_ARRAY().
+// Free an array allocated using PYRO_ALLOCATE_ARRAY() or PYRO_REALLOCATE_ARRAY().
 #define PYRO_FREE_ARRAY(vm, type, pointer, capacity) \
     pyro_realloc(vm, pointer, sizeof(type) * (capacity), 0)
 

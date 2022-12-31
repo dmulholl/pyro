@@ -104,7 +104,7 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* fn, ObjModule* module) {
     }
 
     if (fn->upvalue_count > 0) {
-        ObjUpvalue** array = ALLOCATE_ARRAY(vm, ObjUpvalue*, fn->upvalue_count);
+        ObjUpvalue** array = PYRO_ALLOCATE_ARRAY(vm, ObjUpvalue*, fn->upvalue_count);
         if (!array) {
             return NULL;
         }
@@ -291,7 +291,7 @@ static ObjStr* find_string(ObjMap* map, const char* string, size_t length, uint6
 static bool resize_index_array(ObjMap* map, PyroVM* vm) {
     size_t new_index_array_capacity = PYRO_GROW_CAPACITY(map->index_array_capacity);
 
-    int64_t* new_index_array = ALLOCATE_ARRAY(vm, int64_t, new_index_array_capacity);
+    int64_t* new_index_array = PYRO_ALLOCATE_ARRAY(vm, int64_t, new_index_array_capacity);
     if (!new_index_array) {
         return false;
     }
@@ -413,13 +413,13 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
         return NULL;
     }
 
-    MapEntry* entry_array = ALLOCATE_ARRAY(vm, MapEntry, src->entry_array_capacity);
+    MapEntry* entry_array = PYRO_ALLOCATE_ARRAY(vm, MapEntry, src->entry_array_capacity);
     if (!entry_array) {
         return NULL;
     }
     memcpy(entry_array, src->entry_array, sizeof(MapEntry) * src->entry_array_count);
 
-    int64_t* index_array = ALLOCATE_ARRAY(vm, int64_t, src->index_array_capacity);
+    int64_t* index_array = PYRO_ALLOCATE_ARRAY(vm, int64_t, src->index_array_capacity);
     if (!index_array) {
         PYRO_FREE_ARRAY(vm, MapEntry, entry_array, src->entry_array_capacity);
         return NULL;
@@ -638,7 +638,7 @@ ObjStr* ObjStr_empty(PyroVM* vm) {
         return vm->empty_string;
     }
 
-    char* bytes = ALLOCATE_ARRAY(vm, char, 1);
+    char* bytes = PYRO_ALLOCATE_ARRAY(vm, char, 1);
     if (!bytes) {
         return NULL;
     }
@@ -665,7 +665,7 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
         return ObjStr_empty(vm);
     }
 
-    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
@@ -701,7 +701,7 @@ ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
         return interned;
     }
 
-    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
@@ -725,7 +725,7 @@ ObjStr* ObjStr_concat_n_copies(ObjStr* str, size_t n, PyroVM* vm) {
     }
 
     size_t total_length = str->length * n;
-    char* dst = ALLOCATE_ARRAY(vm, char, total_length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, total_length + 1);
     if (!dst) {
         return NULL;
     }
@@ -754,7 +754,7 @@ ObjStr* ObjStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroVM*
     size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
 
     size_t total_length = buf_count * n;
-    char* dst = ALLOCATE_ARRAY(vm, char, total_length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, total_length + 1);
     if (!dst) {
         return NULL;
     }
@@ -779,7 +779,7 @@ ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
     if (src2->length == 0) return src1;
 
     size_t length = src1->length + src2->length;
-    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
@@ -803,7 +803,7 @@ ObjStr* ObjStr_prepend_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM
     size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
 
     size_t length = buf_count + str->length;
-    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
@@ -827,7 +827,7 @@ ObjStr* ObjStr_append_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM*
     size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
 
     size_t length = str->length + buf_count;
-    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
@@ -854,7 +854,7 @@ ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm)
     size_t buf2_count = pyro_write_utf8_codepoint(cp2, buf2);
 
     size_t length = buf1_count + buf2_count;
-    char* dst = ALLOCATE_ARRAY(vm, char, length + 1);
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
@@ -1310,7 +1310,7 @@ ObjVec* ObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
         return vec;
     }
 
-    Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
+    Value* value_array = PYRO_ALLOCATE_ARRAY(vm, Value, capacity);
     if (!value_array) {
         return NULL;
     }
@@ -1332,7 +1332,7 @@ ObjVec* ObjVec_new_with_cap_and_fill(size_t capacity, Value fill_value, PyroVM* 
         return vec;
     }
 
-    Value* value_array = ALLOCATE_ARRAY(vm, Value, capacity);
+    Value* value_array = PYRO_ALLOCATE_ARRAY(vm, Value, capacity);
     if (!value_array) {
         return NULL;
     }
@@ -1508,7 +1508,7 @@ ObjBuf* ObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
         return buf;
     }
 
-    uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
+    uint8_t* new_array = PYRO_ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
     if (!new_array) {
         return NULL;
     }
@@ -1530,7 +1530,7 @@ ObjBuf* ObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM
         return buf;
     }
 
-    uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
+    uint8_t* new_array = PYRO_ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
     if (!new_array) {
         return NULL;
     }
@@ -1555,7 +1555,7 @@ ObjBuf* ObjBuf_new_from_string(ObjStr* string, PyroVM* vm) {
 
     size_t capacity = string->length + 1;
 
-    uint8_t* new_array = ALLOCATE_ARRAY(vm, uint8_t, capacity);
+    uint8_t* new_array = PYRO_ALLOCATE_ARRAY(vm, uint8_t, capacity);
     if (!new_array) {
         return NULL;
     }

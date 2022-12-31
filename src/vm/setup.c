@@ -130,7 +130,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->panic_line_number = 0;
 
     // Initialize the [frames] stack.
-    vm->frames = ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
+    vm->frames = PYRO_ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
     if (!vm->frames) {
         pyro_free_vm(vm);
         return NULL;

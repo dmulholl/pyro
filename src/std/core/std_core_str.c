@@ -292,7 +292,7 @@ static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_obj(str);
     }
 
-    char* array = ALLOCATE_ARRAY(vm, char, str->length + 1);
+    char* array = PYRO_ALLOCATE_ARRAY(vm, char, str->length + 1);
     if (!array) {
         pyro_panic(vm, "to_ascii_upper(): out of memory");
         return pyro_null();
@@ -322,7 +322,7 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_obj(str);
     }
 
-    char* array = ALLOCATE_ARRAY(vm, char, str->length + 1);
+    char* array = PYRO_ALLOCATE_ARRAY(vm, char, str->length + 1);
     if (!array) {
         pyro_panic(vm, "to_ascii_lower(): out of memory");
         return pyro_null();
