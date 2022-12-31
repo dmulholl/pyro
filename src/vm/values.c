@@ -10,11 +10,11 @@
 
 bool pyro_is_truthy(Value value) {
     switch (value.type) {
-        case VAL_BOOL:
+        case PYRO_VALUE_BOOL:
             return value.as.boolean;
-        case VAL_NULL:
+        case PYRO_VALUE_NULL:
             return false;
-        case VAL_OBJ:
+        case PYRO_VALUE_OBJ:
             return value.as.obj->type != OBJ_ERR;
         default:
             return true;
@@ -24,9 +24,9 @@ bool pyro_is_truthy(Value value) {
 
 ObjClass* pyro_get_class(PyroVM* vm, Value value) {
     switch (value.type) {
-        case VAL_CHAR:
+        case PYRO_VALUE_CHAR:
             return vm->class_char;
-        case VAL_OBJ:
+        case PYRO_VALUE_OBJ:
             return AS_OBJ(value)->class;
         default:
             return NULL;
@@ -99,19 +99,19 @@ bool pyro_has_pub_method(PyroVM* vm, Value receiver, ObjStr* method_name) {
 bool pyro_compare_eq_strict(Value a, Value b) {
     if (a.type == b.type) {
         switch (a.type) {
-            case VAL_BOOL:
+            case PYRO_VALUE_BOOL:
                 return a.as.boolean == b.as.boolean;
-            case VAL_I64:
+            case PYRO_VALUE_I64:
                 return a.as.i64 == b.as.i64;
-            case VAL_F64:
+            case PYRO_VALUE_F64:
                 return a.as.f64 == b.as.f64;
-            case VAL_CHAR:
+            case PYRO_VALUE_CHAR:
                 return a.as.u32 == b.as.u32;
-            case VAL_OBJ:
+            case PYRO_VALUE_OBJ:
                 return a.as.obj == b.as.obj;
-            case VAL_NULL:
+            case PYRO_VALUE_NULL:
                 return true;
-            case VAL_TOMBSTONE:
+            case PYRO_VALUE_TOMBSTONE:
                 return true;
         }
     }
@@ -122,20 +122,20 @@ bool pyro_compare_eq_strict(Value a, Value b) {
 // All builtin types follow the rule that values that compare as equal should also hash as equal.
 uint64_t pyro_hash_value(PyroVM* vm, Value value) {
     switch (value.type) {
-        case VAL_NULL:
+        case PYRO_VALUE_NULL:
             return 123;
 
-        case VAL_BOOL:
+        case PYRO_VALUE_BOOL:
             return value.as.boolean ? 456 : 789;
 
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             return value.as.u64;
 
-        case VAL_CHAR:
+        case PYRO_VALUE_CHAR:
             return (uint64_t)value.as.u32;
 
         // If the f64 is numerically equal to an i64, cast to that i64 first.
-        case VAL_F64:
+        case PYRO_VALUE_F64:
             if (value.as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
                 && value.as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
                 && floor(value.as.f64) == value.as.f64    // is a whole number
@@ -145,7 +145,7 @@ uint64_t pyro_hash_value(PyroVM* vm, Value value) {
                 return value.as.u64;
             }
 
-        case VAL_OBJ:
+        case PYRO_VALUE_OBJ:
             switch (value.as.obj->type) {
                 case OBJ_STR:
                     return AS_STR(value)->hash;
@@ -314,23 +314,23 @@ static void pyro_dump_object(PyroVM* vm, Obj* object) {
 
 void pyro_dump_value(PyroVM* vm, Value value) {
     switch (value.type) {
-        case VAL_BOOL:
+        case PYRO_VALUE_BOOL:
             pyro_stdout_write_f(vm, "%s", value.as.boolean ? "true" : "false");
             break;
 
-        case VAL_NULL:
+        case PYRO_VALUE_NULL:
             pyro_stdout_write(vm, "null");
             break;
 
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             pyro_stdout_write_f(vm, "%lld", value.as.i64);
             break;
 
-        case VAL_F64:
+        case PYRO_VALUE_F64:
             pyro_stdout_write_f(vm, "%.2f", value.as.f64);
             break;
 
-        case VAL_OBJ:
+        case PYRO_VALUE_OBJ:
             pyro_dump_object(vm, AS_OBJ(value));
             break;
 

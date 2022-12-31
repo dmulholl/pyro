@@ -442,16 +442,16 @@ static Value fn_is_inf(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_f64(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             return pyro_f64((double)args[0].as.i64);
 
-        case VAL_F64:
+        case PYRO_VALUE_F64:
             return args[0];
 
-        case VAL_CHAR:
+        case PYRO_VALUE_CHAR:
             return pyro_f64((double)args[0].as.u32);
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             if (IS_STR(args[0])) {
                 ObjStr* string = AS_STR(args[0]);
                 double value;
@@ -479,13 +479,13 @@ static Value fn_is_f64(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             return args[0];
 
-        case VAL_CHAR:
+        case PYRO_VALUE_CHAR:
             return pyro_i64((int64_t)args[0].as.u32);
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             if (args[0].as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
                 && args[0].as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
             ) {
@@ -495,7 +495,7 @@ static Value fn_i64(PyroVM* vm, size_t arg_count, Value* args) {
             return pyro_null();
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             if (IS_STR(args[0])) {
                 ObjStr* string = AS_STR(args[0]);
                 int64_t value;
@@ -949,17 +949,17 @@ static Value fn_exec(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value fn_type(PyroVM* vm, size_t arg_count, Value* args) {
     switch (args[0].type) {
-        case VAL_BOOL:
+        case PYRO_VALUE_BOOL:
             return pyro_obj(vm->str_bool);
-        case VAL_NULL:
+        case PYRO_VALUE_NULL:
             return pyro_obj(vm->str_null);
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             return pyro_obj(vm->str_i64);
-        case VAL_F64:
+        case PYRO_VALUE_F64:
             return pyro_obj(vm->str_f64);
-        case VAL_CHAR:
+        case PYRO_VALUE_CHAR:
             return pyro_obj(vm->str_char);
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(args[0])->type) {
                 case OBJ_BOUND_METHOD:
                     return pyro_obj(vm->str_method);

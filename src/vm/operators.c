@@ -14,11 +14,11 @@
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_i64(a.as.i64 + b.as.i64);
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64((double)a.as.i64 + b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '+'");
@@ -26,11 +26,11 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_f64(a.as.f64 + (double)b.as.i64);
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64(a.as.f64 + b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '+'");
@@ -38,7 +38,7 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
@@ -80,7 +80,7 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             if (IS_CHAR(b)) {
                 ObjStr* result = ObjStr_concat_codepoints_as_utf8(a.as.u32, b.as.u32, vm);
                 if (!result) {
@@ -112,11 +112,11 @@ Value pyro_op_binary_plus(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_i64(a.as.i64 - b.as.i64);
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64((double)a.as.i64 - b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '-'");
@@ -124,11 +124,11 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_f64(a.as.f64 - (double)b.as.i64);
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64(a.as.f64 - b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '-'");
@@ -156,11 +156,11 @@ Value pyro_op_binary_minus(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_i64(a.as.i64 * b.as.i64);
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64((double)a.as.i64 * b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '*'");
@@ -168,11 +168,11 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_f64(a.as.f64 * (double)b.as.i64);
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64(a.as.f64 * b.as.f64);
                 default:
                     pyro_panic(vm, "invalid operand types to '*'");
@@ -180,7 +180,7 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             if (IS_STR(a)) {
                 if (IS_I64(b) && b.as.i64 >= 0) {
                     ObjStr* result = ObjStr_concat_n_copies(AS_STR(a), b.as.i64, vm);
@@ -210,7 +210,7 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             if (IS_I64(b) && b.as.i64 >= 0) {
                 ObjStr* result = ObjStr_concat_n_codepoints_as_utf8(a.as.u32, b.as.i64, vm);
                 if (!result) {
@@ -236,16 +236,16 @@ Value pyro_op_binary_star(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
                     } else {
                         return pyro_f64((double)a.as.i64 / (double)b.as.i64);
                     }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
@@ -258,16 +258,16 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
                     } else {
                         return pyro_f64(a.as.f64 / (double)b.as.i64);
                     }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
@@ -300,9 +300,9 @@ Value pyro_op_binary_slash(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_bar(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_i64(a.as.i64 | b.as.i64);
                 default:
                     pyro_panic(vm, "invalid operand types to '|'");
@@ -330,9 +330,9 @@ Value pyro_op_binary_bar(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_amp(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_i64(a.as.i64 & b.as.i64);
                 default:
                     pyro_panic(vm, "invalid operand types to '&'");
@@ -360,9 +360,9 @@ Value pyro_op_binary_amp(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_caret(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_i64(a.as.i64 ^ b.as.i64);
                 default:
                     pyro_panic(vm, "invalid operand types to '^'");
@@ -390,16 +390,16 @@ Value pyro_op_binary_caret(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, "modulo by zero");
                         return pyro_null();
                     } else {
                         return pyro_i64(a.as.i64 % b.as.i64);
                     }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "modulo by zero");
                         return pyro_null();
@@ -412,16 +412,16 @@ Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, "modulo by zero");
                         return pyro_null();
                     } else {
                         return pyro_f64(fmod(a.as.f64, (double)b.as.i64));
                     }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "modulo by zero");
                         return pyro_null();
@@ -454,11 +454,11 @@ Value pyro_op_binary_percent(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_f64(pow((double)a.as.i64, (double)b.as.i64));
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64(pow((double)a.as.i64, b.as.f64));
                 default:
                     pyro_panic(vm, "invalid operand types to '**'");
@@ -466,11 +466,11 @@ Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_f64(pow(a.as.f64, (double)b.as.i64));
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_f64(pow(a.as.f64, b.as.f64));
                 default:
                     pyro_panic(vm, "invalid operand types to '**'");
@@ -498,16 +498,16 @@ Value pyro_op_binary_star_star(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
                     } else {
                         return pyro_i64(a.as.i64 / b.as.i64);
                     }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
@@ -520,16 +520,16 @@ Value pyro_op_binary_slash_slash(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     if (b.as.i64 == 0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
                     } else {
                         return pyro_f64(trunc(a.as.f64 / (double)b.as.i64));
                     }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     if (b.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
@@ -587,13 +587,13 @@ bool pyro_op_in(PyroVM* vm, Value a, Value b) {
 
 Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
     switch (operand.type) {
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             return operand;
 
-        case VAL_F64:
+        case PYRO_VALUE_F64:
             return operand;
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             if (IS_INSTANCE(operand)) {
                 Value method = pyro_get_method(vm, operand, vm->str_op_unary_plus);
                 if (!IS_NULL(method)) {
@@ -619,13 +619,13 @@ Value pyro_op_unary_plus(PyroVM* vm, Value operand) {
 
 Value pyro_op_unary_minus(PyroVM* vm, Value operand) {
     switch (operand.type) {
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             return pyro_i64(-operand.as.i64);
 
-        case VAL_F64:
+        case PYRO_VALUE_F64:
             return pyro_f64(-operand.as.f64);
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             if (IS_INSTANCE(operand)) {
                 Value method = pyro_get_method(vm, operand, vm->str_op_unary_minus);
                 if (!IS_NULL(method)) {
@@ -754,13 +754,13 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return a.as.i64 == b.as.i64;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float(a.as.i64, b.as.f64) == 0;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.i64 == (int64_t)b.as.u32;
                 default:
                     return false;
@@ -768,13 +768,13 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return (int64_t)a.as.u32 == b.as.i64;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64) == 0;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.u32 == b.as.u32;
                 default:
                     return false;
@@ -782,13 +782,13 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_compare_int_and_float(b.as.i64, a.as.f64) == 0;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return a.as.f64 == b.as.f64;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) == 0;
                 default:
                     return false;
@@ -796,7 +796,7 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR:
                     return a.as.obj == b.as.obj;
@@ -820,13 +820,13 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
             }
         }
 
-        case VAL_BOOL:
+        case PYRO_VALUE_BOOL:
             return IS_BOOL(b) && a.as.boolean == b.as.boolean;
 
-        case VAL_NULL:
+        case PYRO_VALUE_NULL:
             return IS_NULL(b);
 
-        case VAL_TOMBSTONE:
+        case PYRO_VALUE_TOMBSTONE:
             return IS_TOMBSTONE(b);
 
         default:
@@ -839,13 +839,13 @@ bool pyro_op_compare_eq(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return a.as.i64 < b.as.i64;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float(a.as.i64, b.as.f64) == -1;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.i64 < (int64_t)b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -854,13 +854,13 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return (int64_t)a.as.u32 < b.as.i64;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64) == -1;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.u32 < b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -869,13 +869,13 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_compare_int_and_float(b.as.i64, a.as.f64) == 1;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return a.as.f64 < b.as.f64;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) == 1;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -884,7 +884,7 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
@@ -928,15 +928,15 @@ bool pyro_op_compare_lt(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return a.as.i64 <= b.as.i64;
-                case VAL_F64: {
+                case PYRO_VALUE_F64: {
                     int result = pyro_compare_int_and_float(a.as.i64, b.as.f64);
                     return result == -1 || result == 0;
                 }
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.i64 <= (int64_t)b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -945,15 +945,15 @@ bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return (int64_t)a.as.u32 <= b.as.i64;
-                case VAL_F64: {
+                case PYRO_VALUE_F64: {
                     int result = pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64);
                     return result == -1 || result == 0;
                 }
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.u32 <= b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -962,15 +962,15 @@ bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64: {
+                case PYRO_VALUE_I64: {
                     int result = pyro_compare_int_and_float(b.as.i64, a.as.f64);
                     return result == 0 || result == 1;
                 }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return a.as.f64 <= b.as.f64;
-                case VAL_CHAR: {
+                case PYRO_VALUE_CHAR: {
                     int result = pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64);
                     return result == 0 || result == 1;
                 }
@@ -981,7 +981,7 @@ bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
@@ -1026,13 +1026,13 @@ bool pyro_op_compare_le(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return a.as.i64 > b.as.i64;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float(a.as.i64, b.as.f64) == 1;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.i64 > (int64_t)b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -1041,13 +1041,13 @@ bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return (int64_t)a.as.u32 > b.as.i64;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64) == 1;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.u32 > b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -1056,13 +1056,13 @@ bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return pyro_compare_int_and_float(b.as.i64, a.as.f64) == -1;
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return a.as.f64 > b.as.f64;
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) == -1;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -1071,7 +1071,7 @@ bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {
@@ -1115,15 +1115,15 @@ bool pyro_op_compare_gt(PyroVM* vm, Value a, Value b) {
 // This function can call into Pyro code and can set the panic or exit flags.
 bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
     switch (a.type) {
-        case VAL_I64: {
+        case PYRO_VALUE_I64: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return a.as.i64 >= b.as.i64;
-                case VAL_F64: {
+                case PYRO_VALUE_F64: {
                     int result = pyro_compare_int_and_float(a.as.i64, b.as.f64);
                     return result == 1 || result == 0;
                 }
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.i64 >= (int64_t)b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -1132,15 +1132,15 @@ bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             switch (b.type) {
-                case VAL_I64:
+                case PYRO_VALUE_I64:
                     return (int64_t)a.as.u32 >= b.as.i64;
-                case VAL_F64: {
+                case PYRO_VALUE_F64: {
                     int result = pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64);
                     return result == 1 || result == 0;
                 }
-                case VAL_CHAR:
+                case PYRO_VALUE_CHAR:
                     return a.as.u32 >= b.as.u32;
                 default:
                     pyro_panic(vm, "values are not comparable");
@@ -1149,15 +1149,15 @@ bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_F64: {
+        case PYRO_VALUE_F64: {
             switch (b.type) {
-                case VAL_I64: {
+                case PYRO_VALUE_I64: {
                     int result = pyro_compare_int_and_float(b.as.i64, a.as.f64);
                     return result == 0 || result == -1;
                 }
-                case VAL_F64:
+                case PYRO_VALUE_F64:
                     return a.as.f64 >= b.as.f64;
-                case VAL_CHAR: {
+                case PYRO_VALUE_CHAR: {
                     int result = pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64);
                     return result == 0 || result == -1;
                 }
@@ -1168,7 +1168,7 @@ bool pyro_op_compare_ge(PyroVM* vm, Value a, Value b) {
             break;
         }
 
-        case VAL_OBJ: {
+        case PYRO_VALUE_OBJ: {
             switch (AS_OBJ(a)->type) {
                 case OBJ_STR: {
                     if (IS_STR(b)) {

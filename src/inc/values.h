@@ -6,13 +6,13 @@
 // Type-set for Pyro's fundamental [Value] type. Every [Value] has a [.type] field with
 // one of these enum values.
 typedef enum {
-    VAL_BOOL,       // A Pyro boolean, true or false.
-    VAL_NULL,       // A Pyro null.
-    VAL_I64,        // A 64-bit signed integer.
-    VAL_F64,        // A 64-bit float.
-    VAL_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
-    VAL_OBJ,        // A pointer to a heap-allocated object.
-    VAL_TOMBSTONE,  // Used internally by the map implementation.
+    PYRO_VALUE_BOOL,       // A Pyro boolean, true or false.
+    PYRO_VALUE_NULL,       // A Pyro null.
+    PYRO_VALUE_I64,        // A 64-bit signed integer.
+    PYRO_VALUE_F64,        // A 64-bit float.
+    PYRO_VALUE_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
+    PYRO_VALUE_OBJ,        // A pointer to a heap-allocated object.
+    PYRO_VALUE_TOMBSTONE,  // Used internally by the map implementation.
 } PyroValueType;
 
 // Tagged union for Pyro's fundamental [Value] type. Every value in Pyro is a [Value], e.g.
@@ -29,7 +29,7 @@ typedef struct {
     } as;
 } Value;
 
-// Type-set for heap-allocated Pyro objects, i.e. Pyro values with type [VAL_OBJ].
+// Type-set for heap-allocated Pyro objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
 // Every [Obj] has a [.type] field with one of these enum values.
 typedef enum {
     OBJ_BOUND_METHOD,
@@ -66,47 +66,47 @@ struct Obj {
 
 // Converts a C boolean to a Pyro value.
 static inline Value pyro_bool(bool value) {
-    return (Value){VAL_BOOL, {.boolean = value}};
+    return (Value){PYRO_VALUE_BOOL, {.boolean = value}};
 }
 
 // Converts a C integer to a Pyro value.
 static inline Value pyro_i64(int64_t value) {
-    return (Value){VAL_I64, {.i64 = value}};
+    return (Value){PYRO_VALUE_I64, {.i64 = value}};
 }
 
 // Converts a C double to a Pyro value.
 static inline Value pyro_f64(double value) {
-    return (Value){VAL_F64, {.f64 = value}};
+    return (Value){PYRO_VALUE_F64, {.f64 = value}};
 }
 
 // Converts a C integer to a Pyro value.
 static inline Value pyro_char(uint32_t value) {
-    return (Value){VAL_CHAR, {.u32 = value}};
+    return (Value){PYRO_VALUE_CHAR, {.u32 = value}};
 }
 
 // Converts a C pointer to a Pyro value.
 static inline Value pyro_obj(void* value) {
-    return (Value){VAL_OBJ, {.obj = (Obj*)value}};
+    return (Value){PYRO_VALUE_OBJ, {.obj = (Obj*)value}};
 }
 
 // Creates a Pyro tombstone value.
 static inline Value pyro_tombstone() {
-    return (Value){VAL_TOMBSTONE, {.i64 = 0}};
+    return (Value){PYRO_VALUE_TOMBSTONE, {.i64 = 0}};
 }
 
 // Creates a Pyro null value.
 static inline Value pyro_null() {
-    return (Value){VAL_NULL, {.i64 = 0}};
+    return (Value){PYRO_VALUE_NULL, {.i64 = 0}};
 }
 
 // Macros for checking the type of a Value instance.
-#define IS_BOOL(value)              ((value).type == VAL_BOOL)
-#define IS_NULL(value)              ((value).type == VAL_NULL)
-#define IS_I64(value)               ((value).type == VAL_I64)
-#define IS_F64(value)               ((value).type == VAL_F64)
-#define IS_OBJ(value)               ((value).type == VAL_OBJ)
-#define IS_TOMBSTONE(value)         ((value).type == VAL_TOMBSTONE)
-#define IS_CHAR(value)              ((value).type == VAL_CHAR)
+#define IS_BOOL(value)              ((value).type == PYRO_VALUE_BOOL)
+#define IS_NULL(value)              ((value).type == PYRO_VALUE_NULL)
+#define IS_I64(value)               ((value).type == PYRO_VALUE_I64)
+#define IS_F64(value)               ((value).type == PYRO_VALUE_F64)
+#define IS_OBJ(value)               ((value).type == PYRO_VALUE_OBJ)
+#define IS_TOMBSTONE(value)         ((value).type == PYRO_VALUE_TOMBSTONE)
+#define IS_CHAR(value)              ((value).type == PYRO_VALUE_CHAR)
 
 // Macros for checking if a Value instance is an object of a specific type.
 #define IS_STR(value)               pyro_is_obj_of_type(value, OBJ_STR)

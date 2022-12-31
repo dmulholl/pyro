@@ -714,19 +714,19 @@ ObjStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...) {
 
 ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
     switch (value.type) {
-        case VAL_BOOL:
+        case PYRO_VALUE_BOOL:
             return value.as.boolean ? vm->str_true : vm->str_false;
 
-        case VAL_NULL:
+        case PYRO_VALUE_NULL:
             return vm->str_null;
 
-        case VAL_I64:
+        case PYRO_VALUE_I64:
             return pyro_sprintf_to_obj(vm, "%" PRId64, value.as.i64);
 
-        case VAL_F64:
+        case PYRO_VALUE_F64:
             return pyro_stringify_f64(vm, value.as.f64, 6);
 
-        case VAL_CHAR: {
+        case PYRO_VALUE_CHAR: {
             char buffer[4];
             size_t count = pyro_write_utf8_codepoint(value.as.u32, (uint8_t*)buffer);
             ObjStr* string = ObjStr_copy_raw(buffer, count, vm);
@@ -737,7 +737,7 @@ ObjStr* pyro_stringify_value(PyroVM* vm, Value value) {
             return string;
         }
 
-        case VAL_OBJ:
+        case PYRO_VALUE_OBJ:
             return stringify_object(vm, AS_OBJ(value));
 
         default:
