@@ -9,7 +9,7 @@
 #define GROW_CAPACITY(capacity) \
     ((capacity) < 8 ? 8 : (capacity) * 2)
 
-// Heap-allocate memory for a new [type] array with space for [capacity] elements.
+// Heap-allocate memory for a new array of [type] with space for [capacity] elements.
 #define ALLOCATE_ARRAY(vm, type, capacity) \
     (type*)pyro_realloc(vm, NULL, 0, sizeof(type) * (capacity))
 
