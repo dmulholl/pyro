@@ -441,7 +441,7 @@ void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name
     // The contortion on the left is to silence a compiler warning about converting an object
     // pointer to a function pointer. The conversion is safe and is required by dlsym().
     *(void**)(&init_func) = dlsym(handle, init_func_name);
-    FREE_ARRAY(vm, char, init_func_name, strlen(init_func_name) + 1);
+    PYRO_FREE_ARRAY(vm, char, init_func_name, strlen(init_func_name) + 1);
     if (!init_func) {
         pyro_panic(vm, "failed to locate module initialization function: %s: %s", path, dlerror());
         return;

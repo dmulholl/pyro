@@ -9,7 +9,7 @@
 // - Panics ard returns NULL if memory allocation fails.
 // - If successful, the caller is responsible for freeing the returned array via:
 //
-//   FREE_ARRAY(vm, char, string, strlen(string) + 1)
+//   PYRO_FREE_ARRAY(vm, char, string, strlen(string) + 1)
 //
 char* pyro_sprintf(PyroVM* vm, const char* format_string, ...);
 

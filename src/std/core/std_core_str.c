@@ -307,7 +307,7 @@ static Value str_to_ascii_upper(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* new_string = ObjStr_take(array, str->length, vm);
     if (!new_string) {
-        FREE_ARRAY(vm, char, array, str->length + 1);
+        PYRO_FREE_ARRAY(vm, char, array, str->length + 1);
         pyro_panic(vm, "to_ascii_uper(): out of memory");
         return pyro_null();
     }
@@ -337,7 +337,7 @@ static Value str_to_ascii_lower(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* new_string = ObjStr_take(array, str->length, vm);
     if (!new_string) {
-        FREE_ARRAY(vm, char, array, str->length + 1);
+        PYRO_FREE_ARRAY(vm, char, array, str->length + 1);
         pyro_panic(vm, "to_ascii_lower(): out of memory");
         return pyro_null();
     }

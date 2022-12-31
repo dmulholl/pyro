@@ -300,7 +300,7 @@ static bool resize_index_array(ObjMap* map, PyroVM* vm) {
         new_index_array[i] = EMPTY;
     }
 
-    FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
+    PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
     map->index_array = new_index_array;
     map->index_array_capacity = new_index_array_capacity;
     map->index_array_count = map->live_entry_count;
@@ -373,8 +373,8 @@ ObjMap* ObjMap_new(PyroVM* vm) {
 
 
 void ObjMap_clear(ObjMap* map, PyroVM* vm) {
-    FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
-    FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
+    PYRO_FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
+    PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
     map->entry_array = NULL;
     map->entry_array_count = 0;
     map->entry_array_capacity = 0;
@@ -421,7 +421,7 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
 
     int64_t* index_array = ALLOCATE_ARRAY(vm, int64_t, src->index_array_capacity);
     if (!index_array) {
-        FREE_ARRAY(vm, MapEntry, entry_array, src->entry_array_capacity);
+        PYRO_FREE_ARRAY(vm, MapEntry, entry_array, src->entry_array_capacity);
         return NULL;
     }
     memcpy(index_array, src->index_array, sizeof(int64_t) * src->index_array_capacity);
@@ -625,7 +625,7 @@ ObjStr* ObjStr_take(char* src, size_t length, PyroVM* vm) {
     uint64_t hash = PYRO_STRING_HASH(src, length);
     ObjStr* interned = find_string(vm->strings, src, length, hash);
     if (interned) {
-        FREE_ARRAY(vm, char, src, length + 1);
+        PYRO_FREE_ARRAY(vm, char, src, length + 1);
         return interned;
     }
 
@@ -647,7 +647,7 @@ ObjStr* ObjStr_empty(PyroVM* vm) {
 
     ObjStr* string = ObjStr_take(bytes, 0, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, bytes, 1);
+        PYRO_FREE_ARRAY(vm, char, bytes, 1);
         return NULL;
     }
 
@@ -681,7 +681,7 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
 
     ObjStr* string = ObjStr_take(dst, count, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, count + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, count + 1);
         return NULL;
     }
 
@@ -711,7 +711,7 @@ ObjStr* ObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
 
     ObjStr* string = allocate_string(vm, dst, length, hash);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, length + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
     }
 
@@ -737,7 +737,7 @@ ObjStr* ObjStr_concat_n_copies(ObjStr* str, size_t n, PyroVM* vm) {
 
     ObjStr* string = ObjStr_take(dst, total_length, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, total_length + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, total_length + 1);
         return NULL;
     }
 
@@ -766,7 +766,7 @@ ObjStr* ObjStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroVM*
 
     ObjStr* string = ObjStr_take(dst, total_length, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, total_length + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, total_length + 1);
         return NULL;
     }
 
@@ -790,7 +790,7 @@ ObjStr* ObjStr_concat(ObjStr* src1, ObjStr* src2, PyroVM* vm) {
 
     ObjStr* string = ObjStr_take(dst, length, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, length + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
     }
 
@@ -814,7 +814,7 @@ ObjStr* ObjStr_prepend_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM
 
     ObjStr* string = ObjStr_take(dst, length, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, length + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
     }
 
@@ -838,7 +838,7 @@ ObjStr* ObjStr_append_codepoint_as_utf8(ObjStr* str, uint32_t codepoint, PyroVM*
 
     ObjStr* string = ObjStr_take(dst, length, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, length + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
     }
 
@@ -865,7 +865,7 @@ ObjStr* ObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm)
 
     ObjStr* string = ObjStr_take(dst, length, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, dst, length + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
     }
 
@@ -1282,7 +1282,7 @@ ObjVec* ObjVec_new(PyroVM* vm) {
 
 
 void ObjVec_clear(ObjVec* vec, PyroVM* vm) {
-    FREE_ARRAY(vm, Value, vec->values, vec->capacity);
+    PYRO_FREE_ARRAY(vm, Value, vec->values, vec->capacity);
     vec->count = 0;
     vec->capacity = 0;
     vec->values = NULL;
@@ -1491,7 +1491,7 @@ ObjBuf* ObjBuf_new(PyroVM* vm) {
 
 
 void ObjBuf_clear(ObjBuf* buf, PyroVM* vm) {
-    FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
+    PYRO_FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
     buf->count = 0;
     buf->capacity = 0;
     buf->bytes = NULL;
@@ -1794,7 +1794,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
             size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 pyro_panic(vm, "out of memory");
                 return NULL;
             }
@@ -1806,7 +1806,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
 
         if (c == EOF) {
             if (ferror(file->stream)) {
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 pyro_panic(vm, "I/O read error");
                 return NULL;
             }
@@ -1821,7 +1821,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
     }
 
     if (count == 0) {
-        FREE_ARRAY(vm, uint8_t, array, capacity);
+        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         return NULL;
     }
 
@@ -1832,7 +1832,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
     }
 
     if (count == 0) {
-        FREE_ARRAY(vm, uint8_t, array, capacity);
+        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         return vm->empty_string;
     }
 
@@ -1845,7 +1845,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
 
     ObjStr* string = ObjStr_take((char*)array, count, vm);
     if (!string) {
-        FREE_ARRAY(vm, uint8_t, array, capacity);
+        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         pyro_panic(vm, "out of memory");
         return NULL;
     }

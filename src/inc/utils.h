@@ -12,7 +12,7 @@ typedef struct {
 // Attempts to read the content of a file from the filesystem. Returns [true] if the file has been
 // successfully loaded. In this case [fd.data] should be freed using
 //
-//   FREE_ARRAY(vm, char, fd.data, fd.size)
+//   PYRO_FREE_ARRAY(vm, char, fd.data, fd.size)
 //
 // Panics and returns [false] in case of error. If the file has zero length the return value will
 // be true and [fd.data] will be NULL.

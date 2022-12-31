@@ -2405,7 +2405,7 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
     }
 
     pyro_exec_code_as_main(vm, fd.data, fd.size, path);
-    FREE_ARRAY(vm, char, fd.data, fd.size);
+    PYRO_FREE_ARRAY(vm, char, fd.data, fd.size);
 }
 
 
@@ -2447,7 +2447,7 @@ void pyro_try_compile_file(PyroVM* vm, const char* path) {
         return;
     }
     pyro_compile(vm, fd.data, fd.size, path);
-    FREE_ARRAY(vm, char, fd.data, fd.size);
+    PYRO_FREE_ARRAY(vm, char, fd.data, fd.size);
 }
 
 
@@ -2504,7 +2504,7 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, ObjModule* module) {
     }
 
     ObjPyroFn* fn = pyro_compile(vm, fd.data, fd.size, path);
-    FREE_ARRAY(vm, char, fd.data, fd.size);
+    PYRO_FREE_ARRAY(vm, char, fd.data, fd.size);
     if (vm->halt_flag) {
         return;
     }

@@ -116,7 +116,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 pyro_panic(vm, "read(): out of memory");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 return pyro_null();
             }
             capacity = new_capacity;
@@ -128,7 +128,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
         if (c == EOF) {
             if (ferror(file->stream)) {
                 pyro_panic(vm, "read(): I/O read error");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 return pyro_null();
             }
             break;
@@ -140,7 +140,7 @@ static Value file_read(PyroVM* vm, size_t arg_count, Value* args) {
     ObjBuf* buf = ObjBuf_new(vm);
     if (!buf) {
         pyro_panic(vm, "read(): out of memory");
-        FREE_ARRAY(vm, uint8_t, array, capacity);
+        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         return pyro_null();
     }
 
@@ -165,7 +165,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 pyro_panic(vm, "read_string(): out of memory");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 return pyro_null();
             }
             capacity = new_capacity;
@@ -177,7 +177,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
         if (c == EOF) {
             if (ferror(file->stream)) {
                 pyro_panic(vm, "read_string(): I/O read error");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 return pyro_null();
             }
             break;
@@ -195,7 +195,7 @@ static Value file_read_string(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* string = ObjStr_take((char*)array, count, vm);
     if (!string) {
         pyro_panic(vm, "read_string(): out of memory");
-        FREE_ARRAY(vm, uint8_t, array, capacity);
+        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         return pyro_null();
     }
 

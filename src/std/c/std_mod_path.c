@@ -141,7 +141,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
         char* new_array = REALLOCATE_ARRAY(vm, char, array, array_capacity, new_capacity);
         if (!new_array) {
             if (array) {
-                FREE_ARRAY(vm, char, array, array_capacity);
+                PYRO_FREE_ARRAY(vm, char, array, array_capacity);
             }
             pyro_panic(vm, "join(): out of memory");
             return pyro_null();
@@ -166,7 +166,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* output = ObjStr_take(array, array_count, vm);
     if (!output) {
-        FREE_ARRAY(vm, char, array, array_capacity);
+        PYRO_FREE_ARRAY(vm, char, array, array_capacity);
         pyro_panic(vm, "join(): out of memory");
         return pyro_null();
     }

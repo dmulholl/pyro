@@ -19,7 +19,7 @@
     (type*)pyro_realloc(vm, pointer, sizeof(type) * (old_capacity), sizeof(type) * (new_capacity))
 
 // Free an array allocated using ALLOCATE_ARRAY() or REALLOCATE_ARRAY().
-#define FREE_ARRAY(vm, type, pointer, capacity) \
+#define PYRO_FREE_ARRAY(vm, type, pointer, capacity) \
     pyro_realloc(vm, pointer, sizeof(type) * (capacity), 0)
 
 // This function is a wrapper around the C standard library's realloc() and free() functions, adding

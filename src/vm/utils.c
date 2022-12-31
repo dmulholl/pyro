@@ -35,7 +35,7 @@ bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
     size_t bytes_read = fread(file_data, sizeof(char), file_size, file);
     if (bytes_read < file_size) {
         pyro_panic(vm, "I/O read error: unable to read file '%s'", path);
-        FREE_ARRAY(vm, char, file_data, file_size);
+        PYRO_FREE_ARRAY(vm, char, file_data, file_size);
         return false;
     }
 

@@ -40,7 +40,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             size_t new_capacity = PYRO_GROW_CAPACITY(out_capacity);
             char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
             if (!new_array) {
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 pyro_panic(vm, "$fmt(): out of memory");
                 return pyro_null();
             }
@@ -62,14 +62,14 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             fmt_str_index++;
             while (fmt_str_index < fmt_str->length && fmt_str->bytes[fmt_str_index] != '}') {
                 if (fmt_spec_count == 15) {
-                    FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                    PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
                     pyro_panic(vm, "$fmt(): invalid format specifier, too many characters");
                     return pyro_null();
                 }
                 fmt_spec_buffer[fmt_spec_count++] = fmt_str->bytes[fmt_str_index++];
             }
             if (fmt_str_index == fmt_str->length) {
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 pyro_panic(vm, "$fmt(): missing '}' in format string");
                 return pyro_null();
             }
@@ -77,7 +77,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
             fmt_spec_buffer[fmt_spec_count] = '\0';
 
             if (next_arg_index == arg_count) {
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 pyro_panic(vm, "$fmt(): too few arguments for format string");
                 return pyro_null();
             }
@@ -90,7 +90,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
                 formatted = pyro_format_value(vm, arg, fmt_spec_buffer);
             }
             if (vm->halt_flag) {
-                FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 return pyro_null();
             }
 
@@ -102,7 +102,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
                 pyro_pop(vm);
 
                 if (!new_array) {
-                    FREE_ARRAY(vm, char, out_buffer, out_capacity);
+                    PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
                     pyro_panic(vm, "$fmt(): out of memory");
                     return pyro_null();
                 }
@@ -128,7 +128,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
 
     ObjStr* string = ObjStr_take(out_buffer, out_count, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, out_buffer, out_capacity);
+        PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
         pyro_panic(vm, "$fmt(): out of memory");
         return pyro_null();
     }
@@ -701,7 +701,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
             uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 pyro_panic(vm, "$read_file(): out of memory");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 fclose(stream);
                 return pyro_null();
             }
@@ -714,7 +714,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
         if (c == EOF) {
             if (ferror(stream)) {
                 pyro_panic(vm, "$read_file(): I/O read error");
-                FREE_ARRAY(vm, uint8_t, array, capacity);
+                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 fclose(stream);
                 return pyro_null();
             }
@@ -733,7 +733,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
     ObjStr* string = ObjStr_take((char*)array, count, vm);
     if (!string) {
         pyro_panic(vm, "$read_file(): out of memory");
-        FREE_ARRAY(vm, uint8_t, array, capacity);
+        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         fclose(stream);
         return pyro_null();
     }

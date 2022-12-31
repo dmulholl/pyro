@@ -607,7 +607,7 @@ ObjStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
     }
 
     ObjStr* string = ObjStr_copy_raw(array, trimmed_length, vm);
-    FREE_ARRAY(vm, char, array, original_length + 1);
+    PYRO_FREE_ARRAY(vm, char, array, original_length + 1);
     if (!string) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -703,7 +703,7 @@ ObjStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...) {
 
     ObjStr* string = ObjStr_take(array, length, vm);
     if (!string) {
-        FREE_ARRAY(vm, char, array, length + 1);
+        PYRO_FREE_ARRAY(vm, char, array, length + 1);
         pyro_panic(vm, "out of memory");
         return NULL;
     }
@@ -977,7 +977,7 @@ static ObjStr* format_str_obj(PyroVM* vm, ObjStr* string, const char* format_str
 
     ObjStr* result = ObjStr_take(array, target_length, vm);
     if (!result) {
-        FREE_ARRAY(vm, char, array, target_length + 1);
+        PYRO_FREE_ARRAY(vm, char, array, target_length + 1);
         pyro_panic(vm, "out of memory");
         return NULL;
     }

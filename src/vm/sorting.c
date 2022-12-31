@@ -361,7 +361,7 @@ void pyro_mergesort_with_callback(PyroVM* vm, Value* values, size_t count, Value
     }
 
     mergesort_slice_with_cb(vm, values, aux_array, 0, count - 1, callback);
-    FREE_ARRAY(vm, Value, aux_array, count);
+    PYRO_FREE_ARRAY(vm, Value, aux_array, count);
 }
 
 
@@ -377,7 +377,7 @@ void pyro_mergesort(PyroVM* vm, Value* values, size_t count) {
     }
 
     mergesort_slice(vm, values, aux_array, 0, count - 1);
-    FREE_ARRAY(vm, Value, aux_array, count);
+    PYRO_FREE_ARRAY(vm, Value, aux_array, count);
 }
 
 

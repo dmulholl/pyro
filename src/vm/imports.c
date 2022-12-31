@@ -167,7 +167,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
 
         if (pyro_is_file(path)) {
             try_load_compiled_module(vm, path, args[arg_count - 1], module);
-            FREE_ARRAY(vm, char, path, path_capacity);
+            PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
@@ -179,7 +179,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
 
         if (pyro_is_file(path)) {
             pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_capacity);
+            PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
@@ -191,7 +191,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
 
         if (pyro_is_file(path)) {
             try_load_compiled_module(vm, path, args[arg_count - 1], module);
-            FREE_ARRAY(vm, char, path, path_capacity);
+            PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
@@ -203,7 +203,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
 
         if (pyro_is_file(path)) {
             pyro_exec_file_as_module(vm, path, module);
-            FREE_ARRAY(vm, char, path, path_capacity);
+            PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
@@ -212,11 +212,11 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, Value* args, ObjModule* m
         path[path_count] = '\0';
 
         if (pyro_is_dir(path)) {
-            FREE_ARRAY(vm, char, path, path_capacity);
+            PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
 
-        FREE_ARRAY(vm, char, path, path_capacity);
+        PYRO_FREE_ARRAY(vm, char, path, path_capacity);
     }
 
     pyro_panic(

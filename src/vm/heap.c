@@ -48,7 +48,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_BUF: {
             ObjBuf* buf = (ObjBuf*)object;
-            FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
+            PYRO_FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
             FREE_OBJECT(vm, ObjBuf, object);
             break;
         }
@@ -60,7 +60,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_CLOSURE: {
             ObjClosure* closure = (ObjClosure*)object;
-            FREE_ARRAY(vm, ObjUpvalue*, closure->upvalues, closure->upvalue_count);
+            PYRO_FREE_ARRAY(vm, ObjUpvalue*, closure->upvalues, closure->upvalue_count);
             FREE_OBJECT(vm, ObjClosure, object);
             break;
         }
@@ -82,9 +82,9 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
 
         case OBJ_PYRO_FN: {
             ObjPyroFn* fn = (ObjPyroFn*)object;
-            FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
-            FREE_ARRAY(vm, Value, fn->constants, fn->constants_capacity);
-            FREE_ARRAY(vm, uint16_t, fn->bpl, fn->bpl_capacity);
+            PYRO_FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
+            PYRO_FREE_ARRAY(vm, Value, fn->constants, fn->constants_capacity);
+            PYRO_FREE_ARRAY(vm, uint16_t, fn->bpl, fn->bpl_capacity);
             FREE_OBJECT(vm, ObjPyroFn, object);
             break;
         }
@@ -105,8 +105,8 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case OBJ_MAP_AS_SET:
         case OBJ_MAP: {
             ObjMap* map = (ObjMap*)object;
-            FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
-            FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
+            PYRO_FREE_ARRAY(vm, MapEntry, map->entry_array, map->entry_array_capacity);
+            PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
             FREE_OBJECT(vm, ObjMap, object);
             break;
         }
@@ -145,7 +145,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case OBJ_STR: {
             ObjStr* string = (ObjStr*)object;
             ObjMap_remove(vm->strings, pyro_obj(string), vm);
-            FREE_ARRAY(vm, char, string->bytes, string->length + 1);
+            PYRO_FREE_ARRAY(vm, char, string->bytes, string->length + 1);
             FREE_OBJECT(vm, ObjStr, object);
             break;
         }
@@ -164,7 +164,7 @@ void pyro_free_object(PyroVM* vm, Obj* object) {
         case OBJ_VEC_AS_STACK:
         case OBJ_VEC: {
             ObjVec* vec = (ObjVec*)object;
-            FREE_ARRAY(vm, Value, vec->values, vec->capacity);
+            PYRO_FREE_ARRAY(vm, Value, vec->values, vec->capacity);
             FREE_OBJECT(vm, ObjVec, object);
             break;
         }

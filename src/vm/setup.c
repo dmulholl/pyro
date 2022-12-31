@@ -283,9 +283,9 @@ void pyro_free_vm(PyroVM* vm) {
         object = next;
     }
 
-    FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity);
-    FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
-    FREE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity);
+    PYRO_FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity);
+    PYRO_FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
+    PYRO_FREE_ARRAY(vm, Value, vm->with_stack, vm->with_stack_capacity);
 
     free(vm->stack);
     vm->bytes_allocated -= vm->stack_size;
