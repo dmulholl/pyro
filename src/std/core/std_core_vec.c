@@ -332,7 +332,7 @@ static Value vec_filter(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
-    ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
+    ObjIter* iter = ObjIter_new((Obj*)vec, PYRO_ITER_VEC, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_null();
@@ -553,7 +553,7 @@ static Value vec_is_sorted(PyroVM* vm, size_t arg_count, Value* args) {
 static Value vec_join(PyroVM* vm, size_t arg_count, Value* args) {
     ObjVec* vec = AS_VEC(args[-1]);
 
-    ObjIter* iter = ObjIter_new((Obj*)vec, ITER_VEC, vm);
+    ObjIter* iter = ObjIter_new((Obj*)vec, PYRO_ITER_VEC, vm);
     if (!iter) {
         pyro_panic(vm, "join(): out of memory");
         return pyro_null();

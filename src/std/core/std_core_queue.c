@@ -58,7 +58,7 @@ static Value queue_is_empty(PyroVM* vm, size_t arg_count, Value* args) {
 static Value queue_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjQueue* queue = AS_QUEUE(args[-1]);
 
-    ObjIter* iter = ObjIter_new((Obj*)queue, ITER_QUEUE, vm);
+    ObjIter* iter = ObjIter_new((Obj*)queue, PYRO_ITER_QUEUE, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_null();

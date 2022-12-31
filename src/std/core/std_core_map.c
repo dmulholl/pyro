@@ -80,7 +80,7 @@ static Value map_copy(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_KEYS, vm);
+    ObjIter* iter = ObjIter_new((Obj*)map, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "keys(): out of memory");
         return pyro_null();
@@ -91,7 +91,7 @@ static Value map_keys(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_VALUES, vm);
+    ObjIter* iter = ObjIter_new((Obj*)map, PYRO_ITER_MAP_VALUES, vm);
     if (!iter) {
         pyro_panic(vm, "values(): out of memory");
         return pyro_null();
@@ -102,7 +102,7 @@ static Value map_values(PyroVM* vm, size_t arg_count, Value* args) {
 
 static Value map_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjMap* map = AS_MAP(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)map, ITER_MAP_ENTRIES, vm);
+    ObjIter* iter = ObjIter_new((Obj*)map, PYRO_ITER_MAP_ENTRIES, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_null();

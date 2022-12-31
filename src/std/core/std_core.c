@@ -1045,7 +1045,7 @@ static Value fn_methods(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_obj(iter);
     }
 
-    ObjIter* iter = ObjIter_new((Obj*)class->pub_instance_methods, ITER_MAP_KEYS, vm);
+    ObjIter* iter = ObjIter_new((Obj*)class->pub_instance_methods, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "$methods(): out of memory");
         return pyro_null();
@@ -1085,7 +1085,7 @@ static Value fn_fields(PyroVM* vm, size_t arg_count, Value* args) {
         return pyro_obj(iter);
     }
 
-    ObjIter* iter = ObjIter_new((Obj*)class->pub_field_indexes, ITER_MAP_KEYS, vm);
+    ObjIter* iter = ObjIter_new((Obj*)class->pub_field_indexes, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "$fields(): out of memory");
         return pyro_null();

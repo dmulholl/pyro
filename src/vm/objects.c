@@ -1879,17 +1879,17 @@ ObjIter* ObjIter_new(Obj* source, IterType iter_type, PyroVM* vm) {
 
 
 ObjIter* ObjIter_empty(PyroVM* vm) {
-    return ObjIter_new(NULL, ITER_EMPTY, vm);
+    return ObjIter_new(NULL, PYRO_ITER_EMPTY, vm);
 }
 
 
 Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
     switch (iter->iter_type) {
-        case ITER_EMPTY: {
+        case PYRO_ITER_EMPTY: {
             return pyro_obj(vm->error);
         }
 
-        case ITER_VEC: {
+        case PYRO_ITER_VEC: {
             ObjVec* vec = (ObjVec*)iter->source;
             if (iter->next_index < vec->count) {
                 iter->next_index++;
@@ -1899,7 +1899,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_TUP: {
+        case PYRO_ITER_TUP: {
             ObjTup* tup = (ObjTup*)iter->source;
             if (iter->next_index < tup->count) {
                 iter->next_index++;
@@ -1908,7 +1908,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_QUEUE: {
+        case PYRO_ITER_QUEUE: {
             if (iter->next_queue_item) {
                 Value next_value = iter->next_queue_item->value;
                 iter->next_queue_item = iter->next_queue_item->next;
@@ -1917,7 +1917,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_STR: {
+        case PYRO_ITER_STR: {
             ObjStr* str = (ObjStr*)iter->source;
             if (iter->next_index < str->length) {
                 ObjStr* new_str = ObjStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
@@ -1931,7 +1931,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_STR_BYTES: {
+        case PYRO_ITER_STR_BYTES: {
             ObjStr* str = (ObjStr*)iter->source;
             if (iter->next_index < str->length) {
                 int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
@@ -1941,7 +1941,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_STR_CHARS: {
+        case PYRO_ITER_STR_CHARS: {
             ObjStr* str = (ObjStr*)iter->source;
             if (iter->next_index < str->length) {
                 uint8_t* src = (uint8_t*)&str->bytes[iter->next_index];
@@ -1960,7 +1960,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_MAP_KEYS: {
+        case PYRO_ITER_MAP_KEYS: {
             ObjMap* map = (ObjMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
                 MapEntry* entry = &map->entry_array[iter->next_index];
@@ -1973,7 +1973,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_MAP_VALUES: {
+        case PYRO_ITER_MAP_VALUES: {
             ObjMap* map = (ObjMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
                 MapEntry* entry = &map->entry_array[iter->next_index];
@@ -1986,7 +1986,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_MAP_ENTRIES: {
+        case PYRO_ITER_MAP_ENTRIES: {
             ObjMap* map = (ObjMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
                 MapEntry* entry = &map->entry_array[iter->next_index];
@@ -2008,7 +2008,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_FUNC_MAP: {
+        case PYRO_ITER_FUNC_MAP: {
             ObjIter* src_iter = (ObjIter*)iter->source;
             Value next_value = ObjIter_next(src_iter, vm);
             if (IS_ERR(next_value)) {
@@ -2025,7 +2025,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return result;
         }
 
-        case ITER_FUNC_FILTER: {
+        case PYRO_ITER_FUNC_FILTER: {
             ObjIter* src_iter = (ObjIter*)iter->source;
 
             while (true) {
@@ -2047,7 +2047,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             }
         }
 
-        case ITER_ENUM: {
+        case PYRO_ITER_ENUM: {
             ObjIter* src_iter = (ObjIter*)iter->source;
             Value next_value = ObjIter_next(src_iter, vm);
             if (IS_ERR(next_value)) {
@@ -2067,7 +2067,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(tup);
         }
 
-        case ITER_GENERIC: {
+        case PYRO_ITER_GENERIC: {
             Value next_method = pyro_get_method(vm, pyro_obj(iter->source), vm->str_dollar_next);
             pyro_push(vm, pyro_obj(iter->source));
             Value result = pyro_call_method(vm, next_method, 0);
@@ -2077,7 +2077,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return result;
         }
 
-        case ITER_RANGE: {
+        case PYRO_ITER_RANGE: {
             if (iter->range_step > 0) {
                 if (iter->range_next < iter->range_stop) {
                     int64_t range_next = iter->range_next;
@@ -2099,7 +2099,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case ITER_STR_LINES: {
+        case PYRO_ITER_STR_LINES: {
             // If the source is NULL, the iterator has been exhausted.
             if (iter->source == NULL) {
                 return pyro_obj(vm->error);
@@ -2151,7 +2151,7 @@ Value ObjIter_next(ObjIter* iter, PyroVM* vm) {
             return pyro_obj(next_line);
         }
 
-        case ITER_FILE_LINES: {
+        case PYRO_ITER_FILE_LINES: {
             // If the source is NULL, the iterator has been exhausted.
             if (iter->source == NULL) {
                 return pyro_obj(vm->error);

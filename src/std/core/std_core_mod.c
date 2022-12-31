@@ -63,7 +63,7 @@ static Value mod_globals(PyroVM* vm, size_t arg_count, Value* args) {
 static Value mod_iter(PyroVM* vm, size_t arg_count, Value* args) {
     ObjModule* mod = AS_MOD(args[-1]);
 
-    ObjIter* iter = ObjIter_new((Obj*)mod->pub_member_indexes, ITER_MAP_KEYS, vm);
+    ObjIter* iter = ObjIter_new((Obj*)mod->pub_member_indexes, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_null();
