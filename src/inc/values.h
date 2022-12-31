@@ -7,10 +7,10 @@
 // one of these enum values.
 typedef enum {
     PYRO_VALUE_BOOL,       // A Pyro boolean, true or false.
-    PYRO_VALUE_NULL,       // A Pyro null.
-    PYRO_VALUE_I64,        // A 64-bit signed integer.
-    PYRO_VALUE_F64,        // A 64-bit float.
     PYRO_VALUE_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
+    PYRO_VALUE_F64,        // A 64-bit float.
+    PYRO_VALUE_I64,        // A 64-bit signed integer.
+    PYRO_VALUE_NULL,       // A Pyro null.
     PYRO_VALUE_OBJ,        // A pointer to a heap-allocated object.
     PYRO_VALUE_TOMBSTONE,  // Used internally by the map implementation.
 } PyroValueType;
@@ -38,7 +38,6 @@ typedef enum {
     PYRO_OBJECT_CLOSURE,
     PYRO_OBJECT_ERR,
     PYRO_OBJECT_FILE,
-    PYRO_OBJECT_PYRO_FN,
     PYRO_OBJECT_INSTANCE,
     PYRO_OBJECT_ITER,
     PYRO_OBJECT_MAP,
@@ -46,6 +45,7 @@ typedef enum {
     PYRO_OBJECT_MAP_AS_WEAKREF,
     PYRO_OBJECT_MODULE,
     PYRO_OBJECT_NATIVE_FN,
+    PYRO_OBJECT_PYRO_FN,
     PYRO_OBJECT_QUEUE,
     PYRO_OBJECT_RESOURCE_POINTER,
     PYRO_OBJECT_STR,
