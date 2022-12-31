@@ -546,7 +546,7 @@ static void define_variable(Parser* parser, uint16_t index, Access access) {
         mark_initialized(parser);
         return;
     }
-    OpCode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBAL : PYRO_OPCODE_DEFINE_PRI_GLOBAL;
+    PyroOpCode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBAL : PYRO_OPCODE_DEFINE_PRI_GLOBAL;
     emit_byte(parser, opcode);
     emit_u16be(parser, index);
 }
@@ -557,7 +557,7 @@ static void define_variables(Parser* parser, uint16_t* indexes, size_t count, Ac
         mark_initialized_multi(parser, count);
         return;
     }
-    OpCode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBALS : PYRO_OPCODE_DEFINE_PRI_GLOBALS;
+    PyroOpCode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBALS : PYRO_OPCODE_DEFINE_PRI_GLOBALS;
     emit_u8_u8(parser, opcode, count);
     for (size_t i = 0; i < count; i++) {
         emit_u16be(parser, indexes[i]);
@@ -640,7 +640,7 @@ static void end_scope(Parser* parser) {
 
 // Emits a jump instruction and a two-byte placeholder operand. Returns the index of the
 // first byte of the operand.
-static size_t emit_jump(Parser* parser, OpCode instruction) {
+static size_t emit_jump(Parser* parser, PyroOpCode instruction) {
     emit_byte(parser, instruction);
     emit_byte(parser, 0xff);
     emit_byte(parser, 0xff);
@@ -1272,8 +1272,8 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         }
 
         else if (match(parser, TOKEN_DOT)) {
-            OpCode get_opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_GET_FIELD : PYRO_OPCODE_GET_PUB_FIELD;
-            OpCode set_opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_SET_FIELD : PYRO_OPCODE_SET_PUB_FIELD;
+            PyroOpCode get_opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_GET_FIELD : PYRO_OPCODE_GET_PUB_FIELD;
+            PyroOpCode set_opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_SET_FIELD : PYRO_OPCODE_SET_PUB_FIELD;
             consume(parser, TOKEN_IDENTIFIER, "expected a field name after '.'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (can_assign && match(parser, TOKEN_EQUAL)) {
@@ -1303,16 +1303,16 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
                 bool unpack_last_argument;
                 uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
                 if (unpack_last_argument) {
-                    OpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD_WITH_UNPACK : PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK;
+                    PyroOpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD_WITH_UNPACK : PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK;
                     emit_u8_u16be(parser, opcode, index);
                     emit_byte(parser, arg_count);
                 } else {
-                    OpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD : PYRO_OPCODE_CALL_PUB_METHOD;
+                    PyroOpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD : PYRO_OPCODE_CALL_PUB_METHOD;
                     emit_u8_u16be(parser, opcode, index);
                     emit_byte(parser, arg_count);
                 }
             } else {
-                OpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_GET_METHOD : PYRO_OPCODE_GET_PUB_METHOD;
+                PyroOpCode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_GET_METHOD : PYRO_OPCODE_GET_PUB_METHOD;
                 emit_u8_u16be(parser, opcode, index);
             }
         }
