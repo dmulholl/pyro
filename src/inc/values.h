@@ -25,12 +25,12 @@ typedef struct {
         int64_t i64;
         uint64_t u64;
         uint32_t u32;
-        Obj* obj;
+        PyroObj* obj;
     } as;
 } PyroValue;
 
 // Type-set for heap-allocated Pyro objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
-// Every [Obj] has a [.type] field with one of these enum values.
+// Every [PyroObj] has a [.type] field with one of these enum values.
 typedef enum {
     PYRO_OBJECT_BOUND_METHOD,
     PYRO_OBJECT_BUF,
@@ -58,8 +58,8 @@ typedef enum {
 // Base type for all heap-allocated objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
 // The VM maintains a linked list of all heap-allocated objects using the [.next] pointers.
 // Not every object has an associated class so [.class] can be NULL.
-struct Obj {
-    Obj* next;
+struct PyroObj {
+    PyroObj* next;
     ObjClass* class;
     PyroObjectType type;
     bool is_marked;
@@ -87,7 +87,7 @@ static inline PyroValue pyro_char(uint32_t value) {
 
 // Converts a C pointer to a Pyro value.
 static inline PyroValue pyro_obj(void* value) {
-    return (PyroValue){PYRO_VALUE_OBJ, {.obj = (Obj*)value}};
+    return (PyroValue){PYRO_VALUE_OBJ, {.obj = (PyroObj*)value}};
 }
 
 // Creates a Pyro tombstone value.

@@ -81,7 +81,7 @@
 
 // Forward declarations.
 typedef struct PyroVM PyroVM;
-typedef struct Obj Obj;
+typedef struct PyroObj PyroObj;
 typedef struct ObjStr ObjStr;
 typedef struct ObjMap ObjMap;
 typedef struct ObjVec ObjVec;

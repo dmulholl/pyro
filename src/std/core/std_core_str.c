@@ -32,7 +32,7 @@ static PyroValue str_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR, vm);
+    ObjIter* iter = ObjIter_new((PyroObj*)str, PYRO_ITER_STR, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_null();
@@ -64,7 +64,7 @@ static PyroValue str_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR_BYTES, vm);
+    ObjIter* iter = ObjIter_new((PyroObj*)str, PYRO_ITER_STR_BYTES, vm);
     if (!iter) {
         pyro_panic(vm, "bytes(): out of memory");
         return pyro_null();
@@ -75,7 +75,7 @@ static PyroValue str_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR_LINES, vm);
+    ObjIter* iter = ObjIter_new((PyroObj*)str, PYRO_ITER_STR_LINES, vm);
     if (!iter) {
         pyro_panic(vm, "lines(): out of memory");
         return pyro_null();
@@ -180,7 +180,7 @@ static PyroValue str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue
 
 static PyroValue str_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjStr* str = AS_STR(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)str, PYRO_ITER_STR_CHARS, vm);
+    ObjIter* iter = ObjIter_new((PyroObj*)str, PYRO_ITER_STR_CHARS, vm);
     if (!iter) {
         pyro_panic(vm, "chars(): out of memory");
         return pyro_null();

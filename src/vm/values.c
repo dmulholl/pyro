@@ -196,7 +196,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
 }
 
 
-static void pyro_dump_object(PyroVM* vm, Obj* object) {
+static void pyro_dump_object(PyroVM* vm, PyroObj* object) {
     switch (object->type) {
         case PYRO_OBJECT_STR: {
             ObjStr* string = (ObjStr*)object;

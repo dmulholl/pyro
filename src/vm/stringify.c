@@ -443,7 +443,7 @@ static ObjStr* stringify_queue(PyroVM* vm, ObjQueue* queue) {
 
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
-static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
+static ObjStr* stringify_object(PyroVM* vm, PyroObj* object) {
     PyroValue method = pyro_get_method(vm, pyro_obj(object), vm->str_dollar_str);
     if (!IS_NULL(method)) {
         pyro_push(vm, pyro_obj(object));
@@ -501,7 +501,7 @@ static ObjStr* stringify_object(PyroVM* vm, Obj* object) {
 
         case PYRO_OBJECT_BOUND_METHOD: {
             ObjBoundMethod* bound_method = (ObjBoundMethod*)object;
-            Obj* method = bound_method->method;
+            PyroObj* method = bound_method->method;
 
             switch (method->type) {
                 case PYRO_OBJECT_NATIVE_FN:

@@ -106,7 +106,7 @@ struct PyroVM {
     ObjUpvalue* open_upvalues;
 
     // Linked list of all heap-allocated objects.
-    Obj* objects;
+    PyroObj* objects;
 
     // Canned objects.
     ObjStr* empty_string;
@@ -169,7 +169,7 @@ struct PyroVM {
     ObjStr* str_line;
 
     // The grey stack used by the garbage collector.
-    Obj** grey_stack;
+    PyroObj** grey_stack;
     size_t grey_stack_count;
     size_t grey_stack_capacity;
 

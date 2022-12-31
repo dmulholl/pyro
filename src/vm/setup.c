@@ -276,14 +276,14 @@ PyroVM* pyro_new_vm(size_t stack_size) {
 
 
 void pyro_free_vm(PyroVM* vm) {
-    Obj* object = vm->objects;
+    PyroObj* object = vm->objects;
     while (object != NULL) {
-        Obj* next = object->next;
+        PyroObj* next = object->next;
         pyro_free_object(vm, object);
         object = next;
     }
 
-    PYRO_FREE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity);
+    PYRO_FREE_ARRAY(vm, PyroObj*, vm->grey_stack, vm->grey_stack_capacity);
     PYRO_FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity);
 

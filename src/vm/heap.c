@@ -27,7 +27,7 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) 
 }
 
 
-void pyro_free_object(PyroVM* vm, Obj* object) {
+void pyro_free_object(PyroVM* vm, PyroObj* object) {
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_write_stdout(
             vm,

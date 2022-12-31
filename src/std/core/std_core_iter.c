@@ -79,7 +79,7 @@ static PyroValue iter_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, PYRO_ITER_FUNC_MAP, vm);
+    ObjIter* new_iter = ObjIter_new((PyroObj*)src_iter, PYRO_ITER_FUNC_MAP, vm);
     if (!new_iter) {
         pyro_panic(vm, "map(): out of memory");
         return pyro_null();
@@ -98,7 +98,7 @@ static PyroValue iter_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, PYRO_ITER_FUNC_FILTER, vm);
+    ObjIter* new_iter = ObjIter_new((PyroObj*)src_iter, PYRO_ITER_FUNC_FILTER, vm);
     if (!new_iter) {
         pyro_panic(vm, "filter(): out of memory");
         return pyro_null();
@@ -199,7 +199,7 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue iter_enumerate(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjIter* src_iter = AS_ITER(args[-1]);
 
-    ObjIter* new_iter = ObjIter_new((Obj*)src_iter, PYRO_ITER_ENUM, vm);
+    ObjIter* new_iter = ObjIter_new((PyroObj*)src_iter, PYRO_ITER_ENUM, vm);
     if (!new_iter) {
         pyro_panic(vm, "enumerate(): out of memory");
         return pyro_null();
@@ -371,7 +371,7 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     vec->count -= num_to_skip;
 
-    ObjIter* new_iter = ObjIter_new((Obj*)vec, PYRO_ITER_VEC, vm);
+    ObjIter* new_iter = ObjIter_new((PyroObj*)vec, PYRO_ITER_VEC, vm);
     if (!new_iter) {
         pyro_panic(vm, "skip_last(): out of memory");
         return pyro_null();

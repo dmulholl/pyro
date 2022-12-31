@@ -23,8 +23,8 @@
 
 // Allocates memory for a new object. Automatically adds the new object to the VM's linked list of
 // all heap-allocated objects. Returns NULL if memory cannot be allocated.
-static Obj* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
-    Obj* object = pyro_realloc(vm, NULL, 0, size);
+static PyroObj* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
+    PyroObj* object = pyro_realloc(vm, NULL, 0, size);
     if (object == NULL) {
         return NULL;
     }
@@ -1211,7 +1211,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* na
 /* ------------- */
 
 
-ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, PyroValue receiver, Obj* method) {
+ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, PyroValue receiver, PyroObj* method) {
     ObjBoundMethod* bound = ALLOCATE_OBJECT(vm, ObjBoundMethod, PYRO_OBJECT_BOUND_METHOD);
     if (!bound) {
         return NULL;
@@ -1859,7 +1859,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
 /* --------- */
 
 
-ObjIter* ObjIter_new(Obj* source, PyroIterType iter_type, PyroVM* vm) {
+ObjIter* ObjIter_new(PyroObj* source, PyroIterType iter_type, PyroVM* vm) {
     ObjIter* iter = ALLOCATE_OBJECT(vm, ObjIter, PYRO_OBJECT_ITER);
     if (!iter) {
         return NULL;

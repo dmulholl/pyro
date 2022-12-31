@@ -271,7 +271,7 @@ static PyroValue file_read_line(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjFile* file = AS_FILE(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)file, PYRO_ITER_FILE_LINES, vm);
+    ObjIter* iter = ObjIter_new((PyroObj*)file, PYRO_ITER_FILE_LINES, vm);
     if (!iter) {
         pyro_panic(vm, "lines(): out of memory");
         return pyro_null();

@@ -9,7 +9,7 @@
 /* ------- */
 
 struct ObjStr {
-    Obj obj;
+    PyroObj obj;
     uint64_t hash;
     size_t length;
     char* bytes;
@@ -75,7 +75,7 @@ typedef struct {
 // A linear-probing hash map. New entries are appended to [entry_array] so iterating over this
 // array returns the entries in insertion order.
 struct ObjMap {
-    Obj obj;
+    PyroObj obj;
 
     // The number of live entries in the map. In addition to these live entries [entry_array]
     // and [index_array] can contain independently varying numbers of tombstones.
@@ -137,7 +137,7 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm);
 /* ------- */
 
 struct ObjVec {
-    Obj obj;
+    PyroObj obj;
     size_t count;
     size_t capacity;
     PyroValue* values;
@@ -180,7 +180,7 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, PyroValue value, PyroVM* 
 /* ------- */
 
 struct ObjModule {
-    Obj obj;
+    PyroObj obj;
     ObjMap* submodules;
 
     // Stores the module's global members.
@@ -200,7 +200,7 @@ ObjModule* ObjModule_new(PyroVM* vm);
 /* -------------- */
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     ObjStr* name;
     size_t upvalue_count;
 
@@ -260,7 +260,7 @@ typedef PyroValue (*pyro_native_fn_t)(PyroVM* vm, size_t arg_count, PyroValue* a
 
 // [arity = -1] means that the function accepts a variable number of arguments.
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     ObjStr* name;
     pyro_native_fn_t fn_ptr;
     int arity;
@@ -273,7 +273,7 @@ ObjNativeFn* ObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* na
 /* ------- */
 
 struct ObjClass {
-    Obj obj;
+    PyroObj obj;
 
     // The class's name, if it has one. This field can be NULL.
     ObjStr* name;
@@ -317,7 +317,7 @@ ObjClass* ObjClass_new(PyroVM* vm);
 /* --------- */
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     PyroValue fields[];
 } ObjInstance;
 
@@ -330,7 +330,7 @@ ObjInstance* ObjInstance_new(PyroVM* vm, ObjClass* class);
 // The [next] pointer is used by the VM to maintain a linked list of open upvalues pointing to
 // variables still on the stack.
 typedef struct ObjUpvalue {
-    Obj obj;
+    PyroObj obj;
     PyroValue* location;
     PyroValue closed;
     struct ObjUpvalue* next;
@@ -343,7 +343,7 @@ ObjUpvalue* ObjUpvalue_new(PyroVM* vm, PyroValue* slot);
 /* -------- */
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     ObjPyroFn* fn;
     ObjModule* module;
     ObjVec* default_values;
@@ -358,19 +358,19 @@ ObjClosure* ObjClosure_new(PyroVM* vm, ObjPyroFn* func, ObjModule* module);
 /* ------------- */
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     PyroValue receiver;
-    Obj* method; // ObjClosure or ObjNativeFn
+    PyroObj* method; // ObjClosure or ObjNativeFn
 } ObjBoundMethod;
 
-ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, PyroValue receiver, Obj* method);
+ObjBoundMethod* ObjBoundMethod_new(PyroVM* vm, PyroValue receiver, PyroObj* method);
 
 /* ------ */
 /* Tuples */
 /* ------ */
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     size_t count;
     PyroValue values[];
 } ObjTup;
@@ -383,7 +383,7 @@ bool ObjTup_check_equal(ObjTup* a, ObjTup* b, PyroVM* vm);
 /* ------- */
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     size_t count;
     size_t capacity;
     uint8_t* bytes;
@@ -432,7 +432,7 @@ bool ObjBuf_grow_by_n_bytes(ObjBuf* buf, size_t n, PyroVM* vm);
 /* ----- */
 
 struct ObjFile {
-    Obj obj;
+    PyroObj obj;
     FILE* stream; // May be NULL.
     ObjStr* path; // May be NULL.
 };
@@ -454,7 +454,7 @@ typedef struct QueueItem {
 } QueueItem;
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     QueueItem* head;
     QueueItem* tail;
     size_t count;
@@ -497,8 +497,8 @@ typedef enum {
 } PyroIterType;
 
 typedef struct {
-    Obj obj;
-    Obj* source;
+    PyroObj obj;
+    PyroObj* source;
     PyroIterType iter_type;
     size_t next_index;
     int64_t next_enum;
@@ -506,11 +506,11 @@ typedef struct {
     int64_t range_stop;
     int64_t range_step;
     QueueItem* next_queue_item;
-    Obj* callback;
+    PyroObj* callback;
 } ObjIter;
 
 // Creates a new iterator. Returns NULL if the attempt to allocate memory fails.
-ObjIter* ObjIter_new(Obj* source, PyroIterType iter_type, PyroVM* vm);
+ObjIter* ObjIter_new(PyroObj* source, PyroIterType iter_type, PyroVM* vm);
 
 // Creates a new empty iterator. Returns NULL if the attempt to allocate memory fails.
 ObjIter* ObjIter_empty(PyroVM* vm);
@@ -535,7 +535,7 @@ ObjStr* ObjIter_join(ObjIter* iter, const char* sep, size_t sep_length, PyroVM* 
 typedef void (*pyro_free_rp_callback_t)(PyroVM* vm, void* pointer);
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     void* pointer;
     pyro_free_rp_callback_t callback;
 } ObjResourcePointer;
@@ -547,7 +547,7 @@ ObjResourcePointer* ObjResourcePointer_new(void* pointer, pyro_free_rp_callback_
 /* -------- */
 
 typedef struct {
-    Obj obj;
+    PyroObj obj;
     ObjStr* message;
     ObjMap* details;
 } ObjErr;

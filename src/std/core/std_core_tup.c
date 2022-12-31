@@ -48,7 +48,7 @@ static PyroValue tup_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue tup_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     ObjTup* tup = AS_TUP(args[-1]);
-    ObjIter* iter = ObjIter_new((Obj*)tup, PYRO_ITER_TUP, vm);
+    ObjIter* iter = ObjIter_new((PyroObj*)tup, PYRO_ITER_TUP, vm);
     if (!iter) {
         return pyro_null();
     }
