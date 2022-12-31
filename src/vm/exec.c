@@ -125,7 +125,7 @@ static void call_native_fn(PyroVM* vm, PyroObjNativeFn* fn, uint8_t arg_count) {
 static void call_value(PyroVM* vm, uint8_t arg_count) {
     PyroValue callee = pyro_peek(vm, arg_count);
 
-    if (!IS_OBJ(callee)) {
+    if (!PYRO_IS_OBJ(callee)) {
         pyro_panic(vm, "value is not callable");
         return;
     }
@@ -161,7 +161,7 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
             }
             vm->stack_top[-arg_count - 1] = pyro_obj(instance);
 
-            if (IS_NULL(class->init_method)) {
+            if (PYRO_IS_NULL(class->init_method)) {
                 if (arg_count > 0) {
                     pyro_panic(vm,
                         "%s(): expected 0 arguments for initializer, found %zu",
@@ -324,7 +324,7 @@ static PyroObjModule* load_module(PyroVM* vm, PyroValue* names, size_t name_coun
 
 void call_end_with_method(PyroVM* vm, PyroValue receiver) {
     PyroValue end_with_method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
-    if (IS_NULL(end_with_method)) {
+    if (PYRO_IS_NULL(end_with_method)) {
         return;
     }
 
@@ -449,7 +449,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_UNARY_TILDE: {
                 PyroValue operand = pyro_pop(vm);
-                if (IS_I64(operand)) {
+                if (PYRO_IS_I64(operand)) {
                     pyro_push(vm, pyro_i64(~operand.as.i64));
                 } else {
                     pyro_panic(vm, "bitwise '~' requires an integer operand");
@@ -528,10 +528,10 @@ static void run(PyroVM* vm) {
                 PyroValue* values;
                 size_t value_count;
 
-                if (IS_TUP(last_arg)) {
+                if (PYRO_IS_TUP(last_arg)) {
                     values = AS_TUP(last_arg)->values;
                     value_count = AS_TUP(last_arg)->count;
-                } else if (IS_VEC(last_arg)) {
+                } else if (PYRO_IS_VEC(last_arg)) {
                     values = AS_VEC(last_arg)->values;
                     value_count = AS_VEC(last_arg)->count;
                 } else {
@@ -913,7 +913,7 @@ static void run(PyroVM* vm) {
                 PyroValue field_name = READ_CONSTANT();
                 PyroValue receiver = pyro_peek(vm, 0);
 
-                if (IS_INSTANCE(receiver)) {
+                if (PYRO_IS_INSTANCE(receiver)) {
                     PyroObjInstance* instance = AS_INSTANCE(receiver);
                     PyroValue field_index;
                     if (PyroObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
@@ -921,7 +921,7 @@ static void run(PyroVM* vm) {
                         pyro_push(vm, instance->fields[field_index.as.i64]);
                         break;
                     }
-                } else if (IS_CLASS(receiver)) {
+                } else if (PYRO_IS_CLASS(receiver)) {
                     PyroObjClass* class = AS_CLASS(receiver);
                     PyroValue value;
                     if (PyroObjMap_get(class->static_fields, field_name, &value, vm)) {
@@ -939,7 +939,7 @@ static void run(PyroVM* vm) {
                 PyroValue field_name = READ_CONSTANT();
                 PyroValue receiver = pyro_peek(vm, 0);
 
-                if (IS_INSTANCE(receiver)) {
+                if (PYRO_IS_INSTANCE(receiver)) {
                     PyroObjInstance* instance = AS_INSTANCE(receiver);
                     PyroValue field_index;
                     if (PyroObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
@@ -950,7 +950,7 @@ static void run(PyroVM* vm) {
                         pyro_panic(vm, "field '%s' is private", AS_STR(field_name)->bytes);
                         break;
                     }
-                } else if (IS_CLASS(receiver)) {
+                } else if (PYRO_IS_CLASS(receiver)) {
                     PyroObjClass* class = AS_CLASS(receiver);
                     PyroValue value;
                     if (PyroObjMap_get(class->static_fields, field_name, &value, vm)) {
@@ -958,7 +958,7 @@ static void run(PyroVM* vm) {
                         pyro_push(vm, value);
                         break;
                     }
-                } else if (IS_MOD(receiver)) {
+                } else if (PYRO_IS_MOD(receiver)) {
                     pyro_panic(vm,
                         "invalid field name '%s'; receiver is a module, did you mean to use '::'",
                         AS_STR(field_name)->bytes
@@ -1057,13 +1057,13 @@ static void run(PyroVM* vm) {
                 PyroValue member_name = READ_CONSTANT();
                 PyroValue receiver = pyro_pop(vm);
 
-                if (!IS_MOD(receiver)) {
-                    if (IS_INSTANCE(receiver)) {
+                if (!PYRO_IS_MOD(receiver)) {
+                    if (PYRO_IS_INSTANCE(receiver)) {
                         pyro_panic(vm,
                             "invalid member access '%s', receiver is an object instance, did you mean to use ':'",
                             AS_STR(member_name)->bytes
                         );
-                    } else if (IS_CLASS(receiver)) {
+                    } else if (PYRO_IS_CLASS(receiver)) {
                         pyro_panic(vm,
                             "invalid member access '%s', receiver is a class, did you mean to use ':'",
                             AS_STR(member_name)->bytes
@@ -1096,7 +1096,7 @@ static void run(PyroVM* vm) {
                 PyroObjStr* method_name = READ_STRING();
 
                 PyroValue method = pyro_get_method(vm, receiver, method_name);
-                if (IS_NULL(method)) {
+                if (PYRO_IS_NULL(method)) {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
@@ -1117,9 +1117,9 @@ static void run(PyroVM* vm) {
                 PyroObjStr* method_name = READ_STRING();
 
                 PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
-                if (IS_NULL(method)) {
-                    if (IS_NULL(pyro_get_method(vm, receiver, method_name))) {
-                        if (IS_MOD(receiver)) {
+                if (PYRO_IS_NULL(method)) {
+                    if (PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                        if (PYRO_IS_MOD(receiver)) {
                             pyro_panic(vm,
                                 "invalid method name '%s'; receiver is a module, did you mean to use '::'",
                                 method_name->bytes
@@ -1213,7 +1213,7 @@ static void run(PyroVM* vm) {
 
                 for (size_t i = 0; i < imported_module->pub_member_indexes->entry_array_count; i++) {
                     PyroMapEntry* entry = &imported_module->pub_member_indexes->entry_array[i];
-                    if (IS_TOMBSTONE(entry->key)) {
+                    if (PYRO_IS_TOMBSTONE(entry->key)) {
                         continue;
                     }
 
@@ -1268,7 +1268,7 @@ static void run(PyroVM* vm) {
             }
 
             case PYRO_OPCODE_INHERIT: {
-                if (!IS_CLASS(pyro_peek(vm, 1))) {
+                if (!PYRO_IS_CLASS(pyro_peek(vm, 1))) {
                     pyro_panic(vm, "invalid superclass value (not a class)");
                     break;
                 }
@@ -1328,9 +1328,9 @@ static void run(PyroVM* vm) {
                 PyroValue receiver = pyro_peek(vm, arg_count);
 
                 PyroValue method = pyro_get_method(vm, receiver, method_name);
-                if (IS_NATIVE_FN(method)) {
+                if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
-                } else if (IS_CLOSURE(method)) {
+                } else if (PYRO_IS_CLOSURE(method)) {
                     call_closure(vm, AS_CLOSURE(method), arg_count);
                 } else {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
@@ -1347,13 +1347,13 @@ static void run(PyroVM* vm) {
                 PyroValue receiver = pyro_peek(vm, arg_count);
 
                 PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
-                if (IS_NATIVE_FN(method)) {
+                if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
-                } else if (IS_CLOSURE(method)) {
+                } else if (PYRO_IS_CLOSURE(method)) {
                     call_closure(vm, AS_CLOSURE(method), arg_count);
                 } else {
-                    if (IS_NULL(pyro_get_method(vm, receiver, method_name))) {
-                        if (IS_MOD(receiver)) {
+                    if (PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                        if (PYRO_IS_MOD(receiver)) {
                             pyro_panic(vm,
                                 "invalid method name '%s'; receiver is a module, did you mean to use '::'",
                                 method_name->bytes
@@ -1381,10 +1381,10 @@ static void run(PyroVM* vm) {
                 PyroValue* values;
                 size_t value_count;
 
-                if (IS_TUP(last_arg)) {
+                if (PYRO_IS_TUP(last_arg)) {
                     values = AS_TUP(last_arg)->values;
                     value_count = AS_TUP(last_arg)->count;
-                } else if (IS_VEC(last_arg)) {
+                } else if (PYRO_IS_VEC(last_arg)) {
                     values = AS_VEC(last_arg)->values;
                     value_count = AS_VEC(last_arg)->count;
                 } else {
@@ -1405,9 +1405,9 @@ static void run(PyroVM* vm) {
                 }
 
                 PyroValue method = pyro_get_method(vm, receiver, method_name);
-                if (IS_NATIVE_FN(method)) {
+                if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, AS_NATIVE_FN(method), total_args);
-                } else if (IS_CLOSURE(method)) {
+                } else if (PYRO_IS_CLOSURE(method)) {
                     call_closure(vm, AS_CLOSURE(method), total_args);
                 } else {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
@@ -1428,10 +1428,10 @@ static void run(PyroVM* vm) {
                 PyroValue* values;
                 size_t value_count;
 
-                if (IS_TUP(last_arg)) {
+                if (PYRO_IS_TUP(last_arg)) {
                     values = AS_TUP(last_arg)->values;
                     value_count = AS_TUP(last_arg)->count;
-                } else if (IS_VEC(last_arg)) {
+                } else if (PYRO_IS_VEC(last_arg)) {
                     values = AS_VEC(last_arg)->values;
                     value_count = AS_VEC(last_arg)->count;
                 } else {
@@ -1452,12 +1452,12 @@ static void run(PyroVM* vm) {
                 }
 
                 PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
-                if (IS_NATIVE_FN(method)) {
+                if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, AS_NATIVE_FN(method), total_args);
-                } else if (IS_CLOSURE(method)) {
+                } else if (PYRO_IS_CLOSURE(method)) {
                     call_closure(vm, AS_CLOSURE(method), total_args);
                 } else {
-                    if (IS_MOD(receiver)) {
+                    if (PYRO_IS_MOD(receiver)) {
                         pyro_panic(vm,
                             "invalid method name '%s'; receiver is a module, did you mean to use '::'",
                             method_name->bytes
@@ -1482,7 +1482,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                if (IS_NATIVE_FN(method)) {
+                if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
                 } else {
                     call_closure(vm, AS_CLOSURE(method), arg_count);
@@ -1501,10 +1501,10 @@ static void run(PyroVM* vm) {
                 PyroValue* values;
                 size_t value_count;
 
-                if (IS_TUP(last_arg)) {
+                if (PYRO_IS_TUP(last_arg)) {
                     values = AS_TUP(last_arg)->values;
                     value_count = AS_TUP(last_arg)->count;
-                } else if (IS_VEC(last_arg)) {
+                } else if (PYRO_IS_VEC(last_arg)) {
                     values = AS_VEC(last_arg)->values;
                     value_count = AS_VEC(last_arg)->count;
                 } else {
@@ -1530,7 +1530,7 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                if (IS_NATIVE_FN(method)) {
+                if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, AS_NATIVE_FN(method), total_args);
                 } else {
                     call_closure(vm, AS_CLOSURE(method), total_args);
@@ -1543,9 +1543,9 @@ static void run(PyroVM* vm) {
                 PyroValue receiver = pyro_peek(vm, 0);
                 PyroValue iter_method = pyro_get_method(vm, receiver, vm->str_dollar_iter);
 
-                if (IS_NATIVE_FN(iter_method)) {
+                if (PYRO_IS_NATIVE_FN(iter_method)) {
                     call_native_fn(vm, AS_NATIVE_FN(iter_method), 0);
-                } else if (IS_CLOSURE(iter_method)) {
+                } else if (PYRO_IS_CLOSURE(iter_method)) {
                     call_closure(vm, AS_CLOSURE(iter_method), 0);
                 } else {
                     pyro_panic(vm, "value is not iterable");
@@ -1558,7 +1558,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_GET_NEXT_FROM_ITERATOR: {
                 PyroValue receiver = pyro_peek(vm, 0);
 
-                if (IS_ITER(receiver)) {
+                if (PYRO_IS_ITER(receiver)) {
                     PyroValue next_value = PyroObjIter_next(AS_ITER(receiver), vm);
                     pyro_push(vm, next_value);
                     break;
@@ -1566,10 +1566,10 @@ static void run(PyroVM* vm) {
 
                 PyroValue next_method = pyro_get_method(vm, receiver, vm->str_dollar_next);
 
-                if (IS_NATIVE_FN(next_method)) {
+                if (PYRO_IS_NATIVE_FN(next_method)) {
                     pyro_push(vm, receiver);
                     call_native_fn(vm, AS_NATIVE_FN(next_method), 0);
-                } else if (IS_CLOSURE(next_method)) {
+                } else if (PYRO_IS_CLOSURE(next_method)) {
                     pyro_push(vm, receiver);
                     call_closure(vm, AS_CLOSURE(next_method), 0);
                 } else {
@@ -1588,7 +1588,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_JUMP_IF_ERR: {
                 uint16_t offset = READ_BE_U16();
-                if (IS_ERR(pyro_peek(vm, 0))) {
+                if (PYRO_IS_ERR(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
                 break;
@@ -1604,7 +1604,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_JUMP_IF_NOT_ERR: {
                 uint16_t offset = READ_BE_U16();
-                if (!IS_ERR(pyro_peek(vm, 0))) {
+                if (!PYRO_IS_ERR(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
                 break;
@@ -1616,19 +1616,19 @@ static void run(PyroVM* vm) {
                 PyroValue value = pyro_peek(vm, 0);
                 bool is_kinda_falsey = false;
 
-                if (IS_BOOL(value) && value.as.boolean == false) {
+                if (PYRO_IS_BOOL(value) && value.as.boolean == false) {
                     is_kinda_falsey = true;
-                } else if (IS_NULL(value)) {
+                } else if (PYRO_IS_NULL(value)) {
                     is_kinda_falsey = true;
-                } else if (IS_ERR(value)) {
+                } else if (PYRO_IS_ERR(value)) {
                     is_kinda_falsey = true;
-                } else if (IS_I64(value) && value.as.i64 == 0) {
+                } else if (PYRO_IS_I64(value) && value.as.i64 == 0) {
                     is_kinda_falsey = true;
-                } else if (IS_CHAR(value) && value.as.u32 == 0) {
+                } else if (PYRO_IS_CHAR(value) && value.as.u32 == 0) {
                     is_kinda_falsey = true;
-                } else if (IS_F64(value) && value.as.f64 == 0.0) {
+                } else if (PYRO_IS_F64(value) && value.as.f64 == 0.0) {
                     is_kinda_falsey = true;
-                } else if (IS_STR(value) && AS_STR(value)->length == 0) {
+                } else if (PYRO_IS_STR(value) && AS_STR(value)->length == 0) {
                     is_kinda_falsey = true;
                 }
 
@@ -1640,7 +1640,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_JUMP_IF_NOT_NULL: {
                 uint16_t offset = READ_BE_U16();
-                if (!IS_NULL(pyro_peek(vm, 0))) {
+                if (!PYRO_IS_NULL(pyro_peek(vm, 0))) {
                     frame->ip += offset;
                 }
                 break;
@@ -1792,7 +1792,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_BINARY_LESS_LESS: {
                 PyroValue b = pyro_pop(vm);
                 PyroValue a = pyro_pop(vm);
-                if (IS_I64(a) && IS_I64(b)) {
+                if (PYRO_IS_I64(a) && PYRO_IS_I64(b)) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, pyro_i64(a.as.i64 << b.as.i64));
                     } else {
@@ -1995,7 +1995,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_POP_ECHO_IN_REPL: {
                 PyroValue value = pyro_peek(vm, 0);
 
-                if (vm->in_repl && !IS_NULL(value)) {
+                if (vm->in_repl && !PYRO_IS_NULL(value)) {
                     PyroObjStr* string = pyro_debugify_value(vm, value);
                     if (vm->halt_flag) {
                         break;
@@ -2041,7 +2041,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_BINARY_GREATER_GREATER: {
                 PyroValue b = pyro_pop(vm);
                 PyroValue a = pyro_pop(vm);
-                if (IS_I64(a) && IS_I64(b)) {
+                if (PYRO_IS_I64(a) && PYRO_IS_I64(b)) {
                     if (b.as.i64 >= 0) {
                         pyro_push(vm, pyro_i64(a.as.i64 >> b.as.i64));
                     } else {
@@ -2057,7 +2057,7 @@ static void run(PyroVM* vm) {
                 PyroValue field_name = READ_CONSTANT();
                 PyroValue receiver = pyro_peek(vm, 1);
 
-                if (IS_INSTANCE(receiver)) {
+                if (PYRO_IS_INSTANCE(receiver)) {
                     PyroObjInstance* instance = AS_INSTANCE(receiver);
                     PyroValue field_index;
                     if (PyroObjMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
@@ -2067,7 +2067,7 @@ static void run(PyroVM* vm) {
                         pyro_push(vm, new_value);
                         break;
                     }
-                } else if (IS_CLASS(receiver)) {
+                } else if (PYRO_IS_CLASS(receiver)) {
                     PyroObjClass* class = AS_CLASS(receiver);
                     if (PyroObjMap_contains(class->static_fields, field_name, vm)) {
                         PyroValue new_value = pyro_pop(vm); // pop the value
@@ -2086,7 +2086,7 @@ static void run(PyroVM* vm) {
                 PyroValue field_name = READ_CONSTANT();
                 PyroValue receiver = pyro_peek(vm, 1);
 
-                if (IS_INSTANCE(receiver)) {
+                if (PYRO_IS_INSTANCE(receiver)) {
                     PyroObjInstance* instance = AS_INSTANCE(receiver);
                     PyroValue field_index;
                     if (PyroObjMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
@@ -2096,7 +2096,7 @@ static void run(PyroVM* vm) {
                         pyro_push(vm, new_value);
                         break;
                     }
-                } else if (IS_CLASS(receiver)) {
+                } else if (PYRO_IS_CLASS(receiver)) {
                     PyroObjClass* class = AS_CLASS(receiver);
                     if (PyroObjMap_contains(class->static_fields, field_name, vm)) {
                         PyroValue new_value = pyro_pop(vm); // pop the value
@@ -2272,7 +2272,7 @@ static void run(PyroVM* vm) {
                 PyroValue value = pyro_pop(vm);
                 uint8_t count = READ_BYTE();
 
-                if (IS_TUP(value) || IS_ERR(value)) {
+                if (PYRO_IS_TUP(value) || PYRO_IS_ERR(value)) {
                     PyroObjTup* tup = AS_TUP(value);
                     if (tup->count < count) {
                         pyro_panic(
@@ -2284,7 +2284,7 @@ static void run(PyroVM* vm) {
                             pyro_push(vm, tup->values[i]);
                         }
                     }
-                } else if (IS_VEC(value)) {
+                } else if (PYRO_IS_VEC(value)) {
                     PyroObjVec* vec = AS_VEC(value);
                     if (vec->count < count) {
                         pyro_panic(
@@ -2532,7 +2532,7 @@ void pyro_run_main_func(PyroVM* vm) {
     PyroValue main_index;
     if (PyroObjMap_get(vm->main_module->all_member_indexes, pyro_obj(main_string), &main_index, vm)) {
         PyroValue main_value = vm->main_module->members->values[main_index.as.i64];
-        if (IS_CLOSURE(main_value)) {
+        if (PYRO_IS_CLOSURE(main_value)) {
             if (AS_CLOSURE(main_value)->fn->arity == 0) {
                 pyro_push(vm, main_value);
                 call_value(vm, 0);
@@ -2549,10 +2549,10 @@ void pyro_run_main_func(PyroVM* vm) {
 
 
 PyroValue pyro_call_method(PyroVM* vm, PyroValue method, uint8_t arg_count) {
-    if (IS_NATIVE_FN(method)) {
+    if (PYRO_IS_NATIVE_FN(method)) {
         call_native_fn(vm, AS_NATIVE_FN(method), arg_count);
         return pyro_pop(vm);
-    } else if (IS_CLOSURE(method)) {
+    } else if (PYRO_IS_CLOSURE(method)) {
         call_closure(vm, AS_CLOSURE(method), arg_count);
         run(vm);
         return pyro_pop(vm);
@@ -2565,7 +2565,7 @@ PyroValue pyro_call_method(PyroVM* vm, PyroValue method, uint8_t arg_count) {
 
 PyroValue pyro_call_function(PyroVM* vm, uint8_t arg_count) {
     PyroValue value = pyro_peek(vm, arg_count);
-    if (IS_NATIVE_FN(value)) {
+    if (PYRO_IS_NATIVE_FN(value)) {
         call_native_fn(vm, AS_NATIVE_FN(value), arg_count);
         return pyro_pop(vm);
     } else {

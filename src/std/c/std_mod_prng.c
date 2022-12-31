@@ -12,7 +12,7 @@ static PyroValue fn_rand_float(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
+    if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
         return pyro_null();
     }
@@ -21,12 +21,12 @@ static PyroValue fn_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_rand_int_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "rand_int_in_range(): invalid argument [lower], expected an integer");
         return pyro_null();
     }
 
-    if (!IS_I64(args[1])) {
+    if (!PYRO_IS_I64(args[1])) {
         pyro_panic(vm, "rand_int_in_range(): invalid argument [upper], expected an integer");
         return pyro_null();
     }

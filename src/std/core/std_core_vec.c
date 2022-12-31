@@ -24,7 +24,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     else if (arg_count == 1) {
         // Does the object have an :$iter() method?
         PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
-        if (IS_NULL(iter_method)) {
+        if (PYRO_IS_NULL(iter_method)) {
             pyro_panic(vm, "$vec(): invalid argument [arg], expected an iterable object");
             return pyro_null();
         }
@@ -39,7 +39,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
         // Get the iterator's :$next() method.
         PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
-        if (IS_NULL(next_method)) {
+        if (PYRO_IS_NULL(next_method)) {
             pyro_panic(vm, "$vec(): invalid argument [arg], iterator has no :$next() method");
             return pyro_null();
         }
@@ -58,7 +58,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
             if (vm->halt_flag) {
                 return pyro_null();
             }
-            if (IS_ERR(next_value)) {
+            if (PYRO_IS_ERR(next_value)) {
                 break;
             }
             pyro_push(vm, next_value); // protect from GC
@@ -76,7 +76,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     else if (arg_count == 2) {
-        if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
+        if (PYRO_IS_I64(args[0]) && args[0].as.i64 >= 0) {
             PyroObjVec* vec = PyroObjVec_new_with_cap_and_fill((size_t)args[0].as.i64, args[1], vm);
             if (!vec) {
                 pyro_panic(vm, "$vec(): out of memory");
@@ -97,7 +97,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_VEC(args[0]));
+    return pyro_bool(PYRO_IS_VEC(args[0]));
 }
 
 
@@ -124,7 +124,7 @@ static PyroValue vec_append(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue vec_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjVec* vec = AS_VEC(args[-1]);
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < vec->count) {
             return vec->values[index];
@@ -139,7 +139,7 @@ static PyroValue vec_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue vec_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjVec* vec = AS_VEC(args[-1]);
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < vec->count) {
             vec->values[index] = args[1];
@@ -357,7 +357,7 @@ static PyroValue vec_remove_first(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue vec_remove_at_index(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjVec* vec = AS_VEC(args[-1]);
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "remove_at_index(): invalid argument [index], expected an integer");
         return pyro_null();
     }
@@ -400,7 +400,7 @@ static PyroValue vec_random(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue vec_insert_at_index(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjVec* vec = AS_VEC(args[-1]);
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "insert_at_index(): invalid argument [index], expected an integer");
         return pyro_null();
     }
@@ -452,7 +452,7 @@ static PyroValue fn_stack(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_stack(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_STACK(args[0]));
+    return pyro_bool(PYRO_IS_STACK(args[0]));
 }
 
 
@@ -475,7 +475,7 @@ static PyroValue vec_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "slice(): invalid argument [start_index], expected an integer");
         return pyro_null();
     }
@@ -492,7 +492,7 @@ static PyroValue vec_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     size_t length = vec->count - start_index;
     if (arg_count == 2) {
-        if (!IS_I64(args[1])) {
+        if (!PYRO_IS_I64(args[1])) {
             pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
             return pyro_null();
         }
@@ -567,7 +567,7 @@ static PyroValue vec_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        if (!IS_STR(args[0])) {
+        if (!PYRO_IS_STR(args[0])) {
             pyro_panic(vm, "join(): invalid argument [sep], expected a string");
             return pyro_null();
         }

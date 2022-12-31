@@ -43,7 +43,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
 
         for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
             PyroMapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
-            if (IS_TOMBSTONE(entry->key)) {
+            if (PYRO_IS_TOMBSTONE(entry->key)) {
                 continue;
             }
 
@@ -51,7 +51,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
             PyroValue member_index = entry->value;
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
-            if (IS_CLOSURE(member_value)) {
+            if (PYRO_IS_CLOSURE(member_value)) {
                 PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                     pyro_reset_vm(vm);
@@ -137,7 +137,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
 
         for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
             PyroMapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
-            if (IS_TOMBSTONE(entry->key)) {
+            if (PYRO_IS_TOMBSTONE(entry->key)) {
                 continue;
             }
 
@@ -145,7 +145,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
             PyroValue member_index = entry->value;
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
-            if (IS_CLOSURE(member_value)) {
+            if (PYRO_IS_CLOSURE(member_value)) {
                 PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                     pyro_reset_vm(vm);

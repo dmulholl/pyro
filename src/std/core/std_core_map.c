@@ -20,7 +20,7 @@ static PyroValue fn_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_MAP(args[0]));
+    return pyro_bool(PYRO_IS_MAP(args[0]));
 }
 
 
@@ -135,7 +135,7 @@ static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // Does the object have an :$iter() method?
     PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
-    if (IS_NULL(iter_method)) {
+    if (PYRO_IS_NULL(iter_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], argument is not iterable");
         return pyro_null();
     }
@@ -150,7 +150,7 @@ static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // Get the iterator's :$next() method.
     PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
-    if (IS_NULL(next_method)) {
+    if (PYRO_IS_NULL(next_method)) {
         pyro_panic(vm, "$set(): invalid argument [arg], :$iter() returns an object with no :$next() method");
         return pyro_null();
     }
@@ -169,7 +169,7 @@ static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (vm->halt_flag) {
             return pyro_null();
         }
-        if (IS_ERR(next_value)) {
+        if (PYRO_IS_ERR(next_value)) {
             break;
         }
         pyro_push(vm, next_value); // protect from GC
@@ -188,7 +188,7 @@ static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_SET(args[0]));
+    return pyro_bool(PYRO_IS_SET(args[0]));
 }
 
 
@@ -204,7 +204,7 @@ static PyroValue set_add(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "union(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -219,7 +219,7 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -232,7 +232,7 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -249,7 +249,7 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "intersection(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -264,7 +264,7 @@ static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args)
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -283,7 +283,7 @@ static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "difference(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -298,7 +298,7 @@ static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -317,7 +317,7 @@ static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "symmetric_difference(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -332,7 +332,7 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -347,7 +347,7 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -366,7 +366,7 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
 static PyroValue set_is_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "is_subset_of(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -379,7 +379,7 @@ static PyroValue set_is_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args)
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -395,7 +395,7 @@ static PyroValue set_is_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue set_is_proper_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "is_proper_subset_of(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -408,7 +408,7 @@ static PyroValue set_is_proper_subset_of(PyroVM* vm, size_t arg_count, PyroValue
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -424,7 +424,7 @@ static PyroValue set_is_proper_subset_of(PyroVM* vm, size_t arg_count, PyroValue
 static PyroValue set_is_superset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "is_superset_of(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -437,7 +437,7 @@ static PyroValue set_is_superset_of(PyroVM* vm, size_t arg_count, PyroValue* arg
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -453,7 +453,7 @@ static PyroValue set_is_superset_of(PyroVM* vm, size_t arg_count, PyroValue* arg
 static PyroValue set_is_proper_superset_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "is_proper_superset_of(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -466,7 +466,7 @@ static PyroValue set_is_proper_superset_of(PyroVM* vm, size_t arg_count, PyroVal
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -482,7 +482,7 @@ static PyroValue set_is_proper_superset_of(PyroVM* vm, size_t arg_count, PyroVal
 static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjMap* map1 = AS_MAP(args[-1]);
 
-    if (!IS_SET(args[0])) {
+    if (!PYRO_IS_SET(args[0])) {
         pyro_panic(vm, "is_equal_to(): invalid argument, expected a set");
         return pyro_null();
     }
@@ -495,7 +495,7 @@ static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 

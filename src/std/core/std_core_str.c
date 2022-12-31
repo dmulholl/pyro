@@ -20,7 +20,7 @@ static PyroValue fn_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_STR(args[0]));
+    return pyro_bool(PYRO_IS_STR(args[0]));
 }
 
 
@@ -49,7 +49,7 @@ static PyroValue str_byte_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < str->length) {
             return pyro_i64((uint8_t)str->bytes[index]);
@@ -192,7 +192,7 @@ static PyroValue str_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue str_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "char(): invalid argument [index], expected an integer");
         return pyro_null();
     }
@@ -349,7 +349,7 @@ static PyroValue str_to_ascii_lower(PyroVM* vm, size_t arg_count, PyroValue* arg
 static PyroValue str_starts_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "starts_with(): invalid argument [prefix], expected a string");
         return pyro_null();
     }
@@ -371,7 +371,7 @@ static PyroValue str_starts_with(PyroVM* vm, size_t arg_count, PyroValue* args) 
 static PyroValue str_ends_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "ends_with(): invalid argument [suffix], expected a string");
         return pyro_null();
     }
@@ -393,7 +393,7 @@ static PyroValue str_ends_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue str_strip_prefix(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_prefix(): invalid argument [prefix], expected a string");
         return pyro_null();
     }
@@ -420,7 +420,7 @@ static PyroValue str_strip_prefix(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue str_strip_suffix(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_suffix(): invalid argument [suffix], expected a string");
         return pyro_null();
     }
@@ -447,7 +447,7 @@ static PyroValue str_strip_suffix(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_prefix_bytes(), invalid argument [bytes], expected a string");
         return pyro_null();
     }
@@ -482,7 +482,7 @@ static PyroValue str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, PyroValue*
 static PyroValue str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_suffix_bytes(): invalid argument [bytes], expected a string");
         return pyro_null();
     }
@@ -517,7 +517,7 @@ static PyroValue str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, PyroValue*
 static PyroValue str_strip_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_bytes(): invalid argument [bytes], expected a string");
         return pyro_null();
     }
@@ -638,7 +638,7 @@ static PyroValue str_strip_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args
 static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_chars(): invalid argument [chars], expected a string");
         return pyro_null();
     }
@@ -692,7 +692,7 @@ static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) 
 static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_suffix_chars(): invalid argument [chars], expected a string");
         return pyro_null();
     }
@@ -736,7 +736,7 @@ static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue*
 static PyroValue str_strip_prefix_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "strip_prefix_chars(): invalid argument [prefix], expected a string");
         return pyro_null();
     }
@@ -781,7 +781,7 @@ static PyroValue str_strip(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         return str_strip_ascii_ws(vm, arg_count, args);
     } else if (arg_count == 1) {
-        if (!IS_STR(args[0])) {
+        if (!PYRO_IS_STR(args[0])) {
             pyro_panic(vm, "strip(): invalid argument [bytes], expected a string");
             return pyro_null();
         }
@@ -796,13 +796,13 @@ static PyroValue str_strip(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue str_match(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "match(): invalid argument [target], expected a string");
         return pyro_null();
     }
     PyroObjStr* target = AS_STR(args[0]);
 
-    if (!IS_I64(args[1]) || args[1].as.i64 < 0) {
+    if (!PYRO_IS_I64(args[1]) || args[1].as.i64 < 0) {
         pyro_panic(vm, "match(): invalid argument [index], expected a positive integer");
         return pyro_null();
     }
@@ -823,13 +823,13 @@ static PyroValue str_match(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "replace(): invalid argument [old], expected a string");
         return pyro_null();
     }
     PyroObjStr* old = AS_STR(args[0]);
 
-    if (!IS_STR(args[1])) {
+    if (!PYRO_IS_STR(args[1])) {
         pyro_panic(vm, "replace(): invalid argument [new], expected a string");
         return pyro_null();
         return pyro_null();
@@ -892,7 +892,7 @@ static PyroValue str_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "index_of(): invalid argument [target], expected a string");
         return pyro_null();
     }
@@ -900,7 +900,7 @@ static PyroValue str_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     size_t index = 0;
     if (arg_count == 2) {
-        if (!IS_I64(args[1])) {
+        if (!PYRO_IS_I64(args[1])) {
             pyro_panic(vm, "index_of(): invalid argument [start_index], expected an integer");
             return pyro_null();
         }
@@ -935,10 +935,10 @@ static PyroValue str_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     size_t target_length;
     uint8_t codepoint_buffer[4];
 
-    if (IS_STR(args[0])) {
+    if (PYRO_IS_STR(args[0])) {
         target = AS_STR(args[0])->bytes;
         target_length = AS_STR(args[0])->length;
-    } else if (IS_CHAR(args[0])) {
+    } else if (PYRO_IS_CHAR(args[0])) {
         target = (char*)codepoint_buffer;
         target_length = pyro_write_utf8_codepoint(args[0].as.u32, codepoint_buffer);
     } else {
@@ -1046,7 +1046,7 @@ static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     PyroObjStr* str = AS_STR(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "split(): invalid argument [sep], expected a string");
         return pyro_null();
     }
@@ -1219,7 +1219,7 @@ static PyroValue str_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "slice(): invalid argument [start_index], expected an integer");
         return pyro_null();
     }
@@ -1236,7 +1236,7 @@ static PyroValue str_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     size_t length = str->length - start_index;
     if (arg_count == 2) {
-        if (!IS_I64(args[1])) {
+        if (!PYRO_IS_I64(args[1])) {
             pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
             return pyro_null();
         }
@@ -1270,7 +1270,7 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // Does the argument have an :$iter() method?
     PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
-    if (IS_NULL(iter_method)) {
+    if (PYRO_IS_NULL(iter_method)) {
         pyro_panic(vm, "join(): invalid argument [items], expected an iterable object");
         return pyro_null();
     }
@@ -1285,7 +1285,7 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // Get the iterator's :$next() method.
     PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
-    if (IS_NULL(next_method)) {
+    if (PYRO_IS_NULL(next_method)) {
         pyro_panic(vm, "join(): invalid argument [items], iterator has no :$next() method");
         return pyro_null();
     }
@@ -1306,7 +1306,7 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (vm->halt_flag) {
             return pyro_null();
         }
-        if (IS_ERR(next_value)) {
+        if (PYRO_IS_ERR(next_value)) {
             break;
         }
 

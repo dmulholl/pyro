@@ -35,7 +35,7 @@ PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value) {
 
 
 PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
-    if (IS_CLASS(receiver)) {
+    if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
         if (PyroObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
@@ -61,7 +61,7 @@ PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_nam
 
 
 PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
-    if (IS_CLASS(receiver)) {
+    if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
         if (PyroObjMap_get(AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
@@ -87,12 +87,12 @@ PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method
 
 
 bool pyro_has_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
-    return !IS_NULL(pyro_get_method(vm, receiver, method_name));
+    return !PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name));
 }
 
 
 bool pyro_has_pub_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
-    return !IS_NULL(pyro_get_pub_method(vm, receiver, method_name));
+    return !PYRO_IS_NULL(pyro_get_pub_method(vm, receiver, method_name));
 }
 
 
@@ -167,7 +167,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
 
                     for (size_t i = 0; i < map->entry_array_count; i++) {
                         PyroMapEntry* entry = &map->entry_array[i];
-                        if (IS_TOMBSTONE(entry->key)) {
+                        if (PYRO_IS_TOMBSTONE(entry->key)) {
                             continue;
                         }
                         hash ^= pyro_hash_value(vm, entry->key);
@@ -178,7 +178,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
 
                 default: {
                     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_hash);
-                    if (!IS_NULL(method)) {
+                    if (!PYRO_IS_NULL(method)) {
                         pyro_push(vm, value);
                         PyroValue result = pyro_call_method(vm, method, 0);
                         if (vm->halt_flag) {

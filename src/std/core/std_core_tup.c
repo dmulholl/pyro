@@ -21,7 +21,7 @@ static PyroValue fn_tup(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_tup(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_TUP(args[0]));
+    return pyro_bool(PYRO_IS_TUP(args[0]));
 }
 
 
@@ -33,7 +33,7 @@ static PyroValue tup_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue tup_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjTup* tup = AS_TUP(args[-1]);
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < tup->count) {
             return tup->values[index];
@@ -64,7 +64,7 @@ static PyroValue tup_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "slice(): invalid argument [start_index], expected an integer");
         return pyro_null();
     }
@@ -81,7 +81,7 @@ static PyroValue tup_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     size_t length = tup->count - start_index;
     if (arg_count == 2) {
-        if (!IS_I64(args[1])) {
+        if (!PYRO_IS_I64(args[1])) {
             pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
             return pyro_null();
         }

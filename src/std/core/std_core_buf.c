@@ -17,7 +17,7 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     else if (arg_count == 1) {
-        if (IS_STR(args[0])) {
+        if (PYRO_IS_STR(args[0])) {
             PyroObjBuf* buf = PyroObjBuf_new_from_string(AS_STR(args[0]), vm);
             if (!buf) {
                 pyro_panic(vm, "$buf(): out of memory");
@@ -31,11 +31,11 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     else if (arg_count == 2) {
-        if (IS_I64(args[0]) && args[0].as.i64 >= 0) {
+        if (PYRO_IS_I64(args[0]) && args[0].as.i64 >= 0) {
             uint8_t fill_value;
-            if (IS_I64(args[1]) && args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
+            if (PYRO_IS_I64(args[1]) && args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
                 fill_value = (uint8_t)args[1].as.i64;
-            } else if (IS_CHAR(args[1]) && args[1].as.u32 <= 255) {
+            } else if (PYRO_IS_CHAR(args[1]) && args[1].as.u32 <= 255) {
                 fill_value = (uint8_t)args[1].as.u32;
             } else {
                 pyro_panic(vm, "$buf(): invalid argument [fill_value], argument is out of range");
@@ -59,7 +59,7 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_BUF(args[0]));
+    return pyro_bool(PYRO_IS_BUF(args[0]));
 }
 
 
@@ -73,14 +73,14 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjBuf* buf = AS_BUF(args[-1]);
     uint8_t byte_value;
 
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         if (args[0].as.i64 >= 0 && args[0].as.i64 <= 255) {
             byte_value = (uint8_t)args[0].as.i64;
         } else {
             pyro_panic(vm, "write_byte(): invalid argument [byte], integer (%d) is out of range", args[0].as.i64);
             return pyro_null();
         }
-    } else if (IS_CHAR(args[0])) {
+    } else if (PYRO_IS_CHAR(args[0])) {
         if (args[0].as.u32 <= 255) {
             byte_value = (uint8_t)args[0].as.u32;
         } else {
@@ -103,7 +103,7 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 /* static PyroValue buf_write_be_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
 /*     PyroObjBuf* buf = AS_BUF(args[-1]); */
 
-/*     if (!IS_I64(args[0])) { */
+/*     if (!PYRO_IS_I64(args[0])) { */
 /*         pyro_panic(vm, "$write_be_u16(): invalid argument"); */
 /*         return pyro_null(); */
 /*     } */
@@ -133,7 +133,7 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 /* static PyroValue buf_write_le_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
 /*     PyroObjBuf* buf = AS_BUF(args[-1]); */
 
-/*     if (!IS_I64(args[0])) { */
+/*     if (!PYRO_IS_I64(args[0])) { */
 /*         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :write_be_u16()."); */
 /*         return pyro_null(); */
 /*     } */
@@ -173,7 +173,7 @@ static PyroValue buf_to_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjBuf* buf = AS_BUF(args[-1]);
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < buf->count) {
             return pyro_i64(buf->bytes[index]);
@@ -189,7 +189,7 @@ static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjBuf* buf = AS_BUF(args[-1]);
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "set(): invalid argument [index], expected an integer");
         return pyro_null();
     }
@@ -201,14 +201,14 @@ static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     uint8_t byte_value;
-    if (IS_I64(args[1])) {
+    if (PYRO_IS_I64(args[1])) {
         if (args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
             byte_value = (uint8_t)args[1].as.i64;
         } else {
             pyro_panic(vm, "set(): invalid argument [byte], integer (%d) is out of range", args[1].as.i64);
             return pyro_null();
         }
-    } else if (IS_CHAR(args[1])) {
+    } else if (PYRO_IS_CHAR(args[1])) {
         if (args[1].as.u32 <= 255) {
             byte_value = (uint8_t)args[1].as.u32;
         } else {
@@ -234,7 +234,7 @@ static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        if (IS_BUF(args[0])) {
+        if (PYRO_IS_BUF(args[0])) {
             PyroObjBuf* src_buf = AS_BUF(args[0]);
             if (!PyroObjBuf_append_bytes(buf, src_buf->count, src_buf->bytes, vm)) {
                 pyro_panic(vm, "write(): out of memory");
@@ -256,7 +256,7 @@ static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "write(): invalid argument [format_string], expected a string");
         return pyro_null();
     }

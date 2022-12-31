@@ -41,7 +41,7 @@ static void mark_object(PyroVM* vm, PyroObj* object) {
 
 // Marks a value as reachable.
 static void mark_value(PyroVM* vm, PyroValue value) {
-    if (IS_OBJ(value)) {
+    if (PYRO_IS_OBJ(value)) {
         mark_object(vm, AS_OBJ(value));
     }
 }
@@ -242,7 +242,7 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
             PyroObjMap* map = (PyroObjMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
                 PyroMapEntry* entry = &map->entry_array[i];
-                if (IS_TOMBSTONE(entry->key)) {
+                if (PYRO_IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 mark_value(vm, entry->key);
@@ -255,7 +255,7 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
             PyroObjMap* map = (PyroObjMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
                 PyroMapEntry* entry = &map->entry_array[i];
-                if (IS_TOMBSTONE(entry->key)) {
+                if (PYRO_IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 mark_value(vm, entry->key);

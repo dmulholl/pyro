@@ -35,7 +35,7 @@ static void write_msg(
             return;
         }
     } else {
-        if (!IS_STR(args[0])) {
+        if (!PYRO_IS_STR(args[0])) {
             pyro_panic(vm, "%s(): invalid argument [format_string], expected a string", fn_name);
             return;
         }
@@ -115,7 +115,7 @@ static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     int64_t log_level = instance->fields[0].as.i64;
     PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjFile* file = PYRO_IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_DEBUG >= log_level) {
         write_msg(vm, "debug", timestamp_format->bytes, "DEBUG", file, arg_count, args);
@@ -130,7 +130,7 @@ static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     int64_t log_level = instance->fields[0].as.i64;
     PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjFile* file = PYRO_IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_INFO >= log_level) {
         write_msg(vm, "info", timestamp_format->bytes, "INFO", file, arg_count, args);
@@ -145,7 +145,7 @@ static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     int64_t log_level = instance->fields[0].as.i64;
     PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjFile* file = PYRO_IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_WARN >= log_level) {
         write_msg(vm, "warn", timestamp_format->bytes, "WARN", file, arg_count, args);
@@ -160,7 +160,7 @@ static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     int64_t log_level = instance->fields[0].as.i64;
     PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjFile* file = PYRO_IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_ERROR >= log_level) {
         write_msg(vm, "error", timestamp_format->bytes, "ERROR", file, arg_count, args);
@@ -175,7 +175,7 @@ static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     int64_t log_level = instance->fields[0].as.i64;
     PyroObjStr* timestamp_format = AS_STR(instance->fields[1]);
-    PyroObjFile* file = IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
+    PyroObjFile* file = PYRO_IS_NULL(instance->fields[2]) ? NULL : AS_FILE(instance->fields[2]);
 
     if (PYRO_STD_LOG_LEVEL_FATAL >= log_level) {
         write_msg(vm, "fatal", timestamp_format->bytes, "FATAL", file, arg_count, args);
@@ -191,7 +191,7 @@ static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_level(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
-    if (!IS_I64(args[0])) {
+    if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "level(): invalid argument [level], expected an integer");
         return pyro_null();
     }
@@ -204,7 +204,7 @@ static PyroValue logger_level(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_timestamp(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "timestamp(): invalid argument [format_string], expected a string");
         return pyro_null();
     }
@@ -217,7 +217,7 @@ static PyroValue logger_timestamp(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue logger_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjInstance* instance = AS_INSTANCE(args[-1]);
 
-    if (!IS_FILE(args[0])) {
+    if (!PYRO_IS_FILE(args[0])) {
         pyro_panic(vm, "file(): invalid argument [file], expected a file");
         return pyro_null();
     }

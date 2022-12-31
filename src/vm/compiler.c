@@ -270,7 +270,7 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
 // - Uses an optimized instruction set for loading small integer values.
 // - Uses an optimized instruction set for loading constants with small indexes.
 static void emit_load_value_from_constant_table(Parser* parser, PyroValue value) {
-    if (IS_I64(value) && value.as.i64 >= 0 && value.as.i64 <= 9) {
+    if (PYRO_IS_I64(value) && value.as.i64 >= 0 && value.as.i64 <= 9) {
         switch (value.as.i64) {
             case 0: emit_byte(parser, PYRO_OPCODE_LOAD_I64_0); return;
             case 1: emit_byte(parser, PYRO_OPCODE_LOAD_I64_1); return;

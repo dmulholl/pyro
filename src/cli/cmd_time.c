@@ -47,7 +47,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
         for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
             PyroMapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
-            if (IS_TOMBSTONE(entry->key)) {
+            if (PYRO_IS_TOMBSTONE(entry->key)) {
                 continue;
             }
 
@@ -55,7 +55,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
             PyroValue member_index = entry->value;
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
-            if (IS_CLOSURE(member_value)) {
+            if (PYRO_IS_CLOSURE(member_value)) {
                 PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                     if (name->length > max_name_length) {
@@ -67,7 +67,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
         for (size_t i = 0; i < vm->main_module->all_member_indexes->entry_array_count; i++) {
             PyroMapEntry* entry = &vm->main_module->all_member_indexes->entry_array[i];
-            if (IS_TOMBSTONE(entry->key)) {
+            if (PYRO_IS_TOMBSTONE(entry->key)) {
                 continue;
             }
 
@@ -75,7 +75,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
             PyroValue member_index = entry->value;
             PyroValue member_value = vm->main_module->members->values[member_index.as.i64];
 
-            if (IS_CLOSURE(member_value)) {
+            if (PYRO_IS_CLOSURE(member_value)) {
                 PyroObjStr* name = AS_STR(member_name);
                 if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                     double start_time = clock();

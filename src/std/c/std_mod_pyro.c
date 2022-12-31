@@ -19,7 +19,7 @@ static PyroValue fn_gc(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_OBJ(args[0])) {
+    if (PYRO_IS_OBJ(args[0])) {
         switch (AS_OBJ(args[0])->type) {
             case PYRO_OBJECT_VEC:
             case PYRO_OBJECT_VEC_AS_STACK: {
@@ -58,7 +58,7 @@ static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!IS_OBJ(args[0])) {
+    if (!PYRO_IS_OBJ(args[0])) {
         return pyro_obj(vm->error);
     }
 

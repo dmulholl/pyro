@@ -11,7 +11,7 @@
 
 
 static PyroValue fn_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         int64_t arg = args[0].as.i64;
         if (arg >= 0 && arg <= UINT32_MAX) {
             return pyro_char((uint32_t)arg);
@@ -27,7 +27,7 @@ static PyroValue fn_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_CHAR(args[0]));
+    return pyro_bool(PYRO_IS_CHAR(args[0]));
 }
 
 

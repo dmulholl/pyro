@@ -10,7 +10,7 @@
 
 static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 1) {
-        if (!IS_STR(args[0])) {
+        if (!PYRO_IS_STR(args[0])) {
             pyro_panic(vm, "$file(): invalid argument [path], expected a string");
             return pyro_null();
         }
@@ -32,12 +32,12 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 2) {
-        if (!IS_STR(args[0])) {
+        if (!PYRO_IS_STR(args[0])) {
             pyro_panic(vm, "$file(): invalid argument [path], expected a string");
             return pyro_null();
         }
 
-        if (!IS_STR(args[1])) {
+        if (!PYRO_IS_STR(args[1])) {
             pyro_panic(vm, "$file(): invalid argument [mode], expected a string");
             return pyro_null();
         }
@@ -64,7 +64,7 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_FILE(args[0]));
+    return pyro_bool(PYRO_IS_FILE(args[0]));
 }
 
 
@@ -206,7 +206,7 @@ static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjFile* file = AS_FILE(args[-1]);
 
-    if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
+    if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "read_bytes(): invalid argument [n], expected a non-negative integer");
         return pyro_null();
     }
@@ -289,7 +289,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        if (IS_BUF(args[0])) {
+        if (PYRO_IS_BUF(args[0])) {
             PyroObjBuf* buf = AS_BUF(args[0]);
             size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, file->stream);
             if (n < buf->count) {
@@ -311,7 +311,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    if (!IS_STR(args[0])) {
+    if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "write(): invalid agument [format_string], expected a string");
         return pyro_null();
     }
@@ -336,13 +336,13 @@ static PyroValue file_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) 
     PyroObjFile* file = AS_FILE(args[-1]);
     uint8_t byte;
 
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         if (args[0].as.i64 < 0 || args[0].as.i64 > 255) {
             pyro_panic(vm, "write_byte(): invalid argument [byte], integer (%d) is out of range", args[0].as.i64);
             return pyro_null();
         }
         byte = (uint8_t)args[0].as.i64;
-    } else if (IS_CHAR(args[0])) {
+    } else if (PYRO_IS_CHAR(args[0])) {
         if (args[0].as.u32 > 255) {
             pyro_panic(vm, "write_byte(): invalid argument [byte], char (%d) is out of range", args[0].as.u32);
             return pyro_null();

@@ -64,7 +64,7 @@ static void insertion_sort_slice_with_cb(PyroVM* vm, PyroValue* array, size_t lo
                 return;
             }
 
-            if (!IS_BOOL(item_j_is_less_than_previous)) {
+            if (!PYRO_IS_BOOL(item_j_is_less_than_previous)) {
                 pyro_panic(vm, "comparison function must return a boolean");
                 return;
             }
@@ -104,7 +104,7 @@ static size_t partition_slice_with_cb(PyroVM* vm, PyroValue* array, size_t low, 
             return 0;
         }
 
-        if (!IS_BOOL(item_j_is_less_than_pivot)) {
+        if (!PYRO_IS_BOOL(item_j_is_less_than_pivot)) {
             pyro_panic(vm, "comparison function must return a boolean");
             return 0;
         }
@@ -292,7 +292,7 @@ static void merge_with_cb(
             return;
         }
 
-        if (!IS_BOOL(item_j_is_less_than_item_i)) {
+        if (!PYRO_IS_BOOL(item_j_is_less_than_item_i)) {
             pyro_panic(vm, "comparison function must return a boolean");
             return;
         }
@@ -427,7 +427,7 @@ bool pyro_is_sorted_with_callback(PyroVM* vm, PyroValue* values, size_t count, P
             return false;
         }
 
-        if (!IS_BOOL(b_is_less_than_a)) {
+        if (!PYRO_IS_BOOL(b_is_less_than_a)) {
             pyro_panic(vm, "comparison function must return a boolean");
             return false;
         }

@@ -312,7 +312,7 @@ static bool resize_index_array(PyroObjMap* map, PyroVM* vm) {
         size_t dst_index = 0;
 
         for (size_t src_index = 0; src_index < map->entry_array_count; src_index++) {
-            if (IS_TOMBSTONE(map->entry_array[src_index].key)) {
+            if (PYRO_IS_TOMBSTONE(map->entry_array[src_index].key)) {
                 continue;
             }
 
@@ -579,7 +579,7 @@ bool PyroObjMap_remove(PyroObjMap* map, PyroValue key, PyroVM* vm) {
 bool PyroObjMap_copy_entries(PyroObjMap* src, PyroObjMap* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->entry_array_count; i++) {
         PyroMapEntry* entry = &src->entry_array[i];
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
         if (PyroObjMap_set(dst, entry->key, entry->value, vm) == 0) {
@@ -1965,7 +1965,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
-                if (IS_TOMBSTONE(entry->key)) {
+                if (PYRO_IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 return entry->key;
@@ -1978,7 +1978,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
-                if (IS_TOMBSTONE(entry->key)) {
+                if (PYRO_IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
                 return entry->value;
@@ -1991,7 +1991,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
-                if (IS_TOMBSTONE(entry->key)) {
+                if (PYRO_IS_TOMBSTONE(entry->key)) {
                     continue;
                 }
 
@@ -2011,7 +2011,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         case PYRO_ITER_FUNC_MAP: {
             PyroObjIter* src_iter = (PyroObjIter*)iter->source;
             PyroValue next_value = PyroObjIter_next(src_iter, vm);
-            if (IS_ERR(next_value)) {
+            if (PYRO_IS_ERR(next_value)) {
                 return next_value;
             }
 
@@ -2030,7 +2030,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
 
             while (true) {
                 PyroValue next_value = PyroObjIter_next(src_iter, vm);
-                if (IS_ERR(next_value)) {
+                if (PYRO_IS_ERR(next_value)) {
                     return next_value;
                 }
 
@@ -2050,7 +2050,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         case PYRO_ITER_ENUM: {
             PyroObjIter* src_iter = (PyroObjIter*)iter->source;
             PyroValue next_value = PyroObjIter_next(src_iter, vm);
-            if (IS_ERR(next_value)) {
+            if (PYRO_IS_ERR(next_value)) {
                 return next_value;
             }
 
@@ -2194,7 +2194,7 @@ PyroObjStr* PyroObjIter_join(PyroObjIter* iter, const char* sep, size_t sep_leng
         if (vm->halt_flag) {
             return NULL;
         }
-        if (IS_ERR(next_value)) {
+        if (PYRO_IS_ERR(next_value)) {
             break;
         }
 

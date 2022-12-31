@@ -44,7 +44,7 @@ static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     for (size_t i = 0; i < mod->pub_member_indexes->entry_array_count; i++) {
         PyroMapEntry* entry = &mod->pub_member_indexes->entry_array[i];
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
         PyroValue member_name = entry->key;

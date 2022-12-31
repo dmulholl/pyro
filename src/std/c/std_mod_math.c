@@ -7,9 +7,9 @@
 
 static PyroValue fn_abs(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 1) {
-        if (IS_I64(args[0])) {
+        if (PYRO_IS_I64(args[0])) {
             return pyro_i64(imaxabs(args[0].as.i64));
-        } else if (IS_F64(args[0])) {
+        } else if (PYRO_IS_F64(args[0])) {
             return pyro_f64(fabs(args[0].as.f64));
         }
         pyro_panic(vm, "abs(): invalid argument, expected a number");
@@ -17,13 +17,13 @@ static PyroValue fn_abs(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 2) {
-        if (IS_I64(args[0])) {
+        if (PYRO_IS_I64(args[0])) {
             if (args[0].as.i64 == INT64_MIN) {
                 return args[1];
             } else {
                 return pyro_i64(imaxabs(args[0].as.i64));
             }
-        } else if (IS_F64(args[0])) {
+        } else if (PYRO_IS_F64(args[0])) {
             return pyro_f64(fabs(args[0].as.f64));
         }
         pyro_panic(vm, "abs(): invalid argument, expected a number");
@@ -36,9 +36,9 @@ static PyroValue fn_abs(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_acos(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(acos((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(acos(args[0].as.f64));
     }
     pyro_panic(vm, "acos(): invalid argument, expected a number");
@@ -47,9 +47,9 @@ static PyroValue fn_acos(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_asin(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(asin((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(asin(args[0].as.f64));
     }
     pyro_panic(vm, "asin(): invalid argument, expected a number");
@@ -58,9 +58,9 @@ static PyroValue fn_asin(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_atan(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(atan((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(atan(args[0].as.f64));
     }
     pyro_panic(vm, "atan(): invalid argument, expected a number");
@@ -69,9 +69,9 @@ static PyroValue fn_atan(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_cos(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(cos((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(cos(args[0].as.f64));
     }
     pyro_panic(vm, "cos(): invalid argument, expected a number");
@@ -80,9 +80,9 @@ static PyroValue fn_cos(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_sin(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(sin((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(sin(args[0].as.f64));
     }
     pyro_panic(vm, "sin(): invalid argument, expected a number");
@@ -91,9 +91,9 @@ static PyroValue fn_sin(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_tan(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(tan((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(tan(args[0].as.f64));
     }
     pyro_panic(vm, "tan(): invalid argument, expected a number");
@@ -102,9 +102,9 @@ static PyroValue fn_tan(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_ln(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(log((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(log(args[0].as.f64));
     }
     pyro_panic(vm, "ln(): invalid argument, expected a number");
@@ -113,9 +113,9 @@ static PyroValue fn_ln(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_log10(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(log10((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(log10(args[0].as.f64));
     }
     pyro_panic(vm, "log10(): invalid argument, expected a number");
@@ -124,9 +124,9 @@ static PyroValue fn_log10(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_log2(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(log((double)args[0].as.i64) / log(2.0));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(log(args[0].as.f64) / log(2.0));
     }
     pyro_panic(vm, "log2(): invalid argument, expected a number");
@@ -138,18 +138,18 @@ static PyroValue fn_log(PyroVM* vm, size_t arg_count, PyroValue* args) {
     double base;
     double operand;
 
-    if (IS_F64(args[0])) {
+    if (PYRO_IS_F64(args[0])) {
         base = args[0].as.f64;
-    } else if (IS_I64(args[0])) {
+    } else if (PYRO_IS_I64(args[0])) {
         base = (double)args[0].as.i64;
     } else {
         pyro_panic(vm, "log(): invalid argument, expected a number");
         return pyro_null();
     }
 
-    if (IS_F64(args[1])) {
+    if (PYRO_IS_F64(args[1])) {
         operand = args[1].as.f64;
-    } else if (IS_I64(args[1])) {
+    } else if (PYRO_IS_I64(args[1])) {
         operand = (double)args[1].as.i64;
     } else {
         pyro_panic(vm, "log(): invalid argument, expected a number");
@@ -164,18 +164,18 @@ static PyroValue fn_atan2(PyroVM* vm, size_t arg_count, PyroValue* args) {
     double y;
     double x;
 
-    if (IS_F64(args[0])) {
+    if (PYRO_IS_F64(args[0])) {
         y = args[0].as.f64;
-    } else if (IS_I64(args[0])) {
+    } else if (PYRO_IS_I64(args[0])) {
         y = (double)args[0].as.i64;
     } else {
         pyro_panic(vm, "atan2(): invalid argument, expected a number");
         return pyro_null();
     }
 
-    if (IS_F64(args[1])) {
+    if (PYRO_IS_F64(args[1])) {
         x = args[1].as.f64;
-    } else if (IS_I64(args[1])) {
+    } else if (PYRO_IS_I64(args[1])) {
         x = (double)args[1].as.i64;
     } else {
         pyro_panic(vm, "atan2(): invalid argument, expected a number");
@@ -187,9 +187,9 @@ static PyroValue fn_atan2(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_exp(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(exp((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(exp(args[0].as.f64));
     }
     pyro_panic(vm, "exp(): invalid argument, expected a number");
@@ -198,9 +198,9 @@ static PyroValue fn_exp(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_sqrt(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(sqrt((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(sqrt(args[0].as.f64));
     }
     pyro_panic(vm, "sqrt(): invalid argument, expected a number");
@@ -209,9 +209,9 @@ static PyroValue fn_sqrt(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_cbrt(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(cbrt((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(cbrt(args[0].as.f64));
     }
     pyro_panic(vm, "cbrt(): invalid argument, expected a number");
@@ -220,9 +220,9 @@ static PyroValue fn_cbrt(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_ceil(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(ceil((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(ceil(args[0].as.f64));
     }
     pyro_panic(vm, "ceil(): invalid argument, expected a number");
@@ -231,9 +231,9 @@ static PyroValue fn_ceil(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_floor(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (IS_I64(args[0])) {
+    if (PYRO_IS_I64(args[0])) {
         return pyro_f64(floor((double)args[0].as.i64));
-    } else if (IS_F64(args[0])) {
+    } else if (PYRO_IS_F64(args[0])) {
         return pyro_f64(floor(args[0].as.f64));
     }
     pyro_panic(vm, "floor(): invalid argument, must be a number");

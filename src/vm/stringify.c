@@ -275,7 +275,7 @@ static PyroObjStr* stringify_map(PyroVM* vm, PyroObjMap* map) {
     for (size_t i = 0; i < map->entry_array_count; i++) {
         PyroMapEntry* entry = &map->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -348,7 +348,7 @@ static PyroObjStr* stringify_map_as_set(PyroVM* vm, PyroObjMap* map) {
     for (size_t i = 0; i < map->entry_array_count; i++) {
         PyroMapEntry* entry = &map->entry_array[i];
 
-        if (IS_TOMBSTONE(entry->key)) {
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
 
@@ -445,13 +445,13 @@ static PyroObjStr* stringify_queue(PyroVM* vm, PyroObjQueue* queue) {
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static PyroObjStr* stringify_object(PyroVM* vm, PyroObj* object) {
     PyroValue method = pyro_get_method(vm, pyro_obj(object), vm->str_dollar_str);
-    if (!IS_NULL(method)) {
+    if (!PYRO_IS_NULL(method)) {
         pyro_push(vm, pyro_obj(object));
         PyroValue result = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
             return NULL;
         }
-        if (!IS_STR(result)) {
+        if (!PYRO_IS_STR(result)) {
             pyro_panic(vm, "invalid return type for :$str(), expected a string");
             return NULL;
         }
@@ -748,20 +748,20 @@ PyroObjStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
 
 PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_debug);
-    if (!IS_NULL(method)) {
+    if (!PYRO_IS_NULL(method)) {
         pyro_push(vm, value);
         PyroValue result = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
             return NULL;
         }
-        if (!IS_STR(result)) {
+        if (!PYRO_IS_STR(result)) {
             pyro_panic(vm, "invalid return type for :$debug(), expected a string");
             return NULL;
         }
         return AS_STR(result);
     }
 
-    if (IS_STR(value)) {
+    if (PYRO_IS_STR(value)) {
         PyroObjStr* string = make_debug_string_for_string(vm, AS_STR(value));
         if (!string) {
             return NULL;
@@ -769,7 +769,7 @@ PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
         return string;
     }
 
-    if (IS_BUF(value)) {
+    if (PYRO_IS_BUF(value)) {
         PyroObjStr* string = make_debug_string_for_buf(vm, AS_BUF(value));
         if (!string) {
             return NULL;
@@ -777,7 +777,7 @@ PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
         return string;
     }
 
-    if (IS_CHAR(value)) {
+    if (PYRO_IS_CHAR(value)) {
         PyroObjStr* string = make_debug_string_for_char(vm, value);
         if (!string) {
             return NULL;
@@ -785,7 +785,7 @@ PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
         return string;
     }
 
-    if (IS_ERR(value)) {
+    if (PYRO_IS_ERR(value)) {
         PyroObjErr* err = AS_ERR(value);
         PyroObjStr* debug_message = make_debug_string_for_string(vm, err->message);
         if (!debug_message) {
@@ -794,7 +794,7 @@ PyroObjStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
         return pyro_sprintf_to_obj(vm, "<err %s>", debug_message->bytes);
     }
 
-    if (IS_F64(value)) {
+    if (PYRO_IS_F64(value)) {
         // 17 is the minimum number of significant digits that guarantees that any two distinct
         // IEEE-754 64-bit floats will have distinct representations when converted to decimal.
         return pyro_stringify_f64(vm, value.as.f64, 17);
@@ -987,33 +987,33 @@ static PyroObjStr* format_str_obj(PyroVM* vm, PyroObjStr* string, const char* fo
 
 
 PyroObjStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_string) {
-    if (IS_I64(value)) {
+    if (PYRO_IS_I64(value)) {
         if (format_string[0] == '%') {
             return pyro_sprintf_to_obj(vm, format_string, value.as.i64);
         }
         return format_i64(vm, value, format_string);
     }
 
-    if (IS_F64(value)) {
+    if (PYRO_IS_F64(value)) {
         if (format_string[0] == '%') {
             return pyro_sprintf_to_obj(vm, format_string, value.as.f64);
         }
         return format_f64(vm, value, format_string);
     }
 
-    if (IS_CHAR(value)) {
+    if (PYRO_IS_CHAR(value)) {
         if (format_string[0] == '%') {
             return pyro_sprintf_to_obj(vm, format_string, value.as.u32);
         }
         return format_char(vm, value, format_string);
     }
 
-    if (IS_STR(value)) {
+    if (PYRO_IS_STR(value)) {
         return format_str_obj(vm, AS_STR(value), format_string);
     }
 
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_fmt);
-    if (!IS_NULL(method)) {
+    if (!PYRO_IS_NULL(method)) {
         PyroObjStr* format_string_object = PyroObjStr_new(format_string, vm);
         if (!format_string_object) {
             pyro_panic(vm, "out of memory");
@@ -1025,7 +1025,7 @@ PyroObjStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_st
         if (vm->halt_flag) {
             return NULL;
         }
-        if (!IS_STR(result)) {
+        if (!PYRO_IS_STR(result)) {
             pyro_panic(vm, "invalid return type for :$fmt(), expected a string");
             return NULL;
         }

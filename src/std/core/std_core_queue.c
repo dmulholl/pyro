@@ -19,7 +19,7 @@ static PyroValue fn_queue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_is_queue(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(IS_QUEUE(args[0]));
+    return pyro_bool(PYRO_IS_QUEUE(args[0]));
 }
 
 

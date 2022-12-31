@@ -56,14 +56,14 @@ static PyroValue mt64_seed_with_array(PyroVM* vm, size_t arg_count, PyroValue* a
     PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
 
-    if (IS_STR(args[0])) {
+    if (PYRO_IS_STR(args[0])) {
         PyroObjStr* string = AS_STR(args[0]);
         if (string->length < 8) {
             mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
         } else {
             mt64_seed_with_byte_array(mt64, (uint8_t*)string->bytes, string->length);
         }
-    } else if (IS_BUF(args[0])) {
+    } else if (PYRO_IS_BUF(args[0])) {
         PyroObjBuf* buf = AS_BUF(args[0]);
         if (buf->count < 8) {
             mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
@@ -90,7 +90,7 @@ static PyroValue mt64_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
 
-    if (!IS_I64(args[0]) || args[0].as.i64 < 0) {
+    if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "rand_int(): invalid argument, expected a positive integer");
         return pyro_null();
     }
@@ -104,7 +104,7 @@ static PyroValue mt64_rand_int_in_range(PyroVM* vm, size_t arg_count, PyroValue*
     PyroObjResourcePointer* resource = AS_RESOURCE_POINTER(instance->fields[0]);
     MT64* mt64 = (MT64*)resource->pointer;
 
-    if (!IS_I64(args[0]) || !IS_I64(args[1])) {
+    if (!PYRO_IS_I64(args[0]) || !PYRO_IS_I64(args[1])) {
         pyro_panic(vm, "rand_int_in_range(): invalid argument, expected an integer");
         return pyro_null();
     }

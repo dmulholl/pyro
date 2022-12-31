@@ -101,34 +101,34 @@ static inline PyroValue pyro_null() {
 }
 
 // Macros for checking the type of a PyroValue instance.
-#define IS_BOOL(value)              ((value).type == PYRO_VALUE_BOOL)
-#define IS_NULL(value)              ((value).type == PYRO_VALUE_NULL)
-#define IS_I64(value)               ((value).type == PYRO_VALUE_I64)
-#define IS_F64(value)               ((value).type == PYRO_VALUE_F64)
-#define IS_OBJ(value)               ((value).type == PYRO_VALUE_OBJ)
-#define IS_TOMBSTONE(value)         ((value).type == PYRO_VALUE_TOMBSTONE)
-#define IS_CHAR(value)              ((value).type == PYRO_VALUE_CHAR)
+#define PYRO_IS_BOOL(value)              ((value).type == PYRO_VALUE_BOOL)
+#define PYRO_IS_NULL(value)              ((value).type == PYRO_VALUE_NULL)
+#define PYRO_IS_I64(value)               ((value).type == PYRO_VALUE_I64)
+#define PYRO_IS_F64(value)               ((value).type == PYRO_VALUE_F64)
+#define PYRO_IS_OBJ(value)               ((value).type == PYRO_VALUE_OBJ)
+#define PYRO_IS_TOMBSTONE(value)         ((value).type == PYRO_VALUE_TOMBSTONE)
+#define PYRO_IS_CHAR(value)              ((value).type == PYRO_VALUE_CHAR)
 
 // Macros for checking if a PyroValue instance is an object of a specific type.
-#define IS_STR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_STR)
-#define IS_PYRO_FN(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_PYRO_FN)
-#define IS_CLOSURE(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_CLOSURE)
-#define IS_NATIVE_FN(value)         pyro_is_obj_of_type(value, PYRO_OBJECT_NATIVE_FN)
-#define IS_CLASS(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_CLASS)
-#define IS_INSTANCE(value)          pyro_is_obj_of_type(value, PYRO_OBJECT_INSTANCE)
-#define IS_BOUND_METHOD(value)      pyro_is_obj_of_type(value, PYRO_OBJECT_BOUND_METHOD)
-#define IS_MAP(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MAP)
-#define IS_TUP(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_TUP)
-#define IS_MOD(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MODULE)
-#define IS_VEC(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_VEC)
-#define IS_BUF(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_BUF)
-#define IS_FILE(value)              pyro_is_obj_of_type(value, PYRO_OBJECT_FILE)
-#define IS_ITER(value)              pyro_is_obj_of_type(value, PYRO_OBJECT_ITER)
-#define IS_STACK(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_VEC_AS_STACK)
-#define IS_SET(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MAP_AS_SET)
-#define IS_QUEUE(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_QUEUE)
-#define IS_RESOURSE_POINTER(value)  pyro_is_obj_of_type(value, PYRO_OBJECT_RESOURCE_POINTER)
-#define IS_ERR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_ERR)
+#define PYRO_IS_STR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_STR)
+#define PYRO_IS_PYRO_FN(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_PYRO_FN)
+#define PYRO_IS_CLOSURE(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_CLOSURE)
+#define PYRO_IS_NATIVE_FN(value)         pyro_is_obj_of_type(value, PYRO_OBJECT_NATIVE_FN)
+#define PYRO_IS_CLASS(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_CLASS)
+#define PYRO_IS_INSTANCE(value)          pyro_is_obj_of_type(value, PYRO_OBJECT_INSTANCE)
+#define PYRO_IS_BOUND_METHOD(value)      pyro_is_obj_of_type(value, PYRO_OBJECT_BOUND_METHOD)
+#define PYRO_IS_MAP(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MAP)
+#define PYRO_IS_TUP(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_TUP)
+#define PYRO_IS_MOD(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MODULE)
+#define PYRO_IS_VEC(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_VEC)
+#define PYRO_IS_BUF(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_BUF)
+#define PYRO_IS_FILE(value)              pyro_is_obj_of_type(value, PYRO_OBJECT_FILE)
+#define PYRO_IS_ITER(value)              pyro_is_obj_of_type(value, PYRO_OBJECT_ITER)
+#define PYRO_IS_STACK(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_VEC_AS_STACK)
+#define PYRO_IS_SET(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_MAP_AS_SET)
+#define PYRO_IS_QUEUE(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_QUEUE)
+#define PYRO_IS_RESOURSE_POINTER(value)  pyro_is_obj_of_type(value, PYRO_OBJECT_RESOURCE_POINTER)
+#define PYRO_IS_ERR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_ERR)
 
 // Macros for extracting object pointers from PyroValue instances.
 #define AS_OBJ(value)               ((value).as.obj)
@@ -176,7 +176,7 @@ bool pyro_is_truthy(PyroValue value);
 
 // True if [value] is an object of the specified type.
 static inline bool pyro_is_obj_of_type(PyroValue value, PyroObjectType type) {
-    return IS_OBJ(value) && AS_OBJ(value)->type == type;
+    return PYRO_IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
 #endif
