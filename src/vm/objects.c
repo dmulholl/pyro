@@ -23,7 +23,7 @@
 
 // Allocates memory for a new object. Automatically adds the new object to the VM's linked list of
 // all heap-allocated objects. Returns NULL if memory cannot be allocated.
-static Obj* allocate_object(PyroVM* vm, size_t size, ObjType type) {
+static Obj* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
     Obj* object = pyro_realloc(vm, NULL, 0, size);
     if (object == NULL) {
         return NULL;

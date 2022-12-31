@@ -53,14 +53,14 @@ typedef enum {
     OBJ_UPVALUE,
     OBJ_VEC,
     OBJ_VEC_AS_STACK,
-} ObjType;
+} PyroObjectType;
 
 // The VM maintains a linked list of all heap-allocated objects using the [next] pointers.
 // Not every object has an associated class so [class] can be NULL.
 struct Obj {
     Obj* next;
     ObjClass* class;
-    ObjType type;
+    PyroObjectType type;
     bool is_marked;
 };
 
@@ -174,7 +174,7 @@ bool pyro_compare_eq_strict(Value a, Value b);
 bool pyro_is_truthy(Value value);
 
 // True if [value] is an object of the specified type.
-static inline bool pyro_is_obj_of_type(Value value, ObjType type) {
+static inline bool pyro_is_obj_of_type(Value value, PyroObjectType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 

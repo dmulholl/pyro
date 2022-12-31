@@ -616,7 +616,7 @@ ObjStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
 }
 
 
-char* pyro_stringify_object_type(ObjType type) {
+char* pyro_stringify_object_type(PyroObjectType type) {
     switch (type) {
         case OBJ_BOUND_METHOD: return "<method>";
         case OBJ_BUF: return "<buf>";

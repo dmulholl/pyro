@@ -46,6 +46,6 @@ ObjStr* pyro_format_value(PyroVM* vm, Value value, const char* format_string);
 ObjStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision);
 
 // Returns a pointer to a static string.
-char* pyro_stringify_object_type(ObjType type);
+char* pyro_stringify_object_type(PyroObjectType type);
 
 #endif
