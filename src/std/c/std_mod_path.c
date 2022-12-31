@@ -138,7 +138,7 @@ static Value fn_join(PyroVM* vm, size_t arg_count, Value* args) {
         // Always add 1 to allow for a terminating '\0'.
         size_t new_capacity = needs_sep ? array_count + arg->length + 2 : array_count + arg->length + 1;
 
-        char* new_array = REALLOCATE_ARRAY(vm, char, array, array_capacity, new_capacity);
+        char* new_array = PYRO_REALLOCATE_ARRAY(vm, char, array, array_capacity, new_capacity);
         if (!new_array) {
             if (array) {
                 PYRO_FREE_ARRAY(vm, char, array, array_capacity);

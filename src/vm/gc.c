@@ -25,7 +25,7 @@ static void mark_object(PyroVM* vm, Obj* object) {
 
     if (vm->grey_stack_count == vm->grey_stack_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vm->grey_stack_capacity);
-        Obj** new_array = REALLOCATE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
+        Obj** new_array = PYRO_REALLOCATE_ARRAY(vm, Obj*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
         if (!new_array) {
             vm->panic_flag = true;
             return;

@@ -15,10 +15,10 @@
 
 // Resize an existing heap-allocated array. Equivalent to ALLOCATE_ARRAY() if [pointer = NULL]
 // and [old_capacity = 0].
-#define REALLOCATE_ARRAY(vm, type, pointer, old_capacity, new_capacity) \
+#define PYRO_REALLOCATE_ARRAY(vm, type, pointer, old_capacity, new_capacity) \
     (type*)pyro_realloc(vm, pointer, sizeof(type) * (old_capacity), sizeof(type) * (new_capacity))
 
-// Free an array allocated using ALLOCATE_ARRAY() or REALLOCATE_ARRAY().
+// Free an array allocated using ALLOCATE_ARRAY() or PYRO_REALLOCATE_ARRAY().
 #define PYRO_FREE_ARRAY(vm, type, pointer, capacity) \
     pyro_realloc(vm, pointer, sizeof(type) * (capacity), 0)
 

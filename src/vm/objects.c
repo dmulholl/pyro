@@ -447,7 +447,7 @@ ObjMap* ObjMap_copy(ObjMap* src, PyroVM* vm) {
 static int64_t append_entry(ObjMap* map, Value key, Value value, PyroVM* vm) {
     if (map->entry_array_count == map->entry_array_capacity) {
         size_t new_entry_array_capacity = PYRO_GROW_CAPACITY(map->entry_array_capacity);
-        MapEntry* new_entry_array = REALLOCATE_ARRAY(
+        MapEntry* new_entry_array = PYRO_REALLOCATE_ARRAY(
             vm,
             MapEntry,
             map->entry_array,
@@ -676,7 +676,7 @@ ObjStr* ObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
     // If there were no backslashed escapes, [count] will be equal to [length].
     // If there were escapes, [count] will be less than [length].
     if (count < length) {
-        dst = REALLOCATE_ARRAY(vm, char, dst, length + 1, count + 1);
+        dst = PYRO_REALLOCATE_ARRAY(vm, char, dst, length + 1, count + 1);
     }
 
     ObjStr* string = ObjStr_take(dst, count, vm);
@@ -931,7 +931,7 @@ ObjPyroFn* ObjPyroFn_new(PyroVM* vm) {
 bool ObjPyroFn_write(ObjPyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
     if (fn->code_count == fn->code_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(fn->code_capacity);
-        uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity, new_capacity);
+        uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity, new_capacity);
         if (!new_array) {
             return false;
         }
@@ -949,7 +949,7 @@ bool ObjPyroFn_write(ObjPyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm
     if (fn->bpl_capacity < offset + 1) {
         size_t old_capacity = fn->bpl_capacity;
         size_t new_capacity = old_capacity + offset + 1 + 8; // allocating 8 spares is arbitrary
-        uint16_t* new_array = REALLOCATE_ARRAY(vm, uint16_t, fn->bpl, old_capacity, new_capacity);
+        uint16_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint16_t, fn->bpl, old_capacity, new_capacity);
         if (!new_array) {
             return false;
         }
@@ -990,7 +990,7 @@ int64_t ObjPyroFn_add_constant(ObjPyroFn* fn, Value value, PyroVM* vm) {
 
     if (fn->constants_count == fn->constants_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(fn->constants_capacity);
-        Value* new_array = REALLOCATE_ARRAY(vm, Value, fn->constants, fn->constants_capacity, new_capacity);
+        Value* new_array = PYRO_REALLOCATE_ARRAY(vm, Value, fn->constants, fn->constants_capacity, new_capacity);
         if (!new_array) {
             return -1;
         }
@@ -1362,7 +1362,7 @@ ObjVec* ObjVec_copy(ObjVec* src, PyroVM* vm) {
 bool ObjVec_append(ObjVec* vec, Value value, PyroVM* vm) {
     if (vec->count == vec->capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
-        Value* new_array = REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
+        Value* new_array = PYRO_REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             return false;
         }
@@ -1455,7 +1455,7 @@ void ObjVec_insert_at_index(ObjVec* vec, size_t index, Value value, PyroVM* vm) 
 
     if (vec->count == vec->capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
-        Value* new_array = REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
+        Value* new_array = PYRO_REALLOCATE_ARRAY(vm, Value, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             pyro_panic(vm, "out of memory");
             return;
@@ -1597,7 +1597,7 @@ bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
         while (new_capacity < required_capacity) {
             new_capacity = PYRO_GROW_CAPACITY(new_capacity);
         }
-        uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
+        uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
         if (!new_array) {
             return false;
         }
@@ -1614,7 +1614,7 @@ bool ObjBuf_grow(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
 bool ObjBuf_grow_to_fit(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
     if (required_capacity > buf->capacity) {
         size_t new_capacity = required_capacity;
-        uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
+        uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
         if (!new_array) {
             return false;
         }
@@ -1629,7 +1629,7 @@ bool ObjBuf_grow_to_fit(ObjBuf* buf, size_t required_capacity, PyroVM* vm) {
 // allocation fails. In this case the buffer is unchanged.
 bool ObjBuf_grow_by_n_bytes(ObjBuf* buf, size_t n, PyroVM* vm) {
     size_t new_capacity = buf->capacity + n;
-    uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
+    uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
     if (!new_array) {
         return false;
     }
@@ -1667,7 +1667,7 @@ ObjStr* ObjBuf_to_str(ObjBuf* buf, PyroVM* vm) {
     }
 
     if (buf->capacity > buf->count + 1) {
-        buf->bytes = REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, buf->count + 1);
+        buf->bytes = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, buf->count + 1);
         buf->capacity = buf->count + 1;
     }
     buf->bytes[buf->count] = '\0';
@@ -1792,7 +1792,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
     while (true) {
         if (count + 1 > capacity) {
             size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
-            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
+            uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 pyro_panic(vm, "out of memory");
@@ -1837,7 +1837,7 @@ ObjStr* ObjFile_read_line(ObjFile* file, PyroVM* vm) {
     }
 
     if (capacity > count + 1) {
-        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
+        array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
         capacity = count + 1;
     }
 

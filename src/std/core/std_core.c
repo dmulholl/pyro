@@ -38,7 +38,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
     while (fmt_str_index < fmt_str->length) {
         if (out_count + 2 > out_capacity) {
             size_t new_capacity = PYRO_GROW_CAPACITY(out_capacity);
-            char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
+            char* new_array = PYRO_REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
             if (!new_array) {
                 PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
                 pyro_panic(vm, "$fmt(): out of memory");
@@ -98,7 +98,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
                 size_t new_capacity = out_count + formatted->length + 1;
 
                 pyro_push(vm, pyro_obj(formatted));
-                char* new_array = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
+                char* new_array = PYRO_REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
                 pyro_pop(vm);
 
                 if (!new_array) {
@@ -121,7 +121,7 @@ static Value fn_fmt(PyroVM* vm, size_t arg_count, Value* args) {
     }
 
     if (out_capacity > out_count + 1) {
-        out_buffer = REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, out_count + 1);
+        out_buffer = PYRO_REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, out_count + 1);
         out_capacity = out_count + 1;
     }
     out_buffer[out_count] = '\0';
@@ -698,7 +698,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
     while (true) {
         if (count + 1 > capacity) {
             size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
-            uint8_t* new_array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
+            uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
             if (!new_array) {
                 pyro_panic(vm, "$read_file(): out of memory");
                 PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
@@ -726,7 +726,7 @@ static Value fn_read_file(PyroVM* vm, size_t arg_count, Value* args) {
 
     array[count] = '\0';
     if (capacity > count + 1) {
-        array = REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
+        array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
         capacity = count + 1;
     }
 
