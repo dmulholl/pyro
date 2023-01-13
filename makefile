@@ -165,7 +165,7 @@ out/build/std_mod_pretty.o: src/std/pyro/std_mod_pretty.pyro
 
 tests/compiled_module.so: tests/compiled_module.c src/inc/*.h
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.so\n"
-	@${CC} ${CFLAGS} -O2 -D NDEBUG -shared -fPIC -undefineddynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
+	@${CC} ${CFLAGS} -O2 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
 
 check-compiled-module:
 	@rm -f ./tests/compiled_module.so
