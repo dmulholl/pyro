@@ -27,7 +27,7 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) 
 }
 
 
-void pyro_free_object(PyroVM* vm, PyroObj* object) {
+void pyro_free_object(PyroVM* vm, PyroObject* object) {
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_write_stdout(
             vm,
@@ -42,31 +42,31 @@ void pyro_free_object(PyroVM* vm, PyroObj* object) {
 
     switch(object->type) {
         case PYRO_OBJECT_BOUND_METHOD: {
-            FREE_OBJECT(vm, PyroObjBoundMethod, object);
+            FREE_OBJECT(vm, PyroBoundMethod, object);
             break;
         }
 
         case PYRO_OBJECT_BUF: {
-            PyroObjBuf* buf = (PyroObjBuf*)object;
+            PyroBuf* buf = (PyroBuf*)object;
             PYRO_FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
-            FREE_OBJECT(vm, PyroObjBuf, object);
+            FREE_OBJECT(vm, PyroBuf, object);
             break;
         }
 
         case PYRO_OBJECT_CLASS: {
-            FREE_OBJECT(vm, PyroObjClass, object);
+            FREE_OBJECT(vm, PyroClass, object);
             break;
         }
 
         case PYRO_OBJECT_CLOSURE: {
-            PyroObjClosure* closure = (PyroObjClosure*)object;
-            PYRO_FREE_ARRAY(vm, PyroObjUpvalue*, closure->upvalues, closure->upvalue_count);
-            FREE_OBJECT(vm, PyroObjClosure, object);
+            PyroClosure* closure = (PyroClosure*)object;
+            PYRO_FREE_ARRAY(vm, PyroUpvalue*, closure->upvalues, closure->upvalue_count);
+            FREE_OBJECT(vm, PyroClosure, object);
             break;
         }
 
         case PYRO_OBJECT_FILE: {
-            PyroObjFile* file = (PyroObjFile*)object;
+            PyroFile* file = (PyroFile*)object;
             if (file->stream) {
                 if (file->stream == stdin) {
                    // Nothing to do.
@@ -76,101 +76,101 @@ void pyro_free_object(PyroVM* vm, PyroObj* object) {
                     fclose(file->stream);
                 }
             }
-            FREE_OBJECT(vm, PyroObjFile, object);
+            FREE_OBJECT(vm, PyroFile, object);
             break;
         }
 
         case PYRO_OBJECT_PYRO_FN: {
-            PyroObjPyroFn* fn = (PyroObjPyroFn*)object;
+            PyroFn* fn = (PyroFn*)object;
             PYRO_FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
             PYRO_FREE_ARRAY(vm, PyroValue, fn->constants, fn->constants_capacity);
             PYRO_FREE_ARRAY(vm, uint16_t, fn->bpl, fn->bpl_capacity);
-            FREE_OBJECT(vm, PyroObjPyroFn, object);
+            FREE_OBJECT(vm, PyroFn, object);
             break;
         }
 
         case PYRO_OBJECT_INSTANCE: {
-            PyroObjInstance* instance = (PyroObjInstance*)object;
+            PyroInstance* instance = (PyroInstance*)object;
             int num_fields = instance->obj.class->default_field_values->count;
-            pyro_realloc(vm, instance, sizeof(PyroObjInstance) + num_fields * sizeof(PyroValue), 0);
+            pyro_realloc(vm, instance, sizeof(PyroInstance) + num_fields * sizeof(PyroValue), 0);
             break;
         }
 
         case PYRO_OBJECT_ITER: {
-            FREE_OBJECT(vm, PyroObjIter, object);
+            FREE_OBJECT(vm, PyroIter, object);
             break;
         }
 
         case PYRO_OBJECT_MAP_AS_WEAKREF:
         case PYRO_OBJECT_MAP_AS_SET:
         case PYRO_OBJECT_MAP: {
-            PyroObjMap* map = (PyroObjMap*)object;
+            PyroMap* map = (PyroMap*)object;
             PYRO_FREE_ARRAY(vm, PyroMapEntry, map->entry_array, map->entry_array_capacity);
             PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
-            FREE_OBJECT(vm, PyroObjMap, object);
+            FREE_OBJECT(vm, PyroMap, object);
             break;
         }
 
         case PYRO_OBJECT_MODULE: {
-            FREE_OBJECT(vm, PyroObjModule, object);
+            FREE_OBJECT(vm, PyroMod, object);
             break;
         }
 
         case PYRO_OBJECT_NATIVE_FN: {
-            FREE_OBJECT(vm, PyroObjNativeFn, object);
+            FREE_OBJECT(vm, PyroNativeFn, object);
             break;
         }
 
         case PYRO_OBJECT_QUEUE: {
-            PyroObjQueue* queue = (PyroObjQueue*)object;
-            QueueItem* next_item = queue->head;
+            PyroQueue* queue = (PyroQueue*)object;
+            PyroQueueItem* next_item = queue->head;
             while (next_item) {
-                QueueItem* current_item = next_item;
+                PyroQueueItem* current_item = next_item;
                 next_item = current_item->next;
-                pyro_realloc(vm, current_item, sizeof(QueueItem), 0);
+                pyro_realloc(vm, current_item, sizeof(PyroQueueItem), 0);
             }
-            FREE_OBJECT(vm, PyroObjQueue, object);
+            FREE_OBJECT(vm, PyroQueue, object);
             break;
         }
 
         case PYRO_OBJECT_RESOURCE_POINTER: {
-            PyroObjResourcePointer* resource = (PyroObjResourcePointer*)object;
+            PyroResourcePointer* resource = (PyroResourcePointer*)object;
             if (resource->callback) {
                 resource->callback(vm, resource->pointer);
             }
-            FREE_OBJECT(vm, PyroObjResourcePointer, object);
+            FREE_OBJECT(vm, PyroResourcePointer, object);
             break;
         }
 
         case PYRO_OBJECT_STR: {
-            PyroObjStr* string = (PyroObjStr*)object;
-            PyroObjMap_remove(vm->strings, pyro_obj(string), vm);
+            PyroStr* string = (PyroStr*)object;
+            PyroMap_remove(vm->strings, pyro_obj(string), vm);
             PYRO_FREE_ARRAY(vm, char, string->bytes, string->length + 1);
-            FREE_OBJECT(vm, PyroObjStr, object);
+            FREE_OBJECT(vm, PyroStr, object);
             break;
         }
 
         case PYRO_OBJECT_TUP: {
-            PyroObjTup* tup = (PyroObjTup*)object;
-            pyro_realloc(vm, tup, sizeof(PyroObjTup) + tup->count * sizeof(PyroValue), 0);
+            PyroTup* tup = (PyroTup*)object;
+            pyro_realloc(vm, tup, sizeof(PyroTup) + tup->count * sizeof(PyroValue), 0);
             break;
         }
 
         case PYRO_OBJECT_UPVALUE: {
-            FREE_OBJECT(vm, PyroObjUpvalue, object);
+            FREE_OBJECT(vm, PyroUpvalue, object);
             break;
         }
 
         case PYRO_OBJECT_VEC_AS_STACK:
         case PYRO_OBJECT_VEC: {
-            PyroObjVec* vec = (PyroObjVec*)object;
+            PyroVec* vec = (PyroVec*)object;
             PYRO_FREE_ARRAY(vm, PyroValue, vec->values, vec->capacity);
-            FREE_OBJECT(vm, PyroObjVec, object);
+            FREE_OBJECT(vm, PyroVec, object);
             break;
         }
 
         case PYRO_OBJECT_ERR: {
-            FREE_OBJECT(vm, PyroObjErr, object);
+            FREE_OBJECT(vm, PyroErr, object);
             break;
         }
     }

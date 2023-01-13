@@ -65,7 +65,7 @@ static PyroValue fn_dirname(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* output = PyroObjStr_copy_raw(result, strlen(result), vm);
+    PyroStr* output = PyroStr_copy_raw(result, strlen(result), vm);
     if (!output) {
         pyro_panic(vm, "dirname(): out of memory");
         free(path_copy);
@@ -97,7 +97,7 @@ static PyroValue fn_basename(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* output = PyroObjStr_copy_raw(result, strlen(result), vm);
+    PyroStr* output = PyroStr_copy_raw(result, strlen(result), vm);
     if (!output) {
         pyro_panic(vm, "basename(): out of memory");
         free(path_copy);
@@ -127,7 +127,7 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
     size_t array_capacity = 0;
 
     for (size_t i = 0; i < arg_count; i++) {
-        PyroObjStr* arg = PYRO_AS_STR(args[i]);
+        PyroStr* arg = PYRO_AS_STR(args[i]);
         if (arg->length == 0) {
             continue;
         }
@@ -164,7 +164,7 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     array[array_count] = '\0';
 
-    PyroObjStr* output = PyroObjStr_take(array, array_count, vm);
+    PyroStr* output = PyroStr_take(array, array_count, vm);
     if (!output) {
         PYRO_FREE_ARRAY(vm, char, array, array_capacity);
         pyro_panic(vm, "join(): out of memory");
@@ -181,7 +181,7 @@ static PyroValue fn_remove(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* path = PYRO_AS_STR(args[0]);
+    PyroStr* path = PYRO_AS_STR(args[0]);
 
     if (pyro_remove(path->bytes) != 0) {
         pyro_panic(vm, "rm(): unable to delete '%s'", path->bytes);
@@ -198,7 +198,7 @@ static PyroValue fn_getcwd(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* string = PyroObjStr_copy_raw(cwd, strlen(cwd), vm);
+    PyroStr* string = PyroStr_copy_raw(cwd, strlen(cwd), vm);
     free(cwd);
 
     if (!string) {
@@ -216,7 +216,7 @@ static PyroValue fn_listdir(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjVec* vec = pyro_listdir(vm, PYRO_AS_STR(args[0])->bytes);
+    PyroVec* vec = pyro_listdir(vm, PYRO_AS_STR(args[0])->bytes);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -233,7 +233,7 @@ static PyroValue fn_realpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     char* result = pyro_realpath(PYRO_AS_STR(args[0])->bytes);
     if (!result) {
-        PyroObjStr* message = pyro_sprintf_to_obj(vm,
+        PyroStr* message = pyro_sprintf_to_obj(vm,
             "realpath(): invalid path '%s'",
             PYRO_AS_STR(args[0])->bytes
         );
@@ -241,7 +241,7 @@ static PyroValue fn_realpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroObjErr* err = PyroObjErr_new(vm);
+        PyroErr* err = PyroErr_new(vm);
         if (!err) {
             return pyro_null();
         }
@@ -250,7 +250,7 @@ static PyroValue fn_realpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(err);
     }
 
-    PyroObjStr* string = PyroObjStr_copy_raw(result, strlen(result), vm);
+    PyroStr* string = PyroStr_copy_raw(result, strlen(result), vm);
     free(result);
     if (!string) {
         pyro_panic(vm, "realpath(): out of memory");
@@ -267,7 +267,7 @@ static PyroValue fn_chdir(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* path = PYRO_AS_STR(args[0]);
+    PyroStr* path = PYRO_AS_STR(args[0]);
     if (!pyro_chdir(path->bytes)) {
         pyro_panic(vm, "chdir(): failed to change the current working directory to '%s'", path->bytes);
         return pyro_null();
@@ -283,7 +283,7 @@ static PyroValue fn_chroot(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* path = PYRO_AS_STR(args[0]);
+    PyroStr* path = PYRO_AS_STR(args[0]);
     if (!pyro_chroot(path->bytes)) {
         pyro_panic(vm, "chroot(): failed to change root directory to '%s'", path->bytes);
         return pyro_null();
@@ -293,7 +293,7 @@ static PyroValue fn_chroot(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_path(PyroVM* vm, PyroObjModule* module) {
+void pyro_load_std_mod_path(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "exists", fn_exists, 1);
     pyro_define_pub_member_fn(vm, module, "is_file", fn_is_file, 1);
     pyro_define_pub_member_fn(vm, module, "is_dir", fn_is_dir, 1);

@@ -9,7 +9,7 @@
 // Marks an object as reachable. This sets the object's [is_marked] flag and pushes it onto the
 // grey stack. This function will set the panic flag BUT NOT call pyro_panic() if an attempt to
 // allocate memory for the grey stack fails.
-static void mark_object(PyroVM* vm, PyroObj* object) {
+static void mark_object(PyroVM* vm, PyroObject* object) {
     if (object == NULL || object->is_marked || vm->panic_flag) {
         return;
     }
@@ -25,7 +25,7 @@ static void mark_object(PyroVM* vm, PyroObj* object) {
 
     if (vm->grey_stack_count == vm->grey_stack_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vm->grey_stack_capacity);
-        PyroObj** new_array = PYRO_REALLOCATE_ARRAY(vm, PyroObj*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
+        PyroObject** new_array = PYRO_REALLOCATE_ARRAY(vm, PyroObject*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
         if (!new_array) {
             vm->panic_flag = true;
             return;
@@ -56,98 +56,98 @@ static void mark_roots(PyroVM* vm) {
     }
 
     // Classes for builtin types.
-    mark_object(vm, (PyroObj*)vm->class_map);
-    mark_object(vm, (PyroObj*)vm->class_str);
-    mark_object(vm, (PyroObj*)vm->class_tup);
-    mark_object(vm, (PyroObj*)vm->class_vec);
-    mark_object(vm, (PyroObj*)vm->class_buf);
-    mark_object(vm, (PyroObj*)vm->class_file);
-    mark_object(vm, (PyroObj*)vm->class_iter);
-    mark_object(vm, (PyroObj*)vm->class_stack);
-    mark_object(vm, (PyroObj*)vm->class_set);
-    mark_object(vm, (PyroObj*)vm->class_queue);
-    mark_object(vm, (PyroObj*)vm->class_err);
-    mark_object(vm, (PyroObj*)vm->class_module);
-    mark_object(vm, (PyroObj*)vm->class_char);
+    mark_object(vm, (PyroObject*)vm->class_map);
+    mark_object(vm, (PyroObject*)vm->class_str);
+    mark_object(vm, (PyroObject*)vm->class_tup);
+    mark_object(vm, (PyroObject*)vm->class_vec);
+    mark_object(vm, (PyroObject*)vm->class_buf);
+    mark_object(vm, (PyroObject*)vm->class_file);
+    mark_object(vm, (PyroObject*)vm->class_iter);
+    mark_object(vm, (PyroObject*)vm->class_stack);
+    mark_object(vm, (PyroObject*)vm->class_set);
+    mark_object(vm, (PyroObject*)vm->class_queue);
+    mark_object(vm, (PyroObject*)vm->class_err);
+    mark_object(vm, (PyroObject*)vm->class_module);
+    mark_object(vm, (PyroObject*)vm->class_char);
 
     // The VM's pool of canned objects.
-    mark_object(vm, (PyroObj*)vm->error);
-    mark_object(vm, (PyroObj*)vm->empty_string);
-    mark_object(vm, (PyroObj*)vm->str_dollar_init);
-    mark_object(vm, (PyroObj*)vm->str_dollar_str);
-    mark_object(vm, (PyroObj*)vm->str_true);
-    mark_object(vm, (PyroObj*)vm->str_false);
-    mark_object(vm, (PyroObj*)vm->str_null);
-    mark_object(vm, (PyroObj*)vm->str_dollar_fmt);
-    mark_object(vm, (PyroObj*)vm->str_dollar_iter);
-    mark_object(vm, (PyroObj*)vm->str_dollar_next);
-    mark_object(vm, (PyroObj*)vm->str_dollar_get_index);
-    mark_object(vm, (PyroObj*)vm->str_dollar_set_index);
-    mark_object(vm, (PyroObj*)vm->str_dollar_debug);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_equals_equals);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_less);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_less_equals);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_greater);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_greater_equals);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_plus);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_minus);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_bar);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_amp);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_star);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_slash);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_caret);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_percent);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_star_star);
-    mark_object(vm, (PyroObj*)vm->str_op_binary_slash_slash);
-    mark_object(vm, (PyroObj*)vm->str_op_unary_plus);
-    mark_object(vm, (PyroObj*)vm->str_op_unary_minus);
-    mark_object(vm, (PyroObj*)vm->str_dollar_hash);
-    mark_object(vm, (PyroObj*)vm->str_dollar_call);
-    mark_object(vm, (PyroObj*)vm->str_dollar_contains);
-    mark_object(vm, (PyroObj*)vm->str_bool);
-    mark_object(vm, (PyroObj*)vm->str_i64);
-    mark_object(vm, (PyroObj*)vm->str_f64);
-    mark_object(vm, (PyroObj*)vm->str_char);
-    mark_object(vm, (PyroObj*)vm->str_method);
-    mark_object(vm, (PyroObj*)vm->str_buf);
-    mark_object(vm, (PyroObj*)vm->str_class);
-    mark_object(vm, (PyroObj*)vm->str_fn);
-    mark_object(vm, (PyroObj*)vm->str_instance);
-    mark_object(vm, (PyroObj*)vm->str_file);
-    mark_object(vm, (PyroObj*)vm->str_iter);
-    mark_object(vm, (PyroObj*)vm->str_map);
-    mark_object(vm, (PyroObj*)vm->str_set);
-    mark_object(vm, (PyroObj*)vm->str_vec);
-    mark_object(vm, (PyroObj*)vm->str_stack);
-    mark_object(vm, (PyroObj*)vm->str_queue);
-    mark_object(vm, (PyroObj*)vm->str_str);
-    mark_object(vm, (PyroObj*)vm->str_module);
-    mark_object(vm, (PyroObj*)vm->str_tup);
-    mark_object(vm, (PyroObj*)vm->str_err);
-    mark_object(vm, (PyroObj*)vm->str_dollar_end_with);
-    mark_object(vm, (PyroObj*)vm->str_source);
-    mark_object(vm, (PyroObj*)vm->str_line);
+    mark_object(vm, (PyroObject*)vm->error);
+    mark_object(vm, (PyroObject*)vm->empty_string);
+    mark_object(vm, (PyroObject*)vm->str_dollar_init);
+    mark_object(vm, (PyroObject*)vm->str_dollar_str);
+    mark_object(vm, (PyroObject*)vm->str_true);
+    mark_object(vm, (PyroObject*)vm->str_false);
+    mark_object(vm, (PyroObject*)vm->str_null);
+    mark_object(vm, (PyroObject*)vm->str_dollar_fmt);
+    mark_object(vm, (PyroObject*)vm->str_dollar_iter);
+    mark_object(vm, (PyroObject*)vm->str_dollar_next);
+    mark_object(vm, (PyroObject*)vm->str_dollar_get_index);
+    mark_object(vm, (PyroObject*)vm->str_dollar_set_index);
+    mark_object(vm, (PyroObject*)vm->str_dollar_debug);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_equals_equals);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_less);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_less_equals);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_greater);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_greater_equals);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_plus);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_minus);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_bar);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_amp);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_star);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_slash);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_caret);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_percent);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_star_star);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_slash_slash);
+    mark_object(vm, (PyroObject*)vm->str_op_unary_plus);
+    mark_object(vm, (PyroObject*)vm->str_op_unary_minus);
+    mark_object(vm, (PyroObject*)vm->str_dollar_hash);
+    mark_object(vm, (PyroObject*)vm->str_dollar_call);
+    mark_object(vm, (PyroObject*)vm->str_dollar_contains);
+    mark_object(vm, (PyroObject*)vm->str_bool);
+    mark_object(vm, (PyroObject*)vm->str_i64);
+    mark_object(vm, (PyroObject*)vm->str_f64);
+    mark_object(vm, (PyroObject*)vm->str_char);
+    mark_object(vm, (PyroObject*)vm->str_method);
+    mark_object(vm, (PyroObject*)vm->str_buf);
+    mark_object(vm, (PyroObject*)vm->str_class);
+    mark_object(vm, (PyroObject*)vm->str_fn);
+    mark_object(vm, (PyroObject*)vm->str_instance);
+    mark_object(vm, (PyroObject*)vm->str_file);
+    mark_object(vm, (PyroObject*)vm->str_iter);
+    mark_object(vm, (PyroObject*)vm->str_map);
+    mark_object(vm, (PyroObject*)vm->str_set);
+    mark_object(vm, (PyroObject*)vm->str_vec);
+    mark_object(vm, (PyroObject*)vm->str_stack);
+    mark_object(vm, (PyroObject*)vm->str_queue);
+    mark_object(vm, (PyroObject*)vm->str_str);
+    mark_object(vm, (PyroObject*)vm->str_module);
+    mark_object(vm, (PyroObject*)vm->str_tup);
+    mark_object(vm, (PyroObject*)vm->str_err);
+    mark_object(vm, (PyroObject*)vm->str_dollar_end_with);
+    mark_object(vm, (PyroObject*)vm->str_source);
+    mark_object(vm, (PyroObject*)vm->str_line);
 
     // Other object fields.
-    mark_object(vm, (PyroObj*)vm->superglobals);
-    mark_object(vm, (PyroObj*)vm->modules);
-    mark_object(vm, (PyroObj*)vm->strings);
-    mark_object(vm, (PyroObj*)vm->main_module);
-    mark_object(vm, (PyroObj*)vm->import_roots);
-    mark_object(vm, (PyroObj*)vm->stdout_file);
-    mark_object(vm, (PyroObj*)vm->stderr_file);
-    mark_object(vm, (PyroObj*)vm->stdin_file);
-    mark_object(vm, (PyroObj*)vm->panic_buffer);
-    mark_object(vm, (PyroObj*)vm->panic_source_id);
+    mark_object(vm, (PyroObject*)vm->superglobals);
+    mark_object(vm, (PyroObject*)vm->modules);
+    mark_object(vm, (PyroObject*)vm->strings);
+    mark_object(vm, (PyroObject*)vm->main_module);
+    mark_object(vm, (PyroObject*)vm->import_roots);
+    mark_object(vm, (PyroObject*)vm->stdout_file);
+    mark_object(vm, (PyroObject*)vm->stderr_file);
+    mark_object(vm, (PyroObject*)vm->stdin_file);
+    mark_object(vm, (PyroObject*)vm->panic_buffer);
+    mark_object(vm, (PyroObject*)vm->panic_source_id);
 
-    // Each CallFrame in the call stack has a pointer to an PyroObjClosure.
+    // Each CallFrame in the call stack has a pointer to an PyroClosure.
     for (size_t i = 0; i < vm->frame_count; i++) {
-        mark_object(vm, (PyroObj*)vm->frames[i].closure);
+        mark_object(vm, (PyroObject*)vm->frames[i].closure);
     }
 
     // The VM's linked-list of open upvalues.
-    for (PyroObjUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
-        mark_object(vm, (PyroObj*)upvalue);
+    for (PyroUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
+        mark_object(vm, (PyroObject*)upvalue);
     }
 
     // Values on the 'with' stack with pending $end_with() method calls.
@@ -157,7 +157,7 @@ static void mark_roots(PyroVM* vm) {
 }
 
 
-static void blacken_object(PyroVM* vm, PyroObj* object) {
+static void blacken_object(PyroVM* vm, PyroObject* object) {
     #ifdef PYRO_DEBUG_LOG_GC
         pyro_write_stdout(
             vm,
@@ -167,13 +167,13 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
         );
     #endif
 
-    mark_object(vm, (PyroObj*)object->class);
+    mark_object(vm, (PyroObject*)object->class);
 
     switch (object->type) {
         case PYRO_OBJECT_BOUND_METHOD: {
-            PyroObjBoundMethod* bound = (PyroObjBoundMethod*)object;
+            PyroBoundMethod* bound = (PyroBoundMethod*)object;
             mark_value(vm, bound->receiver);
-            mark_object(vm, (PyroObj*)bound->method);
+            mark_object(vm, (PyroObject*)bound->method);
             break;
         }
 
@@ -182,40 +182,40 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
 
         case PYRO_OBJECT_CLASS: {
             // We don't need to mark the cached method names or values as they're in the maps.
-            PyroObjClass* class = (PyroObjClass*)object;
-            mark_object(vm, (PyroObj*)class->name);
-            mark_object(vm, (PyroObj*)class->superclass);
-            mark_object(vm, (PyroObj*)class->all_instance_methods);
-            mark_object(vm, (PyroObj*)class->pub_instance_methods);
-            mark_object(vm, (PyroObj*)class->all_field_indexes);
-            mark_object(vm, (PyroObj*)class->pub_field_indexes);
-            mark_object(vm, (PyroObj*)class->default_field_values);
-            mark_object(vm, (PyroObj*)class->static_methods);
-            mark_object(vm, (PyroObj*)class->static_fields);
+            PyroClass* class = (PyroClass*)object;
+            mark_object(vm, (PyroObject*)class->name);
+            mark_object(vm, (PyroObject*)class->superclass);
+            mark_object(vm, (PyroObject*)class->all_instance_methods);
+            mark_object(vm, (PyroObject*)class->pub_instance_methods);
+            mark_object(vm, (PyroObject*)class->all_field_indexes);
+            mark_object(vm, (PyroObject*)class->pub_field_indexes);
+            mark_object(vm, (PyroObject*)class->default_field_values);
+            mark_object(vm, (PyroObject*)class->static_methods);
+            mark_object(vm, (PyroObject*)class->static_fields);
             break;
         }
 
         case PYRO_OBJECT_CLOSURE: {
-            PyroObjClosure* closure = (PyroObjClosure*)object;
-            mark_object(vm, (PyroObj*)closure->fn);
-            mark_object(vm, (PyroObj*)closure->module);
-            mark_object(vm, (PyroObj*)closure->default_values);
+            PyroClosure* closure = (PyroClosure*)object;
+            mark_object(vm, (PyroObject*)closure->fn);
+            mark_object(vm, (PyroObject*)closure->module);
+            mark_object(vm, (PyroObject*)closure->default_values);
             for (size_t i = 0; i < closure->upvalue_count; i++) {
-                mark_object(vm, (PyroObj*)closure->upvalues[i]);
+                mark_object(vm, (PyroObject*)closure->upvalues[i]);
             }
             break;
         }
 
         case PYRO_OBJECT_FILE: {
-            PyroObjFile* file = (PyroObjFile*)object;
-            mark_object(vm, (PyroObj*)file->path);
+            PyroFile* file = (PyroFile*)object;
+            mark_object(vm, (PyroObject*)file->path);
             break;
         }
 
         case PYRO_OBJECT_PYRO_FN: {
-            PyroObjPyroFn* fn = (PyroObjPyroFn*)object;
-            mark_object(vm, (PyroObj*)fn->name);
-            mark_object(vm, (PyroObj*)fn->source_id);
+            PyroFn* fn = (PyroFn*)object;
+            mark_object(vm, (PyroObject*)fn->name);
+            mark_object(vm, (PyroObject*)fn->source_id);
             for (size_t i = 0; i < fn->constants_count; i++) {
                 mark_value(vm, fn->constants[i]);
             }
@@ -223,7 +223,7 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_INSTANCE: {
-            PyroObjInstance* instance = (PyroObjInstance*)object;
+            PyroInstance* instance = (PyroInstance*)object;
             int num_fields = instance->obj.class->default_field_values->count;
             for (int i = 0; i < num_fields; i++) {
                 mark_value(vm, instance->fields[i]);
@@ -232,14 +232,14 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_ITER: {
-            PyroObjIter* iter = (PyroObjIter*)object;
-            mark_object(vm, (PyroObj*)iter->source);
-            mark_object(vm, (PyroObj*)iter->callback);
+            PyroIter* iter = (PyroIter*)object;
+            mark_object(vm, (PyroObject*)iter->source);
+            mark_object(vm, (PyroObject*)iter->callback);
             break;
         }
 
         case PYRO_OBJECT_MAP: {
-            PyroObjMap* map = (PyroObjMap*)object;
+            PyroMap* map = (PyroMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
                 PyroMapEntry* entry = &map->entry_array[i];
                 if (PYRO_IS_TOMBSTONE(entry->key)) {
@@ -252,7 +252,7 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_MAP_AS_SET: {
-            PyroObjMap* map = (PyroObjMap*)object;
+            PyroMap* map = (PyroMap*)object;
             for (size_t i = 0; i < map->entry_array_count; i++) {
                 PyroMapEntry* entry = &map->entry_array[i];
                 if (PYRO_IS_TOMBSTONE(entry->key)) {
@@ -264,23 +264,23 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_MODULE: {
-            PyroObjModule* module = (PyroObjModule*)object;
-            mark_object(vm, (PyroObj*)module->submodules);
-            mark_object(vm, (PyroObj*)module->members);
-            mark_object(vm, (PyroObj*)module->all_member_indexes);
-            mark_object(vm, (PyroObj*)module->pub_member_indexes);
+            PyroMod* module = (PyroMod*)object;
+            mark_object(vm, (PyroObject*)module->submodules);
+            mark_object(vm, (PyroObject*)module->members);
+            mark_object(vm, (PyroObject*)module->all_member_indexes);
+            mark_object(vm, (PyroObject*)module->pub_member_indexes);
             break;
         }
 
         case PYRO_OBJECT_NATIVE_FN: {
-            PyroObjNativeFn* native = (PyroObjNativeFn*)object;
-            mark_object(vm, (PyroObj*)native->name);
+            PyroNativeFn* native = (PyroNativeFn*)object;
+            mark_object(vm, (PyroObject*)native->name);
             break;
         }
 
         case PYRO_OBJECT_QUEUE: {
-            PyroObjQueue* queue = (PyroObjQueue*)object;
-            QueueItem* next_item = queue->head;
+            PyroQueue* queue = (PyroQueue*)object;
+            PyroQueueItem* next_item = queue->head;
             while (next_item) {
                 mark_value(vm, next_item->value);
                 next_item = next_item->next;
@@ -292,7 +292,7 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
             break;
 
         case PYRO_OBJECT_TUP: {
-            PyroObjTup* tup = (PyroObjTup*)object;
+            PyroTup* tup = (PyroTup*)object;
             for (size_t i = 0; i < tup->count; i++) {
                 mark_value(vm, tup->values[i]);
             }
@@ -300,14 +300,14 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_UPVALUE: {
-            PyroObjUpvalue* upvalue = (PyroObjUpvalue*)object;
+            PyroUpvalue* upvalue = (PyroUpvalue*)object;
             mark_value(vm, upvalue->closed);
             break;
         }
 
         case PYRO_OBJECT_VEC_AS_STACK:
         case PYRO_OBJECT_VEC: {
-            PyroObjVec* vec = (PyroObjVec*)object;
+            PyroVec* vec = (PyroVec*)object;
             for (size_t i = 0; i < vec->count; i++) {
                 mark_value(vm, vec->values[i]);
             }
@@ -318,9 +318,9 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
             break;
 
         case PYRO_OBJECT_ERR: {
-            PyroObjErr* err = (PyroObjErr*)object;
-            mark_object(vm, (PyroObj*)err->message);
-            mark_object(vm, (PyroObj*)err->details);
+            PyroErr* err = (PyroErr*)object;
+            mark_object(vm, (PyroObject*)err->message);
+            mark_object(vm, (PyroObject*)err->details);
             break;
         }
 
@@ -332,7 +332,7 @@ static void blacken_object(PyroVM* vm, PyroObj* object) {
 
 static void trace_references(PyroVM* vm) {
     while (vm->grey_stack_count > 0) {
-        PyroObj* object = vm->grey_stack[--vm->grey_stack_count];
+        PyroObject* object = vm->grey_stack[--vm->grey_stack_count];
         blacken_object(vm, object);
         if (vm->panic_flag) {
             return;
@@ -342,8 +342,8 @@ static void trace_references(PyroVM* vm) {
 
 
 static void sweep(PyroVM* vm) {
-    PyroObj* previous = NULL;
-    PyroObj* object = vm->objects;
+    PyroObject* previous = NULL;
+    PyroObject* object = vm->objects;
 
     while (object != NULL) {
         if (object->is_marked) {
@@ -351,7 +351,7 @@ static void sweep(PyroVM* vm) {
             previous = object;
             object = object->next;
         } else {
-            PyroObj* not_marked = object;
+            PyroObject* not_marked = object;
             object = object->next;
             if (previous == NULL) {
                 vm->objects = object;
@@ -365,7 +365,7 @@ static void sweep(PyroVM* vm) {
 
 
 static void undo_mark_objects(PyroVM* vm) {
-    PyroObj* obj = vm->objects;
+    PyroObject* obj = vm->objects;
     while (obj != NULL) {
         obj->is_marked = false;
         obj = obj->next;

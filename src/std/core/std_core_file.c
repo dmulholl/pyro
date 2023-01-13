@@ -21,7 +21,7 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroObjFile* file = PyroObjFile_new(vm, stream);
+        PyroFile* file = PyroFile_new(vm, stream);
         if (!file) {
             pyro_panic(vm, "$file(): out of memory");
             return pyro_null();
@@ -48,7 +48,7 @@ static PyroValue fn_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroObjFile* file = PyroObjFile_new(vm, stream);
+        PyroFile* file = PyroFile_new(vm, stream);
         if (!file) {
             pyro_panic(vm, "$file(): out of memory");
             return pyro_null();
@@ -69,7 +69,7 @@ static PyroValue fn_is_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_flush(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     if (file->stream) {
         fflush(file->stream);
@@ -80,7 +80,7 @@ static PyroValue file_flush(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_close(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     if (file->stream) {
         fclose(file->stream);
@@ -92,7 +92,7 @@ static PyroValue file_close(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     if (file->stream) {
         fclose(file->stream);
@@ -104,7 +104,7 @@ static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     size_t count = 0;
     size_t capacity = 0;
@@ -137,7 +137,7 @@ static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
         array[count++] = c;
     }
 
-    PyroObjBuf* buf = PyroObjBuf_new(vm);
+    PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
         pyro_panic(vm, "read(): out of memory");
         PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
@@ -153,7 +153,7 @@ static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     size_t count = 0;
     size_t capacity = 0;
@@ -192,7 +192,7 @@ static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args)
         capacity = count + 1;
     }
 
-    PyroObjStr* string = PyroObjStr_take((char*)array, count, vm);
+    PyroStr* string = PyroStr_take((char*)array, count, vm);
     if (!string) {
         pyro_panic(vm, "read_string(): out of memory");
         PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
@@ -204,7 +204,7 @@ static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args)
 
 
 static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "read_bytes(): invalid argument [n], expected a non-negative integer");
@@ -212,7 +212,7 @@ static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
     }
     size_t num_bytes_to_read = args[0].as.i64;
 
-    PyroObjBuf* buf = PyroObjBuf_new_with_cap(num_bytes_to_read, vm);
+    PyroBuf* buf = PyroBuf_new_with_cap(num_bytes_to_read, vm);
     if (!buf) {
         pyro_panic(vm, "read_bytes(): out of memory");
         return pyro_null();
@@ -234,7 +234,7 @@ static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 
 static PyroValue file_read_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     if (feof(file->stream)) {
         return pyro_null();
@@ -258,9 +258,9 @@ static PyroValue file_read_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_read_line(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
-    PyroObjStr* string = PyroObjFile_read_line(file, vm);
+    PyroStr* string = PyroFile_read_line(file, vm);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -270,8 +270,8 @@ static PyroValue file_read_line(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
-    PyroObjIter* iter = PyroObjIter_new((PyroObj*)file, PYRO_ITER_FILE_LINES, vm);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
+    PyroIter* iter = PyroIter_new((PyroObject*)file, PYRO_ITER_FILE_LINES, vm);
     if (!iter) {
         pyro_panic(vm, "lines(): out of memory");
         return pyro_null();
@@ -281,7 +281,7 @@ static PyroValue file_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
 
     if (arg_count == 0) {
         pyro_panic(vm, "write(): expected 1 or more arguments, found 0");
@@ -290,7 +290,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     if (arg_count == 1) {
         if (PYRO_IS_BUF(args[0])) {
-            PyroObjBuf* buf = PYRO_AS_BUF(args[0]);
+            PyroBuf* buf = PYRO_AS_BUF(args[0]);
             size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, file->stream);
             if (n < buf->count) {
                 pyro_panic(vm, "write(): I/O write error");
@@ -298,7 +298,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
             }
             return pyro_i64((int64_t)n);
         } else {
-            PyroObjStr* string = pyro_stringify_value(vm, args[0]);
+            PyroStr* string = pyro_stringify_value(vm, args[0]);
             if (vm->halt_flag) {
                 return pyro_null();
             }
@@ -320,7 +320,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (vm->halt_flag) {
         return pyro_null();
     }
-    PyroObjStr* string = PYRO_AS_STR(formatted);
+    PyroStr* string = PYRO_AS_STR(formatted);
 
     size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
 
@@ -333,7 +333,7 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue file_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = PYRO_AS_FILE(args[-1]);
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
     uint8_t byte;
 
     if (PYRO_IS_I64(args[0])) {

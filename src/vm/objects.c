@@ -23,8 +23,8 @@
 
 // Allocates memory for a new object. Automatically adds the new object to the VM's linked list of
 // all heap-allocated objects. Returns NULL if memory cannot be allocated.
-static PyroObj* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
-    PyroObj* object = pyro_realloc(vm, NULL, 0, size);
+static PyroObject* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
+    PyroObject* object = pyro_realloc(vm, NULL, 0, size);
     if (object == NULL) {
         return NULL;
     }
@@ -53,8 +53,8 @@ static PyroObj* allocate_object(PyroVM* vm, size_t size, PyroObjectType type) {
 /* ------ */
 
 
-PyroObjTup* PyroObjTup_new(size_t count, PyroVM* vm) {
-    PyroObjTup* tup = ALLOCATE_FLEX_OBJECT(vm, PyroObjTup, PYRO_OBJECT_TUP, count, PyroValue);
+PyroTup* PyroTup_new(size_t count, PyroVM* vm) {
+    PyroTup* tup = ALLOCATE_FLEX_OBJECT(vm, PyroTup, PYRO_OBJECT_TUP, count, PyroValue);
     if (!tup) {
         return NULL;
     }
@@ -68,7 +68,7 @@ PyroObjTup* PyroObjTup_new(size_t count, PyroVM* vm) {
 }
 
 
-bool PyroObjTup_check_equal(PyroObjTup* a, PyroObjTup* b, PyroVM* vm) {
+bool PyroTup_check_equal(PyroTup* a, PyroTup* b, PyroVM* vm) {
     if (a->count == b->count) {
         for (size_t i = 0; i < a->count; i++) {
             if (!pyro_op_compare_eq(vm, a->values[i], b->values[i])) {
@@ -86,8 +86,8 @@ bool PyroObjTup_check_equal(PyroObjTup* a, PyroObjTup* b, PyroVM* vm) {
 /* -------- */
 
 
-PyroObjClosure* PyroObjClosure_new(PyroVM* vm, PyroObjPyroFn* fn, PyroObjModule* module) {
-    PyroObjClosure* closure = ALLOCATE_OBJECT(vm, PyroObjClosure, PYRO_OBJECT_CLOSURE);
+PyroClosure* PyroClosure_new(PyroVM* vm, PyroFn* fn, PyroMod* module) {
+    PyroClosure* closure = ALLOCATE_OBJECT(vm, PyroClosure, PYRO_OBJECT_CLOSURE);
     if (!closure) {
         return NULL;
     }
@@ -98,13 +98,13 @@ PyroObjClosure* PyroObjClosure_new(PyroVM* vm, PyroObjPyroFn* fn, PyroObjModule*
     closure->upvalues = NULL;
     closure->upvalue_count = 0;
 
-    closure->default_values = PyroObjVec_new(vm);
+    closure->default_values = PyroVec_new(vm);
     if (!closure->default_values) {
         return NULL;
     }
 
     if (fn->upvalue_count > 0) {
-        PyroObjUpvalue** array = PYRO_ALLOCATE_ARRAY(vm, PyroObjUpvalue*, fn->upvalue_count);
+        PyroUpvalue** array = PYRO_ALLOCATE_ARRAY(vm, PyroUpvalue*, fn->upvalue_count);
         if (!array) {
             return NULL;
         }
@@ -124,8 +124,8 @@ PyroObjClosure* PyroObjClosure_new(PyroVM* vm, PyroObjPyroFn* fn, PyroObjModule*
 /* -------- */
 
 
-PyroObjUpvalue* PyroObjUpvalue_new(PyroVM* vm, PyroValue* addr) {
-    PyroObjUpvalue* upvalue = ALLOCATE_OBJECT(vm, PyroObjUpvalue, PYRO_OBJECT_UPVALUE);
+PyroUpvalue* PyroUpvalue_new(PyroVM* vm, PyroValue* addr) {
+    PyroUpvalue* upvalue = ALLOCATE_OBJECT(vm, PyroUpvalue, PYRO_OBJECT_UPVALUE);
     if (!upvalue) {
         return NULL;
     }
@@ -141,8 +141,8 @@ PyroObjUpvalue* PyroObjUpvalue_new(PyroVM* vm, PyroValue* addr) {
 /* ------- */
 
 
-PyroObjClass* PyroObjClass_new(PyroVM* vm) {
-    PyroObjClass* class = ALLOCATE_OBJECT(vm, PyroObjClass, PYRO_OBJECT_CLASS);
+PyroClass* PyroClass_new(PyroVM* vm) {
+    PyroClass* class = ALLOCATE_OBJECT(vm, PyroClass, PYRO_OBJECT_CLASS);
     if (!class) {
         return NULL;
     }
@@ -162,13 +162,13 @@ PyroObjClass* PyroObjClass_new(PyroVM* vm) {
     class->pub_instance_methods_cached_value = pyro_null();
     class->init_method = pyro_null();
 
-    class->all_instance_methods = PyroObjMap_new(vm);
-    class->pub_instance_methods = PyroObjMap_new(vm);
-    class->all_field_indexes = PyroObjMap_new(vm);
-    class->pub_field_indexes = PyroObjMap_new(vm);
-    class->default_field_values = PyroObjVec_new(vm);
-    class->static_methods = PyroObjMap_new(vm);
-    class->static_fields = PyroObjMap_new(vm);
+    class->all_instance_methods = PyroMap_new(vm);
+    class->pub_instance_methods = PyroMap_new(vm);
+    class->all_field_indexes = PyroMap_new(vm);
+    class->pub_field_indexes = PyroMap_new(vm);
+    class->default_field_values = PyroVec_new(vm);
+    class->static_methods = PyroMap_new(vm);
+    class->static_fields = PyroMap_new(vm);
 
     if (vm->memory_allocation_failed) {
         return NULL;
@@ -183,10 +183,10 @@ PyroObjClass* PyroObjClass_new(PyroVM* vm) {
 /* --------- */
 
 
-PyroObjInstance* PyroObjInstance_new(PyroVM* vm, PyroObjClass* class) {
+PyroInstance* PyroInstance_new(PyroVM* vm, PyroClass* class) {
     size_t num_fields = class->default_field_values->count;
 
-    PyroObjInstance* instance = ALLOCATE_FLEX_OBJECT(vm, PyroObjInstance, PYRO_OBJECT_INSTANCE, num_fields, PyroValue);
+    PyroInstance* instance = ALLOCATE_FLEX_OBJECT(vm, PyroInstance, PYRO_OBJECT_INSTANCE, num_fields, PyroValue);
     if (!instance) {
         return NULL;
     }
@@ -254,7 +254,7 @@ static int64_t* find_entry(
 // This function is only used for looking up strings in the interned strings pool. If the pool
 // contains an entry identical to [string], it returns a pointer to that entry, otherwise it
 // returns NULL.
-static PyroObjStr* find_string(PyroObjMap* map, const char* string, size_t length, uint64_t hash) {
+static PyroStr* find_string(PyroMap* map, const char* string, size_t length, uint64_t hash) {
     if (map->live_entry_count == 0) {
         return NULL;
     }
@@ -269,7 +269,7 @@ static PyroObjStr* find_string(PyroObjMap* map, const char* string, size_t lengt
         } else if (*slot == TOMBSTONE) {
             // Skip over the tombstone and keep looking for a matching entry.
         } else {
-            PyroObjStr* entry = PYRO_AS_STR(map->entry_array[*slot].key);
+            PyroStr* entry = PYRO_AS_STR(map->entry_array[*slot].key);
             if (entry->length == length) {
                 if (entry->hash == hash) {
                     if (memcmp(entry->bytes, string, length) == 0) {
@@ -288,7 +288,7 @@ static PyroObjStr* find_string(PyroObjMap* map, const char* string, size_t lengt
 // index has the side-effect of eliminating any tombstone slots. This function also takes the
 // opportunity to eliminate any tombstones from the entry array so when this function returns
 // the map contains no tombstone entries.)
-static bool resize_index_array(PyroObjMap* map, PyroVM* vm) {
+static bool resize_index_array(PyroMap* map, PyroVM* vm) {
     size_t new_index_array_capacity = PYRO_GROW_CAPACITY(map->index_array_capacity);
 
     int64_t* new_index_array = PYRO_ALLOCATE_ARRAY(vm, int64_t, new_index_array_capacity);
@@ -353,8 +353,8 @@ static bool resize_index_array(PyroObjMap* map, PyroVM* vm) {
 }
 
 
-PyroObjMap* PyroObjMap_new(PyroVM* vm) {
-    PyroObjMap* map = ALLOCATE_OBJECT(vm, PyroObjMap, PYRO_OBJECT_MAP);
+PyroMap* PyroMap_new(PyroVM* vm) {
+    PyroMap* map = ALLOCATE_OBJECT(vm, PyroMap, PYRO_OBJECT_MAP);
     if (!map) {
         return NULL;
     }
@@ -372,7 +372,7 @@ PyroObjMap* PyroObjMap_new(PyroVM* vm) {
 }
 
 
-void PyroObjMap_clear(PyroObjMap* map, PyroVM* vm) {
+void PyroMap_clear(PyroMap* map, PyroVM* vm) {
     PYRO_FREE_ARRAY(vm, PyroMapEntry, map->entry_array, map->entry_array_capacity);
     PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
     map->entry_array = NULL;
@@ -386,8 +386,8 @@ void PyroObjMap_clear(PyroObjMap* map, PyroVM* vm) {
 }
 
 
-PyroObjMap* PyroObjMap_new_as_set(PyroVM* vm) {
-    PyroObjMap* map = PyroObjMap_new(vm);
+PyroMap* PyroMap_new_as_set(PyroVM* vm) {
+    PyroMap* map = PyroMap_new(vm);
     if (!map) {
         return NULL;
     }
@@ -397,8 +397,8 @@ PyroObjMap* PyroObjMap_new_as_set(PyroVM* vm) {
 }
 
 
-PyroObjMap* PyroObjMap_new_as_weakref(PyroVM* vm) {
-    PyroObjMap* map = PyroObjMap_new(vm);
+PyroMap* PyroMap_new_as_weakref(PyroVM* vm) {
+    PyroMap* map = PyroMap_new(vm);
     if (!map) {
         return NULL;
     }
@@ -407,8 +407,8 @@ PyroObjMap* PyroObjMap_new_as_weakref(PyroVM* vm) {
 }
 
 
-PyroObjMap* PyroObjMap_copy(PyroObjMap* src, PyroVM* vm) {
-    PyroObjMap* dst = PyroObjMap_new(vm);
+PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm) {
+    PyroMap* dst = PyroMap_new(vm);
     if (!dst) {
         return NULL;
     }
@@ -444,7 +444,7 @@ PyroObjMap* PyroObjMap_copy(PyroObjMap* src, PyroVM* vm) {
 // This function appends a new entry to the map's entry array. It returns -1 if memory could not
 // be allocated for the new entry -- in this case the map is unchanged. Otherwise it returns the
 // index of the new entry.
-static int64_t append_entry(PyroObjMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
+static int64_t append_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->entry_array_count == map->entry_array_capacity) {
         size_t new_entry_array_capacity = PYRO_GROW_CAPACITY(map->entry_array_capacity);
         PyroMapEntry* new_entry_array = PYRO_REALLOCATE_ARRAY(
@@ -469,7 +469,7 @@ static int64_t append_entry(PyroObjMap* map, PyroValue key, PyroValue value, Pyr
 }
 
 
-int PyroObjMap_set(PyroObjMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
+int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->index_array_capacity == 0) {
         if (!resize_index_array(map, vm)) {
             return 0;
@@ -514,7 +514,7 @@ int PyroObjMap_set(PyroObjMap* map, PyroValue key, PyroValue value, PyroVM* vm) 
 }
 
 
-bool PyroObjMap_update_entry(PyroObjMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
+bool PyroMap_update_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -530,7 +530,7 @@ bool PyroObjMap_update_entry(PyroObjMap* map, PyroValue key, PyroValue value, Py
 }
 
 
-bool PyroObjMap_get(PyroObjMap* map, PyroValue key, PyroValue* value, PyroVM* vm) {
+bool PyroMap_get(PyroMap* map, PyroValue key, PyroValue* value, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -545,7 +545,7 @@ bool PyroObjMap_get(PyroObjMap* map, PyroValue key, PyroValue* value, PyroVM* vm
 }
 
 
-bool PyroObjMap_contains(PyroObjMap* map, PyroValue key, PyroVM* vm) {
+bool PyroMap_contains(PyroMap* map, PyroValue key, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -559,7 +559,7 @@ bool PyroObjMap_contains(PyroObjMap* map, PyroValue key, PyroVM* vm) {
 }
 
 
-bool PyroObjMap_remove(PyroObjMap* map, PyroValue key, PyroVM* vm) {
+bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -576,13 +576,13 @@ bool PyroObjMap_remove(PyroObjMap* map, PyroValue key, PyroVM* vm) {
 }
 
 
-bool PyroObjMap_copy_entries(PyroObjMap* src, PyroObjMap* dst, PyroVM* vm) {
+bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->entry_array_count; i++) {
         PyroMapEntry* entry = &src->entry_array[i];
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (PyroObjMap_set(dst, entry->key, entry->value, vm) == 0) {
+        if (PyroMap_set(dst, entry->key, entry->value, vm) == 0) {
             return false;
         }
     }
@@ -600,8 +600,8 @@ bool PyroObjMap_copy_entries(PyroObjMap* src, PyroObjMap* dst, PyroVM* vm) {
 // caller should already have verified that an identical string does not exist in the interned
 // strings pool. Returns NULL if the attempt to allocate memory for the object fails -- in this
 // case the input array is not altered or freed.
-static PyroObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t hash) {
-    PyroObjStr* string = ALLOCATE_OBJECT(vm, PyroObjStr, PYRO_OBJECT_STR);
+static PyroStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t hash) {
+    PyroStr* string = ALLOCATE_OBJECT(vm, PyroStr, PYRO_OBJECT_STR);
     if (!string) {
         return NULL;
     }
@@ -611,7 +611,7 @@ static PyroObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint6
     string->bytes = bytes;
     string->obj.class = vm->class_str;
 
-    if (PyroObjMap_set(vm->strings, pyro_obj(string), pyro_null(), vm) == 0) {
+    if (PyroMap_set(vm->strings, pyro_obj(string), pyro_null(), vm) == 0) {
         return NULL;
     }
 
@@ -619,11 +619,11 @@ static PyroObjStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint6
 }
 
 
-PyroObjStr* PyroObjStr_take(char* src, size_t length, PyroVM* vm) {
+PyroStr* PyroStr_take(char* src, size_t length, PyroVM* vm) {
     assert(vm->strings != NULL);
 
     uint64_t hash = PYRO_STRING_HASH(src, length);
-    PyroObjStr* interned = find_string(vm->strings, src, length, hash);
+    PyroStr* interned = find_string(vm->strings, src, length, hash);
     if (interned) {
         PYRO_FREE_ARRAY(vm, char, src, length + 1);
         return interned;
@@ -633,7 +633,7 @@ PyroObjStr* PyroObjStr_take(char* src, size_t length, PyroVM* vm) {
 }
 
 
-PyroObjStr* PyroObjStr_empty(PyroVM* vm) {
+PyroStr* PyroStr_empty(PyroVM* vm) {
     if (vm->empty_string) {
         return vm->empty_string;
     }
@@ -645,7 +645,7 @@ PyroObjStr* PyroObjStr_empty(PyroVM* vm) {
 
     bytes[0] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(bytes, 0, vm);
+    PyroStr* string = PyroStr_take(bytes, 0, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, bytes, 1);
         return NULL;
@@ -655,14 +655,14 @@ PyroObjStr* PyroObjStr_empty(PyroVM* vm) {
 }
 
 
-PyroObjStr* PyroObjStr_new(const char* src, PyroVM* vm) {
-    return PyroObjStr_copy_raw(src, strlen(src), vm);
+PyroStr* PyroStr_new(const char* src, PyroVM* vm) {
+    return PyroStr_copy_raw(src, strlen(src), vm);
 }
 
 
-PyroObjStr* PyroObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
+PyroStr* PyroStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
     if (length == 0) {
-        return PyroObjStr_empty(vm);
+        return PyroStr_empty(vm);
     }
 
     char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
@@ -679,7 +679,7 @@ PyroObjStr* PyroObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
         dst = PYRO_REALLOCATE_ARRAY(vm, char, dst, length + 1, count + 1);
     }
 
-    PyroObjStr* string = PyroObjStr_take(dst, count, vm);
+    PyroStr* string = PyroStr_take(dst, count, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, count + 1);
         return NULL;
@@ -689,14 +689,14 @@ PyroObjStr* PyroObjStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
 }
 
 
-PyroObjStr* PyroObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
+PyroStr* PyroStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
     if (length == 0) {
-        return PyroObjStr_empty(vm);
+        return PyroStr_empty(vm);
     }
 
     uint64_t hash = PYRO_STRING_HASH(src, length);
     assert(vm->strings != NULL);
-    PyroObjStr* interned = find_string(vm->strings, src, length, hash);
+    PyroStr* interned = find_string(vm->strings, src, length, hash);
     if (interned) {
         return interned;
     }
@@ -709,7 +709,7 @@ PyroObjStr* PyroObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
     memcpy(dst, src, length);
     dst[length] = '\0';
 
-    PyroObjStr* string = allocate_string(vm, dst, length, hash);
+    PyroStr* string = allocate_string(vm, dst, length, hash);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -719,9 +719,9 @@ PyroObjStr* PyroObjStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
 }
 
 
-PyroObjStr* PyroObjStr_concat_n_copies(PyroObjStr* str, size_t n, PyroVM* vm) {
+PyroStr* PyroStr_concat_n_copies(PyroStr* str, size_t n, PyroVM* vm) {
     if (n == 0 || str->length == 0) {
-        return PyroObjStr_empty(vm);
+        return PyroStr_empty(vm);
     }
 
     size_t total_length = str->length * n;
@@ -735,7 +735,7 @@ PyroObjStr* PyroObjStr_concat_n_copies(PyroObjStr* str, size_t n, PyroVM* vm) {
     }
     dst[total_length] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(dst, total_length, vm);
+    PyroStr* string = PyroStr_take(dst, total_length, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, total_length + 1);
         return NULL;
@@ -745,9 +745,9 @@ PyroObjStr* PyroObjStr_concat_n_copies(PyroObjStr* str, size_t n, PyroVM* vm) {
 }
 
 
-PyroObjStr* PyroObjStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroVM* vm) {
+PyroStr* PyroStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroVM* vm) {
     if (n == 0) {
-        return PyroObjStr_empty(vm);
+        return PyroStr_empty(vm);
     }
 
     uint8_t buf[4];
@@ -764,7 +764,7 @@ PyroObjStr* PyroObjStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n,
     }
     dst[total_length] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(dst, total_length, vm);
+    PyroStr* string = PyroStr_take(dst, total_length, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, total_length + 1);
         return NULL;
@@ -774,7 +774,7 @@ PyroObjStr* PyroObjStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n,
 }
 
 
-PyroObjStr* PyroObjStr_concat(PyroObjStr* src1, PyroObjStr* src2, PyroVM* vm) {
+PyroStr* PyroStr_concat(PyroStr* src1, PyroStr* src2, PyroVM* vm) {
     if (src1->length == 0) return src2;
     if (src2->length == 0) return src1;
 
@@ -788,7 +788,7 @@ PyroObjStr* PyroObjStr_concat(PyroObjStr* src1, PyroObjStr* src2, PyroVM* vm) {
     memcpy(dst + src1->length, src2->bytes, src2->length);
     dst[length] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -798,7 +798,7 @@ PyroObjStr* PyroObjStr_concat(PyroObjStr* src1, PyroObjStr* src2, PyroVM* vm) {
 }
 
 
-PyroObjStr* PyroObjStr_prepend_codepoint_as_utf8(PyroObjStr* str, uint32_t codepoint, PyroVM* vm) {
+PyroStr* PyroStr_prepend_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, PyroVM* vm) {
     uint8_t buf[4];
     size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
 
@@ -812,7 +812,7 @@ PyroObjStr* PyroObjStr_prepend_codepoint_as_utf8(PyroObjStr* str, uint32_t codep
     memcpy(dst + buf_count, str->bytes, str->length);
     dst[length] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -822,7 +822,7 @@ PyroObjStr* PyroObjStr_prepend_codepoint_as_utf8(PyroObjStr* str, uint32_t codep
 }
 
 
-PyroObjStr* PyroObjStr_append_codepoint_as_utf8(PyroObjStr* str, uint32_t codepoint, PyroVM* vm) {
+PyroStr* PyroStr_append_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, PyroVM* vm) {
     uint8_t buf[4];
     size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
 
@@ -836,7 +836,7 @@ PyroObjStr* PyroObjStr_append_codepoint_as_utf8(PyroObjStr* str, uint32_t codepo
     memcpy(dst + str->length, buf, buf_count);
     dst[length] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -846,7 +846,7 @@ PyroObjStr* PyroObjStr_append_codepoint_as_utf8(PyroObjStr* str, uint32_t codepo
 }
 
 
-PyroObjStr* PyroObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm) {
+PyroStr* PyroStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm) {
     uint8_t buf1[4];
     size_t buf1_count = pyro_write_utf8_codepoint(cp1, buf1);
 
@@ -863,7 +863,7 @@ PyroObjStr* PyroObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, Pyr
     memcpy(dst + buf1_count, buf2, buf2_count);
     dst[length] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -873,25 +873,25 @@ PyroObjStr* PyroObjStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, Pyr
 }
 
 
-PyroObjStr* PyroObjStr_esc_percents(const char* src, size_t length, PyroVM* vm) {
-    PyroObjBuf* buf = PyroObjBuf_new_with_cap(length, vm);
+PyroStr* PyroStr_esc_percents(const char* src, size_t length, PyroVM* vm) {
+    PyroBuf* buf = PyroBuf_new_with_cap(length, vm);
     if (!buf) {
         return NULL;
     }
 
     for (size_t i = 0; i < length; i++) {
         if (src[i] == '%') {
-            if (!PyroObjBuf_append_bytes(buf, 2, (uint8_t*)"%%", vm)) {
+            if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"%%", vm)) {
                 return NULL;
             }
         } else {
-            if (!PyroObjBuf_append_byte(buf, src[i], vm)) {
+            if (!PyroBuf_append_byte(buf, src[i], vm)) {
                 return NULL;
             }
         }
     }
 
-    return PyroObjBuf_to_str(buf, vm);
+    return PyroBuf_to_str(buf, vm);
 }
 
 
@@ -900,8 +900,8 @@ PyroObjStr* PyroObjStr_esc_percents(const char* src, size_t length, PyroVM* vm) 
 /* -------------- */
 
 
-PyroObjPyroFn* PyroObjPyroFn_new(PyroVM* vm) {
-    PyroObjPyroFn* fn = ALLOCATE_OBJECT(vm, PyroObjPyroFn, PYRO_OBJECT_PYRO_FN);
+PyroFn* PyroFn_new(PyroVM* vm) {
+    PyroFn* fn = ALLOCATE_OBJECT(vm, PyroFn, PYRO_OBJECT_PYRO_FN);
     if (!fn) {
         return NULL;
     }
@@ -928,7 +928,7 @@ PyroObjPyroFn* PyroObjPyroFn_new(PyroVM* vm) {
 }
 
 
-bool PyroObjPyroFn_write(PyroObjPyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
+bool PyroFn_write(PyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
     if (fn->code_count == fn->code_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(fn->code_capacity);
         uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity, new_capacity);
@@ -965,7 +965,7 @@ bool PyroObjPyroFn_write(PyroObjPyroFn* fn, uint8_t byte, size_t line_number, Py
 }
 
 
-size_t PyroObjPyroFn_get_line_number(PyroObjPyroFn* fn, size_t ip) {
+size_t PyroFn_get_line_number(PyroFn* fn, size_t ip) {
     size_t offset = 0;
     size_t sum = 0;
 
@@ -981,7 +981,7 @@ size_t PyroObjPyroFn_get_line_number(PyroObjPyroFn* fn, size_t ip) {
 }
 
 
-int64_t PyroObjPyroFn_add_constant(PyroObjPyroFn* fn, PyroValue value, PyroVM* vm) {
+int64_t PyroFn_add_constant(PyroFn* fn, PyroValue value, PyroVM* vm) {
     for (size_t i = 0; i < fn->constants_count; i++) {
         if (pyro_compare_eq_strict(value, fn->constants[i])) {
             return i;
@@ -1003,7 +1003,7 @@ int64_t PyroObjPyroFn_add_constant(PyroObjPyroFn* fn, PyroValue value, PyroVM* v
 }
 
 
-size_t PyroObjPyroFn_opcode_argcount(PyroObjPyroFn* fn, size_t ip) {
+size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
     switch (fn->code[ip]) {
         case PYRO_OPCODE_ASSERT:
         case PYRO_OPCODE_BINARY_AMP:
@@ -1157,14 +1157,14 @@ size_t PyroObjPyroFn_opcode_argcount(PyroObjPyroFn* fn, size_t ip) {
         // 2 bytes for the constant index, plus two for each upvalue.
         case PYRO_OPCODE_MAKE_CLOSURE: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
-            PyroObjPyroFn* closure_fn = PYRO_AS_PYRO_FN(fn->constants[const_index]);
+            PyroFn* closure_fn = PYRO_AS_PYRO_FN(fn->constants[const_index]);
             return 2 + closure_fn->upvalue_count * 2;
         }
 
         // 2 bytes for the constant index, 1 byte for the value count, plus two for each upvalue.
         case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
-            PyroObjPyroFn* closure_fn = PYRO_AS_PYRO_FN(fn->constants[const_index]);
+            PyroFn* closure_fn = PYRO_AS_PYRO_FN(fn->constants[const_index]);
             return 2 + 1 + closure_fn->upvalue_count * 2;
         }
 
@@ -1177,7 +1177,7 @@ size_t PyroObjPyroFn_opcode_argcount(PyroObjPyroFn* fn, size_t ip) {
 
         default:
             assert(false);
-            fprintf(stderr, "Unhandled opcode in PyroObjPyroFn_opcode_argcount().");
+            fprintf(stderr, "Unhandled opcode in PyroFn_opcode_argcount().");
             exit(1);
     }
 }
@@ -1188,13 +1188,13 @@ size_t PyroObjPyroFn_opcode_argcount(PyroObjPyroFn* fn, size_t ip) {
 /* ---------------- */
 
 
-PyroObjNativeFn* PyroObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* name, int arity) {
-    PyroObjStr* name_string = PyroObjStr_new(name, vm);
+PyroNativeFn* PyroNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* name, int arity) {
+    PyroStr* name_string = PyroStr_new(name, vm);
     if (!name_string) {
         return NULL;
     }
 
-    PyroObjNativeFn* func = ALLOCATE_OBJECT(vm, PyroObjNativeFn, PYRO_OBJECT_NATIVE_FN);
+    PyroNativeFn* func = ALLOCATE_OBJECT(vm, PyroNativeFn, PYRO_OBJECT_NATIVE_FN);
     if (!func) {
         return NULL;
     }
@@ -1211,8 +1211,8 @@ PyroObjNativeFn* PyroObjNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const 
 /* ------------- */
 
 
-PyroObjBoundMethod* PyroObjBoundMethod_new(PyroVM* vm, PyroValue receiver, PyroObj* method) {
-    PyroObjBoundMethod* bound = ALLOCATE_OBJECT(vm, PyroObjBoundMethod, PYRO_OBJECT_BOUND_METHOD);
+PyroBoundMethod* PyroBoundMethod_new(PyroVM* vm, PyroValue receiver, PyroObject* method) {
+    PyroBoundMethod* bound = ALLOCATE_OBJECT(vm, PyroBoundMethod, PYRO_OBJECT_BOUND_METHOD);
     if (!bound) {
         return NULL;
     }
@@ -1227,8 +1227,8 @@ PyroObjBoundMethod* PyroObjBoundMethod_new(PyroVM* vm, PyroValue receiver, PyroO
 /* ------- */
 
 
-PyroObjModule* PyroObjModule_new(PyroVM* vm) {
-    PyroObjModule* module = ALLOCATE_OBJECT(vm, PyroObjModule, PYRO_OBJECT_MODULE);
+PyroMod* PyroMod_new(PyroVM* vm) {
+    PyroMod* module = ALLOCATE_OBJECT(vm, PyroMod, PYRO_OBJECT_MODULE);
     if (!module) {
         return NULL;
     }
@@ -1239,22 +1239,22 @@ PyroObjModule* PyroObjModule_new(PyroVM* vm) {
     module->all_member_indexes = NULL;
     module->pub_member_indexes = NULL;
 
-    module->submodules = PyroObjMap_new(vm);
+    module->submodules = PyroMap_new(vm);
     if (!module->submodules) {
         return NULL;
     }
 
-    module->members = PyroObjVec_new(vm);
+    module->members = PyroVec_new(vm);
     if (!module->members) {
         return NULL;
     }
 
-    module->all_member_indexes = PyroObjMap_new(vm);
+    module->all_member_indexes = PyroMap_new(vm);
     if (!module->all_member_indexes) {
         return NULL;
     }
 
-    module->pub_member_indexes = PyroObjMap_new(vm);
+    module->pub_member_indexes = PyroMap_new(vm);
     if (!module->pub_member_indexes) {
         return NULL;
     }
@@ -1268,8 +1268,8 @@ PyroObjModule* PyroObjModule_new(PyroVM* vm) {
 /* ------------------ */
 
 
-PyroObjVec* PyroObjVec_new(PyroVM* vm) {
-    PyroObjVec* vec = ALLOCATE_OBJECT(vm, PyroObjVec, PYRO_OBJECT_VEC);
+PyroVec* PyroVec_new(PyroVM* vm) {
+    PyroVec* vec = ALLOCATE_OBJECT(vm, PyroVec, PYRO_OBJECT_VEC);
     if (!vec) {
         return NULL;
     }
@@ -1281,7 +1281,7 @@ PyroObjVec* PyroObjVec_new(PyroVM* vm) {
 }
 
 
-void PyroObjVec_clear(PyroObjVec* vec, PyroVM* vm) {
+void PyroVec_clear(PyroVec* vec, PyroVM* vm) {
     PYRO_FREE_ARRAY(vm, PyroValue, vec->values, vec->capacity);
     vec->count = 0;
     vec->capacity = 0;
@@ -1289,8 +1289,8 @@ void PyroObjVec_clear(PyroObjVec* vec, PyroVM* vm) {
 }
 
 
-PyroObjVec* PyroObjVec_new_as_stack(PyroVM* vm) {
-    PyroObjVec* stack = PyroObjVec_new(vm);
+PyroVec* PyroVec_new_as_stack(PyroVM* vm) {
+    PyroVec* stack = PyroVec_new(vm);
     if (!stack) {
         return NULL;
     }
@@ -1300,8 +1300,8 @@ PyroObjVec* PyroObjVec_new_as_stack(PyroVM* vm) {
 }
 
 
-PyroObjVec* PyroObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
-    PyroObjVec* vec = PyroObjVec_new(vm);
+PyroVec* PyroVec_new_with_cap(size_t capacity, PyroVM* vm) {
+    PyroVec* vec = PyroVec_new(vm);
     if (!vec) {
         return NULL;
     }
@@ -1322,8 +1322,8 @@ PyroObjVec* PyroObjVec_new_with_cap(size_t capacity, PyroVM* vm) {
 }
 
 
-PyroObjVec* PyroObjVec_new_with_cap_and_fill(size_t capacity, PyroValue fill_value, PyroVM* vm) {
-    PyroObjVec* vec = PyroObjVec_new(vm);
+PyroVec* PyroVec_new_with_cap_and_fill(size_t capacity, PyroValue fill_value, PyroVM* vm) {
+    PyroVec* vec = PyroVec_new(vm);
     if (!vec) {
         return NULL;
     }
@@ -1349,8 +1349,8 @@ PyroObjVec* PyroObjVec_new_with_cap_and_fill(size_t capacity, PyroValue fill_val
 }
 
 
-PyroObjVec* PyroObjVec_copy(PyroObjVec* src, PyroVM* vm) {
-    PyroObjVec* vec = PyroObjVec_new_with_cap(src->count, vm);
+PyroVec* PyroVec_copy(PyroVec* src, PyroVM* vm) {
+    PyroVec* vec = PyroVec_new_with_cap(src->count, vm);
     if (!vec) {
         return NULL;
     }
@@ -1359,7 +1359,7 @@ PyroObjVec* PyroObjVec_copy(PyroObjVec* src, PyroVM* vm) {
 }
 
 
-bool PyroObjVec_append(PyroObjVec* vec, PyroValue value, PyroVM* vm) {
+bool PyroVec_append(PyroVec* vec, PyroValue value, PyroVM* vm) {
     if (vec->count == vec->capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
         PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
@@ -1374,9 +1374,9 @@ bool PyroObjVec_append(PyroObjVec* vec, PyroValue value, PyroVM* vm) {
 }
 
 
-bool PyroObjVec_copy_entries(PyroObjVec* src, PyroObjVec* dst, PyroVM* vm) {
+bool PyroVec_copy_entries(PyroVec* src, PyroVec* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->count; i++) {
-        if (!PyroObjVec_append(dst, src->values[i], vm)) {
+        if (!PyroVec_append(dst, src->values[i], vm)) {
             return false;
         }
     }
@@ -1384,7 +1384,7 @@ bool PyroObjVec_copy_entries(PyroObjVec* src, PyroObjVec* dst, PyroVM* vm) {
 }
 
 
-PyroValue PyroObjVec_remove_last(PyroObjVec* vec, PyroVM* vm) {
+PyroValue PyroVec_remove_last(PyroVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove last item from empty vector");
         return pyro_null();
@@ -1394,7 +1394,7 @@ PyroValue PyroObjVec_remove_last(PyroObjVec* vec, PyroVM* vm) {
 }
 
 
-PyroValue PyroObjVec_remove_first(PyroObjVec* vec, PyroVM* vm) {
+PyroValue PyroVec_remove_first(PyroVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove first item from empty vector");
         return pyro_null();
@@ -1414,7 +1414,7 @@ PyroValue PyroObjVec_remove_first(PyroObjVec* vec, PyroVM* vm) {
 }
 
 
-PyroValue PyroObjVec_remove_at_index(PyroObjVec* vec, size_t index, PyroVM* vm) {
+PyroValue PyroVec_remove_at_index(PyroVec* vec, size_t index, PyroVM* vm) {
     if (index >= vec->count) {
         pyro_panic(vm, "index is out of range");
         return pyro_null();
@@ -1440,14 +1440,14 @@ PyroValue PyroObjVec_remove_at_index(PyroObjVec* vec, size_t index, PyroVM* vm) 
 }
 
 
-void PyroObjVec_insert_at_index(PyroObjVec* vec, size_t index, PyroValue value, PyroVM* vm) {
+void PyroVec_insert_at_index(PyroVec* vec, size_t index, PyroValue value, PyroVM* vm) {
     if (index > vec->count) {
         pyro_panic(vm, "index is out of range");
         return;
     }
 
     if (index == vec->count) {
-        if (!PyroObjVec_append(vec, value, vm)) {
+        if (!PyroVec_append(vec, value, vm)) {
             pyro_panic(vm, "out of memory");
         }
         return;
@@ -1477,8 +1477,8 @@ void PyroObjVec_insert_at_index(PyroObjVec* vec, size_t index, PyroValue value, 
 /* ------- */
 
 
-PyroObjBuf* PyroObjBuf_new(PyroVM* vm) {
-    PyroObjBuf* buf = ALLOCATE_OBJECT(vm, PyroObjBuf, PYRO_OBJECT_BUF);
+PyroBuf* PyroBuf_new(PyroVM* vm) {
+    PyroBuf* buf = ALLOCATE_OBJECT(vm, PyroBuf, PYRO_OBJECT_BUF);
     if (!buf) {
         return NULL;
     }
@@ -1490,7 +1490,7 @@ PyroObjBuf* PyroObjBuf_new(PyroVM* vm) {
 }
 
 
-void PyroObjBuf_clear(PyroObjBuf* buf, PyroVM* vm) {
+void PyroBuf_clear(PyroBuf* buf, PyroVM* vm) {
     PYRO_FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
     buf->count = 0;
     buf->capacity = 0;
@@ -1498,8 +1498,8 @@ void PyroObjBuf_clear(PyroObjBuf* buf, PyroVM* vm) {
 }
 
 
-PyroObjBuf* PyroObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
-    PyroObjBuf* buf = PyroObjBuf_new(vm);
+PyroBuf* PyroBuf_new_with_cap(size_t capacity, PyroVM* vm) {
+    PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
         return NULL;
     }
@@ -1520,8 +1520,8 @@ PyroObjBuf* PyroObjBuf_new_with_cap(size_t capacity, PyroVM* vm) {
 }
 
 
-PyroObjBuf* PyroObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM* vm) {
-    PyroObjBuf* buf = PyroObjBuf_new(vm);
+PyroBuf* PyroBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM* vm) {
+    PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
         return NULL;
     }
@@ -1547,8 +1547,8 @@ PyroObjBuf* PyroObjBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value
 }
 
 
-PyroObjBuf* PyroObjBuf_new_from_string(PyroObjStr* string, PyroVM* vm) {
-    PyroObjBuf* buf = PyroObjBuf_new(vm);
+PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
+    PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
         return NULL;
     }
@@ -1569,13 +1569,13 @@ PyroObjBuf* PyroObjBuf_new_from_string(PyroObjStr* string, PyroVM* vm) {
 }
 
 
-bool PyroObjBuf_append_byte(PyroObjBuf* buf, uint8_t byte, PyroVM* vm) {
-    return PyroObjBuf_append_bytes(buf, 1, &byte, vm);
+bool PyroBuf_append_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm) {
+    return PyroBuf_append_bytes(buf, 1, &byte, vm);
 }
 
 
-bool PyroObjBuf_append_hex_escaped_byte(PyroObjBuf* buf, uint8_t byte, PyroVM* vm) {
-    if (!PyroObjBuf_append_bytes(buf, 4, (uint8_t*)"\\x##", vm)) {
+bool PyroBuf_append_hex_escaped_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm) {
+    if (!PyroBuf_append_bytes(buf, 4, (uint8_t*)"\\x##", vm)) {
         return false;
     }
 
@@ -1591,7 +1591,7 @@ bool PyroObjBuf_append_hex_escaped_byte(PyroObjBuf* buf, uint8_t byte, PyroVM* v
 
 // Attempts to grow the buffer to at least the required capacity. Returns true on success, false
 // if memory allocation fails. In this case the buffer is unchanged.
-bool PyroObjBuf_grow(PyroObjBuf* buf, size_t required_capacity, PyroVM* vm) {
+bool PyroBuf_grow(PyroBuf* buf, size_t required_capacity, PyroVM* vm) {
     if (required_capacity > buf->capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(buf->capacity);
         while (new_capacity < required_capacity) {
@@ -1611,7 +1611,7 @@ bool PyroObjBuf_grow(PyroObjBuf* buf, size_t required_capacity, PyroVM* vm) {
 // Attempts to grow the buffer to at least the required capacity. If the buffer's capacity needs to
 // be increased, it will be increased to exactly the required capacity. Returns true on success,
 // false if memory allocation fails. In this case the buffer is unchanged.
-bool PyroObjBuf_grow_to_fit(PyroObjBuf* buf, size_t required_capacity, PyroVM* vm) {
+bool PyroBuf_grow_to_fit(PyroBuf* buf, size_t required_capacity, PyroVM* vm) {
     if (required_capacity > buf->capacity) {
         size_t new_capacity = required_capacity;
         uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
@@ -1627,7 +1627,7 @@ bool PyroObjBuf_grow_to_fit(PyroObjBuf* buf, size_t required_capacity, PyroVM* v
 
 // Attempts to grow the buffer's capacity by [n] bytes. Returns true on success, false if memory
 // allocation fails. In this case the buffer is unchanged.
-bool PyroObjBuf_grow_by_n_bytes(PyroObjBuf* buf, size_t n, PyroVM* vm) {
+bool PyroBuf_grow_by_n_bytes(PyroBuf* buf, size_t n, PyroVM* vm) {
     size_t new_capacity = buf->capacity + n;
     uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
     if (!new_array) {
@@ -1642,11 +1642,11 @@ bool PyroObjBuf_grow_by_n_bytes(PyroObjBuf* buf, size_t n, PyroVM* vm) {
 // We make sure there's always at least one spare byte of capacity -- this means that we can
 // efficiently convert the buffer's underlying byte array to a string without needing to allocate
 // extra memory for the terminating \0.
-bool PyroObjBuf_append_bytes(PyroObjBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
+bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
     size_t required_capacity = buf->count + count + 1;
 
     if (required_capacity > buf->capacity) {
-        if (!PyroObjBuf_grow(buf, required_capacity, vm)) {
+        if (!PyroBuf_grow(buf, required_capacity, vm)) {
             return false;
         }
     }
@@ -1661,7 +1661,7 @@ bool PyroObjBuf_append_bytes(PyroObjBuf* buf, size_t count, uint8_t* bytes, Pyro
 // This function converts the contents of the buffer into a string, leaving a valid but empty
 // buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
 // case the buffer is unchanged.
-PyroObjStr* PyroObjBuf_to_str(PyroObjBuf* buf, PyroVM* vm) {
+PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm) {
     if (buf->count == 0) {
         return vm->empty_string;
     }
@@ -1672,7 +1672,7 @@ PyroObjStr* PyroObjBuf_to_str(PyroObjBuf* buf, PyroVM* vm) {
     }
     buf->bytes[buf->count] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take((char*)buf->bytes, buf->count, vm);
+    PyroStr* string = PyroStr_take((char*)buf->bytes, buf->count, vm);
     if (!string) {
         return NULL;
     }
@@ -1685,16 +1685,16 @@ PyroObjStr* PyroObjBuf_to_str(PyroObjBuf* buf, PyroVM* vm) {
 }
 
 
-int64_t PyroObjBuf_write_f(PyroObjBuf* buf, PyroVM* vm, const char* format_string, ...) {
+int64_t PyroBuf_write_f(PyroBuf* buf, PyroVM* vm, const char* format_string, ...) {
     va_list args;
     va_start(args, format_string);
-    int64_t result = PyroObjBuf_write_fv(buf, vm, format_string, args);
+    int64_t result = PyroBuf_write_fv(buf, vm, format_string, args);
     va_end(args);
     return result;
 }
 
 
-int64_t PyroObjBuf_write_fv(PyroObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+int64_t PyroBuf_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
     // Determine the length of the string. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
     va_list args_copy;
@@ -1712,7 +1712,7 @@ int64_t PyroObjBuf_write_fv(PyroObjBuf* buf, PyroVM* vm, const char* format_stri
 
     size_t required_capacity = buf->count + (size_t)length + 1;
 
-    if (required_capacity <= buf->capacity || PyroObjBuf_grow(buf, required_capacity, vm)) {
+    if (required_capacity <= buf->capacity || PyroBuf_grow(buf, required_capacity, vm)) {
         vsprintf((char*)&buf->bytes[buf->count], format_string, args);
         buf->count += length;
         return length;
@@ -1722,7 +1722,7 @@ int64_t PyroObjBuf_write_fv(PyroObjBuf* buf, PyroVM* vm, const char* format_stri
 }
 
 
-void PyroObjBuf_try_write_fv(PyroObjBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
+void PyroBuf_try_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
     // Determine the length of the string we want to write. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
     va_list args_copy;
@@ -1738,7 +1738,7 @@ void PyroObjBuf_try_write_fv(PyroObjBuf* buf, PyroVM* vm, const char* format_str
     size_t required_capacity = buf->count + (size_t)length + 1;
 
     // If we can write the entire string, write it.
-    if (buf->capacity >= required_capacity || PyroObjBuf_grow_to_fit(buf, required_capacity, vm)) {
+    if (buf->capacity >= required_capacity || PyroBuf_grow_to_fit(buf, required_capacity, vm)) {
         vsprintf((char*)&buf->bytes[buf->count], format_string, args);
         buf->count += length;
         return;
@@ -1746,7 +1746,7 @@ void PyroObjBuf_try_write_fv(PyroObjBuf* buf, PyroVM* vm, const char* format_str
 
     // Try to grow the buffer as much as possible.
     while (buf->capacity < required_capacity) {
-        if (!PyroObjBuf_grow_by_n_bytes(buf, 128, vm)) {
+        if (!PyroBuf_grow_by_n_bytes(buf, 128, vm)) {
             break;
         }
     }
@@ -1772,8 +1772,8 @@ void PyroObjBuf_try_write_fv(PyroObjBuf* buf, PyroVM* vm, const char* format_str
 /* ----- */
 
 
-PyroObjFile* PyroObjFile_new(PyroVM* vm, FILE* stream) {
-    PyroObjFile* file = ALLOCATE_OBJECT(vm, PyroObjFile, PYRO_OBJECT_FILE);
+PyroFile* PyroFile_new(PyroVM* vm, FILE* stream) {
+    PyroFile* file = ALLOCATE_OBJECT(vm, PyroFile, PYRO_OBJECT_FILE);
     if (!file) {
         return NULL;
     }
@@ -1784,7 +1784,7 @@ PyroObjFile* PyroObjFile_new(PyroVM* vm, FILE* stream) {
 }
 
 
-PyroObjStr* PyroObjFile_read_line(PyroObjFile* file, PyroVM* vm) {
+PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm) {
     size_t count = 0;
     size_t capacity = 0;
     uint8_t* array = NULL;
@@ -1843,7 +1843,7 @@ PyroObjStr* PyroObjFile_read_line(PyroObjFile* file, PyroVM* vm) {
 
     array[count] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take((char*)array, count, vm);
+    PyroStr* string = PyroStr_take((char*)array, count, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         pyro_panic(vm, "out of memory");
@@ -1859,8 +1859,8 @@ PyroObjStr* PyroObjFile_read_line(PyroObjFile* file, PyroVM* vm) {
 /* --------- */
 
 
-PyroObjIter* PyroObjIter_new(PyroObj* source, PyroIterType iter_type, PyroVM* vm) {
-    PyroObjIter* iter = ALLOCATE_OBJECT(vm, PyroObjIter, PYRO_OBJECT_ITER);
+PyroIter* PyroIter_new(PyroObject* source, PyroIterType iter_type, PyroVM* vm) {
+    PyroIter* iter = ALLOCATE_OBJECT(vm, PyroIter, PYRO_OBJECT_ITER);
     if (!iter) {
         return NULL;
     }
@@ -1878,19 +1878,19 @@ PyroObjIter* PyroObjIter_new(PyroObj* source, PyroIterType iter_type, PyroVM* vm
 }
 
 
-PyroObjIter* PyroObjIter_empty(PyroVM* vm) {
-    return PyroObjIter_new(NULL, PYRO_ITER_EMPTY, vm);
+PyroIter* PyroIter_empty(PyroVM* vm) {
+    return PyroIter_new(NULL, PYRO_ITER_EMPTY, vm);
 }
 
 
-PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
+PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
     switch (iter->iter_type) {
         case PYRO_ITER_EMPTY: {
             return pyro_obj(vm->error);
         }
 
         case PYRO_ITER_VEC: {
-            PyroObjVec* vec = (PyroObjVec*)iter->source;
+            PyroVec* vec = (PyroVec*)iter->source;
             if (iter->next_index < vec->count) {
                 iter->next_index++;
                 PyroValue result = vec->values[iter->next_index - 1];
@@ -1900,7 +1900,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_TUP: {
-            PyroObjTup* tup = (PyroObjTup*)iter->source;
+            PyroTup* tup = (PyroTup*)iter->source;
             if (iter->next_index < tup->count) {
                 iter->next_index++;
                 return tup->values[iter->next_index - 1];
@@ -1918,9 +1918,9 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_STR: {
-            PyroObjStr* str = (PyroObjStr*)iter->source;
+            PyroStr* str = (PyroStr*)iter->source;
             if (iter->next_index < str->length) {
-                PyroObjStr* new_str = PyroObjStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
+                PyroStr* new_str = PyroStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
                 if (!new_str) {
                     pyro_panic(vm, "out of memory");
                     return pyro_obj(vm->error);
@@ -1932,7 +1932,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_STR_BYTES: {
-            PyroObjStr* str = (PyroObjStr*)iter->source;
+            PyroStr* str = (PyroStr*)iter->source;
             if (iter->next_index < str->length) {
                 int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
                 iter->next_index++;
@@ -1942,7 +1942,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_STR_CHARS: {
-            PyroObjStr* str = (PyroObjStr*)iter->source;
+            PyroStr* str = (PyroStr*)iter->source;
             if (iter->next_index < str->length) {
                 uint8_t* src = (uint8_t*)&str->bytes[iter->next_index];
                 size_t src_len = str->length - iter->next_index;
@@ -1961,7 +1961,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_MAP_KEYS: {
-            PyroObjMap* map = (PyroObjMap*)iter->source;
+            PyroMap* map = (PyroMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
@@ -1974,7 +1974,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_MAP_VALUES: {
-            PyroObjMap* map = (PyroObjMap*)iter->source;
+            PyroMap* map = (PyroMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
@@ -1987,7 +1987,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_MAP_ENTRIES: {
-            PyroObjMap* map = (PyroObjMap*)iter->source;
+            PyroMap* map = (PyroMap*)iter->source;
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
@@ -1995,7 +1995,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
                     continue;
                 }
 
-                PyroObjTup* tup = PyroObjTup_new(2, vm);
+                PyroTup* tup = PyroTup_new(2, vm);
                 if (!tup) {
                     pyro_panic(vm, "out of memory");
                     return pyro_obj(vm->error);
@@ -2009,8 +2009,8 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_FUNC_MAP: {
-            PyroObjIter* src_iter = (PyroObjIter*)iter->source;
-            PyroValue next_value = PyroObjIter_next(src_iter, vm);
+            PyroIter* src_iter = (PyroIter*)iter->source;
+            PyroValue next_value = PyroIter_next(src_iter, vm);
             if (PYRO_IS_ERR(next_value)) {
                 return next_value;
             }
@@ -2026,10 +2026,10 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_FUNC_FILTER: {
-            PyroObjIter* src_iter = (PyroObjIter*)iter->source;
+            PyroIter* src_iter = (PyroIter*)iter->source;
 
             while (true) {
-                PyroValue next_value = PyroObjIter_next(src_iter, vm);
+                PyroValue next_value = PyroIter_next(src_iter, vm);
                 if (PYRO_IS_ERR(next_value)) {
                     return next_value;
                 }
@@ -2048,13 +2048,13 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_ENUM: {
-            PyroObjIter* src_iter = (PyroObjIter*)iter->source;
-            PyroValue next_value = PyroObjIter_next(src_iter, vm);
+            PyroIter* src_iter = (PyroIter*)iter->source;
+            PyroValue next_value = PyroIter_next(src_iter, vm);
             if (PYRO_IS_ERR(next_value)) {
                 return next_value;
             }
 
-            PyroObjTup* tup = PyroObjTup_new(2, vm);
+            PyroTup* tup = PyroTup_new(2, vm);
             if (!tup) {
                 pyro_panic(vm, "out of memory");
                 return pyro_obj(vm->error);
@@ -2104,7 +2104,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
             if (iter->source == NULL) {
                 return pyro_obj(vm->error);
             }
-            PyroObjStr* str = (PyroObjStr*)iter->source;
+            PyroStr* str = (PyroStr*)iter->source;
 
             // If we're at the end of the string, set the source to NULL and return an empty string.
             if (iter->next_index == str->length) {
@@ -2135,7 +2135,7 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
                 }
             }
 
-            PyroObjStr* next_line = PyroObjStr_copy_raw(line_start, line_end - line_start, vm);
+            PyroStr* next_line = PyroStr_copy_raw(line_start, line_end - line_start, vm);
             if (!next_line) {
                 pyro_panic(vm, "out of memory");
                 return pyro_obj(vm->error);
@@ -2157,8 +2157,8 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
                 return pyro_obj(vm->error);
             }
 
-            PyroObjFile* file = (PyroObjFile*)iter->source;
-            PyroObjStr* next_line = PyroObjFile_read_line(file, vm);
+            PyroFile* file = (PyroFile*)iter->source;
+            PyroStr* next_line = PyroFile_read_line(file, vm);
             if (vm->halt_flag) {
                 return pyro_obj(vm->error);
             }
@@ -2179,8 +2179,8 @@ PyroValue PyroObjIter_next(PyroObjIter* iter, PyroVM* vm) {
 }
 
 
-PyroObjStr* PyroObjIter_join(PyroObjIter* iter, const char* sep, size_t sep_length, PyroVM* vm) {
-    PyroObjBuf* buf = PyroObjBuf_new(vm);
+PyroStr* PyroIter_join(PyroIter* iter, const char* sep, size_t sep_length, PyroVM* vm) {
+    PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -2190,7 +2190,7 @@ PyroObjStr* PyroObjIter_join(PyroObjIter* iter, const char* sep, size_t sep_leng
     bool is_first_item = true;
 
     while (true) {
-        PyroValue next_value = PyroObjIter_next(iter, vm);
+        PyroValue next_value = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return NULL;
         }
@@ -2199,20 +2199,20 @@ PyroObjStr* PyroObjIter_join(PyroObjIter* iter, const char* sep, size_t sep_leng
         }
 
         if (!is_first_item) {
-            if (!PyroObjBuf_append_bytes(buf, sep_length, (uint8_t*)sep, vm)) {
+            if (!PyroBuf_append_bytes(buf, sep_length, (uint8_t*)sep, vm)) {
                 pyro_panic(vm, "out of memory");
                 return NULL;
             }
         }
 
         pyro_push(vm, next_value); // Stringification can call into Pyro code and trigger the GC.
-        PyroObjStr* value_string = pyro_stringify_value(vm, next_value);
+        PyroStr* value_string = pyro_stringify_value(vm, next_value);
         if (vm->halt_flag) {
             return NULL;
         }
         pyro_pop(vm); // next_value
 
-        if (!PyroObjBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
@@ -2220,7 +2220,7 @@ PyroObjStr* PyroObjIter_join(PyroObjIter* iter, const char* sep, size_t sep_leng
         is_first_item = false;
     }
 
-    PyroObjStr* output_string = PyroObjBuf_to_str(buf, vm);
+    PyroStr* output_string = PyroBuf_to_str(buf, vm);
     if (!output_string) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -2236,8 +2236,8 @@ PyroObjStr* PyroObjIter_join(PyroObjIter* iter, const char* sep, size_t sep_leng
 /* ------ */
 
 
-PyroObjQueue* PyroObjQueue_new(PyroVM* vm) {
-    PyroObjQueue* queue = ALLOCATE_OBJECT(vm, PyroObjQueue, PYRO_OBJECT_QUEUE);
+PyroQueue* PyroQueue_new(PyroVM* vm) {
+    PyroQueue* queue = ALLOCATE_OBJECT(vm, PyroQueue, PYRO_OBJECT_QUEUE);
     if (!queue) {
         return NULL;
     }
@@ -2249,12 +2249,12 @@ PyroObjQueue* PyroObjQueue_new(PyroVM* vm) {
 }
 
 
-void PyroObjQueue_clear(PyroObjQueue* queue, PyroVM* vm) {
-    QueueItem* next_item = queue->head;
+void PyroQueue_clear(PyroQueue* queue, PyroVM* vm) {
+    PyroQueueItem* next_item = queue->head;
     while (next_item) {
-        QueueItem* current_item = next_item;
+        PyroQueueItem* current_item = next_item;
         next_item = current_item->next;
-        pyro_realloc(vm, current_item, sizeof(QueueItem), 0);
+        pyro_realloc(vm, current_item, sizeof(PyroQueueItem), 0);
     }
     queue->head = NULL;
     queue->tail = NULL;
@@ -2263,8 +2263,8 @@ void PyroObjQueue_clear(PyroObjQueue* queue, PyroVM* vm) {
 
 
 // Add the new item to the end of the linked list.
-bool PyroObjQueue_enqueue(PyroObjQueue* queue, PyroValue value, PyroVM* vm) {
-    QueueItem* item = pyro_realloc(vm, NULL, 0, sizeof(QueueItem));
+bool PyroQueue_enqueue(PyroQueue* queue, PyroValue value, PyroVM* vm) {
+    PyroQueueItem* item = pyro_realloc(vm, NULL, 0, sizeof(PyroQueueItem));
     if (!item) {
         return false;
     }
@@ -2285,12 +2285,12 @@ bool PyroObjQueue_enqueue(PyroObjQueue* queue, PyroValue value, PyroVM* vm) {
 
 
 // Remove the item at the front of the linked list.
-bool PyroObjQueue_dequeue(PyroObjQueue* queue, PyroValue* value, PyroVM* vm) {
+bool PyroQueue_dequeue(PyroQueue* queue, PyroValue* value, PyroVM* vm) {
     if (queue->count == 0) {
         return false;
     }
 
-    QueueItem* item = queue->head;
+    PyroQueueItem* item = queue->head;
     *value = item->value;
 
     if (queue->count == 1) {
@@ -2300,7 +2300,7 @@ bool PyroObjQueue_dequeue(PyroObjQueue* queue, PyroValue* value, PyroVM* vm) {
         queue->head = item->next;
     }
 
-    pyro_realloc(vm, item, sizeof(QueueItem), 0);
+    pyro_realloc(vm, item, sizeof(PyroQueueItem), 0);
     queue->count--;
     return true;
 }
@@ -2311,8 +2311,8 @@ bool PyroObjQueue_dequeue(PyroObjQueue* queue, PyroValue* value, PyroVM* vm) {
 /* ------------------- */
 
 
-PyroObjResourcePointer* PyroObjResourcePointer_new(void* pointer, pyro_free_rp_callback_t callback, PyroVM* vm) {
-    PyroObjResourcePointer* resource = ALLOCATE_OBJECT(vm, PyroObjResourcePointer, PYRO_OBJECT_RESOURCE_POINTER);
+PyroResourcePointer* PyroResourcePointer_new(void* pointer, pyro_free_rp_callback_t callback, PyroVM* vm) {
+    PyroResourcePointer* resource = ALLOCATE_OBJECT(vm, PyroResourcePointer, PYRO_OBJECT_RESOURCE_POINTER);
     if (!resource) {
         return NULL;
     }
@@ -2328,8 +2328,8 @@ PyroObjResourcePointer* PyroObjResourcePointer_new(void* pointer, pyro_free_rp_c
 /* -------- */
 
 
-PyroObjErr* PyroObjErr_new(PyroVM* vm) {
-    PyroObjErr* err = ALLOCATE_OBJECT(vm, PyroObjErr, PYRO_OBJECT_ERR);
+PyroErr* PyroErr_new(PyroVM* vm) {
+    PyroErr* err = ALLOCATE_OBJECT(vm, PyroErr, PYRO_OBJECT_ERR);
     if (!err) {
         return NULL;
     }
@@ -2337,7 +2337,7 @@ PyroObjErr* PyroObjErr_new(PyroVM* vm) {
     err->obj.class = vm->class_err;
     err->message = vm->empty_string;
 
-    err->details = PyroObjMap_new(vm);
+    err->details = PyroMap_new(vm);
     if (!err->details) {
         return NULL;
     }

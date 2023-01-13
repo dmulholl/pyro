@@ -25,12 +25,12 @@ typedef struct {
         int64_t i64;
         uint64_t u64;
         uint32_t u32;
-        PyroObj* obj;
+        PyroObject* obj;
     } as;
 } PyroValue;
 
 // Type-set for heap-allocated Pyro objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
-// Every [PyroObj] has a [.type] field with one of these enum values.
+// Every [PyroObject] has a [.type] field with one of these enum values.
 typedef enum {
     PYRO_OBJECT_BOUND_METHOD,
     PYRO_OBJECT_BUF,
@@ -58,9 +58,9 @@ typedef enum {
 // Base type for all heap-allocated objects, i.e. Pyro values with type [PYRO_VALUE_OBJ].
 // The VM maintains a linked list of all heap-allocated objects using the [.next] pointers.
 // Not every object has an associated class so [.class] can be NULL.
-struct PyroObj {
-    PyroObj* next;
-    PyroObjClass* class;
+struct PyroObject {
+    PyroObject* next;
+    PyroClass* class;
     PyroObjectType type;
     bool is_marked;
 };
@@ -87,7 +87,7 @@ static inline PyroValue pyro_char(uint32_t value) {
 
 // Converts a C pointer to a Pyro value.
 static inline PyroValue pyro_obj(void* value) {
-    return (PyroValue){PYRO_VALUE_OBJ, {.obj = (PyroObj*)value}};
+    return (PyroValue){PYRO_VALUE_OBJ, {.obj = (PyroObject*)value}};
 }
 
 // Creates a Pyro tombstone value.
@@ -132,34 +132,34 @@ static inline PyroValue pyro_null() {
 
 // Macros for extracting object pointers from PyroValue instances.
 #define PYRO_AS_OBJ(value)               ((value).as.obj)
-#define PYRO_AS_STR(value)               ((PyroObjStr*)PYRO_AS_OBJ(value))
-#define PYRO_AS_PYRO_FN(value)           ((PyroObjPyroFn*)PYRO_AS_OBJ(value))
-#define PYRO_AS_CLOSURE(value)           ((PyroObjClosure*)PYRO_AS_OBJ(value))
-#define PYRO_AS_CLASS(value)             ((PyroObjClass*)PYRO_AS_OBJ(value))
-#define PYRO_AS_INSTANCE(value)          ((PyroObjInstance*)PYRO_AS_OBJ(value))
-#define PYRO_AS_BOUND_METHOD(value)      ((PyroObjBoundMethod*)PYRO_AS_OBJ(value))
-#define PYRO_AS_MAP(value)               ((PyroObjMap*)PYRO_AS_OBJ(value))
-#define PYRO_AS_TUP(value)               ((PyroObjTup*)PYRO_AS_OBJ(value))
-#define PYRO_AS_NATIVE_FN(value)         ((PyroObjNativeFn*)PYRO_AS_OBJ(value))
-#define PYRO_AS_MOD(value)               ((PyroObjModule*)PYRO_AS_OBJ(value))
-#define PYRO_AS_VEC(value)               ((PyroObjVec*)PYRO_AS_OBJ(value))
-#define PYRO_AS_BUF(value)               ((PyroObjBuf*)PYRO_AS_OBJ(value))
-#define PYRO_AS_FILE(value)              ((PyroObjFile*)PYRO_AS_OBJ(value))
-#define PYRO_AS_ITER(value)              ((PyroObjIter*)PYRO_AS_OBJ(value))
-#define PYRO_AS_QUEUE(value)             ((PyroObjQueue*)PYRO_AS_OBJ(value))
-#define PYRO_AS_RESOURCE_POINTER(value)  ((PyroObjResourcePointer*)PYRO_AS_OBJ(value))
-#define PYRO_AS_ERR(value)               ((PyroObjErr*)PYRO_AS_OBJ(value))
+#define PYRO_AS_STR(value)               ((PyroStr*)PYRO_AS_OBJ(value))
+#define PYRO_AS_PYRO_FN(value)           ((PyroFn*)PYRO_AS_OBJ(value))
+#define PYRO_AS_CLOSURE(value)           ((PyroClosure*)PYRO_AS_OBJ(value))
+#define PYRO_AS_CLASS(value)             ((PyroClass*)PYRO_AS_OBJ(value))
+#define PYRO_AS_INSTANCE(value)          ((PyroInstance*)PYRO_AS_OBJ(value))
+#define PYRO_AS_BOUND_METHOD(value)      ((PyroBoundMethod*)PYRO_AS_OBJ(value))
+#define PYRO_AS_MAP(value)               ((PyroMap*)PYRO_AS_OBJ(value))
+#define PYRO_AS_TUP(value)               ((PyroTup*)PYRO_AS_OBJ(value))
+#define PYRO_AS_NATIVE_FN(value)         ((PyroNativeFn*)PYRO_AS_OBJ(value))
+#define PYRO_AS_MOD(value)               ((PyroMod*)PYRO_AS_OBJ(value))
+#define PYRO_AS_VEC(value)               ((PyroVec*)PYRO_AS_OBJ(value))
+#define PYRO_AS_BUF(value)               ((PyroBuf*)PYRO_AS_OBJ(value))
+#define PYRO_AS_FILE(value)              ((PyroFile*)PYRO_AS_OBJ(value))
+#define PYRO_AS_ITER(value)              ((PyroIter*)PYRO_AS_OBJ(value))
+#define PYRO_AS_QUEUE(value)             ((PyroQueue*)PYRO_AS_OBJ(value))
+#define PYRO_AS_RESOURCE_POINTER(value)  ((PyroResourcePointer*)PYRO_AS_OBJ(value))
+#define PYRO_AS_ERR(value)               ((PyroErr*)PYRO_AS_OBJ(value))
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
-PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value);
+PyroClass* pyro_get_class(PyroVM* vm, PyroValue value);
 
 // Returns the named method if it exists, otherwise NULL.
-PyroValue pyro_get_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
-PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
+PyroValue pyro_get_method(PyroVM* vm, PyroValue value, PyroStr* method_name);
+PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue value, PyroStr* method_name);
 
 // Returns true if the named method exists.
-bool pyro_has_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
-bool pyro_has_pub_method(PyroVM* vm, PyroValue value, PyroObjStr* method_name);
+bool pyro_has_method(PyroVM* vm, PyroValue value, PyroStr* method_name);
+bool pyro_has_pub_method(PyroVM* vm, PyroValue value, PyroStr* method_name);
 
 // Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
 // Pyro code.

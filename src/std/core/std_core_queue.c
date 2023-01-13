@@ -9,7 +9,7 @@
 
 
 static PyroValue fn_queue(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = PyroObjQueue_new(vm);
+    PyroQueue* queue = PyroQueue_new(vm);
     if (!queue) {
         pyro_panic(vm, "$queue(): out of memory");
         return pyro_null();
@@ -24,14 +24,14 @@ static PyroValue fn_is_queue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
     return pyro_i64(queue->count);
 }
 
 
 static PyroValue queue_enqueue(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
-    if (!PyroObjQueue_enqueue(queue, args[0], vm)) {
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    if (!PyroQueue_enqueue(queue, args[0], vm)) {
         pyro_panic(vm, "enqueue(): out of memory");
     }
     return pyro_null();
@@ -39,9 +39,9 @@ static PyroValue queue_enqueue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_dequeue(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
     PyroValue value;
-    if (!PyroObjQueue_dequeue(queue, &value, vm)) {
+    if (!PyroQueue_dequeue(queue, &value, vm)) {
         pyro_panic(vm, "dequeue(): cannot dequeue from empty queue");
         return pyro_null();
     }
@@ -50,15 +50,15 @@ static PyroValue queue_dequeue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
     return pyro_bool(queue->count == 0);
 }
 
 
 static PyroValue queue_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
 
-    PyroObjIter* iter = PyroObjIter_new((PyroObj*)queue, PYRO_ITER_QUEUE, vm);
+    PyroIter* iter = PyroIter_new((PyroObject*)queue, PYRO_ITER_QUEUE, vm);
     if (!iter) {
         pyro_panic(vm, "iter(): out of memory");
         return pyro_null();
@@ -70,8 +70,8 @@ static PyroValue queue_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue queue_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjQueue* queue = PYRO_AS_QUEUE(args[-1]);
-    PyroObjQueue_clear(queue, vm);
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    PyroQueue_clear(queue, vm);
     return pyro_null();
 }
 

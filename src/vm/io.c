@@ -4,7 +4,7 @@
 #include "../inc/vm.h"
 
 
-static int64_t pyro_write_n(PyroVM* vm, PyroObjFile* file, const char* string, size_t count) {
+static int64_t pyro_write_n(PyroVM* vm, PyroFile* file, const char* string, size_t count) {
     if (!file || count == 0) {
         return 0;
     }
@@ -21,7 +21,7 @@ static int64_t pyro_write_n(PyroVM* vm, PyroObjFile* file, const char* string, s
 }
 
 
-static int64_t pyro_write_fv(PyroVM* vm, PyroObjFile* file, const char* format_string, va_list args) {
+static int64_t pyro_write_fv(PyroVM* vm, PyroFile* file, const char* format_string, va_list args) {
     if (!file) {
         return 0;
     }
@@ -45,7 +45,7 @@ int64_t pyro_stdout_write_n(PyroVM* vm, const char* string, size_t count) {
 }
 
 
-int64_t pyro_stdout_write_s(PyroVM* vm, PyroObjStr* string) {
+int64_t pyro_stdout_write_s(PyroVM* vm, PyroStr* string) {
     return pyro_write_n(vm, vm->stdout_file, string->bytes, string->length);
 }
 
@@ -74,7 +74,7 @@ int64_t pyro_stderr_write_n(PyroVM* vm, const char* string, size_t count) {
 }
 
 
-int64_t pyro_stderr_write_s(PyroVM* vm, PyroObjStr* string) {
+int64_t pyro_stderr_write_s(PyroVM* vm, PyroStr* string) {
     return pyro_write_n(vm, vm->stderr_file, string->bytes, string->length);
 }
 

@@ -12,11 +12,11 @@ PyroVM* pyro_new_vm(size_t stack_size);
 // Frees a VM instance and all heap-allocated memory owned by that VM.
 void pyro_free_vm(PyroVM* vm);
 
-// Sets the file to use for the VM's standard error stream. Returns false if an PyroObjFile cannot be
+// Sets the file to use for the VM's standard error stream. Returns false if an PyroFile cannot be
 // allocated to wrap the stream.
 bool pyro_set_stderr(PyroVM* vm, FILE* stream);
 
-// Sets the file to use for the VM's standard output stream. Returns false if an PyroObjFile cannot be
+// Sets the file to use for the VM's standard output stream. Returns false if an PyroFile cannot be
 // allocated to wrap the stream.
 bool pyro_set_stdout(PyroVM* vm, FILE* stream);
 
@@ -52,42 +52,42 @@ bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr
 
 // Adds a new public member to [module], i.e. creates a module-level global variable called [name]
 // with initial value [value]. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pub_member(PyroVM* vm, PyroObjModule* module, const char* name, PyroValue value);
+bool pyro_define_pub_member(PyroVM* vm, PyroMod* module, const char* name, PyroValue value);
 
 // Adds a new private member to [module], i.e. creates a module-level global variable called [name]
 // with initial value [value]. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pri_member(PyroVM* vm, PyroObjModule* module, const char* name, PyroValue value);
+bool pyro_define_pri_member(PyroVM* vm, PyroMod* module, const char* name, PyroValue value);
 
 // Convenience function for adding a new public member to [module] where the value is a native
 // function. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pub_member_fn(PyroVM* vm, PyroObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
+bool pyro_define_pub_member_fn(PyroVM* vm, PyroMod* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Convenience function for adding a new private member to [module] where the value is a native
 // function. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pri_member_fn(PyroVM* vm, PyroObjModule* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
+bool pyro_define_pri_member_fn(PyroVM* vm, PyroMod* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new public method to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pub_method(PyroVM* vm, PyroObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
+bool pyro_define_pub_method(PyroVM* vm, PyroClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new private method to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pri_method(PyroVM* vm, PyroObjClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
+bool pyro_define_pri_method(PyroVM* vm, PyroClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new public field to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pub_field(PyroVM* vm, PyroObjClass* class, const char* name, PyroValue default_value);
+bool pyro_define_pub_field(PyroVM* vm, PyroClass* class, const char* name, PyroValue default_value);
 
 // Adds a new private field to the class. Returns true on success, false if memory could not be allocated.
-bool pyro_define_pri_field(PyroVM* vm, PyroObjClass* class, const char* name, PyroValue default_value);
+bool pyro_define_pri_field(PyroVM* vm, PyroClass* class, const char* name, PyroValue default_value);
 
 // Creates a new top-level module. Returns the module or NULL if memory allocation fails.
-PyroObjModule* pyro_define_module_1(PyroVM* vm, const char* name);
+PyroMod* pyro_define_module_1(PyroVM* vm, const char* name);
 
 // Defines a new 2nd level module where [parent] is a top-level module.
 // Returns the module or NULL if memory allocation fails.
-PyroObjModule* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name);
+PyroMod* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name);
 
 // Defines a new 3rd level module where [grandparent] is a top-level module and [parent] is a
 // submodule of [grandparent]. Returns the module or NULL if memory allocation fails.
-PyroObjModule* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name);
+PyroMod* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name);
 
 // Sets the value of the VM's REPL flag.
 void pyro_set_repl_flag(PyroVM* vm, bool flag);

@@ -139,8 +139,8 @@ char* pyro_getcwd(void) {
 }
 
 
-PyroObjVec* pyro_listdir(PyroVM* vm, const char* path) {
-    PyroObjVec* vec = PyroObjVec_new(vm);
+PyroVec* pyro_listdir(PyroVM* vm, const char* path) {
+    PyroVec* vec = PyroVec_new(vm);
     if (!vec) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -166,13 +166,13 @@ PyroObjVec* pyro_listdir(PyroVM* vm, const char* path) {
             continue;
         }
 
-        PyroObjStr* string = PyroObjStr_copy_raw(name, length, vm);
+        PyroStr* string = PyroStr_copy_raw(name, length, vm);
         if (!string) {
             pyro_panic(vm, "out of memory");
             break;
         }
 
-        if (!PyroObjVec_append(vec, pyro_obj(string), vm)) {
+        if (!PyroVec_append(vec, pyro_obj(string), vm)) {
             pyro_panic(vm, "out of memory");
             break;
         }
@@ -254,8 +254,8 @@ static bool write_to_fd(int fd, const uint8_t* buf, size_t length) {
 // - Returns 0 on success.
 // - Returns 1 if memory allocation fails.
 // - Returns 2 if an I/O error occurs.
-static int read_from_fd(PyroVM* vm, int fd, PyroObjBuf** output) {
-    PyroObjBuf* out_buf = PyroObjBuf_new(vm);
+static int read_from_fd(PyroVM* vm, int fd, PyroBuf** output) {
+    PyroBuf* out_buf = PyroBuf_new(vm);
     if (!out_buf) {
         return 1;
     }
@@ -273,7 +273,7 @@ static int read_from_fd(PyroVM* vm, int fd, PyroObjBuf** output) {
         } else if (count == 0) {
             break;
         } else {
-            if (!PyroObjBuf_append_bytes(out_buf, count, in_buf, vm)) {
+            if (!PyroBuf_append_bytes(out_buf, count, in_buf, vm)) {
                 return 1;
             }
         }
@@ -289,8 +289,8 @@ bool pyro_exec_shell_cmd(
     const char* cmd,
     const uint8_t* input,
     size_t input_length,
-    PyroObjStr** output,
-    PyroObjStr** error,
+    PyroStr** output,
+    PyroStr** error,
     int* exit_code
 ) {
     int child_stdin_pipe[2];
@@ -357,7 +357,7 @@ bool pyro_exec_shell_cmd(
         close(child_stdin_pipe[1]);
 
         // Read the child's stdout pipe.
-        PyroObjBuf* out_buf;
+        PyroBuf* out_buf;
         int out_result = read_from_fd(vm, child_stdout_pipe[0], &out_buf);
         if (out_result == 1) {
             pyro_panic(vm, "pyro_exec_shell_cmd(): ran out of memory while reading from child's stdout pipe");
@@ -373,7 +373,7 @@ bool pyro_exec_shell_cmd(
         close(child_stdout_pipe[0]);
 
         // Read the child's stderr pipe.
-        PyroObjBuf* err_buf;
+        PyroBuf* err_buf;
         int err_result = read_from_fd(vm, child_stderr_pipe[0], &err_buf);
         if (err_result == 1) {
             pyro_panic(vm, "pyro_exec_shell_cmd(): ran out of memory while reading from child's stderr pipe");
@@ -391,13 +391,13 @@ bool pyro_exec_shell_cmd(
             waitpid(child_pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
 
-        PyroObjStr* out_str = PyroObjBuf_to_str(out_buf, vm);
+        PyroStr* out_str = PyroBuf_to_str(out_buf, vm);
         if (!out_str) {
             pyro_panic(vm, "pyro_exec_shell_cmd(): out of memory");
             return false;
         }
 
-        PyroObjStr* err_str = PyroObjBuf_to_str(err_buf, vm);
+        PyroStr* err_str = PyroBuf_to_str(err_buf, vm);
         if (!err_str) {
             pyro_panic(vm, "pyro_exec_shell_cmd(): out of memory");
             return false;
@@ -423,14 +423,14 @@ bool pyro_exec_shell_cmd(
 }
 
 
-void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name, PyroObjModule* module) {
+void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name, PyroMod* module) {
     void* handle = dlopen(path, RTLD_NOW);
     if (!handle) {
         pyro_panic(vm, "failed to load module: %s: %s", path, dlerror());
         return;
     }
 
-    typedef bool (*init_func_t)(PyroVM* vm, PyroObjModule* module);
+    typedef bool (*init_func_t)(PyroVM* vm, PyroMod* module);
     init_func_t init_func;
 
     char* init_func_name = pyro_sprintf(vm, "pyro_init_mod_%s", mod_name);

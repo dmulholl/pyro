@@ -34,6 +34,6 @@ void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size);
 // This frees the object along with any heap-allocated memory it owns. This function should only
 // be called from two places -- (1) from inside the garbage collector, and (2) from inside the
 // pyro_free_vm() function.
-void pyro_free_object(PyroVM* vm, PyroObj* object);
+void pyro_free_object(PyroVM* vm, PyroObject* object);
 
 #endif

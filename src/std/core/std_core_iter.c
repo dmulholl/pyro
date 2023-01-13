@@ -20,9 +20,9 @@ static PyroValue fn_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return args[0];
     }
 
-    // If the argument is an iterator, wrap it in an PyroObjIter instance.
+    // If the argument is an iterator, wrap it in an PyroIter instance.
     if (PYRO_IS_OBJ(args[0]) && pyro_has_method(vm, args[0], vm->str_dollar_next)) {
-        PyroObjIter* iter = PyroObjIter_new(PYRO_AS_OBJ(args[0]), PYRO_ITER_GENERIC, vm);
+        PyroIter* iter = PyroIter_new(PYRO_AS_OBJ(args[0]), PYRO_ITER_GENERIC, vm);
         if (!iter) {
             pyro_panic(vm, "$iter(): out of memory");
             return pyro_null();
@@ -45,7 +45,7 @@ static PyroValue fn_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
         if (PYRO_IS_OBJ(result) && pyro_has_method(vm, result, vm->str_dollar_next)) {
             pyro_push(vm, result);
-            PyroObjIter* iter = PyroObjIter_new(PYRO_AS_OBJ(result), PYRO_ITER_GENERIC, vm);
+            PyroIter* iter = PyroIter_new(PYRO_AS_OBJ(result), PYRO_ITER_GENERIC, vm);
             if (!iter) {
                 pyro_panic(vm, "$iter(): out of memory");
                 return pyro_null();
@@ -66,20 +66,20 @@ static PyroValue iter_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_next(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
-    return PyroObjIter_next(iter, vm);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
+    return PyroIter_next(iter, vm);
 }
 
 
 static PyroValue iter_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* src_iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* src_iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_OBJ(args[0])) {
         pyro_panic(vm, "map(): invalid argument [callback], expected a callable");
         return pyro_null();
     }
 
-    PyroObjIter* new_iter = PyroObjIter_new((PyroObj*)src_iter, PYRO_ITER_FUNC_MAP, vm);
+    PyroIter* new_iter = PyroIter_new((PyroObject*)src_iter, PYRO_ITER_FUNC_MAP, vm);
     if (!new_iter) {
         pyro_panic(vm, "map(): out of memory");
         return pyro_null();
@@ -91,14 +91,14 @@ static PyroValue iter_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* src_iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* src_iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_OBJ(args[0])) {
         pyro_panic(vm, "filter(): invalid argument [callback], expected a callable");
         return pyro_null();
     }
 
-    PyroObjIter* new_iter = PyroObjIter_new((PyroObj*)src_iter, PYRO_ITER_FUNC_FILTER, vm);
+    PyroIter* new_iter = PyroIter_new((PyroObject*)src_iter, PYRO_ITER_FUNC_FILTER, vm);
     if (!new_iter) {
         pyro_panic(vm, "filter(): out of memory");
         return pyro_null();
@@ -110,9 +110,9 @@ static PyroValue iter_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
 
-    PyroObjVec* vec = PyroObjVec_new(vm);
+    PyroVec* vec = PyroVec_new(vm);
     if (!vec) {
         pyro_panic(vm, "to_vec(): out of memory");
         return pyro_null();
@@ -120,7 +120,7 @@ static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     pyro_push(vm, pyro_obj(vec));
 
     while (true) {
-        PyroValue next_value = PyroObjIter_next(iter, vm);
+        PyroValue next_value = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -129,7 +129,7 @@ static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
 
         pyro_push(vm, next_value);
-        if (!PyroObjVec_append(vec, next_value, vm)) {
+        if (!PyroVec_append(vec, next_value, vm)) {
             pyro_panic(vm, "to_vec(): out of memory");
             return pyro_null();
         }
@@ -142,10 +142,10 @@ static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
 
     if (arg_count == 0) {
-        PyroObjStr* result = PyroObjIter_join(iter, "", 0, vm);
+        PyroStr* result = PyroIter_join(iter, "", 0, vm);
         return vm->halt_flag ? pyro_null() : pyro_obj(result);
     }
 
@@ -154,8 +154,8 @@ static PyroValue iter_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "join(): invalid argument [sep], expected a string");
             return pyro_null();
         }
-        PyroObjStr* sep = PYRO_AS_STR(args[0]);
-        PyroObjStr* result = PyroObjIter_join(iter, sep->bytes, sep->length, vm);
+        PyroStr* sep = PYRO_AS_STR(args[0]);
+        PyroStr* result = PyroIter_join(iter, sep->bytes, sep->length, vm);
         return vm->halt_flag ? pyro_null() : pyro_obj(result);
     }
 
@@ -165,9 +165,9 @@ static PyroValue iter_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
 
-    PyroObjMap* map = PyroObjMap_new_as_set(vm);
+    PyroMap* map = PyroMap_new_as_set(vm);
     if (!map) {
         pyro_panic(vm, "to_set(): out of memory");
         return pyro_null();
@@ -175,7 +175,7 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     pyro_push(vm, pyro_obj(map));
 
     while (true) {
-        PyroValue next_value = PyroObjIter_next(iter, vm);
+        PyroValue next_value = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -184,7 +184,7 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
 
         pyro_push(vm, next_value);
-        if (PyroObjMap_set(map, next_value, pyro_null(), vm) == 0) {
+        if (PyroMap_set(map, next_value, pyro_null(), vm) == 0) {
             pyro_panic(vm, "to_set(): out of memory");
             return pyro_null();
         }
@@ -197,9 +197,9 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_enumerate(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* src_iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* src_iter = PYRO_AS_ITER(args[-1]);
 
-    PyroObjIter* new_iter = PyroObjIter_new((PyroObj*)src_iter, PYRO_ITER_ENUM, vm);
+    PyroIter* new_iter = PyroIter_new((PyroObject*)src_iter, PYRO_ITER_ENUM, vm);
     if (!new_iter) {
         pyro_panic(vm, "enumerate(): out of memory");
         return pyro_null();
@@ -267,7 +267,7 @@ static PyroValue fn_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjIter* iter = PyroObjIter_new(NULL, PYRO_ITER_RANGE, vm);
+    PyroIter* iter = PyroIter_new(NULL, PYRO_ITER_RANGE, vm);
     if (!iter) {
         pyro_panic(vm, "$range(): out of memory");
         return pyro_null();
@@ -282,7 +282,7 @@ static PyroValue fn_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_skip_first(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "skip_first(): invalid argument [n], expected an integer");
@@ -300,7 +300,7 @@ static PyroValue iter_skip_first(PyroVM* vm, size_t arg_count, PyroValue* args) 
     int64_t num_skipped = 0;
 
     while (num_skipped < num_to_skip) {
-        PyroValue result = PyroObjIter_next(iter, vm);
+        PyroValue result = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
         } else if (PYRO_IS_ERR(result)) {
@@ -320,7 +320,7 @@ static PyroValue iter_skip_first(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 
 static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
 
     if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "skip_last(): invalid argument [n], expected an integer");
@@ -335,7 +335,7 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjVec* vec = PyroObjVec_new(vm);
+    PyroVec* vec = PyroVec_new(vm);
     if (!vec) {
         pyro_panic(vm, "skip_last(): out of memory");
         return pyro_null();
@@ -343,7 +343,7 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
     pyro_push(vm, pyro_obj(vec));
 
     while (true) {
-        PyroValue value = PyroObjIter_next(iter, vm);
+        PyroValue value = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -352,7 +352,7 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
 
         pyro_push(vm, value);
-        if (!PyroObjVec_append(vec, value, vm)) {
+        if (!PyroVec_append(vec, value, vm)) {
             pyro_panic(vm, "skip_last(): out of memory");
             return pyro_null();
         }
@@ -371,7 +371,7 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     vec->count -= num_to_skip;
 
-    PyroObjIter* new_iter = PyroObjIter_new((PyroObj*)vec, PYRO_ITER_VEC, vm);
+    PyroIter* new_iter = PyroIter_new((PyroObject*)vec, PYRO_ITER_VEC, vm);
     if (!new_iter) {
         pyro_panic(vm, "skip_last(): out of memory");
         return pyro_null();
@@ -383,11 +383,11 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
     int64_t count = 0;
 
     while (true) {
-        PyroValue result = PyroObjIter_next(iter, vm);
+        PyroValue result = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
         } else if (PYRO_IS_ERR(result)) {
@@ -401,12 +401,12 @@ static PyroValue iter_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_sum(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
     bool is_first_item = true;
     PyroValue sum = pyro_null();
 
     while (true) {
-        PyroValue item = PyroObjIter_next(iter, vm);
+        PyroValue item = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
         } else if (PYRO_IS_ERR(item)) {
@@ -430,12 +430,12 @@ static PyroValue iter_sum(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue iter_reduce(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjIter* iter = PYRO_AS_ITER(args[-1]);
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
     PyroValue callback = args[0];
     PyroValue accumulator = args[1];
 
     while (true) {
-        PyroValue item = PyroObjIter_next(iter, vm);
+        PyroValue item = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
         } else if (PYRO_IS_ERR(item)) {

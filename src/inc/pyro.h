@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 8
-#define PYRO_VERSION_PATCH 61
+#define PYRO_VERSION_PATCH 62
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -81,12 +81,12 @@
 
 // Forward declarations.
 typedef struct PyroVM PyroVM;
-typedef struct PyroObj PyroObj;
-typedef struct PyroObjStr PyroObjStr;
-typedef struct PyroObjMap PyroObjMap;
-typedef struct PyroObjVec PyroObjVec;
-typedef struct PyroObjClass PyroObjClass;
-typedef struct PyroObjModule PyroObjModule;
-typedef struct PyroObjFile PyroObjFile;
+typedef struct PyroObject PyroObject;
+typedef struct PyroStr PyroStr;
+typedef struct PyroMap PyroMap;
+typedef struct PyroVec PyroVec;
+typedef struct PyroClass PyroClass;
+typedef struct PyroMod PyroMod;
+typedef struct PyroFile PyroFile;
 
 #endif

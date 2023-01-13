@@ -23,7 +23,7 @@ static PyroValue fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjStr* fmt_str = PYRO_AS_STR(args[0]);
+    PyroStr* fmt_str = PYRO_AS_STR(args[0]);
 
     char fmt_spec_buffer[16];
     size_t fmt_spec_count = 0;
@@ -83,7 +83,7 @@ static PyroValue fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
             }
             PyroValue arg = args[next_arg_index++];
 
-            PyroObjStr* formatted;
+            PyroStr* formatted;
             if (fmt_spec_count == 0) {
                 formatted = pyro_stringify_value(vm, arg);
             } else {
@@ -126,7 +126,7 @@ static PyroValue fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
     out_buffer[out_count] = '\0';
 
-    PyroObjStr* string = PyroObjStr_take(out_buffer, out_count, vm);
+    PyroStr* string = PyroStr_take(out_buffer, out_count, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
         pyro_panic(vm, "$fmt(): out of memory");
@@ -144,7 +144,7 @@ static PyroValue fn_eprint(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        PyroObjStr* string = pyro_stringify_value(vm, args[0]);
+        PyroStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -195,7 +195,7 @@ static PyroValue fn_eprintln(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        PyroObjStr* string = pyro_stringify_value(vm, args[0]);
+        PyroStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -255,7 +255,7 @@ static PyroValue fn_print(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        PyroObjStr* string = pyro_stringify_value(vm, args[0]);
+        PyroStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -306,7 +306,7 @@ static PyroValue fn_println(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        PyroObjStr* string = pyro_stringify_value(vm, args[0]);
+        PyroStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -378,12 +378,12 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        PyroObjStr* panic_message = pyro_stringify_value(vm, args[0]);
+        PyroStr* panic_message = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
 
-        PyroObjStr* escaped_panic_message = PyroObjStr_esc_percents(panic_message->bytes, panic_message->length, vm);
+        PyroStr* escaped_panic_message = PyroStr_esc_percents(panic_message->bytes, panic_message->length, vm);
         if (!escaped_panic_message) {
             pyro_panic(vm, "$panic(): out of memory");
             return pyro_null();
@@ -402,9 +402,9 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (vm->halt_flag) {
         return pyro_null();
     }
-    PyroObjStr* panic_message = PYRO_AS_STR(formatted);
+    PyroStr* panic_message = PYRO_AS_STR(formatted);
 
-    PyroObjStr* escaped_panic_message = PyroObjStr_esc_percents(panic_message->bytes, panic_message->length, vm);
+    PyroStr* escaped_panic_message = PyroStr_esc_percents(panic_message->bytes, panic_message->length, vm);
     if (!escaped_panic_message) {
         pyro_panic(vm, "$panic(): out of memory");
         return pyro_null();
@@ -453,7 +453,7 @@ static PyroValue fn_f64(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
         case PYRO_VALUE_OBJ: {
             if (PYRO_IS_STR(args[0])) {
-                PyroObjStr* string = PYRO_AS_STR(args[0]);
+                PyroStr* string = PYRO_AS_STR(args[0]);
                 double value;
                 if (pyro_parse_string_as_float(string->bytes, string->length, &value)) {
                     return pyro_f64(value);
@@ -497,7 +497,7 @@ static PyroValue fn_i64(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
         case PYRO_VALUE_OBJ: {
             if (PYRO_IS_STR(args[0])) {
-                PyroObjStr* string = PYRO_AS_STR(args[0]);
+                PyroStr* string = PYRO_AS_STR(args[0]);
                 int64_t value;
                 if (pyro_parse_string_as_int(string->bytes, string->length, &value)) {
                     return pyro_i64(value);
@@ -548,9 +548,9 @@ static PyroValue fn_has_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroValue field_name = args[1];
 
     if (PYRO_IS_INSTANCE(args[0])) {
-        PyroObjMap* field_index_map = PYRO_AS_INSTANCE(args[0])->obj.class->all_field_indexes;
+        PyroMap* field_index_map = PYRO_AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         PyroValue field_index;
-        if (PyroObjMap_get(field_index_map, field_name, &field_index, vm)) {
+        if (PyroMap_get(field_index_map, field_name, &field_index, vm)) {
             return pyro_bool(true);
         }
     }
@@ -569,12 +569,12 @@ static PyroValue fn_is_instance_of(PyroVM* vm, size_t arg_count, PyroValue* args
         pyro_panic(vm, "$is_instance_of(): invalid argument [class], expected a class object");
         return pyro_null();
     }
-    PyroObjClass* target_class = PYRO_AS_CLASS(args[1]);
+    PyroClass* target_class = PYRO_AS_CLASS(args[1]);
 
     if (!PYRO_IS_INSTANCE(args[0])) {
         return pyro_bool(false);
     }
-    PyroObjClass* instance_class = PYRO_AS_INSTANCE(args[0])->obj.class;
+    PyroClass* instance_class = PYRO_AS_INSTANCE(args[0])->obj.class;
 
     while (instance_class != NULL) {
         if (instance_class == target_class) {
@@ -588,8 +588,8 @@ static PyroValue fn_is_instance_of(PyroVM* vm, size_t arg_count, PyroValue* args
 
 
 static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjStr* out_str;
-    PyroObjStr* err_str;
+    PyroStr* out_str;
+    PyroStr* err_str;
     int exit_code;
 
     if (!PYRO_IS_STR(args[0])) {
@@ -606,8 +606,8 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
 
 
 static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjStr* out_str;
-    PyroObjStr* err_str;
+    PyroStr* out_str;
+    PyroStr* err_str;
     int exit_code;
 
     if (arg_count == 1) {
@@ -656,7 +656,7 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroObjTup* tup = PyroObjTup_new(3, vm);
+    PyroTup* tup = PyroTup_new(3, vm);
     if (!tup) {
         pyro_panic(vm, "$shell(): out of memory");
         return pyro_null();
@@ -671,7 +671,7 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjStr* string = pyro_debugify_value(vm, args[0]);
+    PyroStr* string = pyro_debugify_value(vm, args[0]);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -730,7 +730,7 @@ static PyroValue fn_read_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
         capacity = count + 1;
     }
 
-    PyroObjStr* string = PyroObjStr_take((char*)array, count, vm);
+    PyroStr* string = PyroStr_take((char*)array, count, vm);
     if (!string) {
         pyro_panic(vm, "$read_file(): out of memory");
         PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
@@ -761,7 +761,7 @@ static PyroValue fn_write_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (PYRO_IS_BUF(args[1])) {
-        PyroObjBuf* buf = PYRO_AS_BUF(args[1]);
+        PyroBuf* buf = PYRO_AS_BUF(args[1]);
         size_t n = fwrite(buf->bytes, sizeof(uint8_t), buf->count, stream);
         if (n < buf->count) {
             pyro_panic(vm, "$write_file(): I/O write error");
@@ -772,7 +772,7 @@ static PyroValue fn_write_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_i64((int64_t)n);
     }
 
-    PyroObjStr* string = PYRO_AS_STR(args[1]);
+    PyroStr* string = PYRO_AS_STR(args[1]);
     size_t n = fwrite(string->bytes, sizeof(char), string->length, stream);
     if (n < string->length) {
         pyro_panic(vm, "$write_file(): I/O write error");
@@ -867,13 +867,13 @@ static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroObjStr* name = PYRO_AS_STR(args[0]);
+        PyroStr* name = PYRO_AS_STR(args[0]);
         char* value = getenv(name->bytes);
         if (!value) {
             return pyro_obj(vm->error);
         }
 
-        PyroObjStr* string = PyroObjStr_new(value, vm);
+        PyroStr* string = PyroStr_new(value, vm);
         if (!string) {
             pyro_panic(vm, "$env(): out of memory");
             return pyro_null();
@@ -889,8 +889,8 @@ static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroObjStr* name = PYRO_AS_STR(args[0]);
-        PyroObjStr* value = pyro_stringify_value(vm, args[1]);
+        PyroStr* name = PYRO_AS_STR(args[0]);
+        PyroStr* value = pyro_stringify_value(vm, args[1]);
         if (vm->halt_flag) {
             return pyro_null();
         }
@@ -914,9 +914,9 @@ static PyroValue fn_is_null(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_input(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjFile* file = vm->stdin_file;
+    PyroFile* file = vm->stdin_file;
 
-    PyroObjStr* string = PyroObjFile_read_line(file, vm);
+    PyroStr* string = PyroFile_read_line(file, vm);
     if (vm->halt_flag) {
         return pyro_null();
     }
@@ -930,9 +930,9 @@ static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "$exec(): invalid argument [code], expected a string");
         return pyro_null();
     }
-    PyroObjStr* code = PYRO_AS_STR(args[0]);
+    PyroStr* code = PYRO_AS_STR(args[0]);
 
-    PyroObjModule* module = PyroObjModule_new(vm);
+    PyroMod* module = PyroMod_new(vm);
     if (!module) {
         pyro_panic(vm, "$exec(): out of memory");
         return pyro_null();
@@ -968,7 +968,7 @@ static PyroValue fn_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 case PYRO_OBJECT_CLASS:
                     return pyro_obj(vm->str_class);
                 case PYRO_OBJECT_INSTANCE: {
-                    PyroObjStr* class_name = PYRO_AS_OBJ(args[0])->class->name;
+                    PyroStr* class_name = PYRO_AS_OBJ(args[0])->class->name;
                     if (class_name) {
                         return pyro_obj(class_name);
                     }
@@ -1017,14 +1017,14 @@ static PyroValue fn_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "$method(): invalid argument [method_name], expected a string");
         return pyro_null();
     }
-    PyroObjStr* method_name = PYRO_AS_STR(args[1]);
+    PyroStr* method_name = PYRO_AS_STR(args[1]);
 
     PyroValue method = pyro_get_method(vm, obj, method_name);
     if (PYRO_IS_NULL(method)) {
         return pyro_obj(vm->error);
     }
 
-    PyroObjBoundMethod* bound_method = PyroObjBoundMethod_new(vm, obj, PYRO_AS_OBJ(method));
+    PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, obj, PYRO_AS_OBJ(method));
     if (!bound_method) {
         pyro_panic(vm, "$method(): out of memory");
         return pyro_null();
@@ -1035,9 +1035,9 @@ static PyroValue fn_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_methods(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjClass* class = pyro_get_class(vm, args[0]);
+    PyroClass* class = pyro_get_class(vm, args[0]);
     if (!class) {
-        PyroObjIter* iter = PyroObjIter_empty(vm);
+        PyroIter* iter = PyroIter_empty(vm);
         if (!iter) {
             pyro_panic(vm, "$methods(): out of memory");
             return pyro_null();
@@ -1045,7 +1045,7 @@ static PyroValue fn_methods(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(iter);
     }
 
-    PyroObjIter* iter = PyroObjIter_new((PyroObj*)class->pub_instance_methods, PYRO_ITER_MAP_KEYS, vm);
+    PyroIter* iter = PyroIter_new((PyroObject*)class->pub_instance_methods, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "$methods(): out of memory");
         return pyro_null();
@@ -1063,9 +1063,9 @@ static PyroValue fn_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroValue field_name = args[1];
 
     if (PYRO_IS_INSTANCE(args[0])) {
-        PyroObjMap* field_index_map = PYRO_AS_INSTANCE(args[0])->obj.class->all_field_indexes;
+        PyroMap* field_index_map = PYRO_AS_INSTANCE(args[0])->obj.class->all_field_indexes;
         PyroValue field_index;
-        if (PyroObjMap_get(field_index_map, field_name, &field_index, vm)) {
+        if (PyroMap_get(field_index_map, field_name, &field_index, vm)) {
             return PYRO_AS_INSTANCE(args[0])->fields[field_index.as.i64];
         }
     }
@@ -1075,9 +1075,9 @@ static PyroValue fn_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_fields(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroObjClass* class = pyro_get_class(vm, args[0]);
+    PyroClass* class = pyro_get_class(vm, args[0]);
     if (!class) {
-        PyroObjIter* iter = PyroObjIter_empty(vm);
+        PyroIter* iter = PyroIter_empty(vm);
         if (!iter) {
             pyro_panic(vm, "$fields(): out of memory");
             return pyro_null();
@@ -1085,7 +1085,7 @@ static PyroValue fn_fields(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(iter);
     }
 
-    PyroObjIter* iter = PyroObjIter_new((PyroObj*)class->pub_field_indexes, PYRO_ITER_MAP_KEYS, vm);
+    PyroIter* iter = PyroIter_new((PyroObject*)class->pub_field_indexes, PYRO_ITER_MAP_KEYS, vm);
     if (!iter) {
         pyro_panic(vm, "$fields(): out of memory");
         return pyro_null();
@@ -1185,7 +1185,7 @@ void pyro_load_std_core(PyroVM* vm) {
     pyro_define_module_1(vm, "$std");
     pyro_define_global(vm, "$roots", pyro_obj(vm->import_roots));
 
-    PyroObjTup* args = PyroObjTup_new(0, vm);
+    PyroTup* args = PyroTup_new(0, vm);
     if (args) {
         pyro_define_global(vm, "$args", pyro_obj(args));
     }

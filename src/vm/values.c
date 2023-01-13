@@ -22,7 +22,7 @@ bool pyro_is_truthy(PyroValue value) {
 }
 
 
-PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value) {
+PyroClass* pyro_get_class(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_CHAR:
             return vm->class_char;
@@ -34,22 +34,22 @@ PyroObjClass* pyro_get_class(PyroVM* vm, PyroValue value) {
 }
 
 
-PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
+PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) {
     if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
-        if (PyroObjMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
         return pyro_null();
     }
 
-    PyroObjClass* class = pyro_get_class(vm, receiver);
+    PyroClass* class = pyro_get_class(vm, receiver);
     if (class) {
         if (class->all_instance_methods_cached_name == method_name) {
             return class->all_instance_methods_cached_value;
         }
         PyroValue method;
-        if (PyroObjMap_get(class->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_get(class->all_instance_methods, pyro_obj(method_name), &method, vm)) {
             class->all_instance_methods_cached_name = method_name;
             class->all_instance_methods_cached_value = method;
             return method;
@@ -60,22 +60,22 @@ PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_nam
 }
 
 
-PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
+PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) {
     if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
-        if (PyroObjMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
             return method;
         }
         return pyro_null();
     }
 
-    PyroObjClass* class = pyro_get_class(vm, receiver);
+    PyroClass* class = pyro_get_class(vm, receiver);
     if (class) {
         if (class->pub_instance_methods_cached_name == method_name) {
             return class->pub_instance_methods_cached_value;
         }
         PyroValue method;
-        if (PyroObjMap_get(class->pub_instance_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_get(class->pub_instance_methods, pyro_obj(method_name), &method, vm)) {
             class->pub_instance_methods_cached_name = method_name;
             class->pub_instance_methods_cached_value = method;
             return method;
@@ -86,12 +86,12 @@ PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method
 }
 
 
-bool pyro_has_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
+bool pyro_has_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) {
     return !PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name));
 }
 
 
-bool pyro_has_pub_method(PyroVM* vm, PyroValue receiver, PyroObjStr* method_name) {
+bool pyro_has_pub_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) {
     return !PYRO_IS_NULL(pyro_get_pub_method(vm, receiver, method_name));
 }
 
@@ -152,7 +152,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
 
                 case PYRO_OBJECT_TUP: {
                     uint64_t hash = 0;
-                    PyroObjTup* tup = PYRO_AS_TUP(value);
+                    PyroTup* tup = PYRO_AS_TUP(value);
 
                     for (size_t i = 0; i < tup->count; i++) {
                         hash ^= pyro_hash_value(vm, tup->values[i]);
@@ -163,7 +163,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
 
                 case PYRO_OBJECT_MAP_AS_SET: {
                     uint64_t hash = 0;
-                    PyroObjMap* map = PYRO_AS_MAP(value);
+                    PyroMap* map = PYRO_AS_MAP(value);
 
                     for (size_t i = 0; i < map->entry_array_count; i++) {
                         PyroMapEntry* entry = &map->entry_array[i];
@@ -196,10 +196,10 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
 }
 
 
-static void pyro_dump_object(PyroVM* vm, PyroObj* object) {
+static void pyro_dump_object(PyroVM* vm, PyroObject* object) {
     switch (object->type) {
         case PYRO_OBJECT_STR: {
-            PyroObjStr* string = (PyroObjStr*)object;
+            PyroStr* string = (PyroStr*)object;
             pyro_stdout_write_f(vm, "\"%s\"", string->bytes);
             break;
         }
@@ -209,7 +209,7 @@ static void pyro_dump_object(PyroVM* vm, PyroObj* object) {
             break;
 
         case PYRO_OBJECT_CLASS: {
-            PyroObjClass* class = (PyroObjClass*)object;
+            PyroClass* class = (PyroClass*)object;
             if (class->name == NULL) {
                 pyro_stdout_write(vm, "<class>");
             } else {
@@ -219,7 +219,7 @@ static void pyro_dump_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_CLOSURE: {
-            PyroObjClosure* closure = (PyroObjClosure*)object;
+            PyroClosure* closure = (PyroClosure*)object;
             if (closure->fn->name == NULL) {
                 pyro_stdout_write(vm, "<fn>");
             } else {
@@ -229,7 +229,7 @@ static void pyro_dump_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_PYRO_FN: {
-            PyroObjPyroFn* fn = (PyroObjPyroFn*)object;
+            PyroFn* fn = (PyroFn*)object;
             if (fn->name == NULL) {
                 pyro_stdout_write(vm, "<fn_obj>");
             } else {
@@ -239,7 +239,7 @@ static void pyro_dump_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_INSTANCE: {
-            PyroObjInstance* instance = (PyroObjInstance*)object;
+            PyroInstance* instance = (PyroInstance*)object;
             pyro_stdout_write_f(vm, "<instance %s>", instance->obj.class->name->bytes);
             break;
         }
@@ -260,7 +260,7 @@ static void pyro_dump_object(PyroVM* vm, PyroObj* object) {
         }
 
         case PYRO_OBJECT_NATIVE_FN: {
-            PyroObjNativeFn* native = (PyroObjNativeFn*)object;
+            PyroNativeFn* native = (PyroNativeFn*)object;
             pyro_stdout_write_f(vm, "<fn_nat %s>", native->name->bytes);
             break;
         }
