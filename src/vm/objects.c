@@ -901,7 +901,7 @@ PyroStr* PyroStr_esc_percents(const char* src, size_t length, PyroVM* vm) {
 
 
 PyroFn* PyroFn_new(PyroVM* vm) {
-    PyroFn* fn = ALLOCATE_OBJECT(vm, PyroFn, PYRO_OBJECT_PYRO_FN);
+    PyroFn* fn = ALLOCATE_OBJECT(vm, PyroFn, PYRO_OBJECT_FN);
     if (!fn) {
         return NULL;
     }

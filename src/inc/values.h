@@ -45,7 +45,7 @@ typedef enum {
     PYRO_OBJECT_MAP_AS_WEAKREF,
     PYRO_OBJECT_MODULE,
     PYRO_OBJECT_NATIVE_FN,
-    PYRO_OBJECT_PYRO_FN,
+    PYRO_OBJECT_FN,
     PYRO_OBJECT_QUEUE,
     PYRO_OBJECT_RESOURCE_POINTER,
     PYRO_OBJECT_STR,
@@ -111,7 +111,7 @@ static inline PyroValue pyro_null() {
 
 // Macros for checking if a PyroValue instance is an object of a specific type.
 #define PYRO_IS_STR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_STR)
-#define PYRO_IS_PYRO_FN(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_PYRO_FN)
+#define PYRO_IS_PYRO_FN(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_FN)
 #define PYRO_IS_CLOSURE(value)           pyro_is_obj_of_type(value, PYRO_OBJECT_CLOSURE)
 #define PYRO_IS_NATIVE_FN(value)         pyro_is_obj_of_type(value, PYRO_OBJECT_NATIVE_FN)
 #define PYRO_IS_CLASS(value)             pyro_is_obj_of_type(value, PYRO_OBJECT_CLASS)

@@ -80,7 +80,7 @@ void pyro_free_object(PyroVM* vm, PyroObject* object) {
             break;
         }
 
-        case PYRO_OBJECT_PYRO_FN: {
+        case PYRO_OBJECT_FN: {
             PyroFn* fn = (PyroFn*)object;
             PYRO_FREE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity);
             PYRO_FREE_ARRAY(vm, PyroValue, fn->constants, fn->constants_capacity);

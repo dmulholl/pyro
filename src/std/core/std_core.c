@@ -975,7 +975,7 @@ static PyroValue fn_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
                     return pyro_obj(vm->str_instance);
                 }
                 case PYRO_OBJECT_CLOSURE:
-                case PYRO_OBJECT_PYRO_FN:
+                case PYRO_OBJECT_FN:
                 case PYRO_OBJECT_NATIVE_FN:
                     return pyro_obj(vm->str_fn);
                 case PYRO_OBJECT_FILE:
