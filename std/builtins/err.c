@@ -68,7 +68,7 @@ static PyroValue err_details(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_core_err(PyroVM* vm) {
+void pyro_load_std_builtins_err(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$err", fn_err, -1);
     pyro_define_global_fn(vm, "$is_err", fn_is_err, 1);

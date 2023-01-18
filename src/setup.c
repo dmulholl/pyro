@@ -244,19 +244,19 @@ PyroVM* pyro_new_vm(size_t stack_size) {
         return NULL;
     }
 
-    // Load the core standard library -- global functions and builtin types.
-    pyro_load_std_core(vm);
-    pyro_load_std_core_map(vm);
-    pyro_load_std_core_vec(vm);
-    pyro_load_std_core_tup(vm);
-    pyro_load_std_core_str(vm);
-    pyro_load_std_core_buf(vm);
-    pyro_load_std_core_file(vm);
-    pyro_load_std_core_iter(vm);
-    pyro_load_std_core_queue(vm);
-    pyro_load_std_core_err(vm);
-    pyro_load_std_core_mod(vm);
-    pyro_load_std_core_char(vm);
+    // Load the core standard library -- superglobal functions and builtin types.
+    pyro_load_std_builtins(vm);
+    pyro_load_std_builtins_map(vm);
+    pyro_load_std_builtins_vec(vm);
+    pyro_load_std_builtins_tup(vm);
+    pyro_load_std_builtins_str(vm);
+    pyro_load_std_builtins_buf(vm);
+    pyro_load_std_builtins_file(vm);
+    pyro_load_std_builtins_iter(vm);
+    pyro_load_std_builtins_queue(vm);
+    pyro_load_std_builtins_err(vm);
+    pyro_load_std_builtins_mod(vm);
+    pyro_load_std_builtins_char(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

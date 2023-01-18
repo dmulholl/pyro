@@ -69,7 +69,7 @@ static PyroValue queue_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_core_queue(PyroVM* vm) {
+void pyro_load_std_builtins_queue(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$queue", fn_queue, 0);
     pyro_define_global_fn(vm, "$is_queue", fn_is_queue, 1);

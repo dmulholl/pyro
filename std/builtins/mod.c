@@ -65,7 +65,7 @@ static PyroValue mod_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_core_mod(PyroVM* vm) {
+void pyro_load_std_builtins_mod(PyroVM* vm) {
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_module, "$contains", mod_contains, 1);
     pyro_define_pri_method(vm, vm->class_module, "$iter", mod_iter, 0);

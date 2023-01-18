@@ -62,7 +62,7 @@ static PyroValue char_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args
 }
 
 
-void pyro_load_std_core_char(PyroVM* vm) {
+void pyro_load_std_builtins_char(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$char", fn_char, 1);
     pyro_define_global_fn(vm, "$is_char", fn_is_char, 1);

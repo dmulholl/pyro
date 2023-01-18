@@ -580,7 +580,7 @@ static PyroValue vec_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_core_vec(PyroVM* vm) {
+void pyro_load_std_builtins_vec(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$vec", fn_vec, -1);
     pyro_define_global_fn(vm, "$is_vec", fn_is_vec, 1);

@@ -500,7 +500,7 @@ static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) 
 }
 
 
-void pyro_load_std_core_map(PyroVM* vm) {
+void pyro_load_std_builtins_map(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$map", fn_map, 0);
     pyro_define_global_fn(vm, "$is_map", fn_is_map, 1);
