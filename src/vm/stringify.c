@@ -1,4 +1,4 @@
-#include "../inc/pyro.h"
+#include "../../inc/pyro.h"
 
 
 // Returns a quoted, escaped string. Panics and returns NULL if memory allocation fails.

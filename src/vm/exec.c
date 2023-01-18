@@ -1,4 +1,4 @@
-#include "../inc/pyro.h"
+#include "../../inc/pyro.h"
 
 
 // Pushes a new frame onto the call stack. [frame_pointer] points to the frame's zeroth

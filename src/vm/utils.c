@@ -1,4 +1,4 @@
-#include "../inc/pyro.h"
+#include "../../inc/pyro.h"
 
 
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {

@@ -1,7 +1,7 @@
 #ifndef pyro_cli_h
 #define pyro_cli_h
 
-#include "../src/inc/pyro.h"
+#include "../inc/pyro.h"
 #include "../lib/args/args.h"
 #include "../lib/bestline/bestline.h"
 

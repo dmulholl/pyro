@@ -1,9 +1,4 @@
-#include "../../inc/std_lib.h"
-#include "../../inc/vm.h"
-#include "../../inc/utils.h"
-#include "../../inc/setup.h"
-#include "../../inc/stringify.h"
-#include "../../inc/panics.h"
+#include "../../../inc/pyro.h"
 
 
 static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {

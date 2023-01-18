@@ -1,5 +1,5 @@
 // Local imports.
-#include "../inc/pyro.h"
+#include "../../inc/pyro.h"
 
 // POSIX: popen(), pclose()
 #include <stdio.h>

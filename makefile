@@ -14,6 +14,8 @@ DEBUG_LEVEL_3 = $(DEBUG_LEVEL_2) -D PYRO_DEBUG_TRACE_EXECUTION
 DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
+HDR_FILES = inc/*.h
+
 SRC_FILES = cli/*.c src/vm/*.c src/std/core/*.c src/std/c/*.c
 
 OBJ_FILES = out/build/sqlite.o \
@@ -34,14 +36,14 @@ INPUT = $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 # --------------- #
 
 release: ## Builds the release binary.
-release: $(OBJ_FILES)
+release: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p out/release
 	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(INPUT)
 	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 debug: ## Builds the debug binary.
-debug: $(OBJ_FILES)
+debug: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(INPUT)
@@ -163,7 +165,7 @@ out/build/std_mod_pretty.o: src/std/pyro/std_mod_pretty.pyro
 #  Test Compiled Module  #
 # ---------------------- #
 
-tests/compiled_module.so: tests/compiled_module.c src/inc/*.h
+tests/compiled_module.so: tests/compiled_module.c inc/*.h
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.so\n"
 	@${CC} ${CFLAGS} -O2 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
 

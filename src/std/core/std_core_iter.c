@@ -1,13 +1,4 @@
-#include "../../inc/std_lib.h"
-#include "../../inc/values.h"
-#include "../../inc/vm.h"
-#include "../../inc/utils.h"
-#include "../../inc/heap.h"
-#include "../../inc/utf8.h"
-#include "../../inc/setup.h"
-#include "../../inc/panics.h"
-#include "../../inc/exec.h"
-#include "../../inc/operators.h"
+#include "../../../inc/pyro.h"
 
 
 static PyroValue fn_is_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
