@@ -16,7 +16,7 @@ DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
 HDR_FILES = inc/*.h
 
-SRC_FILES = cli/*.c src/vm/*.c std/core/*.c std/c/*.c
+SRC_FILES = cli/*.c src/*.c std/core/*.c std/c/*.c
 
 OBJ_FILES = out/build/sqlite.o \
 			out/build/bestline.o \

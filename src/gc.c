@@ -1,4 +1,4 @@
-#include "../../inc/pyro.h"
+#include "../inc/pyro.h"
 
 
 // Marks an object as reachable. This sets the object's [is_marked] flag and pushes it onto the

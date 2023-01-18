@@ -1,4 +1,4 @@
-#include "../../inc/pyro.h"
+#include "../inc/pyro.h"
 
 
 static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {

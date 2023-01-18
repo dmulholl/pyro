@@ -1,4 +1,4 @@
-#include "../../inc/pyro.h"
+#include "../inc/pyro.h"
 
 
 PyroVM* pyro_new_vm(size_t stack_size) {

@@ -1,4 +1,4 @@
-#include "../../inc/pyro.h"
+#include "../inc/pyro.h"
 
 
 // Allocates memory for a fixed-size object.

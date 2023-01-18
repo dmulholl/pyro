@@ -1,4 +1,4 @@
-#include "../../inc/pyro.h"
+#include "../inc/pyro.h"
 
 
 /* -------------- */

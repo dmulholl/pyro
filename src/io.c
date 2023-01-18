@@ -1,4 +1,4 @@
-#include "../../inc/pyro.h"
+#include "../inc/pyro.h"
 
 
 static int64_t pyro_write_n(PyroVM* vm, PyroFile* file, const char* string, size_t count) {
