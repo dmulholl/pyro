@@ -1,8 +1,6 @@
 #ifndef pyro_io_h
 #define pyro_io_h
 
-#include "pyro.h"
-
 // Functions with an `_f` suffix support printf-style formatting.
 // All these functions:
 // - Return the number of bytes written on success.

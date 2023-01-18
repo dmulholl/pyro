@@ -1,10 +1,6 @@
 #ifndef pyro_heap_h
 #define pyro_heap_h
 
-#include "pyro.h"
-#include "values.h"
-#include "objects.h"
-
 // Increase the capacity of an array.
 #define PYRO_GROW_CAPACITY(capacity) \
     ((capacity) < 8 ? 8 : (capacity) * 2)

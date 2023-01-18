@@ -1,9 +1,4 @@
-#include "../inc/utils.h"
-#include "../inc/heap.h"
-#include "../inc/vm.h"
-#include "../inc/utf8.h"
-#include "../inc/panics.h"
-#include "../inc/os.h"
+#include "../inc/pyro.h"
 
 
 bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {

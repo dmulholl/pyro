@@ -1,6 +1,4 @@
-#include "../inc/heap.h"
-#include "../inc/vm.h"
-#include "../inc/stringify.h"
+#include "../inc/pyro.h"
 
 
 void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size) {

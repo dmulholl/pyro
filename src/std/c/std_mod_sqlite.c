@@ -1,8 +1,4 @@
-#include "../../inc/std_lib.h"
-#include "../../inc/values.h"
-#include "../../inc/vm.h"
-#include "../../inc/setup.h"
-#include "../../inc/panics.h"
+#include "../../inc/pyro.h"
 #include "../../../lib/sqlite/sqlite3.h"
 
 

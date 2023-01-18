@@ -1,8 +1,6 @@
 #ifndef pyro_os_h
 #define pyro_os_h
 
-#include "pyro.h"
-
 // This file quarantines all functions with OS-specific dependencies.
 // Currently only POSIX systems are supported.
 

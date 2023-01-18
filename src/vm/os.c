@@ -1,10 +1,5 @@
 // Local imports.
-#include "../inc/os.h"
-#include "../inc/vm.h"
-#include "../inc/values.h"
-#include "../inc/objects.h"
-#include "../inc/heap.h"
-#include "../inc/stringify.h"
+#include "../inc/pyro.h"
 
 // POSIX: popen(), pclose()
 #include <stdio.h>

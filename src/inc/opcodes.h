@@ -1,8 +1,6 @@
 #ifndef pyro_opcodes_h
 #define pyro_opcodes_h
 
-#include "pyro.h"
-
 typedef enum {
     PYRO_OPCODE_ASSERT,
     PYRO_OPCODE_BINARY_AMP,

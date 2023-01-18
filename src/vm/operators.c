@@ -1,8 +1,4 @@
-#include "../inc/operators.h"
-#include "../inc/objects.h"
-#include "../inc/vm.h"
-#include "../inc/exec.h"
-#include "../inc/panics.h"
+#include "../inc/pyro.h"
 
 
 /* ------------------ */

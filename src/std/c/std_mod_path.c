@@ -1,12 +1,4 @@
-#include "../../inc/std_lib.h"
-#include "../../inc/values.h"
-#include "../../inc/vm.h"
-#include "../../inc/utils.h"
-#include "../../inc/heap.h"
-#include "../../inc/setup.h"
-#include "../../inc/panics.h"
-#include "../../inc/os.h"
-#include "../../inc/stringify.h"
+#include "../../inc/pyro.h"
 
 
 static PyroValue fn_exists(PyroVM* vm, size_t arg_count, PyroValue* args) {

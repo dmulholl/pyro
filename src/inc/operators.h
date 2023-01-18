@@ -1,9 +1,6 @@
 #ifndef pyro_operators_h
 #define pyro_operators_h
 
-#include "pyro.h"
-#include "values.h"
-
 // Returns [a] + [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue a, PyroValue b);

@@ -1,8 +1,6 @@
 #ifndef pyro_panics_h
 #define pyro_panics_h
 
-#include "pyro.h"
-
 // Pyro follows a SINGLE-PANIC rule -- i.e. if a sequence of panics occurs, we only report the first
 // panic. Ideally we would never have a sequence of panics, but this can happen if, for example, we
 // have a panic and then while exiting from that panic we execute clean-up code in 3 $end_with()

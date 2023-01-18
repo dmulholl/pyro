@@ -1,9 +1,6 @@
 #ifndef pyro_stringify_h
 #define pyro_stringify_h
 
-#include "pyro.h"
-#include "values.h"
-
 // Prints to an automatically-allocated, null-terminated array using printf-style formatting.
 // - Panics and returns NULL if a formatting error occurs.
 // - Panics ard returns NULL if memory allocation fails.

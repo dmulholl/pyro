@@ -1,7 +1,4 @@
-#include "../inc/debug.h"
-#include "../inc/opcodes.h"
-#include "../inc/utils.h"
-#include "../inc/io.h"
+#include "../inc/pyro.h"
 
 
 // A single-byte instruction with no arguments.

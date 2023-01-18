@@ -1,8 +1,6 @@
 #ifndef pyro_utils_h
 #define pyro_utils_h
 
-#include "pyro.h"
-
 // Output struct for [pyro_read_file].
 typedef struct {
     size_t size;

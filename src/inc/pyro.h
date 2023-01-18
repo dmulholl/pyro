@@ -63,7 +63,7 @@
     #define _XOPEN_SOURCE 700
 #endif
 
-// C standard library -- no OS-dependent headers.
+// C standard library headers -- no OS-dependent headers.
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -88,5 +88,28 @@ typedef struct PyroVec PyroVec;
 typedef struct PyroClass PyroClass;
 typedef struct PyroMod PyroMod;
 typedef struct PyroFile PyroFile;
+
+// Pyro headers.
+#include "./values.h"
+#include "./objects.h"
+#include "./panics.h"
+#include "./vm.h"
+#include "./compiler.h"
+#include "./debug.h"
+#include "./exec.h"
+#include "./gc.h"
+#include "./heap.h"
+#include "./imports.h"
+#include "./io.h"
+#include "./lexer.h"
+#include "./opcodes.h"
+#include "./operators.h"
+#include "./os.h"
+#include "./setup.h"
+#include "./sorting.h"
+#include "./stringify.h"
+#include "./utf8.h"
+#include "./utils.h"
+#include "./std_lib.h"
 
 #endif

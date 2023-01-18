@@ -1,9 +1,4 @@
-#include "../inc/sorting.h"
-#include "../inc/operators.h"
-#include "../inc/vm.h"
-#include "../inc/exec.h"
-#include "../inc/heap.h"
-#include "../inc/panics.h"
+#include "../inc/pyro.h"
 
 
 static void swap(PyroValue* a, PyroValue* b) {

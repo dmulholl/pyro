@@ -1,9 +1,6 @@
 #ifndef pyro_exec_h
 #define pyro_exec_h
 
-#include "pyro.h"
-#include "values.h"
-
 // Executes a chunk of source code in the context of the VM's main module.
 // - Outside of string literals, code should be utf-8 encoded.
 // - String literals can contain arbitrary binary data including nulls and invalid utf-8.

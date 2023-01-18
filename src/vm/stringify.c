@@ -1,10 +1,4 @@
-#include "../inc/stringify.h"
-#include "../inc/utils.h"
-#include "../inc/vm.h"
-#include "../inc/exec.h"
-#include "../inc/heap.h"
-#include "../inc/utf8.h"
-#include "../inc/panics.h"
+#include "../inc/pyro.h"
 
 
 // Returns a quoted, escaped string. Panics and returns NULL if memory allocation fails.

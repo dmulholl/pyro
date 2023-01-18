@@ -1,11 +1,4 @@
-#include "../../inc/std_lib.h"
-#include "../../inc/values.h"
-#include "../../inc/vm.h"
-#include "../../inc/setup.h"
-#include "../../inc/panics.h"
-#include "../../inc/io.h"
-#include "../../inc/stringify.h"
-#include "../../../lib/mt64/mt64.h"
+#include "../../inc/pyro.h"
 
 
 static PyroValue fn_test(PyroVM* vm, size_t arg_count, PyroValue* args) {

@@ -1,12 +1,6 @@
 #ifndef pyro_vm_h
 #define pyro_vm_h
 
-#include "pyro.h"
-#include "values.h"
-#include "objects.h"
-#include "utils.h"
-#include "panics.h"
-
 #include "../../lib/mt64/mt64.h"
 
 // We create a new [CallFrame] on the [vm->frames] stack for each function call.

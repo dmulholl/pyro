@@ -1,19 +1,4 @@
-#include "../inc/exec.h"
-#include "../inc/vm.h"
-#include "../inc/opcodes.h"
-#include "../inc/debug.h"
-#include "../inc/compiler.h"
-#include "../inc/heap.h"
-#include "../inc/values.h"
-#include "../inc/utils.h"
-#include "../inc/operators.h"
-#include "../inc/setup.h"
-#include "../inc/stringify.h"
-#include "../inc/panics.h"
-#include "../inc/imports.h"
-#include "../inc/os.h"
-#include "../inc/io.h"
-#include "../inc/gc.h"
+#include "../inc/pyro.h"
 
 
 // Pushes a new frame onto the call stack. [frame_pointer] points to the frame's zeroth

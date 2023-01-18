@@ -1,10 +1,4 @@
-#include "../inc/imports.h"
-#include "../inc/vm.h"
-#include "../inc/exec.h"
-#include "../inc/heap.h"
-#include "../inc/panics.h"
-#include "../inc/os.h"
-#include "../inc/std_lib.h"
+#include "../inc/pyro.h"
 
 
 static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {

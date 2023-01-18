@@ -1,8 +1,7 @@
 #ifndef pyro_std_lib_h
 #define pyro_std_lib_h
 
-#include "pyro.h"
-#include "values.h"
+#include "./pyro.h"
 
 // Global functions and variables.
 void pyro_load_std_core(PyroVM* vm);

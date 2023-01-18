@@ -1,8 +1,6 @@
 #ifndef pyro_lexer_h
 #define pyro_lexer_h
 
-#include "pyro.h"
-
 typedef enum {
     // Single-character tokens.
     TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,

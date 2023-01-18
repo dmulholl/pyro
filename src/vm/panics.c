@@ -1,6 +1,4 @@
-#include "../inc/panics.h"
-#include "../inc/vm.h"
-#include "../inc/io.h"
+#include "../inc/pyro.h"
 
 
 static void print_stack_trace(PyroVM* vm) {

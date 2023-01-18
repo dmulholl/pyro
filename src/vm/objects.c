@@ -1,14 +1,4 @@
-#include "../inc/values.h"
-#include "../inc/objects.h"
-#include "../inc/heap.h"
-#include "../inc/vm.h"
-#include "../inc/utils.h"
-#include "../inc/opcodes.h"
-#include "../inc/utf8.h"
-#include "../inc/operators.h"
-#include "../inc/exec.h"
-#include "../inc/stringify.h"
-#include "../inc/panics.h"
+#include "../inc/pyro.h"
 
 
 // Allocates memory for a fixed-size object.

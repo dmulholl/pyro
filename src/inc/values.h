@@ -1,8 +1,6 @@
 #ifndef pyro_values_h
 #define pyro_values_h
 
-#include "pyro.h"
-
 // Type-set for Pyro's fundamental [PyroValue] type. Every [PyroValue] has a [.type] field with
 // one of these enum values.
 typedef enum {

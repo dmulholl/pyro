@@ -1,12 +1,4 @@
-#include "../inc/setup.h"
-#include "../inc/vm.h"
-#include "../inc/heap.h"
-#include "../inc/values.h"
-#include "../inc/utils.h"
-#include "../inc/panics.h"
-#include "../inc/os.h"
-#include "../inc/std_lib.h"
-#include "../../lib/mt64/mt64.h"
+#include "../inc/pyro.h"
 
 
 PyroVM* pyro_new_vm(size_t stack_size) {

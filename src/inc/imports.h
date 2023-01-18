@@ -1,9 +1,6 @@
 #ifndef pyro_imports_h
 #define pyro_imports_h
 
-#include "pyro.h"
-#include "values.h"
-
 // This function attempts to import the module specified by the import path [args], an array of
 // [arg_count] PyroStr* values.
 //
