@@ -1,5 +1,5 @@
-#include "../../inc/pyro.h"
-#include "../../lib/sqlite/sqlite3.h"
+#include "../../../inc/pyro.h"
+#include "../../../lib/sqlite/sqlite3.h"
 
 
 void pyro_load_std_mod_sqlite(PyroVM* vm, PyroMod* module) {
