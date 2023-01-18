@@ -1,4 +1,4 @@
-#include "../../../inc/pyro.h"
+#include "../../inc/pyro.h"
 
 
 #define PYRO_STD_LOG_LEVEL_DEBUG 10

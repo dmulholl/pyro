@@ -1,4 +1,4 @@
-#include "../../../inc/pyro.h"
+#include "../../inc/pyro.h"
 
 
 static PyroValue fn_char(PyroVM* vm, size_t arg_count, PyroValue* args) {

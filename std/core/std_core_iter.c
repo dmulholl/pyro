@@ -1,4 +1,4 @@
-#include "../../../inc/pyro.h"
+#include "../../inc/pyro.h"
 
 
 static PyroValue fn_is_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
