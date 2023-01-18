@@ -1,6 +1,4 @@
 #include "cli.h"
-#include "../inc/exec.h"
-#include "../inc/vm.h"
 
 
 void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {

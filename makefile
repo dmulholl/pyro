@@ -14,7 +14,7 @@ DEBUG_LEVEL_3 = $(DEBUG_LEVEL_2) -D PYRO_DEBUG_TRACE_EXECUTION
 DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
-SRC_FILES = src/cli/*.c src/vm/*.c src/std/core/*.c src/std/c/*.c
+SRC_FILES = cli/*.c src/vm/*.c src/std/core/*.c src/std/c/*.c
 
 OBJ_FILES = out/build/sqlite.o \
 			out/build/bestline.o \

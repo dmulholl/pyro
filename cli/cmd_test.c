@@ -1,6 +1,4 @@
 #include "cli.h"
-#include "../inc/exec.h"
-#include "../inc/vm.h"
 
 
 static void run_verbose_tests(ArgParser* cmd_parser) {
