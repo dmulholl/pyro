@@ -14,7 +14,7 @@ DEBUG_LEVEL_3 = $(DEBUG_LEVEL_2) -D PYRO_DEBUG_TRACE_EXECUTION
 DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
 DEBUG_LEVEL = $(DEBUG_LEVEL_1)
 
-HDR_FILES = inc/*.h
+HDR_FILES = cli/*.h inc/*.h
 
 SRC_FILES = cli/*.c src/*.c std/builtins/*.c std/mods/c/*.c
 
