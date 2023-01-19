@@ -309,18 +309,17 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroValue formatted = pyro_fn_fmt(vm, arg_count, args);
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$write()");
     if (vm->halt_flag) {
         return pyro_null();
     }
-    PyroStr* string = PYRO_AS_STR(formatted);
 
     size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
-
     if (n < string->length) {
         pyro_panic(vm, "write(): I/O write error");
         return pyro_null();
     }
+
     return pyro_i64((int64_t)n);
 }
 

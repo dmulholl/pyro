@@ -2,8 +2,8 @@
 
 
 static PyroValue fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (arg_count < 2) {
-        pyro_panic(vm, "$fmt(): expected 2 or more arguments, found %zu", arg_count);
+    if (arg_count == 0) {
+        pyro_panic(vm, "$fmt(): expected 1 or more arguments, found 0");
         return pyro_null();
     }
 
@@ -12,113 +12,8 @@ static PyroValue fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroStr* fmt_str = PYRO_AS_STR(args[0]);
-
-    char fmt_spec_buffer[16];
-    size_t fmt_spec_count = 0;
-
-    char* out_buffer = NULL;
-    size_t out_capacity = 0;
-    size_t out_count = 0;
-
-    size_t fmt_str_index = 0;
-    size_t next_arg_index = 1;
-
-    while (fmt_str_index < fmt_str->length) {
-        if (out_count + 2 > out_capacity) {
-            size_t new_capacity = PYRO_GROW_CAPACITY(out_capacity);
-            char* new_array = PYRO_REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
-            if (!new_array) {
-                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                pyro_panic(vm, "$fmt(): out of memory");
-                return pyro_null();
-            }
-            out_capacity = new_capacity;
-            out_buffer = new_array;
-        }
-
-        if (fmt_str_index < fmt_str->length - 1) {
-            if (fmt_str->bytes[fmt_str_index] == '\\') {
-                if (fmt_str->bytes[fmt_str_index + 1] == '{') {
-                    out_buffer[out_count++] = '{';
-                    fmt_str_index += 2;
-                    continue;
-                }
-            }
-        }
-
-        if (fmt_str->bytes[fmt_str_index] == '{') {
-            fmt_str_index++;
-            while (fmt_str_index < fmt_str->length && fmt_str->bytes[fmt_str_index] != '}') {
-                if (fmt_spec_count == 15) {
-                    PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                    pyro_panic(vm, "$fmt(): invalid format specifier, too many characters");
-                    return pyro_null();
-                }
-                fmt_spec_buffer[fmt_spec_count++] = fmt_str->bytes[fmt_str_index++];
-            }
-            if (fmt_str_index == fmt_str->length) {
-                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                pyro_panic(vm, "$fmt(): missing '}' in format string");
-                return pyro_null();
-            }
-            fmt_str_index++;
-            fmt_spec_buffer[fmt_spec_count] = '\0';
-
-            if (next_arg_index == arg_count) {
-                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                pyro_panic(vm, "$fmt(): too few arguments for format string");
-                return pyro_null();
-            }
-            PyroValue arg = args[next_arg_index++];
-
-            PyroStr* formatted;
-            if (fmt_spec_count == 0) {
-                formatted = pyro_stringify_value(vm, arg);
-            } else {
-                formatted = pyro_format_value(vm, arg, fmt_spec_buffer);
-            }
-            if (vm->halt_flag) {
-                PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                return pyro_null();
-            }
-
-            if (out_count + formatted->length + 1 > out_capacity) {
-                size_t new_capacity = out_count + formatted->length + 1;
-
-                pyro_push(vm, pyro_obj(formatted));
-                char* new_array = PYRO_REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, new_capacity);
-                pyro_pop(vm);
-
-                if (!new_array) {
-                    PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
-                    pyro_panic(vm, "$fmt(): out of memory");
-                    return pyro_null();
-                }
-
-                out_capacity = new_capacity;
-                out_buffer = new_array;
-            }
-
-            memcpy(&out_buffer[out_count], formatted->bytes, formatted->length);
-            out_count += formatted->length;
-            fmt_spec_count = 0;
-            continue;
-        }
-
-        out_buffer[out_count++] = fmt_str->bytes[fmt_str_index++];
-    }
-
-    if (out_capacity > out_count + 1) {
-        out_buffer = PYRO_REALLOCATE_ARRAY(vm, char, out_buffer, out_capacity, out_count + 1);
-        out_capacity = out_count + 1;
-    }
-    out_buffer[out_count] = '\0';
-
-    PyroStr* string = PyroStr_take(out_buffer, out_count, vm);
-    if (!string) {
-        PYRO_FREE_ARRAY(vm, char, out_buffer, out_capacity);
-        pyro_panic(vm, "$fmt(): out of memory");
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$fmt()");
+    if (vm->halt_flag) {
         return pyro_null();
     }
 
@@ -138,11 +33,8 @@ static PyroValue fn_eprint(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
         int64_t result = pyro_stderr_write_s(vm, string);
-        if (result == -1) {
+        if (result < 0) {
             pyro_panic(vm, "$eprint(): unable to write to the standard error stream");
-            return pyro_null();
-        } else if (result == -2) {
-            pyro_panic(vm, "$eprint(): out of memory");
             return pyro_null();
         }
         return pyro_i64(result);
@@ -153,19 +45,17 @@ static PyroValue fn_eprint(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroValue formatted = fn_fmt(vm, arg_count, args);
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$eprint()");
     if (vm->halt_flag) {
         return pyro_null();
     }
 
-    int64_t result = pyro_stderr_write_s(vm, PYRO_AS_STR(formatted));
-    if (result == -1) {
+    int64_t result = pyro_stderr_write_s(vm, string);
+    if (result < 0) {
         pyro_panic(vm, "$eprint(): unable to write to the standard error stream");
         return pyro_null();
-    } else if (result == -2) {
-        pyro_panic(vm, "$eprint(): out of memory");
-        return pyro_null();
     }
+
     return pyro_i64(result);
 }
 
@@ -173,11 +63,8 @@ static PyroValue fn_eprint(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue fn_eprintln(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         int64_t result = pyro_stderr_write_n(vm, "\n", 1);
-        if (result == -1) {
+        if (result < 0) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-            return pyro_null();
-        } else if (result == -2) {
-            pyro_panic(vm, "$eprintln(): out of memory");
             return pyro_null();
         }
         return pyro_i64(result);
@@ -189,19 +76,13 @@ static PyroValue fn_eprintln(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
         int64_t result1 = pyro_stderr_write_s(vm, string);
-        if (result1 == -1) {
+        if (result1 < 0) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-            return pyro_null();
-        } else if (result1 == -2) {
-            pyro_panic(vm, "$eprintln(): out of memory");
             return pyro_null();
         }
         int64_t result2 = pyro_stderr_write_n(vm, "\n", 1);
-        if (result2 == -1) {
+        if (result2 < 0) {
             pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
-            return pyro_null();
-        } else if (result2 == -2) {
-            pyro_panic(vm, "$eprintln(): out of memory");
             return pyro_null();
         }
         return pyro_i64(result1 + result2);
@@ -212,27 +93,23 @@ static PyroValue fn_eprintln(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroValue formatted = fn_fmt(vm, arg_count, args);
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$eprintln()");
     if (vm->halt_flag) {
         return pyro_null();
     }
 
-    int64_t result1 = pyro_stderr_write_s(vm, PYRO_AS_STR(formatted));
-    if (result1 == -1) {
+    int64_t result1 = pyro_stderr_write_s(vm, string);
+    if (result1 < 0) {
         pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
         return pyro_null();
-    } else if (result1 == -2) {
-        pyro_panic(vm, "$eprintln(): out of memory");
-        return pyro_null();
     }
+
     int64_t result2 = pyro_stderr_write_n(vm, "\n", 1);
-    if (result2 == -1) {
+    if (result2 < 0) {
         pyro_panic(vm, "$eprintln(): unable to write to the standard error stream");
         return pyro_null();
-    } else if (result2 == -2) {
-        pyro_panic(vm, "$eprintln(): out of memory");
-        return pyro_null();
     }
+
     return pyro_i64(result1 + result2);
 }
 
@@ -249,11 +126,8 @@ static PyroValue fn_print(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
         int64_t result = pyro_stdout_write_s(vm, string);
-        if (result == -1) {
+        if (result < 0) {
             pyro_panic(vm, "$print(): unable to write to the standard output stream");
-            return pyro_null();
-        } else if (result == -2) {
-            pyro_panic(vm, "$print(): out of memory");
             return pyro_null();
         }
         return pyro_i64(result);
@@ -264,19 +138,17 @@ static PyroValue fn_print(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroValue formatted = fn_fmt(vm, arg_count, args);
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$print()");
     if (vm->halt_flag) {
         return pyro_null();
     }
 
-    int64_t result = pyro_stdout_write_s(vm, PYRO_AS_STR(formatted));
-    if (result == -1) {
+    int64_t result = pyro_stdout_write_s(vm, string);
+    if (result < 0) {
         pyro_panic(vm, "$print(): unable to write to the standard output stream");
         return pyro_null();
-    } else if (result == -2) {
-        pyro_panic(vm, "$print(): out of memory");
-        return pyro_null();
     }
+
     return pyro_i64(result);
 }
 
@@ -284,11 +156,8 @@ static PyroValue fn_print(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue fn_println(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         int64_t result = pyro_stdout_write_n(vm, "\n", 1);
-        if (result == -1) {
+        if (result < 0) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
-            return pyro_null();
-        } else if (result == -2) {
-            pyro_panic(vm, "$println(): out of memory");
             return pyro_null();
         }
         return pyro_i64(result);
@@ -300,19 +169,13 @@ static PyroValue fn_println(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
         int64_t result1 = pyro_stdout_write_s(vm, string);
-        if (result1 == -1) {
+        if (result1 < 0) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
-            return pyro_null();
-        } else if (result1 == -2) {
-            pyro_panic(vm, "$println(): out of memory");
             return pyro_null();
         }
         int64_t result2 = pyro_stdout_write_n(vm, "\n", 1);
-        if (result2 == -1) {
+        if (result2 < 0) {
             pyro_panic(vm, "$println(): unable to write to the standard output stream");
-            return pyro_null();
-        } else if (result2 == -2) {
-            pyro_panic(vm, "$println(): out of memory");
             return pyro_null();
         }
         return pyro_i64(result1 + result2);
@@ -323,27 +186,23 @@ static PyroValue fn_println(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroValue formatted = fn_fmt(vm, arg_count, args);
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$println()");
     if (vm->halt_flag) {
         return pyro_null();
     }
 
-    int64_t result1 = pyro_stdout_write_s(vm, PYRO_AS_STR(formatted));
-    if (result1 == -1) {
+    int64_t result1 = pyro_stdout_write_s(vm, string);
+    if (result1 < 0) {
         pyro_panic(vm, "$println(): unable to write to the standard output stream");
         return pyro_null();
-    } else if (result1 == -2) {
-        pyro_panic(vm, "$println(): out of memory");
-        return pyro_null();
     }
+
     int64_t result2 = pyro_stdout_write_n(vm, "\n", 1);
-    if (result2 == -1) {
+    if (result2 < 0) {
         pyro_panic(vm, "$println(): unable to write to the standard output stream");
         return pyro_null();
-    } else if (result2 == -2) {
-        pyro_panic(vm, "$println(): out of memory");
-        return pyro_null();
     }
+
     return pyro_i64(result1 + result2);
 }
 
@@ -1165,11 +1024,6 @@ static PyroValue fn_stdin(PyroVM* vm, size_t arg_count, PyroValue* args) {
 /* -------- */
 
 
-PyroValue pyro_fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return fn_fmt(vm, arg_count, args);
-}
-
-
 void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_module_1(vm, "$std");
     pyro_define_global(vm, "$roots", pyro_obj(vm->import_roots));
@@ -1228,5 +1082,4 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_global_fn(vm, "$stdin", fn_stdin, -1);
     pyro_define_global_fn(vm, "$stdout", fn_stdout, -1);
     pyro_define_global_fn(vm, "$stderr", fn_stderr, -1);
-
 }

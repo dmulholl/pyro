@@ -1029,3 +1029,100 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_strin
     pyro_panic(vm, "no handler for format specifier '%s'", format_string);
     return NULL;
 }
+
+
+PyroStr* pyro_format(PyroVM* vm, PyroStr* format_string, size_t arg_count, PyroValue* args, const char* caller) {
+    // This buffer stores the content of a single {format_specifier} element.
+    const size_t specifier_capacity = 16;
+    size_t specifier_count = 0;
+    char specifier[16];
+
+    size_t format_string_index = 0;
+    size_t next_arg_index = 0;
+
+    PyroBuf* output = PyroBuf_new(vm);
+    if (!output) {
+        pyro_panic(vm, "%s: out of memory", caller);
+        return NULL;
+    }
+
+    // We might call into Pyro code so we need to keep the buffer safe from the garbage collector.
+    if (!pyro_push(vm, pyro_obj(output))) {
+        return NULL;
+    }
+
+    while (format_string_index < format_string->length) {
+        // Check for a backslash-escaped opening curly brace.
+        if (format_string_index < format_string->length - 1) {
+            if (format_string->bytes[format_string_index] == '\\') {
+                if (format_string->bytes[format_string_index + 1] == '{') {
+                    if (!PyroBuf_append_byte(output, '{', vm)) {
+                        pyro_panic(vm, "%s: out of memory", caller);
+                        return NULL;
+                    }
+                    format_string_index += 2;
+                    continue;
+                }
+            }
+        }
+
+        if (format_string->bytes[format_string_index] == '{') {
+            format_string_index++;
+
+            // Read the content of the {format_specifier} into the specifier buffer and add a
+            // terminating NULL.
+            while (format_string_index < format_string->length && format_string->bytes[format_string_index] != '}') {
+                if (specifier_count == specifier_capacity - 1) {
+                    pyro_panic(vm, "%s: format specifier is too long (max: %zu bytes)", caller, specifier_capacity - 1);
+                    return NULL;
+                }
+                specifier[specifier_count++] = format_string->bytes[format_string_index++];
+            }
+            if (format_string_index == format_string->length) {
+                pyro_panic(vm, "%s: invalid format string, missing closing '}'");
+                return NULL;
+            }
+            format_string_index++;
+            specifier[specifier_count] = '\0';
+
+            if (next_arg_index == arg_count) {
+                pyro_panic(vm, "%s: not enough arguments for format string");
+                return NULL;
+            }
+            PyroValue next_arg = args[next_arg_index++];
+
+            PyroStr* formatted_arg;
+            if (specifier_count == 0) {
+                formatted_arg = pyro_stringify_value(vm, next_arg);
+            } else {
+                formatted_arg = pyro_format_value(vm, next_arg, specifier);
+            }
+            if (vm->halt_flag) {
+                return NULL;
+            }
+
+            if (!PyroBuf_append_bytes(output, formatted_arg->length, (uint8_t*)formatted_arg->bytes, vm)) {
+                pyro_panic(vm, "%s: out of memory", caller);
+                return NULL;
+            }
+
+            specifier_count = 0;
+            continue;
+        }
+
+        if (!PyroBuf_append_byte(output, format_string->bytes[format_string_index++], vm)) {
+            pyro_panic(vm, "%s: out of memory", caller);
+            return NULL;
+        }
+    }
+
+    PyroStr* string = PyroBuf_to_str(output, vm);
+    if (!string) {
+        pyro_panic(vm, "%s: out of memory", caller);
+        return NULL;
+    }
+
+    // Pop the output buffer.
+    pyro_pop(vm);
+    return string;
+}

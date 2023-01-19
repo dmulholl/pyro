@@ -241,12 +241,10 @@ static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
             if (vm->halt_flag) {
                 return pyro_null();
             }
-            pyro_push(vm, pyro_obj(string));
             if (!PyroBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
                 pyro_panic(vm, "write(): out of memory");
                 return pyro_null();
             }
-            pyro_pop(vm);
             return pyro_i64((int64_t)string->length);
         }
     }
@@ -256,17 +254,14 @@ static PyroValue buf_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroValue formatted = pyro_fn_fmt(vm, arg_count, args);
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "write()");
     if (vm->halt_flag) {
         return pyro_null();
     }
-    PyroStr* string = PYRO_AS_STR(formatted);
 
-    pyro_push(vm, formatted);
     if (!PyroBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
         pyro_panic(vm, "write(): out of memory");
     }
-    pyro_pop(vm);
 
     return pyro_i64((int64_t)string->length);
 }

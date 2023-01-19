@@ -45,4 +45,12 @@ PyroStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision);
 // Returns a pointer to a static string.
 char* pyro_stringify_object_type(PyroObjectType type);
 
+// Interpolates an array of values into a format string.
+// - This function provides the format-string backing for Pyro's $fmt(), $print(), etc, functions.
+// - Panics and returns NULL if a formatting or memory-allocation error occurs.
+// - This function can call into Pyro code which may set the panic and/or exit flags.
+// - Caller should check [vm->halt_flag] immeditely on return.
+// - The [caller] string is used as a prefix for error messages.
+PyroStr* pyro_format(PyroVM* vm, PyroStr* format_string, size_t arg_count, PyroValue* args, const char* caller);
+
 #endif

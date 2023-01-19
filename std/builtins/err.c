@@ -10,25 +10,29 @@ static PyroValue fn_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     if (arg_count == 0) {
         return pyro_obj(err);
-    } else if (arg_count == 1) {
+    }
+
+    if (arg_count == 1) {
         PyroStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
         err->message = string;
         return pyro_obj(err);
-    } else {
-        if (!PYRO_IS_STR(args[0])) {
-            pyro_panic(vm, "$err(): invalid argument [format_string], expected a string");
-            return pyro_null();
-        }
-        PyroValue formatted = pyro_fn_fmt(vm, arg_count, args);
-        if (vm->halt_flag) {
-            return pyro_null();
-        }
-        err->message = PYRO_AS_STR(formatted);
-        return pyro_obj(err);
     }
+
+    if (!PYRO_IS_STR(args[0])) {
+        pyro_panic(vm, "$err(): invalid argument [format_string], expected a string");
+        return pyro_null();
+    }
+
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$err()");
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    err->message = string;
+    return pyro_obj(err);
 }
 
 

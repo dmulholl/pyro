@@ -18,7 +18,4 @@ void pyro_load_std_builtins_err(PyroVM* vm);
 void pyro_load_std_builtins_mod(PyroVM* vm);
 void pyro_load_std_builtins_char(PyroVM* vm);
 
-// The format function is defined in std_core.c but used by a number of builtin types.
-PyroValue pyro_fn_fmt(PyroVM* vm, size_t arg_count, PyroValue* args);
-
 #endif
