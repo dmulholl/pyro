@@ -32,7 +32,7 @@ typedef enum {
 
     // Literals.
     TOKEN_IDENTIFIER,
-    TOKEN_STRING,
+    TOKEN_RAW_STRING,
     TOKEN_ESCAPED_STRING,
     TOKEN_INT,
     TOKEN_HEX_INT,

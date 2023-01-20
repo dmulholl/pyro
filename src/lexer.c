@@ -273,7 +273,7 @@ static Token read_number(Lexer* lexer) {
 }
 
 
-static Token read_raw_string(Lexer* lexer) {
+static Token read_backtick_string(Lexer* lexer) {
     size_t start_line = lexer->line;
 
     while (!is_at_end(lexer) && peek(lexer) != '`') {
@@ -295,11 +295,11 @@ static Token read_raw_string(Lexer* lexer) {
     }
 
     next_char(lexer);
-    return make_token(lexer, TOKEN_STRING);
+    return make_token(lexer, TOKEN_RAW_STRING);
 }
 
 
-static Token read_string(Lexer* lexer) {
+static Token read_double_quoted_string(Lexer* lexer) {
     bool has_escapes = false;
     size_t start_line = lexer->line;
 
@@ -326,7 +326,7 @@ static Token read_string(Lexer* lexer) {
     }
 
     next_char(lexer);
-    return make_token(lexer, has_escapes ? TOKEN_ESCAPED_STRING: TOKEN_STRING);
+    return make_token(lexer, has_escapes ? TOKEN_ESCAPED_STRING: TOKEN_RAW_STRING);
 }
 
 
@@ -423,8 +423,8 @@ Token pyro_next_token(Lexer* lexer) {
         case '?': return make_token(lexer, match_char(lexer, '?') ? TOKEN_HOOK_HOOK: TOKEN_HOOK);
         case '&': return make_token(lexer, match_char(lexer, '&') ? TOKEN_AMP_AMP: TOKEN_AMP);
 
-        case '"': return read_string(lexer);
-        case '`': return read_raw_string(lexer);
+        case '"': return read_double_quoted_string(lexer);
+        case '`': return read_backtick_string(lexer);
         case '\'': return read_char_literal(lexer);
 
         case ':':

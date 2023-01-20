@@ -1045,7 +1045,7 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
         emit_load_value_from_constant_table(parser, pyro_f64(value));
     }
 
-    else if (match(parser, TOKEN_STRING)) {
+    else if (match(parser, TOKEN_RAW_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
         PyroStr* string = PyroStr_copy_raw(start, length, parser->vm);
@@ -1123,7 +1123,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
         consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after expression");
     }
 
-    else if (match(parser, TOKEN_STRING)) {
+    else if (match(parser, TOKEN_RAW_STRING)) {
         const char* start = parser->previous_token.start + 1;
         size_t length = parser->previous_token.length - 2;
         PyroStr* string = PyroStr_copy_raw(start, length, parser->vm);
