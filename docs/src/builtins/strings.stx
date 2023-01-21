@@ -40,6 +40,7 @@ Regular string literals process all the usual backslashed escapes:
     `\0` | null byte
     `\"` | double quote
     `\'` | single quote
+    `\$` | dollar symbol
     `\b` | backspace
     `\e` | escape
     `\f` | form feed

@@ -300,33 +300,52 @@ static Token read_backtick_string(Lexer* lexer) {
 
 
 static Token read_double_quoted_string(Lexer* lexer) {
-    bool has_escapes = false;
+    bool contains_escapes = false;
     size_t start_line = lexer->line;
 
-    while (!is_at_end(lexer) && peek(lexer) != '"') {
-        if (peek(lexer) == '\n') {
+    while (!is_at_end(lexer)) {
+        char c = next_char(lexer);
+
+        if (c == '\n') {
             lexer->line++;
+            continue;
         }
-        if (peek(lexer) == '\\') {
-            has_escapes = true;
-            next_char(lexer);
+
+        if (c == '\\') {
+            if (!is_at_end(lexer)) {
+                next_char(lexer);
+            }
+            contains_escapes = true;
+            continue;
         }
-        next_char(lexer);
+
+        if (c == '$') {
+            if (peek(lexer) == '{') {
+                next_char(lexer);
+                Token token = make_token(lexer, TOKEN_STRING_FRAGMENT);
+                token.start += 1;
+                token.length -= 3;
+                return token;
+            }
+            continue;
+        }
+
+        if (c == '"') {
+            TokenType type = contains_escapes ? TOKEN_ESCAPED_STRING : TOKEN_RAW_STRING;
+            Token token = make_token(lexer, type);
+            return token;
+        }
     }
 
-    if (is_at_end(lexer)) {
-        pyro_syntax_error(
-            lexer->vm,
-            lexer->src_id,
-            start_line,
-            "unterminated string literal, opened in line %zu",
-            start_line
-        );
-        return make_error_token(lexer);
-    }
+    pyro_syntax_error(
+        lexer->vm,
+        lexer->src_id,
+        lexer->line,
+        "unterminated string literal, opened in line %zu",
+        start_line
+    );
 
-    next_char(lexer);
-    return make_token(lexer, has_escapes ? TOKEN_ESCAPED_STRING: TOKEN_RAW_STRING);
+    return make_error_token(lexer);
 }
 
 
@@ -359,7 +378,61 @@ static Token read_char_literal(Lexer* lexer) {
 }
 
 
+// We're already inside the string. The last token to be parsed was '}', closing an
+// ${interpolation} element. There are only three possible values we can return:
+// - TOKEN_STRING_FRAGMENT if we meet a ${
+// - TOKEN_STRING_FRAGMENT_FINAL if we meet a "
+// - TOKEN_ERROR if the string is unterminated
+static Token next_interpolated_string_token(Lexer* lexer) {
+    while (!is_at_end(lexer)) {
+        char c = next_char(lexer);
+
+        if (c == '\n') {
+            lexer->line++;
+            continue;
+        }
+
+        if (c == '\\') {
+            if (!is_at_end(lexer)) {
+                next_char(lexer);
+            }
+            continue;
+        }
+
+        if (c == '$') {
+            if (peek(lexer) == '{') {
+                next_char(lexer);
+                Token token = make_token(lexer, TOKEN_STRING_FRAGMENT);
+                token.length -= 2;
+                return token;
+            }
+            continue;
+        }
+
+        if (c == '"') {
+            Token token = make_token(lexer, TOKEN_STRING_FRAGMENT_FINAL);
+            token.length -= 1;
+            return token;
+        }
+    }
+
+    pyro_syntax_error(
+        lexer->vm,
+        lexer->src_id,
+        lexer->line,
+        "unterminated string literal"
+    );
+
+    return make_error_token(lexer);
+}
+
+
 Token pyro_next_token(Lexer* lexer) {
+    lexer->start = lexer->current;
+    if (lexer->interpolated_string_mode) {
+        return next_interpolated_string_token(lexer);
+    }
+
     skip_whitespace_and_comments(lexer);
     lexer->start = lexer->current;
 
@@ -453,23 +526,18 @@ Token pyro_next_token(Lexer* lexer) {
             return make_token(lexer, TOKEN_BANG);
     }
 
+    const char* error_message = "unexpected byte value (0x%02X) in input";
     if (isprint(c)) {
-        pyro_syntax_error(
-            lexer->vm,
-            lexer->src_id,
-            lexer->line,
-            "unexpected character '%c' in input",
-            c
-        );
-    } else {
-        pyro_syntax_error(
-            lexer->vm,
-            lexer->src_id,
-            lexer->line,
-            "unexpected byte value (0x%02X) in input",
-            c
-        );
+        error_message = "unexpected character '%c' in input";
     }
+
+    pyro_syntax_error(
+        lexer->vm,
+        lexer->src_id,
+        lexer->line,
+        error_message,
+        c
+    );
 
     return make_error_token(lexer);
 }
@@ -482,4 +550,5 @@ void pyro_init_lexer(Lexer* lexer, PyroVM* vm, const char* src_code, size_t src_
     lexer->line = 1;
     lexer->vm = vm;
     lexer->src_id = src_id;
+    lexer->interpolated_string_mode = false;
 }

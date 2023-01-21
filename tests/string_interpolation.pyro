@@ -1,0 +1,103 @@
+var foo = "foo";
+var bar = "bar";
+var int = 123;
+var float = 123.456;
+
+class Object {
+    pub var field = 123;
+
+    pub def method() {
+        return 456;
+    }
+}
+
+assert "" == ``;
+
+assert "\${" == `${`;
+assert "xxx \${ yyy" == `xxx ${ yyy`;
+assert "xxx \${} yyy" == `xxx ${} yyy`;
+assert "xxx \${foo} yyy" == `xxx ${foo} yyy`;
+assert "xxx \${foo}\${bar} yyy" == `xxx ${foo}${bar} yyy`;
+
+assert "${foo}" == "foo";
+assert "xxx ${foo}" == "xxx foo";
+assert "${foo} yyy" == "foo yyy";
+assert "xxx ${foo} yyy" == "xxx foo yyy";
+
+assert "${foo}${bar}" == "foobar";
+assert "xxx ${foo}${bar}" == "xxx foobar";
+assert "${foo}${bar} yyy" == "foobar yyy";
+assert "xxx ${foo}${bar} yyy" == "xxx foobar yyy";
+assert "xxx ${foo} yyy ${bar} zzz" == "xxx foo yyy bar zzz";
+
+assert "${int}" == "123";
+assert "xxx ${int} yyy" == "xxx 123 yyy";
+assert "${float}" == "123.456";
+assert "xxx ${float} yyy" == "xxx 123.456 yyy";
+assert "xxx ${int} yyy ${float} zzz" == "xxx 123 yyy 123.456 zzz";
+
+assert "${1 + 2}" == "3";
+assert "xxx ${1 + 2} yyy" == "xxx 3 yyy";
+assert "${int + 1}" == "124";
+assert "${float + 1}" == "124.456";
+
+var obj = Object();
+assert "${obj.field}" == "123";
+assert "${obj.field + 1}" == "124";
+assert "${obj:method()}" == "456";
+assert "${obj:method() + 1}" == "457";
+
+assert "${Object().field}" == "123";
+assert "${Object().field + 1}" == "124";
+assert "${Object():method()}" == "456";
+assert "${Object():method() + 1}" == "457";
+
+var source_code_1 = `${}`;
+assert $is_err(try $exec(source_code_1));
+
+var source_code_2 = `${`;
+assert $is_err(try $exec(source_code_2));
+
+assert "${'a'}" == `a`;
+assert "${$str('a')}" == `a`;
+assert "${$str('a'):to_ascii_upper()}" == `A`;
+
+assert "${`foo bar`}" == `foo bar`;
+assert "${`foo bar`:to_ascii_upper()}" == `FOO BAR`;
+
+assert "${"foo bar"}" == `foo bar`;
+assert "${"foo bar":to_ascii_upper()}" == `FOO BAR`;
+
+assert "${`${foo}`}" == `${foo}`;
+assert "${`${foo}`:to_ascii_upper()}" == `${FOO}`;
+
+assert "${"${foo}"}" == `foo`;
+assert "${"${foo:to_ascii_upper()}"}" == `FOO`;
+assert "${"xxx ${foo} yyy"}" == `xxx foo yyy`;
+
+assert "${"${"xyz"}"}" == `xyz`;
+assert "${"${"xyz":to_ascii_upper()}"}" == `XYZ`;
+
+assert "${"a ${"b ${"c"} d"} e"}" == `a b c d e`;
+assert "${"a ${"b ${"c":to_ascii_upper()} d"} e"}" == `a b C d e`;
+
+{
+    var local = "foobar";
+    assert "${local}" == "foobar";
+}
+
+var vec = [];
+for i in $range(10) {
+    var string = "${i}";
+    assert string == $str(i);
+    vec:append(string);
+}
+assert vec[0] == `0`;
+assert vec[1] == `1`;
+assert vec[8] == `8`;
+assert vec[9] == `9`;
+
+def $test_interpolation_in_function() {
+    var func_local = "foobar";
+    assert "${func_local}" == "foobar";
+}

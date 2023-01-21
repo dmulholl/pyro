@@ -166,8 +166,13 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
             return constant_instruction(vm, "DEFINE_PRI_GLOBAL", fn, ip);
         case PYRO_OPCODE_DEFINE_PUB_GLOBAL:
             return constant_instruction(vm, "DEFINE_PUB_GLOBAL", fn, ip);
+
         case PYRO_OPCODE_DUP:
             return atomic_instruction(vm, "DUP", ip);
+
+        case PYRO_OPCODE_STRINGIFY:
+            return atomic_instruction(vm, "STRINGIFY", ip);
+
         case PYRO_OPCODE_DUP_2:
             return atomic_instruction(vm, "DUP_2", ip);
         case PYRO_OPCODE_ECHO:
@@ -420,6 +425,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
             return atomic_instruction(vm, "CALL_VALUE_8", ip);
         case PYRO_OPCODE_CALL_VALUE_9:
             return atomic_instruction(vm, "CALL_VALUE_9", ip);
+
+        case PYRO_OPCODE_CONCAT_STRINGS:
+            return u16_instruction(vm, "CONCAT_STRINGS", fn, ip);
+
         default:
             pyro_stdout_write_f(vm, "INVALID OPCODE [%d]\n", instruction);
             return ip + 1;

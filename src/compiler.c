@@ -1124,17 +1124,75 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     }
 
     else if (match(parser, TOKEN_RAW_STRING)) {
-        const char* start = parser->previous_token.start + 1;
-        size_t length = parser->previous_token.length - 2;
-        PyroStr* string = PyroStr_copy_raw(start, length, parser->vm);
+        PyroStr* string = PyroStr_copy_raw(
+            parser->previous_token.start + 1,
+            parser->previous_token.length - 2,
+            parser->vm
+        );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
-        const char* start = parser->previous_token.start + 1;
-        size_t length = parser->previous_token.length - 2;
-        PyroStr* string = PyroStr_copy_esc(start, length, parser->vm);
+        PyroStr* string = PyroStr_copy_esc(
+            parser->previous_token.start + 1,
+            parser->previous_token.length - 2,
+            parser->vm
+        );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
+    }
+
+    else if (match(parser, TOKEN_STRING_FRAGMENT)) {
+        PyroStr* string = PyroStr_copy_esc(
+            parser->previous_token.start,
+            parser->previous_token.length,
+            parser->vm
+        );
+
+        emit_load_value_from_constant_table(parser, pyro_obj(string));
+        uint16_t string_count = 1;
+
+        while (true) {
+            parse_expression(parser, false, false);
+            if (parser->had_syntax_error || parser->had_memory_error) {
+                return TOKEN_UNDEFINED;
+            }
+            emit_byte(parser, PYRO_OPCODE_STRINGIFY);
+            string_count++;
+
+            parser->lexer.interpolated_string_mode = true;
+            if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after interpolated expression")) {
+                return TOKEN_UNDEFINED;
+            }
+            parser->lexer.interpolated_string_mode = false;
+
+            if (match(parser, TOKEN_STRING_FRAGMENT)) {
+                PyroStr* string = PyroStr_copy_esc(
+                    parser->previous_token.start,
+                    parser->previous_token.length,
+                    parser->vm
+                );
+                emit_load_value_from_constant_table(parser, pyro_obj(string));
+                string_count++;
+                continue;
+            }
+
+            if (match(parser, TOKEN_STRING_FRAGMENT_FINAL)) {
+                PyroStr* string = PyroStr_copy_esc(
+                    parser->previous_token.start,
+                    parser->previous_token.length,
+                    parser->vm
+                );
+                emit_load_value_from_constant_table(parser, pyro_obj(string));
+                string_count++;
+                break;
+            }
+
+            // We must have an unterminated string literal. The lexer will have returned
+            // TOKEN_ERROR and the advance() function will have registered a syntax error.
+            return TOKEN_UNDEFINED;
+        }
+
+        emit_u8_u16be(parser, PYRO_OPCODE_CONCAT_STRINGS, string_count);
     }
 
     else if (match(parser, TOKEN_CHAR)) {

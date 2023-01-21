@@ -40,6 +40,8 @@ typedef enum {
     TOKEN_BINARY_INT,
     TOKEN_FLOAT,
     TOKEN_CHAR,
+    TOKEN_STRING_FRAGMENT,
+    TOKEN_STRING_FRAGMENT_FINAL,
 
     // Keywords.
     TOKEN_AS, TOKEN_ASSERT,
@@ -78,6 +80,7 @@ typedef struct {
     const char* end;        // Points to one past the end of the input array.
     size_t line;
     const char* src_id;
+    bool interpolated_string_mode;
     PyroVM* vm;
 } Lexer;
 

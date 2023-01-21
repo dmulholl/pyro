@@ -157,6 +157,10 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
                     dst[count++] = 11;
                     i++;
                     break;
+                case '$':
+                    dst[count++] = '$';
+                    i++;
+                    break;
 
                 // 8-bit hex-encoded byte value: \xXX.
                 case 'x':

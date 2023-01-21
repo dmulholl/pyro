@@ -2311,6 +2311,52 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case PYRO_OPCODE_STRINGIFY: {
+                PyroValue value = pyro_peek(vm, 0);
+                PyroStr* string = pyro_stringify_value(vm, value);
+                if (vm->halt_flag) {
+                    break;
+                }
+                pyro_pop(vm);
+                pyro_push(vm, pyro_obj(string));
+                break;
+            }
+
+            // There are [count] strings sitting on top of the stack. We want to concatenate them
+            // into a single string, pop the input strings, and replace them with the result.
+            case PYRO_OPCODE_CONCAT_STRINGS: {
+                uint16_t count = READ_BE_U16();
+
+                PyroBuf* buf = PyroBuf_new(vm);
+                if (!buf) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                for (uint16_t i = 0; i < count; i++) {
+                    PyroValue value = pyro_peek(vm, count - 1 - i);
+                    PyroStr* string = PYRO_AS_STR(value);
+                    if (!PyroBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                PyroStr* result = PyroBuf_to_str(buf, vm);
+                if (!result) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                vm->stack_top -= count;
+                pyro_push(vm, pyro_obj(result));
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;

@@ -1066,6 +1066,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_SET_LOCAL_7:
         case PYRO_OPCODE_SET_LOCAL_8:
         case PYRO_OPCODE_SET_LOCAL_9:
+        case PYRO_OPCODE_STRINGIFY:
         case PYRO_OPCODE_LOAD_CONSTANT_0:
         case PYRO_OPCODE_LOAD_CONSTANT_1:
         case PYRO_OPCODE_LOAD_CONSTANT_2:
@@ -1134,6 +1135,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_SET_FIELD:
         case PYRO_OPCODE_SET_PUB_FIELD:
         case PYRO_OPCODE_SET_GLOBAL:
+        case PYRO_OPCODE_CONCAT_STRINGS:
             return 2;
 
         case PYRO_OPCODE_CALL_METHOD:
