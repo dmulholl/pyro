@@ -285,7 +285,10 @@ static Token read_backtick_string(Lexer* lexer) {
         }
 
         if (c == '`') {
-            return make_token(lexer, TOKEN_RAW_STRING);
+            Token token = make_token(lexer, TOKEN_RAW_STRING);
+            token.start += 1;
+            token.length -= 2;
+            return token;
         }
     }
 
@@ -335,6 +338,8 @@ static Token read_double_quoted_string(Lexer* lexer) {
         if (c == '"') {
             TokenType type = contains_escapes ? TOKEN_ESCAPED_STRING : TOKEN_RAW_STRING;
             Token token = make_token(lexer, type);
+            token.start += 1;
+            token.length -= 2;
             return token;
         }
     }
