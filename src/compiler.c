@@ -1046,16 +1046,20 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
     }
 
     else if (match(parser, TOKEN_RAW_STRING)) {
-        const char* start = parser->previous_token.start + 1;
-        size_t length = parser->previous_token.length - 2;
-        PyroStr* string = PyroStr_copy_raw(start, length, parser->vm);
+        PyroStr* string = PyroStr_copy_raw(
+            parser->previous_token.start + 1,
+            parser->previous_token.length - 2,
+            parser->vm
+        );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
-        const char* start = parser->previous_token.start + 1;
-        size_t length = parser->previous_token.length - 2;
-        PyroStr* string = PyroStr_copy_esc(start, length, parser->vm);
+        PyroStr* string = PyroStr_copy_esc(
+            parser->previous_token.start + 1,
+            parser->previous_token.length - 2,
+            parser->vm
+        );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
