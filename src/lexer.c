@@ -354,29 +354,35 @@ static Token read_double_quoted_string(Lexer* lexer) {
 static Token read_char_literal(Lexer* lexer) {
     size_t start_line = lexer->line;
 
-    while (!is_at_end(lexer) && peek(lexer) != '\'') {
-        if (peek(lexer) == '\n') {
+    while (!is_at_end(lexer)) {
+        char c = next_char(lexer);
+
+        if (c == '\n') {
             lexer->line++;
+            continue;
         }
-        if (peek(lexer) == '\\') {
-            next_char(lexer);
+
+        if (c == '\\') {
+            if (!is_at_end(lexer)) {
+                next_char(lexer);
+            }
+            continue;
         }
-        next_char(lexer);
+
+        if (c == '\'') {
+            return make_token(lexer, TOKEN_CHAR);
+        }
     }
 
-    if (is_at_end(lexer)) {
-        pyro_syntax_error(
-            lexer->vm,
-            lexer->src_id,
-            start_line,
-            "unterminated character literal, opened in line %zu",
-            start_line
-        );
-        return make_error_token(lexer);
-    }
+    pyro_syntax_error(
+        lexer->vm,
+        lexer->src_id,
+        lexer->line,
+        "unterminated character literal, opened in line %zu",
+        start_line
+    );
 
-    next_char(lexer);
-    return make_token(lexer, TOKEN_CHAR);
+    return make_error_token(lexer);
 }
 
 
