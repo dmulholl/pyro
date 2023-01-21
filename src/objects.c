@@ -1635,6 +1635,10 @@ bool PyroBuf_grow_by_n_bytes(PyroBuf* buf, size_t n, PyroVM* vm) {
 // efficiently convert the buffer's underlying byte array to a string without needing to allocate
 // extra memory for the terminating \0.
 bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
+    if (count == 0) {
+        return true;
+    }
+
     size_t required_capacity = buf->count + count + 1;
 
     if (required_capacity > buf->capacity) {
