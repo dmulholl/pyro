@@ -276,26 +276,28 @@ static Token read_number(Lexer* lexer) {
 static Token read_backtick_string(Lexer* lexer) {
     size_t start_line = lexer->line;
 
-    while (!is_at_end(lexer) && peek(lexer) != '`') {
-        if (peek(lexer) == '\n') {
+    while (!is_at_end(lexer)) {
+        char c = next_char(lexer);
+
+        if (c == '\n') {
             lexer->line++;
+            continue;
         }
-        next_char(lexer);
+
+        if (c == '`') {
+            return make_token(lexer, TOKEN_RAW_STRING);
+        }
     }
 
-    if (is_at_end(lexer)) {
-        pyro_syntax_error(
-            lexer->vm,
-            lexer->src_id,
-            start_line,
-            "unterminated raw string literal, opened in line %zu",
-            start_line
-        );
-        return make_error_token(lexer);
-    }
+    pyro_syntax_error(
+        lexer->vm,
+        lexer->src_id,
+        lexer->line,
+        "unterminated raw string literal, opened in line %zu",
+        start_line
+    );
 
-    next_char(lexer);
-    return make_token(lexer, TOKEN_RAW_STRING);
+    return make_error_token(lexer);
 }
 
 
