@@ -9,6 +9,10 @@ class Object {
     pub def method() {
         return 456;
     }
+
+    def $str() {
+        return "OBJECT";
+    }
 }
 
 assert "" == ``;
@@ -46,11 +50,13 @@ assert "${obj.field}" == "123";
 assert "${obj.field + 1}" == "124";
 assert "${obj:method()}" == "456";
 assert "${obj:method() + 1}" == "457";
+assert "${obj}" == `OBJECT`;
 
 assert "${Object().field}" == "123";
 assert "${Object().field + 1}" == "124";
 assert "${Object():method()}" == "456";
 assert "${Object():method() + 1}" == "457";
+assert "${Object()}" == `OBJECT`;
 
 var source_code_1 = `${}`;
 assert $is_err(try $exec(source_code_1));
