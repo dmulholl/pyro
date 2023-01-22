@@ -72,7 +72,7 @@ You can interpolate the value of an expression into a double-quoted string using
 ::: code pyro
     var value = "xxx";
     assert "abc ${value} def" == `abc xxx def`;
-    assert "abc ${value:to_ascii_upper()} def" == `abc XXX def`;
+    assert "abc ${value:to_upper()} def" == `abc XXX def`;
 
 You can interpolate the value of any expression into a string using `${}`.
 If the value of the expression isn't a string, it will be automatically stringified --- this is equivalent to calling `$str()` on the value, e.g.
@@ -443,3 +443,11 @@ This is equivalent to calling the string's `:contains()` method.
     Returns a new string containing the hex-escaped byte values from the orginal string ---
     e.g. ``<code>`foo`</code>`` becomes ``<code>`\x66\x6F\x6F`</code>``.
     Useful for inspecting and debugging Unicode.
+
+[[ `:to_lower() -> str` ]]
+
+    This method is an alias for `:to_ascii_lower()`.
+
+[[ `:to_upper() -> str` ]]
+
+    This method is an alias for `:to_ascii_upper()`.
