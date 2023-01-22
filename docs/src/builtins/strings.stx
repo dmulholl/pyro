@@ -90,7 +90,7 @@ You can backslash-escape a `$` symbol in a double-quoted string to prevent it be
 
 Interpolated expressions can be nested arbitrarily --- i.e. an interpolated expression can contain a double-quoted string containing an interpolated expression containing a double-quoted string containing an interpolated expression, etc.
 
-You can format an interpolated expression by supplying a format-specifier after a semicolon, e.g.
+You can format the value of an interpolated expression by supplying a format-specifier after a semicolon, e.g.
 
 ::: code pyro
     var value = 123;
