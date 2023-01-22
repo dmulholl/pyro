@@ -58,6 +58,9 @@
 <a href="#string-literals">String Literals</a>
 </li>
 <li>
+<a href="#string-interpolation">String Interpolation</a>
+</li>
+<li>
 <a href="#equality">Equality</a>
 </li>
 <li>
@@ -103,7 +106,8 @@ Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but 
 String Literals
 </h3>
 <p>
-String literals come in two flavours &mdash; regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
+String literals come in two flavours &mdash; <i>regular</i> (double-quoted) and <i>raw</i> (backticked).
+Both can contain arbitrary byte sequences, including literal newlines.
 </p>
 <p>
 Regular string literals use double quotes:
@@ -254,6 +258,36 @@ Raw string literals use backticks:
 </pre>
 <p>
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
+</p>
+<h3 id="string-interpolation">
+String Interpolation
+</h3>
+<p>
+You can interpolate the value of an expression into a double-quoted string using <code>${}</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xxx&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc xxx def`</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value:to_ascii_upper()} def&quot;</span> <span class="o">==</span> <span class="s">`abc XXX def`</span><span class="p">;</span>
+</pre>
+<p>
+You can interpolate the value of any expression into a string using <code>${}</code>.
+If the value of the expression isn't a string, it will be automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on the value, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc 123 def`</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value + 1} def&quot;</span> <span class="o">==</span> <span class="s">`abc 124 def`</span><span class="p">;</span>
+</pre>
+<p>
+You can backslash-escape a <code>$</code> symbol in a double-quoted string to prevent it being treated as the opening of an interpolated expression, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc \${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc ${value} def`</span><span class="p">;</span>
+</pre>
+<p>
+Interpolated expressions can be nested arbitrarily &mdash; i.e. an interpolated expression can contain a double-quoted string containing an interpolated expression containing a double-quoted string containing an interpolated expression, etc.
 </p>
 <h3 id="equality">
 Equality

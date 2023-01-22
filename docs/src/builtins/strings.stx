@@ -22,7 +22,8 @@ Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but 
 
 ### String Literals
 
-String literals come in two flavours --- regular and raw. Both can contain arbitrary byte sequences, including literal newlines.
+String literals come in two flavours --- *regular* (double-quoted) and *raw* (backticked).
+Both can contain arbitrary byte sequences, including literal newlines.
 
 Regular string literals use double quotes:
 
@@ -62,6 +63,32 @@ Raw string literals use backticks:
     lines`;
 
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
+
+
+### String Interpolation
+
+You can interpolate the value of an expression into a double-quoted string using `${}`, e.g.
+
+::: code pyro
+    var value = "xxx";
+    assert "abc ${value} def" == `abc xxx def`;
+    assert "abc ${value:to_ascii_upper()} def" == `abc XXX def`;
+
+You can interpolate the value of any expression into a string using `${}`.
+If the value of the expression isn't a string, it will be automatically stringified --- this is equivalent to calling `$str()` on the value, e.g.
+
+::: code pyro
+    var value = 123;
+    assert "abc ${value} def" == `abc 123 def`;
+    assert "abc ${value + 1} def" == `abc 124 def`;
+
+You can backslash-escape a `$` symbol in a double-quoted string to prevent it being treated as the opening of an interpolated expression, e.g.
+
+::: code pyro
+    var value = 123;
+    assert "abc \${value} def" == `abc ${value} def`;
+
+Interpolated expressions can be nested arbitrarily --- i.e. an interpolated expression can contain a double-quoted string containing an interpolated expression containing a double-quoted string containing an interpolated expression, etc.
 
 
 
