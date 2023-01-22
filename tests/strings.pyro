@@ -78,6 +78,8 @@ assert sum == 97 + 98 + 99;
 assert "foo BAR 123":to_ascii_upper() == "FOO BAR 123";
 assert "foo BAR 123":to_ascii_lower() == "foo bar 123";
 
+assert "foo BAR 123":to_upper() == "FOO BAR 123";
+assert "foo BAR 123":to_lower() == "foo bar 123";
 
 def $test_starts_with() {
     var str = "foobar";

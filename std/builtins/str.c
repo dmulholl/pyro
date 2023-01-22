@@ -1414,7 +1414,9 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "chars", str_chars, 0);
     pyro_define_pub_method(vm, vm->class_str, "char_count", str_char_count, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_ascii_upper", str_to_ascii_upper, 0);
+    pyro_define_pub_method(vm, vm->class_str, "to_upper", str_to_ascii_upper, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_ascii_lower", str_to_ascii_lower, 0);
+    pyro_define_pub_method(vm, vm->class_str, "to_lower", str_to_ascii_lower, 0);
     pyro_define_pub_method(vm, vm->class_str, "starts_with", str_starts_with, 1);
     pyro_define_pub_method(vm, vm->class_str, "ends_with", str_ends_with, 1);
     pyro_define_pub_method(vm, vm->class_str, "strip_prefix", str_strip_prefix, 1);
