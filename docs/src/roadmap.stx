@@ -29,26 +29,17 @@ If I do add suppprt for concurrency, the implementation is likely to be influnce
 
 
 
-### String Interpolation
+### Formatted String Interpolations
 
-Some day I'll get around to implementing string interpolation for double-quoted strings.
-The syntax will be:
+Syntax will be:
 
 ::: code pyro
-    "string with ${<expr>;<fmt_spec>} interpolations"
+    "foo ${<expression>;<format_specifier>} bar"
 
 For example:
-
-::: code pyro
-    var foo = "123";
-    var bar = 456;
-    echo "${foo} and ${bar}"; # "123 and 456"
-
-Or:
 
 ::: code pyro
     var foo = 123;
     var bar = 456.789
     echo "${foo;04i} and ${bar;.2f}"; # "0123 and 456.79"
 
-Interpolation syntax will be backwards-compatible with the existing string-formatting syntax.
