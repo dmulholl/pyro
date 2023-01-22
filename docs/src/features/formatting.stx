@@ -24,9 +24,9 @@ A format string is a string containing `{}` placeholders:
 
 An empty placeholder `{}` is equivalent to calling `$str(arg)` on the value and interpolating the resulting string.
 
-A placeholder can contain a format specifier --- if the value has a `:$fmt(spec)` method defined, this method will be called and the resulting string will be used.
+A placeholder can contain a format specifier --- if the value has a `:$fmt(specifier)` method defined, this method will be called and the resulting string will be used.
 
-The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(spec)` method.
+The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(specifier)` method.
 
 Note that you can escape an opening brace `{` in a format string with a backslash, i.e. `\{`, to stop it being treated as a placeholder.
 
@@ -145,3 +145,46 @@ If the placeholder contains a format specifier, it gets passed to the value's `:
 
 ::: code pyro
     assert $fmt("{xyz}", foo) == "<xyz>";
+
+
+
+### String Interpolation
+
+In practice, many common use-cases can be handled by string-interpolation.
+
+You can interpolate the value of an expression into a double-quoted string using `${}`, e.g.
+
+::: code pyro
+    var value = "xyz";
+    assert "abc ${value} def" == `abc xyz def`;
+    assert "abc ${value:to_upper()} def" == `abc XYZ def`;
+
+The syntax is:
+
+::: code
+   "... ${<expression>} ..."
+   "... ${<expression>;<format_specifier>} ..."
+
+You can interpolate the value of any expression into a double-quoted string using `${}`.
+If the value of the expression isn't a string, it will be automatically stringified --- this is equivalent to calling `$str()` on the value, e.g.
+
+::: code pyro
+    var value = 123;
+    assert "abc ${value} def" == `abc 123 def`;
+    assert "abc ${value + 1} def" == `abc 124 def`;
+
+You can backslash-escape a `$` symbol in a double-quoted string to prevent it being treated as the opening of an interpolated expression, e.g.
+
+::: code pyro
+    var value = 123;
+    assert "abc \${value} def" == `abc ${value} def`;
+
+Interpolated expressions can be nested arbitrarily --- i.e. an interpolated expression can contain a double-quoted string containing an interpolated expression containing a double-quoted string containing an interpolated expression, etc.
+
+You can format the value of an interpolated expression by supplying a format-specifier after a semicolon, e.g.
+
+::: code pyro
+    var value = 123;
+    assert "${value;05d}" == `00123`;
+
+Format-specifiers in interpolated strings have the same syntax as format-specifiers in the `$fmt()` function.

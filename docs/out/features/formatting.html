@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.67</p>
+                <p class="version">Version 0.8.69</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -69,6 +69,9 @@
 <li>
 <a href="#custom-class-example">Custom Class Example</a>
 </li>
+<li>
+<a href="#string-interpolation">String Interpolation</a>
+</li>
 </ul>
 <hr>
 <p>
@@ -100,10 +103,10 @@ A format string is a string containing <code>{}</code> placeholders:
 An empty placeholder <code>{}</code> is equivalent to calling <code>$str(arg)</code> on the value and interpolating the resulting string.
 </p>
 <p>
-A placeholder can contain a format specifier &mdash; if the value has a <code>:$fmt(spec)</code> method defined, this method will be called and the resulting string will be used.
+A placeholder can contain a format specifier &mdash; if the value has a <code>:$fmt(specifier)</code> method defined, this method will be called and the resulting string will be used.
 </p>
 <p>
-The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(spec)</code> method.
+The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(specifier)</code> method.
 </p>
 <p>
 Note that you can escape an opening brace <code>{</code> in a format string with a backslash, i.e. <code>\{</code>, to stop it being treated as a placeholder.
@@ -269,6 +272,56 @@ If the placeholder contains a format specifier, it gets passed to the value's <c
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{xyz}&quot;</span><span class="p">,</span> <span class="nx">foo</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;xyz&gt;&quot;</span><span class="p">;</span>
 </pre>
+<h3 id="string-interpolation">
+String Interpolation
+</h3>
+<p>
+In practice, many common use-cases can be handled by string-interpolation.
+</p>
+<p>
+You can interpolate the value of an expression into a double-quoted string using <code>${}</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc xyz def`</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value:to_upper()} def&quot;</span> <span class="o">==</span> <span class="s">`abc XYZ def`</span><span class="p">;</span>
+</pre>
+<p>
+The syntax is:
+</p>
+<pre>
+"... ${&lt;expression&gt;} ..."
+"... ${&lt;expression&gt;;&lt;format_specifier&gt;} ..."
+</pre>
+<p>
+You can interpolate the value of any expression into a double-quoted string using <code>${}</code>.
+If the value of the expression isn't a string, it will be automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on the value, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc 123 def`</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value + 1} def&quot;</span> <span class="o">==</span> <span class="s">`abc 124 def`</span><span class="p">;</span>
+</pre>
+<p>
+You can backslash-escape a <code>$</code> symbol in a double-quoted string to prevent it being treated as the opening of an interpolated expression, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc \${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc ${value} def`</span><span class="p">;</span>
+</pre>
+<p>
+Interpolated expressions can be nested arbitrarily &mdash; i.e. an interpolated expression can contain a double-quoted string containing an interpolated expression containing a double-quoted string containing an interpolated expression, etc.
+</p>
+<p>
+You can format the value of an interpolated expression by supplying a format-specifier after a semicolon, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;${value;05d}&quot;</span> <span class="o">==</span> <span class="s">`00123`</span><span class="p">;</span>
+</pre>
+<p>
+Format-specifiers in interpolated strings have the same syntax as format-specifiers in the <code>$fmt()</code> function.
+</p>
         </article>
         
     </body>

@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.67</p>
+                <p class="version">Version 0.8.69</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -288,6 +288,16 @@ You can backslash-escape a <code>$</code> symbol in a double-quoted string to pr
 </pre>
 <p>
 Interpolated expressions can be nested arbitrarily &mdash; i.e. an interpolated expression can contain a double-quoted string containing an interpolated expression containing a double-quoted string containing an interpolated expression, etc.
+</p>
+<p>
+You can format an interpolated expression by supplying a format-specifier after a semicolon, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;${value;05d}&quot;</span> <span class="o">==</span> <span class="s">`00123`</span><span class="p">;</span>
+</pre>
+<p>
+See the <a href="../features/formatting.html">string formatting</a> documentation for the syntax of format-specifiers.
 </p>
 <h3 id="equality">
 Equality
