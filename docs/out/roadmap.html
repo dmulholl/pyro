@@ -82,23 +82,6 @@ I'm waiting until I decide if it's worth investing the significant time and effo
 <p>
 If I do add suppprt for concurrency, the implementation is likely to be influnced by the Go model.
 </p>
-<h3 id="formatted-string-interpolations">
-Formatted String Interpolations
-</h3>
-<p>
-Syntax will be:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="s">&quot;foo ${&lt;expression&gt;;&lt;format_specifier&gt;} bar&quot;</span>
-</pre>
-<p>
-For example:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="mf">456.789</span>
-<span class="k">echo</span> <span class="s">&quot;${foo;04i} and ${bar;.2f}&quot;</span><span class="p">;</span> <span class="c1"># &quot;0123 and 456.79&quot;</span>
-</pre>
         </article>
         
     </body>

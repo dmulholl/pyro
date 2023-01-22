@@ -26,20 +26,3 @@ Adding support for concurrency is on the very long finger.
 I'm waiting until I decide if it's worth investing the significant time and effort needed to do it right.
 
 If I do add suppprt for concurrency, the implementation is likely to be influnced by the Go model.
-
-
-
-### Formatted String Interpolations
-
-Syntax will be:
-
-::: code pyro
-    "foo ${<expression>;<format_specifier>} bar"
-
-For example:
-
-::: code pyro
-    var foo = 123;
-    var bar = 456.789
-    echo "${foo;04i} and ${bar;.2f}"; # "0123 and 456.79"
-
