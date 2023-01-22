@@ -7,7 +7,7 @@ meta_title: Pyro &mdash; String Formatting
 ::: hr
 
 
-Use the `$fmt()` function to interpolate values into a string:
+Use the `$fmt()` function to interpolate formatted values into a string:
 
 [[ `$fmt(format_string: str, arg1: any, arg2: any, ...) -> str` ]]
 
