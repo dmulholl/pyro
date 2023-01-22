@@ -70,9 +70,9 @@ Raw string literals ignore backslashed escapes. The only character a raw string 
 You can interpolate the value of an expression into a double-quoted string using `${}`, e.g.
 
 ::: code pyro
-    var value = "xxx";
-    assert "abc ${value} def" == `abc xxx def`;
-    assert "abc ${value:to_upper()} def" == `abc XXX def`;
+    var value = "xyz";
+    assert "abc ${value} def" == `abc xyz def`;
+    assert "abc ${value:to_upper()} def" == `abc XYZ def`;
 
 You can interpolate the value of any expression into a string using `${}`.
 If the value of the expression isn't a string, it will be automatically stringified --- this is equivalent to calling `$str()` on the value, e.g.
