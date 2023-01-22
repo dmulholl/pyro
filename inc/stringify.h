@@ -2,6 +2,7 @@
 #define pyro_stringify_h
 
 // Prints to an automatically-allocated, null-terminated array using printf-style formatting.
+// - [format_string] should be a C-style printf-compatible format string.
 // - Panics and returns NULL if a formatting error occurs.
 // - Panics ard returns NULL if memory allocation fails.
 // - If successful, the caller is responsible for freeing the returned array via:
@@ -11,6 +12,7 @@
 char* pyro_sprintf(PyroVM* vm, const char* format_string, ...);
 
 // Prints to a new PyroStr instance using printf-style formatting.
+// - [format_string] should be a C-style printf-compatible format string.
 // - Panics and returns NULL if a formatting error occurs.
 // - Panics ard returns NULL if memory allocation fails.
 PyroStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...);
@@ -34,8 +36,8 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value);
 // - This function can call into Pyro code and can therefore set the exit flag.
 // - The caller should check [vm->halt_flag] immediately on return before using the result.
 // - If [vm->halt_flag] is false the return value is safe to use.
-// - [format_string] must be non-NULL and non-zero-length.
-PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_string);
+// - [format_specifier] must be non-NULL and non-zero-length.
+PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_specifier);
 
 // Stringifies a double, stripping trailing zeros.
 // - Panics and returns NULL if an error occurs.

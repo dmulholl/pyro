@@ -173,6 +173,9 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_STRINGIFY:
             return atomic_instruction(vm, "STRINGIFY", ip);
 
+        case PYRO_OPCODE_FORMAT:
+            return atomic_instruction(vm, "FORMAT", ip);
+
         case PYRO_OPCODE_DUP_2:
             return atomic_instruction(vm, "DUP_2", ip);
         case PYRO_OPCODE_ECHO:

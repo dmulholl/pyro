@@ -1067,6 +1067,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_SET_LOCAL_8:
         case PYRO_OPCODE_SET_LOCAL_9:
         case PYRO_OPCODE_STRINGIFY:
+        case PYRO_OPCODE_FORMAT:
         case PYRO_OPCODE_LOAD_CONSTANT_0:
         case PYRO_OPCODE_LOAD_CONSTANT_1:
         case PYRO_OPCODE_LOAD_CONSTANT_2:

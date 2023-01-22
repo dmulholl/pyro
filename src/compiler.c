@@ -1160,11 +1160,34 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             if (parser->had_syntax_error || parser->had_memory_error) {
                 return TOKEN_UNDEFINED;
             }
-            emit_byte(parser, PYRO_OPCODE_STRINGIFY);
+
+            PyroOpCode stringify_opcode = PYRO_OPCODE_STRINGIFY;
+
+            if (check(parser, TOKEN_SEMICOLON)) {
+                parser->lexer.format_specifier_mode = true;
+                advance(parser);
+                parser->lexer.format_specifier_mode = false;
+
+                // The next token will be one of: TOKEN_FORMAT_SPECIFIER, TOKEN_ERROR.
+                if (!consume(parser, TOKEN_FORMAT_SPECIFIER, "expected format specifier after ';'")) {
+                    return TOKEN_UNDEFINED;
+                }
+
+                PyroStr* string = PyroStr_copy_raw(
+                    parser->previous_token.start,
+                    parser->previous_token.length,
+                    parser->vm
+                );
+
+                emit_load_value_from_constant_table(parser, pyro_obj(string));
+                stringify_opcode = PYRO_OPCODE_FORMAT;
+            }
+
+            emit_byte(parser, stringify_opcode);
             string_count++;
 
             parser->lexer.interpolated_string_mode = true;
-            if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after interpolated expression")) {
+            if (!consume(parser, TOKEN_RIGHT_BRACE, "expected closing '}' for interpolation element")) {
                 return TOKEN_UNDEFINED;
             }
             parser->lexer.interpolated_string_mode = false;

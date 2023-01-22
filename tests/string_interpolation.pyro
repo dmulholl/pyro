@@ -1,7 +1,8 @@
 var foo = "foo";
 var bar = "bar";
 var int = 123;
-var float = 123.456;
+var float = 1.23456;
+var char = 'z';
 
 class Object {
     pub var field = 123;
@@ -13,39 +14,45 @@ class Object {
     def $str() {
         return "OBJECT";
     }
+
+    def $fmt(format_specifier) {
+        return "<" + format_specifier + ">";
+    }
 }
 
 assert "" == ``;
 
 assert "\${" == `${`;
-assert "xxx \${ yyy" == `xxx ${ yyy`;
-assert "xxx \${} yyy" == `xxx ${} yyy`;
-assert "xxx \${foo} yyy" == `xxx ${foo} yyy`;
-assert "xxx \${foo}\${bar} yyy" == `xxx ${foo}${bar} yyy`;
+assert "abc \${ def" == `abc ${ def`;
+assert "abc \${} def" == `abc ${} def`;
+assert "abc \${foo} def" == `abc ${foo} def`;
+assert "abc \${foo}\${bar} def" == `abc ${foo}${bar} def`;
 
 assert "${foo}" == "foo";
-assert "xxx ${foo}" == "xxx foo";
-assert "${foo} yyy" == "foo yyy";
-assert "xxx ${foo} yyy" == "xxx foo yyy";
+assert "abc ${foo}" == "abc foo";
+assert "${foo} def" == "foo def";
+assert "abc ${foo} def" == "abc foo def";
 
 assert "${foo}${bar}" == "foobar";
-assert "xxx ${foo}${bar}" == "xxx foobar";
-assert "${foo}${bar} yyy" == "foobar yyy";
-assert "xxx ${foo}${bar} yyy" == "xxx foobar yyy";
-assert "xxx ${foo} yyy ${bar} zzz" == "xxx foo yyy bar zzz";
+assert "abc ${foo}${bar}" == "abc foobar";
+assert "${foo}${bar} def" == "foobar def";
+assert "abc ${foo}${bar} def" == "abc foobar def";
+assert "abc ${foo} def ${bar} zzz" == "abc foo def bar zzz";
 
 assert "\x61\x62\x63 ${foo} \x78\x79\x7A" == `abc foo xyz`;
 
 assert "${int}" == "123";
-assert "xxx ${int} yyy" == "xxx 123 yyy";
-assert "${float}" == "123.456";
-assert "xxx ${float} yyy" == "xxx 123.456 yyy";
-assert "xxx ${int} yyy ${float} zzz" == "xxx 123 yyy 123.456 zzz";
+assert "abc ${int} def" == "abc 123 def";
+assert "${float}" == "1.23456";
+assert "abc ${float} def" == "abc 1.23456 def";
+assert "${char}" == `z`;
+assert "abc ${char} def" == `abc z def`;
+assert "abc ${int} def ${float} ghi ${char} jkl" == "abc 123 def 1.23456 ghi z jkl";
 
 assert "${1 + 2}" == "3";
-assert "xxx ${1 + 2} yyy" == "xxx 3 yyy";
+assert "abc ${1 + 2} def" == "abc 3 def";
 assert "${int + 1}" == "124";
-assert "${float + 1}" == "124.456";
+assert "${float + 1}" == "2.23456";
 
 var obj = Object();
 assert "${obj.field}" == "123";
@@ -53,12 +60,14 @@ assert "${obj.field + 1}" == "124";
 assert "${obj:method()}" == "456";
 assert "${obj:method() + 1}" == "457";
 assert "${obj}" == `OBJECT`;
+assert "${obj;format_specifier}" == `<format_specifier>`;
 
 assert "${Object().field}" == "123";
 assert "${Object().field + 1}" == "124";
 assert "${Object():method()}" == "456";
 assert "${Object():method() + 1}" == "457";
 assert "${Object()}" == `OBJECT`;
+assert "${Object();format_specifier}" == `<format_specifier>`;
 
 var source_code_1 = `${}`;
 assert $is_err(try $exec(source_code_1));
@@ -109,3 +118,59 @@ def $test_interpolation_in_function() {
     var func_local = "foobar";
     assert "${func_local}" == "foobar";
 }
+
+# Try formatting an i64 with an invalid specifier.
+assert $is_err(try "${int;!!!}");
+
+# Format i64 as decimal.
+assert "${int;d}" == `123`;
+assert "${int;4d}" == ` 123`;
+assert "${int;04d}" == `0123`;
+
+# Format i64 as octal.
+assert "${int;o}" == `173`;
+assert "${int;4o}" == ` 173`;
+assert "${int;04o}" == `0173`;
+
+# Format i64 as lowercase hex.
+assert "${int;x}" == `7b`;
+assert "${int;4x}" == `  7b`;
+assert "${int;04x}" == `007b`;
+
+# Format i64 as uppercase hex.
+assert "${int;X}" == `7B`;
+assert "${int;4X}" == `  7B`;
+assert "${int;04X}" == `007B`;
+
+# Try formatting an f64 with an invalid specifier.
+assert $is_err(try "${float;!!!}");
+
+# Format f64.
+assert "${float;.2f}" == `1.23`;
+assert "${float;5.2f}" == ` 1.23`;
+assert "${float;05.2f}" == `01.23`;
+
+# Try formatting a char with an invalid specifier.
+assert $is_err(try "${char;!!!}");
+
+# Try formatting a char as an integer.
+assert "${char;d}" == `122`;
+assert "${char;o}" == `172`;
+assert "${char;x}" == `7a`;
+assert "${char;X}" == `7A`;
+assert "${char;04d}" == `0122`;
+assert "${char;04o}" == `0172`;
+assert "${char;04x}" == `007a`;
+assert "${char;04X}" == `007A`;
+
+# Try formatting a string with an invalid specifier.
+assert $is_err(try "${foo;!!!}");
+
+# Format a string.
+assert "${foo;5}" == `  foo`;
+assert "${foo;-5}" == `foo  `;
+
+# Test nested format specifiers.
+assert "${"${int;05d}";7}" == `  00123`;
+assert "abc|${"${int;05d}";7}|def" == `abc|  00123|def`;
+assert "abc|${"def-${int;05d}-ghi";15}|jkl" == `abc|  def-00123-ghi|jkl`;

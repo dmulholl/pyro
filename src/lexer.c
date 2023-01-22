@@ -391,8 +391,9 @@ static Token read_char_literal(Lexer* lexer) {
 }
 
 
-// We're already inside the string. The last token to be parsed was '}', closing an
-// ${interpolation} element. There are only three possible values we can return:
+// If this function is called, we're inside a double-quoted string containing ${} elements. The last
+// token to be parsed was '}', closing a ${} element. We want to parse the next string-fragment.
+// There are only three possible values we can return:
 // - TOKEN_STRING_FRAGMENT if we meet a ${
 // - TOKEN_STRING_FRAGMENT_FINAL if we meet a "
 // - TOKEN_ERROR if the string is unterminated
@@ -440,8 +441,41 @@ static Token next_interpolated_string_token(Lexer* lexer) {
 }
 
 
+// If this function is called, we're inside a ${expression;format_specifier} element. The last token
+// to be parsed was ';'. We want to parse the format specifier.
+static Token next_format_specifier_token(Lexer* lexer) {
+    while (!is_at_end(lexer)) {
+        char c = peek(lexer);
+
+        if (c == '}') {
+            return make_token(lexer, TOKEN_FORMAT_SPECIFIER);
+        }
+
+        if (c == '\n') {
+            lexer->line++;
+        }
+
+        next_char(lexer);
+    }
+
+    pyro_syntax_error(
+        lexer->vm,
+        lexer->src_id,
+        lexer->line,
+        "unterminated format specifier"
+    );
+
+    return make_error_token(lexer);
+}
+
+
 Token pyro_next_token(Lexer* lexer) {
     lexer->start = lexer->current;
+
+    if (lexer->format_specifier_mode) {
+        return next_format_specifier_token(lexer);
+    }
+
     if (lexer->interpolated_string_mode) {
         return next_interpolated_string_token(lexer);
     }
@@ -564,4 +598,5 @@ void pyro_init_lexer(Lexer* lexer, PyroVM* vm, const char* src_code, size_t src_
     lexer->vm = vm;
     lexer->src_id = src_id;
     lexer->interpolated_string_mode = false;
+    lexer->format_specifier_mode = false;
 }

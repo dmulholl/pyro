@@ -40,6 +40,7 @@ typedef enum {
     TOKEN_BINARY_INT,
     TOKEN_FLOAT,
     TOKEN_CHAR,
+    TOKEN_FORMAT_SPECIFIER,
     TOKEN_STRING_FRAGMENT,
     TOKEN_STRING_FRAGMENT_FINAL,
 
@@ -81,6 +82,7 @@ typedef struct {
     size_t line;
     const char* src_id;
     bool interpolated_string_mode;
+    bool format_specifier_mode;
     PyroVM* vm;
 } Lexer;
 

@@ -2322,6 +2322,21 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            case PYRO_OPCODE_FORMAT: {
+                PyroValue value = pyro_peek(vm, 1);
+                PyroValue format_string = pyro_peek(vm, 0);
+
+                PyroStr* string = pyro_format_value(vm, value, PYRO_AS_STR(format_string)->bytes);
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                pyro_pop(vm);
+                pyro_pop(vm);
+                pyro_push(vm, pyro_obj(string));
+                break;
+            }
+
             // There are [count] strings sitting on top of the stack. We want to concatenate them
             // into a single string, pop the input strings, and replace them with the result.
             case PYRO_OPCODE_CONCAT_STRINGS: {
