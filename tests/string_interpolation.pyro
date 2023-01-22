@@ -34,6 +34,8 @@ assert "${foo}${bar} yyy" == "foobar yyy";
 assert "xxx ${foo}${bar} yyy" == "xxx foobar yyy";
 assert "xxx ${foo} yyy ${bar} zzz" == "xxx foo yyy bar zzz";
 
+assert "\x61\x62\x63 ${foo} \x78\x79\x7A" == `abc foo xyz`;
+
 assert "${int}" == "123";
 assert "xxx ${int} yyy" == "xxx 123 yyy";
 assert "${float}" == "123.456";
