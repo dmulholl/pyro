@@ -13,10 +13,4 @@ def fib(n) {
 }
 ```
 
-To build the release binary run:
-
-    make release
-
-The binary will be created in a new `out` directory as `out/release/pyro`.
-
 See the [documentation][1] for details.
