@@ -1087,14 +1087,14 @@ PyroStr* pyro_format(PyroVM* vm, PyroStr* format_string, size_t arg_count, PyroV
                 specifier[specifier_count++] = format_string->bytes[format_string_index++];
             }
             if (format_string_index == format_string->length) {
-                pyro_panic(vm, "%s: invalid format string, missing closing '}'");
+                pyro_panic(vm, "%s: invalid format string, missing closing '}'", caller);
                 return NULL;
             }
             format_string_index++;
             specifier[specifier_count] = '\0';
 
             if (next_arg_index == arg_count) {
-                pyro_panic(vm, "%s: not enough arguments for format string");
+                pyro_panic(vm, "%s: not enough arguments for format string", caller);
                 return NULL;
             }
             PyroValue next_arg = args[next_arg_index++];
