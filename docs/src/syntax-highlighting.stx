@@ -1,0 +1,11 @@
+---
+title: Syntax Highlighting
+meta_title: Pyro &mdash; Syntax Highlighting
+---
+
+The Pyro GitHub repository contains a syntax-highlighting file for Vim, `etc/pyro.vim`.
+
+Copy the `etc/pyro.vim` file to your `~/.vim/syntax/` directory to enable syntax highlighting for Pyro in Vim, e.g.
+
+::: code
+    cp ./etc/pyro.vim ~/.vim/syntax/

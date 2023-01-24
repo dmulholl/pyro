@@ -11,6 +11,7 @@
 * [Tutorials](@root/tutorials//)
 * [Roadmap](@root/roadmap//)
 * [FAQ](@root/faq//)
+* [Syntax Highlighting](@root/syntax-highlighting//)
 * [Acknowledgements](@root/acknowledgements//)
 * [License](@root/license//)
 * [Github](https://github.com/dmulholl/pyro)

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Tutorials</title>
+        <title>Pyro &mdash; Syntax Highlighting</title>
         <link rel="stylesheet" href="assets/fonts.css">
         <link rel="stylesheet" href="assets/graphite.css">
         <link rel="stylesheet" href="assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-tutorials node">
+    <body class="node-syntax-highlighting node">
         <header class="masthead">
             <h1><a href="index.html">Pyro</a></h1>
             
@@ -50,22 +50,19 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>Tutorials</h1>
+                <h1>Syntax Highlighting</h1>
                 
                 <hr>
             </header>
-            <dl>
-<div>
-<dt>
-<a href="tutorials/linked-list-iterator.html">Linked List Iterator</a>
-</dt>
-<dd>
-<p>
-This tutorial demonstrates Pyro's iterator protocol by building an iterator for a custom linked-list type.
+            <p>
+The Pyro GitHub repository contains a syntax-highlighting file for Vim, <code>etc/pyro.vim</code>.
 </p>
-</dd>
-</div>
-</dl>
+<p>
+Copy the <code>etc/pyro.vim</code> file to your <code>~/.vim/syntax/</code> directory to enable syntax highlighting for Pyro in Vim, e.g.
+</p>
+<pre>
+cp ./etc/pyro.vim ~/.vim/syntax/
+</pre>
         </article>
         
     </body>
