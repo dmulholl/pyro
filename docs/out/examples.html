@@ -58,6 +58,9 @@
 <a href="#hello-world">Hello world</a>
 </li>
 <li>
+<a href="#string-interpolation">String Interpolation</a>
+</li>
+<li>
 <a href="#run-a-shell-command">Run a shell command</a>
 </li>
 <li>
@@ -86,13 +89,13 @@
 Hello world
 </h3>
 <p>
-You can <code>echo</code> any value to the standard output stream:
+You can <code>echo</code> any value to the standard output stream, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
 </pre>
 <p>
-The value doesn't have to be a string &mdash; <code>echo</code> <i>stringifies</i> the value before printing it:
+The value doesn't have to be a string &mdash; <code>echo</code> <i>stringifies</i> the value before printing it, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">echo</span> <span class="mi">123</span><span class="p">;</span>
@@ -102,20 +105,38 @@ This is equivalent to calling <code>$str()</code> on the value before printing i
 Note that <code>echo</code> automatically adds a newline character to the output.
 </p>
 <p>
-Pyro also has a family of <code>$print()</code>/<code>$println()</code> functions:
+Pyro also has <code>$print()</code>/<code>$println()</code> functions which print to the standard output stream, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">$print</span><span class="p">(</span><span class="s">&quot;hello world\n&quot;</span><span class="p">);</span>
 <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;hello world&quot;</span><span class="p">);</span>
 </pre>
 <p>
-You can use format strings with these functions to interpolate variables:
+The only difference between <code>$print()</code> and <code>$println()</code> is that <code>$println()</code> automatically adds a newline character to the output.
+</p>
+<p>
+Pyro also has <code>$eprint()</code>/<code>$eprintln()</code> functions which print to the standard error stream.
+</p>
+<h3 id="string-interpolation">
+String Interpolation
+</h3>
+<p>
+You can interpolate the value of an expression into a double-quoted string using <code>${}</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">target</span> <span class="p">=</span> <span class="s">&quot;world&quot;</span><span class="p">;</span>
-<span class="nx">$println</span><span class="p">(</span><span class="s">&quot;hello {}&quot;</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc xyz def`</span><span class="p">;</span>
 </pre>
 <p>
-The only difference between <code>$print()</code> and <code>$println()</code> is that <code>$println()</code> automatically adds a newline character to the output.
+The value doesn't have to be a string &mdash; if it isn't a string, it will be automatically <i>stringified</i>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc 123 def`</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value + 1} def&quot;</span> <span class="o">==</span> <span class="s">`abc 124 def`</span><span class="p">;</span>
+</pre>
+<p>
+See the <a href="features/formatting.html">string formatting</a> documentation for details.
 </p>
 <h3 id="run-a-shell-command">
 Run a shell command

@@ -8,12 +8,12 @@ meta_title: Pyro &mdash; Examples
 
 ### Hello world
 
-You can `echo` any value to the standard output stream:
+You can `echo` any value to the standard output stream, e.g.
 
 ::: code pyro
     echo "hello world";
 
-The value doesn't have to be a string --- `echo` *stringifies* the value before printing it:
+The value doesn't have to be a string --- `echo` *stringifies* the value before printing it, e.g.
 
 ::: code pyro
     echo 123;
@@ -21,18 +21,34 @@ The value doesn't have to be a string --- `echo` *stringifies* the value before 
 This is equivalent to calling `$str()` on the value before printing it.
 Note that `echo` automatically adds a newline character to the output.
 
-Pyro also has a family of `$print()`/`$println()` functions:
+Pyro also has `$print()`/`$println()` functions which print to the standard output stream, e.g.
 
 ::: code pyro
+    $print("hello world\n");
     $println("hello world");
 
-You can use format strings with these functions to interpolate variables:
+The only difference between `$print()` and `$println()` is that `$println()` automatically adds a newline character to the output.
+
+Pyro also has `$eprint()`/`$eprintln()` functions which print to the standard error stream.
+
+
+
+### String Interpolation
+
+You can interpolate the value of an expression into a double-quoted string using `${}`, e.g.
 
 ::: code pyro
-    var target = "world";
-    $println("hello {}", target);
+    var value = "xyz";
+    assert "abc ${value} def" == `abc xyz def`;
 
-The only difference between `$print()` and `$println()` is that `$println()` automatically adds a newline character to the output.
+The value doesn't have to be a string --- if it isn't a string, it will be automatically *stringified*, e.g.
+
+::: code pyro
+    var value = 123;
+    assert "abc ${value} def" == `abc 123 def`;
+    assert "abc ${value + 1} def" == `abc 124 def`;
+
+See the [string formatting](@root/features/formatting//) documentation for details.
 
 
 
