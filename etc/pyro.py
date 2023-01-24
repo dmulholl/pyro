@@ -5,6 +5,10 @@
 # 2. cd pygments/formatters && python _mapping.py
 # 3. cd pygments/lexers && python _mapping.py
 
+# This works with pygments 2.12.0, breaks with later point releases.
+# Use:
+#   pip install pygments==2.12.0
+
 import re
 
 from pygments.lexer import RegexLexer, words
