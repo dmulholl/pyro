@@ -642,7 +642,7 @@ Class definitions look like this:
     <span class="p">}</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">$println</span><span class="p">(</span><span class="s">&quot;{} is a {}.&quot;</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">role</span><span class="p">);</span>
+        <span class="k">echo</span> <span class="s">&quot;${self.name} is a ${self.role}.&quot;</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre>
@@ -653,7 +653,7 @@ Create an instance of a class by calling its name:
 <span class="cp">&gt;&gt;&gt;</span> <span class="kd">var</span> <span class="nx">dave</span> <span class="p">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
 </pre>
 <p>
-Arguments are passed on to the optional initializer method, <code>$init()</code>.
+Arguments are passed to the optional initializer method, <code>$init()</code>.
 </p>
 <p>
 Call a method on an instance using the method access operator, <code>:</code>:
@@ -848,7 +848,7 @@ You can unpack the values of a tuple or vector in a <code>var</code> declaration
 <span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
 </pre>
 <p>
-Similarly, you can unpack the loop variable of a <code>for</code> loop:
+Similarly, you can unpack the loop variable of a <code>for</code> loop if it's a tuple or vector, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span>
@@ -861,6 +861,9 @@ Similarly, you can unpack the loop variable of a <code>for</code> loop:
     <span class="k">echo</span> <span class="nx">value</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
+<p>
+(Iterating over a <code>map</code> returns <code>(key, value)</code> tuples.)
+</p>
 <p>
 You can discard unwanted values by assigning them to the unnamed variable <code>_</code>, e.g.
 </p>

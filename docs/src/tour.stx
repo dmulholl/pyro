@@ -413,7 +413,7 @@ Class definitions look like this:
         }
 
         pub def info() {
-            $println("{} is a {}.", self.name, self.role);
+            echo "${self.name} is a ${self.role}.";
         }
     }
 
@@ -422,7 +422,7 @@ Create an instance of a class by calling its name:
 ::: code pyro
     >>> var dave = Person("Dave");
 
-Arguments are passed on to the optional initializer method, `$init()`.
+Arguments are passed to the optional initializer method, `$init()`.
 
 Call a method on an instance using the method access operator, `:`:
 
@@ -593,7 +593,7 @@ You can unpack the values of a tuple or vector in a `var` declaration using the 
     assert bar == 456;
     assert baz == 789;
 
-Similarly, you can unpack the loop variable of a `for` loop:
+Similarly, you can unpack the loop variable of a `for` loop if it's a tuple or vector, e.g.
 
 ::: code pyro
     var map = {
@@ -605,6 +605,8 @@ Similarly, you can unpack the loop variable of a `for` loop:
         echo key;
         echo value;
     }
+
+(Iterating over a `map` returns `(key, value)` tuples.)
 
 You can discard unwanted values by assigning them to the unnamed variable `_`, e.g.
 
