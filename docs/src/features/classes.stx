@@ -34,7 +34,7 @@ Create an instance of a class by calling its name:
 ::: code pyro
     var dave = Person("Dave");
 
-Arguments are passed on to the optional `$init()` method.
+Arguments are passed to the optional `$init()` method.
 
 
 
