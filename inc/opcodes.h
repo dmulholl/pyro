@@ -150,6 +150,6 @@ typedef enum {
     PYRO_OPCODE_UNARY_PLUS,
     PYRO_OPCODE_UNARY_TILDE,
     PYRO_OPCODE_UNPACK,
-} PyroOpCode;
+} PyroOpcode;
 
 #endif
