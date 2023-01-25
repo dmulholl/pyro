@@ -406,7 +406,7 @@ String arguments can contain underscores and can begin with <code>0b</code>, <co
 </div>
 <div>
 <dt>
-<code>$input() -&gt; str?</code>
+<code>$input() -&gt; str?</code> <br> <code>$input(prompt: str) -&gt; str?</code>
 </dt>
 <dd>
 <p>
@@ -417,7 +417,7 @@ Strips the terminating <code>\n</code> or <code>\r\n</code> if present.
 Returns <code>null</code> if the end of the stream had already been reached.
 </p>
 <p>
-Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+If <code>prompt</code> is specified, this string will be printed to the standard output stream before reading the input.
 </p>
 </dd>
 </div>

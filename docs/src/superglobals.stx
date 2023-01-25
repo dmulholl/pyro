@@ -211,14 +211,14 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$input() -> str?` ]]
+[[ `$input() -> str?` <br> `$input(prompt: str) -> str?` ]]
 
     Reads the next line of input from the standard input stream and returns it as a string.
     Strips the terminating `\n` or `\r\n` if present.
 
     Returns `null` if the end of the stream had already been reached.
 
-    Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+    If `prompt` is specified, this string will be printed to the standard output stream before reading the input.
 
 
 

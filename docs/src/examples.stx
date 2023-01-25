@@ -97,14 +97,13 @@ Read a sequence of lines in a loop from the standard input stream:
 
 ::: code pyro
     loop {
-        $print(">>> ");
-        var line = $input();
+        var line = $input(">>> ");
 
         if line == null || line == "exit" {
             break;
         }
 
-        echo "input was: " + line;
+        echo line;
     }
 
 The `$input()` function is provided for simple use-cases. You can also access the standard input stream as a `file` using the `$stdin()` function, e.g.
@@ -151,12 +150,12 @@ This is a convenience function --- a `file` object provides more fine-grained co
 The classic guess-a-random-number game:
 
 ::: code pyro
-    var target = $std::prng::rand_int(10) + 1;
+    import $std::prng;
+
+    var target = prng::rand_int(10) + 1;
 
     loop {
-        $print("Enter a number between 1 and 10: ");
-
-        var guess = $input();
+        var guess = $input("Enter a number between 1 and 10: ");
         if guess == null || guess == "exit" {
             break;
         }
@@ -164,9 +163,9 @@ The classic guess-a-random-number game:
         if guess == $str(target) {
             echo "Correct!";
             break;
-        } else {
-            echo "Wrong! Try again...";
         }
+
+        echo "Wrong! Try again...";
     }
 
 
