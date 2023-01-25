@@ -2,7 +2,7 @@ assert $is_err("foobar") == false;
 
 var foo = $err();
 assert $is_err(foo);
-assert $str(foo) == "";
+assert $str(foo) == `<err>`;
 assert $debug(foo) == `<err "">`;
 assert foo == foo;
 assert foo != $err();

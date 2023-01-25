@@ -574,6 +574,9 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 
         case PYRO_OBJECT_ERR: {
             PyroErr* err = (PyroErr*)object;
+            if (err->message == NULL || err->message->length == 0) {
+                return pyro_sprintf_to_obj(vm, "<err>");
+            }
             return err->message;
         }
 
@@ -781,6 +784,9 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
 
     if (PYRO_IS_ERR(value)) {
         PyroErr* err = PYRO_AS_ERR(value);
+        if (err->message == NULL || err->message->length == 0) {
+            return pyro_sprintf_to_obj(vm, "<err \"\">");
+        }
         PyroStr* debug_message = make_debug_string_for_string(vm, err->message);
         if (!debug_message) {
             return NULL;

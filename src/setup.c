@@ -162,11 +162,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     // Canned objects.
     vm->empty_string = PyroStr_empty(vm);
     vm->error = PyroErr_new(vm);
-    if (!vm->error) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-    vm->error->message = PyroStr_new("error", vm);
 
     // Static strings.
     vm->str_dollar_init = PyroStr_new("$init", vm);
