@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.4.3
+" v0.4.4
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -13,11 +13,10 @@ syn region pyroDoubleQuotedString start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=py
 syn region pyroChar start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=pyroEscaped
 
 " Escapes inside string literals.
-syn match pyroEscaped +\\[$abfnrtv'"\\]+ contained
-syn match pyroEscaped "\\\o\{1,3}" contained
-syn match pyroEscaped "\\x\x\{2}" contained
-syn match pyroEscaped "\%(\\u\x\{4}\|\\U\x\{8}\)" contained
-syn match pyroEscaped /${[_$a-zA-Z0-9 .,:;(){}'"-]\+}/ contained
+syn match pyroEscaped #\\[0befnrtv$'"\\]# contained
+syn match pyroEscaped #\\x\x\{2}# contained
+syn match pyroEscaped #\%(\\u\x\{4}\|\\U\x\{8}\)# contained
+syn match pyroEscaped #${[_$a-zA-Z0-9 .,:;(){}\[\]`'"!&|^*/%+-]\+}# contained
 
 " Keywords.
 syn keyword pyroKeyword var def class typedef with
