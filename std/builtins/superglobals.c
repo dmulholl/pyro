@@ -762,8 +762,22 @@ static PyroValue fn_is_null(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_input(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroFile* file = vm->stdin_file;
+    if (arg_count > 1) {
+        pyro_panic(vm, "$input(): expected 0 or 1 arguments, found %zu", arg_count);
+        return pyro_null();
+    }
 
+    if (arg_count == 1) {
+        if (!PYRO_IS_STR(args[0])) {
+            pyro_panic(vm, "$input(): invalid argument [prompt], expected a string");
+            return pyro_null();
+        }
+        PyroStr* prompt = PYRO_AS_STR(args[0]);
+        pyro_stdout_write_s(vm, prompt);
+        pyro_stdout_flush(vm);
+    }
+
+    PyroFile* file = vm->stdin_file;
     PyroStr* string = PyroFile_read_line(file, vm);
     if (vm->halt_flag) {
         return pyro_null();
@@ -1050,7 +1064,7 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_global_fn(vm, "$has_method", fn_has_method, 2);
     pyro_define_global_fn(vm, "$hash", fn_hash, 1);
     pyro_define_global_fn(vm, "$i64", fn_i64, 1);
-    pyro_define_global_fn(vm, "$input", fn_input, 0);
+    pyro_define_global_fn(vm, "$input", fn_input, -1);
     pyro_define_global_fn(vm, "$is_bool", fn_is_bool, 1);
     pyro_define_global_fn(vm, "$is_callable", fn_is_callable, 1);
     pyro_define_global_fn(vm, "$is_class", fn_is_class, 1);

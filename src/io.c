@@ -61,6 +61,13 @@ int64_t pyro_stdout_write_fv(PyroVM* vm, const char* format_string, va_list args
 }
 
 
+void pyro_stdout_flush(PyroVM* vm) {
+    if (vm->stdout_file && vm->stdout_file->stream) {
+        fflush(vm->stdout_file->stream);
+    }
+}
+
+
 int64_t pyro_stderr_write(PyroVM* vm, const char* string) {
     return pyro_write_n(vm, vm->stderr_file, string, strlen(string));
 }
@@ -87,4 +94,11 @@ int64_t pyro_stderr_write_f(PyroVM* vm, const char* format_string, ...) {
 
 int64_t pyro_stderr_write_fv(PyroVM* vm, const char* format_string, va_list args) {
     return pyro_write_fv(vm, vm->stderr_file, format_string, args);
+}
+
+
+void pyro_stderr_flush(PyroVM* vm) {
+    if (vm->stderr_file && vm->stderr_file->stream) {
+        fflush(vm->stderr_file->stream);
+    }
 }
