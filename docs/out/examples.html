@@ -59,7 +59,7 @@
 <a href="#hello-world">Hello world</a>
 </li>
 <li>
-<a href="#string-interpolation">String Interpolation</a>
+<a href="#string-interpolation">String interpolation</a>
 </li>
 <li>
 <a href="#run-a-shell-command">Run a shell command</a>
@@ -119,7 +119,7 @@ The only difference between <code>$print()</code> and <code>$println()</code> is
 Pyro also has <code>$eprint()</code>/<code>$eprintln()</code> functions which print to the standard error stream.
 </p>
 <h3 id="string-interpolation">
-String Interpolation
+String interpolation
 </h3>
 <p>
 You can interpolate the value of an expression into a double-quoted string using <code>${}</code>, e.g.
@@ -127,6 +127,7 @@ You can interpolate the value of an expression into a double-quoted string using
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc xyz def`</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc ${value:to_upper()} def&quot;</span> <span class="o">==</span> <span class="s">`abc XYZ def`</span><span class="p">;</span>
 </pre>
 <p>
 The value doesn't have to be a string &mdash; if it isn't a string, it will be automatically <i>stringified</i>, e.g.
@@ -199,11 +200,10 @@ Read a sequence of lines in a loop from the standard input stream:
 <span class="p">}</span>
 </pre>
 <p>
-The global <code>$input()</code> function is provided for simple use-cases. You can also access the standard input stream as a <code>file</code>:
+The <code>$input()</code> function is provided for simple use-cases. You can also access the standard input stream as a <code>file</code> using the <code>$stdin()</code> function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">stdin</span> <span class="p">=</span> <span class="nx">$std</span><span class="p">::</span><span class="nx">pyro</span><span class="p">::</span><span class="nx">stdin</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">input</span> <span class="p">=</span> <span class="nx">stdin</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">input</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">():</span><span class="nx">read_string</span><span class="p">();</span>
 </pre>
 <h3 id="reading-from-a-file">
 Reading from a file
