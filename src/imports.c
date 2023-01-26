@@ -93,7 +93,7 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
 
 
 void try_load_compiled_module(PyroVM* vm, const char* path, PyroValue name, PyroMod* module) {
-    pyro_load_dyn_lib_as_mod(vm, path, PYRO_AS_STR(name)->bytes, module);
+    pyro_dlopen_as_module(vm, path, PYRO_AS_STR(name)->bytes, module);
 }
 
 

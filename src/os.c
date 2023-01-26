@@ -418,7 +418,7 @@ bool pyro_exec_shell_cmd(
 }
 
 
-void pyro_load_dyn_lib_as_mod(PyroVM* vm, const char* path, const char* mod_name, PyroMod* module) {
+void pyro_dlopen_as_module(PyroVM* vm, const char* path, const char* mod_name, PyroMod* module) {
     void* handle = dlopen(path, RTLD_NOW);
     if (!handle) {
         pyro_panic(vm, "failed to load module: %s: %s", path, dlerror());
