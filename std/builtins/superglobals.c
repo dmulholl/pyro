@@ -1039,7 +1039,6 @@ static PyroValue fn_stdin(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 void pyro_load_std_builtins(PyroVM* vm) {
-    pyro_define_module_1(vm, "$std");
     pyro_define_global(vm, "$roots", pyro_obj(vm->import_roots));
 
     PyroTup* args = PyroTup_new(0, vm);

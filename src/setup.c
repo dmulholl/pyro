@@ -239,7 +239,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
         return NULL;
     }
 
-    // Load the core standard library -- superglobal functions and builtin types.
+    // Load builtins.
     pyro_load_std_builtins(vm);
     pyro_load_std_builtins_map(vm);
     pyro_load_std_builtins_vec(vm);
@@ -254,6 +254,24 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     pyro_load_std_builtins_char(vm);
 
     if (vm->memory_allocation_failed) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
+    // Create the root standard library module.
+    PyroMod* module = PyroMod_new(vm);
+    if (!module) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
+    PyroStr* name = PyroStr_new("$std", vm);
+    if (!name) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
+    if (!PyroMap_set(vm->modules, pyro_obj(name), pyro_obj(module), vm)) {
         pyro_free_vm(vm);
         return NULL;
     }
@@ -279,100 +297,6 @@ void pyro_free_vm(PyroVM* vm) {
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);
-}
-
-
-PyroMod* pyro_define_module_1(PyroVM* vm, const char* name) {
-    PyroStr* name_string = PyroStr_new(name, vm);
-    if (!name_string) {
-        return NULL;
-    }
-
-    PyroMod* module = PyroMod_new(vm);
-    if (!module) {
-        return NULL;
-    }
-
-    if (PyroMap_set(vm->modules, pyro_obj(name_string), pyro_obj(module), vm) == 0) {
-        return NULL;
-    }
-
-    return module;
-}
-
-
-PyroMod* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name) {
-    PyroStr* parent_string = PyroStr_new(parent, vm);
-    if (!parent_string) {
-        return NULL;
-    }
-
-    PyroValue parent_module;
-    if (!PyroMap_get(vm->modules, pyro_obj(parent_string), &parent_module, vm)) {
-        assert(false);
-        return NULL;
-    }
-
-    PyroStr* name_string = PyroStr_new(name, vm);
-    if (!name_string) {
-        return NULL;
-    }
-    PyroValue name_value = pyro_obj(name_string);
-
-    PyroMod* module_object = PyroMod_new(vm);
-    if (!module_object) {
-        return NULL;
-    }
-    PyroValue module_value = pyro_obj(module_object);
-
-    if (PyroMap_set(PYRO_AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
-        return NULL;
-    }
-
-    return module_object;
-}
-
-
-PyroMod* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name) {
-    PyroStr* grandparent_string = PyroStr_new(parent, vm);
-    if (!grandparent_string) {
-        return NULL;
-    }
-
-    PyroValue grandparent_module;
-    if (!PyroMap_get(vm->modules, pyro_obj(grandparent_string), &grandparent_module, vm)) {
-        assert(false);
-        return NULL;
-    }
-
-    PyroStr* parent_string = PyroStr_new(parent, vm);
-    if (!parent_string) {
-        return NULL;
-    }
-
-    PyroValue parent_module;
-    if (!PyroMap_get(PYRO_AS_MOD(grandparent_module)->submodules, pyro_obj(parent_string), &parent_module, vm)) {
-        assert(false);
-        return NULL;
-    }
-
-    PyroStr* name_string = PyroStr_new(name, vm);
-    if (!name_string) {
-        return NULL;
-    }
-    PyroValue name_value = pyro_obj(name_string);
-
-    PyroMod* module_object = PyroMod_new(vm);
-    if (!module_object) {
-        return NULL;
-    }
-    PyroValue module_value = pyro_obj(module_object);
-
-    if (PyroMap_set(PYRO_AS_MOD(parent_module)->submodules, name_value, module_value, vm) == 0) {
-        return NULL;
-    }
-
-    return module_object;
 }
 
 

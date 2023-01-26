@@ -74,17 +74,6 @@ bool pyro_define_pub_field(PyroVM* vm, PyroClass* class, const char* name, PyroV
 // Adds a new private field to the class. Returns true on success, false if memory could not be allocated.
 bool pyro_define_pri_field(PyroVM* vm, PyroClass* class, const char* name, PyroValue default_value);
 
-// Creates a new top-level module. Returns the module or NULL if memory allocation fails.
-PyroMod* pyro_define_module_1(PyroVM* vm, const char* name);
-
-// Defines a new 2nd level module where [parent] is a top-level module.
-// Returns the module or NULL if memory allocation fails.
-PyroMod* pyro_define_module_2(PyroVM* vm, const char* parent, const char* name);
-
-// Defines a new 3rd level module where [grandparent] is a top-level module and [parent] is a
-// submodule of [grandparent]. Returns the module or NULL if memory allocation fails.
-PyroMod* pyro_define_module_3(PyroVM* vm, const char* grandparent, const char* parent, const char* name);
-
 // Sets the value of the VM's REPL flag.
 void pyro_set_repl_flag(PyroVM* vm, bool flag);
 
