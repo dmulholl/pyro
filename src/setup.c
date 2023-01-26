@@ -265,13 +265,25 @@ PyroVM* pyro_new_vm(size_t stack_size) {
         return NULL;
     }
 
-    PyroStr* name = PyroStr_new("$std", vm);
+    PyroStr* name = PyroStr_new("std", vm);
     if (!name) {
         pyro_free_vm(vm);
         return NULL;
     }
 
     if (!PyroMap_set(vm->modules, pyro_obj(name), pyro_obj(module), vm)) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
+    // Temporarily support "$std" as an alias.
+    PyroStr* temp_name = PyroStr_new("$std", vm);
+    if (!temp_name) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
+    if (!PyroMap_set(vm->modules, pyro_obj(temp_name), pyro_obj(module), vm)) {
         pyro_free_vm(vm);
         return NULL;
     }

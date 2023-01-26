@@ -98,6 +98,11 @@ void try_load_compiled_module(PyroVM* vm, const char* path, PyroValue name, Pyro
 
 
 void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
+    if (arg_count == 2 && strcmp(PYRO_AS_STR(args[0])->bytes, "std") == 0) {
+        try_load_stdlib_module(vm, PYRO_AS_STR(args[1]), module);
+        return;
+    }
+
     if (arg_count == 2 && strcmp(PYRO_AS_STR(args[0])->bytes, "$std") == 0) {
         try_load_stdlib_module(vm, PYRO_AS_STR(args[1]), module);
         return;
