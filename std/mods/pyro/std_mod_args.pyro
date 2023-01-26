@@ -202,23 +202,25 @@ pub class ArgParser {
     #  Parsing machinery.  #
     # -------------------- #
 
-    pub def parse() -> err? {
+    pub def parse() -> ArgParser|err {
         if $args:count() > 1 {
             var args = $args:slice(1);
             return self:parse_args(args);
         }
+        return self;
     }
 
-    pub def parse_args(args: vec[str]|tup[str]) -> err? {
-        var stream = ArgStream(args);
-        var result = try self:parse_stream(stream);
-        if $is_err(result) {
+    pub def parse_args(args: vec[str]|tup[str]) -> ArgParser|err {
+        var arg_stream = ArgStream(args);
+
+        if var result = try self:parse_stream(arg_stream); $is_err(result) {
             if self.exit_on_error {
                 self:exit_with_error(result);
-            } else {
-                return result;
             }
+            return result;
         }
+
+        return self;
     }
 
     def parse_stream(stream: ArgStream) {
