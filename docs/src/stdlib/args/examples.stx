@@ -34,7 +34,7 @@ Here's an example of a simple argument parser:
     # Dump the parser to stdout.
     parser:print();
 
-Note that we can chain the calls to `helptext()`, `version()`,  `flag()` and `option()`, e.g.
+Note that we can chain the calls to `helptext()`, `version()`,  `flag()`, `option()`, and `parse()`, e.g.
 
 ::: code pyro
     var parser = args::ArgParser()
@@ -42,7 +42,8 @@ Note that we can chain the calls to `helptext()`, `version()`,  `flag()` and `op
         :version("1.0")
         :flag("flag f")
         :option("name n")
-        :option("count c", 0, $i64);
+        :option("count c", 0, $i64)
+        :parse();
 
 
 
@@ -82,7 +83,7 @@ Here's an example of an argument parser that registers a command:
     # Dump the parser to stdout.
     parser:print();
 
-Note that we can chain the calls to `helptext()`, `flag()`, `option()`, and `callback()`, e.g.
+Note that we can chain the calls to the command parser's `helptext()`, `flag()`, `option()`, and `callback()` methods, e.g.
 
 ::: code pyro
     var cmd_parser = parser:command("boo")

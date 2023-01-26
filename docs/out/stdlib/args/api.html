@@ -232,11 +232,12 @@ Call the <code>:parse()</code> method on the root <code>ArgParser</code> instanc
 <dl>
 <div>
 <dt>
-<code>:parse() -&gt; err?</code>
+<code>:parse() -&gt; ArgParser|err</code>
 </dt>
 <dd>
 <p>
 Parses the program's command line arguments.
+Returns the parser to enable chaining.
 </p>
 <ul>
 <li>

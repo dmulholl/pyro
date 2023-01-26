@@ -86,9 +86,10 @@ You can register flags and options on an `ArgParser` using the methods below:
 
 Call the `:parse()` method on the root `ArgParser` instance to parse the program's command line arguments:
 
-[[ `:parse() -> err?` ]]
+[[ `:parse() -> ArgParser|err` ]]
 
     Parses the program's command line arguments.
+    Returns the parser to enable chaining.
 
     * If `exit_on_error` is `true`, exits with an error message for the user if the command line arguments are invalid.
 
