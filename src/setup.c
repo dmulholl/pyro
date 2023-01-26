@@ -259,31 +259,31 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     }
 
     // Create the root standard library module.
-    PyroMod* module = PyroMod_new(vm);
-    if (!module) {
+    PyroMod* std_mod = PyroMod_new(vm);
+    if (!std_mod) {
         pyro_free_vm(vm);
         return NULL;
     }
 
-    PyroStr* name = PyroStr_new("std", vm);
-    if (!name) {
+    PyroStr* std_mod_name = PyroStr_new("std", vm);
+    if (!std_mod_name) {
         pyro_free_vm(vm);
         return NULL;
     }
 
-    if (!PyroMap_set(vm->modules, pyro_obj(name), pyro_obj(module), vm)) {
+    if (!PyroMap_set(vm->modules, pyro_obj(std_mod_name), pyro_obj(std_mod), vm)) {
         pyro_free_vm(vm);
         return NULL;
     }
 
-    // Temporarily support "$std" as an alias.
-    PyroStr* temp_name = PyroStr_new("$std", vm);
-    if (!temp_name) {
+    // Temporarily support "$std" as an alias for backwards compatibility.
+    PyroStr* std_mod_alias = PyroStr_new("$std", vm);
+    if (!std_mod_alias) {
         pyro_free_vm(vm);
         return NULL;
     }
 
-    if (!PyroMap_set(vm->modules, pyro_obj(temp_name), pyro_obj(module), vm)) {
+    if (!PyroMap_set(vm->modules, pyro_obj(std_mod_alias), pyro_obj(std_mod), vm)) {
         pyro_free_vm(vm);
         return NULL;
     }
