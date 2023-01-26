@@ -150,7 +150,7 @@ This is a convenience function --- a `file` object provides more fine-grained co
 The classic guess-a-random-number game:
 
 ::: code pyro
-    import $std::prng;
+    import std::prng;
 
     var target = prng::rand_int(10) + 1;
 

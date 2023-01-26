@@ -33,7 +33,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 ### Functions
 
 
-[[ `$(cmd: str) -> str` ]]
+[[ `$(command: str) -> str` ]]
 
     Runs a shell command and returns its output as a string.
 
@@ -478,7 +478,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$shell(cmd: str) -> tup[i64, str, str]` <br> `$shell(cmd: str, input: str|buf) -> tup[i64, str, str]` ]]
+[[ `$shell(command: str) -> tup[i64, str, str]` <br> `$shell(command: str, input: str|buf) -> tup[i64, str, str]` ]]
 
     Runs a shell command.
 

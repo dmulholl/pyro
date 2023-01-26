@@ -1,6 +1,6 @@
 ---
-title: <code>$std::sqlite</code>
-meta_title: Pyro Standard Library &mdash; $std::sqlite
+title: <code>std::sqlite</code>
+meta_title: Pyro Standard Library &mdash; std::sqlite
 ---
 
 [1]: https://sqlite.org/

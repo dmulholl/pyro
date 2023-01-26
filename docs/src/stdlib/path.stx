@@ -1,6 +1,6 @@
 ---
-title: <code>$std::path</code>
-meta_title: Pyro Standard Library &mdash; $std::path
+title: <code>std::path</code>
+meta_title: Pyro Standard Library &mdash; std::path
 ---
 
 This module contains filepath utilities.

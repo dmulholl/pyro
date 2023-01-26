@@ -1,6 +1,6 @@
 ---
-title: <code>$std::json</code>
-meta_title: Pyro Standard Library &mdash; $std::json
+title: <code>std::json</code>
+meta_title: Pyro Standard Library &mdash; std::json
 ---
 
 This module contains utility functions for working with JSON.

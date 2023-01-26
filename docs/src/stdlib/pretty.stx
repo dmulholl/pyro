@@ -1,6 +1,6 @@
 ---
-title: <code>$std::pretty</code>
-meta_title: Pyro Standard Library &mdash; $std::pretty
+title: <code>std::pretty</code>
+meta_title: Pyro Standard Library &mdash; std::pretty
 ---
 
 Pretty-printing for Pyro values.

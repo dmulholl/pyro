@@ -1,6 +1,6 @@
 ---
-title: <code>$std::math</code>
-meta_title: Pyro Standard Library &mdash; $std::math
+title: <code>std::math</code>
+meta_title: Pyro Standard Library &mdash; std::math
 ---
 
 This module provides a Pyro interface to the C standard library's mathematical functions.

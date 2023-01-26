@@ -4,10 +4,10 @@ meta_title: The Pyro Standard Library
 ---
 
 The standard library is a collection of modules built into the Pyro binary.
-All standard library modules are submodules of the root module `$std`.
+All standard library modules are submodules of the root module `std`.
 
 ::: code pyro
-    import $std::math;
+    import std::math;
     assert math::abs(-1) == 1;
 
 

@@ -1,6 +1,6 @@
 ---
-title: <code>$std::mt64</code>
-meta_title: Pyro Standard Library &mdash; $std::mt64
+title: <code>std::mt64</code>
+meta_title: Pyro Standard Library &mdash; std::mt64
 ---
 
 [1]: https://en.wikipedia.org/wiki/Mersenne_Twister

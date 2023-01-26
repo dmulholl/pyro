@@ -1,6 +1,6 @@
 ---
-title: <code>$std::args</code>
-meta_title: Pyro Standard Library &mdash; $std::args
+title: <code>std::args</code>
+meta_title: Pyro Standard Library &mdash; std::args
 ---
 
 A library for parsing command line arguments.

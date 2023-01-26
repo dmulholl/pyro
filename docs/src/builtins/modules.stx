@@ -6,7 +6,7 @@ meta_title: Pyro &mdash; Modules
 A module object, `mod`, is created when you import a Pyro source file using an `import` statement, e.g.
 
 ::: code pyro
-    import $std::math;
+    import std::math;
     assert $is_mod(math);
 
 A module object can also be created by executing a string of source code using the `$exec()` function, e.g.

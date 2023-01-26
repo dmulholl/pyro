@@ -1,6 +1,6 @@
 ---
 title: Quickstart Tutorial
-meta_title: Quickstart &mdash; $std::args
+meta_title: Quickstart &mdash; std::args
 ---
 
 Imagine we're building a utility for joining MP3 files.
@@ -10,7 +10,7 @@ We also want to support an `--out/-o` option so the user can specify an output f
 First we need to create an `ArgParser` instance:
 
 ::: code pyro
-    import $std::args;
+    import std::args;
 
     var parser = args::ArgParser();
     parser:helptext("Usage: mp3cat...");

@@ -1,6 +1,6 @@
 ---
 title: Command Line Interface
-meta_title: CLI &mdash; $std::args
+meta_title: CLI &mdash; std::args
 ---
 
 ::: insert toc

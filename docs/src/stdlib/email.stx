@@ -1,6 +1,6 @@
 ---
-title: <code>$std::email</code>
-meta_title: Pyro Standard Library &mdash; $std::email
+title: <code>std::email</code>
+meta_title: Pyro Standard Library &mdash; std::email
 ---
 
 A utility module for sending email. Uses the system's `sendmail` command.
@@ -10,7 +10,7 @@ A utility module for sending email. Uses the system's `sendmail` command.
 ### Example
 
 ::: code pyro
-    import $std::email;
+    import std::email;
 
     # Create a new email.
     var mail = email::Email();

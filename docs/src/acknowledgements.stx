@@ -17,7 +17,7 @@ As Pyro develops it will incorporate code from external libraries and projects r
 
 (*) Many of the implementation's core mechanics were adapted from or inspired by *Lox*, the sample language from Bob Nystrom's [Crafting Interpreters][1] book. This code was released under the MIT license.
 
-(*) The `$std::prng` module's Mersenne Twister was adapted from the [original implementation][2] by the algorithm's inventors, Takuji Nishimura and Makoto Matsumoto. This code was released under the 3-clause BSD license.
+(*) The `std::prng` module's Mersenne Twister was adapted from the [original implementation][2] by the algorithm's inventors, Takuji Nishimura and Makoto Matsumoto. This code was released under the 3-clause BSD license.
 
 (*) The REPL uses the [Bestline][3] library by Justine Tunney to provide support for line-editing.
     This code was released under the 2-clause BSD license.

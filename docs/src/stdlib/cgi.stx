@@ -1,6 +1,6 @@
 ---
-title: <code>$std::cgi</code>
-meta_title: Pyro Standard Library &mdash; $std::cgi
+title: <code>std::cgi</code>
+meta_title: Pyro Standard Library &mdash; std::cgi
 ---
 
 A utility module for writing CGI scripts in Pyro.

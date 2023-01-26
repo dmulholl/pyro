@@ -1,6 +1,6 @@
 ---
 title: Examples
-meta_title: Examples &mdash; $std::args
+meta_title: Examples &mdash; std::args
 ---
 
 ::: insert toc
@@ -11,7 +11,7 @@ meta_title: Examples &mdash; $std::args
 Here's an example of a simple argument parser:
 
 ::: code pyro
-    import $std::args;
+    import std::args;
 
     # Initialize a new argument parser.
     var parser = args::ArgParser();
@@ -51,7 +51,7 @@ Note that we can chain the calls to `helptext()`, `version()`,  `flag()` and `op
 Here's an example of an argument parser that registers a command:
 
 ::: code pyro
-    import $std::args;
+    import std::args;
 
     # Callback function for the 'boo' command.
     def cmd_boo(cmd_name, cmd_parser) {

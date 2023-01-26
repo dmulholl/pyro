@@ -1,6 +1,6 @@
 ---
-title: <code>$std::prng</code>
-meta_title: Pyro Standard Library &mdash; $std::prng
+title: <code>std::prng</code>
+meta_title: Pyro Standard Library &mdash; std::prng
 ---
 
 [1]: https://en.wikipedia.org/wiki/Mersenne_Twister
