@@ -1,4 +1,4 @@
-import $std::path;
+import std::path;
 
 if path::exists(path::dirname($filepath) + "/compiled_module.so") {
     import compiled_module;

@@ -1,4 +1,4 @@
-import $std::html;
+import std::html;
 
 def $test_esc_html() {
     assert html::esc_html("<") == "&lt;";

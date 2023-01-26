@@ -1,4 +1,4 @@
-import $std::math;
+import std::math;
 
 # Not callable.
 assert !$is_callable(123);

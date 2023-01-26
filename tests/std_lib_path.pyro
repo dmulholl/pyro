@@ -1,6 +1,6 @@
-import $std::path;
-import $std::path::{exists, is_file, is_dir, is_symlink};
-import $std::path::{basename, dirname, join};
+import std::path;
+import std::path::{exists, is_file, is_dir, is_symlink};
+import std::path::{basename, dirname, join};
 
 assert exists($filepath);
 assert is_file($filepath);

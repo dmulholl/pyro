@@ -18,7 +18,7 @@ assert $type($tup()) == "tup";
 assert $type($err()) == "err";
 
 
-import $std::pyro;
+import std::pyro;
 assert $type(pyro) == "module";
 
 

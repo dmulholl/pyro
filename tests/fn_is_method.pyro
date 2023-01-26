@@ -6,7 +6,7 @@ assert !$is_method(false);
 assert !$is_method("foo");
 assert !$is_method($clock);
 
-import $std::math;
+import std::math;
 assert !$is_method(math::abs);
 
 def func() {}

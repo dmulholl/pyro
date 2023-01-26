@@ -6,12 +6,12 @@ assert !$is_mod(foobar);
 import $std;
 assert $is_mod($std);
 
-import $std::math;
+import std::math;
 assert $is_mod(math);
 assert $is_f64(math::PI);
 assert math::abs(-1) == 1;
 
-import $std::math as alias;
+import std::math as alias;
 assert $is_mod(alias);
 assert $is_f64(alias::PI);
 assert alias::abs(-1) == 1;

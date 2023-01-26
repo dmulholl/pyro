@@ -1,13 +1,13 @@
-import $std::math::{abs};
+import std::math::{abs};
 assert abs(-1) == 1;
 
-import $std::math::{abs} as foo;
+import std::math::{abs} as foo;
 assert foo(-1) == 1;
 
-import $std::math::{E, PI};
+import std::math::{E, PI};
 assert $is_f64(E);
 assert $is_f64(PI);
 
-import $std::math::{E, PI} as bar, baz;
+import std::math::{E, PI} as bar, baz;
 assert $is_f64(bar);
 assert $is_f64(baz);

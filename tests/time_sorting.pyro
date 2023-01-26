@@ -1,5 +1,5 @@
 import $std;
-import $std::prng;
+import std::prng;
 
 def $time_quicksort_shuffled_sequential_integers() {
     var vec = $range(1_000_000):to_vec():shuffle();

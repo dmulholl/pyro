@@ -1,4 +1,4 @@
-import $std::prng;
+import std::prng;
 
 
 def $test_sequential_integers() {

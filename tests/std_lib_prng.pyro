@@ -1,4 +1,4 @@
-import $std::prng;
+import std::prng;
 
 assert $is_f64(prng::rand_float());
 assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;

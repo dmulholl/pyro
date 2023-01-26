@@ -3,7 +3,7 @@ assert !$is_mod(123);
 import $std;
 assert $is_mod($std);
 
-import $std::math;
+import std::math;
 assert $is_mod(math);
 assert math::abs(-1) == 1;
 

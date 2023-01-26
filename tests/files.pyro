@@ -1,4 +1,4 @@
-import $std::path;
+import std::path;
 
 assert !$is_file(123);
 assert !$is_file("foo");

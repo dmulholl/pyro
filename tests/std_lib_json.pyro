@@ -1,6 +1,6 @@
-import $std::json::{to_json};
-import $std::json::{from_json};
-import $std::json::{format};
+import std::json::{to_json};
+import std::json::{from_json};
+import std::json::{format};
 
 # ------------------ #
 #  Marshall to JSON  #

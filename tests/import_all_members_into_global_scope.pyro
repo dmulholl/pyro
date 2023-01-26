@@ -1,4 +1,4 @@
-import $std::math::{*};
+import std::math::{*};
 
 assert $is_callable(sin);
 assert $is_callable(cos);

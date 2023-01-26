@@ -1,4 +1,4 @@
-import $std::cgi;
+import std::cgi;
 
 assert cgi::url_encode(" ") == "%20";
 assert cgi::url_encode("!") == "%21";

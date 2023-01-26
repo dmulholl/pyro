@@ -1,4 +1,4 @@
-import $std::math;
+import std::math;
 
 assert $is_f64(1.0);
 assert !$is_f64(1);

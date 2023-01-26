@@ -1,4 +1,4 @@
-import $std::args;
+import std::args;
 
 # Test setup.
 

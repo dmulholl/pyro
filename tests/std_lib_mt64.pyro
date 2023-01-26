@@ -1,4 +1,4 @@
-import $std::mt64;
+import std::mt64;
 
 assert mt64::test();
 assert $is_class(mt64::MT64);
