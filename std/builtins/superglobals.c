@@ -441,7 +441,7 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
     int exit_code;
 
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "$(): invalid argument [cmd], expected a string");
+        pyro_panic(vm, "$(): invalid argument [command], expected a string");
         return pyro_null();
     }
 
@@ -460,7 +460,7 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     if (arg_count == 1) {
         if (!PYRO_IS_STR(args[0])) {
-            pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
+            pyro_panic(vm, "$shell(): invalid argument [command], expected a string");
             return pyro_null();
         }
         if (!pyro_exec_shell_cmd(vm, PYRO_AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
@@ -468,7 +468,7 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     } else if (arg_count == 2) {
         if (!PYRO_IS_STR(args[0])) {
-            pyro_panic(vm, "$shell(): invalid argument [cmd], expected a string");
+            pyro_panic(vm, "$shell(): invalid argument [command], expected a string");
             return pyro_null();
         }
         if (PYRO_IS_STR(args[1])) {
