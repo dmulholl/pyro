@@ -178,19 +178,12 @@ char* pyro_realpath(const char* path) {
     errno = 0;
     char* array = malloc(PATH_MAX);
     if (!array) {
-        #ifdef DEBUG
-            perror("DEBUG: malloc() returned NULL in pyro_realpath()");
-        #endif
         return NULL;
     }
 
     errno = 0;
     char* result = realpath(path, array);
     if (!result) {
-        #ifdef DEBUG
-            fprintf(stderr, "DEBUG: realpath() returned NULL in pyro_realpath() for path '%s':\n  ", path);
-            perror(NULL);
-        #endif
         free(array);
         return NULL;
     }

@@ -2416,7 +2416,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
         return;
     }
 
-    #ifdef DEBUG
+    #ifdef PYRO_DEBUG
         PyroValue* saved_stack_top = vm->stack_top;
     #endif
 
@@ -2425,7 +2425,7 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
     run(vm);
     pyro_pop(vm);
 
-    #ifdef DEBUG
+    #ifdef PYRO_DEBUG
         if (!vm->halt_flag) {
             assert(vm->stack_top == saved_stack_top);
         }
@@ -2515,7 +2515,7 @@ void pyro_exec_code_as_module(
         return;
     }
 
-    #ifdef DEBUG
+    #ifdef PYRO_DEBUG
         PyroValue* saved_stack_top = vm->stack_top;
     #endif
 
@@ -2524,7 +2524,7 @@ void pyro_exec_code_as_module(
     run(vm);
     pyro_pop(vm);
 
-    #ifdef DEBUG
+    #ifdef PYRO_DEBUG
         if (!vm->halt_flag) {
             assert(vm->stack_top == saved_stack_top);
         }

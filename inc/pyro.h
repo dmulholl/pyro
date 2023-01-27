@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 8
-#define PYRO_VERSION_PATCH 77
+#define PYRO_VERSION_PATCH 78
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -28,7 +28,7 @@
 
 // Sets the initial capacity of the call-frame stack.
 #ifndef PYRO_INITIAL_CALL_FRAME_CAPACITY
-    #ifdef DEBUG
+    #ifdef PYRO_DEBUG
         #define PYRO_INITIAL_CALL_FRAME_CAPACITY 2
     #else
         #define PYRO_INITIAL_CALL_FRAME_CAPACITY 64
