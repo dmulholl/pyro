@@ -51,10 +51,6 @@ PyroVec* pyro_listdir(PyroVM* vm, const char* path);
 // If the return value is non-NULL, the caller should free it using free().
 char* pyro_realpath(const char* path);
 
-// Wrapper for POSIX strdup(). Allocates memory using malloc() -- the return value should be
-// freed using free(). Returns NULL if memory cannot be allocated.
-char* pyro_strdup(const char* source);
-
 // Wrapper for POSIX setenv(). Returns true on success, false on failure.
 bool pyro_setenv(const char* name, const char* value);
 

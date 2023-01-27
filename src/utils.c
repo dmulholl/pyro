@@ -369,3 +369,18 @@ char* pyro_get_version_string(void) {
 
     return version_string;
 }
+
+
+char* pyro_strdup(const char* source) {
+    size_t length = strlen(source);
+
+    char* array = malloc(length + 1);
+    if (!array) {
+        return NULL;
+    }
+
+    memcpy(array, source, length);
+    array[length] = '\0';
+
+    return array;
+}

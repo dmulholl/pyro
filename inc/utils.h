@@ -39,4 +39,9 @@ bool pyro_parse_string_as_float(const char* string, size_t length, double* value
 // free().
 char* pyro_get_version_string(void);
 
+// Duplicates a null-terminated C string.
+// - Allocates memory using malloc() -- the return value should be freed using free().
+// - Returns NULL if memory cannot be allocated for the copy.
+char* pyro_strdup(const char* source);
+
 #endif

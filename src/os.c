@@ -22,9 +22,6 @@
 // POSIX: opendir(), closedir()
 #include <dirent.h>
 
-// POSIX: strdup()
-#include <string.h>
-
 // POSIX: setenv()
 #include <stdlib.h>
 
@@ -200,11 +197,6 @@ char* pyro_realpath(const char* path) {
     }
 
     return array;
-}
-
-
-char* pyro_strdup(const char* source) {
-    return strdup(source);
 }
 
 

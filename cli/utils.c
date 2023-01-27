@@ -51,7 +51,7 @@ void pyro_cli_add_import_roots_from_environment(PyroVM* vm) {
         return;
     }
 
-    char* array = strdup(env_roots_var);
+    char* array = pyro_strdup(env_roots_var);
     if (!array) {
         fprintf(stderr, "Error: out of memory.\n");
         exit(2);
