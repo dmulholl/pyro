@@ -97,9 +97,8 @@ int pyro_remove(const char* path) {
         return remove(path);
     } else if (pyro_is_dir(path)) {
         return nftw(path, remove_callback, 64, FTW_DEPTH | FTW_PHYS);
-    } else {
-        return -1;
     }
+    return -1;
 }
 
 
