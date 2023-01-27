@@ -736,19 +736,14 @@ static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "$env(): invalid argument [name], expected a string");
             return pyro_null();
         }
-
         PyroStr* name = PYRO_AS_STR(args[0]);
+
         PyroStr* value = pyro_stringify_value(vm, args[1]);
         if (vm->halt_flag) {
             return pyro_null();
         }
 
-        if (!pyro_setenv(name->bytes, value->bytes)) {
-            pyro_panic(vm, "$env(): failed to set environment variable '%s'", name->bytes);
-            return pyro_null();
-        }
-
-        return pyro_null();
+        return pyro_bool(pyro_setenv(name->bytes, value->bytes));
     }
 
     pyro_panic(vm, "$env(): expected 1 or 2 arguments, found %zu", arg_count);
