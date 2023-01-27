@@ -22,6 +22,10 @@ assert basename("baz.txt") == "baz.txt";
 assert basename("/") == "/";
 assert basename("") == ".";
 
+assert $is_err(try join());
+
+assert join("foo") == "foo";
+
 assert join("foo", "bar") == "foo/bar";
 assert join("foo", "bar", "baz") == "foo/bar/baz";
 assert join("foo/", "bar") == "foo/bar";
@@ -29,8 +33,13 @@ assert join("foo", "/bar") == "foo/bar";
 assert join("foo/", "/bar") == "foo//bar";
 assert join("/foo/", "/bar") == "/foo//bar";
 assert join("/foo/", "/bar/") == "/foo//bar/";
+
+assert join("") == "";
+
+assert join("", "") == "";
 assert join("foo", "") == "foo";
 assert join("", "bar") == "bar";
+
 assert join("foo", "", "baz") == "foo/baz";
 assert join("", "bar", "") == "bar";
 assert join("foo", "", "") == "foo";

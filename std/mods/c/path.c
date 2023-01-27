@@ -102,8 +102,8 @@ static PyroValue fn_basename(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (arg_count < 2) {
-        pyro_panic(vm, "join(): expected at least 2 arguments");
+    if (arg_count == 0) {
+        pyro_panic(vm, "join(): expected 1 or more arguments, found 0");
         return pyro_null();
     }
 
@@ -114,9 +114,11 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    char* array = NULL;
-    size_t array_count = 0;
-    size_t array_capacity = 0;
+    PyroBuf* buf = PyroBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, "join(): out of memory");
+        return pyro_null();
+    }
 
     for (size_t i = 0; i < arg_count; i++) {
         PyroStr* arg = PYRO_AS_STR(args[i]);
@@ -124,46 +126,26 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
             continue;
         }
 
-        // Do we need to add a '/'?
-        bool needs_sep = array_count > 0 && array[array_count - 1] != '/' && arg->bytes[0] != '/';
-
-        // Always add 1 to allow for a terminating '\0'.
-        size_t new_capacity = needs_sep ? array_count + arg->length + 2 : array_count + arg->length + 1;
-
-        char* new_array = PYRO_REALLOCATE_ARRAY(vm, char, array, array_capacity, new_capacity);
-        if (!new_array) {
-            if (array) {
-                PYRO_FREE_ARRAY(vm, char, array, array_capacity);
+        if (buf->count > 0 && buf->bytes[buf->count - 1] != '/' && arg->bytes[0] != '/') {
+            if (!PyroBuf_append_byte(buf, '/', vm)) {
+                pyro_panic(vm, "join(): out of memory");
+                return pyro_null();
             }
+        }
+
+        if (!PyroBuf_append_bytes(buf, arg->length, (uint8_t*)arg->bytes, vm)) {
             pyro_panic(vm, "join(): out of memory");
             return pyro_null();
         }
-        array = new_array;
-        array_capacity = new_capacity;
-
-        if (needs_sep) {
-            array[array_count] = '/';
-            array_count++;
-        }
-
-        memcpy(array + array_count, arg->bytes, arg->length);
-        array_count += arg->length;
     }
 
-    if (!array) {
-        return pyro_obj(vm->empty_string);
-    }
-
-    array[array_count] = '\0';
-
-    PyroStr* output = PyroStr_take(array, array_count, vm);
-    if (!output) {
-        PYRO_FREE_ARRAY(vm, char, array, array_capacity);
+    PyroStr* result = PyroBuf_to_str(buf, vm);
+    if (!result) {
         pyro_panic(vm, "join(): out of memory");
         return pyro_null();
     }
 
-    return pyro_obj(output);
+    return pyro_obj(result);
 }
 
 
