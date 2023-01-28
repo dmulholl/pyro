@@ -580,6 +580,20 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
 }
 
 
+bool pyro_add_import_root_n(PyroVM* vm, const char* path, size_t length)  {
+    if (!path) {
+        return false;
+    }
+
+    PyroStr* string = PyroStr_copy_raw(path, length, vm);
+    if (!string) {
+        return false;
+    }
+
+    return PyroVec_append(vm->import_roots, pyro_obj(string), vm);
+}
+
+
 void pyro_set_max_memory(PyroVM* vm, size_t bytes) {
     vm->max_bytes = bytes;
 }

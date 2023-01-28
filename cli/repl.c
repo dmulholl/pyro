@@ -102,7 +102,7 @@ void pyro_run_repl(ArgParser* parser) {
 
     PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {
-        fprintf(stderr, "Error: Out of memory, unable to initialize the Pyro VM.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize the Pyro VM.\n");
         exit(1);
     }
 
@@ -146,7 +146,7 @@ void pyro_run_repl(ArgParser* parser) {
 
         code = realloc(code, code_count + strlen(line) + 1);
         if (!code) {
-            fprintf(stderr, "Error: Failed to allocate memory for input.\n");
+            fprintf(stderr, "Pyro CLI error: failed to allocate memory for input.\n");
             exit(1);
         }
         memcpy(&code[code_count], line, strlen(line));

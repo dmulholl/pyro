@@ -1,26 +1,37 @@
 #include "cli.h"
 
 
-// [path] can be a script file or a module directory.
+// Add the directory containing [path] to the set of import roots.
+// - [path] can be a script file or a module directory.
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
-    // Add the directory containing [path].
-    char* dirpath = pyro_dirname((char*)path);
-    size_t dirpath_length = strlen(dirpath);
-    pyro_add_import_root(vm, dirpath);
-
-    // Add [dirpath/pyro_modules].
-    char* array = malloc(dirpath_length + strlen("/pyro_modules") + 1);
-    if (!array) {
-        fprintf(stderr, "Error: out of memory.\n");
-        exit(2);
+    // We call realpath() here because we want to add the directory containing the *actual* script
+    // or directory at [path]. This may be different from a simple dirname(path) if [path] is or
+    // contains symlinks.
+   char* real_path = pyro_realpath(path);
+    if (!real_path) {
+        fprintf(stderr, "Pyro CLI error: failed to resolve path '%s' to determine import roots.\n", path);
+        exit(1);
     }
 
-    memcpy(array, dirpath, dirpath_length);
-    memcpy(&array[dirpath_length], "/pyro_modules", strlen("/pyro_modules"));
-    array[dirpath_length + strlen("/pyro_modules")] = '\0';
-    pyro_add_import_root(vm, array);
+    // Add the directory containing [real_path].
+    size_t dirpath_length = pyro_dirname(real_path);
+    pyro_add_import_root_n(vm, real_path, dirpath_length);
 
-    free(array);
+    // Add the pyro_modules directory.
+    char* buffer = malloc(dirpath_length + strlen("/pyro_modules") + 1);
+    if (!buffer) {
+        free(real_path);
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
+        exit(1);
+    }
+
+    memcpy(buffer, real_path, dirpath_length);
+    memcpy(&buffer[dirpath_length], "/pyro_modules", strlen("/pyro_modules"));
+    buffer[dirpath_length + strlen("/pyro_modules")] = '\0';
+    pyro_add_import_root(vm, buffer);
+
+    free(buffer);
+    free(real_path);
 }
 
 
@@ -46,7 +57,7 @@ void pyro_cli_add_import_roots_from_environment(PyroVM* vm) {
 
     char* array = pyro_strdup(env_roots_var);
     if (!array) {
-        fprintf(stderr, "Error: out of memory.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
         exit(2);
     }
 
@@ -101,7 +112,7 @@ void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
 
     int64_t size = parse_memory_size(ap_str_value(parser, "max-memory"));
     if (size <= 0) {
-        fprintf(stderr, "Error: invalid argument for --max-memory option.\n");
+        fprintf(stderr, "Pyro CLI error: invalid argument for --max-memory option.\n");
         exit(1);
     }
 
@@ -116,7 +127,7 @@ size_t pyro_cli_get_stack_size(ArgParser* parser) {
 
     int64_t size = parse_memory_size(ap_str_value(parser, "stack-size"));
     if (size <= 0) {
-        fprintf(stderr, "Error: invalid argument for --stack-size option.\n");
+        fprintf(stderr, "Pyro CLI error: invalid argument for --stack-size option.\n");
         exit(1);
     }
 

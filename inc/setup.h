@@ -32,11 +32,13 @@ bool pyro_get_panic_flag(PyroVM* vm);
 // on success, false if memory could not be allocated for the tuple.
 bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args);
 
-// This function appends an entry to the list of directories checked when attempting to import a
-// module. [path] should be a directory path, optionally ending with a single trailing slash '/'.
-// Use "." for the current working directory, "/" for the root directory. Returns true if the
-// entry was successfully added, false if memory could not be allocated for the entry.
+// Appends an entry to the list of directories checked when attempting to import a module.
+// - [path] should be a directory path, optionally ending in '/'.
+// - Use "" or "." for the current working directory.
+// - Use "/" for the root directory.
+// - Returns true on success, false if memory could not be allocated for the entry.
 bool pyro_add_import_root(PyroVM* vm, const char* path);
+bool pyro_add_import_root_n(PyroVM* vm, const char* path, size_t length);
 
 // Creates a new VM-level global variable. Returns true on success, false if memory could not be
 // allocated.

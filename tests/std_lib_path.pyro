@@ -10,17 +10,25 @@ assert is_file(join(dirname($filepath), basename($filepath)));
 assert exists(path::cwd());
 assert is_dir(path::cwd());
 
-assert dirname("/foo/bar/baz.txt") == "/foo/bar";
-assert dirname("foo/bar/baz.txt") == "foo/bar";
-assert dirname("baz.txt") == ".";
-assert dirname("/") == "/";
-assert dirname("") == ".";
-
-assert basename("/foo/bar/baz.txt") == "baz.txt";
+assert basename("") == "";
+assert basename("/") == "";
+assert basename("/foo.txt") == "foo.txt";
+assert basename("foo.txt/") == "";
+assert basename("foo.txt") == "foo.txt";
+assert basename("foo/bar.txt") == "bar.txt";
+assert basename("/foo/bar.txt") == "bar.txt";
 assert basename("foo/bar/baz.txt") == "baz.txt";
-assert basename("baz.txt") == "baz.txt";
-assert basename("/") == "/";
-assert basename("") == ".";
+assert basename("/foo/bar/baz.txt") == "baz.txt";
+
+assert dirname("") == "";
+assert dirname("/") == "/";
+assert dirname("/foo.txt") == "/";
+assert dirname("foo.txt/") == "foo.txt";
+assert dirname("foo.txt") == "";
+assert dirname("foo/bar.txt") == "foo";
+assert dirname("/foo/bar.txt") == "/foo";
+assert dirname("foo/bar/baz.txt") == "foo/bar";
+assert dirname("/foo/bar/baz.txt") == "/foo/bar";
 
 assert $is_err(try join());
 

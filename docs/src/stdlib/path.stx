@@ -11,8 +11,20 @@ This module contains filepath utilities.
 
 [[ `basename(path: str) -> str` ]]
 
-    Extracts the base part of a pathname.
-    Equivalent to POSIX `basename()`.
+    Returns the base name of the filepath `path`.
+
+    Examples:
+
+    ::: code pyro
+        import std::path::{basename};
+
+        assert basename("") == "";
+        assert basename("/") == "";
+        assert basename("/foo.txt") == "foo.txt";
+        assert basename("foo.txt/") == "";
+        assert basename("foo.txt") == "foo.txt";
+        assert basename("foo/bar.txt") == "bar.txt";
+        assert basename("/foo/bar.txt") == "bar.txt";
 
 
 [[ `chdir(path: str)` ]]
@@ -27,8 +39,20 @@ This module contains filepath utilities.
 
 [[ `dirname(path: str) -> str` ]]
 
-    Extracts the directory part of a pathname.
-    Equivalent to POSIX `dirname()`.
+    Returns the directory name of the filepath `path`.
+
+    Examples:
+
+    ::: code pyro
+        import std::path::{dirname};
+
+        assert dirname("") == "";
+        assert dirname("/") == "/";
+        assert dirname("/foo.txt") == "/";
+        assert dirname("foo.txt/") == "foo.txt";
+        assert dirname("foo.txt") == "";
+        assert dirname("foo/bar.txt") == "foo";
+        assert dirname("/foo/bar.txt") == "/foo";
 
 
 [[ `exists(path: str) -> bool` ]]
@@ -59,7 +83,7 @@ This module contains filepath utilities.
 
     Joins one or more path segments, adding `/` separators as required.
 
-    If a segment is an absolute path --- i.e. begins with a `/` --- all previous segments are ignored.
+    If a segment is an absolute path --- i.e. begins with a `/` --- all previous segments are ignored and joining continues from the absolute path segment.
 
 
 [[ `listdir(path: str) -> vec[str]` ]]
@@ -68,13 +92,13 @@ This module contains filepath utilities.
     Skips `"."` and `".."`.
 
 
-[[ `realpath(path: str) -> str|err` ]]
+[[ `realpath(path: str) -> str` ]]
 
     Returns the canonicalized absolute path, resolving all symbolic links.
     All the components of `path` must exist.
     Equivalent to POSIX `realpath()`.
 
-    Returns an `err` if the path cannot be resolved.
+    Panics if the path cannot be resolved.
 
 
 [[ `remove(path: str)` ]]

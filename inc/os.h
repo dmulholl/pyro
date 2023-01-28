@@ -20,16 +20,6 @@ bool pyro_is_file(const char* path);
 // (This checks if the symlink itself exists, not its target.)
 bool pyro_is_symlink(const char* path);
 
-// Wrapper for POSIX dirname(). May modify the input string.
-// NB: It isn't safe to call free() on the return value from this function as it may point to
-// statically allocated memory.
-char* pyro_dirname(char* path);
-
-// Wrapper for POSIX basename(). May modify the input string.
-// NB: It isn't safe to call free() on the return value from this function as it may point to
-// statically allocated memory.
-char* pyro_basename(char* path);
-
 // Deletes the symlink or file or directory at [path]. If [path] is a symlink, the link itself will
 // be deleted, not its target. If [path] is a directory, its content will be recursively deleted,
 // then the directory itself.
@@ -47,8 +37,10 @@ char* pyro_getcwd(void);
 // allocation or I/O read error.
 PyroVec* pyro_listdir(PyroVM* vm, const char* path);
 
-// Wrapper for POSIX realpath(). Returns NULL on failure, a freshly allocated string on success.
-// If the return value is non-NULL, the caller should free it using free().
+// Wrapper for POSIX realpath().
+// - Returns NULL on failure.
+// - Returns a new null-terminated, heap-allocated string on success.
+// - If the return value is not NULL, the caller should free the new string using free().
 char* pyro_realpath(const char* path);
 
 // Wrapper for POSIX setenv(). Returns true on success, false on failure.

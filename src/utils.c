@@ -384,3 +384,46 @@ char* pyro_strdup(const char* source) {
 
     return array;
 }
+
+
+const char* pyro_basename(const char* path) {
+    const char* start = path + strlen(path);
+
+    while (start > path) {
+        start--;
+        if (*start == '/') {
+            start++;
+            break;
+        }
+    }
+
+    return start;
+}
+
+
+size_t pyro_dirname(const char* path) {
+    size_t path_length = strlen(path);
+
+    if (path_length == 0) {
+        return 0;
+    }
+
+    if (path_length == 1 && path[0]  == '/') {
+        return 1;
+    }
+
+    const char* end = path + path_length;
+
+    while (end > path) {
+        end--;
+        if (*end == '/') {
+            break;
+        }
+    }
+
+    if (end > path) {
+        return end - path;
+    }
+
+    return (*end == '/') ? 1 : 0;
+}

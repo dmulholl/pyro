@@ -44,4 +44,26 @@ char* pyro_get_version_string(void);
 // - Returns NULL if memory cannot be allocated for the copy.
 char* pyro_strdup(const char* source);
 
+// Takes a null-termminated path as input. Returns a pointer to the beginning of the final path
+// element within the input string. Does not modify the input string.
+// - "" --> ""
+// - "/" --> ""
+// - "/bar.txt" --> "bar.txt"
+// - "bar.txt/" --> ""
+// - "bar.txt" --> "bar.txt"
+// - "foo/bar.txt" --> "bar.txt"
+// - "/foo/bar.txt" --> "bar.txt"
+const char* pyro_basename(const char* path);
+
+// Takes a null-terminated path as input. Returns the length of the directory name prefix within
+// the input string. Does not modify the input string.
+// - "" --> ""
+// - "/" --> "/"
+// - "/bar.txt" --> "/"
+// - "bar.txt/" --> "bar.txt"
+// - "bar.txt" --> ""
+// - "foo/bar.txt" --> "foo"
+// - "/foo/bar.txt" --> "/foo"
+size_t pyro_dirname(const char* path);
+
 #endif

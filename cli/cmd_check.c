@@ -12,13 +12,13 @@ void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         PyroVM* vm = pyro_new_vm(stack_size);
         if (!vm) {
-            fprintf(stderr, "Error: out of memory, unable to initialize Pyro VM.\n");
+            fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize Pyro VM.\n");
             exit(1);
         }
 
         char* path = ap_arg(cmd_parser, i);
         if (!pyro_exists(path)) {
-            fprintf(stderr, "Error: invalid path '%s'.\n", path);
+            fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
             exit(1);
         }
 

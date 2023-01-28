@@ -118,19 +118,19 @@ int main(int argc, char* argv[]) {
     // Initialize the root argument parser.
     ArgParser* parser = ap_new();
     if (!parser) {
-        fprintf(stderr, "Error: Out of memory.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
         exit(1);
     }
 
     char* version_string = pyro_get_version_string();
     if (!version_string) {
-        fprintf(stderr, "Error: Out of memory.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
         exit(1);
     }
 
     char* helptext_string = pyro_cli_sprintf(HELPTEXT, version_string);
     if (!helptext_string) {
-        fprintf(stderr, "Error: Out of memory.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
         exit(1);
     }
 
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
     // Register the parser for the 'test' comand.
     ArgParser* test_cmd_parser = ap_cmd(parser, "test");
     if (!test_cmd_parser) {
-        fprintf(stderr, "Error: Out of memory.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
         exit(1);
     }
 
@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
     // Register the parser for the 'time' comand.
     ArgParser* time_cmd_parser = ap_cmd(parser, "time");
     if (!time_cmd_parser) {
-        fprintf(stderr, "Error: Out of memory.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
         exit(1);
     }
 
@@ -176,7 +176,7 @@ int main(int argc, char* argv[]) {
     // Register the parser for the 'check' comand.
     ArgParser* check_cmd_parser = ap_cmd(parser, "check");
     if (!check_cmd_parser) {
-        fprintf(stderr, "Error: Out of memory.\n");
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
         exit(1);
     }
 
@@ -187,8 +187,8 @@ int main(int argc, char* argv[]) {
 
     // Parse the command line arguments.
     if (!ap_parse(parser, argc, argv)) {
-        fprintf(stderr, "Error: Out of memory.\n");
-        exit(2);
+        fprintf(stderr, "Pyro CLI error: out of memory.\n");
+        exit(1);
     }
 
     if (!ap_has_cmd(parser)) {

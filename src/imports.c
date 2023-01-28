@@ -111,8 +111,11 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         PyroStr* base = PYRO_AS_STR(vm->import_roots->values[i]);
         if (base->length == 0) {
-            pyro_panic(vm, "invalid import root (empty string)");
-            return;
+            base = PyroStr_new(".", vm);
+            if (!base) {
+                pyro_panic(vm, "out of memory");
+                return;
+            }
         }
 
         // Support `$roots` entries with or without a trailing slash.

@@ -67,9 +67,22 @@ Functions
 </dt>
 <dd>
 <p>
-Extracts the base part of a pathname.
-Equivalent to POSIX <code>basename()</code>.
+Returns the base name of the filepath <code>path</code>.
 </p>
+<p>
+Examples:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">path</span><span class="p">::{</span><span class="nx">basename</span><span class="p">};</span>
+
+<span class="k">assert</span> <span class="nx">basename</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">basename</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">basename</span><span class="p">(</span><span class="s">&quot;/foo.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo.txt&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">basename</span><span class="p">(</span><span class="s">&quot;foo.txt/&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">basename</span><span class="p">(</span><span class="s">&quot;foo.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo.txt&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">basename</span><span class="p">(</span><span class="s">&quot;foo/bar.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bar.txt&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">basename</span><span class="p">(</span><span class="s">&quot;/foo/bar.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bar.txt&quot;</span><span class="p">;</span>
+</pre>
 </dd>
 </div>
 <div>
@@ -98,9 +111,22 @@ Returns the path of the current working directory.
 </dt>
 <dd>
 <p>
-Extracts the directory part of a pathname.
-Equivalent to POSIX <code>dirname()</code>.
+Returns the directory name of the filepath <code>path</code>.
 </p>
+<p>
+Examples:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">path</span><span class="p">::{</span><span class="nx">dirname</span><span class="p">};</span>
+
+<span class="k">assert</span> <span class="nx">dirname</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">dirname</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;/&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">dirname</span><span class="p">(</span><span class="s">&quot;/foo.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;/&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">dirname</span><span class="p">(</span><span class="s">&quot;foo.txt/&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo.txt&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">dirname</span><span class="p">(</span><span class="s">&quot;foo.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">dirname</span><span class="p">(</span><span class="s">&quot;foo/bar.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">dirname</span><span class="p">(</span><span class="s">&quot;/foo/bar.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;/foo&quot;</span><span class="p">;</span>
+</pre>
 </dd>
 </div>
 <div>
@@ -156,7 +182,7 @@ Returns <code>true</code> if <code>path</code> exists and is a symlink.
 Joins one or more path segments, adding <code>/</code> separators as required.
 </p>
 <p>
-If a segment is an absolute path &mdash; i.e. begins with a <code>/</code> &mdash; all previous segments are ignored.
+If a segment is an absolute path &mdash; i.e. begins with a <code>/</code> &mdash; all previous segments are ignored and joining continues from the absolute path segment.
 </p>
 </dd>
 </div>
@@ -173,7 +199,7 @@ Skips <code>&quot;.&quot;</code> and <code>&quot;..&quot;</code>.
 </div>
 <div>
 <dt>
-<code>realpath(path: str) -&gt; str|err</code>
+<code>realpath(path: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -182,7 +208,7 @@ All the components of <code>path</code> must exist.
 Equivalent to POSIX <code>realpath()</code>.
 </p>
 <p>
-Returns an <code>err</code> if the path cannot be resolved.
+Panics if the path cannot be resolved.
 </p>
 </dd>
 </div>

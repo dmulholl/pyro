@@ -42,30 +42,17 @@ static PyroValue fn_dirname(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "dirname(): invalid argument [path], expected a string");
         return pyro_null();
     }
-    char* path = PYRO_AS_STR(args[0])->bytes;
 
-    char* path_copy = pyro_strdup(path);
-    if (!path_copy) {
-        pyro_panic(vm, "dirname(): out of memory");
-        return pyro_null();
-    }
+    PyroStr* path = PYRO_AS_STR(args[0]);
+    size_t dirname_length = pyro_dirname(path->bytes);
 
-    char* result = pyro_dirname(path_copy);
+    PyroStr* result = PyroStr_copy_raw(path->bytes, dirname_length, vm);
     if (!result) {
         pyro_panic(vm, "dirname(): out of memory");
-        free(path_copy);
         return pyro_null();
     }
 
-    PyroStr* output = PyroStr_copy_raw(result, strlen(result), vm);
-    if (!output) {
-        pyro_panic(vm, "dirname(): out of memory");
-        free(path_copy);
-        return pyro_null();
-    }
-
-    free(path_copy);
-    return pyro_obj(output);
+    return pyro_obj(result);
 }
 
 
@@ -74,30 +61,17 @@ static PyroValue fn_basename(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "basename(): invalid argument [path], expected a string");
         return pyro_null();
     }
-    char* path = PYRO_AS_STR(args[0])->bytes;
 
-    char* path_copy = pyro_strdup(path);
-    if (!path_copy) {
-        pyro_panic(vm, "basename(): out of memory");
-        return pyro_null();
-    }
+    PyroStr* path = PYRO_AS_STR(args[0]);
+    const char* basename_ptr = pyro_basename(path->bytes);
 
-    char* result = pyro_basename(path_copy);
+    PyroStr* result = PyroStr_new(basename_ptr, vm);
     if (!result) {
         pyro_panic(vm, "basename(): out of memory");
-        free(path_copy);
         return pyro_null();
     }
 
-    PyroStr* output = PyroStr_copy_raw(result, strlen(result), vm);
-    if (!output) {
-        pyro_panic(vm, "basename(): out of memory");
-        free(path_copy);
-        return pyro_null();
-    }
-
-    free(path_copy);
-    return pyro_obj(output);
+    return pyro_obj(result);
 }
 
 
@@ -209,33 +183,23 @@ static PyroValue fn_realpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    char* result = pyro_realpath(PYRO_AS_STR(args[0])->bytes);
-    if (!result) {
-        PyroStr* message = pyro_sprintf_to_obj(vm,
-            "realpath(): invalid path '%s'",
-            PYRO_AS_STR(args[0])->bytes
-        );
-        if (!message) {
-            return pyro_null();
-        }
+    PyroStr* path = PYRO_AS_STR(args[0]);
 
-        PyroErr* err = PyroErr_new(vm);
-        if (!err) {
-            return pyro_null();
-        }
-
-        err->message = message;
-        return pyro_obj(err);
+    char* real_path = pyro_realpath(path->bytes);
+    if (!real_path) {
+        pyro_panic(vm, "realpath(): failed to resolve path '%s'", path->bytes);
+        return pyro_null();
     }
 
-    PyroStr* string = PyroStr_copy_raw(result, strlen(result), vm);
-    free(result);
-    if (!string) {
+    PyroStr* result = PyroStr_new(real_path, vm);
+    if (!result) {
+        free(real_path);
         pyro_panic(vm, "realpath(): out of memory");
         return pyro_null();
     }
 
-    return pyro_obj(string);
+    free(real_path);
+    return pyro_obj(result);
 }
 
 

@@ -75,16 +75,6 @@ bool pyro_is_symlink(const char* path) {
 }
 
 
-char* pyro_dirname(char* path) {
-    return dirname(path);
-}
-
-
-char* pyro_basename(char* path) {
-    return basename(path);
-}
-
-
 // Returns 0 if successful, -1 if an error occurs.
 static int remove_callback(const char* path, const struct stat* s, int type, struct FTW* ftw_buf) {
     return remove(path);
@@ -175,20 +165,7 @@ PyroVec* pyro_listdir(PyroVM* vm, const char* path) {
 
 
 char* pyro_realpath(const char* path) {
-    errno = 0;
-    char* array = malloc(PATH_MAX);
-    if (!array) {
-        return NULL;
-    }
-
-    errno = 0;
-    char* result = realpath(path, array);
-    if (!result) {
-        free(array);
-        return NULL;
-    }
-
-    return array;
+    return realpath(path, NULL);
 }
 
 

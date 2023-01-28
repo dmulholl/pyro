@@ -8,7 +8,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
     int num_runs = ap_int_value(cmd_parser, "num-runs");
     if (num_runs < 1) {
-        fprintf(stderr, "Error: invalid argument for --num-runs.\n");
+        fprintf(stderr, "Pyro CLI error: invalid argument for --num-runs.\n");
         exit(1);
     }
 
@@ -17,7 +17,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_arg(cmd_parser, i);
         if (!pyro_exists(path)) {
-            fprintf(stderr, "Error: invalid path '%s'.\n", path);
+            fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
             exit(1);
         }
 
@@ -26,7 +26,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
         PyroVM* vm = pyro_new_vm(stack_size);
         if (!vm) {
-            fprintf(stderr, "Error: out of memory, unable to initialize Pyro VM.\n");
+            fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize Pyro VM.\n");
             exit(1);
         }
 
