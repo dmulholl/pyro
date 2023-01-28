@@ -3,19 +3,19 @@
 # ----------- #
 
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
-		 -Wno-unused-parameter -Wno-unused-function -Wno-unused-result
+		 -Wno-unused-parameter \
+		 -Wno-unused-function \
+		 -Wno-unused-result
 
-RELEASE_FLAGS = -rdynamic -O2 -D NDEBUG -D PYRO_VERSION_BUILD='"release"'
-DEBUG_FLAGS = -rdynamic -D PYRO_DEBUG -D PYRO_VERSION_BUILD='"debug"'
-
-DEBUG_LEVEL_1 = -D PYRO_DEBUG_STRESS_GC
-DEBUG_LEVEL_2 = $(DEBUG_LEVEL_1) -D PYRO_DEBUG_DUMP_BYTECODE
-DEBUG_LEVEL_3 = $(DEBUG_LEVEL_2) -D PYRO_DEBUG_TRACE_EXECUTION
-DEBUG_LEVEL_4 = $(DEBUG_LEVEL_3) -D PYRO_DEBUG_LOG_GC
-DEBUG_LEVEL = $(DEBUG_LEVEL_1)
+RELEASE_FLAGS = -rdynamic -O2 -D PYRO_VERSION_BUILD='"release"' -D NDEBUG
+DEBUG_FLAGS_0 = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG
+DEBUG_FLAGS_1 = $(DEBUG_FLAGS_0) -D PYRO_DEBUG_STRESS_GC
+DEBUG_FLAGS_2 = $(DEBUG_FLAGS_1) -D PYRO_DEBUG_DUMP_BYTECODE
+DEBUG_FLAGS_3 = $(DEBUG_FLAGS_2) -D PYRO_DEBUG_TRACE_EXECUTION
+DEBUG_FLAGS_4 = $(DEBUG_FLAGS_3) -D PYRO_DEBUG_LOG_GC
+DEBUG_FLAGS = $(DEBUG_FLAGS_1)
 
 HDR_FILES = cli/*.h inc/*.h
-
 SRC_FILES = cli/*.c src/*.c std/builtins/*.c std/mods/c/*.c
 
 OBJ_FILES = out/build/sqlite.o \
@@ -29,8 +29,6 @@ OBJ_FILES = out/build/sqlite.o \
 			out/build/std_mod_pretty.o \
 			out/build/std_mod_json.o
 
-INPUT = $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
-
 # --------------- #
 #  Phony Targets  #
 # --------------- #
@@ -39,41 +37,41 @@ release: ## Builds the release binary.
 release: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p out/release
 	@printf "\e[1;32mBuilding\e[0m out/release/pyro\n"
-	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(INPUT)
+	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o out/release/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./out/release/pyro --version
 
 debug: ## Builds the debug binary.
 debug: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p out/debug
 	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) $(DEBUG_LEVEL) -o out/debug/pyro $(INPUT)
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -o out/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
-debug1: ## Debug build. Checks assertions, stresses GC.
-	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_1)"
+debug1: ## Default debug level. Checks assertions, stresses the garbage collector.
+	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_1)"
 
 debug2: ## As debug1, also dumps bytecode.
-	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_2)"
+	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_2)"
 
 debug3: ## As debug2, also traces execution.
-	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_3)"
+	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_3)"
 
-debug4: ## As debug3, also logs GC.
-	@make debug DEBUG_LEVEL="$(DEBUG_LEVEL_4)"
+debug4: ## As debug3, also logs garbage collection.
+	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_4)"
 
 check-debug: ## Builds the debug binary, then runs the test suite.
 check-debug: tests/compiled_module.so
 	@make debug
-	@printf "\e[1;32m Running\e[0m test suite\n\n"
+	@printf "\e[1;32m Running\e[0m out/debug/pyro test tests/*.pyro\n\n"
 	@./out/debug/pyro test ./tests/*.pyro
 
 check-release: ## Builds the release binary, then runs the test suite.
 check-release: tests/compiled_module.so
 	@make release
-	@printf "\e[1;32m Running\e[0m test suite\n\n"
+	@printf "\e[1;32m Running\e[0m out/release/pyro test tests/*.pyro\n\n"
 	@./out/release/pyro test ./tests/*.pyro
 
-check:
+check: ## Alias for check-debug.
 	@make check-debug
 
 install: ## Installs the release binary.
