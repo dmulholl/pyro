@@ -126,11 +126,15 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
             continue;
         }
 
-        if (buf->count > 0 && buf->bytes[buf->count - 1] != '/' && arg->bytes[0] != '/') {
+        if (buf->count > 0 && buf->bytes[buf->count - 1] != '/') {
             if (!PyroBuf_append_byte(buf, '/', vm)) {
                 pyro_panic(vm, "join(): out of memory");
                 return pyro_null();
             }
+        }
+
+        if (arg->bytes[0] == '/') {
+            buf->count = 0;
         }
 
         if (!PyroBuf_append_bytes(buf, arg->length, (uint8_t*)arg->bytes, vm)) {

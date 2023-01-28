@@ -149,11 +149,14 @@ Returns <code>true</code> if <code>path</code> exists and is a symlink.
 </div>
 <div>
 <dt>
-<code>join(arg1: str, arg2: str, ...) -&gt; str</code>
+<code>join(path: str, *paths: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Joins path components, adding a separating <code>/</code> if required.
+Joins one or more path segments, adding <code>/</code> separators as required.
+</p>
+<p>
+If a segment is an absolute path &mdash; i.e. begins with a <code>/</code> &mdash; all previous segments are ignored.
 </p>
 </dd>
 </div>
@@ -189,7 +192,7 @@ Returns an <code>err</code> if the path cannot be resolved.
 </dt>
 <dd>
 <p>
-Deletes the symlink, file, or directory at <code>path</code>.
+Deletes the file, symlink, or directory at <code>path</code>.
 </p>
 <ul>
 <li>

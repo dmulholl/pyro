@@ -55,9 +55,11 @@ This module contains filepath utilities.
     (This checks if the symlink itself exists, not its target.)
 
 
-[[ `join(arg1: str, arg2: str, ...) -> str` ]]
+[[ `join(path: str, *paths: str) -> str` ]]
 
-    Joins path components, adding a separating `/` if required.
+    Joins one or more path segments, adding `/` separators as required.
+
+    If a segment is an absolute path --- i.e. begins with a `/` --- all previous segments are ignored.
 
 
 [[ `listdir(path: str) -> vec[str]` ]]
@@ -77,7 +79,7 @@ This module contains filepath utilities.
 
 [[ `remove(path: str)` ]]
 
-    Deletes the symlink, file, or directory at `path`.
+    Deletes the file, symlink, or directory at `path`.
 
     * If `path` is a symlink, the link itself will be deleted, not its target.
     * If `path` is a directory, the directory and all its content will be deleted.

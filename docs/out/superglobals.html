@@ -197,7 +197,7 @@ Note that calling <code>$debug()</code> on an <code>f64</code> prints its value 
 </div>
 <div>
 <dt>
-<code>$env(name: str) -&gt; str|err</code> <br> <code>$env(name: str, value: any)</code>
+<code>$env(name: str) -&gt; str|err</code> <br> <code>$env(name: str, value: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -211,6 +211,7 @@ Returns an <code>err</code> if <code>name</code> is not defined.
 <li>
 If called with two arguments, sets the environment variable <code>name</code> to <code>value</code>.
 Stringifies <code>value</code> if <code>value</code> is not already a string. (This is equivalent to calling <code>$str()</code> on <code>value</code>.)
+Returns <code>true</code> on success, <code>false</code> if the environment variable could not be set.
 </li>
 </ul>
 </dd>
