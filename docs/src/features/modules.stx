@@ -205,7 +205,7 @@ Note that you can only use this `{*}` syntax at global scope in a script or modu
 
 The global `$roots` vector contains the list of root directories that Pyro checks when attempting to import a module.
 
-(*) When Pyro is executing a script it adds the parent directory containing the script to the `$roots` vector, along with a `modules` directory within that parent directory. (This means that the modules required by a script can be located either in the same directory as the script or in a `modules` directory alongside the script.)
+(*) When Pyro is executing a script it adds the parent directory containing the script to the `$roots` vector, along with a `pyro_modules` directory within that parent directory. (This means that the modules required by a script can be located either in the same directory as the script or in a `pyro_modules` directory alongside the script.)
 
 (*) When Pyro is executing the REPL it adds the current working directory to the `$roots` vector.
 
@@ -222,7 +222,7 @@ To customize Pyro's import behaviour:
 
 ### Executing Module Directories
 
-You can execute a module directory if it contains a `self.pyro` file:
+You can execute a module directory as a script if it contains a `self.pyro` file:
 
     $ pyro path/to/module/directory
 
