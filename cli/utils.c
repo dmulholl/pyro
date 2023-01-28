@@ -3,31 +3,24 @@
 
 // [path] can be a script file or a module directory.
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
-    char* resolved_path = pyro_realpath(path);
-    if (!resolved_path) {
-        fprintf(stderr, "Error: unable to resolve path '%s' to determine import roots.\n", path);
-        exit(1);
-    }
-
     // Add the directory containing [path].
-    char* dirpath = pyro_dirname(resolved_path);
+    char* dirpath = pyro_dirname((char*)path);
     size_t dirpath_length = strlen(dirpath);
     pyro_add_import_root(vm, dirpath);
 
-    // Add [dirpath/modules].
-    char* array = malloc(dirpath_length + strlen("/modules") + 1);
+    // Add [dirpath/pyro_modules].
+    char* array = malloc(dirpath_length + strlen("/pyro_modules") + 1);
     if (!array) {
         fprintf(stderr, "Error: out of memory.\n");
         exit(2);
     }
 
     memcpy(array, dirpath, dirpath_length);
-    memcpy(&array[dirpath_length], "/modules", strlen("/modules"));
-    array[dirpath_length + strlen("/modules")] = '\0';
+    memcpy(&array[dirpath_length], "/pyro_modules", strlen("/pyro_modules"));
+    array[dirpath_length + strlen("/pyro_modules")] = '\0';
     pyro_add_import_root(vm, array);
 
     free(array);
-    free(resolved_path);
 }
 
 
