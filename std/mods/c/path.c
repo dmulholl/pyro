@@ -393,6 +393,32 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_abspath(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_STR(args[0])) {
+        pyro_panic(vm, "abspath(): invalid argument [path], expected a string");
+        return pyro_null();
+    }
+
+    PyroValue cwd = fn_getcwd(vm, 0, NULL);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    PyroValue args_array_for_fn_join[] = {cwd, args[0]};
+    PyroValue joined_path = fn_join(vm, 2, args_array_for_fn_join);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    PyroValue normalized_path = fn_normpath(vm, 1, &joined_path);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    return normalized_path;
+}
+
+
 void pyro_load_std_mod_path(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "exists", fn_exists, 1);
     pyro_define_pub_member_fn(vm, module, "is_file", fn_is_file, 1);
@@ -408,6 +434,7 @@ void pyro_load_std_mod_path(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "chroot", fn_chroot, 1);
     pyro_define_pub_member_fn(vm, module, "getcwd", fn_getcwd, 0);
     pyro_define_pub_member_fn(vm, module, "normpath", fn_normpath, 1);
+    pyro_define_pub_member_fn(vm, module, "abspath", fn_abspath, 1);
 
     // Deprecated.
     pyro_define_pub_member_fn(vm, module, "cd", fn_chdir, 1);

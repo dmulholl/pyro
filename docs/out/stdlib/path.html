@@ -63,6 +63,17 @@ Functions
 <dl>
 <div>
 <dt>
+<code>abspath(path: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the normalized, absolute version of the filepath <code>path</code>.
+This is equivalent to calling <code>normpath(join(getcwd(), path))</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>basename(path: str) -&gt; str</code>
 </dt>
 <dd>

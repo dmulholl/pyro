@@ -9,6 +9,12 @@ This module contains filepath utilities.
 ### Functions
 
 
+[[ `abspath(path: str) -> str` ]]
+
+    Returns the normalized, absolute version of the filepath `path`.
+    This is equivalent to calling `normpath(join(getcwd(), path))`.
+
+
 [[ `basename(path: str) -> str` ]]
 
     Returns the base name of the filepath `path`.
