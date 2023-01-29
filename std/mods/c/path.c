@@ -235,6 +235,164 @@ static PyroValue fn_chroot(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_STR(args[0])) {
+        pyro_panic(vm, "normpath(): invalid argument [path], expected a string");
+        return pyro_null();
+    }
+
+    PyroStr* path = PYRO_AS_STR(args[0]);
+    const char* src = path->bytes;
+    size_t len = path->length;
+
+    PyroBuf* buf = PyroBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, "normpath(): out of memory");
+        return pyro_null();
+    }
+
+    size_t index = 0;
+
+    // Special handling for paths equal to "//" or beginning with "//x".
+    if (path->length == 2 & memcmp(src, "//", 2) == 0) {
+        if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"//", vm)) {
+            pyro_panic(vm, "normpath(): out of memory");
+            return pyro_null();
+        }
+        index += 2;
+    } else if (path->length > 2 & memcmp(src, "//", 2) == 0 && src[2] != '/') {
+        if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"//", vm)) {
+            pyro_panic(vm, "normpath(): out of memory");
+            return pyro_null();
+        }
+        index += 2;
+    }
+
+    while (index < len) {
+        // Check if the next token is: "./"
+        if (len - index >= 2 && src[index]== '.' && src[index + 1] == '/') {
+            index += 2;
+            while (index < len && src[index] == '/') {
+                index++;
+            }
+            continue;
+        }
+
+        // Check if the next token is: "../"
+        if (len - index >= 3 && src[index] == '.' && src[index + 1] == '.' && src[index + 2] == '/') {
+            if (buf->count == 0) {
+                if (!PyroBuf_append_bytes(buf, 3, (uint8_t*)"../", vm)) {
+                    pyro_panic(vm, "normpath(): out of memory");
+                    return pyro_null();
+                }
+                index += 3;
+                continue;
+            }
+
+            if (buf->count >= 3 && buf->bytes[buf->count - 3] == '.' && buf->bytes[buf->count - 2] == '.' && buf->bytes[buf->count - 1] == '/') {
+                if (!PyroBuf_append_bytes(buf, 3, (uint8_t*)"../", vm)) {
+                    pyro_panic(vm, "normpath(): out of memory");
+                    return pyro_null();
+                }
+                index += 3;
+                continue;
+            }
+
+            if (buf->count == 1 && buf->bytes[0] == '/') {
+                index += 3;
+                continue;
+            }
+
+            if (buf->count == 2 && buf->bytes[0] == '/' && buf->bytes[1] == '/') {
+                index += 3;
+                continue;
+            }
+
+            if (buf->bytes[buf->count - 1] == '/') {
+                buf->count--;
+            }
+
+            while (buf->count > 0 && buf->bytes[buf->count - 1] != '/') {
+                buf->count--;
+            }
+
+            index += 3;
+            while (index < len && src[index] == '/') {
+                index++;
+            }
+            continue;
+        }
+
+        // Consume any characters that are not: "/"
+        while (index < len && src[index] != '/') {
+            if (!PyroBuf_append_byte(buf, src[index], vm)) {
+                pyro_panic(vm, "normpath(): out of memory");
+                return pyro_null();
+            }
+            index++;
+        }
+
+        // Consume any number of "/" but write only one.
+        while (index < len && src[index] == '/') {
+            if (buf->count == 0 || buf->bytes[buf->count - 1] != '/') {
+                if (!PyroBuf_append_byte(buf, '/', vm)) {
+                    pyro_panic(vm, "normpath(): out of memory");
+                    return pyro_null();
+                }
+            }
+            index++;
+        }
+    }
+
+    // Handle a trailing: /..
+    if (buf->count >= 3 && memcmp(&buf->bytes[buf->count - 3], "/..", 3) == 0) {
+        if (buf->count == 3) {
+            buf->count -= 2;
+        } else if (buf->count == 4 && buf->bytes[0] == '/') {
+            buf->count -= 2;
+        } else if (buf->count == 5 && memcmp(buf->bytes, "../..", 5) == 0) {
+            // Keep the trailing "..".
+        } else if (buf->count >= 6 && memcmp(&buf->bytes[buf->count - 6], "/..", 3) == 0) {
+            // Keep the trailing "..".
+        } else {
+            buf->count -= 3;
+            while (buf->count > 0 && buf->bytes[buf->count - 1] != '/') {
+                buf->count--;
+            }
+        }
+    }
+
+    // Handle a trailing: /.
+    if (buf->count >= 2 && buf->bytes[buf->count - 2] == '/' && buf->bytes[buf->count - 1] == '.') {
+        buf->count--;
+    }
+
+    // Handle a trailing: /
+    if (buf->count >= 1 && buf->bytes[buf->count - 1] == '/') {
+        buf->count--;
+        if (buf->count == 0 || (buf->count == 1 && buf->bytes[0] == '/')) {
+            buf->count++;
+        }
+    }
+
+    // Convert "" -> ".".
+    if (buf->count == 0) {
+        if (!PyroBuf_append_byte(buf, '.', vm)) {
+            pyro_panic(vm, "normpath(): out of memory");
+            return pyro_null();
+        }
+    }
+
+    PyroStr* result = PyroBuf_to_str(buf, vm);
+    if (!result) {
+        pyro_panic(vm, "normpath(): out of memory");
+        return pyro_null();
+    }
+
+    return pyro_obj(result);
+}
+
+
 void pyro_load_std_mod_path(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "exists", fn_exists, 1);
     pyro_define_pub_member_fn(vm, module, "is_file", fn_is_file, 1);
@@ -249,6 +407,7 @@ void pyro_load_std_mod_path(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "chdir", fn_chdir, 1);
     pyro_define_pub_member_fn(vm, module, "chroot", fn_chroot, 1);
     pyro_define_pub_member_fn(vm, module, "getcwd", fn_getcwd, 0);
+    pyro_define_pub_member_fn(vm, module, "normpath", fn_normpath, 1);
 
     // Deprecated.
     pyro_define_pub_member_fn(vm, module, "cd", fn_chdir, 1);
