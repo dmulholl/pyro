@@ -85,6 +85,17 @@ This module contains filepath utilities.
 
     If a segment is an absolute path --- i.e. begins with a `/` --- all previous segments are ignored and joining continues from the absolute path segment.
 
+    Examples:
+
+    ::: code pyro
+        import std::path::{join};
+
+        assert join("") == "";
+        assert join("foo") == "foo";
+        assert join("foo", "bar") == "foo/bar";
+        assert join("/foo/", "bar") == "/foo/bar";
+        assert join("/foo/", "/bar") == "/bar";
+
 
 [[ `listdir(path: str) -> vec[str]` ]]
 
