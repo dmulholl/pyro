@@ -313,7 +313,7 @@ assert normpath("//foo/./bar") == "//foo/bar";
 assert normpath("//foo/bar/.") == "//foo/bar";
 assert normpath("//foo/bar/./") == "//foo/bar";
 
-# Test normpath() for filename with dotted extension.
+# Test normpath() for filenames with dotted extension.
 assert normpath("foo.txt") == "foo.txt";
 assert normpath("./foo.txt") == "foo.txt";
 assert normpath("foo.txt/.") == "foo.txt";
