@@ -5,8 +5,8 @@
 // - [path] can be a script file or a module directory.
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     // We call realpath() here because we want to add the directory containing the *actual* script
-    // or directory at [path]. This may be different from a simple dirname(path) if [path] is or
-    // contains symlinks.
+    // or directory at [path]. This may be different from the result of a simple dirname() call if
+    // [path] is a symlink.
    char* real_path = pyro_realpath(path);
     if (!real_path) {
         fprintf(stderr, "Pyro CLI error: failed to resolve path '%s' to determine import roots.\n", path);
