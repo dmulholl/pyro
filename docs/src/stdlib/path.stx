@@ -103,6 +103,22 @@ This module contains filepath utilities.
     Skips `"."` and `".."`.
 
 
+[[ `normpath(path: str) -> str` ]]
+
+    Normalizes the filepath `path` by collapsing redundant `//` and `.` separators and up-leveling `..` references.
+
+    Examples:
+
+    ::: code pyro
+        import std::path::{normpath};
+
+        assert normpath("foo//bar") == "foo/bar";
+        assert normpath("foo/./bar") == "foo/bar";
+        assert normpath("foo/../bar") == "bar";
+
+    For paths beginning with exactly two slashes, `//`, the leading two slashes are preserved in accordance with [POSIX pathname resolution](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_13).
+
+
 [[ `realpath(path: str) -> str` ]]
 
     Returns the canonicalized absolute path, resolving all symbolic links.
