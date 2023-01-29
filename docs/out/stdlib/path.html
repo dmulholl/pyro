@@ -184,6 +184,18 @@ Joins one or more path segments, adding <code>/</code> separators as required.
 <p>
 If a segment is an absolute path &mdash; i.e. begins with a <code>/</code> &mdash; all previous segments are ignored and joining continues from the absolute path segment.
 </p>
+<p>
+Examples:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">path</span><span class="p">::{</span><span class="nx">join</span><span class="p">};</span>
+
+<span class="k">assert</span> <span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">join</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">join</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo/bar&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">join</span><span class="p">(</span><span class="s">&quot;/foo/&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;/foo/bar&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">join</span><span class="p">(</span><span class="s">&quot;/foo/&quot;</span><span class="p">,</span> <span class="s">&quot;/bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;/bar&quot;</span><span class="p">;</span>
+</pre>
 </dd>
 </div>
 <div>
