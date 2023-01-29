@@ -289,7 +289,17 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 continue;
             }
 
-            if (buf->count >= 3 && buf->bytes[buf->count - 3] == '.' && buf->bytes[buf->count - 2] == '.' && buf->bytes[buf->count - 1] == '/') {
+            if (buf->count == 1 && buf->bytes[0] == '/') {
+                index += 3;
+                continue;
+            }
+
+            if (buf->count == 2 && buf->bytes[0] == '/' && buf->bytes[1] == '/') {
+                index += 3;
+                continue;
+            }
+
+            if (buf->count == 3 && memcmp(buf->bytes, "../", 3) == 0) {
                 if (!PyroBuf_append_bytes(buf, 3, (uint8_t*)"../", vm)) {
                     pyro_panic(vm, "normpath(): out of memory");
                     return pyro_null();
@@ -298,12 +308,11 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 continue;
             }
 
-            if (buf->count == 1 && buf->bytes[0] == '/') {
-                index += 3;
-                continue;
-            }
-
-            if (buf->count == 2 && buf->bytes[0] == '/' && buf->bytes[1] == '/') {
+            if (buf->count > 3 && memcmp(&buf->bytes[buf->count - 4], "/..", 3) == 0) {
+                if (!PyroBuf_append_bytes(buf, 3, (uint8_t*)"../", vm)) {
+                    pyro_panic(vm, "normpath(): out of memory");
+                    return pyro_null();
+                }
                 index += 3;
                 continue;
             }

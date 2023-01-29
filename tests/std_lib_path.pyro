@@ -398,3 +398,46 @@ assert normpath("//./../.foo.txt.") == "//.foo.txt.";
 assert normpath("//.././.foo.txt.") == "//.foo.txt.";
 assert normpath("//.foo.txt././..") == "//";
 assert normpath("//.foo.txt./../.") == "//";
+
+# Test normpath for filename with double-dotted prefix and suffix.
+assert normpath("..foo.txt..") == "..foo.txt..";
+assert normpath("./..foo.txt..") == "..foo.txt..";
+assert normpath("..foo.txt../.") == "..foo.txt..";
+assert normpath("././..foo.txt..") == "..foo.txt..";
+assert normpath("..foo.txt.././.") == "..foo.txt..";
+assert normpath("../..foo.txt..") == "../..foo.txt..";
+assert normpath("..foo.txt../..") == ".";
+assert normpath("../../..foo.txt..") == "../../..foo.txt..";
+assert normpath("..foo.txt../../..") == "..";
+assert normpath("./../..foo.txt..") == "../..foo.txt..";
+assert normpath(".././..foo.txt..") == "../..foo.txt..";
+assert normpath("..foo.txt.././..") == ".";
+assert normpath("..foo.txt../../.") == ".";
+
+assert normpath("/..foo.txt..") == "/..foo.txt..";
+assert normpath("/./..foo.txt..") == "/..foo.txt..";
+assert normpath("/..foo.txt../.") == "/..foo.txt..";
+assert normpath("/././..foo.txt..") == "/..foo.txt..";
+assert normpath("/..foo.txt.././.") == "/..foo.txt..";
+assert normpath("/../..foo.txt..") == "/..foo.txt..";
+assert normpath("/..foo.txt../..") == "/";
+assert normpath("/../../..foo.txt..") == "/..foo.txt..";
+assert normpath("/..foo.txt../../..") == "/";
+assert normpath("/./../..foo.txt..") == "/..foo.txt..";
+assert normpath("/.././..foo.txt..") == "/..foo.txt..";
+assert normpath("/..foo.txt.././..") == "/";
+assert normpath("/..foo.txt../../.") == "/";
+
+assert normpath("//..foo.txt..") == "//..foo.txt..";
+assert normpath("//./..foo.txt..") == "//..foo.txt..";
+assert normpath("//..foo.txt../.") == "//..foo.txt..";
+assert normpath("//././..foo.txt..") == "//..foo.txt..";
+assert normpath("//..foo.txt.././.") == "//..foo.txt..";
+assert normpath("//../..foo.txt..") == "//..foo.txt..";
+assert normpath("//..foo.txt../..") == "//";
+assert normpath("//../../..foo.txt..") == "//..foo.txt..";
+assert normpath("//..foo.txt../../..") == "//";
+assert normpath("//./../..foo.txt..") == "//..foo.txt..";
+assert normpath("//.././..foo.txt..") == "//..foo.txt..";
+assert normpath("//..foo.txt.././..") == "//";
+assert normpath("//..foo.txt../../.") == "//";
