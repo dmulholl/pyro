@@ -270,7 +270,7 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     while (index < len) {
         // Check if the next token is: "./"
-        if (len - index >= 2 && src[index]== '.' && src[index + 1] == '/') {
+        if (len - index >= 2 && memcmp(&src[index], "./", 2) == 0) {
             index += 2;
             while (index < len && src[index] == '/') {
                 index++;
@@ -279,7 +279,7 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
 
         // Check if the next token is: "../"
-        if (len - index >= 3 && src[index] == '.' && src[index + 1] == '.' && src[index + 2] == '/') {
+        if (len - index >= 3 && memcmp(&src[index], "../", 3) == 0) {
             if (buf->count == 0) {
                 if (!PyroBuf_append_bytes(buf, 3, (uint8_t*)"../", vm)) {
                     pyro_panic(vm, "normpath(): out of memory");
