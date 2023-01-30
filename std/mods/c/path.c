@@ -253,14 +253,14 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     size_t index = 0;
 
-    // Special handling for paths equal to "//" or beginning with "//x".
-    if (path->length == 2 & memcmp(src, "//", 2) == 0) {
+    // Special handling for paths equal to "//" or beginning with "//X".
+    if (path->length == 2 && memcmp(src, "//", 2) == 0) {
         if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"//", vm)) {
             pyro_panic(vm, "normpath(): out of memory");
             return pyro_null();
         }
         index += 2;
-    } else if (path->length > 2 & memcmp(src, "//", 2) == 0 && src[2] != '/') {
+    } else if (path->length > 2 && memcmp(src, "//", 2) == 0 && src[2] != '/') {
         if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"//", vm)) {
             pyro_panic(vm, "normpath(): out of memory");
             return pyro_null();
