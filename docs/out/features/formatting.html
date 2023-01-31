@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.86</p>
+                <p class="version">Version 0.8.89</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -91,7 +91,7 @@ Returns the new string created by interpolating the argument values into the for
 </div>
 </dl>
 <p>
-A format string is a string containing <code>{}</code> placeholders:
+A format string is a string containing <code>{}</code> placeholders, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
@@ -100,15 +100,23 @@ A format string is a string containing <code>{}</code> placeholders:
 <span class="kd">var</span> <span class="nx">bar</span> <span class="o">==</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="s">&quot;foo and bar&quot;</span><span class="p">;</span>
 </pre>
+<ul>
+<li>
 <p>
-An empty placeholder <code>{}</code> is equivalent to calling <code>$str(arg)</code> on the value and interpolating the resulting string.
+An empty placeholder <code>{}</code> is equivalent to calling <code>$str()</code> on the value.
 </p>
+</li>
+<li>
 <p>
-A placeholder can contain a format specifier &mdash; if the value has a <code>:$fmt(specifier)</code> method defined, this method will be called and the resulting string will be used.
+A placeholder containing a single question mark <code>{?}</code> is equivalent to calling <code>$debug()</code> on the value.
 </p>
+</li>
+<li>
 <p>
-The format specifier itself is an arbitrary string &mdash; it's simply the content of the placeholder. How it's interpreted is up the value's <code>:$fmt(specifier)</code> method.
+Otherwise, the content of the placeholder is passed to the value's <code>:$fmt(format_specifier)</code> method.
 </p>
+</li>
+</ul>
 <p>
 Note that you can escape an opening brace <code>{</code> in a format string with a backslash, i.e. <code>\{</code>, to stop it being treated as a placeholder.
 </p>

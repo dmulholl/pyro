@@ -13,7 +13,7 @@ Use the `$fmt()` function to interpolate formatted values into a string:
 
     Returns the new string created by interpolating the argument values into the format string.
 
-A format string is a string containing `{}` placeholders:
+A format string is a string containing `{}` placeholders, e.g.
 
 ::: code pyro
     var foo = $fmt("{} and {}", 123, 456);
@@ -22,11 +22,11 @@ A format string is a string containing `{}` placeholders:
     var bar == $fmt("{} and {}", "foo", "bar");
     assert bar == "foo and bar";
 
-An empty placeholder `{}` is equivalent to calling `$str(arg)` on the value and interpolating the resulting string.
+(*) An empty placeholder `{}` is equivalent to calling `$str()` on the value.
 
-A placeholder can contain a format specifier --- if the value has a `:$fmt(specifier)` method defined, this method will be called and the resulting string will be used.
+(*) A placeholder containing a single question mark `{?}` is equivalent to calling `$debug()` on the value.
 
-The format specifier itself is an arbitrary string --- it's simply the content of the placeholder. How it's interpreted is up the value's `:$fmt(specifier)` method.
+(*) Otherwise, the content of the placeholder is passed to the value's `:$fmt(format_specifier)` method.
 
 Note that you can escape an opening brace `{` in a format string with a backslash, i.e. `\{`, to stop it being treated as a placeholder.
 
