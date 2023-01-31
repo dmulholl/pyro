@@ -992,6 +992,10 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
         return NULL;
     }
 
+    if (strlen(format_specifier) == 1 && format_specifier[0] == '?') {
+        return pyro_debugify_value(vm, value);
+    }
+
     if (PYRO_IS_I64(value)) {
         // Support for %-prefixed format-specifiers is temporary and unofficial.
         if (format_specifier[0] == '%') {
