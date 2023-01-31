@@ -9,7 +9,7 @@ meta_title: Pyro &mdash; String Formatting
 
 Use the `$fmt()` function to interpolate formatted values into a string:
 
-[[ `$fmt(format_string: str, arg1: any, arg2: any, ...) -> str` ]]
+[[ `$fmt(format_string: str, *args: any) -> str` ]]
 
     Returns the new string created by interpolating the argument values into the format string.
 
@@ -117,34 +117,52 @@ The decimal number specifies the minimum field width --- longer strings aren't t
 
 ### Custom Class Example
 
-Here's a sample class with custom `:$str()` and `:$fmt(spec)` methods:
+Here's a sample class with custom `:$str()`, `:$debug()`, and `:$fmt()` methods:
 
 ::: code pyro
-    class Foo {
+    class Object {
         def $str() {
-            return "<foo>";
+            return "<str>";
         }
 
-        def $fmt(spec) {
-            return "<" + spec + ">";
+        def $debug() {
+            return "<debug>";
+        }
+
+        def $fmt(format_specifier) {
+            return "<" + format_specifier + ">";
         }
     }
 
-Calling `$str(arg)` on an instance returns the output of its `:$str()` method:
+Calling `$str()` on an instance returns the output of its `:$str()` method, e.g.
 
 ::: code pyro
-    var foo = Foo();
-    assert $str(foo) == "<foo>";
+    var object = Object();
+    assert $str(object) == "<str>";
 
-An empty placeholder in a format string is equvialent to calling `$str(arg)` on the value:
-
-::: code pyro
-    assert $fmt("{}", foo) == "<foo>";
-
-If the placeholder contains a format specifier, it gets passed to the value's `:$fmt(spec)` method:
+An empty placeholder in a format string is equivalent to calling `$str()` on the value, e.g.
 
 ::: code pyro
-    assert $fmt("{xyz}", foo) == "<xyz>";
+    var object = Object();
+    assert $fmt("{}", object) == "<str>";
+
+Calling `$debug()` on an instance returns the output of its `:$debug()` method, e.g.
+
+::: code pyro
+    var object = Object();
+    assert $debug(object) == "<debug>";
+
+A placeholder in a format string containing a single question mark is equivalent to calling `$debug()` on the value, e.g.
+
+::: code pyro
+    var object = Object();
+    assert $fmt("{?}", object) == "<debug>";
+
+If the placeholder contains a format specifier, it gets passed to the value's `:$fmt()` method, e.g.
+
+::: code pyro
+    var object = Object();
+    assert $fmt("{xyz}", object) == "<xyz>";
 
 
 
