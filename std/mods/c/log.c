@@ -10,15 +10,15 @@
 
 static void write_msg(
     PyroVM* vm,
-    const char* caller,
+    const char* err_prefix,
     const char* timestamp_format,
-    const char* level,
+    const char* log_level,
     PyroFile* file,
     size_t arg_count,
     PyroValue* args
 ) {
     if (arg_count == 0) {
-        pyro_panic(vm, "%s: expected 1 or more arguments, found 0", caller);
+        pyro_panic(vm, "%s: expected 1 or more arguments, found 0", err_prefix);
         return;
     }
 
@@ -30,10 +30,10 @@ static void write_msg(
         }
     } else {
         if (!PYRO_IS_STR(args[0])) {
-            pyro_panic(vm, "%s: invalid argument [format_string], expected a string", caller);
+            pyro_panic(vm, "%s: invalid argument [format_string], expected a string", err_prefix);
             return;
         }
-        message = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], caller);
+        message = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], err_prefix);
         if (vm->halt_flag) {
             return;
         }
@@ -47,24 +47,24 @@ static void write_msg(
         struct tm* tm = localtime(&now);
         size_t dt_count = strftime(timestamp_buffer, 128, timestamp_format, tm);
         if (dt_count == 0) {
-            pyro_panic(vm, "%s: formatted timestamp string is too long", caller);
+            pyro_panic(vm, "%s: timestamp string is too long", err_prefix);
             return;
         }
     }
 
     if (file) {
         if (file->stream) {
-            int result = fprintf(file->stream, "[%s]  [%5s]  %s\n", timestamp_buffer, level, message->bytes);
+            int result = fprintf(file->stream, "[%5s]  [%s]  %s\n", log_level, timestamp_buffer, message->bytes);
             if (result < 0) {
-                pyro_panic(vm, "%s: failed to write log message to file", caller);
+                pyro_panic(vm, "%s: failed to write log message to file", err_prefix);
             }
         } else {
-            pyro_panic(vm, "%s: unable to write to log file, file has been closed", caller);
+            pyro_panic(vm, "%s: failed to write to log file, file has been closed", err_prefix);
         }
     } else {
-        int64_t result = pyro_stderr_write_f(vm, "[%s]  [%5s]  %s\n", timestamp_buffer, level, message->bytes);
+        int64_t result = pyro_stderr_write_f(vm, "[%5s]  [%s]  %s\n", log_level, timestamp_buffer, message->bytes);
         if (result < 0) {
-            pyro_panic(vm, "%s: failed to write log message to standard error stream", caller);
+            pyro_panic(vm, "%s: failed to write log message to the standard error stream", err_prefix);
         }
     }
 }
