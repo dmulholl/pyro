@@ -168,9 +168,9 @@ If the placeholder contains a format specifier, it gets passed to the value's `:
 
 ### String Interpolation
 
-In practice, many common use-cases can be handled by string-interpolation.
+In practice, many common use-cases for string-formatting can be handled by string-interpolation.
 
-You can interpolate the value of an expression into a double-quoted string using `${}`, e.g.
+You can interpolate the value of an expression into a double-quoted string literal using `${}`, e.g.
 
 ::: code pyro
     var value = "xyz";
@@ -183,7 +183,7 @@ The syntax is:
    "... ${<expression>} ..."
    "... ${<expression>;<format_specifier>} ..."
 
-You can interpolate the value of any expression into a double-quoted string using `${}`.
+You can interpolate the value of any expression into a double-quoted string literal using `${}`.
 If the value of the expression isn't a string, it will be automatically stringified --- this is equivalent to calling `$str()` on the value, e.g.
 
 ::: code pyro

@@ -305,10 +305,10 @@ If the placeholder contains a format specifier, it gets passed to the value's <c
 String Interpolation
 </h3>
 <p>
-In practice, many common use-cases can be handled by string-interpolation.
+In practice, many common use-cases for string-formatting can be handled by string-interpolation.
 </p>
 <p>
-You can interpolate the value of an expression into a double-quoted string using <code>${}</code>, e.g.
+You can interpolate the value of an expression into a double-quoted string literal using <code>${}</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
@@ -323,7 +323,7 @@ The syntax is:
 "... ${&lt;expression&gt;;&lt;format_specifier&gt;} ..."
 </pre>
 <p>
-You can interpolate the value of any expression into a double-quoted string using <code>${}</code>.
+You can interpolate the value of any expression into a double-quoted string literal using <code>${}</code>.
 If the value of the expression isn't a string, it will be automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on the value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
