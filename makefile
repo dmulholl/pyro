@@ -7,7 +7,7 @@ CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 		 -Wno-unused-function \
 		 -Wno-unused-result
 
-RELEASE_FLAGS = -rdynamic -O2 -D PYRO_VERSION_BUILD='"release"' -D NDEBUG
+RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O2
 DEBUG_FLAGS_0 = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG
 DEBUG_FLAGS_1 = $(DEBUG_FLAGS_0) -D PYRO_DEBUG_STRESS_GC
 DEBUG_FLAGS_2 = $(DEBUG_FLAGS_1) -D PYRO_DEBUG_DUMP_BYTECODE
