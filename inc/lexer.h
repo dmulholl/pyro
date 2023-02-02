@@ -77,7 +77,7 @@ typedef struct {
 
 typedef struct {
     const char* start;      // Points to the first character of the current token.
-    const char* current;    // Points to the next character to be read.
+    const char* next;       // Points to the next character to be read.
     const char* end;        // Points to one past the end of the input array.
     size_t line;
     const char* src_id;

@@ -71,32 +71,32 @@ static bool is_binary_digit(char c) {
 
 
 static inline bool is_at_end(Lexer* lexer) {
-    return lexer->current == lexer->end;
+    return lexer->next == lexer->end;
 }
 
 
 static inline char next_char(Lexer* lexer) {
-    lexer->current++;
-    return lexer->current[-1];
+    lexer->next++;
+    return lexer->next[-1];
 }
 
 
 static char peek(Lexer* lexer) {
-    if (lexer->current == lexer->end) return '\0';
-    return *lexer->current;
+    if (lexer->next == lexer->end) return '\0';
+    return *lexer->next;
 }
 
 
 static char peek_next(Lexer* lexer) {
-    if (lexer->current + 1 >= lexer->end) return '\0';
-    return lexer->current[1];
+    if (lexer->next + 1 >= lexer->end) return '\0';
+    return lexer->next[1];
 }
 
 
 static bool match_char(Lexer* lexer, char expected) {
     if (is_at_end(lexer)) return false;
-    if (*lexer->current != expected) return false;
-    lexer->current++;
+    if (*lexer->next != expected) return false;
+    lexer->next++;
     return true;
 }
 
@@ -105,7 +105,7 @@ static Token make_token(Lexer* lexer, TokenType type) {
     Token token;
     token.type = type;
     token.start = lexer->start;
-    token.length = (size_t)(lexer->current - lexer->start);
+    token.length = (size_t)(lexer->next - lexer->start);
     token.line = lexer->line;
     return token;
 }
@@ -149,7 +149,7 @@ static void skip_whitespace_and_comments(Lexer* lexer) {
 
 static bool check_keyword(Lexer* lexer, const char* keyword) {
     size_t length = strlen(keyword);
-    if (lexer->current - lexer->start == (ptrdiff_t)length) {
+    if (lexer->next - lexer->start == (ptrdiff_t)length) {
         if (memcmp(lexer->start, keyword, length) == 0) {
             return true;
         }
@@ -470,7 +470,7 @@ static Token next_format_specifier_token(Lexer* lexer) {
 
 
 Token pyro_next_token(Lexer* lexer) {
-    lexer->start = lexer->current;
+    lexer->start = lexer->next;
 
     if (lexer->format_specifier_mode) {
         return next_format_specifier_token(lexer);
@@ -481,7 +481,7 @@ Token pyro_next_token(Lexer* lexer) {
     }
 
     skip_whitespace_and_comments(lexer);
-    lexer->start = lexer->current;
+    lexer->start = lexer->next;
 
     if (is_at_end(lexer)) {
         return make_token(lexer, TOKEN_EOF);
@@ -592,7 +592,7 @@ Token pyro_next_token(Lexer* lexer) {
 
 void pyro_init_lexer(Lexer* lexer, PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     lexer->start = src_code;
-    lexer->current = src_code;
+    lexer->next = src_code;
     lexer->end = src_code + src_len;
     lexer->line = 1;
     lexer->vm = vm;
