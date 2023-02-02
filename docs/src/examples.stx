@@ -58,7 +58,7 @@ See the [string formatting](@root/features/formatting//) documentation for detai
 The `$()` function runs a shell command and returns its output as a string, e.g.
 
 ::: code pyro
-    var output = $("pwd");
+    var current_directory = $("pwd");
 
 The `$shell()` function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string:
 
