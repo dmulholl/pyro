@@ -226,18 +226,18 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (arg_count == 1) {
-        PyroStr* panic_message = pyro_stringify_value(vm, args[0]);
+        PyroStr* string = pyro_stringify_value(vm, args[0]);
         if (vm->halt_flag) {
             return pyro_null();
         }
 
-        PyroStr* escaped_panic_message = PyroStr_esc_percents(panic_message->bytes, panic_message->length, vm);
-        if (!escaped_panic_message) {
+        PyroStr* escaped_string = PyroStr_esc_percents(string->bytes, string->length, vm);
+        if (!escaped_string) {
             pyro_panic(vm, "$panic(): out of memory");
             return pyro_null();
         }
 
-        pyro_panic(vm, escaped_panic_message->bytes);
+        pyro_panic(vm, escaped_string->bytes);
         return pyro_null();
     }
 
@@ -246,19 +246,18 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroValue formatted = fn_fmt(vm, arg_count, args);
+    PyroStr* string = pyro_format(vm, PYRO_AS_STR(args[0]), arg_count - 1, &args[1], "$panic()");
     if (vm->halt_flag) {
         return pyro_null();
     }
-    PyroStr* panic_message = PYRO_AS_STR(formatted);
 
-    PyroStr* escaped_panic_message = PyroStr_esc_percents(panic_message->bytes, panic_message->length, vm);
-    if (!escaped_panic_message) {
+    PyroStr* escaped_string = PyroStr_esc_percents(string->bytes, string->length, vm);
+    if (!escaped_string) {
         pyro_panic(vm, "$panic(): out of memory");
         return pyro_null();
     }
 
-    pyro_panic(vm, escaped_panic_message->bytes);
+    pyro_panic(vm, escaped_string->bytes);
     return pyro_null();
 }
 
