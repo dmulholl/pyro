@@ -660,18 +660,18 @@ PyroStr* PyroStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
         return NULL;
     }
 
-    size_t count = pyro_unescape_string(src, length, dst);
-    dst[count] = '\0';
+    size_t dst_count = pyro_process_backslashed_escapes(src, length, dst);
+    dst[dst_count] = '\0';
 
-    // If there were no backslashed escapes, [count] will be equal to [length].
-    // If there were escapes, [count] will be less than [length].
-    if (count < length) {
-        dst = PYRO_REALLOCATE_ARRAY(vm, char, dst, length + 1, count + 1);
+    // If there were no backslashed escapes, [dst_count] will be equal to [length].
+    // If there were escapes, [dst_count] will be less than [length].
+    if (dst_count < length) {
+        dst = PYRO_REALLOCATE_ARRAY(vm, char, dst, length + 1, dst_count + 1);
     }
 
-    PyroStr* string = PyroStr_take(dst, count, vm);
+    PyroStr* string = PyroStr_take(dst, dst_count, vm);
     if (!string) {
-        PYRO_FREE_ARRAY(vm, char, dst, count + 1);
+        PYRO_FREE_ARRAY(vm, char, dst, dst_count + 1);
         return NULL;
     }
 

@@ -103,138 +103,148 @@ static inline uint8_t hex_to_int(char c) {
 }
 
 
-size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
-    if (src_len == 0) {
+// Copies [src_count] bytes from [src] to [dst], processing backslashed escape sequences.
+// - Returns the number of bytes written to [dst] - this will be less than or equal to [src_count].
+// - Does not add a terminating null to [dst].
+// - [dst] can be the same buffer as [src] - i.e. it's safe for a buffer to overwrite itself.
+// - Ignores unrecognised escape sequences - i.e. copies them verbatim to [dst].
+size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char* dst) {
+    if (src_count == 0) {
         return 0;
     }
 
-    size_t count = 0;
+    size_t dst_count = 0;
+    size_t i = 0;
 
-    for (size_t i = 0; i < src_len; i++) {
-        if (src[i] == '\\' && i < src_len - 1) {
-            switch (src[i + 1]) {
-                case '\\':
-                    dst[count++] = '\\';
-                    i++;
-                    break;
+    while (i < src_count) {
+        size_t src_chars_remaining = src_count - i;
 
-                case '0':
-                    dst[count++] = 0;
-                    i++;
-                    break;
+        if (src[i] != '\\' || src_chars_remaining < 2) {
+            dst[dst_count++] = src[i++];
+            continue;
+        }
 
-                case '"':
-                    dst[count++] = '"';
-                    i++;
-                    break;
+        switch (src[i + 1]) {
+            case '\\':
+                dst[dst_count++] = '\\';
+                i += 2;
+                break;
 
-                case '\'':
-                    dst[count++] = '\'';
-                    i++;
-                    break;
+            case '0':
+                dst[dst_count++] = 0;
+                i += 2;
+                break;
 
-                case '$':
-                    dst[count++] = '$';
-                    i++;
-                    break;
+            case '"':
+                dst[dst_count++] = '"';
+                i += 2;
+                break;
 
-                case 'b':
-                    dst[count++] = 8;
-                    i++;
-                    break;
+            case '\'':
+                dst[dst_count++] = '\'';
+                i += 2;
+                break;
 
-                case 'e':
-                    dst[count++] = 27;
-                    i++;
-                    break;
+            case '$':
+                dst[dst_count++] = '$';
+                i += 2;
+                break;
 
-                case 'n':
-                    dst[count++] = 10;
-                    i++;
-                    break;
+            case 'b':
+                dst[dst_count++] = 8;
+                i += 2;
+                break;
 
-                case 'r':
-                    dst[count++] = 13;
-                    i++;
-                    break;
+            case 'e':
+                dst[dst_count++] = 27;
+                i += 2;
+                break;
 
-                case 't':
-                    dst[count++] = 9;
-                    i++;
-                    break;
+            case 'n':
+                dst[dst_count++] = 10;
+                i += 2;
+                break;
 
-                // 8-bit hex-encoded byte value: \xXX.
-                case 'x':
-                    if (src_len - i > 3 &&
-                        isxdigit(src[i + 2]) &&
-                        isxdigit(src[i + 3])
-                    ) {
-                        dst[count++] = (hex_to_int(src[i + 2]) << 4) | hex_to_int(src[i + 3]);
-                        i += 3;
-                    } else {
-                        dst[count++] = src[i];
-                    }
-                    break;
+            case 'r':
+                dst[dst_count++] = 13;
+                i += 2;
+                break;
 
-                // 16-bit hex-encoded unicode code point: \uXXXX. Output as utf-8.
-                case 'u': {
-                    if (src_len - i > 5 &&
-                        isxdigit(src[i + 2]) &&
-                        isxdigit(src[i + 3]) &&
-                        isxdigit(src[i + 4]) &&
-                        isxdigit(src[i + 5])
-                    ) {
-                        uint16_t codepoint =
-                            (hex_to_int(src[i + 2]) << 12) |
-                            (hex_to_int(src[i + 3]) << 8)  |
-                            (hex_to_int(src[i + 4]) << 4)  |
-                            (hex_to_int(src[i + 5]));
-                        i += 5;
-                        count += pyro_write_utf8_codepoint(codepoint, (uint8_t*)&dst[count]);
-                    } else {
-                        dst[count++] = src[i];
-                    }
-                    break;
+            case 't':
+                dst[dst_count++] = 9;
+                i += 2;
+                break;
+
+            // 8-bit hex-encoded byte value: \xXX.
+            case 'x':
+                if (src_chars_remaining >= 4 &&
+                    isxdigit(src[i + 2]) &&
+                    isxdigit(src[i + 3])
+                ) {
+                    dst[dst_count++] = (hex_to_int(src[i + 2]) << 4) | hex_to_int(src[i + 3]);
+                    i += 4;
+                } else {
+                    dst[dst_count++] = src[i++];
                 }
+                break;
 
-                // 32-bit hex-encoded unicode code point: \UXXXXXXXX. Output as utf-8.
-                case 'U': {
-                    if (src_len - i > 9 &&
-                        isxdigit(src[i + 2]) &&
-                        isxdigit(src[i + 3]) &&
-                        isxdigit(src[i + 4]) &&
-                        isxdigit(src[i + 5]) &&
-                        isxdigit(src[i + 6]) &&
-                        isxdigit(src[i + 7]) &&
-                        isxdigit(src[i + 8]) &&
-                        isxdigit(src[i + 9])
-                    ) {
-                        uint32_t codepoint =
-                            (hex_to_int(src[i + 2]) << 28) |
-                            (hex_to_int(src[i + 3]) << 24) |
-                            (hex_to_int(src[i + 4]) << 20) |
-                            (hex_to_int(src[i + 5]) << 16) |
-                            (hex_to_int(src[i + 6]) << 12) |
-                            (hex_to_int(src[i + 7]) << 8)  |
-                            (hex_to_int(src[i + 8]) << 4)  |
-                            (hex_to_int(src[i + 9]));
-                        i += 9;
-                        count += pyro_write_utf8_codepoint(codepoint, (uint8_t*)&dst[count]);
-                    } else {
-                        dst[count++] = src[i];
-                    }
-                    break;
+            // 16-bit hex-encoded unicode code point: \uXXXX. Output as utf-8.
+            case 'u': {
+                if (src_chars_remaining >= 6 &&
+                    isxdigit(src[i + 2]) &&
+                    isxdigit(src[i + 3]) &&
+                    isxdigit(src[i + 4]) &&
+                    isxdigit(src[i + 5])
+                ) {
+                    uint16_t codepoint =
+                        (hex_to_int(src[i + 2]) << 12) |
+                        (hex_to_int(src[i + 3]) << 8)  |
+                        (hex_to_int(src[i + 4]) << 4)  |
+                        (hex_to_int(src[i + 5]));
+                    i += 6;
+                    dst_count += pyro_write_utf8_codepoint(codepoint, (uint8_t*)&dst[dst_count]);
+                } else {
+                    dst[dst_count++] = src[i++];
                 }
-
-                default:
-                    dst[count++] = src[i];
+                break;
             }
-        } else {
-            dst[count++] = src[i];
+
+            // 32-bit hex-encoded unicode code point: \UXXXXXXXX. Output as utf-8.
+            case 'U': {
+                if (src_chars_remaining >= 10 &&
+                    isxdigit(src[i + 2]) &&
+                    isxdigit(src[i + 3]) &&
+                    isxdigit(src[i + 4]) &&
+                    isxdigit(src[i + 5]) &&
+                    isxdigit(src[i + 6]) &&
+                    isxdigit(src[i + 7]) &&
+                    isxdigit(src[i + 8]) &&
+                    isxdigit(src[i + 9])
+                ) {
+                    uint32_t codepoint =
+                        (hex_to_int(src[i + 2]) << 28) |
+                        (hex_to_int(src[i + 3]) << 24) |
+                        (hex_to_int(src[i + 4]) << 20) |
+                        (hex_to_int(src[i + 5]) << 16) |
+                        (hex_to_int(src[i + 6]) << 12) |
+                        (hex_to_int(src[i + 7]) << 8)  |
+                        (hex_to_int(src[i + 8]) << 4)  |
+                        (hex_to_int(src[i + 9]));
+                    i += 10;
+                    dst_count += pyro_write_utf8_codepoint(codepoint, (uint8_t*)&dst[dst_count]);
+                } else {
+                    dst[dst_count++] = src[i++];
+                }
+                break;
+            }
+
+            default:
+                dst[dst_count++] = src[i++];
+                break;
         }
     }
 
-    return count;
+    return dst_count;
 }
 
 

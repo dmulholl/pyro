@@ -906,17 +906,19 @@ static double parse_float_literal(Parser* parser) {
 
 
 static uint32_t parse_char_literal(Parser* parser) {
-    const char* start = parser->previous_token.start + 1;
-    size_t length = parser->previous_token.length - 2;
-
     // The longest valid character literal is a unicode escape sequence of the form: '\UXXXXXXXX'.
-    if (length == 0 || length > 10) {
+    const size_t max_length = 10;
+
+    const char* start = parser->previous_token.start;
+    size_t length = parser->previous_token.length;
+
+    if (length == 0 || length > max_length) {
         ERROR_AT_PREVIOUS_TOKEN("invalid character literal");
         return 0;
     }
 
-    char buffer[10];
-    size_t count = pyro_unescape_string(start, length, buffer);
+    char buffer[16];
+    size_t count = pyro_process_backslashed_escapes(start, length, buffer);
 
     Utf8CodePoint cp;
     if (!pyro_read_utf8_codepoint((uint8_t*)buffer, count, &cp)) {

@@ -483,7 +483,10 @@ static Token read_char_literal(Lexer* lexer) {
         }
 
         if (c == '\'') {
-            return make_token(lexer, TOKEN_CHAR);
+            Token token = make_token(lexer, TOKEN_CHAR);
+            token.start += 1;
+            token.length -= 2;
+            return token;
         }
     }
 

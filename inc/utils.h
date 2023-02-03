@@ -22,11 +22,6 @@ uint64_t pyro_fnv1a_64_opt(const char* string, size_t length);
 uint64_t pyro_djb2_64(const char* string, size_t length);
 uint64_t pyro_sdbm_64(const char* string, size_t length);
 
-// Copies [src_len] bytes from the string [src] to the buffer [dst], replacing backslashed escapes.
-// Does not add a terminating null to [dst]. Returns the number of bytes written to [dst] -- this
-// will be less than or equal to [src_len].
-size_t pyro_unescape_string(const char* src, size_t src_len, char* dst);
-
 // Parse a string as an integer. The string can contain underscores and can begin with 0b, 0o, or
 // 0x to specify the base. Returns true if successful, false if the string was invalid.
 bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value);
@@ -69,5 +64,12 @@ size_t pyro_dirname(const char* path);
 // Returns a string with '%' symbols in the input escaped as '%%'.
 // Returns NULL if memory cannot be allocated for the new string.
 PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len);
+
+// Copies [src_count] bytes from [src] to [dst], processing backslashed escape sequences.
+// - Returns the number of bytes written to [dst] - this will be less than or equal to [src_count].
+// - Does not add a terminating null to [dst].
+// - [dst] can be the same buffer as [src] - i.e. it's safe for a buffer to overwrite itself.
+// - Ignores unrecognised escape sequences - i.e. copies them verbatim to [dst].
+size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char* dst);
 
 #endif
