@@ -87,7 +87,7 @@ static char peek(Lexer* lexer) {
 }
 
 
-static char peek_next(Lexer* lexer) {
+static char peek2(Lexer* lexer) {
     if (lexer->next + 1 >= lexer->end) return '\0';
     return lexer->next[1];
 }
@@ -254,14 +254,14 @@ static Token read_number(Lexer* lexer) {
         return make_token(lexer, TOKEN_INT);
     }
 
-    if (peek(lexer) == '.' && is_digit(peek_next(lexer))) {
+    if (peek(lexer) == '.' && is_digit(peek2(lexer))) {
         next_char(lexer);
         while (is_digit_or_underscore(peek(lexer))) {
             next_char(lexer);
         }
     }
 
-    if (peek(lexer) == 'e' && is_digit_or_plus_or_minus(peek_next(lexer))) {
+    if (peek(lexer) == 'e' && is_digit_or_plus_or_minus(peek2(lexer))) {
         next_char(lexer);
         next_char(lexer);
         while (is_digit_or_underscore(peek(lexer))) {
@@ -304,6 +304,108 @@ static Token read_backtick_string(Lexer* lexer) {
 }
 
 
+// Are we at the beginning of a valid backslashed escape sequence? We've already parsed the
+// backslash and the input contains at least one more character.
+static bool is_valid_backslashed_escape(Lexer* lexer) {
+    size_t chars_remaining = lexer->end - lexer->next;
+
+    switch (peek(lexer)) {
+        case '\\':
+        case '0':
+        case '"':
+        case '\'':
+        case '$':
+        case '{':
+        case 'b':
+        case 'e':
+        case 'f':
+        case 'n':
+        case 'r':
+        case 't':
+        case 'v':
+            return true;
+
+        case 'x': {
+            if (chars_remaining >= 3 &&
+                isxdigit(lexer->next[1]) &&
+                isxdigit(lexer->next[2])
+            ) {
+                return true;
+            }
+
+            pyro_syntax_error(
+                lexer->vm,
+                lexer->src_id,
+                lexer->line,
+                "invalid escape sequence, \\x must be followed by 2 hexadecimal digits",
+                lexer->next
+            );
+            return false;
+        }
+
+        case 'u': {
+            if (chars_remaining >= 5 &&
+                isxdigit(lexer->next[1]) &&
+                isxdigit(lexer->next[2]) &&
+                isxdigit(lexer->next[3]) &&
+                isxdigit(lexer->next[4])
+            ) {
+                return true;
+            }
+
+            pyro_syntax_error(
+                lexer->vm,
+                lexer->src_id,
+                lexer->line,
+                "invalid escape sequence, \\u must be followed by 4 hexadecimal digits",
+                lexer->next
+            );
+            return false;
+        }
+
+        case 'U': {
+            if (chars_remaining >= 9 &&
+                isxdigit(lexer->next[1]) &&
+                isxdigit(lexer->next[2]) &&
+                isxdigit(lexer->next[3]) &&
+                isxdigit(lexer->next[4]) &&
+                isxdigit(lexer->next[5]) &&
+                isxdigit(lexer->next[6]) &&
+                isxdigit(lexer->next[7]) &&
+                isxdigit(lexer->next[8])
+            ) {
+                return true;
+            }
+
+            pyro_syntax_error(
+                lexer->vm,
+                lexer->src_id,
+                lexer->line,
+                "invalid escape sequence, \\U must be followed by 8 hexadecimal digits",
+                lexer->next
+            );
+            return false;
+        }
+
+        default: {
+            const char* error_message = "invalid escape sequence \\(0x%02X)";
+            if (isprint(lexer->next[0])) {
+                error_message = "invalid escape sequence \\%c";
+            }
+
+            pyro_syntax_error(
+                lexer->vm,
+                lexer->src_id,
+                lexer->line,
+                error_message,
+                lexer->next[0]
+            );
+            return false;
+        }
+    }
+}
+
+
 static Token read_double_quoted_string(Lexer* lexer) {
     bool contains_escapes = false;
     size_t start_line = lexer->line;
@@ -317,11 +419,15 @@ static Token read_double_quoted_string(Lexer* lexer) {
         }
 
         if (c == '\\') {
-            if (!is_at_end(lexer)) {
-                next_char(lexer);
+            if (is_at_end(lexer)) {
+                break;
             }
-            contains_escapes = true;
-            continue;
+            if (is_valid_backslashed_escape(lexer)) {
+                contains_escapes = true;
+                next_char(lexer);
+                continue;
+            }
+            return make_error_token(lexer);
         }
 
         if (c == '$') {
@@ -368,10 +474,14 @@ static Token read_char_literal(Lexer* lexer) {
         }
 
         if (c == '\\') {
-            if (!is_at_end(lexer)) {
-                next_char(lexer);
+            if (is_at_end(lexer)) {
+                break;
             }
-            continue;
+            if (is_valid_backslashed_escape(lexer)) {
+                next_char(lexer);
+                continue;
+            }
+            return make_error_token(lexer);
         }
 
         if (c == '\'') {
@@ -407,10 +517,14 @@ static Token next_interpolated_string_token(Lexer* lexer) {
         }
 
         if (c == '\\') {
-            if (!is_at_end(lexer)) {
-                next_char(lexer);
+            if (is_at_end(lexer)) {
+                break;
             }
-            continue;
+            if (is_valid_backslashed_escape(lexer)) {
+                next_char(lexer);
+                continue;
+            }
+            return make_error_token(lexer);
         }
 
         if (c == '$') {
