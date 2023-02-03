@@ -528,7 +528,7 @@ class Parser {
             }
 
             if self.input:match(`\f`, index) {
-                buf:write("\f");
+                buf:write("\x0C");
                 index +=2;
                 continue;
             }

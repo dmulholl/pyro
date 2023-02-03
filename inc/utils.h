@@ -66,4 +66,8 @@ const char* pyro_basename(const char* path);
 // - "/foo/bar.txt" --> "/foo"
 size_t pyro_dirname(const char* path);
 
+// Returns a string with '%' symbols in the input escaped as '%%'.
+// Returns NULL if memory cannot be allocated for the new string.
+PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len);
+
 #endif

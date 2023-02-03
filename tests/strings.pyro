@@ -609,7 +609,7 @@ def $test_indexing_into_string() {
 
 def $test_is_ascii_ws() {
     assert " ":is_ascii_ws();
-    assert " \t\r\n\v\f ":is_ascii_ws();
+    assert " \t\r\n ":is_ascii_ws();
 
     assert !"":is_ascii_ws();
     assert !"a":is_ascii_ws();
@@ -621,7 +621,7 @@ def $test_is_ascii_ws() {
 def $test_is_empty_or_ascii_ws() {
     assert "":is_empty_or_ascii_ws();
     assert " ":is_empty_or_ascii_ws();
-    assert " \t\r\n\v\f ":is_empty_or_ascii_ws();
+    assert " \t\r\n ":is_empty_or_ascii_ws();
 
     assert !"a":is_empty_or_ascii_ws();
     assert !"abc":is_empty_or_ascii_ws();
@@ -631,7 +631,7 @@ def $test_is_empty_or_ascii_ws() {
 
 def $test_is_ws() {
     assert " ":is_ws();
-    assert " \t\r\n\v\f ":is_ws();
+    assert " \t\r\n ":is_ws();
 
     assert !"":is_ws();
     assert !"a":is_ws();
@@ -643,7 +643,7 @@ def $test_is_ws() {
 def $test_is_empty_or_ws() {
     assert "":is_empty_or_ws();
     assert " ":is_empty_or_ws();
-    assert " \t\r\n\v\f ":is_empty_or_ws();
+    assert " \t\r\n ":is_empty_or_ws();
 
     assert !"a":is_empty_or_ws();
     assert !"abc":is_empty_or_ws();
@@ -653,7 +653,7 @@ def $test_is_empty_or_ws() {
 
 def $test_is_utf8_ws() {
     assert " ":is_utf8_ws();
-    assert " \t\r\n\v\f ":is_utf8_ws();
+    assert " \t\r\n ":is_utf8_ws();
 
     assert !"":is_utf8_ws();
     assert !"a":is_utf8_ws();
@@ -668,7 +668,7 @@ def $test_is_utf8_ws() {
 def $test_is_empty_or_utf8_ws() {
     assert "":is_empty_or_utf8_ws();
     assert " ":is_empty_or_utf8_ws();
-    assert " \t\r\n\v\f ":is_empty_or_utf8_ws();
+    assert " \t\r\n ":is_empty_or_utf8_ws();
 
     assert !"a":is_empty_or_utf8_ws();
     assert !"abc":is_empty_or_utf8_ws();

@@ -56,10 +56,6 @@ PyroStr* PyroStr_append_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, Pyro
 // Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
 PyroStr* PyroStr_empty(PyroVM* vm);
 
-// Returns a string with '%' symbols in the input escaped as '%%'.
-// Returns NULL if memory cannot be allocated for the new string.
-PyroStr* PyroStr_esc_percents(const char* src, size_t length, PyroVM* vm);
-
 /* ---- */
 /* Maps */
 /* ---- */

@@ -117,48 +117,49 @@ size_t pyro_unescape_string(const char* src, size_t src_len, char* dst) {
                     dst[count++] = '\\';
                     i++;
                     break;
+
                 case '0':
                     dst[count++] = 0;
                     i++;
                     break;
+
                 case '"':
                     dst[count++] = '"';
                     i++;
                     break;
+
                 case '\'':
                     dst[count++] = '\'';
                     i++;
                     break;
+
+                case '$':
+                    dst[count++] = '$';
+                    i++;
+                    break;
+
                 case 'b':
                     dst[count++] = 8;
                     i++;
                     break;
+
                 case 'e':
                     dst[count++] = 27;
                     i++;
                     break;
-                case 'f':
-                    dst[count++] = 12;
-                    i++;
-                    break;
+
                 case 'n':
                     dst[count++] = 10;
                     i++;
                     break;
+
                 case 'r':
                     dst[count++] = 13;
                     i++;
                     break;
+
                 case 't':
                     dst[count++] = 9;
-                    i++;
-                    break;
-                case 'v':
-                    dst[count++] = 11;
-                    i++;
-                    break;
-                case '$':
-                    dst[count++] = '$';
                     i++;
                     break;
 
@@ -426,4 +427,26 @@ size_t pyro_dirname(const char* path) {
     }
 
     return (*end == '/') ? 1 : 0;
+}
+
+
+PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len) {
+    PyroBuf* buf = PyroBuf_new_with_cap(src_len, vm);
+    if (!buf) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < src_len; i++) {
+        if (src[i] == '%') {
+            if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"%%", vm)) {
+                return NULL;
+            }
+        } else {
+            if (!PyroBuf_append_byte(buf, src[i], vm)) {
+                return NULL;
+            }
+        }
+    }
+
+    return PyroBuf_to_str(buf, vm);
 }

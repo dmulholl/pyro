@@ -231,7 +231,7 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroStr* escaped_string = PyroStr_esc_percents(string->bytes, string->length, vm);
+        PyroStr* escaped_string = pyro_double_escape_percents(vm, string->bytes, string->length);
         if (!escaped_string) {
             pyro_panic(vm, "$panic(): out of memory");
             return pyro_null();
@@ -251,7 +251,7 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroStr* escaped_string = PyroStr_esc_percents(string->bytes, string->length, vm);
+    PyroStr* escaped_string = pyro_double_escape_percents(vm, string->bytes, string->length);
     if (!escaped_string) {
         pyro_panic(vm, "$panic(): out of memory");
         return pyro_null();

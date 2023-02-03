@@ -125,37 +125,37 @@ out/build/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 
 out/build/std_mod_args.o: std/mods/pyro/std_mod_args.pyro
 	@mkdir -p out/build
-	@printf "\e[1;32mBuilding\e[0m \$$std:args\n"
+	@printf "\e[1;32mBuilding\e[0m std::args\n"
 	@cd std/mods/pyro; xxd -i std_mod_args.pyro > ../../../out/build/std_mod_args.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_args.c -o out/build/std_mod_args.o
 
 out/build/std_mod_email.o: std/mods/pyro/std_mod_email.pyro
 	@mkdir -p out/build
-	@printf "\e[1;32mBuilding\e[0m \$$std:email\n"
+	@printf "\e[1;32mBuilding\e[0m std::email\n"
 	@cd std/mods/pyro; xxd -i std_mod_email.pyro > ../../../out/build/std_mod_email.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_email.c -o out/build/std_mod_email.o
 
 out/build/std_mod_html.o: std/mods/pyro/std_mod_html.pyro
 	@mkdir -p out/build
-	@printf "\e[1;32mBuilding\e[0m \$$std:html\n"
+	@printf "\e[1;32mBuilding\e[0m std::html\n"
 	@cd std/mods/pyro; xxd -i std_mod_html.pyro > ../../../out/build/std_mod_html.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_html.c -o out/build/std_mod_html.o
 
 out/build/std_mod_cgi.o: std/mods/pyro/std_mod_cgi.pyro
 	@mkdir -p out/build
-	@printf "\e[1;32mBuilding\e[0m \$$std:cgi\n"
+	@printf "\e[1;32mBuilding\e[0m std::cgi\n"
 	@cd std/mods/pyro; xxd -i std_mod_cgi.pyro > ../../../out/build/std_mod_cgi.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_cgi.c -o out/build/std_mod_cgi.o
 
 out/build/std_mod_json.o: std/mods/pyro/std_mod_json.pyro
 	@mkdir -p out/build
-	@printf "\e[1;32mBuilding\e[0m \$$std:json\n"
+	@printf "\e[1;32mBuilding\e[0m std::json\n"
 	@cd std/mods/pyro; xxd -i std_mod_json.pyro > ../../../out/build/std_mod_json.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_json.c -o out/build/std_mod_json.o
 
 out/build/std_mod_pretty.o: std/mods/pyro/std_mod_pretty.pyro
 	@mkdir -p out/build
-	@printf "\e[1;32mBuilding\e[0m \$$std:pretty\n"
+	@printf "\e[1;32mBuilding\e[0m std::pretty\n"
 	@cd std/mods/pyro; xxd -i std_mod_pretty.pyro > ../../../out/build/std_mod_pretty.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_pretty.c -o out/build/std_mod_pretty.o
 

@@ -318,11 +318,9 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
         case '{':
         case 'b':
         case 'e':
-        case 'f':
         case 'n':
         case 'r':
         case 't':
-        case 'v':
             return true;
 
         case 'x': {

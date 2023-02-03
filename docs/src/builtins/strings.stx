@@ -34,7 +34,7 @@ Regular string literals use double quotes:
     with multiple
     lines";
 
-Regular string literals process all the usual backslashed escapes:
+Regular string literals process the following backslashed escapes:
 
 ::: table
     `\\` | backslash
@@ -44,11 +44,9 @@ Regular string literals process all the usual backslashed escapes:
     `\$` | dollar symbol
     `\b` | backspace
     `\e` | escape
-    `\f` | form feed
     `\n` | newline
     `\r` | carriage return
     `\t` | tab
-    `\v` | vertical tab
     `\x##` | 8-bit hex-encoded byte value
     `\u####` | 16-bit hex-encoded unicode code point (output as UTF-8)
     `\U########` | 32-bit hex-encoded unicode code point (output as UTF-8)
