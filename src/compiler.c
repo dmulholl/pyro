@@ -248,7 +248,7 @@ static uint16_t add_value_to_constant_table(Parser* parser, PyroValue value) {
 // Takes an identifier token and adds its lexeme to the constant table as a string.
 // Returns its index in the constant table.
 static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name) {
-    PyroStr* string = PyroStr_copy_raw(name->start, name->length, parser->vm);
+    PyroStr* string = PyroStr_copy(name->start, name->length, false, parser->vm);
     if (!string) {
         parser->had_memory_error = true;
         return 0;
@@ -387,14 +387,14 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType typ
         return false;
     }
 
-    fn_compiler->fn->name = PyroStr_copy_raw(name.start, name.length, parser->vm);
+    fn_compiler->fn->name = PyroStr_copy(name.start, name.length, false, parser->vm);
     if (!fn_compiler->fn->name) {
         parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
         return false;
     }
 
-    fn_compiler->fn->source_id = PyroStr_copy_raw(parser->src_id, strlen(parser->src_id), parser->vm);
+    fn_compiler->fn->source_id = PyroStr_copy(parser->src_id, strlen(parser->src_id), false, parser->vm);
     if (!fn_compiler->fn->source_id) {
         parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
@@ -1048,18 +1048,20 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
     }
 
     else if (match(parser, TOKEN_RAW_STRING)) {
-        PyroStr* string = PyroStr_copy_raw(
+        PyroStr* string = PyroStr_copy(
             parser->previous_token.start,
             parser->previous_token.length,
+            false,
             parser->vm
         );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
-        PyroStr* string = PyroStr_copy_esc(
+        PyroStr* string = PyroStr_copy(
             parser->previous_token.start,
             parser->previous_token.length,
+            true,
             parser->vm
         );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
@@ -1130,27 +1132,30 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     }
 
     else if (match(parser, TOKEN_RAW_STRING)) {
-        PyroStr* string = PyroStr_copy_raw(
+        PyroStr* string = PyroStr_copy(
             parser->previous_token.start,
             parser->previous_token.length,
+            false,
             parser->vm
         );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
     else if (match(parser, TOKEN_ESCAPED_STRING)) {
-        PyroStr* string = PyroStr_copy_esc(
+        PyroStr* string = PyroStr_copy(
             parser->previous_token.start,
             parser->previous_token.length,
+            true,
             parser->vm
         );
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
     else if (match(parser, TOKEN_STRING_FRAGMENT)) {
-        PyroStr* string = PyroStr_copy_esc(
+        PyroStr* string = PyroStr_copy(
             parser->previous_token.start,
             parser->previous_token.length,
+            true,
             parser->vm
         );
 
@@ -1175,9 +1180,10 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
                     return TOKEN_UNDEFINED;
                 }
 
-                PyroStr* string = PyroStr_copy_raw(
+                PyroStr* string = PyroStr_copy(
                     parser->previous_token.start,
                     parser->previous_token.length,
+                    false,
                     parser->vm
                 );
 
@@ -1195,9 +1201,10 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             parser->lexer.interpolated_string_mode = false;
 
             if (match(parser, TOKEN_STRING_FRAGMENT)) {
-                PyroStr* string = PyroStr_copy_esc(
+                PyroStr* string = PyroStr_copy(
                     parser->previous_token.start,
                     parser->previous_token.length,
+                    true,
                     parser->vm
                 );
                 emit_load_value_from_constant_table(parser, pyro_obj(string));
@@ -1206,9 +1213,10 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             }
 
             if (match(parser, TOKEN_STRING_FRAGMENT_FINAL)) {
-                PyroStr* string = PyroStr_copy_esc(
+                PyroStr* string = PyroStr_copy(
                     parser->previous_token.start,
                     parser->previous_token.length,
+                    true,
                     parser->vm
                 );
                 emit_load_value_from_constant_table(parser, pyro_obj(string));

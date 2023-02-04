@@ -585,7 +585,7 @@ bool pyro_add_import_root_n(PyroVM* vm, const char* path, size_t length)  {
         return false;
     }
 
-    PyroStr* string = PyroStr_copy_raw(path, length, vm);
+    PyroStr* string = PyroStr_copy(path, length, false, vm);
     if (!string) {
         return false;
     }

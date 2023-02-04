@@ -51,7 +51,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
 
             if (PYRO_IS_CLOSURE(member_value)) {
                 PyroStr* name = PYRO_AS_STR(member_name);
-                if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
+                if (name->count > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                     pyro_reset_vm(vm);
                     pyro_push(vm, member_value);
                     pyro_call_function(vm, 0);
@@ -145,7 +145,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
 
             if (PYRO_IS_CLOSURE(member_value)) {
                 PyroStr* name = PYRO_AS_STR(member_name);
-                if (name->length > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
+                if (name->count > 6 && memcmp(name->bytes, "$test_", 6) == 0) {
                     pyro_reset_vm(vm);
                     pyro_push(vm, member_value);
                     pyro_call_function(vm, 0);

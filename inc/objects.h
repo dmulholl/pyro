@@ -7,30 +7,34 @@
 
 struct PyroStr {
     PyroObject obj;
-    uint64_t hash;
-    size_t length;
+    size_t count;
+    size_t capacity;
     char* bytes;
+    uint64_t hash;
 };
+
+// Creates a new string object by copying the null-terminated C-string [src].
+// - Ignores backslashed escape sequences.
+#define PyroStr_COPY(src) PyroStr_copy((src), strlen((src)), false, vm)
+
+// Creates a new string object by copying [count] bytes from [src].
+// - If [src] is NULL or [count] is zero, returns an empty string.
+// - Returns NULL if the attempt to allocate memory for the new string object fails.
+PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_escapes, PyroVM* vm);
+
+// Creates a new string object by taking ownership of the heap-allocated array [bytes]. Assumes
+// [bytes] was allocated using PYRO_ALLOCATE_ARRAY(); it will be freed using PYRO_FREE_ARRAY().
+// - Requires: [capacity >= count + 1].
+// - Sets: [bytes[count] = '\0'].
+// - Returns NULL if the attempt to allocate memory for the new string object fails.
+// - If the return value is NULL, ownership of [bytes] is returned to the caller.
+PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm);
+
+
 
 // Creates a new string object by copying the null-terminated C-string [src], ignoring backslashed
 // escapes.
 PyroStr* PyroStr_new(const char* src, PyroVM* vm);
-
-// Creates a new string object by copying [length] bytes from [src], ignoring backslashed escapes.
-// If [length] is 0, [src] can be NULL. Returns NULL if the attempt to allocate memory for the
-// string object fails.
-PyroStr* PyroStr_copy_raw(const char* src, size_t length, PyroVM* vm);
-
-// Creates a new string object by copying [length] bytes from [src], processing backslashed escapes.
-// If [length] is 0, [src] can be NULL. Returns NULL if the attempt to allocate memory for the
-// string object fails.
-PyroStr* PyroStr_copy_esc(const char* src, size_t length, PyroVM* vm);
-
-// Creates a new string object taking ownership of a null-terminated, heap-allocated byte array,
-// [src], where [length] is the number of bytes in the array, not including the terminating null.
-// Returns NULL if the attempt to allocate memory for the new string object fails -- in this case
-// the input array is not altered or freed.
-PyroStr* PyroStr_take(char* src, size_t length, PyroVM* vm);
 
 // Creates a new string object by concatenating two source strings. Returns NULL if memory cannot
 // be allocated for the new string.

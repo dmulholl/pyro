@@ -14,7 +14,7 @@ static PyroStr* make_debug_string_for_string(PyroVM* vm, PyroStr* input_string) 
         return NULL;
     }
 
-    for (size_t i = 0; i < input_string->length; i++) {
+    for (size_t i = 0; i < input_string->count; i++) {
         bool ok;
         char c = input_string->bytes[i];
 
@@ -68,7 +68,7 @@ static PyroStr* make_debug_string_for_buf(PyroVM* vm, PyroBuf* buf) {
         return pyro_sprintf_to_obj(vm, "<buf>");
     }
 
-    PyroStr* raw_content = PyroStr_copy_raw((char*)buf->bytes, buf->count, vm);
+    PyroStr* raw_content = PyroStr_copy((char*)buf->bytes, buf->count, false, vm);
     if (!raw_content) {
         pyro_panic(vm, "out of memory");
         return NULL;
@@ -171,7 +171,7 @@ static PyroStr* stringify_tuple(PyroVM* vm, PyroTup* tup) {
             return NULL;
         }
 
-        if (!PyroBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, item_string->count, (uint8_t*)item_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
@@ -221,7 +221,7 @@ static PyroStr* stringify_vector(PyroVM* vm, PyroVec* vec) {
             return NULL;
         }
 
-        if (!PyroBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, item_string->count, (uint8_t*)item_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
@@ -286,7 +286,7 @@ static PyroStr* stringify_map(PyroVM* vm, PyroMap* map) {
             return NULL;
         }
 
-        if (!PyroBuf_append_bytes(buf, key_string->length, (uint8_t*)key_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, key_string->count, (uint8_t*)key_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
@@ -301,7 +301,7 @@ static PyroStr* stringify_map(PyroVM* vm, PyroMap* map) {
             return NULL;
         }
 
-        if (!PyroBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, value_string->count, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
@@ -359,7 +359,7 @@ static PyroStr* stringify_map_as_set(PyroVM* vm, PyroMap* map) {
             return NULL;
         }
 
-        if (!PyroBuf_append_bytes(buf, key_string->length, (uint8_t*)key_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, key_string->count, (uint8_t*)key_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
@@ -411,7 +411,7 @@ static PyroStr* stringify_queue(PyroVM* vm, PyroQueue* queue) {
             return NULL;
         }
 
-        if (!PyroBuf_append_bytes(buf, item_string->length, (uint8_t*)item_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, item_string->count, (uint8_t*)item_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
@@ -517,7 +517,7 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 
         case PYRO_OBJECT_BUF: {
             PyroBuf* buf = (PyroBuf*)object;
-            PyroStr* string = PyroStr_copy_raw((char*)buf->bytes, buf->count, vm);
+            PyroStr* string = PyroStr_copy((char*)buf->bytes, buf->count, false, vm);
             if (!string) {
                 pyro_panic(vm, "out of memory");
                 return NULL;
@@ -574,7 +574,7 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 
         case PYRO_OBJECT_ERR: {
             PyroErr* err = (PyroErr*)object;
-            if (err->message == NULL || err->message->length == 0) {
+            if (err->message == NULL || err->message->count == 0) {
                 return pyro_sprintf_to_obj(vm, "<err>");
             }
             return err->message;
@@ -603,7 +603,7 @@ PyroStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
         trimmed_length++;
     }
 
-    PyroStr* string = PyroStr_copy_raw(array, trimmed_length, vm);
+    PyroStr* string = PyroStr_copy(array, trimmed_length, false, vm);
     PYRO_FREE_ARRAY(vm, char, array, original_length + 1);
     if (!string) {
         pyro_panic(vm, "out of memory");
@@ -698,7 +698,7 @@ PyroStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...) {
     vsprintf(array, format_string, args);
     va_end(args);
 
-    PyroStr* string = PyroStr_take(array, length, vm);
+    PyroStr* string = PyroStr_take(array, length, length + 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, array, length + 1);
         pyro_panic(vm, "out of memory");
@@ -726,7 +726,7 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
         case PYRO_VALUE_CHAR: {
             char buffer[4];
             size_t count = pyro_write_utf8_codepoint(value.as.u32, (uint8_t*)buffer);
-            PyroStr* string = PyroStr_copy_raw(buffer, count, vm);
+            PyroStr* string = PyroStr_copy(buffer, count, false, vm);
             if (!string) {
                 pyro_panic(vm, "out of memory");
                 return NULL;
@@ -784,7 +784,7 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
 
     if (PYRO_IS_ERR(value)) {
         PyroErr* err = PYRO_AS_ERR(value);
-        if (err->message == NULL || err->message->length == 0) {
+        if (err->message == NULL || err->message->count == 0) {
             return pyro_sprintf_to_obj(vm, "<err \"\">");
         }
         PyroStr* debug_message = make_debug_string_for_string(vm, err->message);
@@ -946,7 +946,7 @@ static PyroStr* format_str_obj(PyroVM* vm, PyroStr* string, const char* format_s
         return NULL;
     }
 
-    if (string->length >= target_length) {
+    if (string->count >= target_length) {
         return string;
     }
 
@@ -957,7 +957,7 @@ static PyroStr* format_str_obj(PyroVM* vm, PyroStr* string, const char* format_s
     }
     size_t array_index = 0;
 
-    size_t padding_length = target_length - string->length;
+    size_t padding_length = target_length - string->count;
     if (is_right_aligned) {
         while (array_index < padding_length) {
             array[array_index] = ' ';
@@ -965,8 +965,8 @@ static PyroStr* format_str_obj(PyroVM* vm, PyroStr* string, const char* format_s
         }
     }
 
-    memcpy(&array[array_index], string->bytes, string->length);
-    array_index += string->length;
+    memcpy(&array[array_index], string->bytes, string->count);
+    array_index += string->count;
 
     while (array_index < target_length) {
         array[array_index] = ' ';
@@ -975,7 +975,7 @@ static PyroStr* format_str_obj(PyroVM* vm, PyroStr* string, const char* format_s
 
     array[array_index] = '\0';
 
-    PyroStr* result = PyroStr_take(array, target_length, vm);
+    PyroStr* result = PyroStr_take(array, target_length, target_length + 1, vm);
     if (!result) {
         PYRO_FREE_ARRAY(vm, char, array, target_length + 1);
         pyro_panic(vm, "out of memory");
@@ -1069,9 +1069,9 @@ PyroStr* pyro_format(PyroVM* vm, PyroStr* format_string, size_t arg_count, PyroV
         return NULL;
     }
 
-    while (format_string_index < format_string->length) {
+    while (format_string_index < format_string->count) {
         // Check for a backslash-escaped opening curly brace.
-        if (format_string_index < format_string->length - 1) {
+        if (format_string_index < format_string->count - 1) {
             if (format_string->bytes[format_string_index] == '\\') {
                 if (format_string->bytes[format_string_index + 1] == '{') {
                     if (!PyroBuf_append_byte(output, '{', vm)) {
@@ -1089,14 +1089,14 @@ PyroStr* pyro_format(PyroVM* vm, PyroStr* format_string, size_t arg_count, PyroV
 
             // Read the content of the {format_specifier} into the specifier buffer and add a
             // terminating NULL.
-            while (format_string_index < format_string->length && format_string->bytes[format_string_index] != '}') {
+            while (format_string_index < format_string->count && format_string->bytes[format_string_index] != '}') {
                 if (specifier_count == specifier_capacity - 1) {
                     pyro_panic(vm, "%s: format specifier is too long (max: %zu bytes)", caller, specifier_capacity - 1);
                     return NULL;
                 }
                 specifier[specifier_count++] = format_string->bytes[format_string_index++];
             }
-            if (format_string_index == format_string->length) {
+            if (format_string_index == format_string->count) {
                 pyro_panic(vm, "%s: invalid format string, missing closing '}'", caller);
                 return NULL;
             }
@@ -1119,7 +1119,7 @@ PyroStr* pyro_format(PyroVM* vm, PyroStr* format_string, size_t arg_count, PyroV
                 return NULL;
             }
 
-            if (!PyroBuf_append_bytes(output, formatted_arg->length, (uint8_t*)formatted_arg->bytes, vm)) {
+            if (!PyroBuf_append_bytes(output, formatted_arg->count, (uint8_t*)formatted_arg->bytes, vm)) {
                 pyro_panic(vm, "%s: out of memory", caller);
                 return NULL;
             }

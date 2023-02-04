@@ -51,10 +51,10 @@ static PyroValue mt64_seed_with_array(PyroVM* vm, size_t arg_count, PyroValue* a
 
     if (PYRO_IS_STR(args[0])) {
         PyroStr* string = PYRO_AS_STR(args[0]);
-        if (string->length < 8) {
+        if (string->count < 8) {
             mt64_seed_with_u64(mt64, pyro_hash_value(vm, args[0]));
         } else {
-            mt64_seed_with_byte_array(mt64, (uint8_t*)string->bytes, string->length);
+            mt64_seed_with_byte_array(mt64, (uint8_t*)string->bytes, string->count);
         }
     } else if (PYRO_IS_BUF(args[0])) {
         PyroBuf* buf = PYRO_AS_BUF(args[0]);

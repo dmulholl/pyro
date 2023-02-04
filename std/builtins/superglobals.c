@@ -231,7 +231,7 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroStr* escaped_string = pyro_double_escape_percents(vm, string->bytes, string->length);
+        PyroStr* escaped_string = pyro_double_escape_percents(vm, string->bytes, string->count);
         if (!escaped_string) {
             pyro_panic(vm, "$panic(): out of memory");
             return pyro_null();
@@ -251,7 +251,7 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroStr* escaped_string = pyro_double_escape_percents(vm, string->bytes, string->length);
+    PyroStr* escaped_string = pyro_double_escape_percents(vm, string->bytes, string->count);
     if (!escaped_string) {
         pyro_panic(vm, "$panic(): out of memory");
         return pyro_null();
@@ -302,7 +302,7 @@ static PyroValue fn_f64(PyroVM* vm, size_t arg_count, PyroValue* args) {
             if (PYRO_IS_STR(args[0])) {
                 PyroStr* string = PYRO_AS_STR(args[0]);
                 double value;
-                if (pyro_parse_string_as_float(string->bytes, string->length, &value)) {
+                if (pyro_parse_string_as_float(string->bytes, string->count, &value)) {
                     return pyro_f64(value);
                 }
                 pyro_panic(vm, "$f64(): invalid argument, unable to parse string");
@@ -346,7 +346,7 @@ static PyroValue fn_i64(PyroVM* vm, size_t arg_count, PyroValue* args) {
             if (PYRO_IS_STR(args[0])) {
                 PyroStr* string = PYRO_AS_STR(args[0]);
                 int64_t value;
-                if (pyro_parse_string_as_int(string->bytes, string->length, &value)) {
+                if (pyro_parse_string_as_int(string->bytes, string->count, &value)) {
                     return pyro_i64(value);
                 }
                 pyro_panic(vm, "$i64(): invalid argument, unable to parse string");
@@ -475,7 +475,7 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 vm,
                 PYRO_AS_STR(args[0])->bytes,
                 (uint8_t*)PYRO_AS_STR(args[1])->bytes,
-                PYRO_AS_STR(args[1])->length,
+                PYRO_AS_STR(args[1])->count,
                 &out_str,
                 &err_str,
                 &exit_code
@@ -577,7 +577,7 @@ static PyroValue fn_read_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
         capacity = count + 1;
     }
 
-    PyroStr* string = PyroStr_take((char*)array, count, vm);
+    PyroStr* string = PyroStr_take((char*)array, count, capacity, vm);
     if (!string) {
         pyro_panic(vm, "$read_file(): out of memory");
         PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
@@ -620,8 +620,8 @@ static PyroValue fn_write_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     PyroStr* string = PYRO_AS_STR(args[1]);
-    size_t n = fwrite(string->bytes, sizeof(char), string->length, stream);
-    if (n < string->length) {
+    size_t n = fwrite(string->bytes, sizeof(char), string->count, stream);
+    if (n < string->count) {
         pyro_panic(vm, "$write_file(): I/O write error");
         fclose(stream);
         return pyro_null();
@@ -796,7 +796,7 @@ static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // Push the module onto the stack to keep it safe from the garbage collector.
     if (!pyro_push(vm, pyro_obj(module))) { return pyro_null(); }
-    pyro_exec_code_as_module(vm, code->bytes, code->length, "<exec>", module);
+    pyro_exec_code_as_module(vm, code->bytes, code->count, "<exec>", module);
     pyro_pop(vm);
 
     return pyro_obj(module);

@@ -17,7 +17,7 @@ static PyroValue fn_is_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    return pyro_bool(str->length == 0);
+    return pyro_bool(str->count == 0);
 }
 
 
@@ -34,7 +34,7 @@ static PyroValue str_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_byte_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    return pyro_i64(str->length);
+    return pyro_i64(str->count);
 }
 
 
@@ -42,7 +42,7 @@ static PyroValue str_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
     if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
-        if (index >= 0 && (size_t)index < str->length) {
+        if (index >= 0 && (size_t)index < str->count) {
             return pyro_i64((uint8_t)str->bytes[index]);
         }
         pyro_panic(vm, "byte(): invalid argument [index], integer is out of range");
@@ -77,11 +77,11 @@ static PyroValue str_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_is_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(false);
     }
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         if (str->bytes[i] & 0x80) {
             return pyro_bool(false);
         }
@@ -93,7 +93,7 @@ static PyroValue str_is_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(true);
     }
     return str_is_ascii(vm, arg_count, args);
@@ -102,11 +102,11 @@ static PyroValue str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, PyroValue* 
 
 static PyroValue str_is_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(false);
     }
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         switch (str->bytes[i]) {
             case ' ':
             case '\t':
@@ -126,7 +126,7 @@ static PyroValue str_is_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 static PyroValue str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(true);
     }
     return str_is_ascii_ws(vm, arg_count, args);
@@ -135,16 +135,16 @@ static PyroValue str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, PyroValu
 
 static PyroValue str_is_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(false);
     }
 
     size_t byte_index = 0;
     Utf8CodePoint cp;
 
-    while (byte_index < str->length) {
+    while (byte_index < str->count) {
         uint8_t* src = (uint8_t*)&str->bytes[byte_index];
-        size_t src_len = str->length - byte_index;
+        size_t src_len = str->count - byte_index;
 
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
             byte_index += cp.length;
@@ -162,7 +162,7 @@ static PyroValue str_is_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(true);
     }
     return str_is_utf8_ws(vm, arg_count, args);
@@ -189,7 +189,7 @@ static PyroValue str_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     int64_t target_index = args[0].as.i64;
-    if (target_index < 0 || str->length == 0) {
+    if (target_index < 0 || str->count == 0) {
         pyro_panic(vm, "char(): invalid argument [index], out of range");
         return pyro_null();
     }
@@ -199,13 +199,13 @@ static PyroValue str_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
     Utf8CodePoint cp;
 
     while (char_count < (size_t)target_index + 1) {
-        if (byte_index == str->length) {
+        if (byte_index == str->count) {
             pyro_panic(vm, "char(): invalid argument [index], out of range");
             return pyro_null();
         }
 
         uint8_t* src = (uint8_t*)&str->bytes[byte_index];
-        size_t src_len = str->length - byte_index;
+        size_t src_len = str->count - byte_index;
 
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
             char_count++;
@@ -227,9 +227,9 @@ static PyroValue str_char_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     size_t char_count = 0;
     Utf8CodePoint cp;
 
-    while (byte_index < str->length) {
+    while (byte_index < str->count) {
         uint8_t* src = (uint8_t*)&str->bytes[byte_index];
-        size_t src_len = str->length - byte_index;
+        size_t src_len = str->count - byte_index;
 
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
             char_count++;
@@ -246,16 +246,16 @@ static PyroValue str_char_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_is_utf8(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(false);
     }
 
     size_t byte_index = 0;
     Utf8CodePoint cp;
 
-    while (byte_index < str->length) {
+    while (byte_index < str->count) {
         uint8_t* src = (uint8_t*)&str->bytes[byte_index];
-        size_t src_len = str->length - byte_index;
+        size_t src_len = str->count - byte_index;
 
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
             byte_index += cp.length;
@@ -270,7 +270,7 @@ static PyroValue str_is_utf8(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(true);
     }
     return str_is_utf8(vm, arg_count, args);
@@ -279,26 +279,26 @@ static PyroValue str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, PyroValue* a
 
 static PyroValue str_to_ascii_upper(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_obj(str);
     }
 
-    char* array = PYRO_ALLOCATE_ARRAY(vm, char, str->length + 1);
+    char* array = PYRO_ALLOCATE_ARRAY(vm, char, str->capacity);
     if (!array) {
         pyro_panic(vm, "to_ascii_upper(): out of memory");
         return pyro_null();
     }
-    memcpy(array, str->bytes, str->length + 1);
+    memcpy(array, str->bytes, str->capacity);
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         if (array[i] >= 'a' && array[i] <= 'z') {
             array[i] -= 32;
         }
     }
 
-    PyroStr* new_string = PyroStr_take(array, str->length, vm);
+    PyroStr* new_string = PyroStr_take(array, str->count, str->capacity, vm);
     if (!new_string) {
-        PYRO_FREE_ARRAY(vm, char, array, str->length + 1);
+        PYRO_FREE_ARRAY(vm, char, array, str->capacity);
         pyro_panic(vm, "to_ascii_uper(): out of memory");
         return pyro_null();
     }
@@ -309,26 +309,26 @@ static PyroValue str_to_ascii_upper(PyroVM* vm, size_t arg_count, PyroValue* arg
 
 static PyroValue str_to_ascii_lower(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_obj(str);
     }
 
-    char* array = PYRO_ALLOCATE_ARRAY(vm, char, str->length + 1);
+    char* array = PYRO_ALLOCATE_ARRAY(vm, char, str->capacity);
     if (!array) {
         pyro_panic(vm, "to_ascii_lower(): out of memory");
         return pyro_null();
     }
-    memcpy(array, str->bytes, str->length + 1);
+    memcpy(array, str->bytes, str->capacity);
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         if (array[i] >= 'A' && array[i] <= 'Z') {
             array[i] += 32;
         }
     }
 
-    PyroStr* new_string = PyroStr_take(array, str->length, vm);
+    PyroStr* new_string = PyroStr_take(array, str->count, str->capacity, vm);
     if (!new_string) {
-        PYRO_FREE_ARRAY(vm, char, array, str->length + 1);
+        PYRO_FREE_ARRAY(vm, char, array, str->capacity);
         pyro_panic(vm, "to_ascii_lower(): out of memory");
         return pyro_null();
     }
@@ -347,11 +347,11 @@ static PyroValue str_starts_with(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (str->length < target->length) {
+    if (str->count < target->count) {
         return pyro_bool(false);
     }
 
-    if (memcmp(str->bytes, target->bytes, target->length) == 0) {
+    if (memcmp(str->bytes, target->bytes, target->count) == 0) {
         return pyro_bool(true);
     }
 
@@ -369,11 +369,11 @@ static PyroValue str_ends_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (str->length < target->length) {
+    if (str->count < target->count) {
         return pyro_bool(false);
     }
 
-    if (memcmp(&str->bytes[str->length - target->length], target->bytes, target->length) == 0) {
+    if (memcmp(&str->bytes[str->count - target->count], target->bytes, target->count) == 0) {
         return pyro_bool(true);
     }
 
@@ -391,12 +391,12 @@ static PyroValue str_strip_prefix(PyroVM* vm, size_t arg_count, PyroValue* args)
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (str->length < target->length) {
+    if (str->count < target->count) {
         return pyro_obj(str);
     }
 
-    if (memcmp(str->bytes, target->bytes, target->length) == 0) {
-        PyroStr* new_str = PyroStr_copy_raw(&str->bytes[target->length], str->length - target->length, vm);
+    if (memcmp(str->bytes, target->bytes, target->count) == 0) {
+        PyroStr* new_str = PyroStr_copy(&str->bytes[target->count], str->count - target->count, false, vm);
         if (!new_str) {
             pyro_panic(vm, "strip_prefix(): out of memory");
             return pyro_null();
@@ -418,12 +418,12 @@ static PyroValue str_strip_suffix(PyroVM* vm, size_t arg_count, PyroValue* args)
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (str->length < target->length) {
+    if (str->count < target->count) {
         return pyro_obj(str);
     }
 
-    if (memcmp(&str->bytes[str->length - target->length], target->bytes, target->length) == 0) {
-        PyroStr* new_str = PyroStr_copy_raw(str->bytes, str->length - target->length, vm);
+    if (memcmp(&str->bytes[str->count - target->count], target->bytes, target->count) == 0) {
+        PyroStr* new_str = PyroStr_copy(str->bytes, str->count - target->count, false, vm);
         if (!new_str) {
             pyro_panic(vm, "strip_suffix(): out of memory");
             return pyro_null();
@@ -445,22 +445,22 @@ static PyroValue str_strip_prefix_bytes(PyroVM* vm, size_t arg_count, PyroValue*
 
     PyroStr* prefix = PYRO_AS_STR(args[0]);
 
-    if (prefix->length == 0 || str->length == 0) {
+    if (prefix->count == 0 || str->count == 0) {
         return pyro_obj(str);
     }
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     while (start < end) {
         char c = *start;
-        if (memchr(prefix->bytes, c, prefix->length) == NULL) {
+        if (memchr(prefix->bytes, c, prefix->count) == NULL) {
             break;
         }
         start++;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_prefix_bytes(): out of memory");
         return pyro_null();
@@ -480,22 +480,22 @@ static PyroValue str_strip_suffix_bytes(PyroVM* vm, size_t arg_count, PyroValue*
 
     PyroStr* suffix = PYRO_AS_STR(args[0]);
 
-    if (suffix->length == 0 || str->length == 0) {
+    if (suffix->count == 0 || str->count == 0) {
         return pyro_obj(str);
     }
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     while (start < end) {
         char c = *(end - 1);
-        if (memchr(suffix->bytes, c, suffix->length) == NULL) {
+        if (memchr(suffix->bytes, c, suffix->count) == NULL) {
             break;
         }
         end--;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_suffix_bytes(): out of memory");
         return pyro_null();
@@ -515,16 +515,16 @@ static PyroValue str_strip_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (target->length == 0 || str->length == 0) {
+    if (target->count == 0 || str->count == 0) {
         return pyro_obj(str);
     }
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     while (start < end) {
         char c = *start;
-        if (memchr(target->bytes, c, target->length) == NULL) {
+        if (memchr(target->bytes, c, target->count) == NULL) {
             break;
         }
         start++;
@@ -532,13 +532,13 @@ static PyroValue str_strip_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
     while (start < end) {
         char c = *(end - 1);
-        if (memchr(target->bytes, c, target->length) == NULL) {
+        if (memchr(target->bytes, c, target->count) == NULL) {
             break;
         }
         end--;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_bytes(): out of memory");
         return pyro_null();
@@ -550,14 +550,14 @@ static PyroValue str_strip_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 static PyroValue str_strip_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_obj(str);
     }
 
     const char* whitespace = " \t\r\n\v\f";
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     while (start < end) {
         char c = *start;
@@ -575,7 +575,7 @@ static PyroValue str_strip_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* arg
         end--;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_ascii_ws(): out of memory");
         return pyro_null();
@@ -587,12 +587,12 @@ static PyroValue str_strip_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* arg
 
 static PyroValue str_strip_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_obj(str);
     }
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     Utf8CodePoint cp;
 
@@ -616,7 +616,7 @@ static PyroValue str_strip_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args
         end -= cp.length;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_utf8_ws(): out of memory");
         return pyro_null();
@@ -636,17 +636,17 @@ static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (!pyro_is_valid_utf8(target->bytes, target->length)) {
+    if (!pyro_is_valid_utf8(target->bytes, target->count)) {
         pyro_panic(vm, "strip_chars(): invalid argument [chars], not valid UTF-8");
         return pyro_null();
     }
 
-    if (target->length == 0 || str->length == 0) {
+    if (target->count == 0 || str->count == 0) {
         return pyro_obj(str);
     }
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     Utf8CodePoint cp;
 
@@ -654,7 +654,7 @@ static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) 
         if (!pyro_read_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
             break;
         }
-        if (!pyro_contains_utf8_codepoint(target->bytes, target->length, cp.value)) {
+        if (!pyro_contains_utf8_codepoint(target->bytes, target->count, cp.value)) {
             break;
         }
         start += cp.length;
@@ -664,13 +664,13 @@ static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) 
         if (!pyro_read_trailing_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
             break;
         }
-        if (!pyro_contains_utf8_codepoint(target->bytes, target->length, cp.value)) {
+        if (!pyro_contains_utf8_codepoint(target->bytes, target->count, cp.value)) {
             break;
         }
         end -= cp.length;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_chars(): out of memory");
         return pyro_null();
@@ -690,17 +690,17 @@ static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue*
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (!pyro_is_valid_utf8(target->bytes, target->length)) {
+    if (!pyro_is_valid_utf8(target->bytes, target->count)) {
         pyro_panic(vm, "strip_suffix_chars(): invalid argument [chars], not valid UTF-8");
         return pyro_null();
     }
 
-    if (target->length == 0 || str->length == 0) {
+    if (target->count == 0 || str->count == 0) {
         return pyro_obj(str);
     }
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     Utf8CodePoint cp;
 
@@ -708,13 +708,13 @@ static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue*
         if (!pyro_read_trailing_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
             break;
         }
-        if (!pyro_contains_utf8_codepoint(target->bytes, target->length, cp.value)) {
+        if (!pyro_contains_utf8_codepoint(target->bytes, target->count, cp.value)) {
             break;
         }
         end -= cp.length;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_suffix_chars(): out of memory");
         return pyro_null();
@@ -734,17 +734,17 @@ static PyroValue str_strip_prefix_chars(PyroVM* vm, size_t arg_count, PyroValue*
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
-    if (!pyro_is_valid_utf8(target->bytes, target->length)) {
+    if (!pyro_is_valid_utf8(target->bytes, target->count)) {
         pyro_panic(vm, "strip_prefix_chars(): invalid argument [prefix], not valid UTF-8");
         return pyro_null();
     }
 
-    if (target->length == 0 || str->length == 0) {
+    if (target->count == 0 || str->count == 0) {
         return pyro_obj(str);
     }
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     Utf8CodePoint cp;
 
@@ -752,13 +752,13 @@ static PyroValue str_strip_prefix_chars(PyroVM* vm, size_t arg_count, PyroValue*
         if (!pyro_read_utf8_codepoint((uint8_t*)start, end - start, &cp)) {
             break;
         }
-        if (!pyro_contains_utf8_codepoint(target->bytes, target->length, cp.value)) {
+        if (!pyro_contains_utf8_codepoint(target->bytes, target->count, cp.value)) {
             break;
         }
         start += cp.length;
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(start, end - start, vm);
+    PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
         pyro_panic(vm, "strip_prefix_chars(): out of memory");
         return pyro_null();
@@ -799,11 +799,11 @@ static PyroValue str_match(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
     size_t index = (size_t)args[1].as.i64;
 
-    if (index + target->length > str->length) {
+    if (index + target->count > str->count) {
         return pyro_bool(false);
     }
 
-    if (memcmp(&str->bytes[index], target->bytes, target->length) == 0) {
+    if (memcmp(&str->bytes[index], target->bytes, target->count) == 0) {
         return pyro_bool(true);
     }
 
@@ -827,7 +827,7 @@ static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
     PyroStr* new = PYRO_AS_STR(args[1]);
 
-    if (old->length == 0 || old->length > str->length) {
+    if (old->count == 0 || old->count > str->count) {
         return pyro_obj(str);
     }
 
@@ -839,15 +839,15 @@ static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
     pyro_push(vm, pyro_obj(buf)); // keep the buffer safe from the GC
 
     size_t index = 0;
-    size_t last_possible_match_index = str->length - old->length;
+    size_t last_possible_match_index = str->count - old->count;
 
     while (index <= last_possible_match_index) {
-        if (memcmp(&str->bytes[index], old->bytes, old->length) == 0) {
-            if (!PyroBuf_append_bytes(buf, new->length, (uint8_t*)new->bytes, vm)) {
+        if (memcmp(&str->bytes[index], old->bytes, old->count) == 0) {
+            if (!PyroBuf_append_bytes(buf, new->count, (uint8_t*)new->bytes, vm)) {
                 pyro_panic(vm, "replace(): out of memory");
                 return pyro_null();
             }
-            index += old->length;
+            index += old->count;
         } else {
             if (!PyroBuf_append_byte(buf, str->bytes[index], vm)) {
                 pyro_panic(vm, "replace(): out of memory");
@@ -857,8 +857,8 @@ static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    if (index < str->length) {
-        if (!PyroBuf_append_bytes(buf, str->length - index, (uint8_t*)&str->bytes[index], vm)) {
+    if (index < str->count) {
+        if (!PyroBuf_append_bytes(buf, str->count - index, (uint8_t*)&str->bytes[index], vm)) {
             pyro_panic(vm, "replace(): out of memory");
             return pyro_null();
         }
@@ -895,21 +895,21 @@ static PyroValue str_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "index_of(): invalid argument [start_index], expected an integer");
             return pyro_null();
         }
-        if (args[1].as.i64 < 0 || (size_t)args[1].as.i64 > str->length) {
+        if (args[1].as.i64 < 0 || (size_t)args[1].as.i64 > str->count) {
             pyro_panic(vm, "index_of(): invalid argument [start_index], integer is out of range");
             return pyro_null();
         }
         index = (size_t)args[1].as.i64;
     }
 
-    if (index + target->length > str->length) {
+    if (index + target->count > str->count) {
         return pyro_obj(vm->error);
     }
 
-    size_t last_possible_match_index = str->length - target->length;
+    size_t last_possible_match_index = str->count - target->count;
 
     while (index <= last_possible_match_index) {
-        if (memcmp(&str->bytes[index], target->bytes, target->length) == 0) {
+        if (memcmp(&str->bytes[index], target->bytes, target->count) == 0) {
             return pyro_i64((int64_t)index);
         }
         index++;
@@ -928,7 +928,7 @@ static PyroValue str_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     if (PYRO_IS_STR(args[0])) {
         target = PYRO_AS_STR(args[0])->bytes;
-        target_length = PYRO_AS_STR(args[0])->length;
+        target_length = PYRO_AS_STR(args[0])->count;
     } else if (PYRO_IS_CHAR(args[0])) {
         target = (char*)codepoint_buffer;
         target_length = pyro_write_utf8_codepoint(args[0].as.u32, codepoint_buffer);
@@ -937,12 +937,12 @@ static PyroValue str_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    if (str->length < target_length) {
+    if (str->count < target_length) {
         return pyro_bool(false);
     }
 
     size_t index = 0;
-    size_t last_possible_match_index = str->length - target_length;
+    size_t last_possible_match_index = str->count - target_length;
 
     while (index <= last_possible_match_index) {
         if (memcmp(&str->bytes[index], target, target_length) == 0) {
@@ -968,7 +968,7 @@ static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* 
     const char* whitespace = " \t\r\n\v\f";
 
     char* start = str->bytes;
-    char* end = str->bytes + str->length;
+    char* end = str->bytes + str->count;
 
     while (start < end) {
         char c = *start;
@@ -990,7 +990,7 @@ static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* 
 
     while (current < end) {
         if (memchr(whitespace, *current, 6) != NULL) {
-            PyroStr* new_string = PyroStr_copy_raw(start, current - start, vm);
+            PyroStr* new_string = PyroStr_copy(start, current - start, false, vm);
             if (!new_string) {
                 pyro_panic(vm, "split_on_ascii_ws(): out of memory");
                 return pyro_null();
@@ -1010,7 +1010,7 @@ static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* 
         }
     }
 
-    PyroStr* new_string = PyroStr_copy_raw(start, current - start, vm);
+    PyroStr* new_string = PyroStr_copy(start, current - start, false, vm);
     if (!new_string) {
         pyro_panic(vm, "split_on_ascii_ws(): out of memory");
         return pyro_null();
@@ -1050,7 +1050,7 @@ static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
     pyro_push(vm, pyro_obj(vec));
 
-    if (str->length < sep->length || sep->length == 0) {
+    if (str->count < sep->count || sep->count == 0) {
         if (!PyroVec_append(vec, pyro_obj(str), vm)) {
             pyro_panic(vm, "split(): out of memory");
             return pyro_null();
@@ -1061,11 +1061,11 @@ static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     size_t start = 0;
     size_t current = 0;
-    size_t last_possible_match_index = str->length - sep->length;
+    size_t last_possible_match_index = str->count - sep->count;
 
     while (current <= last_possible_match_index) {
-        if (memcmp(&str->bytes[current], sep->bytes, sep->length) == 0) {
-            PyroStr* new_string = PyroStr_copy_raw(&str->bytes[start], current - start, vm);
+        if (memcmp(&str->bytes[current], sep->bytes, sep->count) == 0) {
+            PyroStr* new_string = PyroStr_copy(&str->bytes[start], current - start, false, vm);
             if (!new_string) {
                 pyro_panic(vm, "split(): out of memory");
                 return pyro_null();
@@ -1076,14 +1076,14 @@ static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 return pyro_null();
             }
             pyro_pop(vm);
-            current += sep->length;
+            current += sep->count;
             start = current;
         } else {
             current++;
         }
     }
 
-    PyroStr* new_string = PyroStr_copy_raw(&str->bytes[start], str->length - start, vm);
+    PyroStr* new_string = PyroStr_copy(&str->bytes[start], str->count - start, false, vm);
     if (!new_string) {
         pyro_panic(vm, "split(): out of memory");
         return pyro_null();
@@ -1111,7 +1111,7 @@ static PyroValue str_split_lines(PyroVM* vm, size_t arg_count, PyroValue* args) 
     pyro_push(vm, pyro_obj(vec));
 
     // Points to the byte *after* the last byte in the string.
-    const char* const string_end = str->bytes + str->length;
+    const char* const string_end = str->bytes + str->count;
 
     // Points to the first byte of the current line.
     const char* line_start = str->bytes;
@@ -1122,7 +1122,7 @@ static PyroValue str_split_lines(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
     while (line_end < string_end) {
         if (string_end - line_end > 1 && line_end[0] == '\r' && line_end[1] == '\n') {
-            PyroStr* new_string = PyroStr_copy_raw(line_start, line_end - line_start, vm);
+            PyroStr* new_string = PyroStr_copy(line_start, line_end - line_start, false, vm);
             if (!new_string) {
                 pyro_panic(vm, "split_lines(): out of memory");
                 return pyro_null();
@@ -1136,7 +1136,7 @@ static PyroValue str_split_lines(PyroVM* vm, size_t arg_count, PyroValue* args) 
             line_end += 2;
             line_start = line_end;
         } else if (*line_end == '\n' || *line_end == '\r') {
-            PyroStr* new_string = PyroStr_copy_raw(line_start, line_end - line_start, vm);
+            PyroStr* new_string = PyroStr_copy(line_start, line_end - line_start, false, vm);
             if (!new_string) {
                 pyro_panic(vm, "split_lines(): out of memory");
                 return pyro_null();
@@ -1154,7 +1154,7 @@ static PyroValue str_split_lines(PyroVM* vm, size_t arg_count, PyroValue* args) 
         }
     }
 
-    PyroStr* new_string = PyroStr_copy_raw(line_start, line_end - line_start, vm);
+    PyroStr* new_string = PyroStr_copy(line_start, line_end - line_start, false, vm);
     if (!new_string) {
         pyro_panic(vm, "split_lines(): out of memory");
         return pyro_null();
@@ -1173,7 +1173,7 @@ static PyroValue str_split_lines(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 static PyroValue str_to_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_obj(str);
     }
 
@@ -1184,7 +1184,7 @@ static PyroValue str_to_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
     pyro_push(vm, pyro_obj(buf));
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         if (!PyroBuf_append_hex_escaped_byte(buf, str->bytes[i], vm)) {
         pyro_panic(vm, "to_hex(): out of memory");
         return pyro_null();
@@ -1216,16 +1216,16 @@ static PyroValue str_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     size_t start_index;
-    if (args[0].as.i64 >= 0 && (size_t)args[0].as.i64 <= str->length) {
+    if (args[0].as.i64 >= 0 && (size_t)args[0].as.i64 <= str->count) {
         start_index = (size_t)args[0].as.i64;
-    } else if (args[0].as.i64 < 0 && (size_t)(args[0].as.i64 * -1) <= str->length) {
-        start_index = (size_t)((int64_t)str->length + args[0].as.i64);
+    } else if (args[0].as.i64 < 0 && (size_t)(args[0].as.i64 * -1) <= str->count) {
+        start_index = (size_t)((int64_t)str->count + args[0].as.i64);
     } else {
         pyro_panic(vm, "slice(): invalid argument [start_index], out of range");
         return pyro_null();
     }
 
-    size_t length = str->length - start_index;
+    size_t length = str->count - start_index;
     if (arg_count == 2) {
         if (!PYRO_IS_I64(args[1])) {
             pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
@@ -1235,7 +1235,7 @@ static PyroValue str_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "slice(): invalid argument [length], expected a positive integer");
             return pyro_null();
         }
-        if (start_index + (size_t)args[1].as.i64 > str->length) {
+        if (start_index + (size_t)args[1].as.i64 > str->count) {
             pyro_panic(vm, "slice(): invalid argument [length], out of range");
             return pyro_null();
         }
@@ -1246,7 +1246,7 @@ static PyroValue str_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(vm->empty_string);
     }
 
-    PyroStr* new_str = PyroStr_copy_raw(&str->bytes[start_index], length, vm);
+    PyroStr* new_str = PyroStr_copy(&str->bytes[start_index], length, false, vm);
     if (!new_str) {
         pyro_panic(vm, "slice(): out of memory");
         return pyro_null();
@@ -1302,7 +1302,7 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
 
         if (!is_first_item) {
-            if (!PyroBuf_append_bytes(buf, str->length, (uint8_t*)str->bytes, vm)) {
+            if (!PyroBuf_append_bytes(buf, str->count, (uint8_t*)str->bytes, vm)) {
                 pyro_panic(vm, "join(): out of memory");
                 return pyro_null();
             }
@@ -1316,7 +1316,7 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_pop(vm); // next_value
 
         pyro_push(vm, pyro_obj(value_string));
-        if (!PyroBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, value_string->count, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, "join(): out of memory");
             return pyro_null();
         }
@@ -1341,11 +1341,11 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_is_ascii_decimal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(false);
     }
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         char c = str->bytes[i];
         if (c < '0' || c > '9') {
             return pyro_bool(false);
@@ -1358,11 +1358,11 @@ static PyroValue str_is_ascii_decimal(PyroVM* vm, size_t arg_count, PyroValue* a
 
 static PyroValue str_is_ascii_octal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(false);
     }
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         char c = str->bytes[i];
         if (c < '0' || c > '7') {
             return pyro_bool(false);
@@ -1375,11 +1375,11 @@ static PyroValue str_is_ascii_octal(PyroVM* vm, size_t arg_count, PyroValue* arg
 
 static PyroValue str_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->length == 0) {
+    if (str->count == 0) {
         return pyro_bool(false);
     }
 
-    for (size_t i = 0; i < str->length; i++) {
+    for (size_t i = 0; i < str->count; i++) {
         char c = str->bytes[i];
         if (!isxdigit(c)) {
             return pyro_bool(false);

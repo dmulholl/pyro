@@ -146,7 +146,7 @@ static PyroValue iter_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
         PyroStr* sep = PYRO_AS_STR(args[0]);
-        PyroStr* result = PyroIter_join(iter, sep->bytes, sep->length, vm);
+        PyroStr* result = PyroIter_join(iter, sep->bytes, sep->count, vm);
         return vm->halt_flag ? pyro_null() : pyro_obj(result);
     }
 

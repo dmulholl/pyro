@@ -185,7 +185,7 @@ static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args)
         capacity = count + 1;
     }
 
-    PyroStr* string = PyroStr_take((char*)array, count, vm);
+    PyroStr* string = PyroStr_take((char*)array, count, capacity, vm);
     if (!string) {
         pyro_panic(vm, "read_string(): out of memory");
         PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
@@ -295,8 +295,8 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
             if (vm->halt_flag) {
                 return pyro_null();
             }
-            size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
-            if (n < string->length) {
+            size_t n = fwrite(string->bytes, sizeof(char), string->count, file->stream);
+            if (n < string->count) {
                 pyro_panic(vm, "write(): I/O write error");
                 return pyro_null();
             }
@@ -314,8 +314,8 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    size_t n = fwrite(string->bytes, sizeof(char), string->length, file->stream);
-    if (n < string->length) {
+    size_t n = fwrite(string->bytes, sizeof(char), string->count, file->stream);
+    if (n < string->count) {
         pyro_panic(vm, "write(): I/O write error");
         return pyro_null();
     }

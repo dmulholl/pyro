@@ -110,7 +110,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
 
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         PyroStr* base = PYRO_AS_STR(vm->import_roots->values[i]);
-        if (base->length == 0) {
+        if (base->count == 0) {
             base = PyroStr_new(".", vm);
             if (!base) {
                 pyro_panic(vm, "out of memory");
@@ -120,7 +120,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
 
         // Support `$roots` entries with or without a trailing slash.
         bool base_has_trailing_slash = false;
-        if (base->bytes[base->length - 1] == '/') {
+        if (base->bytes[base->count - 1] == '/') {
             base_has_trailing_slash = true;
         }
 
@@ -130,9 +130,9 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         // - BASE/foo/bar/baz.pyro
         // - BASE/foo/bar/baz/self.so
         // - BASE/foo/bar/baz/self.pyro
-        size_t path_capacity = base_has_trailing_slash ? base->length : base->length + 1;
+        size_t path_capacity = base_has_trailing_slash ? base->count : base->count + 1;
         for (uint8_t j = 0; j < arg_count; j++) {
-            path_capacity += PYRO_AS_STR(args[j])->length + 1;
+            path_capacity += PYRO_AS_STR(args[j])->count + 1;
         }
         path_capacity += strlen("self.pyro");
 
@@ -147,8 +147,8 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         }
 
         // Start with path = BASE/
-        memcpy(path, base->bytes, base->length);
-        size_t path_count = base->length;
+        memcpy(path, base->bytes, base->count);
+        size_t path_count = base->count;
         if (!base_has_trailing_slash) {
             path[path_count++] = '/';
         }
@@ -156,8 +156,8 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         // Given 'import foo::bar::baz', assemble path = BASE/foo/bar/baz/
         for (uint8_t j = 0; j < arg_count; j++) {
             PyroStr* name = PYRO_AS_STR(args[j]);
-            memcpy(path + path_count, name->bytes, name->length);
-            path_count += name->length;
+            memcpy(path + path_count, name->bytes, name->count);
+            path_count += name->count;
             path[path_count++] = '/';
         }
 

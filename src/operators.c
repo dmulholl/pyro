@@ -659,14 +659,14 @@ static int compare_strings(PyroStr* a, PyroStr* b) {
         return 0;
     }
 
-    size_t min_len = a->length < b->length ? a->length : b->length;
+    size_t min_len = a->count < b->count ? a->count : b->count;
 
     for (size_t i = 0; i < min_len; i++) {
         if (a->bytes[i] < b->bytes[i]) return -1;
         if (a->bytes[i] > b->bytes[i]) return 1;
     }
 
-    return a->length < b->length ? -1 : 1;
+    return a->count < b->count ? -1 : 1;
 }
 
 
@@ -1229,8 +1229,8 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
             PyroStr* str = PYRO_AS_STR(receiver);
             if (PYRO_IS_I64(key)) {
                 int64_t index = key.as.i64;
-                if (index >= 0 && (size_t)index < str->length) {
-                    PyroStr* new_str = PyroStr_copy_raw(&str->bytes[index], 1, vm);
+                if (index >= 0 && (size_t)index < str->count) {
+                    PyroStr* new_str = PyroStr_copy(&str->bytes[index], 1, false, vm);
                     if (!new_str) {
                         pyro_panic(vm, "out of memory");
                         return pyro_null();

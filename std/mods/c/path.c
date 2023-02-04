@@ -46,7 +46,7 @@ static PyroValue fn_dirname(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* path = PYRO_AS_STR(args[0]);
     size_t dirname_length = pyro_dirname(path->bytes);
 
-    PyroStr* result = PyroStr_copy_raw(path->bytes, dirname_length, vm);
+    PyroStr* result = PyroStr_copy(path->bytes, dirname_length, false, vm);
     if (!result) {
         pyro_panic(vm, "dirname(): out of memory");
         return pyro_null();
@@ -96,7 +96,7 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     for (size_t i = 0; i < arg_count; i++) {
         PyroStr* arg = PYRO_AS_STR(args[i]);
-        if (arg->length == 0) {
+        if (arg->count == 0) {
             continue;
         }
 
@@ -111,7 +111,7 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
             buf->count = 0;
         }
 
-        if (!PyroBuf_append_bytes(buf, arg->length, (uint8_t*)arg->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, arg->count, (uint8_t*)arg->bytes, vm)) {
             pyro_panic(vm, "join(): out of memory");
             return pyro_null();
         }
@@ -150,7 +150,7 @@ static PyroValue fn_getcwd(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroStr* string = PyroStr_copy_raw(cwd, strlen(cwd), vm);
+    PyroStr* string = PyroStr_copy(cwd, strlen(cwd), false, vm);
     free(cwd);
 
     if (!string) {
@@ -243,7 +243,7 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     PyroStr* path = PYRO_AS_STR(args[0]);
     const char* src = path->bytes;
-    size_t len = path->length;
+    size_t len = path->count;
 
     PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
@@ -254,13 +254,13 @@ static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
     size_t index = 0;
 
     // Special handling for paths beginning with exactly two slashes.
-    if (path->length == 2 && memcmp(src, "//", 2) == 0) {
+    if (path->count == 2 && memcmp(src, "//", 2) == 0) {
         if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"//", vm)) {
             pyro_panic(vm, "normpath(): out of memory");
             return pyro_null();
         }
         index += 2;
-    } else if (path->length > 2 && memcmp(src, "//", 2) == 0 && src[2] != '/') {
+    } else if (path->count > 2 && memcmp(src, "//", 2) == 0 && src[2] != '/') {
         if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"//", vm)) {
             pyro_panic(vm, "normpath(): out of memory");
             return pyro_null();

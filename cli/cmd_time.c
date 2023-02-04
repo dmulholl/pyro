@@ -55,9 +55,9 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
             if (PYRO_IS_CLOSURE(member_value)) {
                 PyroStr* name = PYRO_AS_STR(member_name);
-                if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
-                    if (name->length > max_name_length) {
-                        max_name_length = name->length;
+                if (name->count > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
+                    if (name->count > max_name_length) {
+                        max_name_length = name->count;
                     }
                 }
             }
@@ -75,7 +75,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
             if (PYRO_IS_CLOSURE(member_value)) {
                 PyroStr* name = PYRO_AS_STR(member_name);
-                if (name->length > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
+                if (name->count > 6 && memcmp(name->bytes, "$time_", 6) == 0) {
                     double start_time = clock();
 
                     for (int j = 0; j < num_runs; j++) {
@@ -93,7 +93,7 @@ void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
                     double average_in_millisecs = average_in_secs * 1000;
 
                     printf("            - %s() ···", name->bytes);
-                    for (size_t j = 0; j < max_name_length - name->length; j++) {
+                    for (size_t j = 0; j < max_name_length - name->count; j++) {
                         printf("·");
                     }
 

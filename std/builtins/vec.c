@@ -563,7 +563,7 @@ static PyroValue vec_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
         PyroStr* sep = PYRO_AS_STR(args[0]);
         pyro_push(vm, pyro_obj(iter));
-        PyroStr* result = PyroIter_join(iter, sep->bytes, sep->length, vm);
+        PyroStr* result = PyroIter_join(iter, sep->bytes, sep->count, vm);
         pyro_pop(vm);
         return vm->halt_flag ? pyro_null() : pyro_obj(result);
     }

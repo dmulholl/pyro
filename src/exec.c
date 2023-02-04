@@ -619,7 +619,7 @@ static void run(PyroVM* vm) {
                 PyroMod* module = frame->closure->module;
                 PyroValue name = READ_CONSTANT();
 
-                if (PYRO_AS_STR(name)->length == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
                     pyro_pop(vm);
                     break;
                 }
@@ -649,7 +649,7 @@ static void run(PyroVM* vm) {
                 PyroMod* module = frame->closure->module;
                 PyroValue name = READ_CONSTANT();
 
-                if (PYRO_AS_STR(name)->length == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
                     pyro_pop(vm);
                     break;
                 }
@@ -688,7 +688,7 @@ static void run(PyroVM* vm) {
 
                 for (uint8_t i = 0; i < count; i++) {
                     PyroValue name = READ_CONSTANT();
-                    if (PYRO_AS_STR(name)->length == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                    if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
                         continue;
                     }
 
@@ -721,7 +721,7 @@ static void run(PyroVM* vm) {
                 for (uint8_t i = 0; i < count; i++) {
                     PyroValue name = READ_CONSTANT();
 
-                    if (PYRO_AS_STR(name)->length == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                    if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
                         continue;
                     }
 
@@ -1613,7 +1613,7 @@ static void run(PyroVM* vm) {
                     is_kinda_falsey = true;
                 } else if (PYRO_IS_F64(value) && value.as.f64 == 0.0) {
                     is_kinda_falsey = true;
-                } else if (PYRO_IS_STR(value) && PYRO_AS_STR(value)->length == 0) {
+                } else if (PYRO_IS_STR(value) && PYRO_AS_STR(value)->count == 0) {
                     is_kinda_falsey = true;
                 }
 
@@ -1895,7 +1895,7 @@ static void run(PyroVM* vm) {
                         break;
                     }
                 }
-                if (name->length > 0 && name->bytes[0] == '$') {
+                if (name->count > 0 && name->bytes[0] == '$') {
                     pyro_panic(vm, "$-prefixed method cannot be declared public");
                     break;
                 }
@@ -2351,7 +2351,7 @@ static void run(PyroVM* vm) {
                 for (uint16_t i = 0; i < count; i++) {
                     PyroValue value = pyro_peek(vm, count - 1 - i);
                     PyroStr* string = PYRO_AS_STR(value);
-                    if (!PyroBuf_append_bytes(buf, string->length, (uint8_t*)string->bytes, vm)) {
+                    if (!PyroBuf_append_bytes(buf, string->count, (uint8_t*)string->bytes, vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }

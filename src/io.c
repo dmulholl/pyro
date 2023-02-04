@@ -43,7 +43,7 @@ int64_t pyro_stdout_write_n(PyroVM* vm, const char* string, size_t count) {
 
 
 int64_t pyro_stdout_write_s(PyroVM* vm, PyroStr* string) {
-    return pyro_write_n(vm, vm->stdout_file, string->bytes, string->length);
+    return pyro_write_n(vm, vm->stdout_file, string->bytes, string->count);
 }
 
 
@@ -79,7 +79,7 @@ int64_t pyro_stderr_write_n(PyroVM* vm, const char* string, size_t count) {
 
 
 int64_t pyro_stderr_write_s(PyroVM* vm, PyroStr* string) {
-    return pyro_write_n(vm, vm->stderr_file, string->bytes, string->length);
+    return pyro_write_n(vm, vm->stderr_file, string->bytes, string->count);
 }
 
 

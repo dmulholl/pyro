@@ -244,32 +244,32 @@ static int64_t* find_entry(
 // This function is only used for looking up strings in the interned strings pool. If the pool
 // contains an entry identical to [string], it returns a pointer to that entry, otherwise it
 // returns NULL.
-static PyroStr* find_string(PyroMap* map, const char* string, size_t length, uint64_t hash) {
-    if (map->live_entry_count == 0) {
+static PyroStr* find_string(PyroMap* string_pool, const char* string, size_t count, uint64_t hash) {
+    if (string_pool->live_entry_count == 0) {
         return NULL;
     }
 
-    size_t i = (size_t)hash & (map->index_array_capacity - 1);
+    size_t i = (size_t)hash & (string_pool->index_array_capacity - 1);
 
     for (;;) {
-        int64_t* slot = &map->index_array[i];
+        int64_t* slot = &string_pool->index_array[i];
 
         if (*slot == EMPTY) {
             return NULL;
         } else if (*slot == TOMBSTONE) {
             // Skip over the tombstone and keep looking for a matching entry.
         } else {
-            PyroStr* entry = PYRO_AS_STR(map->entry_array[*slot].key);
-            if (entry->length == length) {
-                if (entry->hash == hash) {
-                    if (memcmp(entry->bytes, string, length) == 0) {
-                        return entry;
+            PyroStr* interned_string = PYRO_AS_STR(string_pool->entry_array[*slot].key);
+            if (interned_string->count == count) {
+                if (interned_string->hash == hash) {
+                    if (memcmp(interned_string->bytes, string, count) == 0) {
+                        return interned_string;
                     }
                 }
             }
         }
 
-        i = (i + 1) & (map->index_array_capacity - 1);
+        i = (i + 1) & (string_pool->index_array_capacity - 1);
     }
 }
 
@@ -585,23 +585,28 @@ bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm) {
 /* ------- */
 
 
-// Creates a new string object taking ownership of a null-terminated, heap-allocated byte array,
-// where [length] is the number of bytes in the array, not including the terminating null. The
-// caller should already have verified that an identical string does not exist in the interned
-// strings pool. Returns NULL if the attempt to allocate memory for the object fails -- in this
-// case the input array is not altered or freed.
-static PyroStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t hash) {
+// Creates a new string object taking ownership of the heap-allocated array [bytes].
+// - Adds the new string to the interned strings pool.
+// - Returns NULL if memory cannot be allocated for the new string object or if the string cannot
+//   be added to the string pool.
+// - If the return value is NULL, ownership of [bytes] is returned to the caller.
+static PyroStr* create_new_string(PyroVM* vm, char* bytes, size_t count, size_t capacity, uint64_t hash) {
     PyroStr* string = ALLOCATE_OBJECT(vm, PyroStr, PYRO_OBJECT_STR);
     if (!string) {
         return NULL;
     }
 
-    string->length = length;
+    string->obj.class = vm->class_str;
+    string->count = count;
+    string->capacity = capacity;
     string->hash = hash;
     string->bytes = bytes;
-    string->obj.class = vm->class_str;
 
-    if (PyroMap_set(vm->strings, pyro_obj(string), pyro_null(), vm) == 0) {
+    if (!PyroMap_set(vm->strings, pyro_obj(string), pyro_null(), vm)) {
+        string->count = 0;
+        string->capacity = 0;
+        string->hash = 0;
+        string->bytes = NULL;
         return NULL;
     }
 
@@ -609,17 +614,72 @@ static PyroStr* allocate_string(PyroVM* vm, char* bytes, size_t length, uint64_t
 }
 
 
-PyroStr* PyroStr_take(char* src, size_t length, PyroVM* vm) {
+PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
     assert(vm->strings != NULL);
+    uint64_t hash = PYRO_STRING_HASH(bytes, count);
 
-    uint64_t hash = PYRO_STRING_HASH(src, length);
-    PyroStr* interned = find_string(vm->strings, src, length, hash);
-    if (interned) {
-        PYRO_FREE_ARRAY(vm, char, src, length + 1);
-        return interned;
+    PyroStr* interned_string = find_string(vm->strings, bytes, count, hash);
+    if (interned_string) {
+        PYRO_FREE_ARRAY(vm, char, bytes, capacity);
+        return interned_string;
     }
 
-    return allocate_string(vm, src, length, hash);
+    bytes[count] = '\0';
+    return create_new_string(vm, bytes, count, capacity, hash);
+}
+
+
+PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_escapes, PyroVM* vm) {
+    if (!src || count == 0) {
+        return PyroStr_empty(vm);
+    }
+
+    if (process_backslashed_escapes) {
+        size_t dst_capacity = count + 1;
+        char* dst = PYRO_ALLOCATE_ARRAY(vm, char, dst_capacity);
+        if (!dst) {
+            return NULL;
+        }
+
+        size_t dst_count = pyro_process_backslashed_escapes(src, count, dst);
+        if (dst_count < count) {
+            dst = PYRO_REALLOCATE_ARRAY(vm, char, dst, dst_capacity, dst_count + 1);
+            dst_capacity = dst_count + 1;
+        }
+
+        PyroStr* string = PyroStr_take(dst, dst_count, dst_capacity, vm);
+        if (!string) {
+            PYRO_FREE_ARRAY(vm, char, dst, dst_count + 1);
+            return NULL;
+        }
+
+        return string;
+    }
+
+    assert(vm->strings != NULL);
+    uint64_t hash = PYRO_STRING_HASH(src, count);
+
+    PyroStr* interned_string = find_string(vm->strings, src, count, hash);
+    if (interned_string) {
+        return interned_string;
+    }
+
+    size_t dst_capacity = count + 1;
+    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, dst_capacity);
+    if (!dst) {
+        return NULL;
+    }
+
+    memcpy(dst, src, count);
+    dst[count] = '\0';
+
+    PyroStr* string = create_new_string(vm, dst, count, dst_capacity, hash);
+    if (!string) {
+        PYRO_FREE_ARRAY(vm, char, dst, dst_capacity);
+        return NULL;
+    }
+
+    return string;
 }
 
 
@@ -633,9 +693,7 @@ PyroStr* PyroStr_empty(PyroVM* vm) {
         return NULL;
     }
 
-    bytes[0] = '\0';
-
-    PyroStr* string = PyroStr_take(bytes, 0, vm);
+    PyroStr* string = PyroStr_take(bytes, 0, 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, bytes, 1);
         return NULL;
@@ -646,86 +704,27 @@ PyroStr* PyroStr_empty(PyroVM* vm) {
 
 
 PyroStr* PyroStr_new(const char* src, PyroVM* vm) {
-    return PyroStr_copy_raw(src, strlen(src), vm);
-}
-
-
-PyroStr* PyroStr_copy_esc(const char* src, size_t length, PyroVM* vm) {
-    if (length == 0) {
-        return PyroStr_empty(vm);
-    }
-
-    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
-    if (!dst) {
-        return NULL;
-    }
-
-    size_t dst_count = pyro_process_backslashed_escapes(src, length, dst);
-    dst[dst_count] = '\0';
-
-    // If there were no backslashed escapes, [dst_count] will be equal to [length].
-    // If there were escapes, [dst_count] will be less than [length].
-    if (dst_count < length) {
-        dst = PYRO_REALLOCATE_ARRAY(vm, char, dst, length + 1, dst_count + 1);
-    }
-
-    PyroStr* string = PyroStr_take(dst, dst_count, vm);
-    if (!string) {
-        PYRO_FREE_ARRAY(vm, char, dst, dst_count + 1);
-        return NULL;
-    }
-
-    return string;
-}
-
-
-PyroStr* PyroStr_copy_raw(const char* src, size_t length, PyroVM* vm) {
-    if (length == 0) {
-        return PyroStr_empty(vm);
-    }
-
-    uint64_t hash = PYRO_STRING_HASH(src, length);
-    assert(vm->strings != NULL);
-    PyroStr* interned = find_string(vm->strings, src, length, hash);
-    if (interned) {
-        return interned;
-    }
-
-    char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
-    if (!dst) {
-        return NULL;
-    }
-
-    memcpy(dst, src, length);
-    dst[length] = '\0';
-
-    PyroStr* string = allocate_string(vm, dst, length, hash);
-    if (!string) {
-        PYRO_FREE_ARRAY(vm, char, dst, length + 1);
-        return NULL;
-    }
-
-    return string;
+    return PyroStr_COPY(src);
 }
 
 
 PyroStr* PyroStr_concat_n_copies(PyroStr* str, size_t n, PyroVM* vm) {
-    if (n == 0 || str->length == 0) {
+    if (n == 0 || str->count == 0) {
         return PyroStr_empty(vm);
     }
 
-    size_t total_length = str->length * n;
+    size_t total_length = str->count * n;
     char* dst = PYRO_ALLOCATE_ARRAY(vm, char, total_length + 1);
     if (!dst) {
         return NULL;
     }
 
     for (size_t i = 0; i < n; i++) {
-        memcpy(dst + str->length * i, str->bytes, str->length);
+        memcpy(dst + str->count * i, str->bytes, str->count);
     }
     dst[total_length] = '\0';
 
-    PyroStr* string = PyroStr_take(dst, total_length, vm);
+    PyroStr* string = PyroStr_take(dst, total_length, total_length + 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, total_length + 1);
         return NULL;
@@ -754,7 +753,7 @@ PyroStr* PyroStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroV
     }
     dst[total_length] = '\0';
 
-    PyroStr* string = PyroStr_take(dst, total_length, vm);
+    PyroStr* string = PyroStr_take(dst, total_length, total_length + 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, total_length + 1);
         return NULL;
@@ -765,20 +764,20 @@ PyroStr* PyroStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroV
 
 
 PyroStr* PyroStr_concat(PyroStr* src1, PyroStr* src2, PyroVM* vm) {
-    if (src1->length == 0) return src2;
-    if (src2->length == 0) return src1;
+    if (src1->count == 0) return src2;
+    if (src2->count == 0) return src1;
 
-    size_t length = src1->length + src2->length;
+    size_t length = src1->count + src2->count;
     char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
 
-    memcpy(dst, src1->bytes, src1->length);
-    memcpy(dst + src1->length, src2->bytes, src2->length);
+    memcpy(dst, src1->bytes, src1->count);
+    memcpy(dst + src1->count, src2->bytes, src2->count);
     dst[length] = '\0';
 
-    PyroStr* string = PyroStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, length + 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -792,17 +791,17 @@ PyroStr* PyroStr_prepend_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, Pyr
     uint8_t buf[4];
     size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
 
-    size_t length = buf_count + str->length;
+    size_t length = buf_count + str->count;
     char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
 
     memcpy(dst, buf, buf_count);
-    memcpy(dst + buf_count, str->bytes, str->length);
+    memcpy(dst + buf_count, str->bytes, str->count);
     dst[length] = '\0';
 
-    PyroStr* string = PyroStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, length + 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -816,17 +815,17 @@ PyroStr* PyroStr_append_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, Pyro
     uint8_t buf[4];
     size_t buf_count = pyro_write_utf8_codepoint(codepoint, buf);
 
-    size_t length = str->length + buf_count;
+    size_t length = str->count + buf_count;
     char* dst = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
     if (!dst) {
         return NULL;
     }
 
-    memcpy(dst, str->bytes, str->length);
-    memcpy(dst + str->length, buf, buf_count);
+    memcpy(dst, str->bytes, str->count);
+    memcpy(dst + str->count, buf, buf_count);
     dst[length] = '\0';
 
-    PyroStr* string = PyroStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, length + 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -853,7 +852,7 @@ PyroStr* PyroStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* v
     memcpy(dst + buf1_count, buf2, buf2_count);
     dst[length] = '\0';
 
-    PyroStr* string = PyroStr_take(dst, length, vm);
+    PyroStr* string = PyroStr_take(dst, length, length + 1, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, char, dst, length + 1);
         return NULL;
@@ -1524,7 +1523,7 @@ PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
         return NULL;
     }
 
-    size_t capacity = string->length + 1;
+    size_t capacity = string->count + 1;
 
     uint8_t* new_array = PYRO_ALLOCATE_ARRAY(vm, uint8_t, capacity);
     if (!new_array) {
@@ -1533,9 +1532,9 @@ PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
 
     buf->bytes = new_array;
     buf->capacity = capacity;
-    buf->count = string->length;
+    buf->count = string->count;
 
-    memcpy(buf->bytes, string->bytes, string->length);
+    memcpy(buf->bytes, string->bytes, string->count);
     return buf;
 }
 
@@ -1647,7 +1646,7 @@ PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm) {
     }
     buf->bytes[buf->count] = '\0';
 
-    PyroStr* string = PyroStr_take((char*)buf->bytes, buf->count, vm);
+    PyroStr* string = PyroStr_take((char*)buf->bytes, buf->count, buf->capacity, vm);
     if (!string) {
         return NULL;
     }
@@ -1818,7 +1817,7 @@ PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm) {
 
     array[count] = '\0';
 
-    PyroStr* string = PyroStr_take((char*)array, count, vm);
+    PyroStr* string = PyroStr_take((char*)array, count, capacity, vm);
     if (!string) {
         PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         pyro_panic(vm, "out of memory");
@@ -1894,8 +1893,8 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_STR: {
             PyroStr* str = (PyroStr*)iter->source;
-            if (iter->next_index < str->length) {
-                PyroStr* new_str = PyroStr_copy_raw(&str->bytes[iter->next_index], 1, vm);
+            if (iter->next_index < str->count) {
+                PyroStr* new_str = PyroStr_copy(&str->bytes[iter->next_index], 1, false, vm);
                 if (!new_str) {
                     pyro_panic(vm, "out of memory");
                     return pyro_obj(vm->error);
@@ -1908,7 +1907,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_STR_BYTES: {
             PyroStr* str = (PyroStr*)iter->source;
-            if (iter->next_index < str->length) {
+            if (iter->next_index < str->count) {
                 int64_t byte_value = (uint8_t)str->bytes[iter->next_index];
                 iter->next_index++;
                 return pyro_i64(byte_value);
@@ -1918,9 +1917,9 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_STR_CHARS: {
             PyroStr* str = (PyroStr*)iter->source;
-            if (iter->next_index < str->length) {
+            if (iter->next_index < str->count) {
                 uint8_t* src = (uint8_t*)&str->bytes[iter->next_index];
-                size_t src_len = str->length - iter->next_index;
+                size_t src_len = str->count - iter->next_index;
                 Utf8CodePoint cp;
                 if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
                     iter->next_index += cp.length;
@@ -2082,13 +2081,13 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             PyroStr* str = (PyroStr*)iter->source;
 
             // If we're at the end of the string, set the source to NULL and return an empty string.
-            if (iter->next_index == str->length) {
+            if (iter->next_index == str->count) {
                 iter->source = NULL;
                 return pyro_obj(vm->empty_string);
             }
 
             // Points to the byte *after* the last byte in the string.
-            const char* const string_end = str->bytes + str->length;
+            const char* const string_end = str->bytes + str->count;
 
             // Points to the first byte of the next line.
             const char* const line_start = str->bytes + iter->next_index;
@@ -2110,7 +2109,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 }
             }
 
-            PyroStr* next_line = PyroStr_copy_raw(line_start, line_end - line_start, vm);
+            PyroStr* next_line = PyroStr_copy(line_start, line_end - line_start, false, vm);
             if (!next_line) {
                 pyro_panic(vm, "out of memory");
                 return pyro_obj(vm->error);
@@ -2119,7 +2118,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             // If the string ends with a linebreak, we have one more (empty) string to return. This
             // checks for the case where the strings ends without a linebreak -- in this case the
             // returned string exhausts the iterator.
-            if (line_end == string_end && next_line->length > 0) {
+            if (line_end == string_end && next_line->count > 0) {
                 iter->source = NULL;
             }
 
@@ -2187,7 +2186,7 @@ PyroStr* PyroIter_join(PyroIter* iter, const char* sep, size_t sep_length, PyroV
         }
         pyro_pop(vm); // next_value
 
-        if (!PyroBuf_append_bytes(buf, value_string->length, (uint8_t*)value_string->bytes, vm)) {
+        if (!PyroBuf_append_bytes(buf, value_string->count, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }

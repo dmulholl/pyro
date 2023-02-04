@@ -147,7 +147,7 @@ PyroVec* pyro_listdir(PyroVM* vm, const char* path) {
             continue;
         }
 
-        PyroStr* string = PyroStr_copy_raw(name, length, vm);
+        PyroStr* string = PyroStr_copy(name, length, false, vm);
         if (!string) {
             pyro_panic(vm, "out of memory");
             break;
