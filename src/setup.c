@@ -112,7 +112,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_vec = NULL;
     vm->str_source = NULL;
     vm->str_line = NULL;
-    vm->strings = NULL;
+    vm->string_pool = NULL;
     vm->try_depth = 0;
     vm->with_stack = NULL;
     vm->with_stack_count = 0;
@@ -153,8 +153,8 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     }
 
     // We need to initialize the interned strings pool before we create any strings.
-    vm->strings = PyroMap_new_as_weakref(vm);
-    if (!vm->strings) {
+    vm->string_pool = PyroMap_new_as_weakref(vm);
+    if (!vm->string_pool) {
         pyro_free_vm(vm);
         return NULL;
     }

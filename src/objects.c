@@ -241,10 +241,15 @@ static int64_t* find_entry(
 }
 
 
-// This function is only used for looking up strings in the interned strings pool. If the pool
-// contains an entry identical to [string], it returns a pointer to that entry, otherwise it
-// returns NULL.
-static PyroStr* find_string(PyroMap* string_pool, const char* string, size_t count, uint64_t hash) {
+// This function is used for looking up strings in the interned-strings pool. If the pool of
+// interned strings contains an entry identical to [string], it returns a pointer to that string,
+// otherwise it returns NULL.
+static PyroStr* find_string_in_pool(
+    PyroMap* string_pool,
+    const char* string,
+    size_t count,
+    uint64_t hash
+) {
     if (string_pool->live_entry_count == 0) {
         return NULL;
     }
@@ -602,7 +607,7 @@ static PyroStr* create_new_string(PyroVM* vm, char* bytes, size_t count, size_t 
     string->hash = hash;
     string->bytes = bytes;
 
-    if (!PyroMap_set(vm->strings, pyro_obj(string), pyro_null(), vm)) {
+    if (!PyroMap_set(vm->string_pool, pyro_obj(string), pyro_null(), vm)) {
         string->count = 0;
         string->capacity = 0;
         string->hash = 0;
@@ -615,10 +620,10 @@ static PyroStr* create_new_string(PyroVM* vm, char* bytes, size_t count, size_t 
 
 
 PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
-    assert(vm->strings != NULL);
+    assert(vm->string_pool != NULL);
     uint64_t hash = PYRO_STRING_HASH(bytes, count);
 
-    PyroStr* interned_string = find_string(vm->strings, bytes, count, hash);
+    PyroStr* interned_string = find_string_in_pool(vm->string_pool, bytes, count, hash);
     if (interned_string) {
         PYRO_FREE_ARRAY(vm, char, bytes, capacity);
         return interned_string;
@@ -656,10 +661,10 @@ PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_es
         return string;
     }
 
-    assert(vm->strings != NULL);
+    assert(vm->string_pool != NULL);
     uint64_t hash = PYRO_STRING_HASH(src, count);
 
-    PyroStr* interned_string = find_string(vm->strings, src, count, hash);
+    PyroStr* interned_string = find_string_in_pool(vm->string_pool, src, count, hash);
     if (interned_string) {
         return interned_string;
     }
