@@ -18,8 +18,9 @@ struct PyroStr {
 #define PyroStr_COPY(src) PyroStr_copy((src), strlen((src)), false, vm)
 
 // Creates a new string object by copying [count] bytes from [src].
-// - If [src] is NULL or [count] is zero, returns an empty string.
 // - Returns NULL if the attempt to allocate memory for the new string object fails.
+// - [src] must be non-NULL. If [src] is NULL, returns NULL.
+// - If [count] is zero, returns an empty string.
 PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_escapes, PyroVM* vm);
 
 // Creates a new string object by taking ownership of the heap-allocated array [bytes]. Assumes

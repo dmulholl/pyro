@@ -634,7 +634,11 @@ PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
 
 
 PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_escapes, PyroVM* vm) {
-    if (!src || count == 0) {
+    if (!src) {
+        return NULL;
+    }
+
+    if (count == 0) {
         return PyroStr_empty(vm);
     }
 
