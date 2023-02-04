@@ -288,7 +288,9 @@ static PyroValue str_to_ascii_upper(PyroVM* vm, size_t arg_count, PyroValue* arg
         pyro_panic(vm, "to_ascii_upper(): out of memory");
         return pyro_null();
     }
+
     memcpy(array, str->bytes, str->capacity);
+    array[str->count] = '\0';
 
     for (size_t i = 0; i < str->count; i++) {
         if (array[i] >= 'a' && array[i] <= 'z') {
@@ -318,7 +320,9 @@ static PyroValue str_to_ascii_lower(PyroVM* vm, size_t arg_count, PyroValue* arg
         pyro_panic(vm, "to_ascii_lower(): out of memory");
         return pyro_null();
     }
+
     memcpy(array, str->bytes, str->capacity);
+    array[str->count] = '\0';
 
     for (size_t i = 0; i < str->count; i++) {
         if (array[i] >= 'A' && array[i] <= 'Z') {

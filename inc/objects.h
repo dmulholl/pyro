@@ -23,11 +23,13 @@ struct PyroStr {
 PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_escapes, PyroVM* vm);
 
 // Creates a new string object by taking ownership of the heap-allocated array [bytes]. Assumes
-// [bytes] was allocated using PYRO_ALLOCATE_ARRAY(); it will be freed using PYRO_FREE_ARRAY().
-// - Requires: [capacity >= count + 1].
-// - Sets: [bytes[count] = '\0'].
+// [bytes] was allocated using PYRO_ALLOCATE_ARRAY(); it will be freed by the garbage collector
+// using PYRO_FREE_ARRAY().
 // - Returns NULL if the attempt to allocate memory for the new string object fails.
 // - If the return value is NULL, ownership of [bytes] is returned to the caller.
+// - If the return value is NULL, [bytes] is unchanged.
+// - Precondition: [capacity >= count + 1].
+// - Precondition: [bytes[count] == '\0'].
 PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm);
 
 // Creates a new string object by concatenating two source strings. Returns NULL if memory cannot

@@ -179,11 +179,11 @@ static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args)
         array[count++] = c;
     }
 
-    array[count] = '\0';
     if (capacity > count + 1) {
         array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
         capacity = count + 1;
     }
+    array[count] = '\0';
 
     PyroStr* string = PyroStr_take((char*)array, count, capacity, vm);
     if (!string) {

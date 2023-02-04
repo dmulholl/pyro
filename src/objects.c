@@ -592,8 +592,8 @@ bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm) {
 
 // Creates a new string object taking ownership of the heap-allocated array [bytes].
 // - Adds the new string to the interned strings pool.
-// - Returns NULL if memory cannot be allocated for the new string object or if the string cannot
-//   be added to the string pool.
+// - Returns NULL if memory cannot be allocated for the new string object.
+// - Returns null if the string cannot be added to the string pool.
 // - If the return value is NULL, ownership of [bytes] is returned to the caller.
 static PyroStr* create_new_string(PyroVM* vm, char* bytes, size_t count, size_t capacity, uint64_t hash) {
     PyroStr* string = ALLOCATE_OBJECT(vm, PyroStr, PYRO_OBJECT_STR);
@@ -629,7 +629,6 @@ PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
         return interned_string;
     }
 
-    bytes[count] = '\0';
     return create_new_string(vm, bytes, count, capacity, hash);
 }
 
@@ -647,14 +646,11 @@ PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_es
         }
 
         size_t dst_count = pyro_process_backslashed_escapes(src, count, dst);
-        if (dst_count < count) {
-            dst = PYRO_REALLOCATE_ARRAY(vm, char, dst, dst_capacity, dst_count + 1);
-            dst_capacity = dst_count + 1;
-        }
+        dst[dst_count] = '\0';
 
         PyroStr* string = PyroStr_take(dst, dst_count, dst_capacity, vm);
         if (!string) {
-            PYRO_FREE_ARRAY(vm, char, dst, dst_count + 1);
+            PYRO_FREE_ARRAY(vm, char, dst, dst_capacity);
             return NULL;
         }
 
@@ -697,6 +693,8 @@ PyroStr* PyroStr_empty(PyroVM* vm) {
     if (!bytes) {
         return NULL;
     }
+
+    bytes[0] = '\0';
 
     PyroStr* string = PyroStr_take(bytes, 0, 1, vm);
     if (!string) {
