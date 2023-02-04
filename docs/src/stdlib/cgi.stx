@@ -8,18 +8,6 @@ A utility module for writing CGI scripts in Pyro.
 ::: insert toc
 
 
-### Functions
-
-[[ `url_decode(input: str -> str|err` ]]
-
-    Returns a new string containing the URL-decoded content of the input string.
-    Returns an error if the input is invalid.
-
-[[ `url_encode(input: str) -> str` ]]
-
-    Returns a new string containing the URL-encoded content of the input string.
-
-
 ### Requests
 
 [[ `Request() -> Request` ]]
@@ -56,7 +44,6 @@ The `Request` class has the following methods:
     Returns the list of values for `key` where `key` is a query-string or form variable.
 
     Returns an empty vector if `key` was not found.
-
 
 
 ### Responses

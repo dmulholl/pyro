@@ -1,0 +1,29 @@
+---
+title: <code>std::url</code>
+meta_title: Pyro Standard Library &mdash; std::url
+---
+
+A utility module for handling URLs.
+
+::: insert toc
+
+
+### Functions
+
+[[ `parse_query(query_string: str) -> err|map[str, vec[str]]` ]]
+
+    Parses a URL-encoded query string.
+
+    * Returns a `map` mapping `str` keys to vectors of `str` values.
+    * Returns an `err` if the query string is invalidly-encoded.
+
+    The input can be a full URL --- everything up to the first `?` will be ignored.
+
+[[ `url_decode(input: str -> str|err` ]]
+
+    Returns a new string containing the URL-decoded content of the input string.
+    Returns an error if the input is invalidly-encoded.
+
+[[ `url_encode(input: str) -> str` ]]
+
+    Returns a new string containing the URL-encoded content of the input string.
