@@ -65,7 +65,7 @@ static PyroValue fn_basename(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* path = PYRO_AS_STR(args[0]);
     const char* basename_ptr = pyro_basename(path->bytes);
 
-    PyroStr* result = PyroStr_new(basename_ptr, vm);
+    PyroStr* result = PyroStr_COPY(basename_ptr);
     if (!result) {
         pyro_panic(vm, "basename(): out of memory");
         return pyro_null();
@@ -191,7 +191,7 @@ static PyroValue fn_realpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroStr* result = PyroStr_new(real_path, vm);
+    PyroStr* result = PyroStr_COPY(real_path);
     if (!result) {
         free(real_path);
         pyro_panic(vm, "realpath(): out of memory");

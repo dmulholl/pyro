@@ -119,7 +119,7 @@ void pyro_load_std_mod_mt64(PyroVM* vm, PyroMod* module) {
     if (!mt64_class) {
         return;
     }
-    mt64_class->name = PyroStr_new("MT64", vm);
+    mt64_class->name = PyroStr_COPY("MT64");
     pyro_define_pub_member(vm, module, "MT64", pyro_obj(mt64_class));
 
     pyro_define_pub_field(vm, mt64_class, "generator", pyro_null());

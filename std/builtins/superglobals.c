@@ -720,7 +720,7 @@ static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_obj(vm->error);
         }
 
-        PyroStr* string = PyroStr_new(value, vm);
+        PyroStr* string = PyroStr_COPY(value);
         if (!string) {
             pyro_panic(vm, "$env(): out of memory");
             return pyro_null();

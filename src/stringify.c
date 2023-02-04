@@ -1026,7 +1026,7 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
 
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_fmt);
     if (!PYRO_IS_NULL(method)) {
-        PyroStr* format_string_object = PyroStr_new(format_specifier, vm);
+        PyroStr* format_string_object = PyroStr_COPY(format_specifier);
         if (!format_string_object) {
             pyro_panic(vm, "out of memory");
             return NULL;

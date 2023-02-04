@@ -30,12 +30,6 @@ PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_es
 // - If the return value is NULL, ownership of [bytes] is returned to the caller.
 PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm);
 
-
-
-// Creates a new string object by copying the null-terminated C-string [src], ignoring backslashed
-// escapes.
-PyroStr* PyroStr_new(const char* src, PyroVM* vm);
-
 // Creates a new string object by concatenating two source strings. Returns NULL if memory cannot
 // be allocated for the new string.
 PyroStr* PyroStr_concat(PyroStr* s1, PyroStr* s2, PyroVM* vm);

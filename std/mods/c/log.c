@@ -237,11 +237,11 @@ void pyro_load_std_mod_log(PyroVM* vm, PyroMod* module) {
     if (!logger_class) {
         return;
     }
-    logger_class->name = PyroStr_new("Logger", vm);
+    logger_class->name = PyroStr_COPY("Logger");
     pyro_define_pub_member(vm, module, "Logger", pyro_obj(logger_class));
 
     pyro_define_pub_field(vm, logger_class, "level", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_pub_field(vm, logger_class, "timestamp", pyro_obj(PyroStr_new("%Y-%m-%d %H:%M:%S", vm)));
+    pyro_define_pub_field(vm, logger_class, "timestamp", pyro_obj(PyroStr_COPY("%Y-%m-%d %H:%M:%S")));
     pyro_define_pub_field(vm, logger_class, "file", pyro_null());
 
     pyro_define_pub_method(vm, logger_class, "level", logger_level, 1);

@@ -708,11 +708,6 @@ PyroStr* PyroStr_empty(PyroVM* vm) {
 }
 
 
-PyroStr* PyroStr_new(const char* src, PyroVM* vm) {
-    return PyroStr_COPY(src);
-}
-
-
 PyroStr* PyroStr_concat_n_copies(PyroStr* str, size_t n, PyroVM* vm) {
     if (n == 0 || str->count == 0) {
         return PyroStr_empty(vm);
@@ -1164,7 +1159,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
 
 
 PyroNativeFn* PyroNativeFn_new(PyroVM* vm, pyro_native_fn_t fn_ptr, const char* name, int arity) {
-    PyroStr* name_string = PyroStr_new(name, vm);
+    PyroStr* name_string = PyroStr_COPY(name);
     if (!name_string) {
         return NULL;
     }
