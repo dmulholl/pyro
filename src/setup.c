@@ -160,7 +160,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     }
 
     // Canned objects.
-    vm->empty_string = PyroStr_empty(vm);
+    vm->empty_string = PyroStr_COPY("");
     vm->error = PyroErr_new(vm);
 
     // Static strings.

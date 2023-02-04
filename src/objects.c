@@ -638,8 +638,8 @@ PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_es
         return NULL;
     }
 
-    if (count == 0) {
-        return PyroStr_empty(vm);
+    if (count == 0 && vm->empty_string) {
+        return vm->empty_string;
     }
 
     if (process_backslashed_escapes) {
@@ -688,31 +688,9 @@ PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_es
 }
 
 
-PyroStr* PyroStr_empty(PyroVM* vm) {
-    if (vm->empty_string) {
-        return vm->empty_string;
-    }
-
-    char* bytes = PYRO_ALLOCATE_ARRAY(vm, char, 1);
-    if (!bytes) {
-        return NULL;
-    }
-
-    bytes[0] = '\0';
-
-    PyroStr* string = PyroStr_take(bytes, 0, 1, vm);
-    if (!string) {
-        PYRO_FREE_ARRAY(vm, char, bytes, 1);
-        return NULL;
-    }
-
-    return string;
-}
-
-
 PyroStr* PyroStr_concat_n_copies(PyroStr* str, size_t n, PyroVM* vm) {
     if (n == 0 || str->count == 0) {
-        return PyroStr_empty(vm);
+        return vm->empty_string;
     }
 
     size_t total_length = str->count * n;
@@ -738,7 +716,7 @@ PyroStr* PyroStr_concat_n_copies(PyroStr* str, size_t n, PyroVM* vm) {
 
 PyroStr* PyroStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroVM* vm) {
     if (n == 0) {
-        return PyroStr_empty(vm);
+        return vm->empty_string;
     }
 
     uint8_t buf[4];

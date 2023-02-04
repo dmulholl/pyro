@@ -54,9 +54,6 @@ PyroStr* PyroStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* v
 PyroStr* PyroStr_prepend_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, PyroVM* vm);
 PyroStr* PyroStr_append_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, PyroVM* vm);
 
-// Returns the VM's cached empty string if it exists, otherwise creates a new empty string.
-PyroStr* PyroStr_empty(PyroVM* vm);
-
 /* ---- */
 /* Maps */
 /* ---- */
