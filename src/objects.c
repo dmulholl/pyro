@@ -1761,67 +1761,47 @@ PyroFile* PyroFile_new(PyroVM* vm, FILE* stream) {
 
 
 PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm) {
-    size_t count = 0;
-    size_t capacity = 0;
-    uint8_t* array = NULL;
+    PyroBuf* buf = PyroBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
 
     while (true) {
-        if (count + 1 > capacity) {
-            size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
-            uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
-            if (!new_array) {
-                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
-                pyro_panic(vm, "out of memory");
-                return NULL;
-            }
-            capacity = new_capacity;
-            array = new_array;
-        }
-
         int c = fgetc(file->stream);
 
         if (c == EOF) {
             if (ferror(file->stream)) {
-                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
                 pyro_panic(vm, "I/O read error");
                 return NULL;
             }
             break;
         }
 
-        array[count++] = c;
+        if (!PyroBuf_append_byte(buf, c, vm)) {
+            pyro_panic(vm, "out of memory");
+            return NULL;
+        }
 
         if (c == '\n') {
             break;
         }
     }
 
-    if (count == 0) {
-        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
+    if (buf->count == 0) {
         return NULL;
     }
 
-    if (count > 1 && array[count - 2] == '\r' && array[count - 1] == '\n') {
-        count -= 2;
-    } else if (array[count - 1] == '\n') {
-        count -= 1;
+    if (buf->count >= 2 && buf->bytes[buf->count - 2] == '\r' && buf->bytes[buf->count - 1] == '\n') {
+        buf->count -= 2;
     }
 
-    if (count == 0) {
-        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
-        return vm->empty_string;
+    if (buf->count >= 1 && buf->bytes[buf->count - 1] == '\n') {
+        buf->count -= 1;
     }
 
-    if (capacity > count + 1) {
-        array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, count + 1);
-        capacity = count + 1;
-    }
-
-    array[count] = '\0';
-
-    PyroStr* string = PyroStr_take((char*)array, count, capacity, vm);
+    PyroStr* string = PyroBuf_to_str(buf, vm);
     if (!string) {
-        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         pyro_panic(vm, "out of memory");
         return NULL;
     }
