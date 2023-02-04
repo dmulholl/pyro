@@ -14,5 +14,7 @@ extern unsigned char std_mod_json_pyro[];
 extern unsigned int std_mod_json_pyro_len;
 extern unsigned char std_mod_pretty_pyro[];
 extern unsigned int std_mod_pretty_pyro_len;
+extern unsigned char std_mod_url_pyro[];
+extern unsigned int std_mod_url_pyro_len;
 
 #endif

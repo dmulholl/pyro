@@ -27,6 +27,7 @@ OBJ_FILES = out/build/sqlite.o \
 			out/build/std_mod_html.o \
 			out/build/std_mod_cgi.o \
 			out/build/std_mod_pretty.o \
+			out/build/std_mod_url.o \
 			out/build/std_mod_json.o
 
 # --------------- #
@@ -158,6 +159,12 @@ out/build/std_mod_pretty.o: std/mods/pyro/std_mod_pretty.pyro
 	@printf "\e[1;32mBuilding\e[0m std::pretty\n"
 	@cd std/mods/pyro; xxd -i std_mod_pretty.pyro > ../../../out/build/std_mod_pretty.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_pretty.c -o out/build/std_mod_pretty.o
+
+out/build/std_mod_url.o: std/mods/pyro/std_mod_url.pyro
+	@mkdir -p out/build
+	@printf "\e[1;32mBuilding\e[0m std::url\n"
+	@cd std/mods/pyro; xxd -i std_mod_url.pyro > ../../../out/build/std_mod_url.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_url.c -o out/build/std_mod_url.o
 
 # ---------------------- #
 #  Test Compiled Module  #

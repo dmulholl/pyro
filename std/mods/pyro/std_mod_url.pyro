@@ -1,0 +1,92 @@
+var url_reserved_chars = " !#$%&'()*+,/:;=?@[]";
+var url_reserved_bytes = url_reserved_chars:bytes():to_set();
+
+
+pub def url_encode(input: str) -> str {
+    var buf = $buf();
+
+    for byte in input:bytes() {
+        if byte in url_reserved_bytes {
+            buf:write("%{02X}", byte);
+        } else {
+            buf:write_byte(byte);
+        }
+    }
+
+    return buf:to_str();
+}
+
+
+pub def url_decode(input: str) -> str|err {
+    var index = 0;
+    var count = input:count();
+    var buf = $buf();
+
+    while index < count {
+        var char = input[index];
+
+        if char == "+" {
+            buf:write(" ");
+            index += 1;
+            continue;
+        }
+
+        if char == "%" {
+            if count - index < 3 {
+                return $err();
+            }
+
+            var value = try $i64("0x" + input:slice(index + 1, 2));
+            if $is_err(value) {
+                return $err();
+            }
+
+            buf:write_byte(value);
+            index += 3;
+            continue;
+        }
+
+        if char in url_reserved_chars {
+            return $err();
+        }
+
+        buf:write(char);
+        index += 1;
+    }
+
+    return buf:to_str();
+}
+
+
+pub def parse_query(query_string: str) -> err|map[str, vec[str]] {
+    if query_string:contains("?") {
+        query_string = query_string:split("?")[1];
+    }
+
+    var data = $map();
+
+    for element in query_string:split("&") {
+        if element:contains("=") {
+            var parts = element:split("=");
+
+            var key = url_decode(parts[0]);
+            if $is_err(key) {
+                return $err("parse_query(): invalid key '{}'", key);
+            }
+
+            var value = url_decode(parts[1]);
+            if $is_err(value) {
+                return $err("parse_query(): invalid value '{}'", value);
+            }
+
+            var values = data[key];
+            if $is_err(values) {
+                data[key] = [value];
+            } else {
+                values:append(value);
+            }
+        }
+    }
+
+    return data;
+}

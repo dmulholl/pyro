@@ -1,54 +1,5 @@
-import $std::json;
-
-
-var url_reserved_chars = " !#$%&'()*+,/:;=?@[]":bytes():to_set();
-
-
-pub def url_encode(input: str) -> str {
-    var buf = $buf();
-
-    for byte in input:bytes() {
-        if byte in url_reserved_chars {
-            buf:write("%{02X}", byte);
-        } else {
-            buf:write_byte(byte);
-        }
-    }
-
-    return buf:to_str();
-}
-
-
-pub def url_decode(input: str) -> str|err {
-    var index = 0;
-    var count = input:count();
-    var buf = $buf();
-
-    while index < count {
-        var char = input[index];
-        if char == "+" {
-            buf:write(" ");
-            index += 1;
-        } else if char == "%" {
-            if count - index >= 3 {
-                var value = try $i64("0x" + input:slice(index + 1, 2));
-                if $is_err(value) {
-                    return $err();
-                }
-                buf:write_byte(value);
-                index += 3;
-            } else {
-                return $err();
-            }
-        } else {
-            buf:write(char);
-            index += 1;
-        }
-    }
-
-    return buf:to_str();
-}
-
+import std::json;
+import std::url;
 
 pub class Request {
     pub var method: str;
@@ -116,14 +67,17 @@ pub class Request {
         for element in input:split("&") {
             if element:contains("=") {
                 var parts = element:split("=");
-                var key = url_decode(parts[0]);
+
+                var key = url::url_decode(parts[0]);
                 if $is_err(key) {
                     continue;
                 }
-                var value = url_decode(parts[1]);
+
+                var value = url::url_decode(parts[1]);
                 if $is_err(value) {
                     continue;
                 }
+
                 var values = self.data[key];
                 if $is_err(values) {
                     self.data[key] = [value];

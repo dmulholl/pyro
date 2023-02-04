@@ -88,6 +88,11 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         return;
     }
 
+    if (strcmp(name->bytes, "url") == 0) {
+        pyro_exec_code_as_module(vm, (char*)std_mod_url_pyro, std_mod_url_pyro_len, "std::url", module);
+        return;
+    }
+
     pyro_panic(vm, "no module in standard library named '%s'", name->bytes);
 }
 

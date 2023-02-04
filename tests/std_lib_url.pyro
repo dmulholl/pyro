@@ -1,0 +1,105 @@
+import std::url::{url_encode, url_decode};
+import std::url::{parse_query};
+
+# Test url-encoding.
+assert url_encode("") == "";
+assert url_encode("A") == "A";
+assert url_encode("b") == "b";
+assert url_encode("foo") == "foo";
+
+assert url_encode(" ") == "%20";
+assert url_encode("!") == "%21";
+assert url_encode("#") == "%23";
+assert url_encode("$") == "%24";
+assert url_encode("%") == "%25";
+assert url_encode("&") == "%26";
+assert url_encode("'") == "%27";
+assert url_encode("(") == "%28";
+assert url_encode(")") == "%29";
+assert url_encode("*") == "%2A";
+assert url_encode("+") == "%2B";
+assert url_encode(",") == "%2C";
+assert url_encode("/") == "%2F";
+assert url_encode(":") == "%3A";
+assert url_encode(";") == "%3B";
+assert url_encode("=") == "%3D";
+assert url_encode("?") == "%3F";
+assert url_encode("@") == "%40";
+assert url_encode("[") == "%5B";
+assert url_encode("]") == "%5D";
+assert url_encode(" !$! ") == "%20%21%24%21%20";
+
+assert url_encode(" !foo! ") == "%20%21foo%21%20";
+
+# Test url-decoding.
+assert url_decode("+") == " ";
+assert url_decode("%20") == " ";
+assert url_decode("%21") == "!";
+assert url_decode("%25") == "%";
+assert url_decode("%21%25%21") == "!%!";
+
+assert url_decode("") == "";
+assert url_decode("foo") == "foo";
+
+assert url_decode("%21foo%21") == "!foo!";
+
+assert $is_err(url_decode(" "));
+assert $is_err(url_decode("!"));
+assert $is_err(url_decode("foo!bar"));
+assert $is_err(url_decode("%XX"));
+assert $is_err(url_decode("foo%XXbar"));
+
+# Test round-trip encoding/decoding.
+var input = "foo !#$%&'()*+,/:;=?@[] bar";
+var encoded = url_encode(input);
+var decoded = url_decode(encoded);
+assert input == decoded;
+
+# Test query-parsing.
+var map1 = parse_query("k1=foo&k2=bar&k3=baz&k1=foobar");
+assert $is_map(map1);
+assert map1:count() == 3;
+
+assert "k1" in map1;
+assert $is_vec(map1["k1"]);
+assert map1["k1"]:count() == 2;
+assert map1["k1"][0] == "foo";
+assert map1["k1"][1] == "foobar";
+
+assert "k2" in map1;
+assert $is_vec(map1["k2"]);
+assert map1["k2"]:count() == 1;
+assert map1["k2"][0] == "bar";
+
+assert "k3" in map1;
+assert $is_vec(map1["k3"]);
+assert map1["k3"]:count() == 1;
+assert map1["k3"][0] == "baz";
+
+var map2 = parse_query("k1=foo%20bar&k2=foo%21bar");
+assert $is_map(map2);
+assert map2:count() == 2;
+
+assert "k1" in map2;
+assert $is_vec(map2["k1"]);
+assert map2["k1"]:count() == 1;
+assert map2["k1"][0] == "foo bar";
+
+assert "k2" in map2;
+assert $is_vec(map2["k2"]);
+assert map2["k2"]:count() == 1;
+assert map2["k2"][0] == "foo!bar";
+
+var map3 = parse_query("http://www.example.com?k1=foo&k2=bar");
+assert $is_map(map3);
+assert map3:count() == 2;
+
+assert "k1" in map3;
+assert $is_vec(map3["k1"]);
+assert map3["k1"]:count() == 1;
+assert map3["k1"][0] == "foo";
+
+assert "k2" in map3;
+assert $is_vec(map3["k2"]);
+assert map3["k2"]:count() == 1;
+assert map3["k2"][0] == "bar";
