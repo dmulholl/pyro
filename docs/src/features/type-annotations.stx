@@ -194,3 +194,18 @@ You can define an alias for a type using a `typedef` statement, e.g.
     def makes_token() -> Token {
         return $tup("FOO", 123, true);
     }
+
+
+
+### Variadic Functions
+
+A type annotation in a variadic function specifies the type of the individual parameter values, e.g.
+
+::: code pyro
+    def add(*args: i64|f64) {
+        return args:iter():sum();
+    }
+
+    assert add(1, 2.0) == 3.0;
+
+Here, `add()` is a function that takes a variable number of arguments; each argument can be an `i64` or an `f64`.
