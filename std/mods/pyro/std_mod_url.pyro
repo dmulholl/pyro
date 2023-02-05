@@ -1,4 +1,5 @@
-var url_reserved_chars = " !#$%&'()*+,/:;=?@[]";
+# Ref: https://en.wikipedia.org/wiki/URL_encoding
+var url_reserved_chars = " !\"#$%&'()*+,/:;=?@[]";
 var url_reserved_bytes = url_reserved_chars:bytes():to_set();
 
 
@@ -55,7 +56,7 @@ pub def url_decode(input: str) -> str|err {
         }
 
         if char in url_reserved_chars {
-            return $err();
+            return $err("url_decode(): invalid character '{}'", char);
         }
 
         buf:write(char);
