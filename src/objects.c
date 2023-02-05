@@ -620,7 +620,9 @@ static PyroStr* create_new_string(PyroVM* vm, char* bytes, size_t count, size_t 
 
 
 PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
+    assert(bytes != NULL);
     assert(vm->string_pool != NULL);
+
     uint64_t hash = PYRO_STRING_HASH(bytes, count);
 
     PyroStr* interned_string = find_string_in_pool(vm->string_pool, bytes, count, hash);
@@ -634,9 +636,7 @@ PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
 
 
 PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_escapes, PyroVM* vm) {
-    if (!src) {
-        return NULL;
-    }
+    assert(src != NULL);
 
     if (count == 0 && vm->empty_string) {
         return vm->empty_string;
