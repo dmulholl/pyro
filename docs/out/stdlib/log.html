@@ -151,7 +151,7 @@ Functions
 <dl>
 <div>
 <dt>
-<code>debug(arg: any)</code> <br> <code>debug(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>debug(arg: any)</code> <br> <code>debug(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -169,7 +169,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </div>
 <div>
 <dt>
-<code>error(arg: any)</code> <br> <code>error(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>error(arg: any)</code> <br> <code>error(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -187,7 +187,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </div>
 <div>
 <dt>
-<code>fatal(arg: any)</code> <br> <code>fatal(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>fatal(arg: any)</code> <br> <code>fatal(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -208,7 +208,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </div>
 <div>
 <dt>
-<code>info(arg: any)</code> <br> <code>info(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>info(arg: any)</code> <br> <code>info(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -226,7 +226,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </div>
 <div>
 <dt>
-<code>warn(arg: any)</code> <br> <code>warn(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>warn(arg: any)</code> <br> <code>warn(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -275,7 +275,7 @@ The default timestamp format is <code>&quot;[%Y-%m-%d %H:%M:%S]&quot;</code>.
 <dl>
 <div>
 <dt>
-<code>:debug(arg: any)</code> <br> <code>:debug(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>:debug(arg: any)</code> <br> <code>:debug(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -293,7 +293,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </div>
 <div>
 <dt>
-<code>:error(arg: any)</code> <br> <code>:error(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>:error(arg: any)</code> <br> <code>:error(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -311,7 +311,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </div>
 <div>
 <dt>
-<code>:fatal(arg: any)</code> <br> <code>:fatal(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>:fatal(arg: any)</code> <br> <code>:fatal(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -343,7 +343,7 @@ The default output file is the standard error stream.
 </div>
 <div>
 <dt>
-<code>:info(arg: any)</code> <br> <code>:info(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>:info(arg: any)</code> <br> <code>:info(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -389,7 +389,7 @@ The format string can include any format specifiers supported by the C standard 
 </div>
 <div>
 <dt>
-<code>:warn(arg: any)</code> <br> <code>:warn(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>:warn(arg: any)</code> <br> <code>:warn(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>

@@ -96,7 +96,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$eprint(arg: any) -> i64` <br> `$eprint(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+[[ `$eprint(arg: any) -> i64` <br> `$eprint(format_string: str, *args: any) -> i64` ]]
 
     Prints to the standard error stream.
 
@@ -110,13 +110,13 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$eprintln() -> i64` <br> `$eprintln(arg: any) -> i64` <br> `$eprintln(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+[[ `$eprintln() -> i64` <br> `$eprintln(arg: any) -> i64` <br> `$eprintln(format_string: str, *args: any) -> i64` ]]
 
     Like `$eprint()` but adds a terminating newline.
 
 
 
-[[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, arg1: any, arg2: any, ...) -> err` ]]
+[[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, *args: any) -> err` ]]
 
     Creates a new `err` object.
 
@@ -175,7 +175,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$fmt(format_string: str, arg1: any, arg2: any, ...) -> str` ]]
+[[ `$fmt(format_string: str, *args: any) -> str` ]]
 
     Returns the new string created by interpolating the argument values into the format string --- see the [string formatting](@root/features/formatting//) documentation for details.
 
@@ -420,7 +420,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$panic(error_message: any)` <br> `$panic(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `$panic(error_message: any)` <br> `$panic(format_string: str, *args: any)` ]]
 
     Panics with the specified error message.
 
@@ -432,7 +432,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$print(arg: any) -> i64` <br> `$print(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+[[ `$print(arg: any) -> i64` <br> `$print(format_string: str, *args: any) -> i64` ]]
 
     Prints to the standard output stream.
 
@@ -446,7 +446,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$println() -> i64` <br> `$println(arg: any) -> i64` <br> `$println(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+[[ `$println() -> i64` <br> `$println(arg: any) -> i64` <br> `$println(format_string: str, *args: any) -> i64` ]]
 
     Like `$print()` but adds a terminating newline.
 

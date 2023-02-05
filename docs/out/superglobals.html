@@ -218,7 +218,7 @@ Returns <code>true</code> on success, <code>false</code> if the environment vari
 </div>
 <div>
 <dt>
-<code>$eprint(arg: any) -&gt; i64</code> <br> <code>$eprint(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+<code>$eprint(arg: any) -&gt; i64</code> <br> <code>$eprint(format_string: str, *args: any) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -242,7 +242,7 @@ This function will panic if a formatting error occurs or if the attempt to write
 </div>
 <div>
 <dt>
-<code>$eprintln() -&gt; i64</code> <br> <code>$eprintln(arg: any) -&gt; i64</code> <br> <code>$eprintln(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+<code>$eprintln() -&gt; i64</code> <br> <code>$eprintln(arg: any) -&gt; i64</code> <br> <code>$eprintln(format_string: str, *args: any) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -252,7 +252,7 @@ Like <code>$eprint()</code> but adds a terminating newline.
 </div>
 <div>
 <dt>
-<code>$err() -&gt; err</code> <br> <code>$err(message: any) -&gt; err</code> <br> <code>$err(format_string: str, arg1: any, arg2: any, ...) -&gt; err</code>
+<code>$err() -&gt; err</code> <br> <code>$err(message: any) -&gt; err</code> <br> <code>$err(format_string: str, *args: any) -&gt; err</code>
 </dt>
 <dd>
 <p>
@@ -347,7 +347,7 @@ If <code>mode</code> is not specified, it defaults to <code>&quot;r&quot;</code>
 </div>
 <div>
 <dt>
-<code>$fmt(format_string: str, arg1: any, arg2: any, ...) -&gt; str</code>
+<code>$fmt(format_string: str, *args: any) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -749,7 +749,7 @@ Returns an iterator over the object's public method names as strings.
 </div>
 <div>
 <dt>
-<code>$panic(error_message: any)</code> <br> <code>$panic(format_string: str, arg1: any, arg2: any, ...)</code>
+<code>$panic(error_message: any)</code> <br> <code>$panic(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
@@ -770,7 +770,7 @@ If the panic is unhandled, the error message will be printed to the standard err
 </div>
 <div>
 <dt>
-<code>$print(arg: any) -&gt; i64</code> <br> <code>$print(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+<code>$print(arg: any) -&gt; i64</code> <br> <code>$print(format_string: str, *args: any) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -794,7 +794,7 @@ This function will panic if a formatting error occurs or if the attempt to write
 </div>
 <div>
 <dt>
-<code>$println() -&gt; i64</code> <br> <code>$println(arg: any) -&gt; i64</code> <br> <code>$println(format_string: str, arg1: any, arg2: any, ...) -&gt; i64</code>
+<code>$println() -&gt; i64</code> <br> <code>$println(arg: any) -&gt; i64</code> <br> <code>$println(format_string: str, *args: any) -&gt; i64</code>
 </dt>
 <dd>
 <p>

@@ -48,7 +48,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 ### Functions
 
 
-[[ `debug(arg: any)` <br> `debug(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `debug(arg: any)` <br> `debug(format_string: str, *args: any)` ]]
 
     A convenience function for writing a `DEBUG` log message to the standard error stream.
 
@@ -57,7 +57,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `error(arg: any)` <br> `error(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `error(arg: any)` <br> `error(format_string: str, *args: any)` ]]
 
     A convenience function for writing an `ERROR` log message to the standard error stream.
 
@@ -66,7 +66,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `fatal(arg: any)` <br> `fatal(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `fatal(arg: any)` <br> `fatal(format_string: str, *args: any)` ]]
 
     A convenience function for writing a `FATAL` log message to the standard error stream.
 
@@ -77,7 +77,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `info(arg: any)` <br> `info(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `info(arg: any)` <br> `info(format_string: str, *args: any)` ]]
 
     A convenience function for writing an `INFO` log message to the standard error stream.
 
@@ -86,7 +86,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `warn(arg: any)` <br> `warn(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `warn(arg: any)` <br> `warn(format_string: str, *args: any)` ]]
 
     A convenience function for writing a `WARN` log message to the standard error stream.
 
@@ -109,7 +109,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 `Logger` instances support the following methods:
 
 
-[[ `:debug(arg: any)` <br> `:debug(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `:debug(arg: any)` <br> `:debug(format_string: str, *args: any)` ]]
 
     Writes a `DEBUG` level log message to the logger's output file.
 
@@ -118,7 +118,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `:error(arg: any)` <br> `:error(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `:error(arg: any)` <br> `:error(format_string: str, *args: any)` ]]
 
     Writes an `ERROR` level log message to the logger's output file.
 
@@ -127,7 +127,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `:fatal(arg: any)` <br> `:fatal(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `:fatal(arg: any)` <br> `:fatal(format_string: str, *args: any)` ]]
 
     Writes a `FATAL` level log message to the logger's output file.
 
@@ -144,7 +144,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     The default output file is the standard error stream.
 
 
-[[ `:info(arg: any)` <br> `:info(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `:info(arg: any)` <br> `:info(format_string: str, *args: any)` ]]
 
     Writes an `INFO` level log message to the logger's output file.
 
@@ -169,7 +169,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     The format string can include any format specifiers supported by the C standard library's `strftime()` function.
 
 
-[[ `:warn(arg: any)` <br> `:warn(format_string: str, arg1: any, arg2: any, ...)` ]]
+[[ `:warn(arg: any)` <br> `:warn(format_string: str, *args: any)` ]]
 
     Writes a `WARN` level log message to the logger's output file.
 

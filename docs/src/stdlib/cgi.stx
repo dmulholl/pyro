@@ -88,7 +88,7 @@ The `Response` class has the following methods:
 
     Writes the response to the standard output stream.
 
-[[ `:write(arg: any) -> Response` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> Response` ]]
+[[ `:write(arg: any) -> Response` <br> `:write(format_string: str, *args: any) -> Response` ]]
 
     Writes to the response's `body` buffer.
 
