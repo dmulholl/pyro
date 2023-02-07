@@ -19,7 +19,7 @@ A utility module for handling URLs.
 
     The input can be a full URL --- everything up to the first `?` will be ignored.
 
-[[ `url_decode(input: str -> str|err` ]]
+[[ `url_decode(input: str) -> str|err` ]]
 
     Returns a new string containing the URL-decoded content of the input string.
     Returns an error if the input is invalidly-encoded.
