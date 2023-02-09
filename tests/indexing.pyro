@@ -46,27 +46,31 @@ bam["ghi"] = "new value";
 assert bam["ghi"] == "new value";
 
 
-class VecWrapper {
+class Object {
     var vec;
 
     def $init() {
         self.vec = ["foo", "bar", "baz"];
     }
 
-    def $get_index(key) {
+    def $get(key) {
         return self.vec[key];
     }
 
-    def $set_index(key, value) {
+    def $set(key, value) {
         self.vec[key] = value;
         return value;
     }
 }
 
-var wrap = VecWrapper();
-assert wrap[0] == "foo";
-assert wrap[1] == "bar";
-assert wrap[2] == "baz";
+var obj = Object();
+assert obj[0] == "foo";
+assert obj[1] == "bar";
+assert obj[2] == "baz";
+assert $is_err(try (obj[123] == "xyz"));
 
-wrap[1] = "new value";
-assert wrap[1] == "new value";
+obj[1] = "abc";
+assert obj[1] == "abc";
+assert (obj[1] = "def") == "def";
+assert $is_err(try (obj[123] = "xyz"));
+assert !$is_err(try (obj[1] = "xyz"));

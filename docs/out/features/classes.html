@@ -298,25 +298,25 @@ A subclass can use the <code>super</code> keyword to access an overridden superc
 Indexing
 </h3>
 <p>
-You can add indexing support to a class by implementing <code>$get_index(key)</code> and/or <code>$set_index(key, value)</code> methods.
+You can add indexing support to a class by implementing <code>$get(key)</code> and/or <code>$set(key, value)</code> methods.
 </p>
 <p>
-Accessing an index:
+Accessing an index, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
 </pre>
 <p>
-is equivalent to calling the object's <code>:$get_index(key)</code> method.
+is equivalent to calling the instance's <code>$get(key)</code> method.
 </p>
 <p>
-Assigning to an index:
+Assigning to an index, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
 </pre>
 <p>
-is equivalent to calling the object's <code>:$set_index(key, value)</code> method.
+is equivalent to calling the instance's <code>$set(key, value)</code> method.
 </p>
 <h3 id="dollar-methods">
 Dollar Methods
@@ -384,7 +384,7 @@ This method should return a string representation of the instance formatted acco
 </div>
 <div>
 <dt>
-<code>:$get_index(key: any) -&gt; any</code>
+<code>:$get(key: any) -&gt; any</code>
 </dt>
 <dd>
 <p>
@@ -393,6 +393,9 @@ Implementing this method adds support for index-style read access to instances, 
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
 </pre>
+<p>
+Implementing a <code>$set(key, value)</code> method adds support for write-access to instances.
+</p>
 </dd>
 </div>
 <div>
@@ -641,7 +644,7 @@ Implementing this method overloads the unary <code>+</code> operator for express
 </div>
 <div>
 <dt>
-<code>:$set_index(key: any, value: any)</code>
+<code>:$set(key: any, value: any)</code>
 </dt>
 <dd>
 <p>
@@ -650,6 +653,9 @@ Implementing this method adds support for index-style write access to instances,
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
 </pre>
+<p>
+Implementing a <code>$get(key)</code> method adds support for read-access to instances.
+</p>
 </dd>
 </div>
 <div>

@@ -207,21 +207,21 @@ A subclass can use the `super` keyword to access an overridden superclass method
 
 ### Indexing
 
-You can add indexing support to a class by implementing `$get_index(key)` and/or `$set_index(key, value)` methods.
+You can add indexing support to a class by implementing `$get(key)` and/or `$set(key, value)` methods.
 
-Accessing an index:
+Accessing an index, e.g.
 
 ::: code pyro
     var foo = object[key];
 
-is equivalent to calling the object's `:$get_index(key)` method.
+is equivalent to calling the instance's `$get(key)` method.
 
-Assigning to an index:
+Assigning to an index, e.g.
 
 ::: code pyro
     object[key] = value;
 
-is equivalent to calling the object's `:$set_index(key, value)` method.
+is equivalent to calling the instance's `$set(key, value)` method.
 
 
 
@@ -261,12 +261,14 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     This method should return a string representation of the instance formatted according to the `format_specifier` string.
 
 
-[[ `:$get_index(key: any) -> any` ]]
+[[ `:$get(key: any) -> any` ]]
 
     Implementing this method adds support for index-style read access to instances, e.g.
 
     ::: code pyro
         var value = instance[key];
+
+    Implementing a `$set(key, value)` method adds support for write-access to instances.
 
 
 [[ `:$hash() -> i64` ]]
@@ -396,12 +398,14 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     Implementing this method overloads the unary `+` operator for expressions of the form `+receiver`.
 
 
-[[ `:$set_index(key: any, value: any)` ]]
+[[ `:$set(key: any, value: any)` ]]
 
     Implementing this method adds support for index-style write access to instances, e.g.
 
     ::: code pyro
         instance[key] = value;
+
+    Implementing a `$get(key)` method adds support for read-access to instances.
 
 
 [[ `:$str() -> str` ]]

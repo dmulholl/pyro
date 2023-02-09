@@ -1273,7 +1273,7 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         }
 
         default: {
-            PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_get_index);
+            PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_get);
             if (!PYRO_IS_NULL(method)) {
                 pyro_push(vm, receiver);
                 pyro_push(vm, key);
@@ -1317,7 +1317,7 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
         }
 
         default: {
-            PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_set_index);
+            PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_set);
             if (!PYRO_IS_NULL(method)) {
                 pyro_push(vm, receiver);
                 pyro_push(vm, key);

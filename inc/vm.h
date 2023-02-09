@@ -115,8 +115,8 @@ struct PyroVM {
     PyroStr* str_dollar_fmt;
     PyroStr* str_dollar_iter;
     PyroStr* str_dollar_next;
-    PyroStr* str_dollar_get_index;
-    PyroStr* str_dollar_set_index;
+    PyroStr* str_dollar_get;
+    PyroStr* str_dollar_set;
     PyroStr* str_dollar_debug;
     PyroStr* str_op_binary_equals_equals;
     PyroStr* str_op_binary_less;

@@ -76,8 +76,8 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->str_dollar_fmt);
     mark_object(vm, (PyroObject*)vm->str_dollar_iter);
     mark_object(vm, (PyroObject*)vm->str_dollar_next);
-    mark_object(vm, (PyroObject*)vm->str_dollar_get_index);
-    mark_object(vm, (PyroObject*)vm->str_dollar_set_index);
+    mark_object(vm, (PyroObject*)vm->str_dollar_get);
+    mark_object(vm, (PyroObject*)vm->str_dollar_set);
     mark_object(vm, (PyroObject*)vm->str_dollar_debug);
     mark_object(vm, (PyroObject*)vm->str_op_binary_equals_equals);
     mark_object(vm, (PyroObject*)vm->str_op_binary_less);

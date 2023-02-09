@@ -68,12 +68,12 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_dollar_contains = NULL;
     vm->str_dollar_debug = NULL;
     vm->str_dollar_fmt = NULL;
-    vm->str_dollar_get_index = NULL;
+    vm->str_dollar_get = NULL;
     vm->str_dollar_hash = NULL;
     vm->str_dollar_init = NULL;
     vm->str_dollar_iter = NULL;
     vm->str_dollar_next = NULL;
-    vm->str_dollar_set_index = NULL;
+    vm->str_dollar_set = NULL;
     vm->str_dollar_str = NULL;
     vm->str_err = NULL;
     vm->str_false = NULL;
@@ -172,8 +172,8 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_dollar_fmt = PyroStr_COPY("$fmt");
     vm->str_dollar_iter = PyroStr_COPY("$iter");
     vm->str_dollar_next = PyroStr_COPY("$next");
-    vm->str_dollar_get_index = PyroStr_COPY("$get_index");
-    vm->str_dollar_set_index = PyroStr_COPY("$set_index");
+    vm->str_dollar_get = PyroStr_COPY("$get");
+    vm->str_dollar_set = PyroStr_COPY("$set");
     vm->str_dollar_debug = PyroStr_COPY("$debug");
     vm->str_op_binary_equals_equals = PyroStr_COPY("$op_binary_equals_equals");
     vm->str_op_binary_less = PyroStr_COPY("$op_binary_less");
