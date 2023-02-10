@@ -2257,19 +2257,23 @@ static void run(PyroVM* vm) {
                 PyroValue value = pyro_pop(vm);
                 uint8_t count = READ_BYTE();
 
-                if (PYRO_IS_TUP(value) || PYRO_IS_ERR(value)) {
+                if (PYRO_IS_TUP(value)) {
                     PyroTup* tup = PYRO_AS_TUP(value);
                     if (tup->count < count) {
                         pyro_panic(
                             vm,
-                            "tuple contains %zu value(s), requires %zu for unpacking", tup->count, count
+                            "tuple contains %zu value(s), requires %zu for unpacking",
+                            tup->count, count
                         );
                     } else {
                         for (size_t i = 0; i < count; i++) {
                             pyro_push(vm, tup->values[i]);
                         }
                     }
-                } else if (PYRO_IS_VEC(value)) {
+                    break;
+                }
+
+                if (PYRO_IS_VEC(value)) {
                     PyroVec* vec = PYRO_AS_VEC(value);
                     if (vec->count < count) {
                         pyro_panic(
@@ -2282,10 +2286,10 @@ static void run(PyroVM* vm) {
                             pyro_push(vm, vec->values[i]);
                         }
                     }
-                } else {
-                    pyro_panic(vm, "value cannot be unpacked");
+                    break;
                 }
 
+                pyro_panic(vm, "value cannot be unpacked");
                 break;
             }
 
