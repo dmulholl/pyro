@@ -18,17 +18,19 @@ File objects have builtin support for `with` blocks, e.g.
 The file object's `close()` method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
 
 
+
 ### Syntax
 
 `with` blocks have the following syntax:
 
-    with <varname> = <expression> {
+    with <name> = <expression> {
         ...
     }
 
-Inside the block, `varname` is a new local variable.
+Inside the block, `name` is a new local variable.
 
-If `varname` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
+If the value of `<expression>` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
+
 
 
 ### Custom Classes
@@ -58,4 +60,4 @@ You can add support for `with` blocks to any object by defining an `$end_with()`
 
 Here the `$end_with()` method ensures that the file will be closed when the `with` block exits, even if the code inside the `with` block panics or returns early.
 
-(In practice, Pyro's `file` type has builtin support for `with` blocks so this kind of wrapper is unnecessary, but similar support can be implemented for user-defined types.)
+(In practice, Pyro's `file` type already has builtin support for `with` blocks so this kind of wrapper is unnecessary, but you can implement similar support for your own types.)
