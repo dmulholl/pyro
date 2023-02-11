@@ -36,16 +36,26 @@ If `varname` has an `$end_with()` method, this method will be called when the `w
 You can add support for `with` blocks to any object by defining an `$end_with()` method, e.g.
 
 ::: code pyro
-    class Object {
-        pub var number = 123;
+    class File {
+        var file;
+
+        def $init(path) {
+            self.file = $file(path, "r");
+        }
 
         def $end_with() {
-            self.number = 0;
+            self.file:close();
+        }
+
+        pub def read() {
+            return self.file:read_string();
         }
     }
 
-    with obj = Object() {
-        obj.number = 456;
+    with file = File("data.txt") {
+        echo file:read();
     }
 
-Here the `$end_with()` method ensures that `obj.number` will be set to `0` when the `with` block exits, even if the code inside the `with` block panics or returns early.
+Here the `$end_with()` method ensures that the file will be closed when the `with` block exits, even if the code inside the `with` block panics or returns early.
+
+(In practice, Pyro's `file` type has builtin support for `with` blocks so this kind of wrapper is unnecessary, but similar support can be implemented for user-defined types.)

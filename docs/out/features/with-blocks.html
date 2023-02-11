@@ -101,20 +101,31 @@ Custom Classes
 You can add support for <code>with</code> blocks to any object by defining an <code>$end_with()</code> method, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">File</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">file</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
 
     <span class="kd">def</span> <span class="nx">$end_with</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">number</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">read</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">file</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">with</span> <span class="nx">obj</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">obj</span><span class="p">.</span><span class="nx">number</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">File</span><span class="p">(</span><span class="s">&quot;data.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read</span><span class="p">();</span>
 <span class="p">}</span>
 </pre>
 <p>
-Here the <code>$end_with()</code> method ensures that <code>obj.number</code> will be set to <code>0</code> when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
+Here the <code>$end_with()</code> method ensures that the file will be closed when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
+</p>
+<p>
+(In practice, Pyro's <code>file</code> type has builtin support for <code>with</code> blocks so this kind of wrapper is unnecessary, but similar support can be implemented for user-defined types.)
 </p>
         </article>
         
