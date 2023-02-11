@@ -98,7 +98,7 @@ Calling the `:to_str()` method converts the content of the buffer into a string,
 
     Note that calling `$str(buf)` on a buffer does something different --- it creates a string with a *copy* of the buffer's content, leaving the buffer itself unchanged.
 
-[[ `:write(arg: any) -> i64` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+[[ `:write(arg: any) -> i64` <br> `:write(format_string: str, *args: any) -> i64` ]]
 
     Appends the content of a string or buffer to the buffer.
 

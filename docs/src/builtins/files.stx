@@ -109,7 +109,7 @@ The file object's `close()` method will be called when the `with` block exits, e
 
     Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
 
-[[ `:write(arg: any) -> i64` <br> `:write(format_string: str, arg1: any, arg2: any, ...) -> i64` ]]
+[[ `:write(arg: any) -> i64` <br> `:write(format_string: str, *args: any) -> i64` ]]
 
     Writes a string or buffer to the file.
 
