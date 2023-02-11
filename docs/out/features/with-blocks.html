@@ -61,6 +61,9 @@
 <li>
 <a href="#custom-classes">Custom Classes</a>
 </li>
+<li>
+<a href="#variable-scoping">Variable Scoping</a>
+</li>
 </ul>
 <hr>
 <p>
@@ -70,7 +73,7 @@ You can use a <code>with</code> block to ensure that clean-up code gets run, eve
 File objects have builtin support for <code>with</code> blocks, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;filename.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;data.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">do_stuff</span><span class="p">();</span>
 <span class="p">}</span>
 </pre>
@@ -89,7 +92,7 @@ with &lt;name&gt; = &lt;expression&gt; {
 }
 </pre>
 <p>
-Inside the block, <code>name</code> is a new local variable.
+Inside the <code>with</code> block, <code>&lt;name&gt;</code> is a new local variable.
 </p>
 <p>
 If the value of <code>&lt;expression&gt;</code> has an <code>$end_with()</code> method, this method will be called when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
@@ -98,34 +101,72 @@ If the value of <code>&lt;expression&gt;</code> has an <code>$end_with()</code> 
 Custom Classes
 </h3>
 <p>
-You can add support for <code>with</code> blocks to any object by defining an <code>$end_with()</code> method, e.g.
+You can add support for <code>with</code> blocks to any object by defining an <code>$end_with()</code> method.
+</p>
+<p>
+As an example, let's create a custom wrapper for writable files:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">class</span> <span class="nx">File</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nx">WriteableFile</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">file</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="kd">def</span> <span class="nx">$end_with</span><span class="p">()</span> <span class="p">{</span>
         <span class="kc">self</span><span class="p">.</span><span class="nx">file</span><span class="p">:</span><span class="nx">close</span><span class="p">();</span>
     <span class="p">}</span>
 
-    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">read</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">file</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
+    <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">write</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="nx">arg</span><span class="p">);</span>
     <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">File</span><span class="p">(</span><span class="s">&quot;data.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read</span><span class="p">();</span>
 <span class="p">}</span>
 </pre>
 <p>
 Here the <code>$end_with()</code> method ensures that the file will be closed when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
 </p>
 <p>
-(In practice, Pyro's <code>file</code> type already has builtin support for <code>with</code> blocks so this kind of wrapper is unnecessary, but you can implement similar support for your own types.)
+We can use our custom <code>WriteableFile</code> type like this:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">WriteableFile</span><span class="p">(</span><span class="s">&quot;data.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+    <span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">);</span>
+    <span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="nx">function_that_might_panic</span><span class="p">());</span>
+<span class="p">}</span>
+</pre>
+<p>
+The <code>with</code> block ensures that the file will be closed even if <code>function_that_might_panic()</code> panics.
+</p>
+<p>
+In practice, Pyro's <code>file</code> type already has builtin support for <code>with</code> blocks so this kind of wrapper is unnecessary, but you can implement similar support for your own types.
+</p>
+<h3 id="variable-scoping">
+Variable Scoping
+</h3>
+<p>
+You can also use a <code>with</code> block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">with</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">foo</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="p">(</span><span class="nx">foo</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">));</span>
+</pre>
+<p>
+Here the variable <code>foo</code> is only valid inside the <code>with</code> block.
+This is equivalent to wrapping the variable declaration in a curly-braces block, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="nx">foo</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+You may find the explicit <code>with</code> syntax preferable &mdash; this is a matter of stylistic choice.
 </p>
         </article>
         

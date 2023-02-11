@@ -38,7 +38,7 @@ Mode options:
 File objects have builtin support for `with` blocks, e.g.
 
 ::: code pyro
-    with file = $file("filename.txt") {
+    with file = $file("data.txt") {
         do_stuff();
     }
 
@@ -52,7 +52,8 @@ The file object's `close()` method will be called when the `with` block exits, e
 
     Closes the file stream.
     You can safely call `close()` on a file multiple times.
-    If the file hasn't been explicitly closed it will be automatically closed by the garbage collector before the file object is destroyed.
+
+    If the file hasn't been explicitly closed by calling this method, it will be automatically closed by the garbage collector before the file object is destroyed.
 
 [[ `:flush()` ]]
 

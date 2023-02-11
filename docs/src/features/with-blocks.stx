@@ -11,7 +11,7 @@ You can use a `with` block to ensure that clean-up code gets run, even if the co
 File objects have builtin support for `with` blocks, e.g.
 
 ::: code pyro
-    with file = $file("filename.txt") {
+    with file = $file("data.txt") {
         do_stuff();
     }
 
@@ -27,7 +27,7 @@ The file object's `close()` method will be called when the `with` block exits, e
         ...
     }
 
-Inside the block, `name` is a new local variable.
+Inside the `with` block, `<name>` is a new local variable.
 
 If the value of `<expression>` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
 
@@ -35,29 +35,62 @@ If the value of `<expression>` has an `$end_with()` method, this method will be 
 
 ### Custom Classes
 
-You can add support for `with` blocks to any object by defining an `$end_with()` method, e.g.
+You can add support for `with` blocks to any object by defining an `$end_with()` method.
+
+As an example, let's create a custom wrapper for writable files:
 
 ::: code pyro
-    class File {
+    class WriteableFile {
         var file;
 
         def $init(path) {
-            self.file = $file(path, "r");
+            self.file = $file(path, "w");
         }
 
         def $end_with() {
             self.file:close();
         }
 
-        pub def read() {
-            return self.file:read_string();
+        pub def write(arg) {
+            self.file:write(arg);
         }
-    }
-
-    with file = File("data.txt") {
-        echo file:read();
     }
 
 Here the `$end_with()` method ensures that the file will be closed when the `with` block exits, even if the code inside the `with` block panics or returns early.
 
-(In practice, Pyro's `file` type already has builtin support for `with` blocks so this kind of wrapper is unnecessary, but you can implement similar support for your own types.)
+We can use our custom `WriteableFile` type like this:
+
+::: code pyro
+    with file = WriteableFile("data.txt") {
+        file:write("foo");
+        file:write("bar");
+        file:write(function_that_might_panic());
+    }
+
+The `with` block ensures that the file will be closed even if `function_that_might_panic()` panics.
+
+In practice, Pyro's `file` type already has builtin support for `with` blocks so this kind of wrapper is unnecessary, but you can implement similar support for your own types.
+
+
+
+### Variable Scoping
+
+You can also use a `with` block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
+
+::: code pyro
+    with foo = 123 {
+        echo foo;
+    }
+
+    assert $is_err(try (foo += 1));
+
+Here the variable `foo` is only valid inside the `with` block.
+This is equivalent to wrapping the variable declaration in a curly-braces block, e.g.
+
+::: code pyro
+    {
+        var foo = 123;
+        echo foo;
+    }
+
+You may find the explicit `with` syntax preferable --- this is a matter of stylistic choice.

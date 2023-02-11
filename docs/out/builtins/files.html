@@ -151,7 +151,7 @@ With Blocks
 File objects have builtin support for <code>with</code> blocks, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;filename.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;data.txt&quot;</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">do_stuff</span><span class="p">();</span>
 <span class="p">}</span>
 </pre>
@@ -170,7 +170,9 @@ Methods
 <p>
 Closes the file stream.
 You can safely call <code>close()</code> on a file multiple times.
-If the file hasn't been explicitly closed it will be automatically closed by the garbage collector before the file object is destroyed.
+</p>
+<p>
+If the file hasn't been explicitly closed by calling this method, it will be automatically closed by the garbage collector before the file object is destroyed.
 </p>
 </dd>
 </div>
