@@ -1,12 +1,39 @@
-# Test with-variable as local.
+# Variable scoping 1: no shadowing.
 with foo = 123 {
     assert foo == 123;
-    assert foo + 1 == 124;
+    foo += 1;
+    assert foo == 124;
+}
+assert $is_err(try (foo += 1));
+
+# Variable scoping 2: shadowing a global.
+var bar = 123;
+assert bar == 123;
+
+with bar = 456 {
+    assert bar == 456;
+    bar += 1;
+    assert bar == 457;
 }
 
-assert $is_err(try foo);
+assert bar == 123;
 
-# Simple happy path.
+# Variable scoping 3: shadowing a local.
+{
+    var baz = 123;
+    assert baz == 123;
+
+    with baz = 456 {
+        assert baz == 456;
+        baz += 1;
+        assert baz == 457;
+    }
+
+    assert baz == 123;
+}
+assert $is_err(try(baz += 1));
+
+# Simple happy path -- no panics or early returns.
 var global = 0;
 
 class Object {
