@@ -26,14 +26,7 @@ assert bam == 456;
 }
 
 
-def $test_unpacking_a_vector() {
-    var (v1, v2) = [123, 456];
-    assert v1 == 123;
-    assert v2 == 456;
-}
-
-
-def $test_unpacking_a_single_tuple() {
+def $test_unpacking_a_univalue_tuple() {
     var (foo) = $tup(123);
     assert foo == 123;
 }
@@ -43,4 +36,33 @@ def $test_partially_unpacking_a_tuple() {
     var (foo, bar) = $tup(123, 456, 789);
     assert foo == 123;
     assert bar == 456;
+}
+
+
+def $test_unpacking_a_vector() {
+    var (foo, bar, baz) = [123, 456, 789];
+    assert foo == 123;
+    assert bar == 456;
+    assert baz == 789;
+}
+
+
+def $test_partially_unpacking_a_vector() {
+    var (foo, bar) = [123, 456, 789];
+    assert foo == 123;
+    assert bar == 456;
+}
+
+
+def $test_unpacking_a_vector_with_discarding() {
+    var (_, bar, _) = [123, 456, 789];
+    assert bar == 456;
+}
+
+
+def $test_unpacking_a_var_declaration_with_commas() {
+    var (foo, bar) = $tup(123, 456), baz = 789;
+    assert foo == 123;
+    assert bar == 456;
+    assert baz == 789;
 }
