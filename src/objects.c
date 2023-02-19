@@ -1057,6 +1057,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_SET_LOCAL:
         case PYRO_OPCODE_SET_UPVALUE:
         case PYRO_OPCODE_UNPACK:
+        case PYRO_OPCODE_RETURN_TUPLE:
             return 1;
 
         case PYRO_OPCODE_BREAK:

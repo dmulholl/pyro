@@ -1,0 +1,29 @@
+def f1() {
+}
+assert f1() == null;
+
+def f2() {
+    return;
+}
+assert f2() == null;
+
+def f3() {
+    return 123;
+}
+assert f3() == 123;
+
+def f4() {
+    return 123, 456;
+}
+assert f4() == $tup(123, 456);
+var (f4_v1, f4_v2) = f4();
+assert f4_v1 == 123;
+assert f4_v2 == 456;
+
+def f5() {
+    return 123, 456, 789;
+}
+assert f5() == $tup(123, 456, 789);
+var (f5_v1, f5_v2) = f5();
+assert f5_v1 == 123;
+assert f5_v2 == 456;

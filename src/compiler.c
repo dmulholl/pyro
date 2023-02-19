@@ -2514,18 +2514,38 @@ static void parse_class_declaration(Parser* parser, Access access) {
 
 static void parse_return_stmt(Parser* parser) {
     if (parser->fn_compiler->type == TYPE_MODULE) {
-        ERROR_AT_PREVIOUS_TOKEN("can't return from top-level code");
+        ERROR_AT_PREVIOUS_TOKEN("can't return from module-level code");
+        return;
     }
 
     if (match(parser, TOKEN_SEMICOLON)) {
         emit_naked_return(parser);
-    } else {
-        if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
-            ERROR_AT_PREVIOUS_TOKEN("can't return a value from an initializer");
-        }
+        return;
+    }
+
+    if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
+        ERROR_AT_PREVIOUS_TOKEN("can't return a value from an initializer");
+        return;
+    }
+
+    parse_expression(parser, true, true);
+    size_t count = 1;
+
+    while (match(parser, TOKEN_COMMA)) {
         parse_expression(parser, true, true);
-        consume(parser, TOKEN_SEMICOLON, "expected ';' after return value");
+        count++;
+    }
+
+    if (count > 255) {
+        ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'return' (max: 255)");
+    }
+
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after return statement");
+
+    if (count == 1) {
         emit_byte(parser, PYRO_OPCODE_RETURN);
+    } else {
+        emit_u8_u8(parser, PYRO_OPCODE_RETURN_TUPLE, (uint8_t)count);
     }
 }
 

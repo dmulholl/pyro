@@ -2008,17 +2008,41 @@ static void run(PyroVM* vm) {
             }
 
             case PYRO_OPCODE_RETURN: {
+                PyroValue return_value = pyro_peek(vm, 0);
+
                 while (vm->with_stack_count > frame->with_stack_count_on_entry) {
                     PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
                     call_end_with_method(vm, receiver);
                     vm->with_stack_count--;
                 }
 
-                PyroValue result = pyro_pop(vm);
                 close_upvalues(vm, frame->fp);
                 vm->stack_top = frame->fp;
-                pyro_push(vm, result);
+                pyro_push(vm, return_value);
+                vm->frame_count--;
+                break;
+            }
 
+            case PYRO_OPCODE_RETURN_TUPLE: {
+                uint8_t count = READ_BYTE();
+                PyroTup* return_value = PyroTup_new(count, vm);
+                if (!return_value) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                memcpy(return_value->values, vm->stack_top - count, sizeof(PyroValue) * count);
+                vm->stack_top -= count;
+                pyro_push(vm, pyro_obj(return_value));
+
+                while (vm->with_stack_count > frame->with_stack_count_on_entry) {
+                    PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
+                    call_end_with_method(vm, receiver);
+                    vm->with_stack_count--;
+                }
+
+                close_upvalues(vm, frame->fp);
+                vm->stack_top = frame->fp;
+                pyro_push(vm, pyro_obj(return_value));
                 vm->frame_count--;
                 break;
             }

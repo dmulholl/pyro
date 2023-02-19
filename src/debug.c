@@ -164,6 +164,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         }
         case PYRO_OPCODE_DEFINE_PRI_GLOBAL:
             return constant_instruction(vm, "DEFINE_PRI_GLOBAL", fn, ip);
+
         case PYRO_OPCODE_DEFINE_PUB_GLOBAL:
             return constant_instruction(vm, "DEFINE_PUB_GLOBAL", fn, ip);
 
@@ -178,8 +179,10 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
 
         case PYRO_OPCODE_DUP_2:
             return atomic_instruction(vm, "DUP_2", ip);
+
         case PYRO_OPCODE_ECHO:
             return u8_instruction(vm, "ECHO", fn, ip);
+
         case PYRO_OPCODE_BINARY_EQUAL_EQUAL:
             return atomic_instruction(vm, "BINARY_EQUAL_EQUAL", ip);
         case PYRO_OPCODE_DEFINE_PRI_FIELD:
@@ -360,8 +363,13 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
             return jump_instruction(vm, "POP_JUMP_IF_FALSE", 1, fn, ip);
         case PYRO_OPCODE_BINARY_STAR_STAR:
             return atomic_instruction(vm, "BINARY_STAR_STAR", ip);
+
         case PYRO_OPCODE_RETURN:
             return atomic_instruction(vm, "RETURN", ip);
+
+        case PYRO_OPCODE_RETURN_TUPLE:
+            return u8_instruction(vm, "RETURN_TUPLE", fn, ip);
+
         case PYRO_OPCODE_BINARY_GREATER_GREATER:
             return atomic_instruction(vm, "BINARY_GREATER_GREATER", ip);
         case PYRO_OPCODE_SET_FIELD:
