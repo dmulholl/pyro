@@ -166,3 +166,35 @@ Trailing commas are also allowed in function calls, e.g
     );
 
     assert result == "foobarbaz";
+
+
+
+### Multiple Return Values
+
+Functions can return multiple values, e.g.
+
+::: code pyro
+    def get_values() {
+        return 123, 456;
+    }
+
+    assert get_values() == $tup(123, 456);
+
+This is syntactic sugar for returning a tuple, i.e. it's equivalent to:
+
+::: code pyro
+    def get_values() {
+        return $tup(123, 456);
+    }
+
+    assert get_values() == $tup(123, 456);
+
+You can unpack a tuple returned by a function in a `var` declaration using `()`, e.g.
+
+::: code pyro
+    var (foo, bar) = get_values();
+    assert foo == 123;
+    assert bar == 456;
+
+
+
