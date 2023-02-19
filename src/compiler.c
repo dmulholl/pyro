@@ -1752,15 +1752,16 @@ static void parse_expression_stmt(Parser* parser) {
 
 
 static void parse_unpacking_declaration(Parser* parser, Access access) {
-    uint16_t indexes[16];
-    size_t count = 0;
+    const size_t var_name_capacity = 16;
+    size_t var_name_count = 0;
+    uint16_t var_name_indexes[16];
 
     do {
-        uint16_t index = consume_variable_name(parser, "expected variable name");
-        indexes[count++] = index;
-        if (count > 16) {
-            ERROR_AT_PREVIOUS_TOKEN("too many variable names in list (max: 16)");
+        if (var_name_count == var_name_capacity) {
+            ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", var_name_capacity);
+            return;
         }
+        var_name_indexes[var_name_count++] = consume_variable_name(parser, "expected variable name");
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
@@ -1770,9 +1771,9 @@ static void parse_unpacking_declaration(Parser* parser, Access access) {
     consume(parser, TOKEN_EQUAL, "expected '=' after variable list");
 
     parse_expression(parser, true, true);
-    emit_u8_u8(parser, PYRO_OPCODE_UNPACK, count);
+    emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_name_count);
 
-    define_variables(parser, indexes, count, access);
+    define_variables(parser, var_name_indexes, var_name_count, access);
 }
 
 
@@ -1982,25 +1983,27 @@ static void parse_for_in_stmt(Parser* parser) {
     // Push a new scope to wrap a dummy local variable pointing to the iterator object.
     begin_scope(parser);
 
-    // Support unpacking syntax for up to 8 variable names: [for (foo, bar, baz) in ...]
-    // 8 is an arbitrary restriction. We don't really need the brackets here to recognise unpacking
-    // but they match the brackets in variable declarations where they really are required.
-    Token loop_variables[8];
-    size_t variable_count = 0;
+    // Support unpacking syntax for up to [loop_vars_capacity] names. We don't really need the
+    // brackets here to recognise unpacking but they match the brackets in variable declarations
+    // where they really are required.
+    const size_t loop_vars_capacity = 12;
+    size_t loop_vars_count = 0;
+    Token loop_vars[12];
 
     if (match(parser, TOKEN_LEFT_PAREN)) {
         do {
-            consume(parser, TOKEN_IDENTIFIER, "expected loop variable name");
-            loop_variables[variable_count++] = parser->previous_token;
-            if (variable_count > 8) {
-                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: 8)");
+            if (loop_vars_count == loop_vars_capacity) {
+                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack(max: %zu)", loop_vars_capacity);
+                return;
             }
+            consume(parser, TOKEN_IDENTIFIER, "expected loop variable name");
+            loop_vars[loop_vars_count++] = parser->previous_token;
         } while (match(parser, TOKEN_COMMA));
         consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after variable names");
     } else {
         consume(parser, TOKEN_IDENTIFIER, "expected loop variable name");
-        loop_variables[0] = parser->previous_token;
-        variable_count++;
+        loop_vars[0] = parser->previous_token;
+        loop_vars_count++;
     }
 
     consume(parser, TOKEN_IN, "expected keyword 'in'");
@@ -2025,11 +2028,11 @@ static void parse_for_in_stmt(Parser* parser) {
     size_t exit_jump_index = emit_jump(parser, PYRO_OPCODE_JUMP_IF_ERR);
 
     begin_scope(parser);
-    if (variable_count > 1) {
-        emit_u8_u8(parser, PYRO_OPCODE_UNPACK, variable_count);
+    if (loop_vars_count > 1) {
+        emit_u8_u8(parser, PYRO_OPCODE_UNPACK, loop_vars_count);
     }
-    for (size_t i = 0; i < variable_count; i++) {
-        add_local(parser, loop_variables[i]);
+    for (size_t i = 0; i < loop_vars_count; i++) {
+        add_local(parser, loop_vars[i]);
         mark_initialized(parser);
     }
     parse_block(parser);
