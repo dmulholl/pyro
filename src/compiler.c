@@ -1753,8 +1753,8 @@ static void parse_expression_stmt(Parser* parser) {
 
 static void parse_unpacking_declaration(Parser* parser, Access access) {
     const size_t var_name_capacity = 16;
-    size_t var_name_count = 0;
     uint16_t var_name_indexes[16];
+    size_t var_name_count = 0;
 
     do {
         if (var_name_count == var_name_capacity) {
@@ -1983,12 +1983,10 @@ static void parse_for_in_stmt(Parser* parser) {
     // Push a new scope to wrap a dummy local variable pointing to the iterator object.
     begin_scope(parser);
 
-    // Support unpacking syntax for up to [loop_vars_capacity] names. We don't really need the
-    // brackets here to recognise unpacking but they match the brackets in variable declarations
-    // where they really are required.
+    // Support unpacking syntax for up to [loop_vars_capacity] names.
     const size_t loop_vars_capacity = 12;
-    size_t loop_vars_count = 0;
     Token loop_vars[12];
+    size_t loop_vars_count = 0;
     bool unpack_vars = false;
 
     if (match(parser, TOKEN_LEFT_PAREN)) {
@@ -2232,13 +2230,14 @@ static void parse_while_stmt(Parser* parser) {
 
 
 static void parse_with_stmt(Parser* parser) {
+    // Support unpacking syntax for up to [var_names_capacity] names.
     const size_t var_names_capacity = 12;
-    size_t var_names_count = 0;
     Token var_names[12];
-    bool unpacking = false;
+    size_t var_names_count = 0;
+    bool unpack_vars = false;
 
     if (match(parser, TOKEN_LEFT_PAREN)) {
-        unpacking = true;
+        unpack_vars = true;
         do {
             if (var_names_count == var_names_capacity) {
                 ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", var_names_capacity);
@@ -2261,7 +2260,7 @@ static void parse_with_stmt(Parser* parser) {
     parse_expression(parser, true, true);
     emit_byte(parser, PYRO_OPCODE_START_WITH);
     begin_scope(parser);
-    if (unpacking) {
+    if (unpack_vars) {
         emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_names_count);
     }
     for (size_t i = 0; i < var_names_count; i++) {
