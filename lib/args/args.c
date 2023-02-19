@@ -16,20 +16,27 @@
 /* ------------------ */
 
 
-// Prints a message to stderr and exits with a non-zero error code.
-static void err(const char* msg) {
-    fprintf(stderr, "Error: %s.\n", msg);
+// Prints a message to stderr and exits with a non-zero status code.
+static void exit_with_error(const char* format_string, ...) {
+    fprintf(stderr, "Error: ");
+
+    va_list args;
+    va_start(args, format_string);
+    vfprintf(stderr, format_string, args);
+    va_end(args);
+
+    fprintf(stderr, ".\n");
     exit(1);
 }
 
 
 // Prints to an automatically-allocated string. Returns NULL if an encoding
 // error occurs or if sufficient memory cannot be allocated.
-static char* str(const char* fmtstr, ...) {
+static char* str(const char* format_string, ...) {
     va_list args;
 
-    va_start(args, fmtstr);
-    int len = vsnprintf(NULL, 0, fmtstr, args);
+    va_start(args, format_string);
+    int len = vsnprintf(NULL, 0, format_string, args);
     if (len < 0) {
         return NULL;
     }
@@ -40,8 +47,8 @@ static char* str(const char* fmtstr, ...) {
         return NULL;
     }
 
-    va_start(args, fmtstr);
-    vsnprintf(string, len + 1, fmtstr, args);
+    va_start(args, format_string);
+    vsnprintf(string, len + 1, format_string, args);
     va_end(args);
 
     return string;
@@ -75,10 +82,10 @@ static int try_str_to_int(const char* string) {
     errno = 0;
     long result = strtol(string, &endptr, 0);
     if (errno == ERANGE || result > INT_MAX || result < INT_MIN) {
-        err(str("'%s' is out of range", string));
+        exit_with_error("'%s' is out of range", string);
     }
     if (*endptr != '\0') {
-        err(str("cannot parse '%s' as an integer", string));
+        exit_with_error("cannot parse '%s' as an integer", string);
     }
     return (int) result;
 }
@@ -90,10 +97,10 @@ static double try_str_to_double(const char* string) {
     errno = 0;
     double result = strtod(string, &endptr);
     if (errno == ERANGE) {
-        err(str("'%s' is out of range", string));
+        exit_with_error("'%s' is out of range", string);
     }
     if (*endptr != '\0') {
-        err(str("cannot parse '%s' as a floating-point value", string));
+        exit_with_error("cannot parse '%s' as a floating-point value", string);
     }
     return result;
 }
@@ -843,7 +850,7 @@ void ap_dbl_opt(ArgParser* parser, const char* name, double fallback) {
 static Option* ap_get_opt(ArgParser* parser, const char* name) {
     void* opt;
     if (!map_get(parser->option_map, name, &opt)) {
-        err(str("'%s' is not a registered flag or option name", name));
+        exit_with_error("'%s' is not a registered flag or option name", name);
     }
     return (Option*)opt;
 }
@@ -1011,7 +1018,6 @@ double* ap_args_as_doubles(ArgParser* parser) {
 /* -------------------- */
 
 
-// Register a new command.
 ArgParser* ap_cmd(ArgParser* parser, const char* name) {
     ArgParser* cmd_parser = ap_new();
     if (!cmd_parser) {
@@ -1034,33 +1040,33 @@ ArgParser* ap_cmd(ArgParser* parser, const char* name) {
 }
 
 
-// Register a callback function for a command.
 void ap_callback(ArgParser* parser, ap_callback_t function) {
     parser->callback = function;
 }
 
 
-// Returns true if the parser has found a command.
 bool ap_has_cmd(ArgParser* parser) {
     return parser->cmd_name != NULL;
 }
 
 
-// Returns the command name, if the parser has found a command.
 char* ap_cmd_name(ArgParser* parser) {
     return parser->cmd_name;
 }
 
 
-// Returns the command's parser instance, if the parser has found a command.
 ArgParser* ap_cmd_parser(ArgParser* parser) {
     return parser->cmd_parser;
 }
 
 
-// Toggles support for the automatic 'help' command.
 void ap_enable_help_command(ArgParser* parser, bool enable) {
     parser->enable_help_command = enable;
+}
+
+
+ArgParser* ap_parent(ArgParser* parser) {
+    return parser->parent;
 }
 
 
@@ -1084,11 +1090,11 @@ static void ap_handle_equals_opt(ArgParser* parser, const char* prefix, const ch
     bool found = map_get(parser->option_map, name, (void**)&option);
 
     if (!found || option->type == OPT_FLAG) {
-        err(str("%s%s is not a recognised option name", prefix, name));
+        exit_with_error("%s%s is not a recognised option name", prefix, name);
     }
 
     if (strlen(value) == 0) {
-        err(str("missing argument for %s%s", prefix, name));
+        exit_with_error("missing argument for %s%s", prefix, name);
     }
 
     if (!option_try_set(option, value)) {
@@ -1110,7 +1116,7 @@ static void ap_handle_long_opt(ArgParser* parser, const char* arg, ArgStream* st
                 ap_set_memory_error_flag(parser);
             }
         } else {
-            err(str("missing argument for --%s", arg));
+            exit_with_error("missing argument for --%s", arg);
         }
     } else if (strcmp(arg, "help") == 0 && parser->helptext != NULL) {
         puts(parser->helptext);
@@ -1119,7 +1125,7 @@ static void ap_handle_long_opt(ArgParser* parser, const char* arg, ArgStream* st
         puts(parser->version);
         exit(0);
     } else {
-        err(str("--%s is not a recognised flag or option name", arg));
+        exit_with_error("--%s is not a recognised flag or option name", arg);
     }
 }
 
@@ -1138,9 +1144,9 @@ static void ap_handle_short_opt(ArgParser* parser, const char* arg, ArgStream* s
                 puts(parser->version);
                 exit(0);
             } else if (strlen(arg) > 1) {
-                err(str("'%c' in -%s is not a recognised flag or option name", arg[i], arg));
+                exit_with_error("'%c' in -%s is not a recognised flag or option name", arg[i], arg);
             } else {
-                err(str("-%s is not a recognised flag or option name", arg));
+                exit_with_error("-%s is not a recognised flag or option name", arg);
             }
         } else if (option->type == OPT_FLAG) {
             option->count++;
@@ -1149,9 +1155,9 @@ static void ap_handle_short_opt(ArgParser* parser, const char* arg, ArgStream* s
                 ap_set_memory_error_flag(parser);
             }
         } else if (strlen(arg) > 1) {
-            err(str("missing argument for '%c' in -%s", arg[i], arg));
+            exit_with_error("missing argument for '%c' in -%s", arg[i], arg);
         } else {
-            err(str("missing argument for -%s", arg));
+            exit_with_error("missing argument for -%s", arg);
         }
     }
 }
@@ -1163,10 +1169,8 @@ static void ap_parse_stream(ArgParser* parser, ArgStream* stream) {
         return;
     }
 
-    ArgParser* cmd_parser;
-    bool is_first_arg = true;
-
     while (argstream_has_next(stream)) {
+        ArgParser* cmd_parser;
         char* arg = argstream_next(stream);
 
         // If we encounter a '--' argument, turn off option-parsing.
@@ -1201,7 +1205,7 @@ static void ap_parse_stream(ArgParser* parser, ArgStream* stream) {
         }
 
         // Is the argument a registered command?
-        else if (is_first_arg && map_get(parser->command_map, arg, (void**)&cmd_parser)) {
+        else if (parser->positional_args->count == 0 && map_get(parser->command_map, arg, (void**)&cmd_parser)) {
             parser->cmd_name = arg;
             parser->cmd_parser = cmd_parser;
             ap_parse_stream(cmd_parser, stream);
@@ -1211,7 +1215,7 @@ static void ap_parse_stream(ArgParser* parser, ArgStream* stream) {
         }
 
         // Is the argument the automatic 'help' command?
-        else if (is_first_arg && parser->enable_help_command && strcmp(arg, "help") == 0) {
+        else if (parser->positional_args->count == 0 && parser->enable_help_command && strcmp(arg, "help") == 0) {
             if (argstream_has_next(stream)) {
                 char* name = argstream_next(stream);
                 if (map_get(parser->command_map, name, (void**)&cmd_parser)) {
@@ -1220,10 +1224,10 @@ static void ap_parse_stream(ArgParser* parser, ArgStream* stream) {
                     }
                     exit(0);
                 } else {
-                    err(str("'%s' is not a recognised command", name));
+                    exit_with_error("'%s' is not a recognised command", name);
                 }
             } else {
-                err(str("the help command requires an argument"));
+                exit_with_error("the 'help' command requires an argument");
             }
         }
 
@@ -1240,19 +1244,23 @@ static void ap_parse_stream(ArgParser* parser, ArgStream* stream) {
                 }
             }
         }
-
-        is_first_arg = false;
     }
 }
 
 
-// Parse an array of string arguments.
-static bool ap_parse_array(ArgParser* parser, int count, char* args[]) {
+// Parse an array of string arguments. We assume that [argc] and [argv] are the arguments passed to
+// main(), i.e. we ignore the first element in the array. In some situations [argv] can be empty,
+// i.e. [argc == 0], which can lead to security vulnerabilities if not explicitly handled.
+bool ap_parse(ArgParser* parser, int argc, char** argv) {
     if (parser->had_memory_error) {
         return false;
     }
 
-    ArgStream *stream = argstream_new(count, args);
+    if (argc == 0) {
+        return true;
+    }
+
+    ArgStream* stream = argstream_new(argc - 1 , argv + 1);
     if (!stream) {
         return false;
     }
@@ -1260,18 +1268,6 @@ static bool ap_parse_array(ArgParser* parser, int count, char* args[]) {
     ap_parse_stream(parser, stream);
     argstream_free(stream);
 
-    return !parser->had_memory_error;
-}
-
-
-// This function parses the application's command line arguments. It assumes that [argc] and [argv]
-// are the arguments passed to main(), i.e. that the first element in [argv] is the program's name
-// and should be ignored when parsing the actual *arguments*. In some situations [argv] can be
-// empty, i.e. [argc == 0], which can lead to security vulnerabilities if not explicitly handled.
-bool ap_parse(ArgParser* parser, int argc, char* argv[]) {
-    if (argc > 1) {
-        return ap_parse_array(parser, argc - 1, argv + 1);
-    }
     return !parser->had_memory_error;
 }
 

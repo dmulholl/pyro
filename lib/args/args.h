@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Args: a C99 library for parsing command line arguments.
-// Version: 2.8.0
+// Version: 2.10.0
 // -----------------------------------------------------------------------------
 
 #ifndef args_h
@@ -51,12 +51,15 @@ char* ap_get_version(ArgParser* parser);
 // subsequent arguments will be treated as positionals. Defaults to false.
 void ap_first_pos_arg_ends_options(ArgParser* parser, bool enable);
 
-// Parses the application's command line arguments. The parameters are assumed
-// to be [argc] and [argv] as supplied to main(), i.e. the first element of the
-// array is assumed to be the binary name and is therefore ignored. Returns true
-// if the arguments were successfully parsed. Returns false if parsing failed
-// due to a memory allocation error. (This memory allocation error may have
-// occured during set-up rather than during parsing.)
+// Parses an array of string arguments.
+// - Exits with an error message and a non-zero status code if the arguments are
+//   invalid.
+// - The parameters are assumed to be [argc] and [argv] as supplied to main(),
+//   i.e. the first element of the array is assumed to be the binary name and
+//   is therefore ignored.
+// - Returns true if the arguments were successfully parsed.
+// - Returns false if parsing failed because sufficient memory could not be
+//   allocated.
 bool ap_parse(ArgParser* parser, int argc, char** argv);
 
 // Frees the memory associated with the parser and any subparsers.
@@ -177,6 +180,10 @@ ArgParser* ap_cmd_parser(ArgParser* parser);
 // automatically to true whenever a command is registered. You can use this
 // function to disable the feature if required.
 void ap_enable_help_command(ArgParser* parser, bool enable);
+
+// Returns the parser's parent parser if it's a command parser, or NULL if it's
+// the root parser.
+ArgParser* ap_parent(ArgParser* parser);
 
 // -----------------------------------------------------------------------------
 // Debugging utilities.
