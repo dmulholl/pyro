@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.103</p>
+                <p class="version">Version 0.8.106</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -146,27 +146,36 @@ In practice, Pyro's <code>file</code> type already has builtin support for <code
 Variable Scoping
 </h3>
 <p>
-You can also use a <code>with</code> block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
+You can use a <code>with</code> block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">with</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">foo</span><span class="p">;</span>
+    <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="p">(</span><span class="nx">foo</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">));</span>
 </pre>
 <p>
-Here the variable <code>foo</code> is only valid inside the <code>with</code> block.
-This is equivalent to wrapping the variable declaration in a curly-braces block, e.g.
+The variable <code>foo</code> is a new local variable defined inside the <code>with</code> block.
+This is equivalent to wrapping the variable declaration in a <code>{}</code> block, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
-    <span class="k">echo</span> <span class="nx">foo</span><span class="p">;</span>
+    <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <p>
-You may find the explicit <code>with</code> syntax preferable &mdash; this is a matter of stylistic choice.
+You can use unpacking syntax with <code>with</code> blocks, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">with</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+    <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+The variables <code>foo</code> and <code>bar</code> are new local variables defined inside the <code>with</code> block.
 </p>
         </article>
         

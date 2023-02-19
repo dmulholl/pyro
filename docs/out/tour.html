@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.103</p>
+                <p class="version">Version 0.8.106</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -838,7 +838,7 @@ Note that the <code>$main()</code> function won't be run if you import the same 
 Unpacking
 </h3>
 <p>
-You can unpack the values of a tuple or vector in a <code>var</code> declaration using the following syntax:
+You can unpack the values of a tuple or vector in a <code>var</code> declaration using <code>()</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
@@ -846,6 +846,24 @@ You can unpack the values of a tuple or vector in a <code>var</code> declaration
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
+</pre>
+<p>
+You can discard unwanted values by assigning them to the unnamed variable <code>_</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
+</pre>
+<p>
+You can partially unpack the leading values, ignoring the remainder, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+
+<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 </pre>
 <p>
 Similarly, you can unpack the loop variable of a <code>for</code> loop if it's a tuple or vector, e.g.
@@ -864,15 +882,6 @@ Similarly, you can unpack the loop variable of a <code>for</code> loop if it's a
 <p>
 (Iterating over a <code>map</code> returns <code>(key, value)</code> tuples.)
 </p>
-<p>
-You can discard unwanted values by assigning them to the unnamed variable <code>_</code>, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
-
-<span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
-</pre>
 <h3 id="source-code">
 Source Code
 </h3>

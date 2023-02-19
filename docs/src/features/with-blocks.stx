@@ -75,22 +75,30 @@ In practice, Pyro's `file` type already has builtin support for `with` blocks so
 
 ### Variable Scoping
 
-You can also use a `with` block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
+You can use a `with` block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
 
 ::: code pyro
     with foo = 123 {
-        echo foo;
+        assert foo == 123;
     }
 
     assert $is_err(try (foo += 1));
 
-Here the variable `foo` is only valid inside the `with` block.
-This is equivalent to wrapping the variable declaration in a curly-braces block, e.g.
+The variable `foo` is a new local variable defined inside the `with` block.
+This is equivalent to wrapping the variable declaration in a `{}` block, e.g.
 
 ::: code pyro
     {
         var foo = 123;
-        echo foo;
+        assert foo == 123;
     }
 
-You may find the explicit `with` syntax preferable --- this is a matter of stylistic choice.
+You can use unpacking syntax with `with` blocks, e.g.
+
+::: code pyro
+    with (foo, bar) = $tup(123, 456) {
+        assert foo == 123;
+        assert bar == 456;
+    }
+
+The variables `foo` and `bar` are new local variables defined inside the `with` block.
