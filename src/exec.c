@@ -2262,12 +2262,12 @@ static void run(PyroVM* vm) {
                     if (tup->count < count) {
                         pyro_panic(
                             vm,
-                            "tuple count is %zu, unpacking requires %zu",
+                            "tuple count is %zu, unpacking requires at least %zu",
                             tup->count, count
                         );
                     } else {
                         for (size_t i = 0; i < count; i++) {
-                            pyro_push(vm, tup->values[i]);
+                            if (!pyro_push(vm, tup->values[i])) break;
                         }
                     }
                     break;
@@ -2278,12 +2278,12 @@ static void run(PyroVM* vm) {
                     if (vec->count < count) {
                         pyro_panic(
                             vm,
-                            "vector count is %zu, unpacking requires %zu",
+                            "vector count is %zu, unpacking requires at least %zu",
                             vec->count, count
                         );
                     } else {
                         for (size_t i = 0; i < count; i++) {
-                            pyro_push(vm, vec->values[i]);
+                            if (!pyro_push(vm, vec->values[i])) break;
                         }
                     }
                     break;
