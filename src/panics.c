@@ -72,7 +72,7 @@ static void panic(
         pyro_stderr_write(vm, "\n");
         if (vm->frame_count > 0) {
             pyro_stderr_write_f(vm,
-                "\n%s:%zu\n  error: failed to compile Pyro source code\n",
+                "\n%s:%zu\n  panic: invalid source code\n",
                 last_opcode_source_id->bytes,
                 last_opcode_line_number
             );
@@ -87,7 +87,7 @@ static void panic(
         pyro_stderr_write_f(vm, "%s:%zu\n  ", last_opcode_source_id->bytes, last_opcode_line_number);
     }
 
-    pyro_stderr_write(vm, "error: ");
+    pyro_stderr_write(vm, "panic: ");
     pyro_stderr_write_fv(vm, format_string, args);
     pyro_stderr_write(vm, "\n");
 
