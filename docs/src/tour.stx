@@ -623,7 +623,7 @@ Similarly, you can unpack the loop variable of a `for` loop if it's a tuple or v
         echo value;
     }
 
-(Iterating over a `map` returns `(key, value)` tuples.)
+This works because iterating over a `map` returns `(key, value)` tuples.
 
 
 
