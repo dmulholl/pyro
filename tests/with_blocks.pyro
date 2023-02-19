@@ -147,12 +147,12 @@ assert f7() == "f7";
 assert global == 10;
 
 # Test unpacking.
-with (foo) = 123 {
+with (foo) = $tup(123) {
     assert foo == 123;
 }
 
-with (foo) = $tup(123) {
-    assert foo == $tup(123);
+with (foo) = $tup(123, 456) {
+    assert foo == 123;
 }
 
 with (foo, bar) = $tup(123, 456) {

@@ -32,6 +32,12 @@ def $test_unpacking_a_univalue_tuple() {
 }
 
 
+def $test_unpacking_the_first_value_of_a_tuple() {
+    var (foo) = $tup(123, 456);
+    assert foo == 123;
+}
+
+
 def $test_partially_unpacking_a_tuple() {
     var (foo, bar) = $tup(123, 456, 789);
     assert foo == 123;

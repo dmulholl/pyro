@@ -1,8 +1,13 @@
-# Verify that unpacking syntax works with a single variable name.
+# Test unpacking into a single loop variable.
 var count = 0;
+for (value) in $range(10):map(def(n) { return $tup(n); }) {
+    assert value == count;
+    count += 1;
+}
 
-for (i) in $range(10) {
-    assert i == count;
+count = 0;
+for (value) in $range(10):map(def(n) { return $tup(n, n + 1, n + 2); }) {
+    assert value == count;
     count += 1;
 }
 

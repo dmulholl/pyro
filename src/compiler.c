@@ -1989,8 +1989,10 @@ static void parse_for_in_stmt(Parser* parser) {
     const size_t loop_vars_capacity = 12;
     size_t loop_vars_count = 0;
     Token loop_vars[12];
+    bool unpack_vars = false;
 
     if (match(parser, TOKEN_LEFT_PAREN)) {
+        unpack_vars = true;
         do {
             if (loop_vars_count == loop_vars_capacity) {
                 ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", loop_vars_capacity);
@@ -2028,7 +2030,7 @@ static void parse_for_in_stmt(Parser* parser) {
     size_t exit_jump_index = emit_jump(parser, PYRO_OPCODE_JUMP_IF_ERR);
 
     begin_scope(parser);
-    if (loop_vars_count > 1) {
+    if (unpack_vars) {
         emit_u8_u8(parser, PYRO_OPCODE_UNPACK, loop_vars_count);
     }
     for (size_t i = 0; i < loop_vars_count; i++) {
@@ -2233,8 +2235,10 @@ static void parse_with_stmt(Parser* parser) {
     const size_t var_names_capacity = 12;
     size_t var_names_count = 0;
     Token var_names[12];
+    bool unpacking = false;
 
     if (match(parser, TOKEN_LEFT_PAREN)) {
+        unpacking = true;
         do {
             if (var_names_count == var_names_capacity) {
                 ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", var_names_capacity);
@@ -2257,7 +2261,7 @@ static void parse_with_stmt(Parser* parser) {
     parse_expression(parser, true, true);
     emit_byte(parser, PYRO_OPCODE_START_WITH);
     begin_scope(parser);
-    if (var_names_count > 1) {
+    if (unpacking) {
         emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_names_count);
     }
     for (size_t i = 0; i < var_names_count; i++) {
