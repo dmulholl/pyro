@@ -2262,7 +2262,7 @@ static void run(PyroVM* vm) {
                     if (tup->count < count) {
                         pyro_panic(
                             vm,
-                            "tuple contains %zu value(s), requires %zu for unpacking",
+                            "tuple count is %zu, unpacking requires %zu",
                             tup->count, count
                         );
                     } else {
@@ -2278,7 +2278,7 @@ static void run(PyroVM* vm) {
                     if (vec->count < count) {
                         pyro_panic(
                             vm,
-                            "vector contains %zu value(s), requires %zu for unpacking",
+                            "vector count is %zu, unpacking requires %zu",
                             vec->count, count
                         );
                     } else {

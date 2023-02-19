@@ -145,3 +145,28 @@ def f7() {
 
 assert f7() == "f7";
 assert global == 10;
+
+# Test unpacking.
+with (foo) = 123 {
+    assert foo == 123;
+}
+
+with (foo) = $tup(123) {
+    assert foo == $tup(123);
+}
+
+with (foo, bar) = $tup(123, 456) {
+    assert foo == 123;
+    assert bar == 456;
+}
+
+with (foo, bar, baz) = $tup(123, 456, 789) {
+    assert foo == 123;
+    assert bar == 456;
+    assert baz == 789;
+}
+
+with (foo, _, baz) = $tup(123, 456, 789) {
+    assert foo == 123;
+    assert baz == 789;
+}

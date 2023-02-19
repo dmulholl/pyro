@@ -1993,7 +1993,7 @@ static void parse_for_in_stmt(Parser* parser) {
     if (match(parser, TOKEN_LEFT_PAREN)) {
         do {
             if (loop_vars_count == loop_vars_capacity) {
-                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack(max: %zu)", loop_vars_capacity);
+                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", loop_vars_capacity);
                 return;
             }
             consume(parser, TOKEN_IDENTIFIER, "expected loop variable name");
@@ -2230,24 +2230,40 @@ static void parse_while_stmt(Parser* parser) {
 
 
 static void parse_with_stmt(Parser* parser) {
-    if (!consume(parser, TOKEN_IDENTIFIER, "expected a variable name after 'with'")) {
+    const size_t var_names_capacity = 12;
+    size_t var_names_count = 0;
+    Token var_names[12];
+
+    if (match(parser, TOKEN_LEFT_PAREN)) {
+        do {
+            if (var_names_count == var_names_capacity) {
+                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", var_names_capacity);
+                return;
+            }
+            consume(parser, TOKEN_IDENTIFIER, "expected a variable name");
+            var_names[var_names_count++] = parser->previous_token;
+        } while (match(parser, TOKEN_COMMA));
+        consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after variable names");
+    } else {
+        consume(parser, TOKEN_IDENTIFIER, "expected a variable name after 'with'");
+        var_names[0] = parser->previous_token;
+        var_names_count++;
+    }
+
+    if (!consume(parser, TOKEN_EQUAL, "expected '=' in 'with' statement")) {
         return;
     }
-    Token variable_name = parser->previous_token;
 
-    if (match(parser, TOKEN_COLON)) {
-        parse_type(parser);
-    }
-
-    if (!consume(parser, TOKEN_EQUAL, "expected '=' after variable name in 'with' statement")) {
-        return;
-    }
-
-    begin_scope(parser);
     parse_expression(parser, true, true);
-    add_local(parser, variable_name);
-    mark_initialized(parser);
     emit_byte(parser, PYRO_OPCODE_START_WITH);
+    begin_scope(parser);
+    if (var_names_count > 1) {
+        emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_names_count);
+    }
+    for (size_t i = 0; i < var_names_count; i++) {
+        add_local(parser, var_names[i]);
+        mark_initialized(parser);
+    }
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before 'with' statement body");
     parse_block(parser);
     emit_byte(parser, PYRO_OPCODE_END_WITH);
