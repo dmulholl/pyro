@@ -492,3 +492,36 @@ with foo = 1 {
     }
     assert sum == (0 + 1 + 2) + (1 + 1 + 2) + (2 + 1 + 2);
 }
+
+# Test 'with' inside 'for' inside a function.
+global = 0;
+var func1 = def() {
+    for i in $range(3) {
+        with obj = Object() {
+        }
+    }
+};
+func1();
+assert global == 3;
+
+global = 0;
+var func2 = def() {
+    for i in $range(3) {
+        with obj = Object() {
+            continue;
+        }
+    }
+};
+func2();
+assert global == 3;
+
+global = 0;
+var func3 = def() {
+    for i in $range(3) {
+        with obj = Object() {
+            break;
+        }
+    }
+};
+func3();
+assert global == 1;
