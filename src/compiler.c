@@ -601,7 +601,7 @@ static uint16_t consume_variable_name(Parser* parser, const char* error_message)
 
 
 // Emits bytecode to discard all local variables at scope depth greater than or equal to [depth].
-// Returns the number of locals discarded. (This function doesn't decremement the local count as
+// Returns the number of locals discarded. (This function doesn't decrement the local count as
 // it's called directly by break statements.)
 static int discard_locals(Parser* parser, int depth) {
     int local_count = parser->fn_compiler->local_count;
@@ -2568,6 +2568,13 @@ static void parse_break_stmt(Parser* parser) {
     parser->fn_compiler->loop_compiler->had_break = true;
 
     discard_locals(parser, parser->fn_compiler->loop_compiler->start_scope_depth + 1);
+
+    size_t with_block_depth = parser->fn_compiler->with_block_depth;
+    while (with_block_depth > parser->fn_compiler->loop_compiler->start_with_block_depth) {
+        emit_byte(parser, PYRO_OPCODE_END_WITH);
+        with_block_depth--;
+    }
+
     emit_jump(parser, PYRO_OPCODE_BREAK);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after 'break'");
 }
@@ -2580,6 +2587,13 @@ static void parse_continue_stmt(Parser* parser) {
     }
 
     discard_locals(parser, parser->fn_compiler->loop_compiler->start_scope_depth + 1);
+
+    size_t with_block_depth = parser->fn_compiler->with_block_depth;
+    while (with_block_depth > parser->fn_compiler->loop_compiler->start_with_block_depth) {
+        emit_byte(parser, PYRO_OPCODE_END_WITH);
+        with_block_depth--;
+    }
+
     emit_loop(parser, parser->fn_compiler->loop_compiler->start_bytecode_count);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after 'continue'");
 }
