@@ -2668,7 +2668,7 @@ static void parse_statement(Parser* parser) {
 /* -------------------- */
 
 
-static PyroFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
     Parser parser;
     parser.fn_compiler = NULL;
     parser.class_compiler = NULL;
@@ -2721,15 +2721,5 @@ static PyroFn* compile(PyroVM* vm, const char* src_code, size_t src_len, const c
         fn->code[fn->code_count - 3] = PYRO_OPCODE_POP_ECHO_IN_REPL;
     }
 
-    return fn;
-}
-
-
-// This wrappper disables the garbage collector during compilation.
-// TODO: this wrapper isn't needed any more.
-PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
-    vm->gc_disallows++;
-    PyroFn* fn = compile(vm, src_code, src_len, src_id);
-    vm->gc_disallows--;
     return fn;
 }
