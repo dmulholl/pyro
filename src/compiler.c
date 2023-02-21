@@ -2260,6 +2260,7 @@ static void parse_with_stmt(Parser* parser) {
 
     parse_expression(parser, true, true);
     emit_byte(parser, PYRO_OPCODE_START_WITH);
+    parser->fn_compiler->with_block_depth++;
     if (unpack_vars) {
         emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_names_count);
     }
@@ -2274,6 +2275,7 @@ static void parse_with_stmt(Parser* parser) {
     end_scope(parser);
 
     emit_byte(parser, PYRO_OPCODE_END_WITH);
+    parser->fn_compiler->with_block_depth--;
 }
 
 
