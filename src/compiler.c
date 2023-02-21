@@ -2260,18 +2260,20 @@ static void parse_with_stmt(Parser* parser) {
 
     parse_expression(parser, true, true);
     emit_byte(parser, PYRO_OPCODE_START_WITH);
-    begin_scope(parser);
     if (unpack_vars) {
         emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_names_count);
     }
+
+    consume(parser, TOKEN_LEFT_BRACE, "expected '{' before 'with' statement body");
+    begin_scope(parser);
     for (size_t i = 0; i < var_names_count; i++) {
         add_local(parser, var_names[i]);
         mark_initialized(parser);
     }
-    consume(parser, TOKEN_LEFT_BRACE, "expected '{' before 'with' statement body");
     parse_block(parser);
-    emit_byte(parser, PYRO_OPCODE_END_WITH);
     end_scope(parser);
+
+    emit_byte(parser, PYRO_OPCODE_END_WITH);
 }
 
 
