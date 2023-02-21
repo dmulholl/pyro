@@ -64,8 +64,8 @@ typedef enum {
 
 
 typedef struct LoopCompiler {
-    int start_index;    // bytecode index of the loop's starting point
-    int start_depth;    // scope depth of the loop's starting point
+    size_t start_bytecode_count;    // bytecode index of the loop's starting point
+    size_t start_scope_depth;       // scope depth of the loop's starting point
     bool had_break;
     struct LoopCompiler* enclosing;
 } LoopCompiler;
@@ -1965,11 +1965,12 @@ static void parse_if_stmt(Parser* parser) {
 }
 
 
-// Emits an instruction to jump backwards in the bytecode to the index identified by [start_index].
-static void emit_loop(Parser* parser, size_t start_index) {
+// Emits an instruction to jump backwards in the bytecode to the index identified by
+// [start_bytecode_count].
+static void emit_loop(Parser* parser, size_t start_bytecode_count) {
     emit_byte(parser, PYRO_OPCODE_JUMP_BACK);
 
-    size_t offset = parser->fn_compiler->fn->code_count - start_index + 2;
+    size_t offset = parser->fn_compiler->fn->code_count - start_bytecode_count + 2;
     if (offset > UINT16_MAX) {
         ERROR_AT_PREVIOUS_TOKEN("loop body is too large");
     }
@@ -2018,8 +2019,8 @@ static void parse_for_in_stmt(Parser* parser) {
 
     // This is the point in the bytecode the loop will jump back to.
     LoopCompiler loop;
-    loop.start_index = parser->fn_compiler->fn->code_count;
-    loop.start_depth = parser->fn_compiler->scope_depth;
+    loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
+    loop.start_scope_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
@@ -2039,7 +2040,7 @@ static void parse_for_in_stmt(Parser* parser) {
     end_scope(parser);
 
     // Jump back to the beginning of the loop.
-    emit_loop(parser, loop.start_index);
+    emit_loop(parser, loop.start_bytecode_count);
 
     // Backpatch the destination for the exit jump.
     patch_jump(parser, exit_jump_index);
@@ -2049,7 +2050,7 @@ static void parse_for_in_stmt(Parser* parser) {
 
     // If there were any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
-        size_t ip = loop.start_index;
+        size_t ip = loop.start_bytecode_count;
         PyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
@@ -2083,8 +2084,8 @@ static void parse_c_style_loop_stmt(Parser* parser) {
 
     // This is the point in the bytecode the loop will jump back to.
     LoopCompiler loop;
-    loop.start_index = parser->fn_compiler->fn->code_count;
-    loop.start_depth = parser->fn_compiler->scope_depth;
+    loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
+    loop.start_scope_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
@@ -2108,8 +2109,8 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         emit_byte(parser, PYRO_OPCODE_POP);
         consume(parser, TOKEN_LEFT_BRACE, "expected '{' before loop body");
 
-        emit_loop(parser, loop.start_index);
-        loop.start_index = increment_index;
+        emit_loop(parser, loop.start_bytecode_count);
+        loop.start_bytecode_count = increment_index;
         patch_jump(parser, body_jump_index);
     }
 
@@ -2119,7 +2120,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     end_scope(parser);
 
     // Jump back to the beginning of the loop.
-    emit_loop(parser, loop.start_index);
+    emit_loop(parser, loop.start_bytecode_count);
 
     // Backpatch the destination for the exit jump.
     if (loop_has_condition) {
@@ -2128,7 +2129,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
 
     // If there were any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
-        size_t ip = loop.start_index;
+        size_t ip = loop.start_bytecode_count;
         PyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
@@ -2149,8 +2150,8 @@ static void parse_c_style_loop_stmt(Parser* parser) {
 
 static void parse_infinite_loop_stmt(Parser* parser) {
     LoopCompiler loop;
-    loop.start_index = parser->fn_compiler->fn->code_count;
-    loop.start_depth = parser->fn_compiler->scope_depth;
+    loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
+    loop.start_scope_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
@@ -2161,11 +2162,11 @@ static void parse_infinite_loop_stmt(Parser* parser) {
     end_scope(parser);
 
     // Jump back to the beginning of the loop.
-    emit_loop(parser, loop.start_index);
+    emit_loop(parser, loop.start_bytecode_count);
 
     // If we found any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
-        size_t ip = loop.start_index;
+        size_t ip = loop.start_bytecode_count;
         PyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
@@ -2183,8 +2184,8 @@ static void parse_infinite_loop_stmt(Parser* parser) {
 
 static void parse_while_stmt(Parser* parser) {
     LoopCompiler loop;
-    loop.start_index = parser->fn_compiler->fn->code_count;
-    loop.start_depth = parser->fn_compiler->scope_depth;
+    loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
+    loop.start_scope_depth = parser->fn_compiler->scope_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
@@ -2206,14 +2207,14 @@ static void parse_while_stmt(Parser* parser) {
     end_scope(parser);
 
     // Jump back to the beginning of the loop.
-    emit_loop(parser, loop.start_index);
+    emit_loop(parser, loop.start_bytecode_count);
 
     // Backpatch the destination for the exit jump.
     patch_jump(parser, exit_jump_index);
 
     // If we found any break statements in the loop, backpatch their destinations.
     if (loop.had_break) {
-        size_t ip = loop.start_index;
+        size_t ip = loop.start_bytecode_count;
         PyroFn* fn = parser->fn_compiler->fn;
         while (ip < fn->code_count) {
             if (fn->code[ip] == PYRO_OPCODE_BREAK) {
@@ -2557,7 +2558,7 @@ static void parse_break_stmt(Parser* parser) {
     }
     parser->fn_compiler->loop_compiler->had_break = true;
 
-    discard_locals(parser, parser->fn_compiler->loop_compiler->start_depth + 1);
+    discard_locals(parser, parser->fn_compiler->loop_compiler->start_scope_depth + 1);
     emit_jump(parser, PYRO_OPCODE_BREAK);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after 'break'");
 }
@@ -2569,8 +2570,8 @@ static void parse_continue_stmt(Parser* parser) {
         return;
     }
 
-    discard_locals(parser, parser->fn_compiler->loop_compiler->start_depth + 1);
-    emit_loop(parser, parser->fn_compiler->loop_compiler->start_index);
+    discard_locals(parser, parser->fn_compiler->loop_compiler->start_scope_depth + 1);
+    emit_loop(parser, parser->fn_compiler->loop_compiler->start_bytecode_count);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after 'continue'");
 }
 
