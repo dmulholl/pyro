@@ -80,6 +80,7 @@ typedef struct FnCompiler {
     int scope_depth;        // number of blocks surrounding the curent code
     Upvalue upvalues[256];
     LoopCompiler* loop_compiler;
+    size_t with_block_depth;
 } FnCompiler;
 
 
@@ -377,9 +378,8 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType typ
     fn_compiler->local_count = 0;
     fn_compiler->scope_depth = 0;
     fn_compiler->loop_compiler = NULL;
+    fn_compiler->with_block_depth = 0;
 
-    // Assign to NULL first as the function initializer can trigger the GC.
-    fn_compiler->fn = NULL;
     fn_compiler->fn = PyroFn_new(parser->vm);
     if (!fn_compiler->fn) {
         parser->had_memory_error = true;
