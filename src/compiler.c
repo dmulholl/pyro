@@ -66,6 +66,7 @@ typedef enum {
 typedef struct LoopCompiler {
     size_t start_bytecode_count;    // bytecode index of the loop's starting point
     size_t start_scope_depth;       // scope depth of the loop's starting point
+    size_t start_with_block_depth;  // with-block depth of the loop's starting point
     bool had_break;
     struct LoopCompiler* enclosing;
 } LoopCompiler;
@@ -2021,6 +2022,7 @@ static void parse_for_in_stmt(Parser* parser) {
     LoopCompiler loop;
     loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
     loop.start_scope_depth = parser->fn_compiler->scope_depth;
+    loop.start_with_block_depth = parser->fn_compiler->with_block_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
@@ -2086,6 +2088,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     LoopCompiler loop;
     loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
     loop.start_scope_depth = parser->fn_compiler->scope_depth;
+    loop.start_with_block_depth = parser->fn_compiler->with_block_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
@@ -2152,6 +2155,7 @@ static void parse_infinite_loop_stmt(Parser* parser) {
     LoopCompiler loop;
     loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
     loop.start_scope_depth = parser->fn_compiler->scope_depth;
+    loop.start_with_block_depth = parser->fn_compiler->with_block_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
@@ -2186,6 +2190,7 @@ static void parse_while_stmt(Parser* parser) {
     LoopCompiler loop;
     loop.start_bytecode_count = parser->fn_compiler->fn->code_count;
     loop.start_scope_depth = parser->fn_compiler->scope_depth;
+    loop.start_with_block_depth = parser->fn_compiler->with_block_depth;
     loop.had_break = false;
     loop.enclosing = parser->fn_compiler->loop_compiler;
     parser->fn_compiler->loop_compiler = &loop;
