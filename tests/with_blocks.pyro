@@ -470,3 +470,25 @@ while (i < 3) {
     }
 }
 assert global == 2;
+
+# Test 'for' inside 'with'.
+with foo = 1 {
+    var sum = 0;
+    for i in $range(3) {
+        assert foo == 1;
+        sum += (i + foo);
+    }
+    assert sum == (0 + 1) + (1 + 1) + (2 + 1);
+}
+
+with foo = 1 {
+    var sum = 0;
+    for i in $range(3) {
+        assert foo == 1;
+        with bar = 2 {
+            assert bar == 2;
+            sum += (i + foo + bar);
+        }
+    }
+    assert sum == (0 + 1 + 2) + (1 + 1 + 2) + (2 + 1 + 2);
+}
