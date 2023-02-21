@@ -15,7 +15,6 @@ with bar = 456 {
     bar += 1;
     assert bar == 457;
 }
-
 assert bar == 123;
 
 # Variable scoping 3: shadowing a local.
@@ -159,3 +158,315 @@ with (foo, _, baz) = $tup(123, 456, 789) {
     assert foo == 123;
     assert baz == 789;
 }
+
+# Test 'with' inside 'for'.
+global = 0;
+for i in $range(3) {
+    with obj = Object() {
+    }
+}
+assert global == 3;
+
+global = 0;
+for i in $range(3) {
+    with obj1 = Object() {
+        with obj2 = Object() {
+        }
+    }
+}
+assert global == 6;
+
+global = 0;
+for i in $range(3) {
+    with obj1 = Object() {
+        with obj2 = Object() {
+            with obj3 = Object() {
+            }
+        }
+    }
+}
+assert global == 9;
+
+global = 0;
+for i in $range(3) {
+    for j in $range(3) {
+        with obj = Object() {
+        }
+    }
+}
+assert global == 9;
+
+# Test 'with' inside 'for' with 'continue'.
+global = 0;
+for i in $range(3) {
+    with obj = Object() {
+        continue;
+    }
+}
+assert global == 3;
+
+global = 0;
+for i in $range(3) {
+    with obj1 = Object() {
+        with obj2 = Object() {
+            continue;
+        }
+    }
+}
+assert global == 6;
+
+global = 0;
+for i in $range(3) {
+    with obj1 = Object() {
+        with obj2 = Object() {
+            with obj3 = Object() {
+                continue;
+            }
+        }
+    }
+}
+assert global == 9;
+
+global = 0;
+for i in $range(3) {
+    for j in $range(3) {
+        with obj = Object() {
+            continue;
+        }
+    }
+}
+assert global == 9;
+
+# Test 'with' inside 'for' with 'break'.
+global = 0;
+for i in $range(3) {
+    with obj = Object() {
+        break;
+    }
+}
+assert global == 1;
+
+global = 0;
+for i in $range(3) {
+    with obj1 = Object() {
+        with obj2 = Object() {
+            break;
+        }
+    }
+}
+assert global == 2;
+
+global = 0;
+for i in $range(3) {
+    with obj1 = Object() {
+        with obj2 = Object() {
+            with obj3 = Object() {
+                break;
+            }
+        }
+    }
+}
+assert global == 3;
+
+global = 0;
+for i in $range(3) {
+    for j in $range(3) {
+        with obj = Object() {
+            break;
+        }
+    }
+}
+assert global == 3;
+
+# Test 'with' inside 'loop'.
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    with obj = Object() {
+    }
+}
+assert global == 3;
+
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    loop var j = 0; j < 3; j += 1 {
+        with obj = Object() {
+        }
+    }
+}
+assert global == 9;
+
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    with obj1 = Object() {
+        with obj2 = Object() {
+        }
+    }
+}
+assert global == 6;
+
+# Test 'with' inside 'loop' with 'continue'.
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    with obj = Object() {
+        continue;
+    }
+}
+assert global == 3;
+
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    loop var j = 0; j < 3; j += 1 {
+        with obj = Object() {
+            continue;
+        }
+    }
+}
+assert global == 9;
+
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    with obj1 = Object() {
+        with obj2 = Object() {
+            continue;
+        }
+    }
+}
+assert global == 6;
+
+# Test 'with' inside 'loop' with 'break'.
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    with obj = Object() {
+        break;
+    }
+}
+assert global == 1;
+
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    loop var j = 0; j < 3; j += 1 {
+        with obj = Object() {
+            break;
+        }
+    }
+}
+assert global == 3;
+
+global = 0;
+loop var i = 0; i < 3; i += 1 {
+    with obj1 = Object() {
+        with obj2 = Object() {
+            break;
+        }
+    }
+}
+
+assert global == 2;
+
+# Test 'with' inside 'while'.
+global = 0;
+var i = 0;
+while (i < 3) {
+    i += 1;
+    with obj = Object() {
+    }
+}
+assert global == 3;
+
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    var j = 0;
+    while j < 3 {
+        j += 1;
+        with obj = Object() {
+        }
+    }
+}
+assert global == 9;
+
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    with obj1 = Object() {
+        with obj2 = Object() {
+        }
+    }
+}
+assert global == 6;
+
+# Test 'with' inside 'while' with 'continue'.
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    with obj = Object() {
+        continue;
+    }
+}
+assert global == 3;
+
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    var j = 0;
+    while j < 3 {
+        j += 1;
+        with obj = Object() {
+            continue;
+        }
+    }
+}
+assert global == 9;
+
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    with obj1 = Object() {
+        with obj2 = Object() {
+            continue;
+        }
+    }
+}
+assert global == 6;
+
+# Test 'with' inside 'while' with 'break'.
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    with obj = Object() {
+        break;
+    }
+}
+assert global == 1;
+
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    var j = 0;
+    while j < 3 {
+        j += 1;
+        with obj = Object() {
+            break;
+        }
+    }
+}
+assert global == 3;
+
+global = 0;
+i = 0;
+while (i < 3) {
+    i += 1;
+    with obj1 = Object() {
+        with obj2 = Object() {
+            break;
+        }
+    }
+}
+assert global == 2;
