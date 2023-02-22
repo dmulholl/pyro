@@ -1,0 +1,79 @@
+---
+title: List Map
+meta_title: Pyro Tutorials &mdash; List Map
+---
+
+::: insert toc
+::: hr
+
+You can add indexing support to a user-defined type by implementing `$get()` and/or `$set()` methods --- i.e. these methods let us index into instances of the type using `[]` syntax.
+
+As an example, let's build a simple a simple `ListMap` type that maps keys to lists of values.
+If we try to look up a key that isn't in the map, we'll get back an empty list.
+
+
+### The Code
+
+Here's the full code for our `ListMap`:
+
+::: code pyro
+    class ListMap {
+        var data;
+
+        def $init() {
+            self.data = {};
+        }
+
+        def $get(key) {
+            if key in self.data {
+                return self.data[key];
+            }
+            return [];
+        }
+
+        def $set(key, value) {
+            if key in self.data {
+                self.data[key]:append(value);
+                return;
+            }
+            self.data[key] = [value];
+        }
+    }
+
+(*) Implementing the `$get(key)` method adds support for index-style read access to instances.
+
+(*) Implementing the `$set(key, value)` method adds support for index-style write access to instances.
+
+
+
+### Usage
+
+We can now read from and write to instances of our custom `ListMap` type using `[]`, just like the builtin `map` and `vec` types.
+
+If we try to look up a key that isn't in the map, we get back an empty `vec`, e.g.
+
+::: code pyro
+    var map = ListMap();
+
+    assert $is_vec(map["foo"]);
+    assert map["foo"]:is_empty();
+
+If we write a new key to the map, the value is added to a new list, e.g.
+
+::: code pyro
+    map["foo"] = 123;
+
+    assert $is_vec(map["foo"]);
+    assert map["foo"]:count() == 1;
+    assert map["foo"][0] == 123;
+
+If we write more values to the map using the same key, the values are appended to the list, e.g.
+
+::: code pyro
+    map["foo"] = 456;
+
+    assert $is_vec(map["foo"]);
+    assert map["foo"]:count() == 2;
+    assert map["foo"][0] == 123;
+    assert map["foo"][1] == 456;
+

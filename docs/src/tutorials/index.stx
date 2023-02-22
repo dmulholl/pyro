@@ -7,3 +7,6 @@ meta_title: Pyro Tutorials
 
     This tutorial demonstrates Pyro's iterator protocol by building an iterator for a custom linked-list type.
 
+[[ [List Map](@root/tutorials/list-map//) ]]
+
+    This tutorial demonstrates adding indexing support to a user-defined type by building a custom hash-map type that maps keys to lists of values.

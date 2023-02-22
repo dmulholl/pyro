@@ -1,0 +1,43 @@
+class ListMap {
+    var data;
+
+    def $init() {
+        self.data = {};
+    }
+
+    def $get(key) {
+        if key in self.data {
+            return self.data[key];
+        }
+        return [];
+    }
+
+    def $set(key, value) {
+        if key in self.data {
+            self.data[key]:append(value);
+            return;
+        }
+        self.data[key] = [value];
+    }
+}
+
+var map = ListMap();
+
+assert $is_vec(map["foo"]);
+assert map["foo"]:is_empty();
+
+map["foo"] = 123;
+assert $is_vec(map["foo"]);
+assert map["foo"]:count() == 1;
+assert map["foo"][0] == 123;
+
+map["foo"] = 456;
+assert $is_vec(map["foo"]);
+assert map["foo"]:count() == 2;
+assert map["foo"][0] == 123;
+assert map["foo"][1] == 456;
+
+map["bar"] = 789;
+assert $is_vec(map["bar"]);
+assert map["bar"]:count() == 1;
+assert map["bar"][0] == 789;

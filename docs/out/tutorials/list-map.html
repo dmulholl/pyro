@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Tutorials &mdash; List Map</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-tutorials-list-map node-tutorials node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.8.108</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>List Map</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#the-code">The Code</a>
+</li>
+<li>
+<a href="#usage">Usage</a>
+</li>
+</ul>
+<hr>
+<p>
+You can add indexing support to a user-defined type by implementing <code>$get()</code> and/or <code>$set()</code> methods &mdash; i.e. these methods let us index into instances of the type using <code>[]</code> syntax.
+</p>
+<p>
+As an example, let's build a simple a simple <code>ListMap</code> type that maps keys to lists of values.
+If we try to look up a key that isn't in the map, we'll get back an empty list.
+</p>
+<h3 id="the-code">
+The Code
+</h3>
+<p>
+Here's the full code for our <code>ListMap</code>:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">ListMap</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">data</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">data</span> <span class="p">=</span> <span class="p">{};</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">$get</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">key</span> <span class="k">in</span> <span class="kc">self</span><span class="p">.</span><span class="nx">data</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">[];</span>
+    <span class="p">}</span>
+
+    <span class="kd">def</span> <span class="nx">$set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">key</span> <span class="k">in</span> <span class="kc">self</span><span class="p">.</span><span class="nx">data</span> <span class="p">{</span>
+            <span class="kc">self</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">key</span><span class="p">]:</span><span class="nx">append</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="p">[</span><span class="nx">value</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<ul>
+<li>
+<p>
+Implementing the <code>$get(key)</code> method adds support for index-style read access to instances.
+</p>
+</li>
+<li>
+<p>
+Implementing the <code>$set(key, value)</code> method adds support for index-style write access to instances.
+</p>
+</li>
+</ul>
+<h3 id="usage">
+Usage
+</h3>
+<p>
+We can now read from and write to instances of our custom <code>ListMap</code> type using <code>[]</code>, just like the builtin <code>map</code> and <code>vec</code> types.
+</p>
+<p>
+If we try to look up a key that isn't in the map, we get back an empty <code>vec</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="nx">ListMap</span><span class="p">();</span>
+
+<span class="k">assert</span> <span class="nx">$is_vec</span><span class="p">(</span><span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]);</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]:</span><span class="nx">is_empty</span><span class="p">();</span>
+</pre>
+<p>
+If we write a new key to the map, the value is added to a new list, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+
+<span class="k">assert</span> <span class="nx">$is_vec</span><span class="p">(</span><span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]);</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]:</span><span class="nx">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+</pre>
+<p>
+If we write more values to the map using the same key, the values are appended to the list, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+
+<span class="k">assert</span> <span class="nx">$is_vec</span><span class="p">(</span><span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]);</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]:</span><span class="nx">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
+</pre>
+        </article>
+        
+    </body>
+</html>

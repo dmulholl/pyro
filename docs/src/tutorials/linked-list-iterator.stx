@@ -59,7 +59,7 @@ We can use our `List` type like this:
     list:append("bar");
     list:append("baz");
 
-Right now, we can add nodes to the list but we have no way to access the values inside it.
+Right now we can add nodes to the list but we have no way to access the values inside it.
 Let's fix that by making the list iterable.
 
 
