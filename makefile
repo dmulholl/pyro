@@ -8,12 +8,7 @@ CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 		 -Wno-unused-result
 
 RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O2
-DEBUG_FLAGS_0 = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG
-DEBUG_FLAGS_1 = $(DEBUG_FLAGS_0) -D PYRO_DEBUG_STRESS_GC
-DEBUG_FLAGS_2 = $(DEBUG_FLAGS_1) -D PYRO_DEBUG_DUMP_BYTECODE
-DEBUG_FLAGS_3 = $(DEBUG_FLAGS_2) -D PYRO_DEBUG_TRACE_EXECUTION
-DEBUG_FLAGS_4 = $(DEBUG_FLAGS_3) -D PYRO_DEBUG_LOG_GC
-DEBUG_FLAGS = $(DEBUG_FLAGS_1)
+DEBUG_FLAGS   = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DEBUG_STRESS_GC
 
 HDR_FILES = cli/*.h inc/*.h
 SRC_FILES = cli/*.c src/*.c std/builtins/*.c std/mods/c/*.c
@@ -34,6 +29,10 @@ OBJ_FILES = out/build/sqlite.o \
 #  Phony Targets  #
 # --------------- #
 
+all: ## Builds both the release and debug binaries.
+	@make debug
+	@make release
+
 release: ## Builds the release binary.
 release: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p out/release
@@ -48,17 +47,19 @@ debug: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -o out/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
-debug1: ## Default debug level. Checks assertions, stresses the garbage collector.
-	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_1)"
+debug-dump: ## Builds a debug binary that also dumps bytecode.
+	@mkdir -p out/debug
+	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -o out/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread \
+		-D PYRO_DEBUG_DUMP_BYTECODE
+	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
-debug2: ## As debug1, also dumps bytecode.
-	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_2)"
-
-debug3: ## As debug2, also traces execution.
-	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_3)"
-
-debug4: ## As debug3, also logs garbage collection.
-	@make debug DEBUG_FLAGS="$(DEBUG_FLAGS_4)"
+debug-trace: ## Builds a debug binary that also dumps bytecode and traces execution.
+	@mkdir -p out/debug
+	@printf "\e[1;32mBuilding\e[0m out/debug/pyro\n"
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -o out/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread \
+		-D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION
+	@printf "\e[1;32m Version\e[0m " && ./out/debug/pyro --version
 
 check-debug: ## Builds the debug binary, then runs the test suite.
 check-debug: tests/compiled_module.so
