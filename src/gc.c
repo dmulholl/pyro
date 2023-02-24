@@ -9,15 +9,6 @@ static void mark_object(PyroVM* vm, PyroObject* object) {
         return;
     }
 
-    #ifdef PYRO_DEBUG_LOG_GC
-        pyro_write_stdout(
-            vm,
-            "   %p mark %s\n",
-            (void*)object,
-            pyro_stringify_object_type(object->type)
-        );
-    #endif
-
     if (vm->grey_stack_count == vm->grey_stack_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vm->grey_stack_capacity);
         PyroObject** new_array = PYRO_REALLOCATE_ARRAY(vm, PyroObject*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
@@ -153,15 +144,6 @@ static void mark_roots(PyroVM* vm) {
 
 
 static void blacken_object(PyroVM* vm, PyroObject* object) {
-    #ifdef PYRO_DEBUG_LOG_GC
-        pyro_write_stdout(
-            vm,
-            "   %p blacken %s\n",
-            (void*)object,
-            pyro_stringify_object_type(object->type)
-        );
-    #endif
-
     mark_object(vm, (PyroObject*)object->class);
 
     switch (object->type) {
@@ -375,11 +357,6 @@ void pyro_collect_garbage(PyroVM* vm) {
         return;
     }
 
-    #ifdef PYRO_DEBUG_LOG_GC
-        pyro_write_stdout(vm, "-- gc begin\n");
-        size_t initial_bytes_allocated = vm->bytes_allocated;
-    #endif
-
     // If we make it to here, we're not in a panic state.
     // - Attempt to mark every root object as reachable -- i.e. set the object's [is_marked] flag
     //   and push it onto the grey stack.
@@ -414,14 +391,4 @@ void pyro_collect_garbage(PyroVM* vm) {
 
     // Update the GC threshold.
     vm->next_gc_threshold = vm->bytes_allocated * PYRO_GC_HEAP_GROW_FACTOR;
-
-    #ifdef PYRO_DEBUG_LOG_GC
-        pyro_write_stdout(vm, "-- gc end\n");
-        pyro_write_stdout(vm, "-- gc collected %zu bytes (from %zu to %zu) next gc at %zu\n",
-            initial_bytes_allocated - vm->bytes_allocated,
-            initial_bytes_allocated,
-            vm->bytes_allocated,
-            vm->next_gc_threshold
-        );
-    #endif
 }

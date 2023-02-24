@@ -26,14 +26,6 @@ static PyroObject* allocate_object(PyroVM* vm, size_t size, PyroObjectType type)
     object->next = vm->objects;
     vm->objects = object;
 
-    #ifdef PYRO_DEBUG_LOG_GC
-        pyro_out(vm, ">> %p allocate %zu bytes for %s\n",
-            (void*)object,
-            size,
-            pyro_stringify_object_type(type)
-        );
-    #endif
-
     return object;
 }
 

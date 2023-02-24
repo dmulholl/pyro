@@ -584,7 +584,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
 
 
 void pyro_disassemble_function(PyroVM* vm, PyroFn* fn) {
-    pyro_stdout_write_f(vm, "\x1B[1;32mconstants\x1B[0m %s\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
+    pyro_stdout_write_f(vm, "\x1B[1;32mconstants:\x1B[0m %s\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
 
     for (size_t i = 0; i < fn->constants_count; i++) {
         pyro_stdout_write_f(vm, "%04d    ", i);
@@ -592,7 +592,7 @@ void pyro_disassemble_function(PyroVM* vm, PyroFn* fn) {
         pyro_stdout_write_f(vm, "\n");
     }
 
-    pyro_stdout_write_f(vm, "\n\x1B[1;32mbytecode\x1B[0m %s\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
+    pyro_stdout_write_f(vm, "\n\x1B[1;32mbytecode:\x1B[0m %s\n", fn->name == NULL ? "<fn>" : fn->name->bytes);
     for (size_t ip = 0; ip < fn->code_count;) {
         ip = pyro_disassemble_instruction(vm, fn, ip);
     }
