@@ -1,45 +1,39 @@
 #include "../inc/pyro.h"
 
 
-bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd) {
+PyroBuf* pyro_read_file_into_buf(PyroVM* vm, const char* path, const char* err_prefix) {
     FILE* file = fopen(path, "rb");
     if (file == NULL) {
-        pyro_panic(vm, "unable to open file '%s'", path);
-        return false;
+        pyro_panic(vm, "%s: unable to open file '%s'", err_prefix, path);
+        return NULL;
     }
 
     fseek(file, 0L, SEEK_END);
     size_t file_size = ftell(file);
     rewind(file);
 
+    PyroBuf* buf = PyroBuf_new_with_capacity(file_size, vm);
+    if (!buf) {
+        fclose(file);
+        pyro_panic(vm, "%s: out of memory", err_prefix);
+        return NULL;
+    }
+
     if (file_size == 0) {
         fclose(file);
-        *fd = (FileData) {
-            .size = 0,
-            .data = NULL
-        };
-        return true;
+        return buf;
     }
 
-    char* file_data = PYRO_ALLOCATE_ARRAY(vm, char, file_size);
-    if (file_data == NULL) {
-        pyro_panic(vm, "insufficient memory to read file '%s'", path);
-        return false;
-    }
-
-    size_t bytes_read = fread(file_data, sizeof(char), file_size, file);
-    if (bytes_read < file_size) {
-        pyro_panic(vm, "I/O read error: unable to read file '%s'", path);
-        PYRO_FREE_ARRAY(vm, char, file_data, file_size);
-        return false;
+    size_t num_bytes_read = fread(buf->bytes, sizeof(uint8_t), file_size, file);
+    if (num_bytes_read < file_size) {
+        fclose(file);
+        pyro_panic(vm, "%s: error reading file '%s'", err_prefix, path);
+        return NULL;
     }
 
     fclose(file);
-    *fd = (FileData) {
-        .size = file_size,
-        .data = file_data
-    };
-    return true;
+    buf->count = num_bytes_read;
+    return buf;
 }
 
 

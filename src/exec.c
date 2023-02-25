@@ -2473,13 +2473,12 @@ void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
         return;
     }
 
-    FileData fd;
-    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
+    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_exec_file_as_main()");
+    if (vm->halt_flag) {
         return;
     }
 
-    pyro_exec_code_as_main(vm, fd.data, fd.size, path);
-    PYRO_FREE_ARRAY(vm, char, fd.data, fd.size);
+    pyro_exec_code_as_main(vm, (char*)buf->bytes, buf->count, path);
 }
 
 
@@ -2516,12 +2515,11 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
 
 
 void pyro_try_compile_file(PyroVM* vm, const char* path) {
-    FileData fd;
-    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
+    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_try_compile_file()");
+    if (vm->halt_flag) {
         return;
     }
-    pyro_compile(vm, fd.data, fd.size, path);
-    PYRO_FREE_ARRAY(vm, char, fd.data, fd.size);
+    pyro_compile(vm, (char*)buf->bytes, buf->count, path);
 }
 
 
@@ -2572,13 +2570,12 @@ void pyro_exec_file_as_module(PyroVM* vm, const char* path, PyroMod* module) {
         return;
     }
 
-    FileData fd;
-    if (!pyro_read_file(vm, path, &fd) || fd.size == 0) {
+    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_exec_file_as_module()");
+    if (vm->halt_flag) {
         return;
     }
 
-    PyroFn* fn = pyro_compile(vm, fd.data, fd.size, path);
-    PYRO_FREE_ARRAY(vm, char, fd.data, fd.size);
+    PyroFn* fn = pyro_compile(vm, (char*)buf->bytes, buf->count, path);
     if (vm->halt_flag) {
         return;
     }

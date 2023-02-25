@@ -1,20 +1,8 @@
 #ifndef pyro_utils_h
 #define pyro_utils_h
 
-// Output struct for [pyro_read_file].
-typedef struct {
-    size_t size;
-    char* data;
-} FileData;
-
-// Attempts to read the content of a file from the filesystem. Returns [true] if the file has been
-// successfully loaded. In this case [fd.data] should be freed using
-//
-//   PYRO_FREE_ARRAY(vm, char, fd.data, fd.size)
-//
-// Panics and returns [false] in case of error. If the file has zero length the return value will
-// be true and [fd.data] will be NULL.
-bool pyro_read_file(PyroVM* vm, const char* path, FileData* fd);
+// Reads the file into the buffer. Panics and returns NULL if an error occurs.
+PyroBuf* pyro_read_file_into_buf(PyroVM* vm, const char* path, const char* err_prefix);
 
 // String hash functions, 64-bit versions.
 uint64_t pyro_fnv1a_64(const char* string, size_t length);
