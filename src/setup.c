@@ -232,7 +232,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->stdout_file = PyroFile_new(vm, stdout);
     vm->stderr_file = PyroFile_new(vm, stderr);
     vm->stdin_file = PyroFile_new(vm, stdin);
-    vm->panic_buffer = PyroBuf_new_with_cap(256, vm);
+    vm->panic_buffer = PyroBuf_new_with_capacity(256, vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

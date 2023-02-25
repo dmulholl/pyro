@@ -380,17 +380,17 @@ typedef struct {
 } PyroBuf;
 
 PyroBuf* PyroBuf_new(PyroVM* vm);
-PyroBuf* PyroBuf_new_with_cap(size_t capacity, PyroVM* vm);
+PyroBuf* PyroBuf_new_with_capacity(size_t capacity, PyroVM* vm);
 PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm);
-
-bool PyroBuf_append_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm);
-bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 void PyroBuf_clear(PyroBuf* buf, PyroVM* vm);
 
 // This function converts the contents of the buffer into a string, leaving a valid but empty
 // buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
 // case the buffer is unchanged.
 PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm);
+
+bool PyroBuf_append_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm);
+bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 
 // Appends a byte value to the buffer as a hex-escaped string: \x##.
 bool PyroBuf_append_hex_escaped_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm);
@@ -403,19 +403,6 @@ int64_t PyroBuf_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va
 // Writes a printf-style formatted string to the buffer. If sufficient memory cannot be allocated to
 // write the entire string, writes as much of the string as possible.
 void PyroBuf_try_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va_list args);
-
-// Attempts to grow the buffer to at least the required capacity. Returns true on success, false
-// if memory allocation fails. In this case the buffer is unchanged.
-bool PyroBuf_grow(PyroBuf* buf, size_t required_capacity, PyroVM* vm);
-
-// Attempts to grow the buffer to at least the required capacity. If the buffer's capacity needs to
-// be increased, it will be increased to exactly the required capacity. Returns true on success,
-// false if memory allocation fails. In this case the buffer is unchanged.
-bool PyroBuf_grow_to_fit(PyroBuf* buf, size_t required_capacity, PyroVM* vm);
-
-// Attempts to grow the buffer's capacity by [n] bytes. Returns true on success, false if memory
-// allocation fails. In this case the buffer is unchanged.
-bool PyroBuf_grow_by_n_bytes(PyroBuf* buf, size_t n, PyroVM* vm);
 
 /* ----- */
 /* Files */

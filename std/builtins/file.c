@@ -190,7 +190,7 @@ static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
     }
     size_t num_bytes_to_read = args[0].as.i64;
 
-    PyroBuf* buf = PyroBuf_new_with_cap(num_bytes_to_read, vm);
+    PyroBuf* buf = PyroBuf_new_with_capacity(num_bytes_to_read + 1, vm);
     if (!buf) {
         pyro_panic(vm, "read_bytes(): out of memory");
         return pyro_null();

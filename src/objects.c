@@ -1433,15 +1433,7 @@ PyroBuf* PyroBuf_new(PyroVM* vm) {
 }
 
 
-void PyroBuf_clear(PyroBuf* buf, PyroVM* vm) {
-    PYRO_FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
-    buf->count = 0;
-    buf->capacity = 0;
-    buf->bytes = NULL;
-}
-
-
-PyroBuf* PyroBuf_new_with_cap(size_t capacity, PyroVM* vm) {
+PyroBuf* PyroBuf_new_with_capacity(size_t capacity, PyroVM* vm) {
     PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
         return NULL;
@@ -1451,26 +1443,6 @@ PyroBuf* PyroBuf_new_with_cap(size_t capacity, PyroVM* vm) {
         return buf;
     }
 
-    uint8_t* new_array = PYRO_ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
-    if (!new_array) {
-        return NULL;
-    }
-
-    buf->bytes = new_array;
-    buf->capacity = capacity + 1;
-
-    return buf;
-}
-
-
-PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
-    PyroBuf* buf = PyroBuf_new(vm);
-    if (!buf) {
-        return NULL;
-    }
-
-    size_t capacity = string->count + 1;
-
     uint8_t* new_array = PYRO_ALLOCATE_ARRAY(vm, uint8_t, capacity);
     if (!new_array) {
         return NULL;
@@ -1478,10 +1450,89 @@ PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
 
     buf->bytes = new_array;
     buf->capacity = capacity;
-    buf->count = string->count;
+
+    return buf;
+}
+
+
+PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
+    size_t required_capacity = string->count + 1;
+
+    PyroBuf* buf = PyroBuf_new_with_capacity(required_capacity, vm);
+    if (!buf) {
+        return NULL;
+    }
 
     memcpy(buf->bytes, string->bytes, string->count);
+    buf->count = string->count;
     return buf;
+}
+
+
+// Required: [buf->count <= new_capacity].
+static bool PyroBuf_resize_capacity(PyroBuf* buf, size_t new_capacity, PyroVM* vm) {
+    assert(buf->count <= new_capacity);
+
+    uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
+    if (!new_array) {
+        return false;
+    }
+
+    buf->capacity = new_capacity;
+    buf->bytes = new_array;
+    return true;
+}
+
+
+PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm) {
+    if (buf->count == 0) {
+        return vm->empty_string;
+    }
+
+    if (!PyroBuf_resize_capacity(buf, buf->count + 1, vm)) {
+        return NULL;
+    }
+    buf->bytes[buf->count] = '\0';
+
+    PyroStr* string = PyroStr_take((char*)buf->bytes, buf->count, buf->capacity, vm);
+    if (!string) {
+        return NULL;
+    }
+
+    buf->count = 0;
+    buf->capacity = 0;
+    buf->bytes = NULL;
+
+    return string;
+}
+
+
+void PyroBuf_clear(PyroBuf* buf, PyroVM* vm) {
+    PYRO_FREE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity);
+    buf->count = 0;
+    buf->capacity = 0;
+    buf->bytes = NULL;
+}
+
+
+bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
+    if (count == 0) {
+        return true;
+    }
+
+    size_t required_capacity = buf->count + count + 1;
+
+    if (required_capacity > buf->capacity) {
+        size_t new_capacity = (required_capacity <= 8) ? 8 : (size_t)(required_capacity * 1.5);
+        if (!PyroBuf_resize_capacity(buf, new_capacity, vm)) {
+            return false;
+        }
+    }
+
+    memcpy(&buf->bytes[buf->count], bytes, count);
+    buf->count += count;
+
+    return true;
 }
 
 
@@ -1505,115 +1556,6 @@ bool PyroBuf_append_hex_escaped_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm) {
 }
 
 
-// Attempts to grow the buffer to at least the required capacity. Returns true on success, false
-// if memory allocation fails. In this case the buffer is unchanged.
-bool PyroBuf_grow(PyroBuf* buf, size_t required_capacity, PyroVM* vm) {
-    if (required_capacity > buf->capacity) {
-        size_t new_capacity = PYRO_GROW_CAPACITY(buf->capacity);
-        while (new_capacity < required_capacity) {
-            new_capacity = PYRO_GROW_CAPACITY(new_capacity);
-        }
-        uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
-        if (!new_array) {
-            return false;
-        }
-        buf->capacity = new_capacity;
-        buf->bytes = new_array;
-    }
-    return true;
-}
-
-
-// Attempts to grow the buffer to at least the required capacity. If the buffer's capacity needs to
-// be increased, it will be increased to exactly the required capacity. Returns true on success,
-// false if memory allocation fails. In this case the buffer is unchanged.
-bool PyroBuf_grow_to_fit(PyroBuf* buf, size_t required_capacity, PyroVM* vm) {
-    if (required_capacity > buf->capacity) {
-        size_t new_capacity = required_capacity;
-        uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
-        if (!new_array) {
-            return false;
-        }
-        buf->capacity = new_capacity;
-        buf->bytes = new_array;
-    }
-    return true;
-}
-
-
-// Attempts to grow the buffer's capacity by [n] bytes. Returns true on success, false if memory
-// allocation fails. In this case the buffer is unchanged.
-bool PyroBuf_grow_by_n_bytes(PyroBuf* buf, size_t n, PyroVM* vm) {
-    size_t new_capacity = buf->capacity + n;
-    uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
-    if (!new_array) {
-        return false;
-    }
-    buf->capacity = new_capacity;
-    buf->bytes = new_array;
-    return true;
-}
-
-
-// We make sure there's always at least one spare byte of capacity -- this means that we can
-// efficiently convert the buffer's underlying byte array to a string without needing to allocate
-// extra memory for the terminating \0.
-bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm) {
-    if (count == 0) {
-        return true;
-    }
-
-    size_t required_capacity = buf->count + count + 1;
-
-    if (required_capacity > buf->capacity) {
-        if (!PyroBuf_grow(buf, required_capacity, vm)) {
-            return false;
-        }
-    }
-
-    memcpy(&buf->bytes[buf->count], bytes, count);
-    buf->count += count;
-
-    return true;
-}
-
-
-// This function converts the contents of the buffer into a string, leaving a valid but empty
-// buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
-// case the buffer is unchanged.
-PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm) {
-    if (buf->count == 0) {
-        return vm->empty_string;
-    }
-
-    if (buf->capacity > buf->count + 1) {
-        buf->bytes = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, buf->count + 1);
-        buf->capacity = buf->count + 1;
-    }
-    buf->bytes[buf->count] = '\0';
-
-    PyroStr* string = PyroStr_take((char*)buf->bytes, buf->count, buf->capacity, vm);
-    if (!string) {
-        return NULL;
-    }
-
-    buf->count = 0;
-    buf->capacity = 0;
-    buf->bytes = NULL;
-
-    return string;
-}
-
-
-int64_t PyroBuf_write_f(PyroBuf* buf, PyroVM* vm, const char* format_string, ...) {
-    va_list args;
-    va_start(args, format_string);
-    int64_t result = PyroBuf_write_fv(buf, vm, format_string, args);
-    va_end(args);
-    return result;
-}
-
-
 int64_t PyroBuf_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va_list args) {
     // Determine the length of the string. (Doesn't include the terminating null.)
     // A negative length indicates a formatting error.
@@ -1632,13 +1574,22 @@ int64_t PyroBuf_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va
 
     size_t required_capacity = buf->count + (size_t)length + 1;
 
-    if (required_capacity <= buf->capacity || PyroBuf_grow(buf, required_capacity, vm)) {
+    if (required_capacity <= buf->capacity || PyroBuf_resize_capacity(buf, required_capacity, vm)) {
         vsprintf((char*)&buf->bytes[buf->count], format_string, args);
         buf->count += length;
         return length;
     }
 
     return -1;
+}
+
+
+int64_t PyroBuf_write_f(PyroBuf* buf, PyroVM* vm, const char* format_string, ...) {
+    va_list args;
+    va_start(args, format_string);
+    int64_t result = PyroBuf_write_fv(buf, vm, format_string, args);
+    va_end(args);
+    return result;
 }
 
 
@@ -1658,7 +1609,7 @@ void PyroBuf_try_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, v
     size_t required_capacity = buf->count + (size_t)length + 1;
 
     // If we can write the entire string, write it.
-    if (buf->capacity >= required_capacity || PyroBuf_grow_to_fit(buf, required_capacity, vm)) {
+    if (buf->capacity >= required_capacity || PyroBuf_resize_capacity(buf, required_capacity, vm)) {
         vsprintf((char*)&buf->bytes[buf->count], format_string, args);
         buf->count += length;
         return;
@@ -1666,7 +1617,7 @@ void PyroBuf_try_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, v
 
     // Try to grow the buffer as much as possible.
     while (buf->capacity < required_capacity) {
-        if (!PyroBuf_grow_by_n_bytes(buf, 128, vm)) {
+        if (!PyroBuf_resize_capacity(buf, buf->capacity + 128, vm)) {
             break;
         }
     }

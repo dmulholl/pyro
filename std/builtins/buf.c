@@ -41,7 +41,7 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
             return pyro_null();
         }
 
-        PyroBuf* buf = PyroBuf_new_with_cap(size + 1, vm);
+        PyroBuf* buf = PyroBuf_new_with_capacity(size + 1, vm);
         if (!buf) {
             pyro_panic(vm, "$buf(): out of memory");
             return pyro_null();

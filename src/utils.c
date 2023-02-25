@@ -441,7 +441,7 @@ size_t pyro_dirname(const char* path) {
 
 
 PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len) {
-    PyroBuf* buf = PyroBuf_new_with_cap(src_len, vm);
+    PyroBuf* buf = PyroBuf_new_with_capacity(src_len + 1, vm);
     if (!buf) {
         return NULL;
     }
