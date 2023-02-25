@@ -1463,33 +1463,6 @@ PyroBuf* PyroBuf_new_with_cap(size_t capacity, PyroVM* vm) {
 }
 
 
-PyroBuf* PyroBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM* vm) {
-    PyroBuf* buf = PyroBuf_new(vm);
-    if (!buf) {
-        return NULL;
-    }
-
-    if (capacity == 0) {
-        return buf;
-    }
-
-    uint8_t* new_array = PYRO_ALLOCATE_ARRAY(vm, uint8_t, capacity + 1);
-    if (!new_array) {
-        return NULL;
-    }
-
-    buf->bytes = new_array;
-    buf->capacity = capacity + 1;
-    buf->count = capacity;
-
-    for (size_t i = 0; i < capacity; i++) {
-        buf->bytes[i] = fill_value;
-    }
-
-    return buf;
-}
-
-
 PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
     PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {

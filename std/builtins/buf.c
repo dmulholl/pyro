@@ -11,7 +11,7 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(buf);
     }
 
-    else if (arg_count == 1) {
+    if (arg_count == 1) {
         if (PYRO_IS_STR(args[0])) {
             PyroBuf* buf = PyroBuf_new_from_string(PYRO_AS_STR(args[0]), vm);
             if (!buf) {
@@ -19,33 +19,40 @@ static PyroValue fn_buf(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 return pyro_null();
             }
             return pyro_obj(buf);
-        } else {
-            pyro_panic(vm, "$buf(): invalid argument [content], expected a string");
-            return pyro_null();
         }
+        pyro_panic(vm, "$buf(): invalid argument [content], expected a string");
+        return pyro_null();
     }
 
-    else if (arg_count == 2) {
-        if (PYRO_IS_I64(args[0]) && args[0].as.i64 >= 0) {
-            uint8_t fill_value;
-            if (PYRO_IS_I64(args[1]) && args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
-                fill_value = (uint8_t)args[1].as.i64;
-            } else if (PYRO_IS_CHAR(args[1]) && args[1].as.u32 <= 255) {
-                fill_value = (uint8_t)args[1].as.u32;
-            } else {
-                pyro_panic(vm, "$buf(): invalid argument [fill_value], argument is out of range");
-                return pyro_null();
-            }
-            PyroBuf* buf = PyroBuf_new_with_cap_and_fill((size_t)args[0].as.i64, fill_value, vm);
-            if (!buf) {
-                pyro_panic(vm, "$buf(): out of memory");
-                return pyro_null();
-            }
-            return pyro_obj(buf);
-        } else {
+    if (arg_count == 2) {
+        if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
             pyro_panic(vm, "$buf(): invalid argument [size], expected a positive integer");
             return pyro_null();
         }
+        size_t size = args[0].as.i64;
+
+        uint8_t fill_value;
+        if (PYRO_IS_I64(args[1]) && args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
+            fill_value = (uint8_t)args[1].as.i64;
+        } else if (PYRO_IS_CHAR(args[1]) && args[1].as.u32 <= 255) {
+            fill_value = (uint8_t)args[1].as.u32;
+        } else {
+            pyro_panic(vm, "$buf(): invalid argument [fill_value], expected an integer in the range [0,255]");
+            return pyro_null();
+        }
+
+        PyroBuf* buf = PyroBuf_new_with_cap(size + 1, vm);
+        if (!buf) {
+            pyro_panic(vm, "$buf(): out of memory");
+            return pyro_null();
+        }
+
+        for (size_t i = 0; i < size; i++) {
+            buf->bytes[i] = fill_value;
+        }
+        buf->count = size;
+
+        return pyro_obj(buf);
     }
 
     pyro_panic(vm, "$buf(): expected 0 or 2 arguments, found %zu", arg_count);

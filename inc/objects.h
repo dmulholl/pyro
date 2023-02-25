@@ -381,8 +381,8 @@ typedef struct {
 
 PyroBuf* PyroBuf_new(PyroVM* vm);
 PyroBuf* PyroBuf_new_with_cap(size_t capacity, PyroVM* vm);
-PyroBuf* PyroBuf_new_with_cap_and_fill(size_t capacity, uint8_t fill_value, PyroVM* vm);
 PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm);
+
 bool PyroBuf_append_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm);
 bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 void PyroBuf_clear(PyroBuf* buf, PyroVM* vm);
