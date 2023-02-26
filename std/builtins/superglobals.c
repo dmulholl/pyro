@@ -532,44 +532,17 @@ static PyroValue fn_read_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    FILE* stream = fopen(PYRO_AS_STR(args[0])->bytes, "r");
-    if (!stream) {
-        pyro_panic(vm, "$read_file(): unable to open file '%s'", PYRO_AS_STR(args[0])->bytes);
+    PyroBuf* buf = pyro_read_file_into_buf(vm, PYRO_AS_STR(args[0])->bytes, "$read_file()");
+    if (vm->halt_flag) {
         return pyro_null();
-    }
-
-    PyroBuf* buf = PyroBuf_new(vm);
-    if (!buf) {
-        pyro_panic(vm, "$read_file(): out of memory");
-        return pyro_null();
-    }
-
-    while (true) {
-        int c = fgetc(stream);
-
-        if (c == EOF) {
-            if (ferror(stream)) {
-                pyro_panic(vm, "$read_file(): I/O read error");
-                fclose(stream);
-                return pyro_null();
-            }
-            break;
-        }
-
-        if (!PyroBuf_append_byte(buf, c, vm)) {
-            pyro_panic(vm, "$read_file(): out of memory");
-            return pyro_null();
-        }
     }
 
     PyroStr* string = PyroBuf_to_str(buf, vm);
     if (!string) {
         pyro_panic(vm, "$read_file(): out of memory");
-        fclose(stream);
         return pyro_null();
     }
 
-    fclose(stream);
     return pyro_obj(string);
 }
 
