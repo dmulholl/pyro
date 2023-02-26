@@ -1705,6 +1705,66 @@ PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm) {
 }
 
 
+// Reads the file into a a buffer. Panics and returns NULL if an error occurs.
+PyroBuf* PyroFile_read(PyroFile* file, const char* err_prefix, PyroVM* vm) {
+    FILE* file_stream = file->stream;
+
+    int64_t start_pos = ftell(file_stream);
+    int result = fseek(file_stream, 0, SEEK_END);
+
+    // A return value of 0 means the stream is seekable.
+    if (result == 0) {
+        int64_t end_pos = ftell(file_stream);
+        size_t file_size = end_pos - start_pos;
+        fseek(file_stream, start_pos, SEEK_SET);
+
+        PyroBuf* buf = PyroBuf_new_with_capacity(file_size + 1, vm);
+        if (!buf) {
+            pyro_panic(vm, "%s: out of memory", err_prefix);
+            return NULL;
+        }
+
+        if (file_size == 0) {
+            return buf;
+        }
+
+        size_t num_bytes_read = fread(buf->bytes, sizeof(uint8_t), file_size, file_stream);
+        if (num_bytes_read < file_size) {
+            pyro_panic(vm, "%s: error reading file", err_prefix);
+            return NULL;
+        }
+
+        buf->count = num_bytes_read;
+        return buf;
+    }
+
+    PyroBuf* buf = PyroBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, "%s: out of memory", err_prefix);
+        return NULL;
+    }
+
+    while (true) {
+        int c = fgetc(file_stream);
+
+        if (c == EOF) {
+            if (ferror(file_stream)) {
+                pyro_panic(vm, "%s: error reading file", err_prefix);
+                return NULL;
+            }
+            break;
+        }
+
+        if (!PyroBuf_append_byte(buf, c, vm)) {
+            pyro_panic(vm, "%s: out of memory", err_prefix);
+            return NULL;
+        }
+    }
+
+    return buf;
+}
+
+
 /* --------- */
 /* Iterators */
 /* --------- */

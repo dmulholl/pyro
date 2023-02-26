@@ -98,61 +98,23 @@ static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
-    FILE* file_stream = file->stream;
 
-    int start_pos = ftell(file_stream);
-    fseek(file_stream, 0, SEEK_END);
-    int end_pos = ftell(file_stream);
-    size_t file_size = end_pos - start_pos;
-    fseek(file_stream, start_pos, SEEK_SET);
-
-    PyroBuf* buf = PyroBuf_new_with_capacity(file_size, vm);
-    if (!buf) {
-        pyro_panic(vm, "read(): out of memory");
+    PyroBuf* buf = PyroFile_read(file, "read()", vm);
+    if (vm->halt_flag) {
         return pyro_null();
     }
 
-    if (file_size == 0) {
-        return pyro_obj(buf);
-    }
-
-    size_t num_bytes_read = fread(buf->bytes, sizeof(uint8_t), file_size, file_stream);
-    if (num_bytes_read < file_size) {
-        pyro_panic(vm, "read(): error reading file");
-        return pyro_null();
-    }
-
-    buf->count = num_bytes_read;
     return pyro_obj(buf);
 }
 
 
 static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
-    FILE* file_stream = file->stream;
 
-    int start_pos = ftell(file_stream);
-    fseek(file_stream, 0, SEEK_END);
-    int end_pos = ftell(file_stream);
-    size_t file_size = end_pos - start_pos;
-    fseek(file_stream, start_pos, SEEK_SET);
-
-    if (file_size == 0) {
-        return pyro_obj(vm->empty_string);
-    }
-
-    PyroBuf* buf = PyroBuf_new_with_capacity(file_size, vm);
-    if (!buf) {
-        pyro_panic(vm, "read_string(): out of memory");
+    PyroBuf* buf = PyroFile_read(file, "read_string()", vm);
+    if (vm->halt_flag) {
         return pyro_null();
     }
-
-    size_t num_bytes_read = fread(buf->bytes, sizeof(uint8_t), file_size, file_stream);
-    if (num_bytes_read < file_size) {
-        pyro_panic(vm, "read_string(): error reading file");
-        return pyro_null();
-    }
-    buf->count = num_bytes_read;
 
     PyroStr* string = PyroBuf_to_str(buf, vm);
     if (!string) {

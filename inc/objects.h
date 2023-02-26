@@ -421,6 +421,9 @@ PyroFile* PyroFile_new(PyroVM* vm, FILE* stream);
 // read error occurs.
 PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm);
 
+// Reads the file into a a buffer. Panics and returns NULL if an error occurs.
+PyroBuf* PyroFile_read(PyroFile* file, const char* err_prefix, PyroVM* vm);
+
 /* ------ */
 /* Queues */
 /* ------ */
