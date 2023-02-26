@@ -8,7 +8,7 @@ PyroBuf* pyro_read_file_into_buf(PyroVM* vm, const char* path, const char* err_p
         return NULL;
     }
 
-    fseek(file, 0L, SEEK_END);
+    fseek(file, 0, SEEK_END);
     size_t file_size = ftell(file);
     rewind(file);
 
