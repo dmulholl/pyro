@@ -98,49 +98,29 @@ static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    FILE* file_stream = file->stream;
 
-    size_t count = 0;
-    size_t capacity = 0;
-    uint8_t* array = NULL;
+    fseek(file_stream, 0L, SEEK_END);
+    size_t file_size = ftell(file_stream);
+    rewind(file_stream);
 
-    while (true) {
-        if (count + 1 > capacity) {
-            size_t new_capacity = PYRO_GROW_CAPACITY(capacity);
-            uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, array, capacity, new_capacity);
-            if (!new_array) {
-                pyro_panic(vm, "read(): out of memory");
-                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
-                return pyro_null();
-            }
-            capacity = new_capacity;
-            array = new_array;
-        }
-
-        int c = fgetc(file->stream);
-
-        if (c == EOF) {
-            if (ferror(file->stream)) {
-                pyro_panic(vm, "read(): I/O read error");
-                PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
-                return pyro_null();
-            }
-            break;
-        }
-
-        array[count++] = c;
-    }
-
-    PyroBuf* buf = PyroBuf_new(vm);
+    PyroBuf* buf = PyroBuf_new_with_capacity(file_size, vm);
     if (!buf) {
         pyro_panic(vm, "read(): out of memory");
-        PYRO_FREE_ARRAY(vm, uint8_t, array, capacity);
         return pyro_null();
     }
 
-    buf->count = count;
-    buf->capacity = capacity;
-    buf->bytes = array;
+    if (file_size == 0) {
+        return pyro_obj(buf);
+    }
 
+    size_t num_bytes_read = fread(buf->bytes, sizeof(uint8_t), file_size, file_stream);
+    if (num_bytes_read < file_size) {
+        pyro_panic(vm, "read(): error reading file");
+        return pyro_null();
+    }
+
+    buf->count = num_bytes_read;
     return pyro_obj(buf);
 }
 
