@@ -105,4 +105,4 @@ var f13 = $file(temp_filename, "r");
 assert f13:read_string() == "";
 f13:close();
 
-path::rm(temp_filename);
+path::remove(temp_filename);

@@ -382,13 +382,8 @@ typedef struct {
 PyroBuf* PyroBuf_new(PyroVM* vm);
 PyroBuf* PyroBuf_new_with_capacity(size_t capacity, PyroVM* vm);
 PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm);
+
 void PyroBuf_clear(PyroBuf* buf, PyroVM* vm);
-
-// This function converts the contents of the buffer into a string, leaving a valid but empty
-// buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
-// case the buffer is unchanged.
-PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm);
-
 bool PyroBuf_append_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm);
 bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 
@@ -403,6 +398,11 @@ int64_t PyroBuf_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va
 // Writes a printf-style formatted string to the buffer. If sufficient memory cannot be allocated to
 // write the entire string, writes as much of the string as possible.
 void PyroBuf_try_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va_list args);
+
+// This function converts the contents of the buffer into a string, leaving a valid but empty
+// buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
+// case the buffer is unchanged.
+PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm);
 
 /* ----- */
 /* Files */

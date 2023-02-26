@@ -60,7 +60,6 @@ PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len
 // - Ignores unrecognised escape sequences - i.e. copies them verbatim to [dst].
 size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char* dst);
 
-
 // Returns true if the string [s1] is equal to the string [s2].
 static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, size_t s2_count) {
     if (s1_count == s2_count) {
