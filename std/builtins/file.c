@@ -321,6 +321,83 @@ static PyroValue file_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) 
 }
 
 
+static PyroValue file_tell(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "tell(): file is closed");
+        return pyro_null();
+    }
+
+    return pyro_i64(ftell(file->stream));
+}
+
+
+static PyroValue file_seek_from_start(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "seek_from_start(): file is closed");
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm, "seek_from_start(): invalid argument [offset], expected an integer");
+        return pyro_null();
+    }
+
+    int result = fseek(file->stream, args[0].as.i64, SEEK_SET);
+    if (result == -1) {
+        pyro_panic(vm, "seek_from_start(): file is not seekable");
+        return pyro_null();
+    }
+
+    return pyro_i64(ftell(file->stream));
+}
+
+
+static PyroValue file_seek_from_end(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "seek_from_end(): file is closed");
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm, "seek_from_end(): invalid argument [offset], expected an integer");
+        return pyro_null();
+    }
+
+    int result = fseek(file->stream, args[0].as.i64, SEEK_END);
+    if (result == -1) {
+        pyro_panic(vm, "seek_from_end(): file is not seekable");
+        return pyro_null();
+    }
+
+    return pyro_i64(ftell(file->stream));
+}
+
+
+static PyroValue file_seek_from_current(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "seek_from_current(): file is closed");
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm, "seek_from_current(): invalid argument [offset], expected an integer");
+        return pyro_null();
+    }
+
+    int result = fseek(file->stream, args[0].as.i64, SEEK_CUR);
+    if (result == -1) {
+        pyro_panic(vm, "seek_from_current(): file is not seekable");
+        return pyro_null();
+    }
+
+    return pyro_i64(ftell(file->stream));
+}
+
+
 void pyro_load_std_builtins_file(PyroVM* vm) {
     // Functions.
     pyro_define_global_fn(vm, "$file", fn_file, -1);
@@ -340,4 +417,8 @@ void pyro_load_std_builtins_file(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_file, "write", file_write, -1);
     pyro_define_pub_method(vm, vm->class_file, "write_byte", file_write_byte, 1);
     pyro_define_pub_method(vm, vm->class_file, "lines", file_lines, 0);
+    pyro_define_pub_method(vm, vm->class_file, "tell", file_tell, 0);
+    pyro_define_pub_method(vm, vm->class_file, "seek_from_start", file_seek_from_start, 1);
+    pyro_define_pub_method(vm, vm->class_file, "seek_from_end", file_seek_from_end, 1);
+    pyro_define_pub_method(vm, vm->class_file, "seek_from_current", file_seek_from_current, 1);
 }
