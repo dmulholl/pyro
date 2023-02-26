@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.108</p>
+                <p class="version">Version 0.8.115</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -279,6 +279,58 @@ Returns an empty string if the file was empty or if the end of the file had alre
 </p>
 <p>
 Panics if an I/O read error occurs or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:seek_from_current(offset: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Seeks to the specified <code>offset</code> from the current position.
+Returns the value of the file position indicator after the seek operation.
+</p>
+<p>
+Panics if the file is not seekable.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:seek_from_end(offset: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Seeks to the specified <code>offset</code> from the end of the file.
+Returns the value of the file position indicator after the seek operation.
+</p>
+<p>
+Panics if the file is not seekable.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:seek_from_start(offset: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Seeks to the specified <code>offset</code> from the start of the file.
+Returns the value of the file position indicator after the seek operation.
+</p>
+<p>
+Panics if the file is not seekable.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:tell() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the current value of the file position indicator.
 </p>
 </dd>
 </div>
