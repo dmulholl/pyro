@@ -63,11 +63,12 @@ static PyroValue fn_is_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_flush(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
-
-    if (file->stream) {
-        fflush(file->stream);
+    if (!file->stream) {
+        pyro_panic(vm, "flush(): file is closed");
+        return pyro_null();
     }
 
+    fflush(file->stream);
     return pyro_null();
 }
 
@@ -98,6 +99,10 @@ static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "read(): file is closed");
+        return pyro_null();
+    }
 
     PyroBuf* buf = PyroFile_read(file, "read()", vm);
     if (vm->halt_flag) {
@@ -110,6 +115,10 @@ static PyroValue file_read(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "read_string(): file is closed");
+        return pyro_null();
+    }
 
     PyroBuf* buf = PyroFile_read(file, "read_string()", vm);
     if (vm->halt_flag) {
@@ -128,6 +137,10 @@ static PyroValue file_read_string(PyroVM* vm, size_t arg_count, PyroValue* args)
 
 static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "read_bytes(): file is closed");
+        return pyro_null();
+    }
 
     if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
         pyro_panic(vm, "read_bytes(): invalid argument [n], expected a non-negative integer");
@@ -158,6 +171,10 @@ static PyroValue file_read_bytes(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 static PyroValue file_read_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "read_byte(): file is closed");
+        return pyro_null();
+    }
 
     if (feof(file->stream)) {
         return pyro_null();
@@ -182,6 +199,10 @@ static PyroValue file_read_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_read_line(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "read_line(): file is closed");
+        return pyro_null();
+    }
 
     PyroStr* string = PyroFile_read_line(file, vm);
     if (vm->halt_flag) {
@@ -194,17 +215,27 @@ static PyroValue file_read_line(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_lines(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "lines(): file is closed");
+        return pyro_null();
+    }
+
     PyroIter* iter = PyroIter_new((PyroObject*)file, PYRO_ITER_FILE_LINES, vm);
     if (!iter) {
         pyro_panic(vm, "lines(): out of memory");
         return pyro_null();
     }
+
     return pyro_obj(iter);
 }
 
 
 static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "write(): file is closed");
+        return pyro_null();
+    }
 
     if (arg_count == 0) {
         pyro_panic(vm, "write(): expected 1 or more arguments, found 0");
@@ -256,6 +287,11 @@ static PyroValue file_write(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue file_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (!file->stream) {
+        pyro_panic(vm, "write_byte(): file is closed");
+        return pyro_null();
+    }
+
     uint8_t byte;
 
     if (PYRO_IS_I64(args[0])) {
