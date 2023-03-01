@@ -7,7 +7,7 @@ meta_title: Pyro &mdash; Iterators
 [2]: @root/tutorials/linked-list-iterator//
 
 
-Pyro's `for` loop uses a simple iterator protocol for iterating over sequences of values:
+Pyro's `for` loop uses a simple iterator protocol for iterating over sequences of values, e.g.
 
 ::: code pyro
     for item in [123, 456, 789] {
@@ -15,7 +15,7 @@ Pyro's `for` loop uses a simple iterator protocol for iterating over sequences o
     }
 
 An object is *iterable* if it has an `:$iter()` method.
-This method should return an *iterator* --- an object with a `:$next()` method which returns either the next item from a sequence or an `err` if the sequence has been exhausted.
+This method should return an *iterator* --- i.e. an object with a `:$next()` method which returns either the next item from a sequence or an `err` if the sequence has been exhausted.
 
 You can find a tutorial on implementing the iterator protocol for custom types [here][2].
 
