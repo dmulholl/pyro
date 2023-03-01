@@ -29,7 +29,7 @@ The file object's `close()` method will be called when the `with` block exits, e
 
 Inside the `with` block, `<name>` is a new local variable.
 
-If the value of `<expression>` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
+If the value of `<expression>` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or exits early via a `break`, `continue`, or `return` statement.
 
 
 

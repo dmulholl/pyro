@@ -95,7 +95,7 @@ with &lt;name&gt; = &lt;expression&gt; {
 Inside the <code>with</code> block, <code>&lt;name&gt;</code> is a new local variable.
 </p>
 <p>
-If the value of <code>&lt;expression&gt;</code> has an <code>$end_with()</code> method, this method will be called when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or returns early.
+If the value of <code>&lt;expression&gt;</code> has an <code>$end_with()</code> method, this method will be called when the <code>with</code> block exits, even if the code inside the <code>with</code> block panics or exits early via a <code>break</code>, <code>continue</code>, or <code>return</code> statement.
 </p>
 <h3 id="custom-classes">
 Custom Classes
