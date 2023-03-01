@@ -383,7 +383,15 @@ PyroBuf* PyroBuf_new(PyroVM* vm);
 PyroBuf* PyroBuf_new_with_capacity(size_t capacity, PyroVM* vm);
 PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm);
 
+// Clears the buffer, i.e. frees the [bytes] array and sets [count] and [capacity] to zero.
 void PyroBuf_clear(PyroBuf* buf, PyroVM* vm);
+
+// Resizes the buffer's capacity to [new_capacity].
+// - Returns true on success.
+// - Returns false if sufficient memory cannot be allocated. In this case, the buffer is unchanged.
+// - Requires: [new_capacity >= count].
+bool PyroBuf_resize_capacity(PyroBuf* buf, size_t new_capacity, PyroVM* vm);
+
 bool PyroBuf_append_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm);
 bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm);
 

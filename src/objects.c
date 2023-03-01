@@ -1469,9 +1469,8 @@ PyroBuf* PyroBuf_new_from_string(PyroStr* string, PyroVM* vm) {
 }
 
 
-// Required: [buf->count <= new_capacity].
-static bool PyroBuf_resize_capacity(PyroBuf* buf, size_t new_capacity, PyroVM* vm) {
-    assert(buf->count <= new_capacity);
+bool PyroBuf_resize_capacity(PyroBuf* buf, size_t new_capacity, PyroVM* vm) {
+    assert(new_capacity >= buf->count);
 
     uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, buf->bytes, buf->capacity, new_capacity);
     if (!new_array) {
