@@ -1705,28 +1705,31 @@ PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm) {
 }
 
 
-// Reads the file into a a buffer. Panics and returns NULL if an error occurs.
 PyroBuf* PyroFile_read(PyroFile* file, const char* err_prefix, PyroVM* vm) {
     FILE* file_stream = file->stream;
 
+    // If the file is seekable, we want to determine its size and read it using a single fread().
+    // - In theory, fseek() returns 0 if the file is seekable, -1 if not.
+    // - In practice, if the file stream is connected to an interactive terminal, fseek() returns 0
+    //   but has no effect. In this case, [end_pos - start_pos] can be negative.
     int64_t start_pos = ftell(file_stream);
-    int result = fseek(file_stream, 0, SEEK_END);
+    int seek_result = fseek(file_stream, 0, SEEK_END);
+    int64_t end_pos = ftell(file_stream);
+    fseek(file_stream, start_pos, SEEK_SET);
 
-    // A return value of 0 means the stream is seekable.
-    if (result == 0) {
-        int64_t end_pos = ftell(file_stream);
+    size_t required_capacity = 0;
+    if (seek_result == 0 && end_pos > start_pos) {
+        required_capacity = (end_pos - start_pos) + 1;
+    }
+
+    PyroBuf* buf = PyroBuf_new_with_capacity(required_capacity, vm);
+    if (!buf) {
+        pyro_panic(vm, "%s: out of memory", err_prefix);
+        return NULL;
+    }
+
+    if (seek_result == 0 && end_pos > start_pos) {
         size_t file_size = end_pos - start_pos;
-        fseek(file_stream, start_pos, SEEK_SET);
-
-        PyroBuf* buf = PyroBuf_new_with_capacity(file_size + 1, vm);
-        if (!buf) {
-            pyro_panic(vm, "%s: out of memory", err_prefix);
-            return NULL;
-        }
-
-        if (file_size == 0) {
-            return buf;
-        }
 
         size_t num_bytes_read = fread(buf->bytes, sizeof(uint8_t), file_size, file_stream);
         if (num_bytes_read < file_size) {
@@ -1735,13 +1738,6 @@ PyroBuf* PyroFile_read(PyroFile* file, const char* err_prefix, PyroVM* vm) {
         }
 
         buf->count = num_bytes_read;
-        return buf;
-    }
-
-    PyroBuf* buf = PyroBuf_new(vm);
-    if (!buf) {
-        pyro_panic(vm, "%s: out of memory", err_prefix);
-        return NULL;
     }
 
     while (true) {
