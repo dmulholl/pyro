@@ -1243,7 +1243,7 @@ PyroVec* PyroVec_new_as_stack(PyroVM* vm) {
 }
 
 
-PyroVec* PyroVec_new_with_cap(size_t capacity, PyroVM* vm) {
+PyroVec* PyroVec_new_with_capacity(size_t capacity, PyroVM* vm) {
     PyroVec* vec = PyroVec_new(vm);
     if (!vec) {
         return NULL;
@@ -1265,40 +1265,13 @@ PyroVec* PyroVec_new_with_cap(size_t capacity, PyroVM* vm) {
 }
 
 
-PyroVec* PyroVec_new_with_cap_and_fill(size_t capacity, PyroValue fill_value, PyroVM* vm) {
-    PyroVec* vec = PyroVec_new(vm);
-    if (!vec) {
+PyroVec* PyroVec_copy(PyroVec* src_vec, PyroVM* vm) {
+    PyroVec* new_vec = PyroVec_new_with_capacity(src_vec->count, vm);
+    if (!new_vec) {
         return NULL;
     }
-
-    if (capacity == 0) {
-        return vec;
-    }
-
-    PyroValue* value_array = PYRO_ALLOCATE_ARRAY(vm, PyroValue, capacity);
-    if (!value_array) {
-        return NULL;
-    }
-
-    vec->capacity = capacity;
-    vec->count = capacity;
-    vec->values = value_array;
-
-    for (size_t i = 0; i < capacity; i++) {
-        vec->values[i] = fill_value;
-    }
-
-    return vec;
-}
-
-
-PyroVec* PyroVec_copy(PyroVec* src, PyroVM* vm) {
-    PyroVec* vec = PyroVec_new_with_cap(src->count, vm);
-    if (!vec) {
-        return NULL;
-    }
-    memcpy(vec->values, src->values, sizeof(PyroValue) * src->count);
-    return vec;
+    memcpy(new_vec->values, src_vec->values, sizeof(PyroValue) * src_vec->count);
+    return new_vec;
 }
 
 

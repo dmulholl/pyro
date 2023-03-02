@@ -134,8 +134,7 @@ struct PyroVec {
 };
 
 PyroVec* PyroVec_new(PyroVM* vm);
-PyroVec* PyroVec_new_with_cap(size_t capacity, PyroVM* vm);
-PyroVec* PyroVec_new_with_cap_and_fill(size_t capacity, PyroValue fill_value, PyroVM* vm);
+PyroVec* PyroVec_new_with_capacity(size_t capacity, PyroVM* vm);
 PyroVec* PyroVec_new_as_stack(PyroVM* vm);
 void PyroVec_clear(PyroVec* vec, PyroVM* vm);
 

@@ -11,7 +11,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(vec);
     }
 
-    else if (arg_count == 1) {
+    if (arg_count == 1) {
         // Does the object have an :$iter() method?
         PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
         if (PYRO_IS_NULL(iter_method)) {
@@ -65,24 +65,29 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(vec);
     }
 
-    else if (arg_count == 2) {
+    if (arg_count == 2) {
         if (PYRO_IS_I64(args[0]) && args[0].as.i64 >= 0) {
-            PyroVec* vec = PyroVec_new_with_cap_and_fill((size_t)args[0].as.i64, args[1], vm);
+            size_t size = args[0].as.i64;
+            PyroVec* vec = PyroVec_new_with_capacity(size, vm);
             if (!vec) {
                 pyro_panic(vm, "$vec(): out of memory");
                 return pyro_null();
             }
-            return pyro_obj(vec);
-        } else {
-            pyro_panic(vm, "$vec(): invalid argument [size], expected a positive integer");
-            return pyro_null();
-        }
-    }
 
-    else {
-        pyro_panic(vm, "$vec(): expected 0 or 2 arguments, found %zu", arg_count);
+            PyroValue fill_value = args[1];
+            for (size_t i = 0; i < size; i++) {
+                vec->values[i] = fill_value;
+            }
+            vec->count = size;
+
+            return pyro_obj(vec);
+        }
+        pyro_panic(vm, "$vec(): invalid argument [size], expected a positive integer");
         return pyro_null();
     }
+
+    pyro_panic(vm, "$vec(): expected 0, 1, or 2 arguments, found %zu", arg_count);
+    return pyro_null();
 }
 
 
@@ -266,7 +271,7 @@ static PyroValue vec_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue vec_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
 
-    PyroVec* new_vec = PyroVec_new_with_cap(vec->count, vm);
+    PyroVec* new_vec = PyroVec_new_with_capacity(vec->count, vm);
     if (!vec) {
         pyro_panic(vm, "map(): out of memory");
         return pyro_null();

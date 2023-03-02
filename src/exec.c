@@ -1835,7 +1835,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_MAKE_VEC: {
                 uint16_t item_count = READ_BE_U16();
 
-                PyroVec* vec = PyroVec_new_with_cap(item_count, vm);
+                PyroVec* vec = PyroVec_new_with_capacity(item_count, vm);
                 if (!vec) {
                     pyro_panic(vm, "out of memory");
                     break;
