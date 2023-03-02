@@ -1277,8 +1277,8 @@ PyroVec* PyroVec_copy(PyroVec* src_vec, PyroVM* vm) {
 
 bool PyroVec_append(PyroVec* vec, PyroValue value, PyroVM* vm) {
     if (vec->count == vec->capacity) {
-        assert((double)PYRO_VEC_MEMORY_MULTIPLIER > 1.0);
         size_t new_capacity = (vec->capacity < 8) ? 8 : (size_t)(vec->capacity * PYRO_VEC_MEMORY_MULTIPLIER);
+        assert(new_capacity > vec->count);
         PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             return false;
@@ -1371,7 +1371,8 @@ void PyroVec_insert_at_index(PyroVec* vec, size_t index, PyroValue value, PyroVM
     }
 
     if (vec->count == vec->capacity) {
-        size_t new_capacity = PYRO_GROW_CAPACITY(vec->capacity);
+        size_t new_capacity = (vec->capacity < 8) ? 8 : (size_t)(vec->capacity * PYRO_VEC_MEMORY_MULTIPLIER);
+        assert(new_capacity > vec->count);
         PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
             pyro_panic(vm, "out of memory");
@@ -1498,8 +1499,8 @@ bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm
     if (required_capacity > buf->capacity) {
         size_t new_capacity = 8;
         if (required_capacity > 8) {
-            assert((double)PYRO_BUF_MEMORY_MULTIPLIER > 1.0);
             new_capacity = (size_t)(required_capacity * PYRO_BUF_MEMORY_MULTIPLIER);
+            assert(new_capacity >= required_capacity);
         }
         if (!PyroBuf_resize_capacity(buf, new_capacity, vm)) {
             return false;
