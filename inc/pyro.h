@@ -51,6 +51,11 @@
     #define PYRO_BUF_MEMORY_MULTIPLIER 2
 #endif
 
+// The multiplier to use when increasing a vector's memory allocation.
+#ifndef PYRO_VEC_MEMORY_MULTIPLIER
+    #define PYRO_VEC_MEMORY_MULTIPLIER 2
+#endif
+
 // Pi to the maximum accuracy limit of 64-bit IEEE 754 floats.
 #ifndef PYRO_PI
     #define PYRO_PI 3.14159265358979323846
