@@ -46,6 +46,11 @@
     #define PYRO_GC_HEAP_GROW_FACTOR 2
 #endif
 
+// The multiplier to use when increasing a buffer's memory allocation.
+#ifndef PYRO_BUF_MEMORY_MULTIPLIER
+    #define PYRO_BUF_MEMORY_MULTIPLIER 2
+#endif
+
 // Pi to the maximum accuracy limit of 64-bit IEEE 754 floats.
 #ifndef PYRO_PI
     #define PYRO_PI 3.14159265358979323846

@@ -1522,7 +1522,11 @@ bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm
     size_t required_capacity = buf->count + count + 1;
 
     if (required_capacity > buf->capacity) {
-        size_t new_capacity = (required_capacity <= 8) ? 8 : (size_t)(required_capacity * 1.5);
+        size_t new_capacity = 8;
+        if (required_capacity > 8) {
+            assert((double)PYRO_BUF_MEMORY_MULTIPLIER > 1.0);
+            new_capacity = (size_t)(required_capacity * PYRO_BUF_MEMORY_MULTIPLIER);
+        }
         if (!PyroBuf_resize_capacity(buf, new_capacity, vm)) {
             return false;
         }
