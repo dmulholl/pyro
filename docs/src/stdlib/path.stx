@@ -108,6 +108,8 @@ This module contains filepath utilities.
     Returns a vector containing the names of the entries in the directory specified by `path`.
     Skips `"."` and `".."`.
 
+    Panics if `path` is not a directory.
+
 
 [[ `normpath(path: str) -> str` ]]
 
