@@ -589,7 +589,10 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 }
 
 
-PyroStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
+// Stringifies a double, stripping trailing zeros.
+// - Panics and returns NULL if an error occurs.
+// - [precision] specifies the maximum number of decimal digits after the decimal point.
+static PyroStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
     char* array = pyro_sprintf(vm, "%.*f", precision, value);
     if (vm->halt_flag) {
         return NULL;
@@ -613,33 +616,6 @@ PyroStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
         return NULL;
     }
     return string;
-}
-
-
-char* pyro_stringify_object_type(PyroObjectType type) {
-    switch (type) {
-        case PYRO_OBJECT_BOUND_METHOD: return "<method>";
-        case PYRO_OBJECT_BUF: return "<buf>";
-        case PYRO_OBJECT_CLASS: return "<class>";
-        case PYRO_OBJECT_CLOSURE: return "<closure>";
-        case PYRO_OBJECT_FILE: return "<file>";
-        case PYRO_OBJECT_FN: return "<fn>";
-        case PYRO_OBJECT_INSTANCE: return "<instance>";
-        case PYRO_OBJECT_MAP: return "<map>";
-        case PYRO_OBJECT_MAP_AS_SET: return "<set>";
-        case PYRO_OBJECT_MAP_AS_WEAKREF: return "<weakref map>";
-        case PYRO_OBJECT_MODULE: return "<module>";
-        case PYRO_OBJECT_NATIVE_FN: return "<native fn>";
-        case PYRO_OBJECT_STR: return "<str>";
-        case PYRO_OBJECT_TUP: return "<tup>";
-        case PYRO_OBJECT_UPVALUE: return "<upvalue>";
-        case PYRO_OBJECT_VEC: return "<vec>";
-        case PYRO_OBJECT_VEC_AS_STACK: return "<stack>";
-        case PYRO_OBJECT_ITER: return "<iter>";
-        case PYRO_OBJECT_QUEUE: return "<queue>";
-        case PYRO_OBJECT_ERR: return "<err>";
-        default: assert(false); return "<unknown>";
-    }
 }
 
 
