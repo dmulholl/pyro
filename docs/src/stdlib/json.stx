@@ -16,13 +16,13 @@ This module contains utility functions for working with JSON.
     Returns an `err` if `json` is not valid JSON.
 
 
-[[ `from_json(arg: str) -> map|vec|str|i64|f64|bool|null|err` ]]
+[[ `from_json(json: str) -> map|vec|str|i64|f64|bool|null|err` ]]
 
     Unmarshalls the input JSON string.
 
     * A JSON object is unmarshalled as a `map`.
     * A JSON array is unmarshalled as a `vec`.
-    * Supports input with trailing commas and comments beginning with `//`.
+    * Supports input with trailing commas and single-line comments beginning with `//`.
 
     Returns an `err` if `arg` isn't a valid JSON string.
 

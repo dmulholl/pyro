@@ -573,18 +573,18 @@ class Parser {
 }
 
 
-pub def from_json(arg: str) -> map|vec|str|i64|f64|bool|null|err {
-    if !$is_str(arg) {
-        return $err("from_json(): invalid argument, expected a string: found {}", $type(arg));
+pub def from_json(json: str) -> map|vec|str|i64|f64|bool|null|err {
+    if !$is_str(json) {
+        return $err("from_json(): invalid argument, expected a string: found {}", $type(json));
     }
 
-    if arg:count() == 0 {
+    if json:count() == 0 {
         return $err("from_json(): invalid argument, empty string");
     }
 
-    var result = try Parser(arg):parse();
+    var result = try Parser(json):parse();
     if $is_err(result) {
-        return $err("from_json: {}", result);
+        return $err("from_json(): {}", result);
     }
 
     return result;
