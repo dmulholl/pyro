@@ -97,17 +97,20 @@ def pp_set(buf: buf, set: set, indent: i64, current_indent: i64) {
     buf:write("{");
 
     for item in set {
-        if !is_first {
-            buf:write(",");
+        if indent > 0 {
+            buf:write(is_first ? "\n" :| ",\n");
+        } else if !is_first {
+            buf:write(", ");
         }
-        buf:write("\n");
         buf:write(spaces);
         pp_value(buf, item, indent, current_indent + indent);
         is_first = false;
     }
 
-    buf:write("\n");
-    buf:write(" " * current_indent);
+    if indent > 0 {
+        buf:write("\n");
+        buf:write(" " * current_indent);
+    }
     buf:write("}");
 }
 
