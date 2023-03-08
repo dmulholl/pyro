@@ -43,10 +43,11 @@ def pp_map(buf: buf, map: map, indent: i64, current_indent: i64) {
     buf:write("{");
 
     for (key, value) in map {
-        if !is_first {
-            buf:write(",");
+        if indent > 0 {
+            buf:write(is_first ? "\n" :| ",\n");
+        } else if !is_first {
+            buf:write(", ");
         }
-        buf:write("\n");
         buf:write(spaces);
         buf:write($debug(key));
         buf:write(" = ");
@@ -54,8 +55,10 @@ def pp_map(buf: buf, map: map, indent: i64, current_indent: i64) {
         is_first = false;
     }
 
-    buf:write("\n");
-    buf:write(" " * current_indent);
+    if indent > 0 {
+        buf:write("\n");
+        buf:write(" " * current_indent);
+    }
     buf:write("}");
 }
 
