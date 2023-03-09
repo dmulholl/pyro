@@ -77,7 +77,7 @@ Returns an <code>err</code> if <code>json</code> is not valid JSON.
 </div>
 <div>
 <dt>
-<code>from_json(arg: str) -&gt; map|vec|str|i64|f64|bool|null|err</code>
+<code>from_json(json: str) -&gt; map|vec|str|i64|f64|bool|null|err</code>
 </dt>
 <dd>
 <p>
@@ -91,7 +91,7 @@ A JSON object is unmarshalled as a <code>map</code>.
 A JSON array is unmarshalled as a <code>vec</code>.
 </li>
 <li>
-Supports input with trailing commas and comments beginning with <code>//</code>.
+Supports input with trailing commas and single-line comments beginning with <code>//</code>.
 </li>
 </ul>
 <p>

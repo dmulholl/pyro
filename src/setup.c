@@ -78,7 +78,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_err = NULL;
     vm->str_false = NULL;
     vm->str_file = NULL;
-    vm->str_fn = NULL;
+    vm->str_func = NULL;
     vm->str_i64 = NULL;
     vm->str_instance = NULL;
     vm->str_iter = NULL;
@@ -202,7 +202,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_method = PyroStr_COPY("method");
     vm->str_buf = PyroStr_COPY("buf");
     vm->str_class = PyroStr_COPY("class");
-    vm->str_fn = PyroStr_COPY("fn");
+    vm->str_func = PyroStr_COPY("func");
     vm->str_instance = PyroStr_COPY("instance");
     vm->str_file = PyroStr_COPY("file");
     vm->str_iter = PyroStr_COPY("iter");

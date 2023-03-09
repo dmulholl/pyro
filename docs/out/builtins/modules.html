@@ -59,14 +59,14 @@ A module object, <code>mod</code>, is created when you import a Pyro source file
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">math</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">$is_mod</span><span class="p">(</span><span class="nx">math</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$is_module</span><span class="p">(</span><span class="nx">math</span><span class="p">);</span>
 </pre>
 <p>
 A module object can also be created by executing a string of source code using the <code>$exec()</code> function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">&quot;pub var foo = 1 + 2;&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">$is_mod</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$is_module</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">contains</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>

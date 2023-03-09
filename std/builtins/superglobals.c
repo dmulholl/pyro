@@ -262,7 +262,7 @@ static PyroValue fn_panic(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue fn_is_mod(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue fn_is_module(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(PYRO_IS_MOD(args[0]));
 }
 
@@ -790,7 +790,7 @@ static PyroValue fn_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 case PYRO_OBJECT_CLOSURE:
                 case PYRO_OBJECT_FN:
                 case PYRO_OBJECT_NATIVE_FN:
-                    return pyro_obj(vm->str_fn);
+                    return pyro_obj(vm->str_func);
                 case PYRO_OBJECT_FILE:
                     return pyro_obj(vm->str_file);
                 case PYRO_OBJECT_ITER:
@@ -1025,7 +1025,7 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_global_fn(vm, "$is_instance_of", fn_is_instance_of, 2);
     pyro_define_global_fn(vm, "$is_iterable", fn_is_iterable, 1);
     pyro_define_global_fn(vm, "$is_iterator", fn_is_iterator, 1);
-    pyro_define_global_fn(vm, "$is_mod", fn_is_mod, 1);
+    pyro_define_global_fn(vm, "$is_module", fn_is_module, 1);
     pyro_define_global_fn(vm, "$is_nan", fn_is_nan, 1);
     pyro_define_global_fn(vm, "$is_native_func", fn_is_native_func, 1);
     pyro_define_global_fn(vm, "$is_null", fn_is_null, 1);

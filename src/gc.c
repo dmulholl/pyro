@@ -97,7 +97,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->str_method);
     mark_object(vm, (PyroObject*)vm->str_buf);
     mark_object(vm, (PyroObject*)vm->str_class);
-    mark_object(vm, (PyroObject*)vm->str_fn);
+    mark_object(vm, (PyroObject*)vm->str_func);
     mark_object(vm, (PyroObject*)vm->str_instance);
     mark_object(vm, (PyroObject*)vm->str_file);
     mark_object(vm, (PyroObject*)vm->str_iter);

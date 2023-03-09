@@ -304,7 +304,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$is_iter(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is an `iter`.
+    Returns `true` if the argument is an instance of the builtin `iter` type.
 
 
 
@@ -332,7 +332,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$is_mod(arg: any) -> bool` ]]
+[[ `$is_module(arg: any) -> bool` ]]
 
     Returns `true` if the argument is a module.
 

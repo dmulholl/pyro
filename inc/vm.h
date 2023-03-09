@@ -145,7 +145,7 @@ struct PyroVM {
     PyroStr* str_method;
     PyroStr* str_buf;
     PyroStr* str_class;
-    PyroStr* str_fn;
+    PyroStr* str_func;
     PyroStr* str_instance;
     PyroStr* str_file;
     PyroStr* str_iter;

@@ -22,12 +22,12 @@ import std::pyro;
 assert $type(pyro) == "module";
 
 
-def func() {
+def test_function() {
     return "hello";
 }
 
-assert $type(func) == "fn";
-assert $type($print) == "fn";
+assert $type(test_function) == "func";
+assert $type($print) == "func";
 
 
 class Foo {
