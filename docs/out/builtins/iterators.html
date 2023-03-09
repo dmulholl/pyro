@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.115</p>
+                <p class="version">Version 0.9.0-dev</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -116,7 +116,7 @@ Returns a new <code>iter</code> instance whose output values are two-item tuples
 </div>
 <div>
 <dt>
-<code>:filter(callback: call(any) -&gt; bool) -&gt; iter</code>
+<code>:filter(callback: callable(any) -&gt; bool) -&gt; iter</code>
 </dt>
 <dd>
 <p>
@@ -151,7 +151,7 @@ Returns an empty string if the iterator is empty or exhausted.
 </div>
 <div>
 <dt>
-<code>:map(callback: call(any) -&gt; any) -&gt; iter</code>
+<code>:map(callback: callable(any) -&gt; any) -&gt; iter</code>
 </dt>
 <dd>
 <p>
@@ -180,7 +180,7 @@ Returns an <code>err</code> if the iterator has been exhausted.
 </div>
 <div>
 <dt>
-<code>:reduce(callback: call(any, any) -&gt; any, initial_value: any) -&gt; any</code>
+<code>:reduce(callback: callable(any, any) -&gt; any, initial_value: any) -&gt; any</code>
 </dt>
 <dd>
 <p>

@@ -31,7 +31,7 @@ class Flag {
 
 
 class Option {
-    pub var parser: call?(str) -> any;
+    pub var parser: callable?(str) -> any;
     pub var default: any;
     var values: vec[any];
 
@@ -85,7 +85,7 @@ pub class ArgParser {
     var options: map[str, Option];
     var flags: map[str, Flag];
     var commands: map[str, ArgParser];
-    var callback: call?(str, ArgParser);
+    var callback: callable?(str, ArgParser);
     var enable_help_command: bool = false;
     var exit_on_error: bool = true;
 
@@ -122,7 +122,7 @@ pub class ArgParser {
         }
     }
 
-    pub def callback(callback: call(str, ArgParser)) -> ArgParser {
+    pub def callback(callback: callable(str, ArgParser)) -> ArgParser {
         self.callback = callback;
         return self;
     }
@@ -145,7 +145,7 @@ pub class ArgParser {
         return self;
     }
 
-    pub def option(name: str, default: any = null, parser: call(str) -> any = null) {
+    pub def option(name: str, default: any = null, parser: callable(str) -> any = null) {
         var option = Option();
         for alias in name:split() {
             self.options[alias] = option;

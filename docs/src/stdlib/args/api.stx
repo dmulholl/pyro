@@ -66,7 +66,7 @@ You can register flags and options on an `ArgParser` using the methods below:
 
     Returns the parser to enable chaining.
 
-[[ `:option(name: str) -> ArgParser` <br> `:option(name: str, default: any) -> ArgParser` <br> `:option(name: str, default: any, parser: call(str) -> any) -> ArgParser` ]]
+[[ `:option(name: str) -> ArgParser` <br> `:option(name: str, default: any) -> ArgParser` <br> `:option(name: str, default: any, parser: callable(str) -> any) -> ArgParser` ]]
 
     Registers a new option.
 
@@ -150,7 +150,7 @@ Register a command on an `ArgParser` using the method below:
 
 Register a callback function for a command using the method below:
 
-[[ `:callback(callback: call(str, ArgParser)) -> ArgParser` ]]
+[[ `:callback(callback: callable(str, ArgParser)) -> ArgParser` ]]
 
     Sets the callback function for a command parser.
     If the command is found, this function will be called with the command's name and `ArgParser` instance.

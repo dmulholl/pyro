@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.8.115</p>
+                <p class="version">Version 0.9.0-dev</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -197,7 +197,7 @@ Returns the parser to enable chaining.
 </div>
 <div>
 <dt>
-<code>:option(name: str) -&gt; ArgParser</code> <br> <code>:option(name: str, default: any) -&gt; ArgParser</code> <br> <code>:option(name: str, default: any, parser: call(str) -&gt; any) -&gt; ArgParser</code>
+<code>:option(name: str) -&gt; ArgParser</code> <br> <code>:option(name: str, default: any) -&gt; ArgParser</code> <br> <code>:option(name: str, default: any, parser: callable(str) -&gt; any) -&gt; ArgParser</code>
 </dt>
 <dd>
 <p>
@@ -360,7 +360,7 @@ Register a callback function for a command using the method below:
 <dl>
 <div>
 <dt>
-<code>:callback(callback: call(str, ArgParser)) -&gt; ArgParser</code>
+<code>:callback(callback: callable(str, ArgParser)) -&gt; ArgParser</code>
 </dt>
 <dd>
 <p>

@@ -62,14 +62,14 @@ Annotations for builtin types are as follows:
 
 The annotations below describe interfaces rather than concrete types:
 
-* `call`
-* `call(type1, type2, ...) -> type`
+* `callable`
+* `callable(type1, type2, ...) -> type`
 * `iterable`
 * `iterable[type]`
 * `iterator`
 * `iterator[type]`
 
-A `call` value is callable;
+A `callable` value is callable;
 an `iterable` value has an `:$iter()` method that returns an iterator;
 an `iterator` value has a `:$next()` method that returns the next item from a sequence.
 
@@ -136,34 +136,34 @@ You can indicate that a type is nullable --- i.e. can be either the specified ty
 
 ### Callable Values
 
-You can indicate that a value is callable --- i.e. that the value is a function, method, class, or callable instance --- using the `call` type, e.g.
+You can indicate that a value is callable --- i.e. that the value is a function, method, class, or callable instance --- using the `callable` type, e.g.
 
 ::: code pyro
-    var foo: call;
+    var foo: callable;
 
 You can optionally specify the callable's return type, e.g.
 
 ::: code pyro
-    var foo: call -> bool;
+    var foo: callable -> bool;
 
 You can optionally specify the callable's parameter types, e.g.
 
 ::: code pyro
-    var foo: call();
-    var bar: call() -> bool;
-    var baz: call(i64, str);
-    var bam: call(i64, str) -> bool;
+    var foo: callable();
+    var bar: callable() -> bool;
+    var baz: callable(i64, str);
+    var bam: callable(i64, str) -> bool;
 
 * `foo` is a callable that takes no parameters.
 * `bar` is a callable that takes no parameters and returns a `bool`.
 * `baz` is a callable that takes `i64` and `str` parameters.
 * `bam` is a callable that takes `i64` and `str` parameters and returns a `bool`.
 
-The `call` type is nullable, e.g.
+The `callable` type is nullable, e.g.
 
 ::: code pyro
-    var foo: call?;
-    var bar: call?(i64) -> bool;
+    var foo: callable?;
+    var bar: callable?(i64) -> bool;
 
 * `foo` is either `null` or a callable.
 * `bar` is either `null` or a callable that takes takes an `i64` parameter and returns a `bool`.
