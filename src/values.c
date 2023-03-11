@@ -332,3 +332,88 @@ void pyro_dump_value(PyroVM* vm, PyroValue value) {
             break;
     }
 }
+
+
+PyroStr* pyro_get_type_name(PyroVM* vm, PyroValue value) {
+    switch (value.type) {
+        case PYRO_VALUE_BOOL:
+            return vm->str_bool;
+
+        case PYRO_VALUE_NULL:
+            return vm->str_null;
+
+        case PYRO_VALUE_I64:
+            return vm->str_i64;
+
+        case PYRO_VALUE_F64:
+            return vm->str_f64;
+
+        case PYRO_VALUE_CHAR:
+            return vm->str_char;
+
+        case PYRO_VALUE_OBJ: {
+            switch (PYRO_AS_OBJ(value)->type) {
+                case PYRO_OBJECT_BOUND_METHOD:
+                    return vm->str_method;
+
+                case PYRO_OBJECT_BUF:
+                    return vm->str_buf;
+
+                case PYRO_OBJECT_CLASS:
+                    return vm->str_class;
+
+                case PYRO_OBJECT_INSTANCE: {
+                    PyroStr* class_name = PYRO_AS_OBJ(value)->class->name;
+                    if (class_name) {
+                        return class_name;
+                    }
+                    return vm->str_instance;
+                }
+
+                case PYRO_OBJECT_CLOSURE:
+                case PYRO_OBJECT_NATIVE_FN:
+                case PYRO_OBJECT_FN:
+                    return vm->str_func;
+
+                case PYRO_OBJECT_FILE:
+                    return vm->str_file;
+
+                case PYRO_OBJECT_ITER:
+                    return vm->str_iter;
+
+                case PYRO_OBJECT_MAP:
+                    return vm->str_map;
+
+                case PYRO_OBJECT_MAP_AS_SET:
+                    return vm->str_set;
+
+                case PYRO_OBJECT_VEC:
+                    return vm->str_vec;
+
+                case PYRO_OBJECT_VEC_AS_STACK:
+                    return vm->str_stack;
+
+                case PYRO_OBJECT_QUEUE:
+                    return vm->str_queue;
+
+                case PYRO_OBJECT_STR:
+                    return vm->str_str;
+
+                case PYRO_OBJECT_MODULE:
+                    return vm->str_module;
+
+                case PYRO_OBJECT_TUP:
+                    return vm->str_tup;
+
+                case PYRO_OBJECT_ERR:
+                    return vm->str_err;
+
+                default:
+                    return vm->empty_string;
+            }
+        }
+
+        default:
+            return vm->empty_string;
+    }
+}

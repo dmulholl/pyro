@@ -1005,7 +1005,8 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
         return PYRO_IS_STR(result) ? PYRO_AS_STR(result) : pyro_stringify_value(vm, result);
     }
 
-    pyro_panic(vm, "%s: type does not support formatting", err_prefix);
+    PyroStr* type_name = pyro_get_type_name(vm, value);
+    pyro_panic(vm, "%s: type '%s' does not support formatting", err_prefix, type_name->bytes);
     return NULL;
 }
 

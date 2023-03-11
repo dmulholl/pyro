@@ -761,65 +761,8 @@ static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    switch (args[0].type) {
-        case PYRO_VALUE_BOOL:
-            return pyro_obj(vm->str_bool);
-        case PYRO_VALUE_NULL:
-            return pyro_obj(vm->str_null);
-        case PYRO_VALUE_I64:
-            return pyro_obj(vm->str_i64);
-        case PYRO_VALUE_F64:
-            return pyro_obj(vm->str_f64);
-        case PYRO_VALUE_CHAR:
-            return pyro_obj(vm->str_char);
-        case PYRO_VALUE_OBJ: {
-            switch (PYRO_AS_OBJ(args[0])->type) {
-                case PYRO_OBJECT_BOUND_METHOD:
-                    return pyro_obj(vm->str_method);
-                case PYRO_OBJECT_BUF:
-                    return pyro_obj(vm->str_buf);
-                case PYRO_OBJECT_CLASS:
-                    return pyro_obj(vm->str_class);
-                case PYRO_OBJECT_INSTANCE: {
-                    PyroStr* class_name = PYRO_AS_OBJ(args[0])->class->name;
-                    if (class_name) {
-                        return pyro_obj(class_name);
-                    }
-                    return pyro_obj(vm->str_instance);
-                }
-                case PYRO_OBJECT_CLOSURE:
-                case PYRO_OBJECT_FN:
-                case PYRO_OBJECT_NATIVE_FN:
-                    return pyro_obj(vm->str_func);
-                case PYRO_OBJECT_FILE:
-                    return pyro_obj(vm->str_file);
-                case PYRO_OBJECT_ITER:
-                    return pyro_obj(vm->str_iter);
-                case PYRO_OBJECT_MAP:
-                    return pyro_obj(vm->str_map);
-                case PYRO_OBJECT_MAP_AS_SET:
-                    return pyro_obj(vm->str_set);
-                case PYRO_OBJECT_VEC:
-                    return pyro_obj(vm->str_vec);
-                case PYRO_OBJECT_VEC_AS_STACK:
-                    return pyro_obj(vm->str_stack);
-                case PYRO_OBJECT_QUEUE:
-                    return pyro_obj(vm->str_queue);
-                case PYRO_OBJECT_STR:
-                    return pyro_obj(vm->str_str);
-                case PYRO_OBJECT_MODULE:
-                    return pyro_obj(vm->str_module);
-                case PYRO_OBJECT_TUP:
-                    return pyro_obj(vm->str_tup);
-                case PYRO_OBJECT_ERR:
-                    return pyro_obj(vm->str_err);
-                default:
-                    return pyro_obj(vm->empty_string);
-            }
-        }
-        default:
-            return pyro_obj(vm->empty_string);
-    }
+    PyroStr* type_name = pyro_get_type_name(vm, args[0]);
+    return pyro_obj(type_name);
 }
 
 
