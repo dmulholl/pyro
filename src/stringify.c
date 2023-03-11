@@ -783,20 +783,20 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
 }
 
 
-static PyroStr* format_i64(PyroVM* vm, PyroValue value, const char* format_string) {
+static PyroStr* format_i64(PyroVM* vm, PyroValue value, const char* format_specifier, const char* err_prefix) {
     char buffer[24] = {'%'};
     size_t buffer_count = 1;
 
-    size_t format_string_length = strlen(format_string);
-    if (format_string_length > 16) {
-        pyro_panic(vm, "format string is too long (max: 16)");
+    size_t format_specifier_length = strlen(format_specifier);
+    if (format_specifier_length > 16) {
+        pyro_panic(vm, "%s: invalid format specifier for type 'i64': too long (max: 16)", err_prefix);
         return NULL;
     }
 
-    memcpy(&buffer[1], format_string, format_string_length - 1);
-    buffer_count += format_string_length - 1;
+    memcpy(&buffer[1], format_specifier, format_specifier_length - 1);
+    buffer_count += format_specifier_length - 1;
 
-    switch (format_string[format_string_length - 1]) {
+    switch (format_specifier[format_specifier_length - 1]) {
         case 'd':
             memcpy(&buffer[buffer_count], PRId64, strlen(PRId64));
             return pyro_sprintf_to_obj(vm, buffer, value.as.i64);
@@ -814,26 +814,26 @@ static PyroStr* format_i64(PyroVM* vm, PyroValue value, const char* format_strin
             return pyro_sprintf_to_obj(vm, buffer, value.as.u64);
 
         default:
-            pyro_panic(vm, "format string '%s' is invalid for i64 value", format_string);
+            pyro_panic(vm, "%s: invalid format specifier for type 'i64': '%s'", err_prefix, format_specifier);
             return NULL;
     }
 }
 
 
-static PyroStr* format_char(PyroVM* vm, PyroValue value, const char* format_string) {
+static PyroStr* format_char(PyroVM* vm, PyroValue value, const char* format_specifier, const char* err_prefix) {
     char buffer[24] = {'%'};
     size_t buffer_count = 1;
 
-    size_t format_string_length = strlen(format_string);
-    if (format_string_length > 16) {
-        pyro_panic(vm, "format string is too long (max: 16)");
+    size_t format_specifier_length = strlen(format_specifier);
+    if (format_specifier_length > 16) {
+        pyro_panic(vm, "%s: invalid format specifier for type 'char': too long (max: 16)", err_prefix);
         return NULL;
     }
 
-    memcpy(&buffer[1], format_string, format_string_length - 1);
-    buffer_count += format_string_length - 1;
+    memcpy(&buffer[1], format_specifier, format_specifier_length - 1);
+    buffer_count += format_specifier_length - 1;
 
-    switch (format_string[format_string_length - 1]) {
+    switch (format_specifier[format_specifier_length - 1]) {
         case 'd':
             memcpy(&buffer[buffer_count], PRIu32, strlen(PRIu32));
             return pyro_sprintf_to_obj(vm, buffer, value.as.u32);
@@ -851,24 +851,24 @@ static PyroStr* format_char(PyroVM* vm, PyroValue value, const char* format_stri
             return pyro_sprintf_to_obj(vm, buffer, value.as.u32);
 
         default:
-            pyro_panic(vm, "format string '%s' is invalid for char value", format_string);
+            pyro_panic(vm, "%s: invalid format specifier for type 'char': '%s'", err_prefix, format_specifier);
             return NULL;
     }
 }
 
 
-static PyroStr* format_f64(PyroVM* vm, PyroValue value, const char* format_string) {
+static PyroStr* format_f64(PyroVM* vm, PyroValue value, const char* format_specifier, const char* err_prefix) {
     char buffer[24] = {'%'};
 
-    size_t format_string_length = strlen(format_string);
-    if (format_string_length > 16) {
-        pyro_panic(vm, "format string is too long (max: 16)");
+    size_t format_specifier_length = strlen(format_specifier);
+    if (format_specifier_length > 16) {
+        pyro_panic(vm, "%s: invalid format specifier for type 'f64': too long (max: 16)", err_prefix);
         return NULL;
     }
 
-    memcpy(&buffer[1], format_string, format_string_length);
+    memcpy(&buffer[1], format_specifier, format_specifier_length);
 
-    switch (format_string[format_string_length - 1]) {
+    switch (format_specifier[format_specifier_length - 1]) {
         case 'a':
         case 'A':
         case 'e':
@@ -880,19 +880,19 @@ static PyroStr* format_f64(PyroVM* vm, PyroValue value, const char* format_strin
             return pyro_sprintf_to_obj(vm, buffer, value.as.f64);
 
         default:
-            pyro_panic(vm, "format string '%s' is invalid for f64 value", format_string);
+            pyro_panic(vm, "%s: invalid format specifier for type 'f64': '%s'", err_prefix, format_specifier);
             return NULL;
     }
 }
 
 
-static PyroStr* format_pyro_string(PyroVM* vm, PyroStr* string, const char* format_specifier) {
-    char buffer[16] = {0};
+static PyroStr* format_str(PyroVM* vm, PyroStr* string, const char* format_specifier, const char* err_prefix) {
+    char buffer[24] = {0};
     size_t buffer_count = 0;
 
     size_t format_specifier_length = strlen(format_specifier);
-    if (format_specifier_length > 15) {
-        pyro_panic(vm, "format specifier is too long (max: 15)");
+    if (format_specifier_length > 16) {
+        pyro_panic(vm, "%s: invalid format specifier for type 'str': too long (max: 16)", err_prefix);
         return NULL;
     }
 
@@ -908,20 +908,20 @@ static PyroStr* format_pyro_string(PyroVM* vm, PyroStr* string, const char* form
         if (isdigit(format_specifier[index])) {
             buffer[buffer_count++] = format_specifier[index++];
         } else {
-            pyro_panic(vm, "invalid format specifier '%s'", format_specifier);
+            pyro_panic(vm, "%s: invalid format specifier for type 'str': '%s'", err_prefix, format_specifier);
             return NULL;
         }
     }
 
     if (buffer_count == 0) {
-        pyro_panic(vm, "invalid format specifier '%s'", format_specifier);
+        pyro_panic(vm, "%s: invalid format specifier for type 'str': '%s'", err_prefix, format_specifier);
         return NULL;
     }
 
     errno = 0;
     size_t target_length = (size_t)strtoll(buffer, NULL, 10);
     if (errno != 0) {
-        pyro_panic(vm, "integer value in format specifier is out of range");
+        pyro_panic(vm, "%s: invalid format specifier for type 'str': '%s'", err_prefix, format_specifier);
         return NULL;
     }
 
@@ -931,7 +931,7 @@ static PyroStr* format_pyro_string(PyroVM* vm, PyroStr* string, const char* form
 
     char* array = PYRO_ALLOCATE_ARRAY(vm, char, target_length + 1);
     if (!array) {
-        pyro_panic(vm, "out of memory");
+        pyro_panic(vm, "%s: out of memory", err_prefix);
         return NULL;
     }
     size_t array_index = 0;
@@ -957,7 +957,7 @@ static PyroStr* format_pyro_string(PyroVM* vm, PyroStr* string, const char* form
     PyroStr* result = PyroStr_take(array, target_length, target_length + 1, vm);
     if (!result) {
         PYRO_FREE_ARRAY(vm, char, array, target_length + 1);
-        pyro_panic(vm, "out of memory");
+        pyro_panic(vm, "%s: out of memory", err_prefix);
         return NULL;
     }
 
@@ -974,19 +974,19 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
     }
 
     if (PYRO_IS_I64(value)) {
-        return format_i64(vm, value, format_specifier);
+        return format_i64(vm, value, format_specifier, err_prefix);
     }
 
     if (PYRO_IS_F64(value)) {
-        return format_f64(vm, value, format_specifier);
+        return format_f64(vm, value, format_specifier, err_prefix);
     }
 
     if (PYRO_IS_CHAR(value)) {
-        return format_char(vm, value, format_specifier);
+        return format_char(vm, value, format_specifier, err_prefix);
     }
 
     if (PYRO_IS_STR(value)) {
-        return format_pyro_string(vm, PYRO_AS_STR(value), format_specifier);
+        return format_str(vm, PYRO_AS_STR(value), format_specifier, err_prefix);
     }
 
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_fmt);
@@ -1046,7 +1046,7 @@ PyroStr* pyro_format(
     }
 
     while (fs_index < fs_count) {
-        // The 2-byte check here is within-bounds as the string ends with an extra '\0'.
+        // This 2-byte check is always within-bounds as the string has an extra terminating '\0'.
         if (memcmp(&fs_bytes[fs_index], "\\{", 2) == 0) {
             if (!PyroBuf_append_byte(output, '{', vm)) {
                 pyro_panic(vm, "%s: out of memory", err_prefix);
