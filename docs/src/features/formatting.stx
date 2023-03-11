@@ -7,7 +7,7 @@ meta_title: Pyro &mdash; String Formatting
 ::: hr
 
 
-Use the `$fmt()` function to interpolate formatted values into a string:
+You can use the `$fmt()` function to interpolate formatted values into a string:
 
 [[ `$fmt(format_string: str, *args: any) -> str` ]]
 
@@ -19,16 +19,37 @@ A format string is a string containing `{}` placeholders, e.g.
     var foo = $fmt("{} and {}", 123, 456);
     assert foo == "123 and 456";
 
-    var bar == $fmt("{} and {}", "foo", "bar");
-    assert bar == "foo and bar";
+    var bar = $fmt("{} and {}", "abc", "def");
+    assert bar == "abc and def";
 
-(*) An empty placeholder `{}` is equivalent to calling `$str()` on the value.
-
-(*) A placeholder containing a single question mark `{?}` is equivalent to calling `$debug()` on the value.
-
-(*) Otherwise, the content of the placeholder is passed to the value's `:$fmt(format_specifier)` method.
+A placeholder can be empty, as above, or it can contain an optional index and/or a format specifier.
 
 Note that you can escape an opening brace `{` in a format string with a backslash, i.e. `\{`, to stop it being treated as a placeholder.
+
+
+
+### Indexes and Format Specifiers
+
+A placeholder can contain a zero-based index into the argument list, e.g.
+
+::: code pyro
+    assert $fmt("{1} and {0}", 123, 456) == "456 and 123";
+
+A placeholder can also contain a colon-prefixed format specifier, e.g.
+
+::: code pyro
+    assert $fmt("{:04d}", 123) == "0123";
+
+If you specify both, the index comes first, e.g.
+
+::: code pyro
+    assert $fmt("{0:04d}", 123) == "0123";
+
+(*) If you don't supply a format specifier, e.g. `{}`, this is equivalent to calling `$str()` on the value.
+
+(*) If the format specifier consists of a single question mark, e.g. `{:?}`, this is equivalent to calling `$debug()` on the value.
+
+(*) Otherwise, the format specifier is passed to the value's `:$fmt(format_specifier)` method if it exists.
 
 
 
@@ -37,10 +58,10 @@ Note that you can escape an opening brace `{` in a format string with a backslas
 You can use `printf`--style formatting specifiers to format `i64` values, e.g.
 
 ::: code pyro
-    assert $fmt("{d}", 123) == "123";
-    assert $fmt("{4d}", 123) == " 123";
-    assert $fmt("{04d}", 123) == "0123";
-    assert $fmt("{04x}", 123) == "007b";
+    assert $fmt("{:d}", 123) == "123";
+    assert $fmt("{:4d}", 123) == " 123";
+    assert $fmt("{:04d}", 123) == "0123";
+    assert $fmt("{:04x}", 123) == "007b";
 
 The set of valid letters for `i64` values is:
 
@@ -58,9 +79,9 @@ The set of valid letters for `i64` values is:
 You can use `printf`--style formatting specifiers to format `f64` values, e.g.
 
 ::: code pyro
-    assert $fmt("{.2f}", 1.23456) == "1.23";
-    assert $fmt("{5.2f}", 1.23456) == " 1.23";
-    assert $fmt("{05.2f}", 1.23456) == "01.23";
+    assert $fmt("{:.2f}", 1.23456) == "1.23";
+    assert $fmt("{:5.2f}", 1.23456) == " 1.23";
+    assert $fmt("{:05.2f}", 1.23456) == "01.23";
 
 The set of valid letters for `f64` values is:
 
@@ -80,10 +101,10 @@ The set of valid letters for `f64` values is:
 You can use `printf`--style formatting specifiers to format `char` values as unsigned 32-bit integers, e.g.
 
 ::: code pyro
-    assert $fmt("{d}", 'a') == "97";
-    assert $fmt("{4d}", 'a') == "  97";
-    assert $fmt("{x}", 'z') == "7a";
-    assert $fmt("{04x}", 'z') == "007a";
+    assert $fmt("{:d}", 'a') == "97";
+    assert $fmt("{:4d}", 'a') == "  97";
+    assert $fmt("{:x}", 'z') == "7a";
+    assert $fmt("{:04x}", 'z') == "007a";
 
 The set of valid letters for `char` values is:
 
@@ -106,8 +127,8 @@ Using an empty format specifier for a `char` is equivalent to calling `$str()` o
 You can use `printf`--style formatting specifiers to left- or right-pad string values, e.g.
 
 ::: code pyro
-    assert $fmt("{5}", "foo") == "  foo";
-    assert $fmt("{-5}", "foo") == "foo  ";
+    assert $fmt("{:5}", "foo") == "  foo";
+    assert $fmt("{:-5}", "foo") == "foo  ";
 
 A leading `-` specifies left-justification.
 
@@ -140,7 +161,7 @@ Calling `$str()` on an instance returns the output of its `:$str()` method, e.g.
     var object = Object();
     assert $str(object) == "<str>";
 
-An empty placeholder in a format string is equivalent to calling `$str()` on the value, e.g.
+An empty format specifier in a format string is equivalent to calling `$str()` on the value, e.g.
 
 ::: code pyro
     var object = Object();
@@ -152,17 +173,17 @@ Calling `$debug()` on an instance returns the output of its `:$debug()` method, 
     var object = Object();
     assert $debug(object) == "<debug>";
 
-A placeholder in a format string containing a single question mark is equivalent to calling `$debug()` on the value, e.g.
+A format specifier consisting of a single question mark is equivalent to calling `$debug()` on the value, e.g.
 
 ::: code pyro
     var object = Object();
-    assert $fmt("{?}", object) == "<debug>";
+    assert $fmt("{:?}", object) == "<debug>";
 
-If the placeholder contains a format specifier, it gets passed to the value's `:$fmt()` method, e.g.
+Otherwise, the format specifier gets passed to the value's `:$fmt()` method, e.g.
 
 ::: code pyro
     var object = Object();
-    assert $fmt("{xyz}", object) == "<xyz>";
+    assert $fmt("{:xyz}", object) == "<xyz>";
 
 
 
