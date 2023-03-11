@@ -1,9 +1,9 @@
 #ifndef pyro_operators_h
 #define pyro_operators_h
 
-// Returns [a] + [b]. Panics if the operation is not defined for the operand types.
-// This function can call into Pyro code and can set the panic or exit flags.
-PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue a, PyroValue b);
+// Returns [left] + [right]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic and/or exit flags.
+PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right);
 
 // Returns [a] - [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
