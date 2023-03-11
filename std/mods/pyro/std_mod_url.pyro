@@ -12,7 +12,7 @@ pub def url_encode(input: str) -> str {
 
     for byte in input:bytes() {
         if byte in url_reserved_bytes {
-            buf:write("%{02X}", byte);
+            buf:write("%{:02X}", byte);
         } else {
             buf:write_byte(byte);
         }
