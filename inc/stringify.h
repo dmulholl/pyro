@@ -36,7 +36,7 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value);
 // - This function can call into Pyro code which may set the panic and/or exit flags.
 // - The caller should check [vm->halt_flag] immediately on return.
 // - [format_specifier] must be non-NULL, non-zero-length, and NULL-terminated.
-PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_specifier);
+PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_specifier, const char* err_prefix);
 
 // Interpolates an array of values into a format string.
 // - This function provides the format-string backing for Pyro's $fmt(), $print(), etc, functions.

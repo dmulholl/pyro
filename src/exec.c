@@ -2354,7 +2354,13 @@ static void run(PyroVM* vm) {
                 PyroValue value = pyro_peek(vm, 1);
                 PyroValue format_string = pyro_peek(vm, 0);
 
-                PyroStr* string = pyro_format_value(vm, value, PYRO_AS_STR(format_string)->bytes);
+                PyroStr* string = pyro_format_value(
+                    vm,
+                    value,
+                    PYRO_AS_STR(format_string)->bytes,
+                    "formatting error"
+                );
+
                 if (vm->halt_flag) {
                     break;
                 }

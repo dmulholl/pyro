@@ -965,37 +965,23 @@ static PyroStr* format_pyro_string(PyroVM* vm, PyroStr* string, const char* form
 }
 
 
-PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_specifier) {
-    if (!format_specifier || strlen(format_specifier) == 0) {
-        pyro_panic(vm, "format specifier is empty");
-        return NULL;
-    }
+PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_specifier, const char* err_prefix) {
+    assert(format_specifier != NULL);
+    assert(strlen(format_specifier) > 0);
 
     if (strlen(format_specifier) == 1 && format_specifier[0] == '?') {
         return pyro_debugify_value(vm, value);
     }
 
     if (PYRO_IS_I64(value)) {
-        // Support for %-prefixed format-specifiers is temporary and unofficial.
-        if (format_specifier[0] == '%') {
-            return pyro_sprintf_to_obj(vm, format_specifier, value.as.i64);
-        }
         return format_i64(vm, value, format_specifier);
     }
 
     if (PYRO_IS_F64(value)) {
-        // Support for %-prefixed format-specifiers is temporary and unofficial.
-        if (format_specifier[0] == '%') {
-            return pyro_sprintf_to_obj(vm, format_specifier, value.as.f64);
-        }
         return format_f64(vm, value, format_specifier);
     }
 
     if (PYRO_IS_CHAR(value)) {
-        // Support for %-prefixed format-specifiers is temporary and unofficial.
-        if (format_specifier[0] == '%') {
-            return pyro_sprintf_to_obj(vm, format_specifier, value.as.u32);
-        }
         return format_char(vm, value, format_specifier);
     }
 
@@ -1007,7 +993,7 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
     if (!PYRO_IS_NULL(method)) {
         PyroStr* format_string_object = PyroStr_COPY(format_specifier);
         if (!format_string_object) {
-            pyro_panic(vm, "out of memory");
+            pyro_panic(vm, "%s: out of memory", err_prefix);
             return NULL;
         }
         pyro_push(vm, value);
@@ -1016,14 +1002,10 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
         if (vm->halt_flag) {
             return NULL;
         }
-        if (!PYRO_IS_STR(result)) {
-            pyro_panic(vm, "invalid return type for :$fmt(), expected a string");
-            return NULL;
-        }
-        return PYRO_AS_STR(result);
+        return PYRO_IS_STR(result) ? PYRO_AS_STR(result) : pyro_stringify_value(vm, result);
     }
 
-    pyro_panic(vm, "value does not support formatting: specifier '%s'", format_specifier);
+    pyro_panic(vm, "%s: type does not support formatting", err_prefix);
     return NULL;
 }
 
@@ -1141,7 +1123,7 @@ PyroStr* pyro_format(
         if (specifier_count == 0) {
             formatted_arg = pyro_stringify_value(vm, args[arg_index]);
         } else {
-            formatted_arg = pyro_format_value(vm, args[arg_index], specifier);
+            formatted_arg = pyro_format_value(vm, args[arg_index], specifier, err_prefix);
         }
         if (vm->halt_flag) {
             return NULL;
