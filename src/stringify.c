@@ -592,7 +592,7 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 // Stringifies a double, stripping trailing zeros.
 // - Panics and returns NULL if an error occurs.
 // - [precision] specifies the maximum number of decimal digits after the decimal point.
-static PyroStr* pyro_stringify_f64(PyroVM* vm, double value, size_t precision) {
+static PyroStr* stringify_f64(PyroVM* vm, double value, size_t precision) {
     char* array = pyro_sprintf(vm, "%.*f", precision, value);
     if (vm->halt_flag) {
         return NULL;
@@ -700,7 +700,7 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
             return pyro_sprintf_to_obj(vm, "%" PRId64, value.as.i64);
 
         case PYRO_VALUE_F64:
-            return pyro_stringify_f64(vm, value.as.f64, 6);
+            return stringify_f64(vm, value.as.f64, 6);
 
         case PYRO_VALUE_CHAR: {
             char buffer[4];
@@ -776,7 +776,7 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     if (PYRO_IS_F64(value)) {
         // 17 is the minimum number of significant digits that guarantees that any two distinct
         // IEEE-754 64-bit floats will have distinct representations when converted to decimal.
-        return pyro_stringify_f64(vm, value.as.f64, 17);
+        return stringify_f64(vm, value.as.f64, 17);
     }
 
     return pyro_stringify_value(vm, value);
