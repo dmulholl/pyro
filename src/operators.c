@@ -6,6 +6,8 @@
 /* ------------------ */
 
 
+// Returns [left] + [right]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic and/or exit flags.
 PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
     switch (left.type) {
         case PYRO_VALUE_I64: {
@@ -17,8 +19,8 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
                 default:
                     break;
             }
+            break;
         }
-        break;
 
         case PYRO_VALUE_F64: {
             switch (right.type) {
@@ -29,8 +31,8 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
                 default:
                     break;
             }
+            break;
         }
-        break;
 
         case PYRO_VALUE_CHAR: {
             if (PYRO_IS_CHAR(right)) {
@@ -49,8 +51,8 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
                 }
                 return pyro_obj(result);
             }
+            break;
         }
-        break;
 
         case PYRO_VALUE_OBJ: {
             if (PYRO_IS_STR(left)) {
@@ -71,8 +73,8 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
                     return pyro_obj(result);
                 }
             }
+            break;
         }
-        break;
 
         default:
             break;
@@ -95,47 +97,52 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
 }
 
 
-// Returns [a] - [b]. Panics if the operation is not defined for the operand types.
+// Returns [left] - [right]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-PyroValue pyro_op_binary_minus(PyroVM* vm, PyroValue a, PyroValue b) {
-    switch (a.type) {
+PyroValue pyro_op_binary_minus(PyroVM* vm, PyroValue left, PyroValue right) {
+    switch (left.type) {
         case PYRO_VALUE_I64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    return pyro_i64(a.as.i64 - b.as.i64);
+                    return pyro_i64(left.as.i64 - right.as.i64);
                 case PYRO_VALUE_F64:
-                    return pyro_f64((double)a.as.i64 - b.as.f64);
+                    return pyro_f64((double)left.as.i64 - right.as.f64);
                 default:
-                    pyro_panic(vm, "invalid operand types to '-'");
-                    return pyro_null();
+                    break;
             }
+            break;
         }
 
         case PYRO_VALUE_F64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    return pyro_f64(a.as.f64 - (double)b.as.i64);
+                    return pyro_f64(left.as.f64 - (double)right.as.i64);
                 case PYRO_VALUE_F64:
-                    return pyro_f64(a.as.f64 - b.as.f64);
+                    return pyro_f64(left.as.f64 - right.as.f64);
                 default:
-                    pyro_panic(vm, "invalid operand types to '-'");
-                    return pyro_null();
+                    break;
             }
+            break;
         }
 
-        default: {
-            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_minus);
-            if (!PYRO_IS_NULL(method)) {
-                pyro_push(vm, a);
-                pyro_push(vm, b);
-                PyroValue result = pyro_call_method(vm, method, 1);
-                return result;
-            } else {
-                pyro_panic(vm, "invalid operand types to '-'");
-                return pyro_null();
-            }
-        }
+        default:
+            break;
     }
+
+    PyroValue method = pyro_get_method(vm, left, vm->str_op_binary_minus);
+    if (!PYRO_IS_NULL(method)) {
+        pyro_push(vm, left);
+        pyro_push(vm, right);
+        return pyro_call_method(vm, method, 1);
+    }
+
+    pyro_panic(vm,
+        "invalid operand types for '-' operator: '%s' and '%s'",
+        pyro_get_type_name(vm, left)->bytes,
+        pyro_get_type_name(vm, right)->bytes
+    );
+
+    return pyro_null();
 }
 
 
