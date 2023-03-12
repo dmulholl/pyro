@@ -758,88 +758,113 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
 }
 
 
-// Returns true if [a] == [b].
+// Returns true if [left] == [right].
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_compare_eq(PyroVM* vm, PyroValue a, PyroValue b) {
-    switch (a.type) {
+bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
+    switch (left.type) {
         case PYRO_VALUE_I64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    return a.as.i64 == b.as.i64;
+                    return left.as.i64 == right.as.i64;
                 case PYRO_VALUE_F64:
-                    return pyro_compare_int_and_float(a.as.i64, b.as.f64) == 0;
+                    return pyro_compare_int_and_float(left.as.i64, right.as.f64) == 0;
                 case PYRO_VALUE_CHAR:
-                    return a.as.i64 == (int64_t)b.as.u32;
+                    return left.as.i64 == (int64_t)right.as.u32;
                 default:
-                    return false;
+                    break;
             }
             break;
         }
 
         case PYRO_VALUE_CHAR: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    return (int64_t)a.as.u32 == b.as.i64;
+                    return (int64_t)left.as.u32 == right.as.i64;
                 case PYRO_VALUE_F64:
-                    return pyro_compare_int_and_float((int64_t)a.as.u32, b.as.f64) == 0;
+                    return pyro_compare_int_and_float((int64_t)left.as.u32, right.as.f64) == 0;
                 case PYRO_VALUE_CHAR:
-                    return a.as.u32 == b.as.u32;
+                    return left.as.u32 == right.as.u32;
                 default:
-                    return false;
+                    break;
             }
             break;
         }
 
         case PYRO_VALUE_F64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    return pyro_compare_int_and_float(b.as.i64, a.as.f64) == 0;
+                    return pyro_compare_int_and_float(right.as.i64, left.as.f64) == 0;
                 case PYRO_VALUE_F64:
-                    return a.as.f64 == b.as.f64;
+                    return left.as.f64 == right.as.f64;
                 case PYRO_VALUE_CHAR:
-                    return pyro_compare_int_and_float((int64_t)b.as.u32, a.as.f64) == 0;
+                    return pyro_compare_int_and_float((int64_t)right.as.u32, left.as.f64) == 0;
                 default:
-                    return false;
+                    break;
             }
             break;
         }
 
-        case PYRO_VALUE_OBJ: {
-            switch (PYRO_AS_OBJ(a)->type) {
-                case PYRO_OBJECT_STR:
-                    return a.as.obj == b.as.obj;
-
-                case PYRO_OBJECT_TUP:
-                    return PYRO_IS_TUP(b) && PyroTup_check_equal(PYRO_AS_TUP(a), PYRO_AS_TUP(b), vm);
-
-                default: {
-                    PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_equals_equals);
-                    if (!PYRO_IS_NULL(method)) {
-                        pyro_push(vm, a);
-                        pyro_push(vm, b);
-                        PyroValue result = pyro_call_method(vm, method, 1);
-                        if (vm->halt_flag) {
-                            return false;
-                        }
-                        return pyro_is_truthy(result);
-                    }
-                    return a.as.obj == b.as.obj;
-                }
+        case PYRO_VALUE_BOOL: {
+            if (PYRO_IS_BOOL(right)) {
+                return left.as.boolean == right.as.boolean;
             }
+            break;
         }
 
-        case PYRO_VALUE_BOOL:
-            return PYRO_IS_BOOL(b) && a.as.boolean == b.as.boolean;
+        case PYRO_VALUE_NULL: {
+            if (PYRO_IS_NULL(right)) {
+                return true;
+            }
+            break;
+        }
 
-        case PYRO_VALUE_NULL:
-            return PYRO_IS_NULL(b);
+        case PYRO_VALUE_TOMBSTONE: {
+            return PYRO_IS_TOMBSTONE(right);
+        }
 
-        case PYRO_VALUE_TOMBSTONE:
-            return PYRO_IS_TOMBSTONE(b);
+        case PYRO_VALUE_OBJ: {
+            if (PYRO_IS_STR(left) && PYRO_IS_STR(right)) {
+                return left.as.obj == right.as.obj;
+            }
 
-        default:
-            return false;
+            if (PYRO_IS_TUP(left) && PYRO_IS_TUP(right)) {
+                return PyroTup_check_equal(PYRO_AS_TUP(left), PYRO_AS_TUP(right), vm);
+            }
+
+            PyroValue method = pyro_get_method(vm, left, vm->str_op_binary_equals_equals);
+            if (!PYRO_IS_NULL(method)) {
+                pyro_push(vm, left);
+                pyro_push(vm, right);
+                PyroValue result = pyro_call_method(vm, method, 1);
+                if (vm->halt_flag) {
+                    return false;
+                }
+                return pyro_is_truthy(result);
+            }
+
+            break;
+        }
     }
+
+    if (PYRO_IS_OBJ(right)) {
+        PyroValue method = pyro_get_method(vm, right, vm->str_op_binary_equals_equals);
+
+        if (!PYRO_IS_NULL(method)) {
+            pyro_push(vm, right);
+            pyro_push(vm, left);
+            PyroValue result = pyro_call_method(vm, method, 1);
+            if (vm->halt_flag) {
+                return false;
+            }
+            return pyro_is_truthy(result);
+        }
+
+        if (PYRO_IS_OBJ(left)) {
+            return left.as.obj == right.as.obj;
+        }
+    }
+
+    return false;
 }
 
 

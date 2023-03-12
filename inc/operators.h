@@ -49,9 +49,9 @@ PyroValue pyro_op_unary_plus(PyroVM* vm, PyroValue operand);
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_unary_minus(PyroVM* vm, PyroValue operand);
 
-// Returns true if [a] == [b].
+// Returns true if [left] == [right].
 // This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_compare_eq(PyroVM* vm, PyroValue a, PyroValue b);
+bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right);
 
 // Returns true if [a] < [b]. Panics if the values are not comparable.
 // This function can call into Pyro code and can set the panic or exit flags.

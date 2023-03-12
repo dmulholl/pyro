@@ -327,7 +327,7 @@ You can implement the `$`-prefixed methods listed below to overload operators or
 
 [[ `:$op_binary_equals_equals(other: any) -> bool` ]]
 
-    Implementing this method overloads the binary `==` operator for expressions of the form `receiver == other`.
+    Implementing this method overloads the binary `==` operator for expressions of the form `receiver == other` and `other == receiver`.
     (The `!=` operator automatically returns the logical inverse of `==` and cannot be separately overloaded.)
 
     If you overload this operator and you want to use your overloaded type as a key in [hash maps][2] or as a member in [sets][3] you should also overload the `:$hash()` method to ensure that instances that compare as equal also have the same hash value.

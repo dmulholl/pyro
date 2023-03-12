@@ -5,6 +5,13 @@ class Object {
         self.value = value;
     }
 
+    def $op_binary_equals_equals(other) {
+        if $is_instance_of(other, Object) {
+            return self.value == other.value;
+        }
+        return self.value == other;
+    }
+
     def $op_binary_plus(other) {
         return Object(self.value + other);
     }
@@ -30,11 +37,16 @@ class Object {
     }
 }
 
-var object;
-
-object = Object(0);
+var object = Object(0);
 assert object.value == 0;
 
+# Comparisons.
+assert Object(0) == Object(0);
+assert Object(99) == Object(99);
+assert Object(5) == 5;
+assert 5 == Object(5);
+
+# Arithmetic.
 object = Object(0) + 5;
 assert object.value == 5;
 
