@@ -17,7 +17,7 @@ class Object {
     }
 
     def $rop_binary_plus(other) {
-        return Object(self.value + other);
+        return Object(other + self.value);
     }
 
     def $op_binary_minus(other) {
@@ -33,7 +33,7 @@ class Object {
     }
 
     def $rop_binary_star(other) {
-        return Object(self.value * other);
+        return Object(other * self.value);
     }
 
     def $op_unary_minus() {
@@ -44,13 +44,18 @@ class Object {
 var object = Object(0);
 assert object.value == 0;
 
-# Comparisons.
+# Equality.
 assert Object(0) == Object(0);
-assert Object(99) == Object(99);
-assert Object(5) == 5;
-assert 5 == Object(5);
+assert Object(1) == Object(1);
+assert Object(0) != Object(1);
 
-# Arithmetic.
+assert Object(1) == 1;
+assert 1 == Object(1);
+
+assert Object(0) != 1;
+assert 1 != Object(0);
+
+# Binary arithmetic.
 object = Object(0) + 5;
 assert object.value == 5;
 
@@ -69,5 +74,6 @@ assert object.value == 50;
 object = 5 * Object(10);
 assert object.value == 50;
 
+# Unary arithmetic.
 object = -Object(5);
 assert object.value == -5;
