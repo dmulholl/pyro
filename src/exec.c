@@ -1659,7 +1659,10 @@ static void run(PyroVM* vm) {
 
                 PyroValue method = pyro_get_method(vm, right, vm->str_dollar_contains);
                 if (PYRO_IS_NULL(method)) {
-                    pyro_panic(vm, "invalid operand for 'in': no $contains() method");
+                    pyro_panic(vm,
+                        "invalid operand type for 'in' operator: '%s' has no $contains() method",
+                        pyro_get_type_name(vm, right)->bytes
+                    );
                     break;
                 }
 
