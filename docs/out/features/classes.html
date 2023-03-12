@@ -474,7 +474,7 @@ See the documentation on <a href="../features/iterators.html">iterators</a> for 
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>&amp;</code> operator for expressions of the form <code>receiver &amp; other</code>.
+Implementing this method overloads the binary <code>&amp;</code> operator for expressions of the form <code>receiver &amp; other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -484,7 +484,7 @@ Implementing this method overloads the binary <code>&amp;</code> operator for ex
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>|</code> operator for expressions of the form <code>receiver | other</code>.
+Implementing this method overloads the binary <code>|</code> operator for expressions of the form <code>receiver | other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -494,7 +494,7 @@ Implementing this method overloads the binary <code>|</code> operator for expres
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>^</code> operator for expressions of the form <code>receiver ^ other</code>.
+Implementing this method overloads the binary <code>^</code> operator for expressions of the form <code>receiver ^ other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -505,7 +505,12 @@ Implementing this method overloads the binary <code>^</code> operator for expres
 <dd>
 <p>
 Implementing this method overloads the binary <code>==</code> operator for expressions of the form <code>receiver == other</code> and <code>other == receiver</code>.
-(The <code>!=</code> operator automatically returns the logical inverse of <code>==</code> and cannot be separately overloaded.)
+</p>
+<p>
+If both <code>receiver</code> and <code>other</code> have <code>:$op_binary_equals_equals()</code> methods, the method for the value on the left of the expression will be used.
+</p>
+<p>
+The <code>!=</code> operator automatically returns the logical inverse of <code>==</code> and cannot be separately overloaded.
 </p>
 <p>
 If you overload this operator and you want to use your overloaded type as a key in <a href="../builtins/maps.html">hash maps</a> or as a member in <a href="../builtins/sets.html">sets</a> you should also overload the <code>:$hash()</code> method to ensure that instances that compare as equal also have the same hash value.
@@ -518,7 +523,7 @@ If you overload this operator and you want to use your overloaded type as a key 
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>&gt;</code> operator for expressions of the form <code>receiver &gt; other</code>.
+Implementing this method overloads the binary <code>&gt;</code> operator for expressions of the form <code>receiver &gt; other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -528,7 +533,7 @@ Implementing this method overloads the binary <code>&gt;</code> operator for exp
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>&gt;=</code> operator for expressions of the form <code>receiver &gt;= other</code>.
+Implementing this method overloads the binary <code>&gt;=</code> operator for expressions of the form <code>receiver &gt;= other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -538,7 +543,7 @@ Implementing this method overloads the binary <code>&gt;=</code> operator for ex
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>&lt;</code> operator for expressions of the form <code>receiver &lt; other</code>.
+Implementing this method overloads the binary <code>&lt;</code> operator for expressions of the form <code>receiver &lt; other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -548,7 +553,7 @@ Implementing this method overloads the binary <code>&lt;</code> operator for exp
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>&lt;=</code> operator for expressions of the form <code>receiver &lt;= other</code>.
+Implementing this method overloads the binary <code>&lt;=</code> operator for expressions of the form <code>receiver &lt;= other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -558,7 +563,7 @@ Implementing this method overloads the binary <code>&lt;=</code> operator for ex
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>-</code> operator for expressions of the form <code>receiver - other</code>.
+Implementing this method overloads the binary <code>-</code> operator for expressions of the form <code>receiver - other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -568,7 +573,7 @@ Implementing this method overloads the binary <code>-</code> operator for expres
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>%</code> operator for expressions of the form <code>receiver % other</code>.
+Implementing this method overloads the binary <code>%</code> operator for expressions of the form <code>receiver % other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -578,7 +583,7 @@ Implementing this method overloads the binary <code>%</code> operator for expres
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>+</code> operator for expressions of the form <code>receiver + other</code>.
+Implementing this method overloads the binary <code>+</code> operator for expressions of the form <code>receiver + other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -588,7 +593,7 @@ Implementing this method overloads the binary <code>+</code> operator for expres
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>/</code> operator for expressions of the form <code>receiver / other</code>.
+Implementing this method overloads the binary <code>/</code> operator for expressions of the form <code>receiver / other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -598,7 +603,7 @@ Implementing this method overloads the binary <code>/</code> operator for expres
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>//</code> operator for expressions of the form <code>receiver // other</code>.
+Implementing this method overloads the binary <code>//</code> operator for expressions of the form <code>receiver // other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -608,7 +613,7 @@ Implementing this method overloads the binary <code>//</code> operator for expre
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>*</code> operator for expressions of the form <code>receiver * other</code>.
+Implementing this method overloads the binary <code>*</code> operator for expressions of the form <code>receiver * other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>
@@ -618,7 +623,7 @@ Implementing this method overloads the binary <code>*</code> operator for expres
 </dt>
 <dd>
 <p>
-Implementing this method overloads the binary <code>**</code> operator for expressions of the form <code>receiver ** other</code>.
+Implementing this method overloads the binary <code>**</code> operator for expressions of the form <code>receiver ** other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
 </dd>
 </div>

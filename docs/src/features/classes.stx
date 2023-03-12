@@ -312,80 +312,83 @@ You can implement the `$`-prefixed methods listed below to overload operators or
 
 [[ `:$op_binary_amp(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `&` operator for expressions of the form `receiver & other`.
+    Implementing this method overloads the binary `&` operator for expressions of the form `receiver & other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_bar(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `|` operator for expressions of the form `receiver | other`.
+    Implementing this method overloads the binary `|` operator for expressions of the form `receiver | other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_caret(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `^` operator for expressions of the form `receiver ^ other`.
+    Implementing this method overloads the binary `^` operator for expressions of the form `receiver ^ other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_equals_equals(other: any) -> bool` ]]
 
     Implementing this method overloads the binary `==` operator for expressions of the form `receiver == other` and `other == receiver`.
-    (The `!=` operator automatically returns the logical inverse of `==` and cannot be separately overloaded.)
+
+    If both `receiver` and `other` have `:$op_binary_equals_equals()` methods, the method for the value on the left of the expression will be used.
+
+    The `!=` operator automatically returns the logical inverse of `==` and cannot be separately overloaded.
 
     If you overload this operator and you want to use your overloaded type as a key in [hash maps][2] or as a member in [sets][3] you should also overload the `:$hash()` method to ensure that instances that compare as equal also have the same hash value.
 
 
 [[ `:$op_binary_greater(other: any) -> bool` ]]
 
-    Implementing this method overloads the binary `>` operator for expressions of the form `receiver > other`.
+    Implementing this method overloads the binary `>` operator for expressions of the form `receiver > other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_greater_equals(other: any) -> bool` ]]
 
-    Implementing this method overloads the binary `>=` operator for expressions of the form `receiver >= other`.
+    Implementing this method overloads the binary `>=` operator for expressions of the form `receiver >= other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_less(other: any) -> bool` ]]
 
-    Implementing this method overloads the binary `<` operator for expressions of the form `receiver < other`.
+    Implementing this method overloads the binary `<` operator for expressions of the form `receiver < other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_less_equals(other: any) -> bool` ]]
 
-    Implementing this method overloads the binary `<=` operator for expressions of the form `receiver <= other`.
+    Implementing this method overloads the binary `<=` operator for expressions of the form `receiver <= other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_minus(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `-` operator for expressions of the form `receiver - other`.
+    Implementing this method overloads the binary `-` operator for expressions of the form `receiver - other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_percent(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `%` operator for expressions of the form `receiver % other`.
+    Implementing this method overloads the binary `%` operator for expressions of the form `receiver % other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_plus(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `+` operator for expressions of the form `receiver + other`.
+    Implementing this method overloads the binary `+` operator for expressions of the form `receiver + other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_slash(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `/` operator for expressions of the form `receiver / other`.
+    Implementing this method overloads the binary `/` operator for expressions of the form `receiver / other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_slash_slash(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `//` operator for expressions of the form `receiver // other`.
+    Implementing this method overloads the binary `//` operator for expressions of the form `receiver // other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_star(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `*` operator for expressions of the form `receiver * other`.
+    Implementing this method overloads the binary `*` operator for expressions of the form `receiver * other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_binary_star_star(other: any) -> any` ]]
 
-    Implementing this method overloads the binary `**` operator for expressions of the form `receiver ** other`.
+    Implementing this method overloads the binary `**` operator for expressions of the form `receiver ** other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
 
 [[ `:$op_unary_minus() -> any` ]]
