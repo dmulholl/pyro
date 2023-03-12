@@ -7,21 +7,34 @@ class Complex {
         self.im = im;
     }
 
-    def $op_binary_plus(other) {
-        assert $is_instance_of(other, Complex);
-        return Complex(self.re + other.re, self.im + other.im);
+    def $op_binary_equals_equals(other) {
+        if $is_instance_of(other, Complex) {
+            return self.re == other.re && self.im == other.im;
+        }
+        return false;
     }
 
-    def $op_binary_minus(other) {
-        assert $is_instance_of(other, Complex);
-        return Complex(self.re - other.re, self.im - other.im);
+    def $op_binary_plus(other) {
+        if $is_instance_of(other, Complex) {
+            return Complex(self.re + other.re, self.im + other.im);
+        }
+        $panic("invalid operation");
     }
 
     def $op_binary_star(other) {
-        assert $is_instance_of(other, Complex);
-        var re = self.re * other.re - self.im * other.im;
-        var im = self.re * other.im + self.im * other.re;
-        return Complex(re, im);
+        if $is_instance_of(other, Complex) {
+            var re = self.re * other.re - self.im * other.im;
+            var im = self.re * other.im + self.im * other.re;
+            return Complex(re, im);
+        }
+        if $is_i64(other) || $is_f64(other) {
+            return Complex(self.re * other, self.im * other);
+        }
+        $panic("invalid operation");
+    }
+
+    def $rop_binary_star(other) {
+        return self:$op_binary_star(other);
     }
 
     def $op_unary_minus() {
@@ -29,22 +42,26 @@ class Complex {
     }
 }
 
+assert Complex(1, 2) == Complex(1, 2);
+assert Complex(1, 2) != Complex(1, 3);
+assert Complex(1, 2) != 123;
 
-var foo = Complex(1, 2) + Complex(3, 4);
-assert foo.re == 1 + 3;
-assert foo.im == 2 + 4;
+var c1 = Complex(1, 2) + Complex(3, 4);
+assert c1.re == 1 + 3;
+assert c1.im == 2 + 4;
 
+var c2 = Complex(1, 2) * Complex(3, 4);
+assert c2.re == -5;
+assert c2.im == 10;
 
-var bar = Complex(1, 2) - Complex(3, 4);
-assert bar.re == 1 - 3;
-assert bar.im == 2 - 4;
+var c3 = -Complex(1, 2);
+assert c3.re == -1;
+assert c3.im == -2;
 
+var c4 = Complex(1, 2) * 2;
+assert c4.re == 2;
+assert c4.im == 4;
 
-var baz = Complex(1, 2) * Complex(3, 4);
-assert baz.re == -5;
-assert baz.im == 10;
-
-
-var bam = -Complex(1, 2);
-assert bam.re == -1;
-assert bam.im == -2;
+var c5 = 2 * Complex(1, 2);
+assert c4.re == 2;
+assert c4.im == 4;
