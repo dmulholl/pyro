@@ -622,27 +622,22 @@ PyroValue pyro_op_unary_minus(PyroVM* vm, PyroValue operand) {
         case PYRO_VALUE_F64:
             return pyro_f64(-operand.as.f64);
 
-        case PYRO_VALUE_OBJ: {
-            if (PYRO_IS_INSTANCE(operand)) {
-                PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_minus);
-                if (!PYRO_IS_NULL(method)) {
-                    pyro_push(vm, operand);
-                    PyroValue result = pyro_call_method(vm, method, 0);
-                    return result;
-                } else {
-                    pyro_panic(vm, "invalid operand type for unary '-'");
-                    return pyro_null();
-                }
-            } else {
-                pyro_panic(vm, "invalid operand type for unary '-'");
-                return pyro_null();
-            }
-        }
-
         default:
-            pyro_panic(vm, "invalid operand type for unary '-'");
-            return pyro_null();
+            break;
     }
+
+    PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_minus);
+    if (!PYRO_IS_NULL(method)) {
+        pyro_push(vm, operand);
+        return pyro_call_method(vm, method, 0);
+    }
+
+    pyro_panic(vm,
+        "invalid operand type for unary '-' operator: '%s'",
+        pyro_get_type_name(vm, operand)->bytes
+    );
+
+    return pyro_null();
 }
 
 
