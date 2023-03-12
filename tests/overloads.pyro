@@ -36,6 +36,14 @@ class Object {
         return Object(other * self.value);
     }
 
+    def $op_binary_slash(other) {
+        return Object(self.value / other);
+    }
+
+    def $rop_binary_slash(other) {
+        return Object(other / self.value);
+    }
+
     def $op_unary_minus() {
         return Object(-self.value);
     }
@@ -73,6 +81,12 @@ assert object.value == 50;
 
 object = 5 * Object(10);
 assert object.value == 50;
+
+object = Object(5) / 2;
+assert object.value == 5 / 2;
+
+object = 5 / Object(2);
+assert object.value == 5 / 2;
 
 # Unary arithmetic.
 object = -Object(5);

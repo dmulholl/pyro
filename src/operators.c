@@ -240,67 +240,75 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
 }
 
 
-// Returns [a] / [b]. Panics if the operation is not defined for the operand types.
+// Returns [left] / [right]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-PyroValue pyro_op_binary_slash(PyroVM* vm, PyroValue a, PyroValue b) {
-    switch (a.type) {
+PyroValue pyro_op_binary_slash(PyroVM* vm, PyroValue left, PyroValue right) {
+    switch (left.type) {
         case PYRO_VALUE_I64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    if (b.as.i64 == 0) {
+                    if (right.as.i64 == 0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
-                    } else {
-                        return pyro_f64((double)a.as.i64 / (double)b.as.i64);
                     }
+                    return pyro_f64((double)left.as.i64 / (double)right.as.i64);
                 case PYRO_VALUE_F64:
-                    if (b.as.f64 == 0.0) {
+                    if (right.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
-                    } else {
-                        return pyro_f64((double)a.as.i64 / b.as.f64);
                     }
+                    return pyro_f64((double)left.as.i64 / right.as.f64);
                 default:
-                    pyro_panic(vm, "invalid operand types to '/'");
-                    return pyro_null();
+                    break;
             }
+            break;
         }
 
         case PYRO_VALUE_F64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    if (b.as.i64 == 0) {
+                    if (right.as.i64 == 0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
-                    } else {
-                        return pyro_f64(a.as.f64 / (double)b.as.i64);
                     }
+                    return pyro_f64(left.as.f64 / (double)right.as.i64);
                 case PYRO_VALUE_F64:
-                    if (b.as.f64 == 0.0) {
+                    if (right.as.f64 == 0.0) {
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
-                    } else {
-                        return pyro_f64(a.as.f64 / b.as.f64);
                     }
+                    return pyro_f64(left.as.f64 / right.as.f64);
                 default:
-                    pyro_panic(vm, "invalid operand types to '/'");
-                    return pyro_null();
+                    break;
             }
+            break;
         }
 
-        default: {
-            PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_slash);
-            if (!PYRO_IS_NULL(method)) {
-                pyro_push(vm, a);
-                pyro_push(vm, b);
-                PyroValue result = pyro_call_method(vm, method, 1);
-                return result;
-            } else {
-                pyro_panic(vm, "invalid operand types to '/'");
-                return pyro_null();
-            }
-        }
+        default:
+            break;
     }
+
+    PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_slash);
+    if (!PYRO_IS_NULL(left_method)) {
+        pyro_push(vm, left);
+        pyro_push(vm, right);
+        return pyro_call_method(vm, left_method, 1);
+    }
+
+    PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_slash);
+    if (!PYRO_IS_NULL(right_method)) {
+        pyro_push(vm, right);
+        pyro_push(vm, left);
+        return pyro_call_method(vm, right_method, 1);
+    }
+
+    pyro_panic(vm,
+        "invalid operand types for '/' operator: '%s' and '%s'",
+        pyro_get_type_name(vm, left)->bytes,
+        pyro_get_type_name(vm, right)->bytes
+    );
+
+    return pyro_null();
 }
 
 

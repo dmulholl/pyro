@@ -132,6 +132,7 @@ struct PyroVM {
     PyroStr* str_op_binary_star;
     PyroStr* str_rop_binary_star;
     PyroStr* str_op_binary_slash;
+    PyroStr* str_rop_binary_slash;
     PyroStr* str_op_binary_caret;
     PyroStr* str_op_binary_percent;
     PyroStr* str_op_binary_star_star;
