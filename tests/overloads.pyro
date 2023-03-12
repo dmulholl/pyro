@@ -32,6 +32,10 @@ class Object {
         return Object(self.value * other);
     }
 
+    def $rop_binary_star(other) {
+        return Object(self.value * other);
+    }
+
     def $op_unary_minus() {
         return Object(-self.value);
     }
@@ -60,6 +64,9 @@ object = 5 - Object(1);
 assert object.value == 4;
 
 object = Object(10) * 5;
+assert object.value == 50;
+
+object = 5 * Object(10);
 assert object.value == 50;
 
 object = -Object(5);

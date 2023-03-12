@@ -1654,9 +1654,23 @@ static void run(PyroVM* vm) {
             }
 
             case PYRO_OPCODE_BINARY_IN: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(pyro_op_in(vm, a, b)));
+                PyroValue right = pyro_pop(vm);
+                PyroValue left = pyro_pop(vm);
+
+                PyroValue method = pyro_get_method(vm, right, vm->str_dollar_contains);
+                if (PYRO_IS_NULL(method)) {
+                    pyro_panic(vm, "invalid operand for 'in': no $contains() method");
+                    break;
+                }
+
+                pyro_push(vm, right);
+                pyro_push(vm, left);
+                PyroValue result = pyro_call_method(vm, method, 1);
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                pyro_push(vm, pyro_bool(pyro_is_truthy(result)));
                 break;
             }
 

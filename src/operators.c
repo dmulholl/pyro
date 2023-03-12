@@ -160,83 +160,83 @@ PyroValue pyro_op_binary_minus(PyroVM* vm, PyroValue left, PyroValue right) {
 }
 
 
-// Returns [a] * [b]. Panics if the operation is not defined for the operand types.
+// Returns [left] * [right]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue a, PyroValue b) {
-    switch (a.type) {
+PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
+    switch (left.type) {
         case PYRO_VALUE_I64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    return pyro_i64(a.as.i64 * b.as.i64);
+                    return pyro_i64(left.as.i64 * right.as.i64);
                 case PYRO_VALUE_F64:
-                    return pyro_f64((double)a.as.i64 * b.as.f64);
+                    return pyro_f64((double)left.as.i64 * right.as.f64);
                 default:
-                    pyro_panic(vm, "invalid operand types to '*'");
-                    return pyro_null();
+                    break;
             }
+            break;
         }
 
         case PYRO_VALUE_F64: {
-            switch (b.type) {
+            switch (right.type) {
                 case PYRO_VALUE_I64:
-                    return pyro_f64(a.as.f64 * (double)b.as.i64);
+                    return pyro_f64(left.as.f64 * (double)right.as.i64);
                 case PYRO_VALUE_F64:
-                    return pyro_f64(a.as.f64 * b.as.f64);
+                    return pyro_f64(left.as.f64 * right.as.f64);
                 default:
-                    pyro_panic(vm, "invalid operand types to '*'");
-                    return pyro_null();
+                    break;
             }
-        }
-
-        case PYRO_VALUE_OBJ: {
-            if (PYRO_IS_STR(a)) {
-                if (PYRO_IS_I64(b) && b.as.i64 >= 0) {
-                    PyroStr* result = PyroStr_concat_n_copies(PYRO_AS_STR(a), b.as.i64, vm);
-                    if (!result) {
-                        pyro_panic(vm, "out of memory");
-                        return pyro_null();
-                    }
-                    return pyro_obj(result);
-                } else {
-                    pyro_panic(vm, "invalid operand types to '*'");
-                    return pyro_null();
-                }
-            } else if (PYRO_IS_INSTANCE(a)) {
-                PyroValue method = pyro_get_method(vm, a, vm->str_op_binary_star);
-                if (!PYRO_IS_NULL(method)) {
-                    pyro_push(vm, a);
-                    pyro_push(vm, b);
-                    PyroValue result = pyro_call_method(vm, method, 1);
-                    return result;
-                } else {
-                    pyro_panic(vm, "invalid operand types to '*'");
-                    return pyro_null();
-                }
-            } else {
-                pyro_panic(vm, "invalid operand types to '*'");
-                return pyro_null();
-            }
+            break;
         }
 
         case PYRO_VALUE_CHAR: {
-            if (PYRO_IS_I64(b) && b.as.i64 >= 0) {
-                PyroStr* result = PyroStr_concat_n_codepoints_as_utf8(a.as.u32, b.as.i64, vm);
+            if (PYRO_IS_I64(right) && right.as.i64 >= 0) {
+                PyroStr* result = PyroStr_concat_n_codepoints_as_utf8(left.as.u32, right.as.i64, vm);
                 if (!result) {
                     pyro_panic(vm, "out of memory");
                     return pyro_null();
                 }
                 return pyro_obj(result);
-            } else {
-                pyro_panic(vm, "invalid operand types to '*'");
-                return pyro_null();
             }
+            break;
         }
 
-        default: {
-            pyro_panic(vm, "invalid operand types to '*'");
-            return pyro_null();
+        case PYRO_VALUE_OBJ: {
+            if (PYRO_IS_STR(left) && PYRO_IS_I64(right) && right.as.i64 >= 0) {
+                PyroStr* result = PyroStr_concat_n_copies(PYRO_AS_STR(left), right.as.i64, vm);
+                if (!result) {
+                    pyro_panic(vm, "out of memory");
+                    return pyro_null();
+                }
+                return pyro_obj(result);
+            }
+            break;
         }
+
+        default:
+            break;
     }
+
+    PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_star);
+    if (!PYRO_IS_NULL(left_method)) {
+        pyro_push(vm, left);
+        pyro_push(vm, right);
+        return pyro_call_method(vm, left_method, 1);
+    }
+
+    PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_star);
+    if (!PYRO_IS_NULL(right_method)) {
+        pyro_push(vm, right);
+        pyro_push(vm, left);
+        return pyro_call_method(vm, right_method, 1);
+    }
+
+    pyro_panic(vm,
+        "invalid operand types for '*' operator: '%s' and '%s'",
+        pyro_get_type_name(vm, left)->bytes,
+        pyro_get_type_name(vm, right)->bytes
+    );
+
+    return pyro_null();
 }
 
 
@@ -563,28 +563,6 @@ PyroValue pyro_op_binary_slash_slash(PyroVM* vm, PyroValue a, PyroValue b) {
             }
         }
     }
-}
-
-
-// Returns true if [a] is in [b].
-// This function can call into Pyro code and can set the panic or exit flags.
-bool pyro_op_in(PyroVM* vm, PyroValue a, PyroValue b) {
-    PyroValue method = pyro_get_method(vm, b, vm->str_dollar_contains);
-
-    if (!PYRO_IS_NULL(method)) {
-        pyro_push(vm, b);
-        pyro_push(vm, a);
-        PyroValue result = pyro_call_method(vm, method, 1);
-        if (vm->halt_flag) {
-            return false;
-        }
-        return pyro_is_truthy(result);
-    } else {
-        pyro_panic(vm, "invalid operand to 'in', object has no :$contains() method");
-        return false;
-    }
-
-    return false;
 }
 
 
