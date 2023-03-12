@@ -9,13 +9,17 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right);
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_binary_minus(PyroVM* vm, PyroValue left, PyroValue right);
 
-// Returns [a] * [b]. Panics if the operation is not defined for the operand types.
+// Returns [left] * [right]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue a, PyroValue b);
+PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right);
 
-// Returns [a] / [b]. Panics if the operation is not defined for the operand types.
+// Returns [left] / [right]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
-PyroValue pyro_op_binary_slash(PyroVM* vm, PyroValue a, PyroValue b);
+PyroValue pyro_op_binary_slash(PyroVM* vm, PyroValue left, PyroValue right);
+
+// Returns [left] // [right]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+PyroValue pyro_op_binary_slash_slash(PyroVM* vm, PyroValue left, PyroValue right);
 
 // Returns [a] | [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
@@ -36,10 +40,6 @@ PyroValue pyro_op_binary_percent(PyroVM* vm, PyroValue a, PyroValue b);
 // Returns [a] ** [b]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_binary_star_star(PyroVM* vm, PyroValue a, PyroValue b);
-
-// Returns [a] // [b]. Panics if the operation is not defined for the operand types.
-// This function can call into Pyro code and can set the panic or exit flags.
-PyroValue pyro_op_binary_slash_slash(PyroVM* vm, PyroValue a, PyroValue b);
 
 // Returns +[operand]. Panics if the operation is not defined for the operand type.
 // This function can call into Pyro code and can set the panic or exit flags.

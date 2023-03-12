@@ -198,6 +198,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_percent = PyroStr_COPY("$op_binary_percent");
     vm->str_op_binary_star_star = PyroStr_COPY("$op_binary_star_star");
     vm->str_op_binary_slash_slash = PyroStr_COPY("$op_binary_slash_slash");
+    vm->str_rop_binary_slash_slash = PyroStr_COPY("$rop_binary_slash_slash");
     vm->str_op_unary_plus = PyroStr_COPY("$op_unary_plus");
     vm->str_op_unary_minus = PyroStr_COPY("$op_unary_minus");
     vm->str_dollar_hash = PyroStr_COPY("$hash");
