@@ -80,11 +80,18 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
     }
 
-    PyroValue method = pyro_get_method(vm, left, vm->str_op_binary_plus);
-    if (!PYRO_IS_NULL(method)) {
+    PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_plus);
+    if (!PYRO_IS_NULL(left_method)) {
         pyro_push(vm, left);
         pyro_push(vm, right);
-        return pyro_call_method(vm, method, 1);
+        return pyro_call_method(vm, left_method, 1);
+    }
+
+    PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_plus);
+    if (!PYRO_IS_NULL(right_method)) {
+        pyro_push(vm, right);
+        pyro_push(vm, left);
+        return pyro_call_method(vm, right_method, 1);
     }
 
     pyro_panic(vm,

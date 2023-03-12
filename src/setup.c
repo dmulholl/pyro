@@ -93,6 +93,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_less_equals = NULL;
     vm->str_op_binary_minus = NULL;
     vm->str_op_binary_plus = NULL;
+    vm->str_rop_binary_plus = NULL;
     vm->str_op_binary_bar = NULL;
     vm->str_op_binary_amp = NULL;
     vm->str_op_binary_slash = NULL;
@@ -181,6 +182,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_greater = PyroStr_COPY("$op_binary_greater");
     vm->str_op_binary_greater_equals = PyroStr_COPY("$op_binary_greater_equals");
     vm->str_op_binary_plus = PyroStr_COPY("$op_binary_plus");
+    vm->str_rop_binary_plus = PyroStr_COPY("$rop_binary_plus");
     vm->str_op_binary_minus = PyroStr_COPY("$op_binary_minus");
     vm->str_op_binary_bar = PyroStr_COPY("$op_binary_bar");
     vm->str_op_binary_amp = PyroStr_COPY("$op_binary_amp");

@@ -1,0 +1,47 @@
+class Object {
+    pub var value;
+
+    def $init(value) {
+        self.value = value;
+    }
+
+    def $op_binary_plus(other) {
+        return Object(self.value + other);
+    }
+
+    def $rop_binary_plus(other) {
+        return Object(self.value + other);
+    }
+
+    def $op_binary_minus(other) {
+        return Object(self.value - other);
+    }
+
+    def $op_binary_star(other) {
+        return Object(self.value * other);
+    }
+
+    def $op_unary_minus() {
+        return Object(-self.value);
+    }
+}
+
+var object;
+
+object = Object(0);
+assert object.value == 0;
+
+object = Object(0) + 5;
+assert object.value == 5;
+
+object = 5 + Object(0);
+assert object.value == 5;
+
+object = Object(0) - 5;
+assert object.value == -5;
+
+object = Object(10) * 5;
+assert object.value == 50;
+
+object = -Object(5);
+assert object.value == -5;
