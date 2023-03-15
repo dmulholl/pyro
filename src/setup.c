@@ -104,6 +104,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_star = NULL;
     vm->str_rop_binary_star = NULL;
     vm->str_op_binary_caret = NULL;
+    vm->str_rop_binary_caret = NULL;
     vm->str_op_binary_percent = NULL;
     vm->str_op_binary_star_star = NULL;
     vm->str_op_binary_slash_slash = NULL;
@@ -199,6 +200,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_slash = PyroStr_COPY("$op_binary_slash");
     vm->str_rop_binary_slash = PyroStr_COPY("$rop_binary_slash");
     vm->str_op_binary_caret = PyroStr_COPY("$op_binary_caret");
+    vm->str_rop_binary_caret = PyroStr_COPY("$rop_binary_caret");
     vm->str_op_binary_percent = PyroStr_COPY("$op_binary_percent");
     vm->str_op_binary_star_star = PyroStr_COPY("$op_binary_star_star");
     vm->str_op_binary_slash_slash = PyroStr_COPY("$op_binary_slash_slash");

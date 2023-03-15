@@ -68,6 +68,14 @@ class Object {
         return Object(other & self.value);
     }
 
+    def $op_binary_caret(other) {
+        return Object(self.value ^ other);
+    }
+
+    def $rop_binary_caret(other) {
+        return Object(other ^ self.value);
+    }
+
     def $op_unary_minus() {
         return Object(-self.value);
     }
@@ -130,6 +138,12 @@ assert object.value == 0b1010;
 
 object = 0b0011 & Object(0b1010);
 assert object.value == 0b0010;
+
+object = Object(0b1010) ^ 0b1100;
+assert object.value == 0b0110;
+
+object = 0b0011 ^ Object(0b0101);
+assert object.value == 0b0110;
 
 # Unary arithmetic.
 object = -Object(5);
