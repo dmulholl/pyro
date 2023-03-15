@@ -128,6 +128,7 @@ struct PyroVM {
     PyroStr* str_op_binary_minus;
     PyroStr* str_rop_binary_minus;
     PyroStr* str_op_binary_bar;
+    PyroStr* str_rop_binary_bar;
     PyroStr* str_op_binary_amp;
     PyroStr* str_op_binary_star;
     PyroStr* str_rop_binary_star;
