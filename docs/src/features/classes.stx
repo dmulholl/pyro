@@ -429,6 +429,13 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     This method will only be called if the value on the left does not have an `:$op_binary_minus()` method.
 
 
+[[ `:$rop_binary_percent(other: any) -> any` ]]
+
+    Implementing this method overloads the binary `%` operator for expressions of the form `other % receiver` --- i.e. for cases when the receiver instance is on the right of the expression.
+
+    This method will only be called if the value on the left does not have an `:$op_binary_percent()` method.
+
+
 [[ `:$rop_binary_plus(other: any) -> any` ]]
 
     Implementing this method overloads the binary `+` operator for expressions of the form `other + receiver` --- i.e. for cases when the receiver instance is on the right of the expression.
@@ -455,6 +462,13 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     Implementing this method overloads the binary `*` operator for expressions of the form `other * receiver` --- i.e. for cases when the receiver instance is on the right of the expression.
 
     This method will only be called if the value on the left does not have an `:$op_binary_star()` method.
+
+
+[[ `:$rop_binary_star_star(other: any) -> any` ]]
+
+    Implementing this method overloads the binary `**` operator for expressions of the form `other ** receiver` --- i.e. for cases when the receiver instance is on the right of the expression.
+
+    This method will only be called if the value on the left does not have an `:$op_binary_star_star()` method.
 
 
 [[ `:$set(key: any, value: any)` ]]

@@ -52,6 +52,22 @@ class Object {
         return Object(other // self.value);
     }
 
+    def $op_binary_percent(other) {
+        return Object(self.value % other);
+    }
+
+    def $rop_binary_percent(other) {
+        return Object(other % self.value);
+    }
+
+    def $op_binary_star_star(other) {
+        return Object(self.value ** other);
+    }
+
+    def $rop_binary_star_star(other) {
+        return Object(other ** self.value);
+    }
+
     def $op_binary_bar(other) {
         return Object(self.value | other);
     }
@@ -125,6 +141,18 @@ assert object.value == 5 // 2;
 
 object = 5 // Object(2);
 assert object.value == 5 // 2;
+
+object = Object(5) % 2;
+assert object.value == 1;
+
+object = 5 % Object(3);
+assert object.value == 2;
+
+object = Object(2) ** 3;
+assert object.value == 8;
+
+object = 3 ** Object(2);
+assert object.value == 9;
 
 # Bitwise operators.
 object = Object(0b1010) | 0b0101;
