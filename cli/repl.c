@@ -127,9 +127,9 @@ void pyro_run_repl(ArgParser* parser) {
     for (;;) {
         char* line;
         if (code) {
-            line = bestline("··· ");
+            line = bestline("\x1B[90m···\x1B[0m ");
         } else {
-            line = bestline(">>> ");
+            line = bestline("\x1B[90m>>>\x1B[0m ");
         }
 
         if (!line) {
