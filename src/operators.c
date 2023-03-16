@@ -562,6 +562,7 @@ PyroValue pyro_op_binary_star_star(PyroVM* vm, PyroValue left, PyroValue right) 
                 default:
                     break;
             }
+            break;
         }
 
         case PYRO_VALUE_F64: {
@@ -573,6 +574,7 @@ PyroValue pyro_op_binary_star_star(PyroVM* vm, PyroValue left, PyroValue right) 
                 default:
                     break;
             }
+            break;
         }
 
         default:
