@@ -1,8 +1,10 @@
 #include "../inc/pyro.h"
 
 
-// Pushes a new frame onto the call stack. [frame_pointer] points to the frame's zeroth
-// local variable (for instance methods, this will be 'self').
+// Pushes a new function-call-frame onto the call stack.
+// - [frame_pointer] points to the frame's zeroth local variable slot on the value stack.
+// - If [closure] is a function, the zeroth local variable slot will be unused.
+// - If [closure] is a method, the zeroth local variable slot will contain 'self'.
 static void push_call_frame(PyroVM* vm, PyroClosure* closure, PyroValue* frame_pointer) {
     if (vm->frame_count == vm->frame_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vm->frame_capacity);
