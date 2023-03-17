@@ -111,6 +111,10 @@ class Object {
     def $rop_binary_greater_greater(other) {
         return Object(other >> self.value);
     }
+
+    def $op_unary_tilde() {
+        return Object(~self.value);
+    }
 }
 
 var object = Object(0);
@@ -208,6 +212,12 @@ assert object.value == 0b10;
 
 object = 0b1010 >> Object(2);
 assert object.value == 0b10;
+
+object = ~Object(0);
+assert object.value == -1;
+
+object = ~Object(1);
+assert object.value == -2;
 
 # Unary arithmetic.
 object = -Object(5);

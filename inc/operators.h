@@ -85,4 +85,8 @@ PyroValue pyro_op_binary_less_less(PyroVM* vm, PyroValue left, PyroValue right);
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_binary_greater_greater(PyroVM* vm, PyroValue left, PyroValue right);
 
+// Returns ~[operand]. Panics if the operation is not defined for the operand type.
+// This function can call into Pyro code and can set the panic or exit flags.
+PyroValue pyro_op_unary_tilde(PyroVM* vm, PyroValue operand);
+
 #endif

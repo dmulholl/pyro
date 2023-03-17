@@ -726,6 +726,26 @@ PyroValue pyro_op_unary_minus(PyroVM* vm, PyroValue operand) {
 }
 
 
+PyroValue pyro_op_unary_tilde(PyroVM* vm, PyroValue operand) {
+    if (PYRO_IS_I64(operand)) {
+        return pyro_i64(~operand.as.i64);
+    }
+
+    PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_tilde);
+    if (!PYRO_IS_NULL(method)) {
+        pyro_push(vm, operand);
+        return pyro_call_method(vm, method, 0);
+    }
+
+    pyro_panic(vm,
+        "invalid operand type for unary '~' operator: '%s'",
+        pyro_get_type_name(vm, operand)->bytes
+    );
+
+    return pyro_null();
+}
+
+
 /* ---------------------- */
 /*  Comparison Operators  */
 /* ---------------------- */

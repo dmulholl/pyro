@@ -436,11 +436,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_UNARY_TILDE: {
                 PyroValue operand = pyro_pop(vm);
-                if (PYRO_IS_I64(operand)) {
-                    pyro_push(vm, pyro_i64(~operand.as.i64));
-                } else {
-                    pyro_panic(vm, "bitwise '~' requires an integer operand");
-                }
+                pyro_push(vm, pyro_op_unary_tilde(vm, operand));
                 break;
             }
 
