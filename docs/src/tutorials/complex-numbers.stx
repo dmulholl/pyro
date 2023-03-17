@@ -1,0 +1,230 @@
+---
+title: Complex Numbers
+subtitle: This tutorial demonstrates Pyro's support for operator overloading by building a custom complex-number type.
+meta_title: Pyro Tutorials &mdash; Complex Numbers
+---
+
+[1]: https://en.wikipedia.org/wiki/Complex_number
+[2]: @root/features/classes//#dollar-methods
+[3]: @root/builtins/maps//
+[4]: @root/builtins/sets//
+
+::: insert toc
+::: hr
+
+You can overload most of Pyro's builtin operators --- e.g. `==`, `+`, `-`, etc. --- to customize their behaviour for your own user-defined types.
+
+We can illustrate Pyro's support for operator-overloading by building a custom type to represent [complex numbers][1].
+
+
+
+### Base Class
+
+Our complex number type needs to store two values --- the *real* part and the *imaginary* part:
+
+::: code pyro
+    class Complex {
+        pub var re;
+        pub var im;
+
+        def $init(re, im) {
+            self.re = re;
+            self.im = im;
+        }
+    }
+
+Now we can create instances of `Complex` numbers, e.g.
+
+::: code pyro
+    var c = Complex(1, 2);
+    assert c.re == 1;
+    assert c.im == 2;
+
+But to make our `Complex` numbers *useful*, we want to be able to compare them and to perform arithmetic with them.
+
+
+
+### Equality
+
+By default, objects compare as equal using `==` only if they are *the same object*, e.g.
+
+::: code pyro
+    var c1 = Complex(1, 2);
+    var c2 = Complex(1, 2);
+
+    assert c1 == c1;
+    assert c1 != c2;
+
+We can overload the `==` operator for our custom `Complex` number type by defining an `$op_binary_equals_equals()` method:
+
+::: code pyro
+    class Complex {
+        ...
+
+        def $op_binary_equals_equals(other) {
+            return self.re == other.re && self.im == other.im;
+        }
+
+        ...
+    }
+
+Now we can compare instances of our `Complex` number type directly, e.g.
+
+::: code pyro
+    var c1 = Complex(1, 2);
+    var c2 = Complex(1, 2);
+
+    assert c1 == c2;
+
+Overloading the `==` operator automatically overloads the `!=` operator, e.g.
+
+::: code pyro
+    assert Complex(1, 2) != Complex(3, 4);
+
+
+
+### Addition
+
+We can overload the binary addition operator, `+`, for our `Complex` number type by defining an `$op_binary_plus()` method:
+
+::: code pyro
+    class Complex {
+        ...
+
+        def $op_binary_plus(other) {
+            return Complex(self.re + other.re, self.im + other.im);
+        }
+
+        ...
+    }
+
+Now we can add `Complex` numbers directly, e.g.
+
+::: code pyro
+    assert Complex(1, 2) + Complex(3, 4) == Complex(4, 6);
+
+
+
+### Negation
+
+We can add support for the unary negation operator, `-`, by defining an `$op_unary_minus()` method:
+
+::: code pyro
+    class Complex {
+        ...
+
+        def $op_unary_minus()
+            return Complex(-self.re, -self.im);
+        }
+
+        ...
+    }
+
+Now we can negate a `Complex` number directly, e.g.
+
+::: code pyro
+    assert -Complex(1, 2) == Complex(-1, -2);
+
+
+
+### Multiplication
+
+We can overload the binary multiplication operator, `*`, for our `Complex` number type by defining an `$op_binary_star()` method:
+
+::: code pyro
+    class Complex {
+        ...
+
+        def $op_binary_star(other) {
+            var re = self.re * other.re - self.im * other.im;
+            var im = self.re * other.im + self.im * other.re;
+            return Complex(re, im);
+        }
+
+        ...
+    }
+
+Now we can multiply `Complex` numbers directly, e.g.
+
+::: code pyro
+    assert Complex(1, 2) * Complex(3, 4) == Complex(-5, 10);
+
+This works for multiplying two `Complex` numbers, but what if we want to multiply a `Complex` number by a *scalar* --- e.g. an `i64` or an `f64`?
+
+No problem --- we can make our `$op_binary_star()` method a little more discerning:
+
+::: code pyro
+    class Complex {
+        ...
+
+        def $op_binary_star(other) {
+            if $is_instance_of(other, Complex) {
+                var re = self.re * other.re - self.im * other.im;
+                var im = self.re * other.im + self.im * other.re;
+                return Complex(re, im);
+            }
+
+            if $is_i64(other) || $is_f64(other) {
+                return Complex(self.re * other, self.im * other);
+            }
+
+            $panic("invalid operation");
+        }
+
+        ...
+    }
+
+Now we can multiply a `Complex` number by a scalar, e.g.
+
+::: code pyro
+    assert Complex(1, 2) * 3 == Complex(3, 6);
+
+We're not quite done yet. Defining an `$op_binary_star()` method only overloads the binary `*` operator for cases when the receiver instance is on the *left-hand-side* of the expression --- i.e. for expressions of the form `receiver * other`.
+
+If we want to handle cases when the receiver instance is on the *right-hand-side* of the expression --- i.e. expressions of the form `other * receiver` --- we need to define an `$rop_binary_star()` method:
+
+::: code pyro
+    class Complex {
+        ...
+
+        def $rop_binary_star(other) {
+            return self:$op_binary_star(other);
+        }
+
+        ...
+    }
+
+(Here, we simply reuse the logic we already implemented in the `$op_binary_star()` method.)
+
+Now we can multiply a `Complex` number on the left by a scalar, e.g.
+
+::: code pyro
+    assert 3 * Complex(1, 2) == Complex(3, 6);
+
+The `$rop_binary_star()` method is a fallback --- it's only called if the object on the left of the expression doesn't have an `$op_binary_star()` method defined.
+
+
+
+### Hashing
+
+Do we want to use our custom `Complex` number type as a key in [hash maps][3] or as an entry in [sets][4]?
+
+If so, and if we've overloaded the `==` operator by defining an `$op_binary_equals_equals()` method, we also need to define a `$hash()` method that ensures that `Complex` number instances that compare as equal also have the same hash value, e.g.
+
+::: code pyro
+    class Complex {
+        ...
+
+        def $hash() {
+            return $hash(self.re) ^ $hash(self.im);
+        }
+
+        ...
+    }
+
+
+
+
+### Overload Methods
+
+You can find the full set of operator-overload methods for custom types documented [here][2].

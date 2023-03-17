@@ -1,5 +1,6 @@
 ---
 title: Linked List Iterator
+subtitle: This tutorial demonstrates Pyro's iterator protocol by building an iterator for a custom linked-list type.
 meta_title: Pyro Tutorials &mdash; Linked List Iterator
 ---
 

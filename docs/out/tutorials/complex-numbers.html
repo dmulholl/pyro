@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Tutorials &mdash; Complex Numbers</title>
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+        
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-tutorials-complex-numbers node-tutorials node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
+            
+            
+                <p class="version">Version 0.9.6</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+        <article class="main">
+            <header class="title">
+                <h1>Complex Numbers</h1>
+                
+                    <p class="subtitle">This tutorial demonstrates Pyro's support for operator overloading by building a custom complex-number type.</p>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#base-class">Base Class</a>
+</li>
+<li>
+<a href="#equality">Equality</a>
+</li>
+<li>
+<a href="#addition">Addition</a>
+</li>
+<li>
+<a href="#negation">Negation</a>
+</li>
+<li>
+<a href="#multiplication">Multiplication</a>
+</li>
+<li>
+<a href="#hashing">Hashing</a>
+</li>
+<li>
+<a href="#overload-methods">Overload Methods</a>
+</li>
+</ul>
+<hr>
+<p>
+You can overload most of Pyro's builtin operators &mdash; e.g. <code>==</code>, <code>+</code>, <code>-</code>, etc. &mdash; to customize their behaviour for your own user-defined types.
+</p>
+<p>
+We can illustrate Pyro's support for operator-overloading by building a custom type to represent <a href="https://en.wikipedia.org/wiki/Complex_number">complex numbers</a>.
+</p>
+<h3 id="base-class">
+Base Class
+</h3>
+<p>
+Our complex number type needs to store two values &mdash; the <i>real</i> part and the <i>imaginary</i> part:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">re</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">im</span><span class="p">;</span>
+
+    <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="p">=</span> <span class="nx">re</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="p">=</span> <span class="nx">im</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>
+Now we can create instances of <code>Complex</code> numbers, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">c</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">c</span><span class="p">.</span><span class="nx">re</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">c</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
+</pre>
+<p>
+But to make our <code>Complex</code> numbers <i>useful</i>, we want to be able to compare them and to perform arithmetic with them.
+</p>
+<h3 id="equality">
+Equality
+</h3>
+<p>
+By default, objects compare as equal using <code>==</code> only if they are <i>the same object</i>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="k">assert</span> <span class="nx">c1</span> <span class="o">==</span> <span class="nx">c1</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">c1</span> <span class="o">!=</span> <span class="nx">c2</span><span class="p">;</span>
+</pre>
+<p>
+We can overload the <code>==</code> operator for our custom <code>Complex</code> number type by defining an <code>$op_binary_equals_equals()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$op_binary_equals_equals</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">&amp;&amp;</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Now we can compare instances of our <code>Complex</code> number type directly, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+<span class="k">assert</span> <span class="nx">c1</span> <span class="o">==</span> <span class="nx">c2</span><span class="p">;</span>
+</pre>
+<p>
+Overloading the <code>==</code> operator automatically overloads the <code>!=</code> operator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</pre>
+<h3 id="addition">
+Addition
+</h3>
+<p>
+We can overload the binary addition operator, <code>+</code>, for our <code>Complex</code> number type by defining an <code>$op_binary_plus()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$op_binary_plus</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Now we can add <code>Complex</code> numbers directly, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+</pre>
+<h3 id="negation">
+Negation
+</h3>
+<p>
+We can add support for the unary negation operator, <code>-</code>, by defining an <code>$op_unary_minus()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$op_unary_minus</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="o">-</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span><span class="p">,</span> <span class="o">-</span><span class="kc">self</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Now we can negate a <code>Complex</code> number directly, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="o">-</span><span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+</pre>
+<h3 id="multiplication">
+Multiplication
+</h3>
+<p>
+We can overload the binary multiplication operator, <code>*</code>, for our <code>Complex</code> number type by defining an <code>$op_binary_star()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Now we can multiply <code>Complex</code> numbers directly, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</pre>
+<p>
+This works for multiplying two <code>Complex</code> numbers, but what if we want to multiply a <code>Complex</code> number by a <i>scalar</i> &mdash; e.g. an <code>i64</code> or an <code>f64</code>?
+</p>
+<p>
+No problem &mdash; we can make our <code>$op_binary_star()</code> method a little more discerning:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nx">$is_i64</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="o">||</span> <span class="nx">$is_f64</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;invalid operation&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Now we can multiply a <code>Complex</code> number by a scalar, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+</pre>
+<p>
+We're not quite done yet. Defining an <code>$op_binary_star()</code> method only overloads the binary <code>*</code> operator for cases when the receiver instance is on the <i>left-hand-side</i> of the expression &mdash; i.e. for expressions of the form <code>receiver * other</code>.
+</p>
+<p>
+If we want to handle cases when the receiver instance is on the <i>right-hand-side</i> of the expression &mdash; i.e. expressions of the form <code>other * receiver</code> &mdash; we need to define an <code>$rop_binary_star()</code> method:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$rop_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">self</span><span class="p">:</span><span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+(Here, we simply reuse the logic we already implemented in the <code>$op_binary_star()</code> method.)
+</p>
+<p>
+Now we can multiply a <code>Complex</code> number on the left by a scalar, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+</pre>
+<p>
+The <code>$rop_binary_star()</code> method is a fallback &mdash; it's only called if the object on the left of the expression doesn't have an <code>$op_binary_star()</code> method defined.
+</p>
+<h3 id="hashing">
+Hashing
+</h3>
+<p>
+Do we want to use our custom <code>Complex</code> number type as a key in <a href="../builtins/maps.html">hash maps</a> or as an entry in <a href="../builtins/sets.html">sets</a>?
+</p>
+<p>
+If so, and if we've overloaded the <code>==</code> operator by defining an <code>$op_binary_equals_equals()</code> method, we also need to define a <code>$hash()</code> method that ensures that <code>Complex</code> number instances that compare as equal also have the same hash value, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$hash</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">$hash</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span><span class="p">)</span> <span class="p">^</span> <span class="nx">$hash</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<h3 id="overload-methods">
+Overload Methods
+</h3>
+<p>
+You can find the full set of operator-overload methods for custom types documented <a href="../features/classes.html#dollar-methods">here</a>.
+</p>
+        </article>
+        
+    </body>
+</html>
