@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Tutorials &mdash; List Map</title>
+        <title>Pyro Tutorials &mdash; Indexing</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-tutorials-list-map node-tutorials node">
+    <body class="node-tutorials-indexing node-tutorials node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -50,9 +50,9 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>List Map</h1>
+                <h1>Indexing</h1>
                 
-                    <p class="subtitle">This tutorial demonstrates adding indexing support to a user-defined type.</p>
+                    <p class="subtitle">This tutorial shows you how to add indexing support to a user-defined type.</p>
                 
                 <hr>
             </header>
@@ -66,7 +66,7 @@
 </ul>
 <hr>
 <p>
-You can add indexing support to a user-defined type by implementing <code>$get()</code> and/or <code>$set()</code> methods &mdash; i.e. these methods let us index into instances of the type using <code>[]</code> syntax.
+You can add indexing support to a user-defined type by implementing <code>$get()</code> and/or <code>$set()</code> methods &mdash; these methods let us index into instances of the type using <code>[]</code> syntax.
 </p>
 <p>
 As an example, let's build a simple a simple <code>ListMap</code> type that maps keys to lists of values.

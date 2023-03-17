@@ -118,11 +118,19 @@ assert object.value == 5;
 object = 5 + Object(0);
 assert object.value == 5;
 
+object = Object(0);
+object += 5;
+assert object.value == 5;
+
 object = Object(0) - 5;
 assert object.value == -5;
 
 object = 5 - Object(1);
 assert object.value == 4;
+
+object = Object(5);
+object -= 3;
+assert object.value == 2;
 
 object = Object(10) * 5;
 assert object.value == 50;

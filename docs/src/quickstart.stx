@@ -52,7 +52,7 @@ The release binary will be created in a new `out/release` directory as `out/rele
 
 
 
-### Run the REPL
+### Running the REPL
 
 Running the Pyro binary without any arguments launches the REPL --- an interactive environment where you can run Pyro commands directly.
 
@@ -77,7 +77,7 @@ Hit `Ctrl-D` or type `exit` and hit return to end the REPL session.
 
 
 
-### Run a Script
+### Running a Script
 
 Let's make a simple test script.
 Create a file called `hello.pyro` and add the following line to it:

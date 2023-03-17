@@ -565,6 +565,9 @@ Implementing this method overloads the binary <code>&lt;=</code> operator for ex
 <p>
 Implementing this method overloads the binary <code>-</code> operator for expressions of the form <code>receiver - other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
 </p>
+<p>
+Overloading the <code>-</code> operator automatically overloads the <code>-=</code> operator.
+</p>
 </dd>
 </div>
 <div>
@@ -584,6 +587,9 @@ Implementing this method overloads the binary <code>%</code> operator for expres
 <dd>
 <p>
 Implementing this method overloads the binary <code>+</code> operator for expressions of the form <code>receiver + other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
+</p>
+<p>
+Overloading the <code>+</code> operator automatically overloads the <code>+=</code> operator.
 </p>
 </dd>
 </div>
@@ -697,6 +703,9 @@ Implementing this method overloads the binary <code>-</code> operator for expres
 <p>
 This method will only be called if the value on the left does not have an <code>:$op_binary_minus()</code> method.
 </p>
+<p>
+Overloading the <code>-</code> operator automatically overloads the <code>-=</code> operator.
+</p>
 </dd>
 </div>
 <div>
@@ -722,6 +731,9 @@ Implementing this method overloads the binary <code>+</code> operator for expres
 </p>
 <p>
 This method will only be called if the value on the left does not have an <code>:$op_binary_plus()</code> method.
+</p>
+<p>
+Overloading the <code>+</code> operator automatically overloads the <code>+=</code> operator.
 </p>
 </dd>
 </div>

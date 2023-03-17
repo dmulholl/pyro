@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Tutorials &mdash; Complex Numbers</title>
+        <title>Pyro Tutorials &mdash; Operator Overloading</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-tutorials-complex-numbers node-tutorials node">
+    <body class="node-tutorials-operator-overloading node-tutorials node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -50,7 +50,7 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1>Complex Numbers</h1>
+                <h1>Operator Overloading</h1>
                 
                     <p class="subtitle">This tutorial demonstrates Pyro's support for operator overloading by building a custom complex-number type.</p>
                 
@@ -112,7 +112,7 @@ Now we can create instances of <code>Complex</code> numbers, e.g.
 <span class="k">assert</span> <span class="nx">c</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
 </pre>
 <p>
-But to make our <code>Complex</code> numbers <i>useful</i>, we want to be able to compare them and to perform arithmetic with them.
+To make our <code>Complex</code> numbers <i>useful</i>, we want to be able to compare them and to perform arithmetic with them.
 </p>
 <h3 id="equality">
 Equality
@@ -178,6 +178,15 @@ Now we can add <code>Complex</code> numbers directly, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+</pre>
+<p>
+Overloading the <code>+</code> operator automatically overloads the <code>+=</code> operator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">c</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nx">c</span> <span class="o">+=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+
+<span class="k">assert</span> <span class="nx">c</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
 </pre>
 <h3 id="negation">
 Negation

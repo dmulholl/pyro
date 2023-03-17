@@ -65,3 +65,7 @@ assert c4.im == 4;
 var c5 = 2 * Complex(1, 2);
 assert c4.re == 2;
 assert c4.im == 4;
+
+var c6 = Complex(1, 2);
+c6 += Complex(3, 4);
+assert c6 == Complex(4, 6);

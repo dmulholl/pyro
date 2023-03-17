@@ -3,14 +3,14 @@ title: Tutorials
 meta_title: Pyro Tutorials
 ---
 
-[[ [Iterators](@root/tutorials/linked-list-iterator//) ]]
+[[ [Operator Overloading](@root/tutorials/operator-overloading//) ]]
+
+    This tutorial demonstrates Pyro's support for operator overloading by building a custom complex-number type.
+
+[[ [Iterators](@root/tutorials/iterators//) ]]
 
     This tutorial demonstrates Pyro's iterator protocol by building an iterator for a custom linked-list type.
 
-[[ [Indexing](@root/tutorials/list-map//) ]]
+[[ [Indexing](@root/tutorials/indexing//) ]]
 
-    This tutorial demonstrates adding `[]` indexing support to a user-defined type by building a custom hash-map type that maps keys to lists of values.
-
-[[ [Operator Overloading](@root/tutorials/complex-numbers//) ]]
-
-    This tutorial demonstrates Pyro's support for operator overloading by building a custom complex-number type.
+    This tutorial shows you how to add indexing support to a user-defined type by building a custom `ListMap` type that maps keys to lists of values.

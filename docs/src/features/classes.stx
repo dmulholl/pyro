@@ -360,6 +360,8 @@ You can implement the `$`-prefixed methods listed below to overload operators or
 
     Implementing this method overloads the binary `-` operator for expressions of the form `receiver - other` --- i.e. for cases when the receiver instance is on the left of the expression.
 
+    Overloading the `-` operator automatically overloads the `-=` operator.
+
 
 [[ `:$op_binary_percent(other: any) -> any` ]]
 
@@ -369,6 +371,8 @@ You can implement the `$`-prefixed methods listed below to overload operators or
 [[ `:$op_binary_plus(other: any) -> any` ]]
 
     Implementing this method overloads the binary `+` operator for expressions of the form `receiver + other` --- i.e. for cases when the receiver instance is on the left of the expression.
+
+    Overloading the `+` operator automatically overloads the `+=` operator.
 
 
 [[ `:$op_binary_slash(other: any) -> any` ]]
@@ -428,6 +432,8 @@ You can implement the `$`-prefixed methods listed below to overload operators or
 
     This method will only be called if the value on the left does not have an `:$op_binary_minus()` method.
 
+    Overloading the `-` operator automatically overloads the `-=` operator.
+
 
 [[ `:$rop_binary_percent(other: any) -> any` ]]
 
@@ -441,6 +447,8 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     Implementing this method overloads the binary `+` operator for expressions of the form `other + receiver` --- i.e. for cases when the receiver instance is on the right of the expression.
 
     This method will only be called if the value on the left does not have an `:$op_binary_plus()` method.
+
+    Overloading the `+` operator automatically overloads the `+=` operator.
 
 
 [[ `:$rop_binary_slash(other: any) -> any` ]]
