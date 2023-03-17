@@ -103,6 +103,14 @@ class Object {
     def $rop_binary_less_less(other) {
         return Object(other << self.value);
     }
+
+    def $op_binary_greater_greater(other) {
+        return Object(self.value >> other);
+    }
+
+    def $rop_binary_greater_greater(other) {
+        return Object(other >> self.value);
+    }
 }
 
 var object = Object(0);
@@ -194,6 +202,12 @@ assert object.value == 0b10100;
 
 object = 0b101 << Object(2);
 assert object.value == 0b10100;
+
+object = Object(0b1010) >> 2;
+assert object.value == 0b10;
+
+object = 0b1010 >> Object(2);
+assert object.value == 0b10;
 
 # Unary arithmetic.
 object = -Object(5);

@@ -2061,15 +2061,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_BINARY_GREATER_GREATER: {
                 PyroValue b = pyro_pop(vm);
                 PyroValue a = pyro_pop(vm);
-                if (PYRO_IS_I64(a) && PYRO_IS_I64(b)) {
-                    if (b.as.i64 >= 0) {
-                        pyro_push(vm, pyro_i64(a.as.i64 >> b.as.i64));
-                    } else {
-                        pyro_panic(vm, "right operand to '>>' cannot be negative");
-                    }
-                } else {
-                    pyro_panic(vm, "operands to '>>' must both be integers");
-                }
+                pyro_push(vm, pyro_op_binary_greater_greater(vm, a, b));
                 break;
             }
 

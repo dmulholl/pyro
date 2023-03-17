@@ -205,5 +205,6 @@ The following operators can be overloaded by user-defined types:
 * `|`
 * `^`
 * `<<`
+* `>>`
 
 You can overload these operators using the `$`-prefixed methods listed [here](@root/features/classes//#dollar-methods).
