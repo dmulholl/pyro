@@ -130,6 +130,11 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_dollar_end_with = NULL;
     vm->panic_source_id = NULL;
     vm->panic_line_number = 0;
+    vm->str_op_binary_less_less = NULL;
+    vm->str_rop_binary_less_less = NULL;
+    vm->str_op_binary_greater_greater = NULL;
+    vm->str_rop_binary_greater_greater = NULL;
+    vm->str_op_unary_tilde = NULL;
 
     // Initialize the [frames] stack.
     vm->frames = PYRO_ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
@@ -238,6 +243,11 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_tup = PyroStr_COPY("tup");
     vm->str_err = PyroStr_COPY("err");
     vm->str_dollar_end_with = PyroStr_COPY("$end_with");
+    vm->str_op_binary_less_less = PyroStr_COPY("$op_binary_less_less");
+    vm->str_rop_binary_less_less = PyroStr_COPY("$rop_binary_less_less");
+    vm->str_op_binary_greater_greater = PyroStr_COPY("$op_binary_greater_greater");
+    vm->str_rop_binary_greater_greater = PyroStr_COPY("$rop_binary_greater_greater");
+    vm->str_op_unary_tilde = PyroStr_COPY("$op_unary_tilde");
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

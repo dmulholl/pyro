@@ -123,6 +123,11 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->str_dollar_end_with);
     mark_object(vm, (PyroObject*)vm->str_source);
     mark_object(vm, (PyroObject*)vm->str_line);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_less_less);
+    mark_object(vm, (PyroObject*)vm->str_rop_binary_less_less);
+    mark_object(vm, (PyroObject*)vm->str_op_binary_greater_greater);
+    mark_object(vm, (PyroObject*)vm->str_rop_binary_greater_greater);
+    mark_object(vm, (PyroObject*)vm->str_op_unary_tilde);
 
     // Other object fields.
     mark_object(vm, (PyroObject*)vm->superglobals);

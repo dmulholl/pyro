@@ -171,6 +171,11 @@ struct PyroVM {
     PyroStr* str_dollar_end_with;
     PyroStr* str_source;
     PyroStr* str_line;
+    PyroStr* str_op_binary_less_less;
+    PyroStr* str_rop_binary_less_less;
+    PyroStr* str_op_binary_greater_greater;
+    PyroStr* str_rop_binary_greater_greater;
+    PyroStr* str_op_unary_tilde;
 
     // The grey stack used by the garbage collector.
     PyroObject** grey_stack;
