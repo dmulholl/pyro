@@ -559,6 +559,16 @@ Implementing this method overloads the binary <code>&lt;=</code> operator for ex
 </div>
 <div>
 <dt>
+<code>:$op_binary_less_less(other: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the binary <code>&lt;&lt;</code> operator for expressions of the form <code>receiver &lt;&lt; other</code> &mdash; i.e. for cases when the receiver instance is on the left of the expression.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:$op_binary_minus(other: any) -&gt; any</code>
 </dt>
 <dd>
@@ -689,6 +699,19 @@ Implementing this method overloads the binary <code>^</code> operator for expres
 </p>
 <p>
 This method will only be called if the value on the left does not have an <code>:$op_binary_caret()</code> method.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$rop_binary_less_less(other: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the binary <code>&lt;&lt;</code> operator for expressions of the form <code>other &lt;&lt; receiver</code> &mdash; i.e. for cases when the receiver instance is on the right of the expression.
+</p>
+<p>
+This method will only be called if the value on the left does not have an <code>:$op_binary_less_less()</code> method.
 </p>
 </dd>
 </div>

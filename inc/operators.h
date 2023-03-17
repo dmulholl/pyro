@@ -77,4 +77,8 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key);
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroValue value);
 
+// Returns [left] << [right]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+PyroValue pyro_op_binary_less_less(PyroVM* vm, PyroValue left, PyroValue right);
+
 #endif

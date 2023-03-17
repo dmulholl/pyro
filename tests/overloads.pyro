@@ -95,6 +95,14 @@ class Object {
     def $op_unary_minus() {
         return Object(-self.value);
     }
+
+    def $op_binary_less_less(other) {
+        return Object(self.value << other);
+    }
+
+    def $rop_binary_less_less(other) {
+        return Object(other << self.value);
+    }
 }
 
 var object = Object(0);
@@ -180,6 +188,12 @@ assert object.value == 0b0110;
 
 object = 0b0011 ^ Object(0b0101);
 assert object.value == 0b0110;
+
+object = Object(0b101) << 2;
+assert object.value == 0b10100;
+
+object = 0b101 << Object(2);
+assert object.value == 0b10100;
 
 # Unary arithmetic.
 object = -Object(5);
