@@ -204,6 +204,7 @@ The following operators can be overloaded by user-defined types:
 * `&`
 * `|`
 * `^`
+* `~`
 * `<<`
 * `>>`
 
