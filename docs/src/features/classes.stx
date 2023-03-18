@@ -268,7 +268,7 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     ::: code pyro
         var value = instance[key];
 
-    Implementing a `$set(key, value)` method adds support for write-access to instances.
+    Implementing a `:$set(key, value)` method adds support for index-style write access to instances.
 
 
 [[ `:$hash() -> i64` ]]
@@ -545,7 +545,7 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     ::: code pyro
         instance[key] = value;
 
-    Implementing a `$get(key)` method adds support for read-access to instances.
+    Implementing a `:$get(key)` method adds support for index-style read access to instances.
 
 
 [[ `:$str() -> str` ]]
