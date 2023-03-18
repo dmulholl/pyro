@@ -120,9 +120,13 @@ struct PyroVM {
     PyroStr* str_dollar_debug;
     PyroStr* str_op_binary_equals_equals;
     PyroStr* str_op_binary_less;
+    PyroStr* str_rop_binary_less;
     PyroStr* str_op_binary_less_equals;
+    PyroStr* str_rop_binary_less_equals;
     PyroStr* str_op_binary_greater;
+    PyroStr* str_rop_binary_greater;
     PyroStr* str_op_binary_greater_equals;
+    PyroStr* str_rop_binary_greater_equals;
     PyroStr* str_op_binary_plus;
     PyroStr* str_rop_binary_plus;
     PyroStr* str_op_binary_minus;

@@ -88,9 +88,13 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_null = NULL;
     vm->str_op_binary_equals_equals = NULL;
     vm->str_op_binary_greater = NULL;
+    vm->str_rop_binary_greater = NULL;
     vm->str_op_binary_greater_equals = NULL;
+    vm->str_rop_binary_greater_equals = NULL;
     vm->str_op_binary_less = NULL;
+    vm->str_rop_binary_less = NULL;
     vm->str_op_binary_less_equals = NULL;
+    vm->str_rop_binary_less_equals = NULL;
     vm->str_op_binary_minus = NULL;
     vm->str_rop_binary_minus = NULL;
     vm->str_op_binary_plus = NULL;
@@ -192,9 +196,13 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_dollar_debug = PyroStr_COPY("$debug");
     vm->str_op_binary_equals_equals = PyroStr_COPY("$op_binary_equals_equals");
     vm->str_op_binary_less = PyroStr_COPY("$op_binary_less");
+    vm->str_rop_binary_less = PyroStr_COPY("$rop_binary_less");
     vm->str_op_binary_less_equals = PyroStr_COPY("$op_binary_less_equals");
+    vm->str_rop_binary_less_equals = PyroStr_COPY("$rop_binary_less_equals");
     vm->str_op_binary_greater = PyroStr_COPY("$op_binary_greater");
+    vm->str_rop_binary_greater = PyroStr_COPY("$rop_binary_greater");
     vm->str_op_binary_greater_equals = PyroStr_COPY("$op_binary_greater_equals");
+    vm->str_rop_binary_greater_equals = PyroStr_COPY("$rop_binary_greater_equals");
     vm->str_op_binary_plus = PyroStr_COPY("$op_binary_plus");
     vm->str_rop_binary_plus = PyroStr_COPY("$rop_binary_plus");
     vm->str_op_binary_minus = PyroStr_COPY("$op_binary_minus");
