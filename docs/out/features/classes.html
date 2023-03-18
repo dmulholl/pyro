@@ -747,6 +747,19 @@ This method will only be called if the value on the left does not have an <code>
 </div>
 <div>
 <dt>
+<code>:$rop_binary_less(other: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Implementing this method overloads the binary <code>&lt;</code> operator for expressions of the form <code>other &lt; receiver</code> &mdash; i.e. for cases when the receiver instance is on the right of the expression.
+</p>
+<p>
+This method will only be called if the value on the left does not have an <code>:$op_binary_less()</code> method.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:$rop_binary_less_less(other: any) -&gt; any</code>
 </dt>
 <dd>

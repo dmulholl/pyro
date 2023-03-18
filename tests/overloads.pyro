@@ -115,6 +115,14 @@ class Object {
     def $op_unary_tilde() {
         return Object(~self.value);
     }
+
+    def $op_binary_less(other) {
+        return self.value < other;
+    }
+
+    def $rop_binary_less(other) {
+        return other < self.value;
+    }
 }
 
 var object = Object(0);
@@ -130,6 +138,15 @@ assert 1 == Object(1);
 
 assert Object(0) != 1;
 assert 1 != Object(0);
+
+# Comparisons.
+assert Object(1) < 2;
+assert !(Object(1) < 1);
+assert !(Object(1) < 0);
+
+assert 1 < Object(2);
+assert !(1 < Object(1));
+assert !(1 < Object(0));
 
 # Binary arithmetic.
 object = Object(0) + 5;
