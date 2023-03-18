@@ -139,6 +139,14 @@ class Object {
     def $rop_binary_greater(other) {
         return other > self.value;
     }
+
+    def $op_binary_greater_equals(other) {
+        return self.value >= other;
+    }
+
+    def $rop_binary_greater_equals(other) {
+        return other >= self.value;
+    }
 }
 
 var object = Object(0);
@@ -179,6 +187,14 @@ assert !(Object(0) > 1);
 assert 2 > Object(1);
 assert !(1 > Object(1));
 assert !(0 > Object(1));
+
+assert Object(2) >= 1;
+assert Object(1) >= 1;
+assert !(Object(0) >= 1);
+
+assert 2 >= Object(1);
+assert 1 >= Object(1);
+assert !(0 >= Object(1));
 
 # Binary arithmetic.
 object = Object(0) + 5;

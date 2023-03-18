@@ -1256,8 +1256,7 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
                 case PYRO_VALUE_CHAR:
                     return left.as.i64 >= (int64_t)right.as.u32;
                 default:
-                    pyro_panic(vm, "values are not comparable");
-                    return false;
+                    break;
             }
             break;
         }
@@ -1273,8 +1272,7 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
                 case PYRO_VALUE_CHAR:
                     return left.as.u32 >= right.as.u32;
                 default:
-                    pyro_panic(vm, "values are not comparable");
-                    return false;
+                    break;
             }
             break;
         }
@@ -1292,49 +1290,54 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
                     return result == 0 || result == -1;
                 }
                 default:
-                    pyro_panic(vm, "values are not comparable");
-                    return false;
+                    break;
             }
             break;
         }
 
         case PYRO_VALUE_OBJ: {
-            switch (PYRO_AS_OBJ(left)->type) {
-                case PYRO_OBJECT_STR: {
-                    if (PYRO_IS_STR(right)) {
-                        return compare_strings(PYRO_AS_STR(left), PYRO_AS_STR(right)) >= 0;
-                    }
-                    pyro_panic(vm, "values are not comparable");
-                    return false;
-                }
-                case PYRO_OBJECT_TUP: {
-                    if (PYRO_IS_TUP(right)) {
-                        return compare_tuples(vm, PYRO_AS_TUP(left), PYRO_AS_TUP(right)) >= 0;
-                    }
-                    pyro_panic(vm, "values are not comparable");
-                    return false;
-                }
-                default: {
-                    PyroValue method = pyro_get_method(vm, left, vm->str_op_binary_greater_equals);
-                    if (!PYRO_IS_NULL(method)) {
-                        pyro_push(vm, left);
-                        pyro_push(vm, right);
-                        PyroValue result = pyro_call_method(vm, method, 1);
-                        if (vm->halt_flag) {
-                            return false;
-                        }
-                        return pyro_is_truthy(result);
-                    }
-                    pyro_panic(vm, "values are not comparable");
-                    return false;
-                }
+            if (PYRO_IS_STR(left) && PYRO_IS_STR(right)) {
+                return compare_strings(PYRO_AS_STR(left), PYRO_AS_STR(right)) >= 0;
             }
+            if (PYRO_IS_TUP(left) && PYRO_IS_TUP(right)) {
+                return compare_tuples(vm, PYRO_AS_TUP(left), PYRO_AS_TUP(right)) >= 0;
+            }
+            break;
         }
 
         default:
-            pyro_panic(vm, "values are not comparable");
-            return false;
+            break;
     }
+
+    PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_greater_equals);
+    if (!PYRO_IS_NULL(left_method)) {
+        pyro_push(vm, left);
+        pyro_push(vm, right);
+        PyroValue result = pyro_call_method(vm, left_method, 1);
+        if (vm->halt_flag) {
+            return false;
+        }
+        return pyro_is_truthy(result);
+    }
+
+    PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_greater_equals);
+    if (!PYRO_IS_NULL(right_method)) {
+        pyro_push(vm, right);
+        pyro_push(vm, left);
+        PyroValue result = pyro_call_method(vm, right_method, 1);
+        if (vm->halt_flag) {
+            return false;
+        }
+        return pyro_is_truthy(result);
+    }
+
+    pyro_panic(vm,
+        "invalid operand types for '>=' operator: '%s' and '%s'",
+        pyro_get_type_name(vm, left)->bytes,
+        pyro_get_type_name(vm, right)->bytes
+    );
+
+    return false;
 }
 
 
