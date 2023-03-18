@@ -1,7 +1,7 @@
 #include "cli.h"
 
 
-void pyro_run_file(ArgParser* parser) {
+void pyro_cli_run_file(ArgParser* parser) {
     size_t stack_size = pyro_cli_get_stack_size(parser);
 
     char* path = ap_arg(parser, 0);

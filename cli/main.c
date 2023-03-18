@@ -152,11 +152,10 @@ int main(int argc, char* argv[]) {
     }
 
     ap_set_helptext(test_cmd_parser, TEST_HELPTEXT);
-    ap_callback(test_cmd_parser, pyro_cmd_test);
+    ap_callback(test_cmd_parser, pyro_cli_cmd_test);
     ap_flag(test_cmd_parser, "verbose v");
     ap_str_opt(test_cmd_parser, "max-memory m", NULL);
     ap_str_opt(test_cmd_parser, "stack-size s", NULL);
-    ap_str_opt(parser, "import-root i", NULL);
     ap_str_opt(test_cmd_parser, "import-root i", NULL);
 
     // Register the parser for the 'time' comand.
@@ -167,7 +166,7 @@ int main(int argc, char* argv[]) {
     }
 
     ap_set_helptext(time_cmd_parser, TIME_HELPTEXT);
-    ap_callback(time_cmd_parser, pyro_cmd_time);
+    ap_callback(time_cmd_parser, pyro_cli_cmd_time);
     ap_str_opt(time_cmd_parser, "max-memory m", NULL);
     ap_str_opt(time_cmd_parser, "stack-size s", NULL);
     ap_str_opt(time_cmd_parser, "import-root i", NULL);
@@ -193,9 +192,9 @@ int main(int argc, char* argv[]) {
 
     if (!ap_has_cmd(parser)) {
         if (ap_count_args(parser) > 0) {
-            pyro_run_file(parser);
+            pyro_cli_run_file(parser);
         } else {
-            pyro_run_repl(parser);
+            pyro_cli_run_repl(parser);
         }
     }
 

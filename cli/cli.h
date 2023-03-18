@@ -5,11 +5,11 @@
 #include "../lib/args/args.h"
 #include "../lib/bestline/bestline.h"
 
-void pyro_run_file(ArgParser* parser);
-void pyro_run_repl(ArgParser* parser);
+void pyro_cli_run_file(ArgParser* parser);
+void pyro_cli_run_repl(ArgParser* parser);
 
-void pyro_cmd_test(char* cmd_name, ArgParser* cmd_parser);
-void pyro_cmd_time(char* cmd_name, ArgParser* cmd_parser);
+void pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser);
+void pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser);
 void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser);
 
 void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser);

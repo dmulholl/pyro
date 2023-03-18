@@ -97,7 +97,7 @@ static int count_open_brackets(const char* code, size_t code_count) {
 }
 
 
-void pyro_run_repl(ArgParser* parser) {
+void pyro_cli_run_repl(ArgParser* parser) {
     size_t stack_size = pyro_cli_get_stack_size(parser);
 
     PyroVM* vm = pyro_new_vm(stack_size);
