@@ -273,10 +273,12 @@ You can implement the `$`-prefixed methods listed below to overload operators or
 
 [[ `:$hash() -> i64` ]]
 
-    Implementing this method allows you to set a custom hash value for instances.
-    (By default an instance's hash value is simply its memory address.)
+    Implementing this method returns a custom hash value for an instance.
 
-    Hash values are used for looking up entries in the builtin `map` and `set` types.
+    * By default an instance's hash value is simply its memory address.
+    * Hash values are used for looking up entries in the builtin `map` and `set` types.
+    * The output of this method is used by the `$hash()` function.
+    * Instances that compare as equal using `==` should have the same hash value.
 
 
 [[ `:$init(arg1: any, arg2: any, ...)` ]]

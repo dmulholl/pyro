@@ -217,7 +217,9 @@ The `$rop_binary_star()` method is a fallback --- it's only called if the object
 
 Do we want to use our custom `Complex` number type as a key in [hash maps][3] or as an entry in [sets][4]?
 
-If so, and if we've overloaded the `==` operator by defining an `$op_binary_equals_equals()` method, we also need to define a `$hash()` method that ensures that `Complex` number instances that compare as equal also have the same hash value, e.g.
+If so, we need to define a `$hash()` method to ensure that instances that compare as equal using `==` also have the same hash value.
+
+An easy way to do this is to XOR the hashes of the real and imaginary parts, e.g.
 
 ::: code pyro
     class Complex {

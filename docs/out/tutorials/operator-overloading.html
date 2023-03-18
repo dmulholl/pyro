@@ -305,7 +305,10 @@ Hashing
 Do we want to use our custom <code>Complex</code> number type as a key in <a href="../builtins/maps.html">hash maps</a> or as an entry in <a href="../builtins/sets.html">sets</a>?
 </p>
 <p>
-If so, and if we've overloaded the <code>==</code> operator by defining an <code>$op_binary_equals_equals()</code> method, we also need to define a <code>$hash()</code> method that ensures that <code>Complex</code> number instances that compare as equal also have the same hash value, e.g.
+If so, we need to define a <code>$hash()</code> method to ensure that instances that compare as equal using <code>==</code> also have the same hash value.
+</p>
+<p>
+An easy way to do this is to XOR the hashes of the real and imaginary parts, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>
