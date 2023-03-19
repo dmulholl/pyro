@@ -4,7 +4,7 @@
 void pyro_cli_run_file(ArgParser* parser) {
     size_t stack_size = pyro_cli_get_stack_size(parser);
 
-    char* path = ap_arg(parser, 0);
+    char* path = ap_get_arg_at_index(parser, 0);
     if (!pyro_exists(path)) {
         fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
         exit(1);
@@ -25,7 +25,7 @@ void pyro_cli_run_file(ArgParser* parser) {
     pyro_cli_add_import_roots_from_path(vm, path);
 
     // Add the command line args to the global $args variable.
-    char** args = ap_args(parser);
+    char** args = ap_get_args(parser);
     pyro_set_args(vm, ap_count_args(parser), args);
     free(args);
 

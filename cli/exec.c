@@ -19,11 +19,11 @@ void pyro_cli_run_exec(ArgParser* parser) {
     pyro_add_import_root(vm, ".");
 
     // Add the command line args to the global $args variable.
-    char** args = ap_args(parser);
+    char** args = ap_get_args(parser);
     pyro_set_args(vm, ap_count_args(parser), args);
     free(args);
 
-    const char* code = ap_str_value(parser, "exec");
+    const char* code = ap_get_str_value(parser, "exec");
     pyro_exec_code_as_main(vm, code, strlen(code), "<exec>");
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         pyro_free_vm(vm);

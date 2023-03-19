@@ -9,7 +9,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
     int files_failed = 0;
 
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
-        char* path = ap_arg(cmd_parser, i);
+        char* path = ap_get_arg_at_index(cmd_parser, i);
         if (!pyro_exists(path)) {
             fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
             exit(1);
@@ -101,7 +101,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
     int files_failed = 0;
 
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
-        char* path = ap_arg(cmd_parser, i);
+        char* path = ap_get_arg_at_index(cmd_parser, i);
         if (!pyro_exists(path)) {
             fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
             exit(1);
@@ -189,13 +189,16 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
 }
 
 
-void pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
+int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
     if (ap_count_args(cmd_parser) == 0) {
-        return;
+        return 0;
     }
+
     if (ap_found(cmd_parser, "verbose")) {
         run_verbose_tests(cmd_parser);
     } else {
         run_quiet_tests(cmd_parser);
     }
+
+    return 0;
 }

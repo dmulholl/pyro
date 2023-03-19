@@ -1,12 +1,12 @@
 #include "cli.h"
 
 
-void pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
+int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     if (ap_count_args(cmd_parser) == 0) {
-        return;
+        return 0;
     }
 
-    int num_runs = ap_int_value(cmd_parser, "num-runs");
+    int num_runs = ap_get_int_value(cmd_parser, "num-runs");
     if (num_runs < 1) {
         fprintf(stderr, "Pyro CLI error: invalid argument for --num-runs.\n");
         exit(1);
@@ -15,7 +15,7 @@ void pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     double cmd_start_time = clock();
 
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
-        char* path = ap_arg(cmd_parser, i);
+        char* path = ap_get_arg_at_index(cmd_parser, i);
         if (!pyro_exists(path)) {
             fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
             exit(1);
@@ -114,4 +114,6 @@ void pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
     double time = (double)(clock() - cmd_start_time) / CLOCKS_PER_SEC;
     printf("\nTotal Runtime: %f secs\n", time);
+
+    return 0;
 }

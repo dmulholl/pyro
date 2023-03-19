@@ -1,9 +1,9 @@
 #include "cli.h"
 
 
-void pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
+int pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
     if (ap_count_args(cmd_parser) == 0) {
-        return;
+        return 0;
     }
 
     size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
@@ -16,7 +16,7 @@ void pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
             exit(1);
         }
 
-        char* path = ap_arg(cmd_parser, i);
+        char* path = ap_get_arg_at_index(cmd_parser, i);
         if (!pyro_exists(path)) {
             fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
             exit(1);
@@ -33,4 +33,6 @@ void pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
     if (had_panic) {
         exit(1);
     }
+
+    return 0;
 }

@@ -43,7 +43,7 @@ void pyro_cli_add_import_roots_from_command_line(PyroVM* vm, ArgParser* parser) 
     int arg_count = ap_count(parser, "import-root");
 
     for (int i = 0; i < arg_count; i++) {
-        char* root = ap_str_value_at_index(parser, "import-root", i);
+        char* root = ap_get_str_value_at_index(parser, "import-root", i);
         pyro_add_import_root(vm, root);
     }
 }
@@ -110,7 +110,7 @@ void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
         return;
     }
 
-    int64_t size = parse_memory_size(ap_str_value(parser, "max-memory"));
+    int64_t size = parse_memory_size(ap_get_str_value(parser, "max-memory"));
     if (size <= 0) {
         fprintf(stderr, "Pyro CLI error: invalid argument for --max-memory option.\n");
         exit(1);
@@ -125,7 +125,7 @@ size_t pyro_cli_get_stack_size(ArgParser* parser) {
         return 1024 * 1024;
     }
 
-    int64_t size = parse_memory_size(ap_str_value(parser, "stack-size"));
+    int64_t size = parse_memory_size(ap_get_str_value(parser, "stack-size"));
     if (size <= 0) {
         fprintf(stderr, "Pyro CLI error: invalid argument for --stack-size option.\n");
         exit(1);
