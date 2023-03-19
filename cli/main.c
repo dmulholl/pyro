@@ -15,11 +15,12 @@ static const char* HELPTEXT =
     "  [file]                     Script to run. Opens the REPL if omitted.\n"
     "\n"
     "Options:\n"
-    "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
+    "  -e, --exec <str>           Execute a string of Pyro code.\n"
+    "  -i, --import-root <dir>    Add a directory to the list of import roots.\n"
     "                             (This option can be specified multiple times.)\n"
-    "  -m, --max-memory <int>     Sets the maximum memory allocation in bytes.\n"
+    "  -m, --max-memory <int>     Set the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
-    "  -s, --stack-size <int>     Sets the stack size in bytes.\n"
+    "  -s, --stack-size <int>     Set the stack size in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
@@ -139,6 +140,7 @@ int main(int argc, char* argv[]) {
     free(version_string);
     free(helptext_string);
 
+    ap_str_opt(parser, "exec e", NULL);
     ap_str_opt(parser, "max-memory m", NULL);
     ap_str_opt(parser, "stack-size s", NULL);
     ap_str_opt(parser, "import-root i", NULL);
@@ -180,7 +182,7 @@ int main(int argc, char* argv[]) {
     }
 
     ap_set_helptext(check_cmd_parser, CHECK_HELPTEXT);
-    ap_callback(check_cmd_parser, pyro_cmd_check);
+    ap_callback(check_cmd_parser, pyro_cli_cmd_check);
     ap_str_opt(check_cmd_parser, "max-memory m", NULL);
     ap_str_opt(check_cmd_parser, "stack-size s", NULL);
 
@@ -191,7 +193,9 @@ int main(int argc, char* argv[]) {
     }
 
     if (!ap_has_cmd(parser)) {
-        if (ap_count_args(parser) > 0) {
+        if (ap_found(parser, "exec")) {
+            pyro_cli_run_exec(parser);
+        } else if (ap_count_args(parser) > 0) {
             pyro_cli_run_file(parser);
         } else {
             pyro_cli_run_repl(parser);

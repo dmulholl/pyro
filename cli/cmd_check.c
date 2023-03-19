@@ -1,7 +1,7 @@
 #include "cli.h"
 
 
-void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
+void pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
     if (ap_count_args(cmd_parser) == 0) {
         return;
     }

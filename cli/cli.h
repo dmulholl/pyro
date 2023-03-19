@@ -7,10 +7,11 @@
 
 void pyro_cli_run_file(ArgParser* parser);
 void pyro_cli_run_repl(ArgParser* parser);
+void pyro_cli_run_exec(ArgParser* parser);
 
 void pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser);
 void pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser);
-void pyro_cmd_check(char* cmd_name, ArgParser* cmd_parser);
+void pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser);
 
 void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser);
 void pyro_cli_add_import_roots_from_command_line(PyroVM* vm, ArgParser* parser);
