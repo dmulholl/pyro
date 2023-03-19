@@ -1,11 +1,4 @@
-class Foo {}
-
-var foo1 = Foo();
-var foo2 = Foo();
-assert foo1 == foo1;
-assert foo1 != foo2;
-
-class Bar {
+class Object {
     pub var value;
 
     def $init(value) {
@@ -13,22 +6,18 @@ class Bar {
     }
 
     def $op_binary_equals_equals(other) {
-        return $is_instance_of(other, Bar) && other.value == self.value;
+        return self.value == other.value;
     }
 
     def $hash() {
-        return self.value;
+        return $hash(self.value);
     }
 }
 
-var bar1 = Bar(123);
-var bar2 = Bar(123);
-assert bar1 != foo1;
-assert bar1 == bar1;
-assert bar1 == bar2;
+assert Object(0) == Object(0);
+assert Object(1) == Object(1);
+assert Object(1) != Object(0);
 
-var bar3 = Bar(456);
-assert bar1 != bar3;
-
-assert $hash(bar1) == 123;
-assert $hash(bar3) == 456;
+assert $hash(Object(0)) == $hash(Object(0));
+assert $hash(Object(1)) == $hash(Object(1));
+assert $hash(Object(1)) != $hash(Object(0));
