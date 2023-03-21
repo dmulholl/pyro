@@ -1709,15 +1709,24 @@ static void parse_type(Parser* parser) {
 
 
 static void parse_echo_stmt(Parser* parser) {
+    int count = 0;
+    if (match(parser, TOKEN_SEMICOLON)) {
+        emit_u8_u8(parser, PYRO_OPCODE_ECHO, count);
+        return;
+    }
+
     parse_expression(parser, true, true);
-    int count = 1;
+    count++;
+
     while (match(parser, TOKEN_COMMA)) {
+        if (count == 255) {
+            ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'echo' (max: 255)");
+            return;
+        }
         parse_expression(parser, true, true);
         count++;
     }
-    if (count > 255) {
-        ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'echo' (max: 255)");
-    }
+
     consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
     emit_u8_u8(parser, PYRO_OPCODE_ECHO, count);
 }

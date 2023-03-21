@@ -766,22 +766,29 @@ static void run(PyroVM* vm) {
             }
 
             case PYRO_OPCODE_ECHO: {
-                uint8_t arg_count = READ_BYTE();
+                int arg_count = (int)READ_BYTE();
 
-                for (uint8_t i = arg_count; i > 0; i--) {
-                    PyroValue value = vm->stack_top[-i];
+                for (int i = 0; i < arg_count; i++) {
+                    PyroValue value = vm->stack_top[-arg_count + i];
                     PyroStr* string = pyro_stringify_value(vm, value);
                     if (vm->halt_flag) {
                         break;
                     }
-                    int64_t n = pyro_stdout_write_f(vm, i > 1 ? "%s " : "%s\n", string->bytes);
-                    if (n == -1) {
+                    if (pyro_stdout_write_s(vm, string) < 0) {
                         pyro_panic(vm, "echo: failed to write to the standard output stream");
                         break;
-                    } else if (n == -2) {
-                        pyro_panic(vm, "out of memory");
-                        break;
                     }
+                    if (i < arg_count - 1) {
+                        if (pyro_stdout_write_n(vm, " ", 1) < 0) {
+                            pyro_panic(vm, "echo: failed to write to the standard output stream");
+                            break;
+                        }
+                    }
+                }
+
+                if (pyro_stdout_write_n(vm, "\n", 1) < 0) {
+                    pyro_panic(vm, "echo: failed to write to the standard output stream");
+                    break;
                 }
 
                 vm->stack_top -= arg_count;
