@@ -143,7 +143,26 @@ also a <code>-v</code> shortcut unless registered by another option.
 </dt>
 <dd>
 <p>
-This boolean switch toggles support for an automatic <code>help</code> command that prints subcommand helptext. The value defaults to <code>false</code> but gets toggled automatically to <code>true</code> whenever a command is registered. You can use this switch to disable the feature if required.
+Toggles the <code>enable_help_command</code> flag.
+</p>
+<p>
+This boolean flag toggles support for an automatic <code>help</code> command that prints subcommand helptext. The value defaults to <code>false</code> but gets toggled automatically to <code>true</code> whenever a command is registered. You can use this switch to disable the feature if required.
+</p>
+<p>
+Returns the parser to enable chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:error_format(fmt_string: str) -&gt; ArgParser</code>
+</dt>
+<dd>
+<p>
+Sets the format string for error messages printed to <code>stderr</code>.
+</p>
+<p>
+The default format string is <code>&quot;error: {}&quot;</code>.
 </p>
 <p>
 Returns the parser to enable chaining.
@@ -156,11 +175,16 @@ Returns the parser to enable chaining.
 </dt>
 <dd>
 <p>
-If this boolean switch is <code>true</code> (the default), the parser will cause the program to exit with an error message and a non-zero status code if the user supplies invalid command line arguments.
+Toggles the <code>exit_on_error</code> flag.
 </p>
-<p>
-If this switch is set to <code>false</code>, the <code>:parse()</code> method will return an <code>err</code> instead of exiting.
-</p>
+<ul>
+<li>
+If this boolean flag is <code>true</code> (the default), the <code>:parse()</code> method will exit with an error message and a non-zero status code if the command-line arguments are invalid or if a callback function for a command panics.
+</li>
+<li>
+If this boolean flag is <code>false</code>, the <code>:parse()</code> method will return an <code>err</code> instead of exiting.
+</li>
+</ul>
 <p>
 Returns the parser to enable chaining.
 </p>
@@ -241,10 +265,10 @@ Returns the parser to enable chaining.
 </p>
 <ul>
 <li>
-If <code>exit_on_error</code> is <code>true</code>, exits with an error message for the user if the command line arguments are invalid.
+If <code>exit_on_error</code> is <code>true</code>, exits with an error message if the command line arguments are invalid or if a command callback panics.
 </li>
 <li>
-If <code>exit_on_error</code> is <code>false</code>, returns an <code>err</code> if the command line arguments are invalid.
+If <code>exit_on_error</code> is <code>false</code>, returns an <code>err</code> if the command line arguments are invalid or if a command callback panics.
 </li>
 </ul>
 <p>

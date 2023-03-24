@@ -38,15 +38,27 @@ You can customize an `ArgParser` using the methods below:
 
 [[ `:enable_help_command(enable: bool) -> ArgParser` ]]
 
-    This boolean switch toggles support for an automatic `help` command that prints subcommand helptext. The value defaults to `false` but gets toggled automatically to `true` whenever a command is registered. You can use this switch to disable the feature if required.
+    Toggles the `enable_help_command` flag.
+
+    This boolean flag toggles support for an automatic `help` command that prints subcommand helptext. The value defaults to `false` but gets toggled automatically to `true` whenever a command is registered. You can use this switch to disable the feature if required.
+
+    Returns the parser to enable chaining.
+
+[[ `:error_format(fmt_string: str) -> ArgParser` ]]
+
+    Sets the format string for error messages printed to `stderr`.
+
+    The default format string is `"error: {}"`.
 
     Returns the parser to enable chaining.
 
 [[ `:exit_on_error(enable: bool) -> ArgParser` ]]
 
-    If this boolean switch is `true` (the default), the parser will cause the program to exit with an error message and a non-zero status code if the user supplies invalid command line arguments.
+    Toggles the `exit_on_error` flag.
 
-    If this switch is set to `false`, the `:parse()` method will return an `err` instead of exiting.
+    * If this boolean flag is `true` (the default), the `:parse()` method will exit with an error message and a non-zero status code if the command-line arguments are invalid or if a callback function for a command panics.
+
+    * If this boolean flag is `false`, the `:parse()` method will return an `err` instead of exiting.
 
     Returns the parser to enable chaining.
 
@@ -91,9 +103,9 @@ Call the `:parse()` method on the root `ArgParser` instance to parse the program
     Parses the program's command line arguments.
     Returns the parser to enable chaining.
 
-    * If `exit_on_error` is `true`, exits with an error message for the user if the command line arguments are invalid.
+    * If `exit_on_error` is `true`, exits with an error message if the command line arguments are invalid or if a command callback panics.
 
-    * If `exit_on_error` is `false`, returns an `err` if the command line arguments are invalid.
+    * If `exit_on_error` is `false`, returns an `err` if the command line arguments are invalid or if a command callback panics.
 
     You only need to call this method on the root `ArgParser` instance; arguments for commands will be parsed automatically.
 
