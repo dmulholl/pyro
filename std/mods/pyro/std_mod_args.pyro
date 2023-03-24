@@ -79,6 +79,8 @@ pub class ArgParser {
     pub var args: vec[str];
     pub var command_name: str?;
     pub var command_parser: ArgParser?;
+    pub var exit_on_error: bool = true;
+    pub var enable_help_command: bool = false;
 
     var helptext: str?;
     var version: str?;
@@ -86,8 +88,7 @@ pub class ArgParser {
     var flags: map[str, Flag];
     var commands: map[str, ArgParser];
     var callback: callable?(str, ArgParser);
-    var enable_help_command: bool = false;
-    var exit_on_error: bool = true;
+    var error_format_string: str = "error: {}";
 
     def $init() {
         self.options = $map();
@@ -129,6 +130,11 @@ pub class ArgParser {
 
     pub def enable_help_command(enable: bool) -> ArgParser {
         self.enable_help_command = enable;
+        return self;
+    }
+
+    pub def error_format(fmt_string: str) -> ArgParser {
+        self.error_format_string = fmt_string;
         return self;
     }
 
@@ -215,7 +221,8 @@ pub class ArgParser {
 
         if var result = try self:parse_stream(arg_stream); $is_err(result) {
             if self.exit_on_error {
-                self:exit_with_error(result);
+                $eprintln(self.error_format_string, result);
+                $exit(1);
             }
             return result;
         }
@@ -368,11 +375,6 @@ pub class ArgParser {
             $println(self.version:strip());
         }
         $exit(0);
-    }
-
-    pub def exit_with_error(message: any) {
-        $eprintln("Error: {}.", message);
-        $exit(1);
     }
 
     pub def print() {
