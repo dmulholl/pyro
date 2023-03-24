@@ -48,7 +48,7 @@ You can customize an `ArgParser` using the methods below:
 
     Sets the format string for error messages printed to `stderr`.
 
-    The default format string is `"error: {}"`.
+    The default format string is `"error: {}"`. The `{}` placeholder contains the content of the error message.
 
     Returns the parser to enable chaining.
 
@@ -149,7 +149,7 @@ Positional arguments are appended to the parser's `.args` vector.
 
 ### Command Setup
 
-Register a command on a parent `ArgParser` instance using the method below:
+Register a new command on a parent `ArgParser` instance using the `:command()` method:
 
 [[ `:command(name: str) -> ArgParser` ]]
 
@@ -160,12 +160,15 @@ Register a command on a parent `ArgParser` instance using the method below:
     * Returns the command's `ArgParser` instance which can be used to register the command's help text, flags, options, and callback function.
 
 
-Register a callback function for a command on the command's `ArgParser` instance using the method below:
+Register a callback function for a command on the command's `ArgParser` instance using the `:callback()` method:
 
-[[ `:callback(callback: callable(str, ArgParser)) -> ArgParser` ]]
+[[ `:callback(callback: callable(str, ArgParser) -> any) -> ArgParser` ]]
 
     Sets the callback function for a command parser.
-    If the command is found, this function will be called with the command's name and `ArgParser` instance.
+
+    If the command is found, this function will be called with the command's name and `ArgParser` instance as arguments.
+
+    The callback function's return value will be stored in the parent's `.command_return_value` field.
 
     Returns the parser to enable chaining.
 
@@ -177,9 +180,12 @@ If a command is found, the following fields are set on the command's parent `Arg
 
 [[ `.command_name: str?` ]]
 
-    If a command was found, stores the command name, otherwise `null`.
+    If a command was found, this field stores the command name, otherwise `null`.
 
 [[ `.command_parser: ArgParser?` ]]
 
-    If a command was found, stores the command's `ArgParser` instance, otherwise `null`.
+    If a command was found, this field stores the command's `ArgParser` instance, otherwise `null`.
 
+[[ `.command_return_value: any` ]]
+
+    If a command was found, and if that command had a callback function, this field stores the callback function's return value, otherwise `null`.

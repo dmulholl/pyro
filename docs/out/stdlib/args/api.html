@@ -165,7 +165,7 @@ Returns the parser to enable chaining.
 Sets the format string for error messages printed to <code>stderr</code>.
 </p>
 <p>
-The default format string is <code>&quot;error: {}&quot;</code>.
+The default format string is <code>&quot;error: {}&quot;</code>. The <code>{}</code> placeholder contains the content of the error message.
 </p>
 <p>
 Returns the parser to enable chaining.
@@ -359,7 +359,7 @@ Stores positonal arguments as a <code>vec</code> of strings.
 Command Setup
 </h3>
 <p>
-Register a command on a parent <code>ArgParser</code> instance using the method below:
+Register a new command on a parent <code>ArgParser</code> instance using the <code>:command()</code> method:
 </p>
 <dl>
 <div>
@@ -382,17 +382,22 @@ Returns the command's <code>ArgParser</code> instance which can be used to regis
 </div>
 </dl>
 <p>
-Register a callback function for a command on the command's <code>ArgParser</code> instance using the method below:
+Register a callback function for a command on the command's <code>ArgParser</code> instance using the <code>:callback()</code> method:
 </p>
 <dl>
 <div>
 <dt>
-<code>:callback(callback: callable(str, ArgParser)) -&gt; ArgParser</code>
+<code>:callback(callback: callable(str, ArgParser) -&gt; any) -&gt; ArgParser</code>
 </dt>
 <dd>
 <p>
 Sets the callback function for a command parser.
-If the command is found, this function will be called with the command's name and <code>ArgParser</code> instance.
+</p>
+<p>
+If the command is found, this function will be called with the command's name and <code>ArgParser</code> instance as arguments.
+</p>
+<p>
+The callback function's return value will be stored in the parent's <code>.command_return_value</code> field.
 </p>
 <p>
 Returns the parser to enable chaining.
@@ -413,7 +418,7 @@ If a command is found, the following fields are set on the command's parent <cod
 </dt>
 <dd>
 <p>
-If a command was found, stores the command name, otherwise <code>null</code>.
+If a command was found, this field stores the command name, otherwise <code>null</code>.
 </p>
 </dd>
 </div>
@@ -423,7 +428,17 @@ If a command was found, stores the command name, otherwise <code>null</code>.
 </dt>
 <dd>
 <p>
-If a command was found, stores the command's <code>ArgParser</code> instance, otherwise <code>null</code>.
+If a command was found, this field stores the command's <code>ArgParser</code> instance, otherwise <code>null</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>.command_return_value: any</code>
+</dt>
+<dd>
+<p>
+If a command was found, and if that command had a callback function, this field stores the callback function's return value, otherwise <code>null</code>.
 </p>
 </dd>
 </div>

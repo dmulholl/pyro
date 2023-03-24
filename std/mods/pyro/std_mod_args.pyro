@@ -79,6 +79,7 @@ pub class ArgParser {
     pub var args: vec[str];
     pub var command_name: str?;
     pub var command_parser: ArgParser?;
+    pub var command_return_value: any;
     pub var exit_on_error: bool = true;
     pub var enable_help_command: bool = false;
 
@@ -269,7 +270,7 @@ pub class ArgParser {
 
                 var cmd_callback = $field(self.command_parser, "callback");
                 if (cmd_callback) {
-                    cmd_callback(arg, self.command_parser);
+                    self.command_return_value = cmd_callback(arg, self.command_parser);
                 }
             }
 
