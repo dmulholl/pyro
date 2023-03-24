@@ -147,9 +147,9 @@ Positional arguments are appended to the parser's `.args` vector.
 
 
 
-### Commands
+### Command Setup
 
-Register a command on an `ArgParser` using the method below:
+Register a command on a parent `ArgParser` instance using the method below:
 
 [[ `:command(name: str) -> ArgParser` ]]
 
@@ -160,7 +160,7 @@ Register a command on an `ArgParser` using the method below:
     * Returns the command's `ArgParser` instance which can be used to register the command's help text, flags, options, and callback function.
 
 
-Register a callback function for a command using the method below:
+Register a callback function for a command on the command's `ArgParser` instance using the method below:
 
 [[ `:callback(callback: callable(str, ArgParser)) -> ArgParser` ]]
 
@@ -170,16 +170,16 @@ Register a callback function for a command using the method below:
     Returns the parser to enable chaining.
 
 
-The following `ArgParser` fields can also be used for processing commands:
+
+### Command Inspection
+
+If a command is found, the following fields are set on the command's parent `ArgParser` instance:
 
 [[ `.command_name: str?` ]]
 
-    Stores the command name if a command was found.
-    If no command was found, this field will have the value `null`.
+    If a command was found, stores the command name, otherwise `null`.
 
 [[ `.command_parser: ArgParser?` ]]
 
-    Stores the command parser if a command was found.
-    If no command was found, this field will have the value `null`.
+    If a command was found, stores the command's `ArgParser` instance, otherwise `null`.
 
-Note that these fields are set on the command's parent `ArgParser` instance.

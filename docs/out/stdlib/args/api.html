@@ -71,7 +71,10 @@
 <a href="#positional-arguments">Positional Arguments</a>
 </li>
 <li>
-<a href="#commands">Commands</a>
+<a href="#command-setup">Command Setup</a>
+</li>
+<li>
+<a href="#command-inspection">Command Inspection</a>
 </li>
 </ul>
 <h3 id="setup">
@@ -352,11 +355,11 @@ Stores positonal arguments as a <code>vec</code> of strings.
 </dd>
 </div>
 </dl>
-<h3 id="commands">
-Commands
+<h3 id="command-setup">
+Command Setup
 </h3>
 <p>
-Register a command on an <code>ArgParser</code> using the method below:
+Register a command on a parent <code>ArgParser</code> instance using the method below:
 </p>
 <dl>
 <div>
@@ -379,7 +382,7 @@ Returns the command's <code>ArgParser</code> instance which can be used to regis
 </div>
 </dl>
 <p>
-Register a callback function for a command using the method below:
+Register a callback function for a command on the command's <code>ArgParser</code> instance using the method below:
 </p>
 <dl>
 <div>
@@ -397,8 +400,11 @@ Returns the parser to enable chaining.
 </dd>
 </div>
 </dl>
+<h3 id="command-inspection">
+Command Inspection
+</h3>
 <p>
-The following <code>ArgParser</code> fields can also be used for processing commands:
+If a command is found, the following fields are set on the command's parent <code>ArgParser</code> instance:
 </p>
 <dl>
 <div>
@@ -407,8 +413,7 @@ The following <code>ArgParser</code> fields can also be used for processing comm
 </dt>
 <dd>
 <p>
-Stores the command name if a command was found.
-If no command was found, this field will have the value <code>null</code>.
+If a command was found, stores the command name, otherwise <code>null</code>.
 </p>
 </dd>
 </div>
@@ -418,15 +423,11 @@ If no command was found, this field will have the value <code>null</code>.
 </dt>
 <dd>
 <p>
-Stores the command parser if a command was found.
-If no command was found, this field will have the value <code>null</code>.
+If a command was found, stores the command's <code>ArgParser</code> instance, otherwise <code>null</code>.
 </p>
 </dd>
 </div>
 </dl>
-<p>
-Note that these fields are set on the command's parent <code>ArgParser</code> instance.
-</p>
         </article>
         
     </body>
