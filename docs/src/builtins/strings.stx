@@ -109,6 +109,21 @@ Strings compare as equal using the `==` operator if they have the same content, 
 
 
 
+### Comparisons
+
+You can compare strings using the comparison operators, `<`, `<=`, `>`, `>=`, e.g.
+
+::: code pyro
+    assert "abc" < "def";
+
+Strings are compared lexicographically by byte value, e.g.
+
+::: code pyro
+    assert "a" < "aa";
+    assert "aa" < "aaa";
+
+
+
 ### Concatenating
 
 You can concatenate two strings using the `+` operator, e.g.

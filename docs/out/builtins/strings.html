@@ -65,6 +65,9 @@
 <a href="#equality">Equality</a>
 </li>
 <li>
+<a href="#comparisons">Comparisons</a>
+</li>
+<li>
 <a href="#concatenating">Concatenating</a>
 </li>
 <li>
@@ -294,6 +297,22 @@ Strings compare as equal using the <code>==</code> operator if they have the sam
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
+</pre>
+<h3 id="comparisons">
+Comparisons
+</h3>
+<p>
+You can compare strings using the comparison operators, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Strings are compared lexicographically by byte value, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;a&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aa&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;aa&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aaa&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="concatenating">
 Concatenating
