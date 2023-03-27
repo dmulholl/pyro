@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Standard Library &mdash; std::email</title>
+        <title>Pyro Standard Library &mdash; std::sendmail</title>
         <link rel="stylesheet" href="../assets/fonts.css">
         <link rel="stylesheet" href="../assets/graphite.css">
         <link rel="stylesheet" href="../assets/pygments.css">
@@ -11,7 +11,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-stdlib-email node-stdlib node">
+    <body class="node-stdlib-sendmail node-stdlib node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -50,7 +50,7 @@
         </header>
         <article class="main">
             <header class="title">
-                <h1><code>std::email</code></h1>
+                <h1><code>std::sendmail</code></h1>
                 
                 <hr>
             </header>
@@ -61,27 +61,27 @@ A utility module for sending email. Uses the system's <code>sendmail</code> comm
 Example
 </h3>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">email</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">sendmail</span><span class="p">;</span>
 
 <span class="c1"># Create a new email.</span>
-<span class="kd">var</span> <span class="nx">mail</span> <span class="p">=</span> <span class="nx">email</span><span class="p">::</span><span class="nx">Email</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">email</span> <span class="p">=</span> <span class="nx">sendmail</span><span class="p">::</span><span class="nx">Email</span><span class="p">();</span>
 
 <span class="c1"># Set the email&#39;s recipient, sender, and subject.</span>
-<span class="nx">mail</span><span class="p">:</span><span class="nx">to</span><span class="p">(</span><span class="s">&quot;johndoe@example.com&quot;</span><span class="p">);</span>
-<span class="nx">mail</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;sender@example.com&quot;</span><span class="p">);</span>
-<span class="nx">mail</span><span class="p">:</span><span class="nx">subject</span><span class="p">(</span><span class="s">&quot;Important Subject&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">to</span><span class="p">(</span><span class="s">&quot;johndoe@example.com&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;sender@example.com&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">subject</span><span class="p">(</span><span class="s">&quot;Important Subject&quot;</span><span class="p">);</span>
 
 <span class="c1"># Optional: add additional headers.</span>
-<span class="nx">mail</span><span class="p">:</span><span class="nx">add_header</span><span class="p">(</span><span class="s">&quot;Content-Type: text/plain; charset=utf-8&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">add_header</span><span class="p">(</span><span class="s">&quot;Content-Type: text/plain; charset=utf-8&quot;</span><span class="p">);</span>
 
 <span class="c1"># Write the email&#39;s content to its `body` buffer.</span>
-<span class="nx">mail</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;This is the email&#39;s content.&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;This is the email&#39;s content.&quot;</span><span class="p">);</span>
 
 <span class="c1"># Optional: print the email&#39;s raw text.</span>
-<span class="k">echo</span> <span class="nx">mail</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">email</span><span class="p">;</span>
 
 <span class="c1"># Send the email.</span>
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">mail</span><span class="p">:</span><span class="nx">send</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">email</span><span class="p">:</span><span class="nx">send</span><span class="p">();</span>
 <span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">result</span><span class="p">;</span>
 <span class="p">}</span>
@@ -133,13 +133,13 @@ Sets the value of the email's <code>From:</code> header.
 The argument can be a bare email address, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">mail</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;johndoe@example.com&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;johndoe@example.com&quot;</span><span class="p">);</span>
 </pre>
 <p>
 Alternatively, the argument can combine a name and an email address, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">mail</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;John Doe &lt;johndoe@example.com&gt;&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;John Doe &lt;johndoe@example.com&gt;&quot;</span><span class="p">);</span>
 </pre>
 <p>
 Returns <code>self</code> to allow chaining.

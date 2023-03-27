@@ -21,10 +21,6 @@ All standard library modules are submodules of the root module `std`.
 
     A utility module for writing CGI scripts in Pyro.
 
-[[ [email](@root/stdlib/email//) ]]
-
-    A utility module for sending email.
-
 [[ [html](@root/stdlib/html//) ]]
 
     Utility functions for working with HTML.
@@ -60,6 +56,10 @@ All standard library modules are submodules of the root module `std`.
 [[ [pyro](@root/stdlib/pyro//) ]]
 
     A utility module for interacting with the Pyro VM.
+
+[[ [sendmail](@root/stdlib/sendmail//) ]]
+
+    A utility module for sending email.
 
 [[ [sqlite](@root/stdlib/sqlite//) ]]
 

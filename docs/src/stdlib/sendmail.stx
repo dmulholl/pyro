@@ -1,6 +1,6 @@
 ---
-title: <code>std::email</code>
-meta_title: Pyro Standard Library &mdash; std::email
+title: <code>std::sendmail</code>
+meta_title: Pyro Standard Library &mdash; std::sendmail
 ---
 
 A utility module for sending email. Uses the system's `sendmail` command.
@@ -10,27 +10,27 @@ A utility module for sending email. Uses the system's `sendmail` command.
 ### Example
 
 ::: code pyro
-    import std::email;
+    import std::sendmail;
 
     # Create a new email.
-    var mail = email::Email();
+    var email = sendmail::Email();
 
     # Set the email's recipient, sender, and subject.
-    mail:to("johndoe@example.com");
-    mail:from("sender@example.com");
-    mail:subject("Important Subject");
+    email:to("johndoe@example.com");
+    email:from("sender@example.com");
+    email:subject("Important Subject");
 
     # Optional: add additional headers.
-    mail:add_header("Content-Type: text/plain; charset=utf-8");
+    email:add_header("Content-Type: text/plain; charset=utf-8");
 
     # Write the email's content to its `body` buffer.
-    mail:write("This is the email's content.");
+    email:write("This is the email's content.");
 
     # Optional: print the email's raw text.
-    echo mail;
+    echo email;
 
     # Send the email.
-    var result = mail:send();
+    var result = email:send();
     if $is_err(result) {
         echo result;
     }
@@ -60,12 +60,12 @@ A utility module for sending email. Uses the system's `sendmail` command.
     The argument can be a bare email address, e.g.
 
     ::: code pyro
-        mail:from("johndoe@example.com");
+        email:from("johndoe@example.com");
 
     Alternatively, the argument can combine a name and an email address, e.g.
 
     ::: code pyro
-        mail:from("John Doe <johndoe@example.com>");
+        email:from("John Doe <johndoe@example.com>");
 
     Returns `self` to allow chaining.
 
