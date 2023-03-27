@@ -18,7 +18,7 @@ OBJ_FILES = out/build/sqlite.o \
 			out/build/args.o \
 			out/build/mt64.o \
 			out/build/std_mod_args.o \
-			out/build/std_mod_email.o \
+			out/build/std_mod_sendmail.o \
 			out/build/std_mod_html.o \
 			out/build/std_mod_cgi.o \
 			out/build/std_mod_pretty.o \
@@ -131,11 +131,11 @@ out/build/std_mod_args.o: std/mods/pyro/std_mod_args.pyro
 	@cd std/mods/pyro; xxd -i std_mod_args.pyro > ../../../out/build/std_mod_args.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_args.c -o out/build/std_mod_args.o
 
-out/build/std_mod_email.o: std/mods/pyro/std_mod_email.pyro
+out/build/std_mod_sendmail.o: std/mods/pyro/std_mod_sendmail.pyro
 	@mkdir -p out/build
-	@printf "\e[1;32mBuilding\e[0m std::email\n"
-	@cd std/mods/pyro; xxd -i std_mod_email.pyro > ../../../out/build/std_mod_email.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_email.c -o out/build/std_mod_email.o
+	@printf "\e[1;32mBuilding\e[0m std::sendmail\n"
+	@cd std/mods/pyro; xxd -i std_mod_sendmail.pyro > ../../../out/build/std_mod_sendmail.c
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c out/build/std_mod_sendmail.c -o out/build/std_mod_sendmail.o
 
 out/build/std_mod_html.o: std/mods/pyro/std_mod_html.pyro
 	@mkdir -p out/build

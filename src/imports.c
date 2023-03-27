@@ -63,8 +63,8 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         return;
     }
 
-    if (strcmp(name->bytes, "email") == 0) {
-        pyro_exec_code_as_module(vm, (char*)std_mod_email_pyro, std_mod_email_pyro_len, "std::email", module);
+    if (strcmp(name->bytes, "sendmail") == 0) {
+        pyro_exec_code_as_module(vm, (char*)std_mod_sendmail_pyro, std_mod_sendmail_pyro_len, "std::sendmail", module);
         return;
     }
 
