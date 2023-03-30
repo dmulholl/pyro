@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.4.6
+" v0.4.8
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -9,14 +9,14 @@ syn match pyroSpecial "$\w\+\>"
 
 " Strings and characters.
 syn region pyroBacktickedString start=+`+ end=+`+
-syn region pyroDoubleQuotedString start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=pyroEscaped
-syn region pyroChar start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=pyroEscaped
+syn region pyroDoubleQuotedString start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=pyroEscape,pyroInterpolation
+syn region pyroChar start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=pyroEscape
 
 " Escapes inside string literals.
-syn match pyroEscaped #\\[0befnrtv$'"\\]# contained
-syn match pyroEscaped #\\x\x\{2}# contained
-syn match pyroEscaped #\%(\\u\x\{4}\|\\U\x\{8}\)# contained
-syn match pyroEscaped #${[_$a-zA-Z0-9 .,:;?()\[\]`'"!&|^*/%+-]\+}# contained
+syn match pyroEscape #\\[0befnrtv$'"\\]# contained
+syn match pyroEscape #\\x\x\{2}# contained
+syn match pyroEscape #\%(\\u\x\{4}\|\\U\x\{8}\)# contained
+syn match pyroInterpolation #${[_$a-zA-Z0-9 .,:;?()\[\]`'"!&|^*/%+-]\+}# contained
 
 " Keywords.
 syn keyword pyroKeyword var def class typedef with
@@ -49,6 +49,7 @@ hi def link pyroImport PreProc
 hi def link pyroConstant Special
 hi def link pyroNumber Constant
 hi def link pyroSpecial PreProc
-hi def link pyroEscaped Constant
+hi def link pyroEscape Constant
+hi def link pyroInterpolation Constant
 
 let b:current_syntax = "pyro"
