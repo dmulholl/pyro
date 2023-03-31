@@ -1,3 +1,2 @@
-/out/
-/src/std/pyro/*.c
+/build/
 /tests/compiled_module.so

@@ -23,7 +23,7 @@ To build the release binary run:
 ::: code
     $ make release
 
-The release binary will be created in a new `out/release` directory as `out/release/pyro`.
+The release binary will be created in a new `build/release` directory as `build/release/pyro`.
 
 To install the release binary run:
 

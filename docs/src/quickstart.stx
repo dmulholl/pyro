@@ -24,9 +24,9 @@ Build the release binary by running:
 ::: code
     $ make release
 
-The release binary will be created in a new `out/release` directory as `out/release/pyro`.
+The release binary will be created in a new `build/release` directory as `build/release/pyro`.
 
-`cd` into the `out/release` directory and try running the Pyro binary with the `--help` flag to view the command line help:
+`cd` into the `build/release` directory and try running the Pyro binary with the `--help` flag to view the command line help:
 
 ::: code
     $ ./pyro --help
