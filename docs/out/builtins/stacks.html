@@ -55,7 +55,7 @@
                 <hr>
             </header>
             <p>
-A stack object, <code>stack</code>, is a LIFO (last-in-first-out) container type that supports only two operations &mdash; <i>pushing</i> and <i>popping</i>.
+A stack object, <code>stack</code>, is a LIFO (last-in-first-out) container type.
 </p>
 <dl>
 <div>
@@ -105,12 +105,23 @@ Returns <code>true</code> if the stack is empty.
 </div>
 <div>
 <dt>
+<code>:peek() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the item on top of the stack without removing it.
+Returns an <code>err</code> if the stack is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:pop() -&gt; any</code>
 </dt>
 <dd>
 <p>
-Pops and returns the value on top of the stack.
-Panics if the stack is empty.
+Removes and returns the item on top of the stack.
+Returns an <code>err</code> if the stack is empty.
 </p>
 </dd>
 </div>
