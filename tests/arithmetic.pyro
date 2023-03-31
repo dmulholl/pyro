@@ -1,18 +1,38 @@
-# Integers.
+# Integer arithmetic.
 assert 1 + 2 == 3;
-assert 3 - 2 == 1;
-assert 1 * 2 == 2;
-assert 2 + 3 * 4 == 14;
-assert 2 * 3 + 4 == 10;
-assert (2 + 3) * 4 == 20;
+assert 1 + 2 + 3 == 6;
 
-# Floats.
+assert 3 - 2 == 1;
+assert 3 - 2 - 1 == 0;
+
+assert 2 * 3 == 6;
+assert 2 * 3 * 4 == 24;
+
+assert 2 + 3 * 4 == 14;
+assert (2 + 3) * 4 == 20;
+assert 2 + (3 * 4) == 14;
+
+assert 2 * 3 + 4 == 10;
+assert (2 * 3) + 4 == 10;
+assert 2 * (3 + 4) == 14;
+
+# Floating-point arithmetic.
 assert 1.0 + 2.0 == 3.0;
+assert 1.0 + 2.0 + 3.0 == 6.0;
+
 assert 3.0 - 2.0 == 1.0;
-assert 1.0 * 2.0 == 2.0;
+assert 3.0 - 2.0 - 1.0 == 0.0;
+
+assert 2.0 * 3.0 == 6.0;
+assert 2.0 * 3.0 * 4.0 == 24.0;
+
 assert 2.0 + 3.0 * 4.0 == 14.0;
-assert 2.0 * 3.0 + 4.0 == 10.0;
 assert (2.0 + 3.0) * 4.0 == 20.0;
+assert 2.0 + (3.0 * 4.0) == 14.0;
+
+assert 2.0 * 3.0 + 4.0 == 10.0;
+assert (2.0 * 3.0) + 4.0 == 10.0;
+assert 2.0 * (3.0 + 4.0) == 14.0;
 
 # Mixed floats and integers.
 assert 1 + 1.0 == 2.0;
@@ -24,7 +44,7 @@ assert 1.0 * 2 == 2.0;
 assert 1 + 2 * 3.0 == 7.0;
 
 # Unary operators.
-assert +5 == 5 * 1;
-assert +5.0 == 5.0 * 1.0;
+assert +5 == 5;
+assert +5.0 == 5.0;
 assert -5 == 5 * -1;
 assert -5.0 == 5.0 * -1.0;
