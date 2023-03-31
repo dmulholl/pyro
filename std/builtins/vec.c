@@ -454,11 +454,19 @@ static PyroValue fn_is_stack(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue stack_pop(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
     if (vec->count == 0) {
-        pyro_panic(vm, "pop(): stack is empty");
-        return pyro_null();
+        return pyro_obj(vm->error);
     }
     vec->count--;
     return vec->values[vec->count];
+}
+
+
+static PyroValue stack_peek(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroVec* vec = PYRO_AS_VEC(args[-1]);
+    if (vec->count == 0) {
+        return pyro_obj(vm->error);
+    }
+    return vec->values[vec->count - 1];
 }
 
 
@@ -635,5 +643,6 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_stack, "is_empty", vec_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_stack, "push", vec_append, 1);
     pyro_define_pub_method(vm, vm->class_stack, "pop", stack_pop, 0);
+    pyro_define_pub_method(vm, vm->class_stack, "peek", stack_peek, 0);
     pyro_define_pub_method(vm, vm->class_stack, "clear", vec_clear, 0);
 }

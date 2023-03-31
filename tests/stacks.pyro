@@ -4,9 +4,14 @@ var foo = $stack();
 assert $is_stack(foo);
 assert foo:count() == 0;
 assert foo:is_empty();
+assert $is_err(foo:pop());
+assert $is_err(foo:peek());
 
 foo:push("abc");
+assert foo:peek() == "abc";
 foo:push("def");
+assert foo:peek() == "def";
+
 assert foo:count() == 2;
 assert !foo:is_empty();
 
