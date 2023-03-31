@@ -2191,6 +2191,18 @@ bool PyroQueue_dequeue(PyroQueue* queue, PyroValue* value, PyroVM* vm) {
 }
 
 
+// Return the item at the front of the linked list without removing it.
+bool PyroQueue_peek(PyroQueue* queue, PyroValue* value, PyroVM* vm) {
+    if (queue->count == 0) {
+        return false;
+    }
+
+    PyroQueueItem* item = queue->head;
+    *value = item->value;
+    return true;
+}
+
+
 /* ------------------- */
 /*  Resource Pointers  */
 /* ------------------- */

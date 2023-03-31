@@ -4,17 +4,24 @@ var foo = $queue();
 assert $is_queue(foo);
 assert foo:count() == 0;
 assert foo:is_empty();
+assert $is_err(foo:dequeue());
+assert $is_err(foo:peek());
 
-foo:enqueue("foo");
-foo:enqueue("bar");
-foo:enqueue("baz");
+foo:enqueue("abc");
+assert foo:peek() == "abc";
+
+foo:enqueue("def");
+assert foo:peek() == "abc";
+
+foo:enqueue("ghi");
+assert foo:peek() == "abc";
 
 assert foo:count() == 3;
 assert !foo:is_empty();
 
-assert foo:dequeue() == "foo";
-assert foo:dequeue() == "bar";
-assert foo:dequeue() == "baz";
+assert foo:dequeue() == "abc";
+assert foo:dequeue() == "def";
+assert foo:dequeue() == "ghi";
 
 assert foo:count() == 0;
 assert foo:is_empty();

@@ -456,6 +456,9 @@ bool PyroQueue_enqueue(PyroQueue* queue, PyroValue value, PyroVM* vm);
 // Returns true if a value was successfully dequeued, false if the queue was empty.
 bool PyroQueue_dequeue(PyroQueue* queue, PyroValue* value, PyroVM* vm);
 
+// Returns the next value without removing it. Returns true on success, false if the queue was empty.
+bool PyroQueue_peek(PyroQueue* queue, PyroValue* value, PyroVM* vm);
+
 // Clears all entries from the queue.
 void PyroQueue_clear(PyroQueue* queue, PyroVM* vm);
 

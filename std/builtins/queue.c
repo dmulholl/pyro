@@ -34,11 +34,20 @@ static PyroValue queue_enqueue(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue queue_dequeue(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
     PyroValue value;
-    if (!PyroQueue_dequeue(queue, &value, vm)) {
-        pyro_panic(vm, "dequeue(): cannot dequeue from empty queue");
-        return pyro_null();
+    if (PyroQueue_dequeue(queue, &value, vm)) {
+        return value;
     }
-    return value;
+    return pyro_obj(vm->error);
+}
+
+
+static PyroValue queue_peek(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    PyroValue value;
+    if (PyroQueue_peek(queue, &value, vm)) {
+        return value;
+    }
+    return pyro_obj(vm->error);
 }
 
 
@@ -81,6 +90,7 @@ void pyro_load_std_builtins_queue(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_queue, "count", queue_count, 0);
     pyro_define_pub_method(vm, vm->class_queue, "enqueue", queue_enqueue, 1);
     pyro_define_pub_method(vm, vm->class_queue, "dequeue", queue_dequeue, 0);
+    pyro_define_pub_method(vm, vm->class_queue, "peek", queue_peek, 0);
     pyro_define_pub_method(vm, vm->class_queue, "is_empty", queue_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_queue, "clear", queue_clear, 0);
 }
