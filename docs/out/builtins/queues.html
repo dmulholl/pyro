@@ -55,7 +55,7 @@
                 <hr>
             </header>
             <p>
-A queue object, <code>queue</code>, is a FIFO (first-in-first-out) container type that supports only two operations &mdash; <i>enqueueing</i> and <i>dequeueing</i>.
+A queue object, <code>queue</code>, is a FIFO (first-in-first-out) container type.
 </p>
 <dl>
 <div>
@@ -100,7 +100,7 @@ Returns the number of items in the queue.
 <dd>
 <p>
 Removes and returns the first item from the queue.
-Panics if the queue is empty.
+Returns an <code>err</code> if the queue is empty.
 </p>
 </dd>
 </div>
@@ -121,6 +121,17 @@ Adds a new item to the end of the queue.
 <dd>
 <p>
 Returns <code>true</code> if the queue is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:peek() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the first item from the queue without removing it.
+Returns an <code>err</code> if the queue is empty.
 </p>
 </dd>
 </div>

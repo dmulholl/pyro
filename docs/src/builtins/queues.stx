@@ -3,7 +3,7 @@ title: Queues
 meta_title: Pyro &mdash; Queues
 ---
 
-A queue object, `queue`, is a FIFO (first-in-first-out) container type that supports only two operations --- *enqueueing* and *dequeueing*.
+A queue object, `queue`, is a FIFO (first-in-first-out) container type.
 
 [[ `$queue() -> queue` ]]
 
@@ -22,7 +22,7 @@ Queues have the following methods:
 [[ `:dequeue() -> any` ]]
 
     Removes and returns the first item from the queue.
-    Panics if the queue is empty.
+    Returns an `err` if the queue is empty.
 
 [[ `:enqueue(item: any)` ]]
 
@@ -31,3 +31,8 @@ Queues have the following methods:
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the queue is empty.
+
+[[ `:peek() -> any` ]]
+
+    Returns the first item from the queue without removing it.
+    Returns an `err` if the queue is empty.
