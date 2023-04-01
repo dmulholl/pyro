@@ -7,7 +7,7 @@ meta_title: Pyro &mdash; Sets
 ::: hr
 
 
-A set object, `set`, is an unordered collection of distinct objects.
+A set object, `set`, is an unordered collection of distinct values.
 
 [[ `$set() -> set` <br> `$set(arg: iterable) -> set` ]]
 
