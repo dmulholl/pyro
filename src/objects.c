@@ -106,12 +106,12 @@ PyroClosure* PyroClosure_new(PyroVM* vm, PyroFn* fn, PyroMod* module) {
 /* -------- */
 
 
-PyroUpvalue* PyroUpvalue_new(PyroVM* vm, PyroValue* addr) {
+PyroUpvalue* PyroUpvalue_new(PyroVM* vm, PyroValue* slot) {
     PyroUpvalue* upvalue = ALLOCATE_OBJECT(vm, PyroUpvalue, PYRO_OBJECT_UPVALUE);
     if (!upvalue) {
         return NULL;
     }
-    upvalue->location = addr;
+    upvalue->location = slot;
     upvalue->closed = pyro_null();
     upvalue->next = NULL;
     return upvalue;

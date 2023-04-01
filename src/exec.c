@@ -256,8 +256,8 @@ static PyroUpvalue* capture_upvalue(PyroVM* vm, PyroValue* local) {
 
 // This function closes every open upvalue it can find that points to the specified stack slot
 // or to any slot above it on the stack.
-static void close_upvalues(PyroVM* vm, PyroValue* addr) {
-    while (vm->open_upvalues != NULL && vm->open_upvalues->location >= addr) {
+static void close_upvalues(PyroVM* vm, PyroValue* slot) {
+    while (vm->open_upvalues != NULL && vm->open_upvalues->location >= slot) {
         PyroUpvalue* upvalue = vm->open_upvalues;
         upvalue->closed = *upvalue->location;
         upvalue->location = &upvalue->closed;
