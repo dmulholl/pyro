@@ -116,13 +116,13 @@ Two sets `A` and `B` will compare as equal using the `==` operator, `A == B`, if
 
 [[ `:difference(other: set) -> set` ]]
 
-    Returns a new set containing the difference of the two sets --- i.e. the set of all elements that are in `receiver` but not in `other`.
+    Returns a new set containing the difference of the two sets --- i.e. the set of all items that are in `receiver` but not in `other`.
 
     Equivalent to `receiver - other`.
 
 [[ `:intersection(other: set) -> set` ]]
 
-    Returns a new set containing the intersection of the two sets --- i.e. the set of all elements that are in both `receiver` and `other`.
+    Returns a new set containing the intersection of the two sets --- i.e. the set of all items that are in both `receiver` and `other`.
 
     Equivalent to `receiver & other`.
 
@@ -167,12 +167,12 @@ Two sets `A` and `B` will compare as equal using the `==` operator, `A == B`, if
 
 [[ `:symmetric_difference(other: set) -> set` ]]
 
-    Returns a new set containing the symmetric difference of the two sets --- i.e. the set of all elements that are either in `receiver` or in `other` but not both.
+    Returns a new set containing the symmetric difference of the two sets --- i.e. the set of all items that are either in `receiver` or in `other` but not both.
 
     Equivalent to `receiver ^ other`.
 
 [[ `:union(other: set) -> set` ]]
 
-    Returns a new set containing the union of the two sets --- i.e. the set of all elements that are in either `receiver` or `other`.
+    Returns a new set containing the union of the two sets --- i.e. the set of all items that are in either `receiver` or `other`.
 
     Equivalent to `receiver | other`.
