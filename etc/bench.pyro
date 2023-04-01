@@ -256,8 +256,8 @@ def $main() {
     for i in $range(num_runs) {
         run_benchmark();
     }
-    var runtime = $clock() - start;
-    var average = runtime / num_runs;
-    var average_in_ms = average * 1000;
-    $println("Average time: {0.6f} s :: {0.3f} ms", average, average_in_ms);
+    var runtime_s = $clock() - start;
+    var average_s = runtime_s / num_runs;
+    var average_ms = average_s * 1000;
+    $println("Average time: ${average_s;0.6f} s :: ${average_ms;0.3f} ms");
 }

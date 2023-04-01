@@ -203,10 +203,10 @@ def main():
     start = time.process_time()
     for i in range(num_runs):
         run_benchmark()
-    runtime = time.process_time() - start
-    average = runtime / num_runs
-    average_in_ms = average * 1000
-    print(f"Average time: {average:0.6f} s :: {average_in_ms:0.3f} ms")
+    runtime_s = time.process_time() - start
+    average_s = runtime_s / num_runs
+    average_ms = average_s * 1000
+    print(f"Average time: {average_s:0.6f} s :: {average_ms:0.3f} ms")
 
 if __name__ == "__main__":
     main()
