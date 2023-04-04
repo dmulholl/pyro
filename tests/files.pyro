@@ -10,63 +10,63 @@ assert $write_file(temp_filename, "foobar") == 6;
 assert $read_file(temp_filename) == "foobar";
 
 # Test creating an empty file.
-var f1 = $file(temp_filename, "w");
-assert $is_file(f1);
-f1:close();
+with file = $file(temp_filename, "w") {
+    assert $is_file(file);
+}
 assert $read_file(temp_filename) == "";
 
 # Test :write().
-var f2 = $file(temp_filename, "w");
-assert f2:write("foo") == 3;
-assert f2:write(123) == 3;
-assert f2:write("{} and {}", "bar", 456) == 11;
-f2:close();
+with file = $file(temp_filename, "w") {
+    assert file:write("foo") == 3;
+    assert file:write(123) == 3;
+    assert file:write("{} and {}", "bar", 456) == 11;
+}
 assert $read_file(temp_filename) == "foo123bar and 456";
 
 # Test :write_byte().
-var f3 = $file(temp_filename, "w");
-f3:write_byte('a');
-f3:write_byte('b');
-f3:write_byte('c');
-f3:write_byte(100);
-f3:close();
+with file = $file(temp_filename, "w") {
+    file:write_byte('a');
+    file:write_byte('b');
+    file:write_byte('c');
+    file:write_byte(100);
+}
 assert $read_file(temp_filename) == "abcd";
 
 # Test :read().
 $write_file(temp_filename, "foobar");
-var f7 = $file(temp_filename, "r");
-var buf7 = f7:read();
-assert $is_buf(buf7);
-assert buf7:to_str() == "foobar";
-f7:close();
+with file = $file(temp_filename, "r") {
+    var buf = file:read();
+    assert $is_buf(buf);
+    assert buf:to_str() == "foobar";
+}
 
 # Test :read_byte().
 $write_file(temp_filename, "abc");
-var f8 = $file(temp_filename, "r");
-assert f8:read_byte() == 'a';
-assert f8:read_byte() == 'b';
-assert f8:read_byte() == 'c';
-assert f8:read_byte() == null;
-f8:close();
+with file = $file(temp_filename, "r") {
+    assert file:read_byte() == 'a';
+    assert file:read_byte() == 'b';
+    assert file:read_byte() == 'c';
+    assert file:read_byte() == null;
+}
 
 # Test :read_bytes().
 $write_file(temp_filename, "abcdef");
-var f9 = $file(temp_filename, "r");
-var buf9 = f9:read_bytes(3);
-assert buf9:to_str() == "abc";
-f9:close();
+with file = $file(temp_filename, "r") {
+    var buf = file:read_bytes(3);
+    assert buf:to_str() == "abc";
+}
 
 # Test :read_string().
 $write_file(temp_filename, "foo\r\nbar\nbaz");
-var f12 = $file(temp_filename, "r");
-assert f12:read_string() == "foo\r\nbar\nbaz";
-assert f12:read_string() == "";
-f12:close();
+with file = $file(temp_filename, "r") {
+    assert file:read_string() == "foo\r\nbar\nbaz";
+    assert file:read_string() == "";
+}
 
 # Test :read_string() on an empty file.
 $write_file(temp_filename, "");
-var f13 = $file(temp_filename, "r");
-assert f13:read_string() == "";
-f13:close();
+with file = $file(temp_filename, "r") {
+    assert file:read_string() == "";
+}
 
 path::remove(temp_filename);
