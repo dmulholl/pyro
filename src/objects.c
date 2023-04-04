@@ -1985,52 +1985,33 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
         }
 
         case PYRO_ITER_STR_LINES: {
-            // If the source is NULL, the iterator has been exhausted.
-            if (iter->source == NULL) {
+            PyroStr* str = (PyroStr*)iter->source;
+            if (iter->next_index == str->count) {
                 return pyro_obj(vm->error);
             }
-            PyroStr* str = (PyroStr*)iter->source;
 
-            // If we're at the end of the string, set the source to NULL and return an empty string.
-            if (iter->next_index == str->count) {
-                iter->source = NULL;
-                return pyro_obj(vm->empty_string);
-            }
-
-            // Points to the byte *after* the last byte in the string.
-            const char* const string_end = str->bytes + str->count;
-
-            // Points to the first byte of the next line.
             const char* const line_start = str->bytes + iter->next_index;
+            size_t count = 0;
 
-            // Once we've identified the end of the next line, this will point to the byte *after*
-            // the last byte of the line, i.e. line_length = line_end - line_start.
-            const char* line_end = line_start;
-
-            // Find the end of the next line.
-            while (line_end < string_end) {
-                if (string_end - line_end > 1 && line_end[0] == '\r' && line_end[1] == '\n') {
-                    iter->next_index = line_end - str->bytes + 2;
+            while (iter->next_index < str->count) {
+                count++;
+                if (str->bytes[iter->next_index++] == '\n') {
                     break;
-                } else if (*line_end == '\n' || *line_end == '\r') {
-                    iter->next_index = line_end - str->bytes + 1;
-                    break;
-                } else {
-                    line_end++;
                 }
             }
 
-            PyroStr* next_line = PyroStr_copy(line_start, line_end - line_start, false, vm);
+            if (count >= 2 && line_start[count - 2] == '\r' && line_start[count - 1] == '\n') {
+                count -= 2;
+            }
+
+            if (count >= 1 && line_start[count - 1] == '\n') {
+                count -= 1;
+            }
+
+            PyroStr* next_line = PyroStr_copy(line_start, count, false, vm);
             if (!next_line) {
                 pyro_panic(vm, "out of memory");
                 return pyro_obj(vm->error);
-            }
-
-            // If the string ends with a linebreak, we have one more (empty) string to return. This
-            // checks for the case where the strings ends without a linebreak -- in this case the
-            // returned string exhausts the iterator.
-            if (line_end == string_end && next_line->count > 0) {
-                iter->source = NULL;
             }
 
             return pyro_obj(next_line);

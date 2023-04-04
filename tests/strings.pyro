@@ -470,67 +470,33 @@ def $test_join() {
 
 
 def $test_iterating_over_lines() {
-    var v1 = "":lines():to_vec();
-    assert v1:count() == 1;
-    assert v1[0] == "";
+    assert "":lines():count() == 0;
 
-    var v2 = "\n":lines():to_vec();
-    assert v2:count() == 2;
-    assert v2[0] == "";
-    assert v2[1] == "";
+    assert "\n":lines():count() == 1;
+    assert "\n":lines():to_vec()[0] == "";
 
-    var v3 = "\n\n":lines():to_vec();
-    assert v3:count() == 3;
-    assert v3[0] == "";
-    assert v3[1] == "";
-    assert v3[2] == "";
+    assert "foo":lines():count() == 1;
+    assert "foo":lines():to_vec()[0] == "foo";
 
-    var v4 = "foo":lines():to_vec();
-    assert v4:count() == 1;
-    assert v4[0] == "foo";
+    assert "foo\n":lines():count() == 1;
+    assert "foo\n":lines():to_vec()[0] == "foo";
 
-    var v5 = "\nfoo\n":lines():to_vec();
-    assert v5:count() == 3;
-    assert v5[0] == "";
-    assert v5[1] == "foo";
-    assert v5[2] == "";
+    assert "foo\nbar":lines():count() == 2;
+    assert "foo\nbar":lines():to_vec()[0] == "foo";
+    assert "foo\nbar":lines():to_vec()[1] == "bar";
 
-    var v6 = "\nfoo\nbar\n":lines():to_vec();
-    assert v6:count() == 4;
-    assert v6[0] == "";
-    assert v6[1] == "foo";
-    assert v6[2] == "bar";
-    assert v6[3] == "";
+    assert "foo\nbar\n":lines():count() == 2;
+    assert "foo\nbar\n":lines():to_vec()[0] == "foo";
+    assert "foo\nbar\n":lines():to_vec()[1] == "bar";
 
-    var v7 = "\n\nfoo\n\nbar\n\n":lines():to_vec();
-    assert v7:count() == 7;
-    assert v7[0] == "";
-    assert v7[1] == "";
-    assert v7[2] == "foo";
-    assert v7[3] == "";
-    assert v7[4] == "bar";
-    assert v7[5] == "";
-    assert v7[6] == "";
+    assert "\n\n":lines():count() == 2;
+    assert "\n\n":lines():to_vec()[0] == "";
+    assert "\n\n":lines():to_vec()[1] == "";
 
-    var v8 = "\r\rfoo\r\rbar\r\r":lines():to_vec();
-    assert v8:count() == 7;
-    assert v8[0] == "";
-    assert v8[1] == "";
-    assert v8[2] == "foo";
-    assert v8[3] == "";
-    assert v8[4] == "bar";
-    assert v8[5] == "";
-    assert v8[6] == "";
-
-    var v9 = "\r\n\r\nfoo\r\n\r\nbar\r\n\r\n":lines():to_vec();
-    assert v9:count() == 7;
-    assert v9[0] == "";
-    assert v9[1] == "";
-    assert v9[2] == "foo";
-    assert v9[3] == "";
-    assert v9[4] == "bar";
-    assert v9[5] == "";
-    assert v9[6] == "";
+    assert "foo\n\nbar":lines():count() == 3;
+    assert "foo\n\nbar":lines():to_vec()[0] == "foo";
+    assert "foo\n\nbar":lines():to_vec()[1] == "";
+    assert "foo\n\nbar":lines():to_vec()[2] == "bar";
 }
 
 
