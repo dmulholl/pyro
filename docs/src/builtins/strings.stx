@@ -346,10 +346,10 @@ This is equivalent to calling the string's `:contains()` method.
 [[ `:lines() -> iter[str]` ]]
 
     Returns an iterator over the string's lines.
-    Recognised line breaks are `\r\n`, `\r`, and `\n`.
+    Recognised line breaks are `\n` and `\r\n`.
     Strips the line breaks from the returned strings.
 
-    If this method is called on an empty string, the iterator will return a single empty string.
+    If this method is called on an empty string, the iterator will be empty, i.e. will return zero elements.
 
 [[ `:match(target: str, index: i64) -> bool` ]]
 
