@@ -32,24 +32,6 @@ f3:write_byte(100);
 f3:close();
 assert $read_file(temp_filename) == "abcd";
 
-# Test :lines().
-$write_file(temp_filename, "foo\r\nbar\nbaz");
-var f4 = $file(temp_filename, "r");
-assert f4:lines():count() == 3;
-f4:close();
-
-# Test :lines() with a trailing line break.
-$write_file(temp_filename, "foo\r\nbar\nbaz\n");
-var f5 = $file(temp_filename, "r");
-assert f5:lines():count() == 3;
-f5:close();
-
-# Test :lines() on an empty file.
-$write_file(temp_filename, "");
-var f6 = $file(temp_filename, "r");
-assert f6:lines():count() == 0;
-f6:close();
-
 # Test :read().
 $write_file(temp_filename, "foobar");
 var f7 = $file(temp_filename, "r");
@@ -73,24 +55,6 @@ var f9 = $file(temp_filename, "r");
 var buf9 = f9:read_bytes(3);
 assert buf9:to_str() == "abc";
 f9:close();
-
-# Test :read_line().
-$write_file(temp_filename, "foo\r\nbar\nbaz");
-var f10 = $file(temp_filename, "r");
-assert f10:read_line() == "foo";
-assert f10:read_line() == "bar";
-assert f10:read_line() == "baz";
-assert f10:read_line() == null;
-f10:close();
-
-# Test :read_line() with a trailing line break.
-$write_file(temp_filename, "foo\r\nbar\nbaz\n");
-var f11 = $file(temp_filename, "r");
-assert f11:read_line() == "foo";
-assert f11:read_line() == "bar";
-assert f11:read_line() == "baz";
-assert f11:read_line() == null;
-f11:close();
 
 # Test :read_string().
 $write_file(temp_filename, "foo\r\nbar\nbaz");

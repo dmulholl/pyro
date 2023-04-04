@@ -62,7 +62,7 @@ The file object's `close()` method will be called when the `with` block exits, e
 [[ `:lines() -> iter[str]` ]]
 
     Returns an iterator over the files's lines as strings.
-    Recognised line breaks are `\r\n` and `\n`.
+    Recognised line breaks are `\n` and `\r\n`.
     Strips the line breaks from the returned strings.
 
     If this method is called on an empty file, the iterator will be empty, i.e. will return zero elements.
@@ -94,7 +94,7 @@ The file object's `close()` method will be called when the `with` block exits, e
 [[ `:read_line() -> str?` ]]
 
     Reads the next line of input from the file and returns it as a string.
-    Recognised line breaks are `\r\n` and `\n`.
+    Recognised line breaks are `\n` and `\r\n`.
     Strips the line break from the returned string.
 
     Returns `null` if the end of the file had already been reached before the method was called.

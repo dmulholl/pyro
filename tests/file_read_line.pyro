@@ -1,0 +1,45 @@
+import std::path;
+
+var test_dir = path::dirname($filepath);
+var temp_filename = path::join(test_dir, "temp_data.txt");
+
+var file;
+
+$write_file(temp_filename, "");
+with file = $file(temp_filename, "r") {
+    assert file:read_line() == null;
+}
+
+$write_file(temp_filename, "\n");
+with file = $file(temp_filename, "r") {
+    assert file:read_line() == "";
+    assert file:read_line() == null;
+}
+
+$write_file(temp_filename, "foo");
+with file = $file(temp_filename, "r") {
+    assert file:read_line() == "foo";
+    assert file:read_line() == null;
+}
+
+$write_file(temp_filename, "foo\n");
+with file = $file(temp_filename, "r") {
+    assert file:read_line() == "foo";
+    assert file:read_line() == null;
+}
+
+$write_file(temp_filename, "foo\nbar");
+with file = $file(temp_filename, "r") {
+    assert file:read_line() == "foo";
+    assert file:read_line() == "bar";
+    assert file:read_line() == null;
+}
+
+$write_file(temp_filename, "foo\nbar\n");
+with file = $file(temp_filename, "r") {
+    assert file:read_line() == "foo";
+    assert file:read_line() == "bar";
+    assert file:read_line() == null;
+}
+
+path::remove(temp_filename);

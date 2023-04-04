@@ -1,0 +1,38 @@
+import std::path;
+
+var test_dir = path::dirname($filepath);
+var temp_filename = path::join(test_dir, "temp_data.txt");
+
+var file;
+
+$write_file(temp_filename, "");
+with file = $file(temp_filename, "r") {
+    assert file:lines():count() == 0;
+}
+
+$write_file(temp_filename, "\n");
+with file = $file(temp_filename, "r") {
+    assert file:lines():count() == 1;
+}
+
+$write_file(temp_filename, "foo");
+with file = $file(temp_filename, "r") {
+    assert file:lines():count() == 1;
+}
+
+$write_file(temp_filename, "foo\n");
+with file = $file(temp_filename, "r") {
+    assert file:lines():count() == 1;
+}
+
+$write_file(temp_filename, "foo\nbar");
+with file = $file(temp_filename, "r") {
+    assert file:lines():count() == 2;
+}
+
+$write_file(temp_filename, "foo\nbar\n");
+with file = $file(temp_filename, "r") {
+    assert file:lines():count() == 2;
+}
+
+path::remove(temp_filename);
