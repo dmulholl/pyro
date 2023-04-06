@@ -1334,9 +1334,7 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
 
     // Methods -- public.
     pyro_define_pub_method(vm, vm->class_str, "is_utf8", str_is_utf8, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_utf8", str_is_empty_or_utf8, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii", str_is_ascii, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ascii", str_is_empty_or_ascii, 0);
     pyro_define_pub_method(vm, vm->class_str, "iter", str_iter, 0);
     pyro_define_pub_method(vm, vm->class_str, "byte", str_byte, 1);
     pyro_define_pub_method(vm, vm->class_str, "bytes", str_bytes, 0);
@@ -1374,12 +1372,16 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "join", str_join, 1);
     pyro_define_pub_method(vm, vm->class_str, "lines", str_lines, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_utf8_ws", str_is_utf8_ws, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_utf8_ws", str_is_empty_or_utf8_ws, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_ws", str_is_ascii_ws, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ascii_ws", str_is_empty_or_ascii_ws, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ws", str_is_ascii_ws, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ws", str_is_empty_or_ascii_ws, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_decimal", str_is_ascii_decimal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_octal", str_is_ascii_octal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_hex", str_is_ascii_hex, 0);
+
+    // Deprecated.
+    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ws", str_is_empty_or_ascii_ws, 0);
+    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ascii_ws", str_is_empty_or_ascii_ws, 0);
+    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ascii", str_is_empty_or_ascii, 0);
+    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_utf8", str_is_empty_or_utf8, 0);
+    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_utf8_ws", str_is_empty_or_utf8_ws, 0);
 }

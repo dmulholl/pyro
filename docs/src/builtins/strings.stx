@@ -304,22 +304,6 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns `true` if the string is empty, i.e. if its length is zero.
 
-[[ `:is_empty_or_ascii() -> bool` ]]
-
-    Returns `true` if the string is empty or contains only byte values in the range `[0, 127]`.
-
-[[ `:is_empty_or_ascii_ws() -> bool` ]]
-
-    Returns `true` if the string is empty or contains only ASCII whitespace characters.
-
-[[ `:is_empty_or_utf8() -> bool` ]]
-
-    Returns `true` if the string is empty or contains only valid UTF-8.
-
-[[ `:is_empty_or_utf8_ws() -> bool` ]]
-
-    Returns `true` if the string is emtpy or contains only UTF-8 encoded whitespace characters, as defined by the Unicode standard.
-
 [[ `:is_utf8() -> bool` ]]
 
     Returns `true` if the string contains only valid UTF-8.
