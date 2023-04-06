@@ -48,9 +48,9 @@ We can illustrate the iterator protocol by creating a custom `Range` object to i
         }
     }
 
-Note that in this case the `:$iter()` method simply returns `self` --- a `Range` instance is its own iterator.
+Note that in this case the `:$iter()` method simply returns `self` --- i.e. a `Range` instance is its own iterator.
 
-We can try out our new type like this:
+We can try out our new `Range` type like this:
 
 ::: code pyro
     for i in Range(5) {
@@ -65,7 +65,7 @@ This gives us the following output:
     3
     4
 
-Note that Pyro already has a builtin `$range()` function that returns an iterator over a range of integers.
+(In practice, you don't need to implement this functionality yourself --- Pyro already has a builtin `$range()` function that returns an iterator over a range of integers.)
 
 
 

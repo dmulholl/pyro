@@ -99,10 +99,10 @@ We can illustrate the iterator protocol by creating a custom <code>Range</code> 
 <span class="p">}</span>
 </pre>
 <p>
-Note that in this case the <code>:$iter()</code> method simply returns <code>self</code> &mdash; a <code>Range</code> instance is its own iterator.
+Note that in this case the <code>:$iter()</code> method simply returns <code>self</code> &mdash; i.e. a <code>Range</code> instance is its own iterator.
 </p>
 <p>
-We can try out our new type like this:
+We can try out our new <code>Range</code> type like this:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">Range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
@@ -120,7 +120,7 @@ This gives us the following output:
 4
 </pre>
 <p>
-Note that Pyro already has a builtin <code>$range()</code> function that returns an iterator over a range of integers.
+(In practice, you don't need to implement this functionality yourself &mdash; Pyro already has a builtin <code>$range()</code> function that returns an iterator over a range of integers.)
 </p>
 <h3 id="iterator-wrappers">
 Iterator Wrappers
