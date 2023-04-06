@@ -112,6 +112,17 @@ bool pyro_compare_eq_strict(PyroValue a, PyroValue b) {
 }
 
 
+inline static bool is_numerically_equal_to_i64(double value) {
+    if (value >= -9223372036854775808.0    // -2^63 == I64_MIN
+        && value < 9223372036854775808.0   // 2^63 == I64_MAX + 1
+        && floor(value) == value           // is a whole number
+    ) {
+        return true;
+    }
+    return false;
+}
+
+
 // All builtin types follow the rule that values that compare as equal should also hash as equal.
 uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
     switch (value.type) {
@@ -127,16 +138,18 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
         case PYRO_VALUE_CHAR:
             return (uint64_t)value.as.u32;
 
-        // If the f64 is numerically equal to an i64, cast to that i64 first.
-        case PYRO_VALUE_F64:
-            if (value.as.f64 >= -9223372036854775808.0    // -2^63 == I64_MIN
-                && value.as.f64 < 9223372036854775808.0   // 2^63 == I64_MAX + 1
-                && floor(value.as.f64) == value.as.f64    // is a whole number
-            ) {
+        case PYRO_VALUE_F64: {
+            if (is_numerically_equal_to_i64(value.as.f64)) {
                 return (uint64_t)(int64_t)value.as.f64;
-            } else {
-                return value.as.u64;
             }
+            if (isinf(value.as.f64)) {
+                return 123456789;
+            }
+            if (isnan(value.as.f64)) {
+                return 0;
+            }
+            return value.as.u64;
+        }
 
         case PYRO_VALUE_OBJ:
             switch (value.as.obj->type) {
