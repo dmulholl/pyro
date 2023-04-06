@@ -46,7 +46,10 @@ static PyroValue fn_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    pyro_panic(vm, "$iter(): invalid argument [arg], expected an iterator or an iterable object");
+    pyro_panic(vm,
+        "$iter(): invalid argument type '%s', expected an iterator or an iterable type",
+        pyro_get_type_name(vm, args[0])->bytes
+    );
     return pyro_null();
 }
 
