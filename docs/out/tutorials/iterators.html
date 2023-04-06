@@ -176,8 +176,14 @@ A type is <i>iterable</i> if it has an <code>:$iter()</code> method that returns
 We can make our <code>List</code> type iterable by adding the following method:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">$iter</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">ListIterator</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">first_node</span><span class="p">);</span>
+<span class="kd">class</span> <span class="nx">List</span> <span class="p">{</span>
+    <span class="cp">...</span>
+
+    <span class="kd">def</span> <span class="nx">$iter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">ListIterator</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">first_node</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cp">...</span>
 <span class="p">}</span>
 </pre>
 <p>
@@ -205,7 +211,7 @@ baz
 Iterator Wrappers
 </h3>
 <p>
-Now that our <code>List</code> type is iterable, we can use it with Pyro's <a href="../builtins/iterators.html">iterator wrappers</a>.
+Now that our <code>List</code> type is iterable, we can use it with Pyro's builtin <a href="../builtins/iterators.html">iterator-wrapper</a> type, <code>iter</code>.
 </p>
 <p>
 An iterator wrapper, <code>iter</code>, is a builtin type that can wrap any <i>iterator</i> or <i>iterable</i> to automatically add support for a set of chainable, lazily-evaluated utility methods, e.g.

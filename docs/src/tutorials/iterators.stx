@@ -101,8 +101,14 @@ A type is *iterable* if it has an `:$iter()` method that returns an iterator.
 We can make our `List` type iterable by adding the following method:
 
 ::: code pyro
-    def $iter() {
-        return ListIterator(self.first_node);
+    class List {
+        ...
+
+        def $iter() {
+            return ListIterator(self.first_node);
+        }
+
+        ...
     }
 
 That's it, our `List` type is now iterable and we can use it in `for` loops, e.g.
@@ -128,7 +134,7 @@ This will print the output:
 
 ### Iterator Wrappers
 
-Now that our `List` type is iterable, we can use it with Pyro's [iterator wrappers](@root/builtins/iterators//).
+Now that our `List` type is iterable, we can use it with Pyro's builtin [iterator-wrapper](@root/builtins/iterators//) type, `iter`.
 
 An iterator wrapper, `iter`, is a builtin type that can wrap any *iterator* or *iterable* to automatically add support for a set of chainable, lazily-evaluated utility methods, e.g.
 
