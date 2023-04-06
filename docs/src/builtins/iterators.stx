@@ -12,13 +12,14 @@ An iterator wrapper, `iter`, is a builtin type that can wrap any [iterator][1] t
    Wraps an iterator in an `iter` wrapper.
    The argument can be an iterator or an instance of an iterable type.
 
-All iterators returned by Pyro builtins come pre-wrapped in `iter` wrappers, e.g. the character iterator returned by a string's `:chars()` method:
+All the iterators returned by Pyro builtins come pre-wrapped in `iter` wrappers, e.g. the character iterator returned by a string's `:chars()` method:
 
 ::: code pyro
     for item in "abcd":chars():enumerate() {
         echo item;
     }
 
+Here, calling the `:chars()` method on the string returns an `iter[char]` --- i.e. an iterator over the string's UTF-8 encoded Unicode codepoints.
 The `:enumerate()` method is provided by the `iter` wrapper.
 It adds an index to each element in the input, giving us the following output:
 
