@@ -64,9 +64,10 @@ Pyro's <code>for</code> loop uses a simple iterator protocol for iterating over 
 </pre>
 <p>
 An object is <i>iterable</i> if it has an <code>:$iter()</code> method.
-This method should return an <i>iterator</i> &mdash; i.e. an object with a <code>:$next()</code> method which returns either the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
+This method should return an <i>iterator</i> &mdash; i.e. an object with a <code>:$next()</code> method that returns either the next item from a sequence or an <code>err</code> if the sequence has been exhausted.
 </p>
 <p>
+Most of Pyro's builtin container types &mdash; e.g. <code>vec</code>, <code>tup</code>, <code>map</code>, etc. &mdash; are iterable.
 You can find a tutorial on implementing the iterator protocol for custom types <a href="../tutorials/iterators.html">here</a>.
 </p>
 <h3 id="example">

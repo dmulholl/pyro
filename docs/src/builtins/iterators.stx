@@ -28,7 +28,10 @@ It adds an index to each element in the input, giving us the following output:
     (2, 'c')
     (3, 'd')
 
-Iterator wrappers have the following methods:
+You can learn more about Pyro's iterator protocol [here][1].
+
+
+### Methods
 
 [[ `:count() -> i64` ]]
 
