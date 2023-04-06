@@ -1535,13 +1535,18 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_NATIVE_FN(iter_method)) {
                     call_native_fn(vm, PYRO_AS_NATIVE_FN(iter_method), 0);
-                } else if (PYRO_IS_CLOSURE(iter_method)) {
-                    call_closure(vm, PYRO_AS_CLOSURE(iter_method), 0);
-                } else {
-                    pyro_panic(vm, "value is not iterable");
                     break;
                 }
 
+                if (PYRO_IS_CLOSURE(iter_method)) {
+                    call_closure(vm, PYRO_AS_CLOSURE(iter_method), 0);
+                    break;
+                }
+
+                pyro_panic(vm,
+                    "type '%s' is not iterable",
+                    pyro_get_type_name(vm, receiver)->bytes
+                );
                 break;
             }
 
