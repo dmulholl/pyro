@@ -403,23 +403,56 @@ static PyroValue iter_sum(PyroVM* vm, size_t arg_count, PyroValue* args) {
         PyroValue item = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
-        } else if (PYRO_IS_ERR(item)) {
+        }
+
+        if (PYRO_IS_ERR(item)) {
             break;
         }
 
         if (is_first_item) {
+            is_first_item = false;
             sum = item;
-        } else {
-            sum = pyro_op_binary_plus(vm, sum, item);
-            if (vm->halt_flag) {
-                return pyro_null();
-            }
+            continue;
         }
 
-        is_first_item = false;
+        sum = pyro_op_binary_plus(vm, sum, item);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
     }
 
     return sum;
+}
+
+
+static PyroValue iter_product(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroIter* iter = PYRO_AS_ITER(args[-1]);
+    bool is_first_item = true;
+    PyroValue product = pyro_null();
+
+    while (true) {
+        PyroValue item = PyroIter_next(iter, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+
+        if (PYRO_IS_ERR(item)) {
+            break;
+        }
+
+        if (is_first_item) {
+            is_first_item = false;
+            product = item;
+            continue;
+        }
+
+        product = pyro_op_binary_star(vm, product, item);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+    }
+
+    return product;
 }
 
 
@@ -471,5 +504,6 @@ void pyro_load_std_builtins_iter(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_iter, "count", iter_count, 0);
     pyro_define_pub_method(vm, vm->class_iter, "next", iter_next, 0);
     pyro_define_pub_method(vm, vm->class_iter, "sum", iter_sum, 0);
+    pyro_define_pub_method(vm, vm->class_iter, "product", iter_product, 0);
     pyro_define_pub_method(vm, vm->class_iter, "reduce", iter_reduce, 2);
 }

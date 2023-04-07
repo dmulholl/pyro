@@ -140,6 +140,15 @@ def $test_sum() {
 }
 
 
+def $test_product() {
+    assert $range(5):product() == 0 * 1 * 2 * 3 * 4;
+    assert []:iter():product() == null;
+    assert [1, 2, 3]:iter():product() == 1 * 2 * 3;
+    assert [1, 2, 3.0]:iter():product() == 1 * 2 * 3.0;
+    assert $is_err(try [123, "foo"]:iter():product());
+}
+
+
 def $test_reduce() {
     assert [1, 2, 3, 4]:iter():reduce(def(acc, value) {return acc + value;}, 0) == 10;
     assert []:iter():reduce(def(acc, value) {return acc + value;}, 0) == 0;
