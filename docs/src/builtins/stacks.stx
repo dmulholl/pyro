@@ -9,7 +9,8 @@ A stack object, `stack`, is a LIFO (last-in-first-out) container type.
 
     Creates a new `stack` object.
 
-Stacks have the following methods:
+
+### Methods
 
 [[ `:clear()` ]]
 

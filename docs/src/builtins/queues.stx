@@ -9,7 +9,8 @@ A queue object, `queue`, is a FIFO (first-in-first-out) container type.
 
     Creates a new `queue` object.
 
-Queues have the following methods:
+
+### Methods
 
 [[ `:clear()` ]]
 
