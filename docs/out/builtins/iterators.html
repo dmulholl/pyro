@@ -91,6 +91,8 @@ It adds an index to each element in the input, giving us the following output:
 </pre>
 <p>
 Note that an <code>iter</code> object is both an <i>iterator</i> and an <i>iterable</i> type &mdash; it's an iterator because it has a <code>:$next()</code> method that returns the next item from the sequence, and it's an iterable type because it has an <code>:$iter()</code> method that returns an iterator (in this case, it simply returns itself).
+</p>
+<p>
 You can learn more about Pyro's iterator protocol <a href="../features/iterators.html">here</a>.
 </p>
 <h3 id="methods">
@@ -180,6 +182,19 @@ The return values of <code>callback</code> will form the output of the new itera
 <p>
 Returns the next item from the iterator.
 Returns an <code>err</code> if the iterator has been exhausted.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:product() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the result of multiplying the iterator's values using the <code>*</code> operator.
+</p>
+<p>
+Returns <code>null</code> if the iterator is empty.
 </p>
 </dd>
 </div>

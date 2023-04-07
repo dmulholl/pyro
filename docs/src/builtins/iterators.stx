@@ -29,6 +29,7 @@ It adds an index to each element in the input, giving us the following output:
     (3, 'd')
 
 Note that an `iter` object is both an *iterator* and an *iterable* type --- it's an iterator because it has a `:$next()` method that returns the next item from the sequence, and it's an iterable type because it has an `:$iter()` method that returns an iterator (in this case, it simply returns itself).
+
 You can learn more about Pyro's iterator protocol [here][1].
 
 
@@ -71,6 +72,13 @@ You can learn more about Pyro's iterator protocol [here][1].
 
     Returns the next item from the iterator.
     Returns an `err` if the iterator has been exhausted.
+
+[[ `:product() -> any` ]]
+
+    Returns the result of multiplying the iterator's values using the `*` operator.
+
+    Returns `null` if the iterator is empty.
+
 
 [[ `:reduce(callback: callable(any, any) -> any, initial_value: any) -> any` ]]
 
