@@ -79,8 +79,7 @@ You can learn more about Pyro's iterator protocol [here][1].
 
     Returns `null` if the iterator is empty.
 
-
-[[ `:reduce(callback: callable(any, any) -> any, initial_value: any) -> any` ]]
+[[ <pre>:reduce(<br>    callback: callable(any, any) -> any,<br>    initial_value: any<br>) -> any</pre> ]]
 
     Reduces the iterator to single value using `callback`, where `callback` is a function that takes two arguments --- an accumulator value and the next value from the iterator.
 
