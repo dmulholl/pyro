@@ -80,7 +80,7 @@ install: ## Installs the release binary.
 	@if [ -f ./build/release/pyro ]; then \
 		printf "\e[1;32m Copying\e[0m build/release/pyro --> /usr/local/bin/pyro\n"; \
 		rm -f /usr/local/bin/pyro; \
-		cp ./build/release/pyro /usr/local/bin/pyro; \
+		cp -f ./build/release/pyro /usr/local/bin/pyro; \
 	else \
 		printf "\e[1;31m   Error\e[0m build/release/pyro not found\n"; \
 		exit 1; \
