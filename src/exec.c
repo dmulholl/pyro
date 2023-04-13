@@ -2449,13 +2449,22 @@ void pyro_reset_vm(PyroVM* vm) {
 }
 
 
-void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id) {
+void pyro_try_compile_file(PyroVM* vm, const char* path) {
+    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_try_compile_file()");
+    if (vm->halt_flag) {
+        return;
+    }
+    pyro_compile(vm, (char*)buf->bytes, buf->count, path);
+}
+
+
+void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char* source_id, PyroMod* module) {
     PyroFn* fn = pyro_compile(vm, code, code_length, source_id);
     if (vm->halt_flag) {
         return;
     }
 
-    PyroClosure* closure = PyroClosure_new(vm, fn, vm->main_module);
+    PyroClosure* closure = PyroClosure_new(vm, fn, module);
     if (!closure) {
         pyro_panic(vm, "out of memory");
         return;
@@ -2478,30 +2487,32 @@ void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, co
 }
 
 
-void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
+void pyro_exec_file(PyroVM* vm, const char* path, PyroMod* module) {
     PyroStr* path_string = PyroStr_COPY(path);
     if (!path_string) {
         pyro_panic(vm, "out of memory");
         return;
     }
 
-    if (!pyro_define_pri_member(vm, vm->main_module, "$filepath", pyro_obj(path_string))) {
+    if (!pyro_define_pri_member(vm, module, "$filepath", pyro_obj(path_string))) {
         pyro_panic(vm, "out of memory");
         return;
     }
 
-    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_exec_file_as_main()");
+    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_exec_file()");
     if (vm->halt_flag) {
         return;
     }
 
-    pyro_exec_code_as_main(vm, (char*)buf->bytes, buf->count, path);
+    pyro_push(vm, pyro_obj(buf));
+    pyro_exec_code(vm, (char*)buf->bytes, buf->count, path, module);
+    pyro_pop(vm);
 }
 
 
-void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
+void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module) {
     if (pyro_is_file(path)) {
-        pyro_exec_file_as_main(vm, path);
+        pyro_exec_file(vm, path, module);
         return;
     }
 
@@ -2518,11 +2529,12 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
         filepath[path_length + strlen("/self.pyro")] = '\0';
 
         if (pyro_is_file(filepath)) {
-            pyro_exec_file_as_main(vm, filepath);
-        } else {
-            pyro_panic(vm, "directory has no 'self.pyro' file: '%s'", path);
+            pyro_exec_file(vm, filepath, module);
+            free(filepath);
+            return;
         }
 
+        pyro_panic(vm, "directory has no 'self.pyro' file: '%s'", path);
         free(filepath);
         return;
     }
@@ -2531,12 +2543,22 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
 }
 
 
-void pyro_try_compile_file(PyroVM* vm, const char* path) {
-    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_try_compile_file()");
-    if (vm->halt_flag) {
-        return;
-    }
-    pyro_compile(vm, (char*)buf->bytes, buf->count, path);
+
+
+
+
+void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id) {
+    pyro_exec_code(vm, code, code_length, source_id, vm->main_module);
+}
+
+
+void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
+    pyro_exec_file(vm, path, vm->main_module);
+}
+
+
+void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
+    pyro_exec_path(vm, path, vm->main_module);
 }
 
 
