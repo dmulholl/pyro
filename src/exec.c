@@ -2562,11 +2562,6 @@ void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
 
 
 // DEPRECATED.
-void pyro_exec_code_as_module(PyroVM* vm, const char* code, size_t code_length, const char* source_id, PyroMod* module) {
-    pyro_exec_code(vm, code, code_length, source_id, module);
-}
-
-
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, PyroMod* module) {
     pyro_exec_file(vm, path, module);
 }
