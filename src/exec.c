@@ -2543,68 +2543,32 @@ void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module) {
 }
 
 
-
-
-
-
+// DEPRECATED.
 void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id) {
     pyro_exec_code(vm, code, code_length, source_id, vm->main_module);
 }
 
 
+// DEPRECATED.
 void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
     pyro_exec_file(vm, path, vm->main_module);
 }
 
 
+// DEPRECATED.
 void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
     pyro_exec_path(vm, path, vm->main_module);
 }
 
 
-void pyro_exec_code_as_module(
-    PyroVM* vm,
-    const char* code,
-    size_t code_length,
-    const char* source_id,
-    PyroMod* module
-) {
+// DEPRECATED.
+void pyro_exec_code_as_module(PyroVM* vm, const char* code, size_t code_length, const char* source_id, PyroMod* module) {
     pyro_exec_code(vm, code, code_length, source_id, module);
 }
 
 
 void pyro_exec_file_as_module(PyroVM* vm, const char* path, PyroMod* module) {
-    PyroStr* path_string = PyroStr_COPY(path);
-    if (!path_string) {
-        pyro_panic(vm, "out of memory");
-        return;
-    }
-
-    if (!pyro_define_pri_member(vm, module, "$filepath", pyro_obj(path_string))) {
-        pyro_panic(vm, "out of memory");
-        return;
-    }
-
-    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_exec_file_as_module()");
-    if (vm->halt_flag) {
-        return;
-    }
-
-    PyroFn* fn = pyro_compile(vm, (char*)buf->bytes, buf->count, path);
-    if (vm->halt_flag) {
-        return;
-    }
-
-    PyroClosure* closure = PyroClosure_new(vm, fn, module);
-    if (!closure) {
-        pyro_panic(vm, "out of memory");
-        return;
-    }
-
-    pyro_push(vm, pyro_obj(closure));
-    call_value(vm, 0);
-    run(vm);
-    pyro_pop(vm);
+    pyro_exec_file(vm, path, module);
 }
 
 
