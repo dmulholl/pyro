@@ -2640,25 +2640,28 @@ PyroValue pyro_call_method(PyroVM* vm, PyroValue method, uint8_t arg_count) {
     if (PYRO_IS_NATIVE_FN(method)) {
         call_native_fn(vm, PYRO_AS_NATIVE_FN(method), arg_count);
         return pyro_pop(vm);
-    } else if (PYRO_IS_CLOSURE(method)) {
+    }
+
+    if (PYRO_IS_CLOSURE(method)) {
         call_closure(vm, PYRO_AS_CLOSURE(method), arg_count);
         run(vm);
         return pyro_pop(vm);
-    } else {
-        pyro_panic(vm, "value is not callable as a method");
-        return pyro_null();
     }
+
+    pyro_panic(vm, "value is not callable as a method");
+    return pyro_null();
 }
 
 
 PyroValue pyro_call_function(PyroVM* vm, uint8_t arg_count) {
     PyroValue value = pyro_peek(vm, arg_count);
+
     if (PYRO_IS_NATIVE_FN(value)) {
         call_native_fn(vm, PYRO_AS_NATIVE_FN(value), arg_count);
         return pyro_pop(vm);
-    } else {
-        call_value(vm, arg_count);
-        run(vm);
-        return pyro_pop(vm);
     }
+
+    call_value(vm, arg_count);
+    run(vm);
+    return pyro_pop(vm);
 }
