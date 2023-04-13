@@ -2569,31 +2569,7 @@ void pyro_exec_code_as_module(
     const char* source_id,
     PyroMod* module
 ) {
-    PyroFn* fn = pyro_compile(vm, code, code_length, source_id);
-    if (vm->halt_flag) {
-        return;
-    }
-
-    PyroClosure* closure = PyroClosure_new(vm, fn, module);
-    if (!closure) {
-        pyro_panic(vm, "out of memory");
-        return;
-    }
-
-    #ifdef PYRO_DEBUG
-        PyroValue* saved_stack_top = vm->stack_top;
-    #endif
-
-    pyro_push(vm, pyro_obj(closure));
-    call_value(vm, 0);
-    run(vm);
-    pyro_pop(vm);
-
-    #ifdef PYRO_DEBUG
-        if (!vm->halt_flag) {
-            assert(vm->stack_top == saved_stack_top);
-        }
-    #endif
+    pyro_exec_code(vm, code, code_length, source_id, module);
 }
 
 
