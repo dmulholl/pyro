@@ -2543,30 +2543,6 @@ void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module) {
 }
 
 
-// DEPRECATED.
-void pyro_exec_code_as_main(PyroVM* vm, const char* code, size_t code_length, const char* source_id) {
-    pyro_exec_code(vm, code, code_length, source_id, vm->main_module);
-}
-
-
-// DEPRECATED.
-void pyro_exec_file_as_main(PyroVM* vm, const char* path) {
-    pyro_exec_file(vm, path, vm->main_module);
-}
-
-
-// DEPRECATED.
-void pyro_exec_path_as_main(PyroVM* vm, const char* path) {
-    pyro_exec_path(vm, path, vm->main_module);
-}
-
-
-// DEPRECATED.
-void pyro_exec_file_as_module(PyroVM* vm, const char* path, PyroMod* module) {
-    pyro_exec_file(vm, path, module);
-}
-
-
 void pyro_run_main_func(PyroVM* vm) {
     PyroStr* main_string = PyroStr_COPY("$main");
     if (!main_string) {

@@ -10,17 +10,15 @@
 //   code loaded from a source file it should be the filepath.
 void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char* source_id, PyroMod* module);
 
-// Loads and executes a source file.
-void pyro_exec_file_as_main(PyroVM* vm, const char* filepath);
+// Loads and executes a source file in the context of the specified module.
+void pyro_exec_file(PyroVM* vm, const char* filepath, PyroMod* module);
 
-// If [path] is a source file, loads and executes that file.
-// If [path] is a module directory, loads and executes the file [path/self.pyro].
-void pyro_exec_path_as_main(PyroVM* vm, const char* path);
+// Loads and executes a source file in the context of the specified module.
+// - If [path] is a source file, loads and executes that file.
+// - If [path] is a directory, loads and executes the file [path/self.pyro].
+void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module);
 
-// Executes a file in the context of the specified module.
-void pyro_exec_file_as_module(PyroVM* vm, const char* filepath, PyroMod* module);
-
-// Runs the $main() function if it is defined in the main module.
+// Runs the $main() function if it is defined in the VM's main module.
 void pyro_run_main_func(PyroVM* vm);
 
 // Attempts to compile but not execute the file.

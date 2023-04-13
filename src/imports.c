@@ -185,7 +185,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         path[path_count] = '\0';
 
         if (pyro_is_file(path)) {
-            pyro_exec_file_as_module(vm, path, module);
+            pyro_exec_file(vm, path, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
@@ -209,7 +209,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         path[path_count] = '\0';
 
         if (pyro_is_file(path)) {
-            pyro_exec_file_as_module(vm, path, module);
+            pyro_exec_file(vm, path, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return;
         }
