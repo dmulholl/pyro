@@ -1,19 +1,21 @@
 #ifndef pyro_exec_h
 #define pyro_exec_h
 
-// Executes a chunk of source code in the context of the specified module.
-// - Outside of string literals, code should be utf-8 encoded.
+// Executes a string of source code in the context of the specified module.
+// - If [module] is NULL, the code will be executed in the context of the VM's main module.
+// - Outside of string literals, [code] should be utf-8 encoded.
 // - String literals can contain arbitrary binary data including nulls and invalid utf-8.
 // - [code] is treated as a byte array, not a C string, so no terminating null is required.
 // - [code_length] is the length of [code] in bytes.
-// - [source_id] is a null-terminated C string used to identify the code in error messages -- for
-//   code loaded from a source file it should be the filepath.
+// - [source_id] is a null-terminated C string used to identify the code in error messages.
 void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char* source_id, PyroMod* module);
 
 // Loads and executes a source file in the context of the specified module.
+// - If [module] is NULL, the code will be executed in the context of the VM's main module.
 void pyro_exec_file(PyroVM* vm, const char* filepath, PyroMod* module);
 
 // Loads and executes a source file in the context of the specified module.
+// - If [module] is NULL, the code will be executed in the context of the VM's main module.
 // - If [path] is a source file, loads and executes that file.
 // - If [path] is a directory, loads and executes the file [path/self.pyro].
 void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module);

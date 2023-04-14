@@ -2459,6 +2459,10 @@ void pyro_try_compile_file(PyroVM* vm, const char* path) {
 
 
 void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char* source_id, PyroMod* module) {
+    if (!module) {
+        module = vm->main_module;
+    }
+
     PyroFn* fn = pyro_compile(vm, code, code_length, source_id);
     if (vm->halt_flag) {
         return;
@@ -2551,21 +2555,28 @@ void pyro_run_main_func(PyroVM* vm) {
     }
 
     PyroValue main_index;
-    if (PyroMap_get(vm->main_module->all_member_indexes, pyro_obj(main_string), &main_index, vm)) {
-        PyroValue main_value = vm->main_module->members->values[main_index.as.i64];
-        if (PYRO_IS_CLOSURE(main_value)) {
-            if (PYRO_AS_CLOSURE(main_value)->fn->arity == 0) {
-                pyro_push(vm, main_value);
-                call_value(vm, 0);
-                run(vm);
-                pyro_pop(vm);
-            } else {
-                pyro_panic(vm, "invalid $main() function, must take 0 arguments");
-            }
-        } else {
-            pyro_panic(vm, "invalid $main, must be a function");
-        }
+    if (!PyroMap_get(vm->main_module->all_member_indexes, pyro_obj(main_string), &main_index, vm)) {
+        return;
     }
+
+    PyroValue main_value = vm->main_module->members->values[main_index.as.i64];
+    if (!PYRO_IS_CLOSURE(main_value)) {
+        pyro_panic(vm,
+            "invalid type for $main, '%s', expected a function",
+            pyro_get_type_name(vm, main_value)->bytes
+        );
+        return;
+    }
+
+    if (PYRO_AS_CLOSURE(main_value)->fn->arity != 0) {
+        pyro_panic(vm, "invalid $main() function, must take 0 arguments");
+        return;
+    }
+
+    pyro_push(vm, main_value);
+    call_value(vm, 0);
+    run(vm);
+    pyro_pop(vm);
 }
 
 
