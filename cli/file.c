@@ -30,7 +30,7 @@ void pyro_cli_run_file(ArgParser* parser) {
     free(args);
 
     // Compile and execute the script.
-    pyro_exec_path(vm, path, vm->main_module);
+    pyro_exec_path(vm, path, NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         pyro_free_vm(vm);
         exit(pyro_get_exit_code(vm));

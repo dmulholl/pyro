@@ -24,7 +24,7 @@ void pyro_cli_run_exec(ArgParser* parser) {
     free(args);
 
     const char* code = ap_get_str_value(parser, "exec");
-    pyro_exec_code(vm, code, strlen(code), "<exec>", vm->main_module);
+    pyro_exec_code(vm, code, strlen(code), "<exec>", NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         pyro_free_vm(vm);
         exit(pyro_get_exit_code(vm));

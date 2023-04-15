@@ -29,7 +29,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
         pyro_cli_add_import_roots_from_environment(vm);
         pyro_cli_add_import_roots_from_path(vm, path);
 
-        pyro_exec_path(vm, path, vm->main_module);
+        pyro_exec_path(vm, path, NULL);
         if (pyro_get_panic_flag(vm) || pyro_get_exit_code(vm) != 0) {
             printf("            - \x1B[1;31mFAIL\x1B[0m\n");
             files_failed += 1;
@@ -123,7 +123,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
         pyro_cli_add_import_roots_from_path(vm, path);
         pyro_set_stderr(vm, NULL);
 
-        pyro_exec_path(vm, path, vm->main_module);
+        pyro_exec_path(vm, path, NULL);
         if (pyro_get_panic_flag(vm) || pyro_get_exit_code(vm) != 0) {
             printf("\r[  \x1B[1;31mFAIL\x1B[0m\n");
             files_failed += 1;

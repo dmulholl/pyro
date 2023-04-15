@@ -2492,6 +2492,10 @@ void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char
 
 
 void pyro_exec_file(PyroVM* vm, const char* path, PyroMod* module) {
+    if (!module) {
+        module = vm->main_module;
+    }
+
     PyroStr* path_string = PyroStr_COPY(path);
     if (!path_string) {
         pyro_panic(vm, "out of memory");
@@ -2515,6 +2519,10 @@ void pyro_exec_file(PyroVM* vm, const char* path, PyroMod* module) {
 
 
 void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module) {
+    if (!module) {
+        module = vm->main_module;
+    }
+
     if (pyro_is_file(path)) {
         pyro_exec_file(vm, path, module);
         return;
