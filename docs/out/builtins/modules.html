@@ -55,7 +55,7 @@
                 <hr>
             </header>
             <p>
-A module object, <code>mod</code>, is created when you import a Pyro source file using an <code>import</code> statement, e.g.
+A module object, <code>module</code>, is created when you import a Pyro source file using an <code>import</code> statement, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">math</span><span class="p">;</span>
@@ -68,57 +68,64 @@ A module object can also be created by executing a string of source code using t
 <span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">&quot;pub var foo = 1 + 2;&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">$is_module</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
-
-<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">contains</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+</pre>
+<p>
+A module contains <i>members</i>, which can be accessed using the member operator, <code>::</code>. A module object also has methods of its own, which can be accessed using the method operator, <code>:</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">has_member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 
 <span class="kd">var</span> <span class="nx">globals</span> <span class="p">=</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">globals</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">globals</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
+<p>
+You can learn more about modules <a href="../features/modules.html">here</a>.
+</p>
 <h3 id="methods">
 Methods
 </h3>
 <dl>
 <div>
 <dt>
-<code>:contains(name: str) -&gt; bool</code>
+<code>:globals() -&gt; map[str, any]</code>
+</dt>
+<dd>
+<p>
+Returns a new map containing the module's public members, indexed by name.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:has_member(name: str) -&gt; bool</code>
 </dt>
 <dd>
 <p>
 Returns <code>true</code> if the module contains a member named <code>name</code>, otherwise <code>false</code>.
 </p>
-<p>
-(You can also test for containment using the <code>in</code> keyword.)
-</p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:iter() -&gt; iter[str]</code>
-</dt>
-<dd>
-<p>
-Returns an iterator over the module's public member names as strings.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:get(name: str) -&gt; any</code>
+<code>:member(name: str) -&gt; any</code>
 </dt>
 <dd>
 <p>
 Returns the value of the member <code>name</code>, or an <code>err</code> if <code>name</code> is not defined.
 </p>
+<p>
+(Allows access to both public and private members.)
+</p>
 </dd>
 </div>
 <div>
 <dt>
-<code>:globals() -&gt; map[str, any]</code>
+<code>:members() -&gt; iter[str]</code>
 </dt>
 <dd>
 <p>
-Returns a map containing copies of the module's public members, indexed by name.
+Returns an iterator over the module's public member names as strings.
 </p>
 </dd>
 </div>

@@ -1,7 +1,7 @@
 #include "../../inc/pyro.h"
 
 
-static PyroValue mod_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue mod_member(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMod* mod = PYRO_AS_MOD(args[-1]);
 
     PyroValue member_index;
@@ -13,7 +13,7 @@ static PyroValue mod_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue mod_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue mod_has_member(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMod* mod = PYRO_AS_MOD(args[-1]);
 
     PyroValue member_index;
@@ -22,6 +22,19 @@ static PyroValue mod_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     return pyro_bool(false);
+}
+
+
+static PyroValue mod_members(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroMod* mod = PYRO_AS_MOD(args[-1]);
+
+    PyroIter* iter = PyroIter_new((PyroObject*)mod->pub_member_indexes, PYRO_ITER_MAP_KEYS, vm);
+    if (!iter) {
+        pyro_panic(vm, "members(): out of memory");
+        return pyro_null();
+    }
+
+    return pyro_obj(iter);
 }
 
 
@@ -52,27 +65,10 @@ static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue mod_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroMod* mod = PYRO_AS_MOD(args[-1]);
-
-    PyroIter* iter = PyroIter_new((PyroObject*)mod->pub_member_indexes, PYRO_ITER_MAP_KEYS, vm);
-    if (!iter) {
-        pyro_panic(vm, "iter(): out of memory");
-        return pyro_null();
-    }
-
-    return pyro_obj(iter);
-}
-
-
 void pyro_load_std_builtins_mod(PyroVM* vm) {
-    // Methods -- private.
-    pyro_define_pri_method(vm, vm->class_module, "$contains", mod_contains, 1);
-    pyro_define_pri_method(vm, vm->class_module, "$iter", mod_iter, 0);
-
     // Methods -- public.
-    pyro_define_pub_method(vm, vm->class_module, "get", mod_get, 1);
-    pyro_define_pub_method(vm, vm->class_module, "contains", mod_contains, 1);
+    pyro_define_pub_method(vm, vm->class_module, "has_member", mod_has_member, 1);
+    pyro_define_pub_method(vm, vm->class_module, "member", mod_member, 1);
+    pyro_define_pub_method(vm, vm->class_module, "members", mod_members, 0);
     pyro_define_pub_method(vm, vm->class_module, "globals", mod_globals, 0);
-    pyro_define_pub_method(vm, vm->class_module, "iter", mod_iter, 0);
 }

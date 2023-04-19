@@ -83,8 +83,7 @@ l2_child1::test_importing_sibling();
 
 # Test methods defined on the module object itself.
 assert $is_module(math);
-assert "abs" in math;
-assert math:contains("abs");
-assert $is_callable(math:get("abs"));
+assert math:has_member("abs");
+assert $is_callable(math:member("abs"));
 assert $is_map(math:globals());
 assert "abs" in math:globals();

@@ -1,16 +1,16 @@
-import lib_with_pri as lib;
+import lib_with_private_members as lib;
 
 assert lib::var1 == 1;
-assert lib:contains("var1");
-assert lib:get("var1") == 1;
+assert lib:has_member("var1");
+assert lib:member("var1") == 1;
 
 assert $is_err(try lib::var2);
-assert lib:contains("var2");
-assert lib:get("var2") == 2;
+assert lib:has_member("var2");
+assert lib:member("var2") == 2;
 
 assert $is_err(try lib::var3);
-assert lib:contains("var3");
-assert lib:get("var3") == 3;
+assert lib:has_member("var3");
+assert lib:member("var3") == 3;
 
 assert $is_func(lib::func1);
 assert $is_err(try lib::func2);

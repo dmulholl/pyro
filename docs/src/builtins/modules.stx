@@ -3,7 +3,10 @@ title: Modules
 meta_title: Pyro &mdash; Modules
 ---
 
-A module object, `mod`, is created when you import a Pyro source file using an `import` statement, e.g.
+[1]: @root/features/modules//
+
+
+A module object, `module`, is created when you import a Pyro source file using an `import` statement, e.g.
 
 ::: code pyro
     import std::math;
@@ -16,30 +19,35 @@ A module object can also be created by executing a string of source code using t
     assert $is_module(mod);
     assert mod::foo == 3;
 
-    assert mod:contains("foo");
-    assert mod:get("foo") == 3;
+A module contains *members*, which can be accessed using the member operator, `::`. A module object also has methods of its own, which can be accessed using the method operator, `:`, e.g.
+
+::: code pyro
+    assert mod:has_member("foo");
+    assert mod:member("foo") == 3;
 
     var globals = mod:globals();
     assert globals["foo"] == 3;
+
+You can learn more about modules [here][1].
 
 
 
 ### Methods
 
-[[ `:contains(name: str) -> bool` ]]
+[[ `:globals() -> map[str, any]` ]]
+
+    Returns a new map containing the module's public members, indexed by name.
+
+[[ `:has_member(name: str) -> bool` ]]
 
     Returns `true` if the module contains a member named `name`, otherwise `false`.
 
-    (You can also test for containment using the `in` keyword.)
-
-[[ `:iter() -> iter[str]` ]]
-
-    Returns an iterator over the module's public member names as strings.
-
-[[ `:get(name: str) -> any` ]]
+[[ `:member(name: str) -> any` ]]
 
     Returns the value of the member `name`, or an `err` if `name` is not defined.
 
-[[ `:globals() -> map[str, any]` ]]
+    (Allows access to both public and private members.)
 
-    Returns a map containing copies of the module's public members, indexed by name.
+[[ `:members() -> iter[str]` ]]
+
+    Returns an iterator over the module's public member names as strings.
