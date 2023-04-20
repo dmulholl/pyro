@@ -124,8 +124,16 @@ This is a convenience shortcut for the <code>$shell()</code> function which prov
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to a <code>$bool</code>.
+Converts <code>arg</code> to a <code>bool</code>.
 </p>
+<ul>
+<li>
+The values <code>false</code> and <code>null</code> are falsey, as is any <code>err</code> value.
+</li>
+<li>
+All other values are truthy.
+</li>
+</ul>
 </dd>
 </div>
 <div>
@@ -134,19 +142,8 @@ Converts <code>arg</code> to a <code>$bool</code>.
 </dt>
 <dd>
 <p>
-Creates a new <code>buf</code> object.
+Creates a new <a href="builtins/buffers.html">byte buffer</a>.
 </p>
-<ul>
-<li>
-If called with zero arguments, creates a new empty buffer.
-</li>
-<li>
-If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
-</li>
-<li>
-If called with two arguments, creates a new buffer with the specified initial size and fill value, where <code>size</code> is a positive integer and <code>value</code> is an integer value in the range <code>[0, 255]</code>.
-</li>
-</ul>
 </dd>
 </div>
 <div>
@@ -155,7 +152,7 @@ If called with two arguments, creates a new buffer with the specified initial si
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to a <code>char</code>. Panics if the argument is out-of-range.
+Creates a new <a href="builtins/characters.html">character</a>.
 </p>
 </dd>
 </div>
@@ -256,19 +253,8 @@ Like <code>$eprint()</code> but adds a terminating newline.
 </dt>
 <dd>
 <p>
-Creates a new <code>err</code> object.
+Creates a new <a href="builtins/errors.html">error</a>.
 </p>
-<ul>
-<li>
-If called with no arguments, returns an error with an empty message string.
-</li>
-<li>
-If called with a single argument, stringifies that argument and uses the result as the message string. (This is equivalent to calling <code>$str()</code> on the argument.)
-</li>
-<li>
-Calling this function with more than one argument is equivalent to calling <code>$fmt()</code> on those arguments first and using the result as the message string.
-</li>
-</ul>
 </dd>
 </div>
 <div>
@@ -336,12 +322,7 @@ String arguments can contain underscores for readability.
 </dt>
 <dd>
 <p>
-Creates a new <code>file</code> object.
-Opens the underlying file stream using the C function <code>fopen()</code>.
-Panics on failure.
-</p>
-<p>
-If <code>mode</code> is not specified, it defaults to <code>&quot;r&quot;</code> &mdash; i.e. open an existing file for reading.
+Creates a new <a href="builtins/files.html">file</a>.
 </p>
 </dd>
 </div>
@@ -708,8 +689,7 @@ Returns <code>true</code> if the argument is a <code>vec</code>.
 </dt>
 <dd>
 <p>
-Wraps an iterator in an <code>iter</code> wrapper, adding automatic support for a set of chainable, lazily-evaluated utility methods.
-<code>arg</code> can be either an iterator or an instance of an iterable type, e.g. a vector.
+Creates a new <a href="builtins/iterators.html">iterator wrapper</a>.
 </p>
 </dd>
 </div>
@@ -719,7 +699,7 @@ Wraps an iterator in an <code>iter</code> wrapper, adding automatic support for 
 </dt>
 <dd>
 <p>
-Creates a new <code>$map</code> object.
+Creates a new <a href="builtins/maps.html">hash map</a>.
 </p>
 </dd>
 </div>
@@ -808,7 +788,7 @@ Like <code>$print()</code> but adds a terminating newline.
 </dt>
 <dd>
 <p>
-Creates a new <code>queue</code> object.
+Creates a new <a href="builtins/queues.html">queue</a>.
 </p>
 </dd>
 </div>
@@ -842,8 +822,7 @@ Panics if the argument is invalid, if the file cannot be opened, if an I/O read 
 </dt>
 <dd>
 <p>
-Creates a new <code>set</code> object.
-If <code>arg</code> is iterable, initializes the new set by iterating over its values.
+Creates a new <a href="builtins/sets.html">set</a>.
 </p>
 </dd>
 </div>
@@ -887,7 +866,7 @@ The actual time slept may be longer than the requested duration due to system la
 </dt>
 <dd>
 <p>
-Creates a new <code>stack</code> object.
+Creates a new <a href="builtins/stacks.html">stack</a>.
 </p>
 </dd>
 </div>
@@ -954,11 +933,7 @@ If called with one argument, sets the standard output stream to <code>arg</code>
 </dt>
 <dd>
 <p>
-Stringifies the argument &mdash; i.e. returns its default string representation.
-If the argument has a <code>:$str()</code> method, the output of this method will be returned.
-</p>
-<p>
-Note that calling <code>$str()</code> on an <code>f64</code> prints its value to 6 decimal digits of precision, stripping trailing zeros after the decimal point.
+Creates a new <a href="builtins/strings.html">string</a> by stringifying the argument.
 </p>
 </dd>
 </div>
@@ -968,8 +943,7 @@ Note that calling <code>$str()</code> on an <code>f64</code> prints its value to
 </dt>
 <dd>
 <p>
-Creates a new <code>tup</code> object.
-The arguments provide the tuple's values.
+Creates a new <a href="builtins/tuples.html">tuple</a>.
 </p>
 </dd>
 </div>
@@ -989,19 +963,8 @@ Returns the type of <code>arg</code> as a string.
 </dt>
 <dd>
 <p>
-Creates a new <code>vec</code> object.
+Creates a new <a href="builtins/vectors.html">vector</a>.
 </p>
-<ul>
-<li>
-If called with zero arguments, creates an empty vector.
-</li>
-<li>
-If called with a single iterable argument, fills the new vector by iterating over the argument.
-</li>
-<li>
-If called with two arguments, creates a vector with the specified initial size and fill value.
-</li>
-</ul>
 </dd>
 </div>
 <div>

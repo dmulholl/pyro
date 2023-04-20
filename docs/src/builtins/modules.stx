@@ -28,7 +28,7 @@ A module contains *members* --- its global variables, functions, and classes ---
     var globals = mod:globals();
     assert globals["foo"] == 3;
 
-You can learn more about modules [here][1].
+You can learn more about using modules [here][1].
 
 
 

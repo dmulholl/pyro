@@ -43,23 +43,22 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$bool(arg: any) -> bool` ]]
 
-    Converts `arg` to a `$bool`.
+    Converts `arg` to a `bool`.
+
+    * The values `false` and `null` are falsey, as is any `err` value.
+    * All other values are truthy.
 
 
 
 [[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
 
-    Creates a new `buf` object.
-
-    * If called with zero arguments, creates a new empty buffer.
-    * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
-    * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
+    Creates a new [byte buffer](@root/builtins/buffers//).
 
 
 
 [[ `$char(arg: i64) -> char` ]]
 
-    Converts `arg` to a `char`. Panics if the argument is out-of-range.
+    Creates a new [character](@root/builtins/characters//).
 
 
 
@@ -118,13 +117,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, *args: any) -> err` ]]
 
-    Creates a new `err` object.
-
-    * If called with no arguments, returns an error with an empty message string.
-
-    * If called with a single argument, stringifies that argument and uses the result as the message string. (This is equivalent to calling `$str()` on the argument.)
-
-    * Calling this function with more than one argument is equivalent to calling `$fmt()` on those arguments first and using the result as the message string.
+    Creates a new [error](@root/builtins/errors//).
 
 
 
@@ -167,11 +160,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$file(path: str) -> file` <br> `$file(path: str, mode: str) -> file` ]]
 
-    Creates a new `file` object.
-    Opens the underlying file stream using the C function `fopen()`.
-    Panics on failure.
-
-    If `mode` is not specified, it defaults to `"r"` --- i.e. open an existing file for reading.
+    Creates a new [file](@root/builtins/files//).
 
 
 
@@ -394,14 +383,13 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$iter(arg: iterator|iterable) -> iter` ]]
 
-   Wraps an iterator in an `iter` wrapper, adding automatic support for a set of chainable, lazily-evaluated utility methods.
-   `arg` can be either an iterator or an instance of an iterable type, e.g. a vector.
+    Creates a new [iterator wrapper](@root/builtins/iterators//).
 
 
 
 [[ `$map() -> map` ]]
 
-    Creates a new `$map` object.
+    Creates a new [hash map](@root/builtins/maps//).
 
 
 
@@ -454,7 +442,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$queue() -> queue` ]]
 
-    Creates a new `queue` object.
+    Creates a new [queue](@root/builtins/queues//).
 
 
 
@@ -475,8 +463,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$set() -> set` <br> `$set(arg: iterable) -> set` ]]
 
-    Creates a new `set` object.
-    If `arg` is iterable, initializes the new set by iterating over its values.
+    Creates a new [set](@root/builtins/sets//).
 
 
 
@@ -505,7 +492,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$stack() -> stack` ]]
 
-    Creates a new `stack` object.
+    Creates a new [stack](@root/builtins/stacks//).
 
 
 
@@ -544,16 +531,13 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$str(arg: any) -> str` ]]
 
-    Stringifies the argument --- i.e. returns its default string representation.
-    If the argument has a `:$str()` method, the output of this method will be returned.
+    Creates a new [string](@root/builtins/strings//) by stringifying the argument.
 
-    Note that calling `$str()` on an `f64` prints its value to 6 decimal digits of precision, stripping trailing zeros after the decimal point.
 
 
 [[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
 
-    Creates a new `tup` object.
-    The arguments provide the tuple's values.
+    Creates a new [tuple](@root/builtins/tuples//).
 
 
 
@@ -565,11 +549,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
 
-    Creates a new `vec` object.
-
-    * If called with zero arguments, creates an empty vector.
-    * If called with a single iterable argument, fills the new vector by iterating over the argument.
-    * If called with two arguments, creates a vector with the specified initial size and fill value.
+    Creates a new [vector](@root/builtins/vectors//).
 
 
 

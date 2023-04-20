@@ -70,7 +70,7 @@ A module object can also be created by executing a string of source code using t
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <p>
-A module contains <i>members</i>, which can be accessed using the member operator, <code>::</code>. A module object also has methods of its own, which can be accessed using the method operator, <code>:</code>, e.g.
+A module contains <i>members</i> &mdash; its global variables, functions, and classes &mdash; which can be accessed using the member operator, <code>::</code>. A module object also has methods of its own, which can be accessed using the method operator, <code>:</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">has_member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
@@ -80,7 +80,7 @@ A module contains <i>members</i>, which can be accessed using the member operato
 <span class="k">assert</span> <span class="nx">globals</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <p>
-You can learn more about modules <a href="../features/modules.html">here</a>.
+You can learn more about using modules <a href="../features/modules.html">here</a>.
 </p>
 <h3 id="methods">
 Methods
@@ -92,7 +92,7 @@ Methods
 </dt>
 <dd>
 <p>
-Returns a new map containing the module's public members, indexed by name.
+Returns a new map containing a copy of the module's public members, indexed by name.
 </p>
 </dd>
 </div>
