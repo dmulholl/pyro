@@ -19,7 +19,7 @@ A module object can also be created by executing a string of source code using t
     assert $is_module(mod);
     assert mod::foo == 3;
 
-A module contains *members*, which can be accessed using the member operator, `::`. A module object also has methods of its own, which can be accessed using the method operator, `:`, e.g.
+A module contains *members* --- its global variables, functions, and classes --- which can be accessed using the member operator, `::`. A module object also has methods of its own, which can be accessed using the method operator, `:`, e.g.
 
 ::: code pyro
     assert mod:has_member("foo");
@@ -36,7 +36,7 @@ You can learn more about modules [here][1].
 
 [[ `:globals() -> map[str, any]` ]]
 
-    Returns a new map containing the module's public members, indexed by name.
+    Returns a new map containing a copy of the module's public members, indexed by name.
 
 [[ `:has_member(name: str) -> bool` ]]
 
