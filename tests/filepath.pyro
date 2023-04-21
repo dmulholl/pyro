@@ -1,0 +1,2 @@
+import std::path;
+assert path::basename($filepath) == "filepath.pyro";
