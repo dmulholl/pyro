@@ -132,9 +132,12 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$exit(code: i64)` ]]
+[[ `$exit(exit_code: i64)` <br> `$exit(error_message: any)` ]]
 
-    Instructs the program to exit with the specified exit code.
+    Instructs the program to exit.
+
+    * If the argument is an `i64`, exits with the argument as the exit code.
+    * Otherwise, stringifies the argument and prints it to the standard error stream, then exits with a non-zero exit code.
 
 
 

@@ -280,12 +280,20 @@ Returns the module.
 </div>
 <div>
 <dt>
-<code>$exit(code: i64)</code>
+<code>$exit(exit_code: i64)</code> <br> <code>$exit(error_message: any)</code>
 </dt>
 <dd>
 <p>
-Instructs the program to exit with the specified exit code.
+Instructs the program to exit.
 </p>
+<ul>
+<li>
+If the argument is an <code>i64</code>, exits with the argument as the exit code.
+</li>
+<li>
+Otherwise, stringifies the argument and prints it to the standard error stream, then exits with a non-zero exit code.
+</li>
+</ul>
 </dd>
 </div>
 <div>
