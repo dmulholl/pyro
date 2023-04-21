@@ -121,12 +121,14 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$exec(code: str) -> mod` ]]
+[[ `$exec(code: str) -> module` <br> `$exec(code: str, mod: module) -> module` ]]
 
     Executes a string of Pyro source code.
-    The code is executed in the context of a new empty module.
 
-    Returns the new module.
+    * If called with a single argument, executes the code in the context of a new empty module.
+    * If called with two arguments, executes the code in the context of the specified module.
+
+    Returns the module.
 
 
 

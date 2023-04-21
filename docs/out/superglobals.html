@@ -259,15 +259,22 @@ Creates a new <a href="builtins/errors.html">error</a>.
 </div>
 <div>
 <dt>
-<code>$exec(code: str) -&gt; mod</code>
+<code>$exec(code: str) -&gt; module</code> <br> <code>$exec(code: str, mod: module) -&gt; module</code>
 </dt>
 <dd>
 <p>
 Executes a string of Pyro source code.
-The code is executed in the context of a new empty module.
 </p>
+<ul>
+<li>
+If called with a single argument, executes the code in the context of a new empty module.
+</li>
+<li>
+If called with two arguments, executes the code in the context of the specified module.
+</li>
+</ul>
 <p>
-Returns the new module.
+Returns the module.
 </p>
 </dd>
 </div>
