@@ -208,13 +208,27 @@ static PyroValue fn_println(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_exit(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!PYRO_IS_I64(args[0])) {
-        pyro_panic(vm, "$exit(): invalid argument [code], expected an integer");
+    if (PYRO_IS_I64(args[0])) {
+        vm->halt_flag = true;
+        vm->exit_flag = true;
+        vm->exit_code = args[0].as.i64;
         return pyro_null();
     }
+
+    PyroStr* error_message = pyro_stringify_value(vm, args[0]);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    int64_t result = pyro_stderr_write_s(vm, error_message);
+    if (result < 0) {
+        pyro_panic(vm, "$exit(): unable to write to the standard error stream");
+        return pyro_null();
+    }
+
     vm->halt_flag = true;
     vm->exit_flag = true;
-    vm->exit_code = args[0].as.i64;
+    vm->exit_code = 1;
     return pyro_null();
 }
 
