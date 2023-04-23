@@ -122,50 +122,58 @@ build/common/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 #  Pyro Libraries  #
 # ---------------- #
 
-# These are standard library modules written in Pyro. We use `xxd` to compile the source code
-# into byte-arrays in C source file format, then embed them directly into the Pyro binary.
+# These are standard library modules written in Pyro. We use `text2array` to compile the source
+# code into byte-arrays in C source file format, then embed them directly into the Pyro binary.
 
-build/common/std_mod_args.o: std/mods/pyro/std_mod_args.pyro
+build/common/std_mod_args.o: build/bin/text2array std/mods/pyro/args.pyro
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m std::args\n"
-	@cd std/mods/pyro; xxd -i std_mod_args.pyro > ../../../build/common/std_mod_args.c
+	@build/bin/text2array pyro_mod_args < std/mods/pyro/args.pyro > build/common/std_mod_args.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_args.c -o build/common/std_mod_args.o
 
-build/common/std_mod_sendmail.o: std/mods/pyro/std_mod_sendmail.pyro
+build/common/std_mod_sendmail.o: build/bin/text2array std/mods/pyro/sendmail.pyro
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m std::sendmail\n"
-	@cd std/mods/pyro; xxd -i std_mod_sendmail.pyro > ../../../build/common/std_mod_sendmail.c
+	@build/bin/text2array pyro_mod_sendmail < std/mods/pyro/sendmail.pyro > build/common/std_mod_sendmail.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_sendmail.c -o build/common/std_mod_sendmail.o
 
-build/common/std_mod_html.o: std/mods/pyro/std_mod_html.pyro
+build/common/std_mod_html.o: build/bin/text2array std/mods/pyro/html.pyro
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m std::html\n"
-	@cd std/mods/pyro; xxd -i std_mod_html.pyro > ../../../build/common/std_mod_html.c
+	@build/bin/text2array pyro_mod_html < std/mods/pyro/html.pyro > build/common/std_mod_html.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_html.c -o build/common/std_mod_html.o
 
-build/common/std_mod_cgi.o: std/mods/pyro/std_mod_cgi.pyro
+build/common/std_mod_cgi.o: build/bin/text2array std/mods/pyro/cgi.pyro
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m std::cgi\n"
-	@cd std/mods/pyro; xxd -i std_mod_cgi.pyro > ../../../build/common/std_mod_cgi.c
+	@build/bin/text2array pyro_mod_cgi < std/mods/pyro/cgi.pyro > build/common/std_mod_cgi.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_cgi.c -o build/common/std_mod_cgi.o
 
-build/common/std_mod_json.o: std/mods/pyro/std_mod_json.pyro
+build/common/std_mod_json.o: build/bin/text2array std/mods/pyro/json.pyro
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m std::json\n"
-	@cd std/mods/pyro; xxd -i std_mod_json.pyro > ../../../build/common/std_mod_json.c
+	@build/bin/text2array pyro_mod_json < std/mods/pyro/json.pyro > build/common/std_mod_json.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_json.c -o build/common/std_mod_json.o
 
-build/common/std_mod_pretty.o: std/mods/pyro/std_mod_pretty.pyro
+build/common/std_mod_pretty.o: build/bin/text2array std/mods/pyro/pretty.pyro
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m std::pretty\n"
-	@cd std/mods/pyro; xxd -i std_mod_pretty.pyro > ../../../build/common/std_mod_pretty.c
+	@build/bin/text2array pyro_mod_pretty < std/mods/pyro/pretty.pyro > build/common/std_mod_pretty.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_pretty.c -o build/common/std_mod_pretty.o
 
-build/common/std_mod_url.o: std/mods/pyro/std_mod_url.pyro
+build/common/std_mod_url.o: build/bin/text2array std/mods/pyro/url.pyro
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m std::url\n"
-	@cd std/mods/pyro; xxd -i std_mod_url.pyro > ../../../build/common/std_mod_url.c
+	@build/bin/text2array pyro_mod_url < std/mods/pyro/url.pyro > build/common/std_mod_url.c
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_url.c -o build/common/std_mod_url.o
+
+# ------------------ #
+#  Utility Binaries  #
+# ------------------ #
+
+build/bin/text2array: etc/text2array.c
+	@mkdir -p build/bin
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG etc/text2array.c -o build/bin/text2array
 
 # ---------------------- #
 #  Test Compiled Module  #

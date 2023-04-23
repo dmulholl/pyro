@@ -2,19 +2,25 @@
 #define pyro_stdlib_pyro_mods_h
 
 // Embedded source code for modules written in Pyro.
-extern unsigned char std_mod_args_pyro[];
-extern unsigned int std_mod_args_pyro_len;
-extern unsigned char std_mod_sendmail_pyro[];
-extern unsigned int std_mod_sendmail_pyro_len;
-extern unsigned char std_mod_html_pyro[];
-extern unsigned int std_mod_html_pyro_len;
-extern unsigned char std_mod_cgi_pyro[];
-extern unsigned int std_mod_cgi_pyro_len;
-extern unsigned char std_mod_json_pyro[];
-extern unsigned int std_mod_json_pyro_len;
-extern unsigned char std_mod_pretty_pyro[];
-extern unsigned int std_mod_pretty_pyro_len;
-extern unsigned char std_mod_url_pyro[];
-extern unsigned int std_mod_url_pyro_len;
+extern unsigned char pyro_mod_args[];
+extern int pyro_mod_args_count;
+
+extern unsigned char pyro_mod_sendmail[];
+extern int pyro_mod_sendmail_count;
+
+extern unsigned char pyro_mod_html[];
+extern int pyro_mod_html_count;
+
+extern unsigned char pyro_mod_cgi[];
+extern int pyro_mod_cgi_count;
+
+extern unsigned char pyro_mod_json[];
+extern int pyro_mod_json_count;
+
+extern unsigned char pyro_mod_pretty[];
+extern int pyro_mod_pretty_count;
+
+extern unsigned char pyro_mod_url[];
+extern int pyro_mod_url_count;
 
 #endif

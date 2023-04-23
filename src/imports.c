@@ -59,37 +59,37 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
     }
 
     if (strcmp(name->bytes, "args") == 0) {
-        pyro_exec_code(vm, (char*)std_mod_args_pyro, std_mod_args_pyro_len, "std::args", module);
+        pyro_exec_code(vm, (char*)pyro_mod_args, (size_t)pyro_mod_args_count, "std::args", module);
         return;
     }
 
     if (strcmp(name->bytes, "sendmail") == 0) {
-        pyro_exec_code(vm, (char*)std_mod_sendmail_pyro, std_mod_sendmail_pyro_len, "std::sendmail", module);
+        pyro_exec_code(vm, (char*)pyro_mod_sendmail, (size_t)pyro_mod_sendmail_count, "std::sendmail", module);
         return;
     }
 
     if (strcmp(name->bytes, "html") == 0) {
-        pyro_exec_code(vm, (char*)std_mod_html_pyro, std_mod_html_pyro_len, "std::html", module);
+        pyro_exec_code(vm, (char*)pyro_mod_html, (size_t)pyro_mod_html_count, "std::html", module);
         return;
     }
 
     if (strcmp(name->bytes, "cgi") == 0) {
-        pyro_exec_code(vm, (char*)std_mod_cgi_pyro, std_mod_cgi_pyro_len, "std::cgi", module);
+        pyro_exec_code(vm, (char*)pyro_mod_cgi, (size_t)pyro_mod_cgi_count, "std::cgi", module);
         return;
     }
 
     if (strcmp(name->bytes, "json") == 0) {
-        pyro_exec_code(vm, (char*)std_mod_json_pyro, std_mod_json_pyro_len, "std::json", module);
+        pyro_exec_code(vm, (char*)pyro_mod_json, (size_t)pyro_mod_json_count, "std::json", module);
         return;
     }
 
     if (strcmp(name->bytes, "pretty") == 0) {
-        pyro_exec_code(vm, (char*)std_mod_pretty_pyro, std_mod_pretty_pyro_len, "std::pretty", module);
+        pyro_exec_code(vm, (char*)pyro_mod_pretty, (size_t)pyro_mod_pretty_count, "std::pretty", module);
         return;
     }
 
     if (strcmp(name->bytes, "url") == 0) {
-        pyro_exec_code(vm, (char*)std_mod_url_pyro, std_mod_url_pyro_len, "std::url", module);
+        pyro_exec_code(vm, (char*)pyro_mod_url, (size_t)pyro_mod_url_count, "std::url", module);
         return;
     }
 
