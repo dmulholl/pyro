@@ -2,6 +2,7 @@
 #  Variables  #
 # ----------- #
 
+# Common flags for both the release and debug builds.
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 		 -Wno-unused-parameter \
 		 -Wno-unused-function \
@@ -37,28 +38,40 @@ release: ## Builds the release binary.
 release: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p build/release
 	@printf "\e[1;32mBuilding\e[0m build/release/pyro\n"
-	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) -o build/release/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) \
+		-o build/release/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/release/pyro --version
 
 debug: ## Builds the debug binary.
 debug: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) \
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
+
+debug-sanitize: ## Builds a debug binary with sanitizer checks.
+debug-sanitize: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
+	@mkdir -p build/debug
+	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -fsanitize=address,undefined \
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-dump: ## Builds a debug binary that also dumps bytecode.
+debug-dump: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread \
-		-D PYRO_DEBUG_DUMP_BYTECODE
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE \
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-trace: ## Builds a debug binary that also dumps bytecode and traces execution.
+debug-trace: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread \
-		-D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION \
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 check-debug: ## Builds the debug binary, then runs the test suite.
