@@ -7,7 +7,7 @@ meta_title: Pyro Standard Library &mdash; std::prng
 
 This module contains convenience functions for generating pseudo-random numbers using the default pseudo-random number generator (currently a 64-bit [Mersenne Twister][1], initialized with a random seed).
 
-To generate a repeatable sequence of pseudo-random numbers, use a generator from the `$std:mt64` module.
+To generate a repeatable sequence of pseudo-random numbers, use a generator from the `std::mt64` module.
 
 
 
