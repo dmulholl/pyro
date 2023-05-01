@@ -74,17 +74,23 @@ debug-trace: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
 		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
+check-release: ## Builds the release binary, then runs the test suite.
+check-release: tests/compiled_module.so
+	@make release
+	@printf "\e[1;32m Running\e[0m build/release/pyro test tests/*.pyro\n\n"
+	@./build/release/pyro test ./tests/*.pyro
+
 check-debug: ## Builds the debug binary, then runs the test suite.
 check-debug: tests/compiled_module.so
 	@make debug
 	@printf "\e[1;32m Running\e[0m build/debug/pyro test tests/*.pyro\n\n"
 	@./build/debug/pyro test ./tests/*.pyro
 
-check-release: ## Builds the release binary, then runs the test suite.
-check-release: tests/compiled_module.so
-	@make release
-	@printf "\e[1;32m Running\e[0m build/release/pyro test tests/*.pyro\n\n"
-	@./build/release/pyro test ./tests/*.pyro
+check-sanitize: ## Builds the debug binary with sanitizer checks, then runs the test suite.
+check-sanitize: tests/compiled_module.so
+	@make debug-sanitize
+	@printf "\e[1;32m Running\e[0m build/debug/pyro test tests/*.pyro\n\n"
+	@./build/debug/pyro test ./tests/*.pyro
 
 check: ## Alias for check-debug.
 	@make check-debug
