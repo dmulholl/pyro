@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
     }
 
     int count = 0;
-    printf("unsigned char %s[] = {", array_name);
+    printf("const unsigned char %s[] = {", array_name);
 
     while (true) {
         int c = getchar();
@@ -25,6 +25,6 @@ int main(int argc, char** argv) {
     }
 
     printf("\n};\n\n");
-    printf("int %s_count = %d;\n", array_name, count);
+    printf("const int %s_count = %d;\n", array_name, count);
     return 0;
 }
