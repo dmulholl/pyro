@@ -78,13 +78,13 @@ void pyro_load_std_mod_pyro(PyroVM* vm, PyroMod* module) {
     version_tuple->values[4] = pyro_obj(PyroStr_COPY(PYRO_VERSION_BUILD));
     pyro_define_pub_member(vm, module, "version_tuple", pyro_obj(version_tuple));
 
-    char* version_c_string = pyro_get_version_string();
-    if (version_c_string) {
-        PyroStr* version_pyro_string = PyroStr_COPY(version_c_string);
-        if (!version_pyro_string) {
-            return;
+    char* c_string = pyro_get_version_string();
+    if (c_string) {
+        PyroStr* pyro_string = PyroStr_COPY(c_string);
+        if (pyro_string) {
+            pyro_define_pub_member(vm, module, "version_string", pyro_obj(pyro_string));
         }
-        pyro_define_pub_member(vm, module, "version_string", pyro_obj(version_pyro_string));
+        free(c_string);
     }
 
     pyro_define_pub_member_fn(vm, module, "memory", fn_memory, 0);
