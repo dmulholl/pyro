@@ -121,8 +121,7 @@ typedef struct PyroFile PyroFile;
 #include "./utf8.h"
 #include "./utils.h"
 #include "./stdlib_builtins.h"
-#include "./stdlib_c_mods.h"
-#include "./stdlib_pyro_mods.h"
+#include "./stdlib_modules.h"
 #include "./embeds.h"
 
 #endif
