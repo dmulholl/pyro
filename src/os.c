@@ -4,9 +4,6 @@
 // POSIX: popen(), pclose()
 #include <stdio.h>
 
-// POSIX: dirname(), basename()
-#include <libgen.h>
-
 // POSIX: stat(), lstat(), S_ISDIR(), S_ISREG, S_ISLNK()
 #include <sys/stat.h>
 

@@ -8,7 +8,10 @@ CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 		 -Wno-unused-function \
 		 -Wno-unused-result
 
+# Extra flags for release builds.
 RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O2
+
+# Extra flags for debug builds.
 DEBUG_FLAGS   = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DEBUG_STRESS_GC
 
 HDR_FILES = cli/*.h inc/*.h
@@ -18,13 +21,7 @@ OBJ_FILES = build/common/sqlite.o \
 			build/common/bestline.o \
 			build/common/args.o \
 			build/common/mt64.o \
-			build/common/std_mod_args.o \
-			build/common/std_mod_sendmail.o \
-			build/common/std_mod_html.o \
-			build/common/std_mod_cgi.o \
-			build/common/std_mod_pretty.o \
-			build/common/std_mod_url.o \
-			build/common/std_mod_json.o
+			build/common/embeds.o
 
 # --------------- #
 #  Phony Targets  #
@@ -138,61 +135,26 @@ build/common/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/mt64/mt64.c -o build/common/mt64.o
 
 # ---------------- #
-#  Pyro Libraries  #
+#  Embedded Files  #
 # ---------------- #
 
-# These are standard library modules written in Pyro. We use `text2array` to compile the source
-# code into byte-arrays in C source file format, then embed them directly into the Pyro binary.
-
-build/common/std_mod_args.o: build/bin/text2array std/mods/pyro/args.pyro
+build/common/embeds.o: build/common/embeds.c
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m std::args\n"
-	@build/bin/text2array pyro_mod_args < std/mods/pyro/args.pyro > build/common/std_mod_args.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_args.c -o build/common/std_mod_args.o
+	@printf "\e[1;32mBuilding\e[0m embeds.o\n"
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/embeds.c -o build/common/embeds.o
 
-build/common/std_mod_sendmail.o: build/bin/text2array std/mods/pyro/sendmail.pyro
+build/common/embeds.c: build/bin/embed $(shell find ./embed -type file)
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m std::sendmail\n"
-	@build/bin/text2array pyro_mod_sendmail < std/mods/pyro/sendmail.pyro > build/common/std_mod_sendmail.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_sendmail.c -o build/common/std_mod_sendmail.o
-
-build/common/std_mod_html.o: build/bin/text2array std/mods/pyro/html.pyro
-	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m std::html\n"
-	@build/bin/text2array pyro_mod_html < std/mods/pyro/html.pyro > build/common/std_mod_html.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_html.c -o build/common/std_mod_html.o
-
-build/common/std_mod_cgi.o: build/bin/text2array std/mods/pyro/cgi.pyro
-	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m std::cgi\n"
-	@build/bin/text2array pyro_mod_cgi < std/mods/pyro/cgi.pyro > build/common/std_mod_cgi.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_cgi.c -o build/common/std_mod_cgi.o
-
-build/common/std_mod_json.o: build/bin/text2array std/mods/pyro/json.pyro
-	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m std::json\n"
-	@build/bin/text2array pyro_mod_json < std/mods/pyro/json.pyro > build/common/std_mod_json.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_json.c -o build/common/std_mod_json.o
-
-build/common/std_mod_pretty.o: build/bin/text2array std/mods/pyro/pretty.pyro
-	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m std::pretty\n"
-	@build/bin/text2array pyro_mod_pretty < std/mods/pyro/pretty.pyro > build/common/std_mod_pretty.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_pretty.c -o build/common/std_mod_pretty.o
-
-build/common/std_mod_url.o: build/bin/text2array std/mods/pyro/url.pyro
-	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m std::url\n"
-	@build/bin/text2array pyro_mod_url < std/mods/pyro/url.pyro > build/common/std_mod_url.c
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/std_mod_url.c -o build/common/std_mod_url.o
+	@printf "\e[1;32mBuilding\e[0m embeds.c\n"
+	@build/bin/embed ./embed > build/common/embeds.c
 
 # ------------------ #
 #  Utility Binaries  #
 # ------------------ #
 
-build/bin/text2array: etc/text2array.c
+build/bin/embed: tools/embed.c
 	@mkdir -p build/bin
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG etc/text2array.c -o build/bin/text2array
+	@$(CC) $(CFLAGS) -O2 -D NDEBUG tools/embed.c -o build/bin/embed
 
 # ---------------------- #
 #  Test Compiled Module  #

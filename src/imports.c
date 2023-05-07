@@ -1,13 +1,19 @@
 #include "../inc/pyro.h"
 
 
-static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
+static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
+    if (arg_count != 2 || strcmp(PYRO_AS_STR(args[0])->bytes, "std") != 0) {
+        return false;
+    }
+
+    PyroStr* name = PYRO_AS_STR(args[1]);
+
     if (strcmp(name->bytes, "math") == 0) {
         pyro_load_std_mod_math(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
-        return;
+        return true;
     }
 
     if (strcmp(name->bytes, "mt64") == 0) {
@@ -15,7 +21,7 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
-        return;
+        return true;
     }
 
     if (strcmp(name->bytes, "prng") == 0) {
@@ -23,7 +29,7 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
-        return;
+        return true;
     }
 
     if (strcmp(name->bytes, "pyro") == 0) {
@@ -31,7 +37,7 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
-        return;
+        return true;
     }
 
     if (strcmp(name->bytes, "sqlite") == 0) {
@@ -39,7 +45,7 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
-        return;
+        return true;
     }
 
     if (strcmp(name->bytes, "path") == 0) {
@@ -47,7 +53,7 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
-        return;
+        return true;
     }
 
     if (strcmp(name->bytes, "log") == 0) {
@@ -55,71 +61,76 @@ static void try_load_stdlib_module(PyroVM* vm, PyroStr* name, PyroMod* module) {
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
-        return;
+        return true;
     }
 
-    if (strcmp(name->bytes, "args") == 0) {
-        pyro_exec_code(vm, (char*)pyro_mod_args, (size_t)pyro_mod_args_count, "std::args", module);
-        return;
-    }
-
-    if (strcmp(name->bytes, "sendmail") == 0) {
-        pyro_exec_code(vm, (char*)pyro_mod_sendmail, (size_t)pyro_mod_sendmail_count, "std::sendmail", module);
-        return;
-    }
-
-    if (strcmp(name->bytes, "html") == 0) {
-        pyro_exec_code(vm, (char*)pyro_mod_html, (size_t)pyro_mod_html_count, "std::html", module);
-        return;
-    }
-
-    if (strcmp(name->bytes, "cgi") == 0) {
-        pyro_exec_code(vm, (char*)pyro_mod_cgi, (size_t)pyro_mod_cgi_count, "std::cgi", module);
-        return;
-    }
-
-    if (strcmp(name->bytes, "json") == 0) {
-        pyro_exec_code(vm, (char*)pyro_mod_json, (size_t)pyro_mod_json_count, "std::json", module);
-        return;
-    }
-
-    if (strcmp(name->bytes, "pretty") == 0) {
-        pyro_exec_code(vm, (char*)pyro_mod_pretty, (size_t)pyro_mod_pretty_count, "std::pretty", module);
-        return;
-    }
-
-    if (strcmp(name->bytes, "url") == 0) {
-        pyro_exec_code(vm, (char*)pyro_mod_url, (size_t)pyro_mod_url_count, "std::url", module);
-        return;
-    }
-
-    pyro_panic(vm, "no module in standard library named '%s'", name->bytes);
+    return false;
 }
 
 
-void try_load_compiled_module(PyroVM* vm, const char* path, PyroValue name, PyroMod* module) {
-    pyro_dlopen_as_module(vm, path, PYRO_AS_STR(name)->bytes, module);
+// Given 'import foo::bar::baz', we want to check for:
+// 1. foo/bar/baz.pyro
+// 2. foo/bar/baz/self.pyro
+static bool try_load_embedded_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
+    size_t path_capacity = 0;
+    for (uint8_t i = 0; i < arg_count; i++) {
+        path_capacity += PYRO_AS_STR(args[i])->count + 1;
+    }
+    path_capacity += strlen("self.pyro") + 1;
+
+    char* path = PYRO_ALLOCATE_ARRAY(vm, char, path_capacity);
+    if (!path) {
+        pyro_panic(vm, "out of memory");
+        return true;
+    }
+
+    // Assemble the string: foo/bar/baz/
+    size_t path_count = 0;
+    for (uint8_t i = 0; i < arg_count; i++) {
+        PyroStr* name = PYRO_AS_STR(args[i]);
+        memcpy(path + path_count, name->bytes, name->count);
+        path_count += name->count;
+        path[path_count++] = '/';
+    }
+
+    const unsigned char* data;
+    size_t count;
+
+    // 1. Try: foo/bar/baz.pyro
+    memcpy(path + path_count - 1, ".pyro", strlen(".pyro") + 1);
+    if (pyro_get_embedded(path, &data, &count)) {
+        pyro_exec_code(vm, (const char*)data, count, path, module);
+        PYRO_FREE_ARRAY(vm, char, path, path_capacity);
+        return true;
+    }
+
+    // 2. Try: foo/bar/baz/self.pyro
+    memcpy(path + path_count - 1, "/self.pyro", strlen("/self.pyro") + 1);
+    if (pyro_get_embedded(path, &data, &count)) {
+        pyro_exec_code(vm, (const char*)data, count, path, module);
+        PYRO_FREE_ARRAY(vm, char, path, path_capacity);
+        return true;
+    }
+
+    PYRO_FREE_ARRAY(vm, char, path, path_capacity);
+    return false;
 }
 
 
-void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
-    if (arg_count == 2 && strcmp(PYRO_AS_STR(args[0])->bytes, "std") == 0) {
-        try_load_stdlib_module(vm, PYRO_AS_STR(args[1]), module);
-        return;
-    }
-
-    if (arg_count == 2 && strcmp(PYRO_AS_STR(args[0])->bytes, "$std") == 0) {
-        try_load_stdlib_module(vm, PYRO_AS_STR(args[1]), module);
-        return;
-    }
-
+// Given 'import foo::bar::baz', we want to check for:
+// 1. BASE/foo/bar/baz.so
+// 2. BASE/foo/bar/baz.pyro
+// 3. BASE/foo/bar/baz/self.so
+// 4. BASE/foo/bar/baz/self.pyro
+// 5. BASE/foo/bar/baz
+static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
     for (size_t i = 0; i < vm->import_roots->count; i++) {
         PyroStr* base = PYRO_AS_STR(vm->import_roots->values[i]);
         if (base->count == 0) {
             base = PyroStr_COPY(".");
             if (!base) {
                 pyro_panic(vm, "out of memory");
-                return;
+                return true;
             }
         }
 
@@ -129,26 +140,17 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
             base_has_trailing_slash = true;
         }
 
-        // Given 'import foo::bar::baz', allocate enough space for:
-        // - BASE/foo/bar/baz
-        // - BASE/foo/bar/baz.so
-        // - BASE/foo/bar/baz.pyro
-        // - BASE/foo/bar/baz/self.so
-        // - BASE/foo/bar/baz/self.pyro
+        // Allocate enough space for "BASE/foo/bar/baz/self.pyro".
         size_t path_capacity = base_has_trailing_slash ? base->count : base->count + 1;
         for (uint8_t j = 0; j < arg_count; j++) {
             path_capacity += PYRO_AS_STR(args[j])->count + 1;
         }
-        path_capacity += strlen("self.pyro");
+        path_capacity += strlen("self.pyro") + 1;
 
-        // Add an extra space for the terminating NULL.
-        path_capacity += 1;
-
-        // Allocate the path buffer.
         char* path = PYRO_ALLOCATE_ARRAY(vm, char, path_capacity);
         if (!path) {
             pyro_panic(vm, "out of memory");
-            return;
+            return true;
         }
 
         // Start with path = BASE/
@@ -158,7 +160,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
             path[path_count++] = '/';
         }
 
-        // Given 'import foo::bar::baz', assemble path = BASE/foo/bar/baz/
+        // Assemble path = BASE/foo/bar/baz/
         for (uint8_t j = 0; j < arg_count; j++) {
             PyroStr* name = PYRO_AS_STR(args[j]);
             memcpy(path + path_count, name->bytes, name->count);
@@ -173,9 +175,10 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         path[path_count] = '\0';
 
         if (pyro_is_file(path)) {
-            try_load_compiled_module(vm, path, args[arg_count - 1], module);
+            PyroStr* module_name = PYRO_AS_STR(args[arg_count - 1]);
+            pyro_dlopen_as_module(vm, path, module_name->bytes, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
-            return;
+            return true;
         }
 
         // 2. Try file: BASE/foo/bar/baz.pyro
@@ -187,7 +190,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         if (pyro_is_file(path)) {
             pyro_exec_file(vm, path, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
-            return;
+            return true;
         }
 
         // 3. Try file: BASE/foo/bar/baz/self.so
@@ -197,9 +200,10 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         path[path_count] = '\0';
 
         if (pyro_is_file(path)) {
-            try_load_compiled_module(vm, path, args[arg_count - 1], module);
+            PyroStr* module_name = PYRO_AS_STR(args[arg_count - 1]);
+            pyro_dlopen_as_module(vm, path, module_name->bytes, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
-            return;
+            return true;
         }
 
         // 4. Try file: BASE/foo/bar/baz/self.pyro
@@ -211,7 +215,7 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         if (pyro_is_file(path)) {
             pyro_exec_file(vm, path, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
-            return;
+            return true;
         }
 
         // 5. Try dir: BASE/foo/bar/baz
@@ -220,10 +224,27 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
 
         if (pyro_is_dir(path)) {
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
-            return;
+            return true;
         }
 
         PYRO_FREE_ARRAY(vm, char, path, path_capacity);
+    }
+
+    return false;
+}
+
+
+void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
+    if (try_load_builtin_module(vm, arg_count, args, module)) {
+        return;
+    }
+
+    if (try_load_embedded_module(vm, arg_count, args, module)) {
+        return;
+    }
+
+    if (try_load_filesystem_module(vm, arg_count, args, module)) {
+        return;
     }
 
     pyro_panic(

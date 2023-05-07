@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 9
-#define PYRO_VERSION_PATCH 33
+#define PYRO_VERSION_PATCH 34
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -123,5 +123,6 @@ typedef struct PyroFile PyroFile;
 #include "./stdlib_builtins.h"
 #include "./stdlib_c_mods.h"
 #include "./stdlib_pyro_mods.h"
+#include "./embeds.h"
 
 #endif
