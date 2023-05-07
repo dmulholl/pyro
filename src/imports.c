@@ -229,9 +229,6 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         return;
     }
 
-    pyro_panic(
-        vm,
-        "unable to locate module '%s'",
-        PYRO_AS_STR(args[arg_count - 1])->bytes
-    );
+    PyroStr* name = PYRO_AS_STR(args[arg_count - 1]);
+    pyro_panic(vm, "unable to locate module '%s'", name->bytes);
 }
