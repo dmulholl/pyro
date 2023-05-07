@@ -15,7 +15,7 @@ RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O2
 DEBUG_FLAGS   = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DEBUG_STRESS_GC
 
 HDR_FILES = cli/*.h inc/*.h
-SRC_FILES = cli/*.c src/*.c std/builtins/*.c std/mods/c/*.c
+SRC_FILES = cli/*.c src/*.c std/builtins/*.c std/modules/*.c
 
 OBJ_FILES = build/common/sqlite.o \
 			build/common/bestline.o \
