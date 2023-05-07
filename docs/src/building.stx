@@ -106,3 +106,12 @@ You can also run Pyro's test suite directly using the `test` command, e.g.
     $ pyro test ./tests/*.pyro
 
 You can learn more about the `test` command [here](@root/features/testing//).
+
+
+
+### Embedding Modules
+
+You can embed modules written in Pyro directly into a custom build of the Pyro binary.
+Simply place the modules in the `embed` directory and run `make release`.
+
+You can import the embedded modules in the usual way --- the `embed` directory functions as a virtual import root.

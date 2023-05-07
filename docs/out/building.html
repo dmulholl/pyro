@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.30</p>
+                <p class="version">Version 0.9.34</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -63,6 +63,9 @@
 </li>
 <li>
 <a href="#test-suite">Test Suite</a>
+</li>
+<li>
+<a href="#embedding-modules">Embedding Modules</a>
 </li>
 </ul>
 <h3 id="building-installing">
@@ -188,6 +191,16 @@ $ pyro test ./tests/*.pyro
 </pre>
 <p>
 You can learn more about the <code>test</code> command <a href="features/testing.html">here</a>.
+</p>
+<h3 id="embedding-modules">
+Embedding Modules
+</h3>
+<p>
+You can embed modules written in Pyro directly into a custom build of the Pyro binary.
+Simply place the modules in the <code>embed</code> directory and run <code>make release</code>.
+</p>
+<p>
+You can import the embedded modules in the usual way &mdash; the <code>embed</code> directory functions as a virtual import root.
 </p>
         </article>
         
