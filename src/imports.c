@@ -169,11 +169,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
         }
 
         // 1. Try file: BASE/foo/bar/baz.so
-        path_count -= 1;
-        memcpy(path + path_count, ".so", strlen(".so"));
-        path_count += strlen(".so");
-        path[path_count] = '\0';
-
+        memcpy(path + path_count - 1, ".so", strlen(".so") + 1);
         if (pyro_is_file(path)) {
             PyroStr* module_name = PYRO_AS_STR(args[arg_count - 1]);
             pyro_dlopen_as_module(vm, path, module_name->bytes, module);
@@ -182,11 +178,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
         }
 
         // 2. Try file: BASE/foo/bar/baz.pyro
-        path_count -= strlen(".so");
-        memcpy(path + path_count, ".pyro", strlen(".pyro"));
-        path_count += strlen(".pyro");
-        path[path_count] = '\0';
-
+        memcpy(path + path_count - 1, ".pyro", strlen(".pyro") + 1);
         if (pyro_is_file(path)) {
             pyro_exec_file(vm, path, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
@@ -194,11 +186,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
         }
 
         // 3. Try file: BASE/foo/bar/baz/self.so
-        path_count -= strlen(".pyro");
-        memcpy(path + path_count, "/self.so", strlen("/self.so"));
-        path_count += strlen("/self.so");
-        path[path_count] = '\0';
-
+        memcpy(path + path_count - 1, "/self.so", strlen("/self.so") + 1);
         if (pyro_is_file(path)) {
             PyroStr* module_name = PYRO_AS_STR(args[arg_count - 1]);
             pyro_dlopen_as_module(vm, path, module_name->bytes, module);
@@ -207,11 +195,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
         }
 
         // 4. Try file: BASE/foo/bar/baz/self.pyro
-        path_count -= strlen("/self.so");
-        memcpy(path + path_count, "/self.pyro", strlen("/self.pyro"));
-        path_count += strlen("/self.pyro");
-        path[path_count] = '\0';
-
+        memcpy(path + path_count - 1, "/self.pyro", strlen("/self.pyro") + 1);
         if (pyro_is_file(path)) {
             pyro_exec_file(vm, path, module);
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
@@ -219,9 +203,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
         }
 
         // 5. Try dir: BASE/foo/bar/baz
-        path_count -= strlen("/self.pyro");
-        path[path_count] = '\0';
-
+        path[path_count - 1] = '\0';
         if (pyro_is_dir(path)) {
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
             return true;
