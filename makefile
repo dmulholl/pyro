@@ -2,7 +2,7 @@
 #  Variables  #
 # ----------- #
 
-# Common flags for both the release and debug builds.
+# Common flags for both release and debug builds.
 CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 		 -Wno-unused-parameter \
 		 -Wno-unused-function \
@@ -12,11 +12,20 @@ CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O2
 
 # Extra flags for debug builds.
-DEBUG_FLAGS   = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DEBUG_STRESS_GC
+DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DEBUG_STRESS_GC
 
-HDR_FILES = cli/*.h inc/*.h
-SRC_FILES = cli/*.c src/*.c std/builtins/*.c std/modules/*.c
+# Core files for the Pyro VM.
+HDR_FILES = inc/*.h
+SRC_FILES = src/*.c std/builtins/*.c std/modules/*.c
 
+# Files for the CLI binary.
+CLI_HDR_FILES = cli/*.h
+CLI_SRC_FILES = cli/*.c
+
+# Files for the baked-application binary.
+APP_SRC_FILES = app/*.c
+
+# Third-party libraries and embedded files.
 OBJ_FILES = build/common/sqlite.o \
 			build/common/bestline.o \
 			build/common/args.o \
@@ -32,44 +41,51 @@ all: ## Builds both the release and debug binaries.
 	@make release
 
 release: ## Builds the release binary.
-release: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
+release: $(OBJ_FILES)
 	@mkdir -p build/release
 	@printf "\e[1;32mBuilding\e[0m build/release/pyro\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) \
-		-o build/release/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+		-o build/release/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/release/pyro --version
 
 debug: ## Builds the debug binary.
-debug: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
+debug: $(OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-sanitize: ## Builds a debug binary with sanitizer checks.
-debug-sanitize: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
+debug-sanitize: $(OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -fsanitize=address,undefined \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-dump: ## Builds a debug binary that also dumps bytecode.
-debug-dump: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
+debug-dump: $(OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-trace: ## Builds a debug binary that also dumps bytecode and traces execution.
-debug-trace: $(HDR_FILES) $(SRC_FILES) $(OBJ_FILES)
+debug-trace: $(OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) -lm -ldl -pthread
+		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
+
+baked-app: ## Builds a baked-application binary.
+baked-app: $(OBJ_FILES)
+	@mkdir -p build/release
+	@printf "\e[1;32mBuilding\e[0m build/release/app\n"
+	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) \
+		-o build/release/app $(SRC_FILES) $(OBJ_FILES) $(APP_SRC_FILES) -lm -ldl -pthread
 
 check-release: ## Builds the release binary, then runs the test suite.
 check-release: tests/compiled_module.so
@@ -116,22 +132,22 @@ help: ## Prints available commands.
 
 build/common/sqlite.o: lib/sqlite/sqlite3.c lib/sqlite/sqlite3.h
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m sqlite\n"
+	@printf "\e[1;32mBuilding\e[0m build/common/sqlite.o\n"
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/sqlite/sqlite3.c -o build/common/sqlite.o
 
 build/common/bestline.o: lib/bestline/bestline.c lib/bestline/bestline.h
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m bestline\n"
+	@printf "\e[1;32mBuilding\e[0m build/common/bestline.o\n"
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/bestline/bestline.c -o build/common/bestline.o
 
 build/common/args.o: lib/args/args.c lib/args/args.h
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m args\n"
+	@printf "\e[1;32mBuilding\e[0m build/common/args.o\n"
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/args/args.c -o build/common/args.o
 
 build/common/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m mt64\n"
+	@printf "\e[1;32mBuilding\e[0m build/common/mt64.o\n"
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/mt64/mt64.c -o build/common/mt64.o
 
 # ---------------- #
@@ -140,12 +156,12 @@ build/common/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 
 build/common/embeds.o: build/common/embeds.c
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m embeds.o\n"
+	@printf "\e[1;32mBuilding\e[0m build/common/embeds.o\n"
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/embeds.c -o build/common/embeds.o
 
 build/common/embeds.c: build/bin/embed $(shell find ./embed -type f)
 	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m embeds.c\n"
+	@printf "\e[1;32mBuilding\e[0m build/common/embeds.c\n"
 	@build/bin/embed ./embed > build/common/embeds.c
 
 # ------------------ #
