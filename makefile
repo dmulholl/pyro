@@ -143,7 +143,7 @@ build/common/embeds.o: build/common/embeds.c
 	@printf "\e[1;32mBuilding\e[0m embeds.o\n"
 	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/embeds.c -o build/common/embeds.o
 
-build/common/embeds.c: build/bin/embed $(shell find ./embed -type file)
+build/common/embeds.c: build/bin/embed $(shell find ./embed -type f)
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m embeds.c\n"
 	@build/bin/embed ./embed > build/common/embeds.c
