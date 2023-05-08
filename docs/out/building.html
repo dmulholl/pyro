@@ -219,7 +219,10 @@ $ make baked-app
 </pre>
 <p>
 The application will be compiled as <code>build/release/app</code>.
+</p>
+<p>
 The <code>main.pyro</code> script acts as the application's entry point.
+If this file contains a <code>$main()</code> function, it will be called automatically.
 </p>
 <p>
 You can specify a custom name for the binary by setting the <code>APPNAME</code> variable, e.g.

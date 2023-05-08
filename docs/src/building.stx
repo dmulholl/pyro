@@ -128,7 +128,9 @@ To compile a baked binary, place a script file named `main.pyro` in the `embed` 
     $ make baked-app
 
 The application will be compiled as `build/release/app`.
+
 The `main.pyro` script acts as the application's entry point.
+If this file contains a `$main()` function, it will be called automatically.
 
 You can specify a custom name for the binary by setting the `APPNAME` variable, e.g.
 
