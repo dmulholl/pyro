@@ -67,6 +67,9 @@
 <li>
 <a href="#embedding-modules">Embedding Modules</a>
 </li>
+<li>
+<a href="#baked-application-binaries">Baked Application Binaries</a>
+</li>
 </ul>
 <h3 id="building-installing">
 Building &amp; Installing
@@ -202,6 +205,28 @@ Simply place the modules in the <code>embed</code> directory and run <code>make 
 <p>
 You can import the embedded modules in the usual way &mdash; the <code>embed</code> directory functions as a virtual import root.
 </p>
+<h3 id="baked-application-binaries">
+Baked Application Binaries
+</h3>
+<p>
+You can compile a Pyro script and a collection of modules into a single-file binary.
+</p>
+<p>
+To compile a baked binary, place a script file named <code>main.pyro</code> in the <code>embed</code> directory, along with any required modules. Then run:
+</p>
+<pre>
+$ make baked-app
+</pre>
+<p>
+The application will be compiled as <code>build/release/app</code>.
+The <code>main.pyro</code> script acts as the application's entry point.
+</p>
+<p>
+You can specify a custom name for the binary by setting the <code>APPNAME</code> variable, e.g.
+</p>
+<pre>
+$ make baked-app APPNAME=foobar
+</pre>
         </article>
         
     </body>

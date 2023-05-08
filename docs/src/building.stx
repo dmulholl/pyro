@@ -115,3 +115,23 @@ You can embed modules written in Pyro directly into a custom build of the Pyro b
 Simply place the modules in the `embed` directory and run `make release`.
 
 You can import the embedded modules in the usual way --- the `embed` directory functions as a virtual import root.
+
+
+
+### Baked Application Binaries
+
+You can compile a Pyro script and a collection of modules into a single-file binary.
+
+To compile a baked binary, place a script file named `main.pyro` in the `embed` directory, along with any required modules. Then run:
+
+::: code
+    $ make baked-app
+
+The application will be compiled as `build/release/app`.
+The `main.pyro` script acts as the application's entry point.
+
+You can specify a custom name for the binary by setting the `APPNAME` variable, e.g.
+
+::: code
+    $ make baked-app APPNAME=foobar
+
