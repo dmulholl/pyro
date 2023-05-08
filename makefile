@@ -32,6 +32,9 @@ OBJ_FILES = build/common/sqlite.o \
 			build/common/mt64.o \
 			build/common/embeds.o
 
+# Default name for the baked-application binary.
+APPNAME ?= app
+
 # --------------- #
 #  Phony Targets  #
 # --------------- #
@@ -83,9 +86,9 @@ debug-trace: $(OBJ_FILES)
 baked-app: ## Builds a baked-application binary.
 baked-app: $(OBJ_FILES)
 	@mkdir -p build/release
-	@printf "\e[1;32mBuilding\e[0m build/release/app\n"
+	@printf "\e[1;32mBuilding\e[0m build/release/$(APPNAME)\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) \
-		-o build/release/app $(SRC_FILES) $(OBJ_FILES) $(APP_SRC_FILES) -lm -ldl -pthread
+		-o build/release/$(APPNAME) $(SRC_FILES) $(OBJ_FILES) $(APP_SRC_FILES) -lm -ldl -pthread
 
 check-release: ## Builds the release binary, then runs the test suite.
 check-release: tests/compiled_module.so
