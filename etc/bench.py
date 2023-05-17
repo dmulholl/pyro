@@ -54,14 +54,14 @@ class Object:
 class NoConstructorObject:
     pass
 
-def do_arithmetic(a, b, c, d):
+def do_arithmetic_operations(a, b, c, d):
     foo = (((a * 123 + b * 123.456 + c * 23) / 31) * a) / (b + 1) + 2.0 * d
     bar = ((foo * a) / (b + 1)) * c + 3 * d
     baz = foo + bar + a + b + c + d
     bam = foo * 2 + bar * 3 + baz * 4
     return bam
 
-def do_string_stuff(str_a, str_b, str_sep):
+def do_string_operations(str_a, str_b, str_sep):
     string = ""
     vec = []
     local = "xyz"
@@ -107,7 +107,7 @@ def run_benchmark():
     for i in range(10):
         for j in range(10):
             for k in range(10):
-                result = do_arithmetic(i, j, k, i + j + k)
+                result = do_arithmetic_operations(i, j, k, i + j + k)
                 vec.append(result)
                 map[f"{i}-{j}-{k}"] = result
 
@@ -194,7 +194,7 @@ def run_benchmark():
     # Do string stuff.
     for i in range(10):
         for j in range(10):
-            result = do_string_stuff(str(i), str(j), ":")
+            result = do_string_operations(str(i), str(j), ":")
             vec.append(result)
 
 # END TESTS --------------------------------------------------------------------

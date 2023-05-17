@@ -69,7 +69,7 @@ class NoConstructorObject {
     pub var value;
 }
 
-def do_arithmetic(a, b, c, d) {
+def do_arithmetic_operations(a, b, c, d) {
     var foo = (((a * 123 + b * 123.456 + c * 23) / 31) * a) / (b + 1) + 2.0 * d;
     var bar = ((foo * a) / (b + 1)) * c + 3 * d;
     var baz = foo + bar + a + b + c + d;
@@ -77,7 +77,7 @@ def do_arithmetic(a, b, c, d) {
     return bam;
 }
 
-def do_string_stuff(str_a, str_b, str_sep) {
+def do_string_operations(str_a, str_b, str_sep) {
     var string = "";
     var vec = [];
     var local = "xyz";
@@ -131,9 +131,9 @@ def run_benchmark() {
     for i in $range(10) {
         for j in $range(10) {
             for k in $range(10) {
-                var result = do_arithmetic(i, j, k, i + j + k);
+                var result = do_arithmetic_operations(i, j, k, i + j + k);
                 vec:append(result);
-                map[$fmt("{}-{}-{}", i, j, k)] = result;
+                map["${i}-${j}-${k}"] = result;
             }
         }
     }
@@ -235,7 +235,7 @@ def run_benchmark() {
     # Do string stuff.
     for i in $range(10) {
         for j in $range(10) {
-            var result = do_string_stuff($str(i), $str(j), ":");
+            var result = do_string_operations($str(i), $str(j), ":");
             vec:append(result);
         }
     }
