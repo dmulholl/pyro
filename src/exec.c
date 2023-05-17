@@ -358,12 +358,12 @@ static void run(PyroVM* vm) {
     // Reads the next two bytes from the bytecode as a big-endian uint16_t value.
     #define READ_BE_U16() (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 
-    // Reads the next two bytes from the bytecode as an index into the function's constant table.
-    // Returns the constant as a PyroValue.
+    // Reads the next two bytes from the bytecode as an index into the function's constant
+    // table. Returns the constant as a [PyroValue].
     #define READ_CONSTANT() (frame->closure->fn->constants[READ_BE_U16()])
 
-    // Reads the next two bytes from the bytecode as an index into the function's constant table
-    // referencing a string value. Returns the value as an PyroStr*.
+    // Reads the next two bytes from the bytecode as an index into the function's constant
+    // table referencing a string value. Returns the value as a [PyroStr*].
     #define READ_STRING() PYRO_AS_STR(READ_CONSTANT())
 
     for (;;) {
@@ -371,8 +371,9 @@ static void run(PyroVM* vm) {
             break;
         }
 
-        // The last instruction may have changed the frame count or (this can lead to nasty bugs)
-        // forced a reallocation of the frame stack so reset the frame pointer for every iteration.
+        // The last instruction may have changed the frame count or (this can lead to nasty
+        // bugs) forced a reallocation of the frame stack so reset the frame pointer for
+        // every iteration.
         CallFrame* frame = &vm->frames[vm->frame_count - 1];
 
         #ifdef PYRO_DEBUG_STRESS_GC
@@ -405,47 +406,264 @@ static void run(PyroVM* vm) {
         #endif
 
         switch (READ_BYTE()) {
+            // Implements the expression: [left_operand + right_operand].
             case PYRO_OPCODE_BINARY_PLUS: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_plus(vm, a, b));
+                vm->stack_top[-2] = pyro_op_binary_plus(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
                 break;
             }
 
+            // Implements the expression: [left_operand - right_operand].
+            case PYRO_OPCODE_BINARY_MINUS: {
+                vm->stack_top[-2] = pyro_op_binary_minus(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand * right_operand].
+            case PYRO_OPCODE_BINARY_STAR: {
+                vm->stack_top[-2] = pyro_op_binary_star(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand ** right_operand].
+            case PYRO_OPCODE_BINARY_STAR_STAR: {
+                vm->stack_top[-2] = pyro_op_binary_star_star(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand / right_operand].
+            case PYRO_OPCODE_BINARY_SLASH: {
+                vm->stack_top[-2] = pyro_op_binary_slash(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand // right_operand].
+            case PYRO_OPCODE_BINARY_SLASH_SLASH: {
+                vm->stack_top[-2] = pyro_op_binary_slash_slash(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand % right_operand].
+            case PYRO_OPCODE_BINARY_PERCENT: {
+                vm->stack_top[-2] = pyro_op_binary_percent(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand & right_operand].
+            case PYRO_OPCODE_BINARY_AMP: {
+                vm->stack_top[-2] = pyro_op_binary_amp(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand | right_operand].
+            case PYRO_OPCODE_BINARY_BAR: {
+                vm->stack_top[-2] = pyro_op_binary_bar(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand ^ right_operand].
+            case PYRO_OPCODE_BINARY_CARET: {
+                vm->stack_top[-2] = pyro_op_binary_caret(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand << right_operand].
+            case PYRO_OPCODE_BINARY_LESS_LESS: {
+                vm->stack_top[-2] = pyro_op_binary_less_less(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+
+            // Implements the expression: [left_operand >> right_operand].
+            case PYRO_OPCODE_BINARY_GREATER_GREATER: {
+                vm->stack_top[-2] = pyro_op_binary_greater_greater(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand == right_operand].
+            case PYRO_OPCODE_BINARY_EQUAL_EQUAL: {
+                vm->stack_top[-2] = pyro_bool(
+                    pyro_op_compare_eq(
+                        vm,
+                        vm->stack_top[-2],
+                        vm->stack_top[-1]
+                    )
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand != right_operand].
+            case PYRO_OPCODE_BINARY_BANG_EQUAL: {
+                vm->stack_top[-2] = pyro_bool(
+                    !pyro_op_compare_eq(
+                        vm,
+                        vm->stack_top[-2],
+                        vm->stack_top[-1]
+                    )
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand > right_operand].
+            case PYRO_OPCODE_BINARY_GREATER: {
+                vm->stack_top[-2] = pyro_bool(
+                    pyro_op_compare_gt(
+                        vm,
+                        vm->stack_top[-2],
+                        vm->stack_top[-1]
+                    )
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand >= right_operand].
+            case PYRO_OPCODE_BINARY_GREATER_EQUAL: {
+                vm->stack_top[-2] = pyro_bool(
+                    pyro_op_compare_ge(
+                        vm,
+                        vm->stack_top[-2],
+                        vm->stack_top[-1]
+                    )
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand < right_operand].
+            case PYRO_OPCODE_BINARY_LESS: {
+                vm->stack_top[-2] = pyro_bool(
+                    pyro_op_compare_lt(
+                        vm,
+                        vm->stack_top[-2],
+                        vm->stack_top[-1]
+                    )
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand <= right_operand].
+            case PYRO_OPCODE_BINARY_LESS_EQUAL: {
+                vm->stack_top[-2] = pyro_bool(
+                    pyro_op_compare_le(
+                        vm,
+                        vm->stack_top[-2],
+                        vm->stack_top[-1]
+                    )
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [~operand].
+            case PYRO_OPCODE_UNARY_TILDE: {
+                vm->stack_top[-1] = pyro_op_unary_tilde(vm, vm->stack_top[-1]);
+                break;
+            }
+
+            // Implements the expression: [-operand].
+            case PYRO_OPCODE_UNARY_MINUS: {
+                vm->stack_top[-1] = pyro_op_unary_minus(vm, vm->stack_top[-1]);
+                break;
+            }
+
+            // Implements the expression: [+operand].
+            case PYRO_OPCODE_UNARY_PLUS: {
+                vm->stack_top[-1] = pyro_op_unary_plus(vm, vm->stack_top[-1]);
+                break;
+            }
+
+            // Implements the expression: [!operand].
+            case PYRO_OPCODE_UNARY_BANG: {
+                vm->stack_top[-1] = pyro_bool(!pyro_is_truthy(vm->stack_top[-1]));
+                break;
+            }
+
+            // Duplicates the top item on the stack.
+            case PYRO_OPCODE_DUP: {
+                pyro_push(vm, vm->stack_top[-1]);
+                break;
+            }
+
+            // Duplicates the top 2 items on the stack.
+            case PYRO_OPCODE_DUP_2: {
+                pyro_push(vm, vm->stack_top[-2]);
+                pyro_push(vm, vm->stack_top[-2]);
+                break;
+            }
+
+            // Implements the statement: [assert expr].
             case PYRO_OPCODE_ASSERT: {
-                PyroValue test_expr = pyro_pop(vm);
-                if (!pyro_is_truthy(test_expr)) {
+                PyroValue expr = pyro_pop(vm);
+                if (!pyro_is_truthy(expr)) {
                     pyro_panic(vm, "assertion failed");
                 }
                 break;
             }
 
-            case PYRO_OPCODE_BINARY_AMP: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_amp(vm, a, b));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_BAR: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_bar(vm, a, b));
-                break;
-            }
-
-            case PYRO_OPCODE_UNARY_TILDE: {
-                PyroValue operand = pyro_pop(vm);
-                pyro_push(vm, pyro_op_unary_tilde(vm, operand));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_CARET: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_caret(vm, a, b));
-                break;
-            }
+            // UNOPTIMIZED: opcodes below this point have not been optimized or documented.
 
             case PYRO_OPCODE_CALL_VALUE: {
                 uint8_t arg_count = READ_BYTE();
@@ -540,12 +758,13 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_MAKE_CLASS: {
                 PyroClass* class = PyroClass_new(vm);
-                if (class) {
-                    class->name = READ_STRING();
-                    pyro_push(vm, pyro_obj(class));
-                } else {
+                if (!class) {
                     pyro_panic(vm, "out of memory");
+                    break;
                 }
+
+                class->name = READ_STRING();
+                pyro_push(vm, pyro_obj(class));
                 break;
             }
 
@@ -752,19 +971,6 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Duplicate the top item on the stack.
-            case PYRO_OPCODE_DUP: {
-                pyro_push(vm, pyro_peek(vm, 0));
-                break;
-            }
-
-            // Duplicate the top 2 items on the stack.
-            case PYRO_OPCODE_DUP_2: {
-                pyro_push(vm, pyro_peek(vm, 1));
-                pyro_push(vm, pyro_peek(vm, 1));
-                break;
-            }
-
             case PYRO_OPCODE_ECHO: {
                 int arg_count = (int)READ_BYTE();
 
@@ -792,20 +998,6 @@ static void run(PyroVM* vm) {
                 }
 
                 vm->stack_top -= arg_count;
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_EQUAL_EQUAL: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(pyro_op_compare_eq(vm, a, b)));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_SLASH: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_slash(vm, a, b));
                 break;
             }
 
@@ -1050,17 +1242,17 @@ static void run(PyroVM* vm) {
                 if (!PYRO_IS_MOD(receiver)) {
                     if (PYRO_IS_INSTANCE(receiver)) {
                         pyro_panic(vm,
-                            "invalid member access '%s', receiver is an object instance, did you mean to use ':'",
+                            "invalid member access '::%s', receiver is an object instance, did you mean to use ':'",
                             PYRO_AS_STR(member_name)->bytes
                         );
                     } else if (PYRO_IS_CLASS(receiver)) {
                         pyro_panic(vm,
-                            "invalid member access '%s', receiver is a class, did you mean to use ':'",
+                            "invalid member access '::%s', receiver is a class, did you mean to use ':'",
                             PYRO_AS_STR(member_name)->bytes
                         );
                     } else {
                         pyro_panic(vm,
-                            "invalid member access '%s', receiver is not a module",
+                            "invalid member access '::%s', receiver is not a module",
                             PYRO_AS_STR(member_name)->bytes
                         );
                     }
@@ -1159,20 +1351,6 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_GET_UPVALUE: {
                 uint8_t index = READ_BYTE();
                 pyro_push(vm, *frame->closure->upvalues[index]->location);
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_GREATER: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(pyro_op_compare_gt(vm, a, b)));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_GREATER_EQUAL: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(pyro_op_compare_ge(vm, a, b)));
                 break;
             }
 
@@ -1649,20 +1827,6 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case PYRO_OPCODE_BINARY_LESS: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(pyro_op_compare_lt(vm, a, b)));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_LESS_EQUAL: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(pyro_op_compare_le(vm, a, b)));
-                break;
-            }
-
             case PYRO_OPCODE_BINARY_IN: {
                 PyroValue right = pyro_pop(vm);
                 PyroValue left = pyro_pop(vm);
@@ -1798,13 +1962,6 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_JUMP_BACK: {
                 uint16_t offset = READ_BE_U16();
                 frame->ip -= offset;
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_LESS_LESS: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_less_less(vm, a, b));
                 break;
             }
 
@@ -1953,45 +2110,6 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case PYRO_OPCODE_BINARY_PERCENT: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_percent(vm, a, b));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_STAR: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_star(vm, a, b));
-                break;
-            }
-
-            case PYRO_OPCODE_UNARY_MINUS: {
-                PyroValue operand = pyro_pop(vm);
-                pyro_push(vm, pyro_op_unary_minus(vm, operand));
-                break;
-            }
-
-            case PYRO_OPCODE_UNARY_PLUS: {
-                PyroValue operand = pyro_pop(vm);
-                pyro_push(vm, pyro_op_unary_plus(vm, operand));
-                break;
-            }
-
-            case PYRO_OPCODE_UNARY_BANG: {
-                PyroValue operand = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(!pyro_is_truthy(operand)));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_BANG_EQUAL: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_bool(!pyro_op_compare_eq(vm, a, b)));
-                break;
-            }
-
             case PYRO_OPCODE_POP:
                 pyro_pop(vm);
                 break;
@@ -2016,13 +2134,6 @@ static void run(PyroVM* vm) {
                 if (!pyro_is_truthy(pyro_pop(vm))) {
                     frame->ip += offset;
                 }
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_STAR_STAR: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_star_star(vm, a, b));
                 break;
             }
 
@@ -2063,13 +2174,6 @@ static void run(PyroVM* vm) {
                 vm->stack_top = frame->fp;
                 pyro_push(vm, pyro_obj(return_value));
                 vm->frame_count--;
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_GREATER_GREATER: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_greater_greater(vm, a, b));
                 break;
             }
 
@@ -2217,20 +2321,6 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_SET_UPVALUE: {
                 uint8_t index = READ_BYTE();
                 *frame->closure->upvalues[index]->location = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_MINUS: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_minus(vm, a, b));
-                break;
-            }
-
-            case PYRO_OPCODE_BINARY_SLASH_SLASH: {
-                PyroValue b = pyro_pop(vm);
-                PyroValue a = pyro_pop(vm);
-                pyro_push(vm, pyro_op_binary_slash_slash(vm, a, b));
                 break;
             }
 
@@ -2382,8 +2472,9 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // There are [count] strings sitting on top of the stack. We want to concatenate them
-            // into a single string, pop the input strings, and replace them with the result.
+            // There are [count] strings sitting on top of the stack. We want to concatenate
+            // them into a single string, pop the input strings, and replace them with the
+            // result.
             case PYRO_OPCODE_CONCAT_STRINGS: {
                 uint16_t count = READ_BE_U16();
 
