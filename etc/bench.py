@@ -3,7 +3,7 @@
 import time
 import random
 
-num_runs = 100
+num_runs = 1000
 
 # TESTS ------------------------------------------------------------------------
 
@@ -54,14 +54,20 @@ class Object:
 class NoConstructorObject:
     pass
 
-def do_arithmetic_operations(a, b, c, d):
+def arithmetic_operations(a, b, c, d):
     foo = (((a * 123 + b * 123.456 + c * 23) / 31) * a) / (b + 1) + 2.0 * d
     bar = ((foo * a) / (b + 1)) * c + 3 * d
     baz = foo + bar + a + b + c + d
     bam = foo * 2 + bar * 3 + baz * 4
     return bam
 
-def do_string_operations(str_a, str_b, str_sep):
+def bitwise_operations(a, b, c):
+    foo = a << 1;
+    bar = ((foo | a) & b) ^ c;
+    baz = bar >> 1;
+    return baz;
+
+def string_operations(str_a, str_b, str_sep):
     string = ""
     vec = []
     local = "xyz"
@@ -107,9 +113,17 @@ def run_benchmark():
     for i in range(10):
         for j in range(10):
             for k in range(10):
-                result = do_arithmetic_operations(i, j, k, i + j + k)
+                result = arithmetic_operations(i, j, k, i + j + k)
                 vec.append(result)
                 map[f"{i}-{j}-{k}"] = result
+
+    # Bitwise operations in function.
+    for i in range(10):
+        for j in range(10):
+            for k in range(10):
+                result = bitwise_operations(i, j, k)
+                vec.append(result)
+                map[result] = result
 
     # Initialize object in loop (no constructor).
     for i in range(1000):
@@ -163,7 +177,7 @@ def run_benchmark():
 
     # Map getting and setting.
     for i in range(1000):
-        map[i] = map[i]
+        map[i * 2] = map[i]
 
     # Update global.
     global global_variable
@@ -194,15 +208,17 @@ def run_benchmark():
     # Do string stuff.
     for i in range(10):
         for j in range(10):
-            result = do_string_operations(str(i), str(j), ":")
+            result = string_operations(str(i), str(j), ":")
             vec.append(result)
 
 # END TESTS --------------------------------------------------------------------
 
 def main():
     start = time.process_time()
+
     for i in range(num_runs):
         run_benchmark()
+
     runtime_s = time.process_time() - start
     average_s = runtime_s / num_runs
     average_ms = average_s * 1000
