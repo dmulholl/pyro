@@ -268,10 +268,10 @@ static void close_upvalues(PyroVM* vm, PyroValue* slot) {
 
 // Attempts to load the module identified by the [names] array. If the module has already been
 // imported, this will return the cached module object. Otherwise, it will attempt to import,
-// execute, and return the module. Note that this function will import ancestor modules along the
-// [names] path if they haven't already been imported, i.e. if the path is 'foo::bar::baz' this
-// function will first import 'foo' then 'foo::bar' then 'foo::bar::baz', returning 'baz'. This
-// function can call into Pyro code and can set the panic or exit flags.
+// execute, and return the module. Note that this function will import ancestor modules along
+// the [names] path if they haven't already been imported, i.e. if the path is 'foo::bar::baz'
+// this function will first import 'foo' then 'foo::bar' then 'foo::bar::baz', returning
+// 'baz'. This function can call into Pyro code and can set the panic or exit flags.
 static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
     PyroMap* supermod_modules_map = vm->modules;
     PyroValue module_value;
@@ -663,8 +663,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // UNOPTIMIZED: opcodes below this point have not been optimized or documented.
-
+            // UNOPTIMIZED: opcodes below this point have not yet been optimized or documented.
             case PYRO_OPCODE_CALL_VALUE: {
                 uint8_t arg_count = READ_BYTE();
                 call_value(vm, arg_count);
