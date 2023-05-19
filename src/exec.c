@@ -847,6 +847,29 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements the expression: [receiver[key]].
+            case PYRO_OPCODE_GET_INDEX: {
+                vm->stack_top[-2] = pyro_op_get_index(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [receiver[key] = value].
+            case PYRO_OPCODE_SET_INDEX: {
+                vm->stack_top[-3] = pyro_op_set_index(
+                    vm,
+                    vm->stack_top[-3],
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top -= 2;
+                break;
+            }
+
             // UNOPTIMIZED.
 
             case PYRO_OPCODE_MAKE_CLOSURE: {
@@ -1183,13 +1206,6 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_INDEX: {
-                PyroValue key = pyro_pop(vm);
-                PyroValue receiver = pyro_pop(vm);
-                pyro_push(vm, pyro_op_get_index(vm, receiver, key));
                 break;
             }
 
@@ -2265,14 +2281,6 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_INDEX: {
-                PyroValue value = pyro_pop(vm);
-                PyroValue key = pyro_pop(vm);
-                PyroValue receiver = pyro_pop(vm);
-                pyro_push(vm, pyro_op_set_index(vm, receiver, key, value));
                 break;
             }
 
