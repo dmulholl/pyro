@@ -408,6 +408,7 @@ static void run(PyroVM* vm) {
 
         switch (READ_BYTE()) {
             // Implements the expression: [left_operand + right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_PLUS: {
                 vm->stack_top[-2] = pyro_op_binary_plus(
                     vm,
@@ -419,6 +420,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand - right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_MINUS: {
                 vm->stack_top[-2] = pyro_op_binary_minus(
                     vm,
@@ -430,6 +432,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand * right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_STAR: {
                 vm->stack_top[-2] = pyro_op_binary_star(
                     vm,
@@ -441,6 +444,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand ** right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_STAR_STAR: {
                 vm->stack_top[-2] = pyro_op_binary_star_star(
                     vm,
@@ -452,6 +456,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand / right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_SLASH: {
                 vm->stack_top[-2] = pyro_op_binary_slash(
                     vm,
@@ -463,6 +468,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand // right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_SLASH_SLASH: {
                 vm->stack_top[-2] = pyro_op_binary_slash_slash(
                     vm,
@@ -474,6 +480,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand % right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_PERCENT: {
                 vm->stack_top[-2] = pyro_op_binary_percent(
                     vm,
@@ -485,6 +492,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand & right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_AMP: {
                 vm->stack_top[-2] = pyro_op_binary_amp(
                     vm,
@@ -496,6 +504,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand | right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_BAR: {
                 vm->stack_top[-2] = pyro_op_binary_bar(
                     vm,
@@ -507,6 +516,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand ^ right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_CARET: {
                 vm->stack_top[-2] = pyro_op_binary_caret(
                     vm,
@@ -518,6 +528,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand << right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_LESS_LESS: {
                 vm->stack_top[-2] = pyro_op_binary_less_less(
                     vm,
@@ -530,6 +541,7 @@ static void run(PyroVM* vm) {
 
 
             // Implements the expression: [left_operand >> right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_GREATER_GREATER: {
                 vm->stack_top[-2] = pyro_op_binary_greater_greater(
                     vm,
@@ -541,6 +553,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand == right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_EQUAL_EQUAL: {
                 vm->stack_top[-2] = pyro_bool(
                     pyro_op_compare_eq(
@@ -554,6 +567,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand != right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_BANG_EQUAL: {
                 vm->stack_top[-2] = pyro_bool(
                     !pyro_op_compare_eq(
@@ -567,6 +581,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand > right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_GREATER: {
                 vm->stack_top[-2] = pyro_bool(
                     pyro_op_compare_gt(
@@ -580,6 +595,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand >= right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_GREATER_EQUAL: {
                 vm->stack_top[-2] = pyro_bool(
                     pyro_op_compare_ge(
@@ -593,6 +609,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand < right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_LESS: {
                 vm->stack_top[-2] = pyro_bool(
                     pyro_op_compare_lt(
@@ -606,6 +623,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [left_operand <= right_operand].
+            // Stack: [ ... ][ left_operand ][ right_operand ]
             case PYRO_OPCODE_BINARY_LESS_EQUAL: {
                 vm->stack_top[-2] = pyro_bool(
                     pyro_op_compare_le(
@@ -619,24 +637,28 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [~operand].
+            // Stack: [ ... ][ operand ]
             case PYRO_OPCODE_UNARY_TILDE: {
                 vm->stack_top[-1] = pyro_op_unary_tilde(vm, vm->stack_top[-1]);
                 break;
             }
 
             // Implements the expression: [-operand].
+            // Stack: [ ... ][ operand ]
             case PYRO_OPCODE_UNARY_MINUS: {
                 vm->stack_top[-1] = pyro_op_unary_minus(vm, vm->stack_top[-1]);
                 break;
             }
 
             // Implements the expression: [+operand].
+            // Stack: [ ... ][ operand ]
             case PYRO_OPCODE_UNARY_PLUS: {
                 vm->stack_top[-1] = pyro_op_unary_plus(vm, vm->stack_top[-1]);
                 break;
             }
 
             // Implements the expression: [!operand].
+            // Stack: [ ... ][ operand ]
             case PYRO_OPCODE_UNARY_BANG: {
                 vm->stack_top[-1] = pyro_bool(!pyro_is_truthy(vm->stack_top[-1]));
                 break;
@@ -666,6 +688,7 @@ static void run(PyroVM* vm) {
 
             // Implements the expression: [value(arg1, arg2, ...)].
             // The callee and its arguments should be sitting on top of the stack.
+            // Stack: [ ... ][ callee ][ arg1 ][ arg2 ]
             case PYRO_OPCODE_CALL_VALUE: {
                 uint8_t arg_count = READ_BYTE();
                 call_value(vm, arg_count);
@@ -725,6 +748,7 @@ static void run(PyroVM* vm) {
             // Implements the expression: [value(arg1, arg2, ..., *args)], where [args] is a
             // vector or tuple to be unpacked. The callee and its arguments should be sitting
             // on top of the stack.
+            // Stack: [ ... ][ callee ][ arg1 ][ arg2 ][ args ]
             case PYRO_OPCODE_CALL_VALUE_WITH_UNPACK: {
                 uint8_t arg_count = READ_BYTE();
                 PyroValue last_arg = pyro_pop(vm);
@@ -770,12 +794,6 @@ static void run(PyroVM* vm) {
 
                 class->name = READ_STRING();
                 pyro_push(vm, pyro_obj(class));
-                break;
-            }
-
-            case PYRO_OPCODE_CLOSE_UPVALUE: {
-                close_upvalues(vm, vm->stack_top - 1);
-                pyro_pop(vm);
                 break;
             }
 
@@ -915,6 +933,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [receiver[key]].
+            // Stack: [ ... ][ receiver ][ key ]
             case PYRO_OPCODE_GET_INDEX: {
                 vm->stack_top[-2] = pyro_op_get_index(
                     vm,
@@ -926,6 +945,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [receiver[key] = value].
+            // Stack: [ ... ][ receiver ][ key ][ value ]
             case PYRO_OPCODE_SET_INDEX: {
                 vm->stack_top[-3] = pyro_op_set_index(
                     vm,
@@ -995,6 +1015,12 @@ static void run(PyroVM* vm) {
             }
 
             // UNOPTIMIZED.
+
+            case PYRO_OPCODE_CLOSE_UPVALUE: {
+                close_upvalues(vm, vm->stack_top - 1);
+                pyro_pop(vm);
+                break;
+            }
 
             case PYRO_OPCODE_MAKE_CLOSURE: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
