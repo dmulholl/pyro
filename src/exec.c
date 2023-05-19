@@ -1235,6 +1235,7 @@ static void run(PyroVM* vm) {
                 break;
 
             // UNOPTIMIZED.
+            // Opcodes below this point have not yet been optimized and documented.
 
             case PYRO_OPCODE_CLOSE_UPVALUE: {
                 close_upvalues(vm, vm->stack_top - 1);
