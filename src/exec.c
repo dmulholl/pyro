@@ -1056,7 +1056,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Pushes a value from the function's constant table onto the top of the stack.
+            // Pushes a value from the function's constant table onto the stack.
             case PYRO_OPCODE_LOAD_CONSTANT: {
                 PyroValue constant = READ_CONSTANT();
                 pyro_push(vm, constant);
@@ -1113,20 +1113,81 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Pushes the value [null] onto the top of the stack.
+            // Pushes the value [null] onto the stack.
             case PYRO_OPCODE_LOAD_NULL:
                 pyro_push(vm, pyro_null());
                 break;
 
-            // Pushes the value [true] onto the top of the stack.
+            // Pushes the value [true] onto the stack.
             case PYRO_OPCODE_LOAD_TRUE:
                 pyro_push(vm, pyro_bool(true));
                 break;
 
-            // Pushes the value [false] onto the top of the stack.
+            // Pushes the value [false] onto the stack.
             case PYRO_OPCODE_LOAD_FALSE:
                 pyro_push(vm, pyro_bool(false));
                 break;
+
+            // Stringifies the value on top of the stack.
+            // Stack: [ ... ][ value ]
+            case PYRO_OPCODE_STRINGIFY: {
+                vm->stack_top[-1] = pyro_obj(
+                    pyro_stringify_value(vm, vm->stack_top[-1])
+                );
+                break;
+            }
+
+            // Formats a value using a format string and pushes the result onto the stack.
+            // Stack: [ ... ][ value ][ format_string ]
+            case PYRO_OPCODE_FORMAT: {
+                vm->stack_top[-2] = pyro_obj(
+                    pyro_format_value(
+                        vm,
+                        vm->stack_top[-2],
+                        PYRO_AS_STR(vm->stack_top[-1])->bytes,
+                        "formatting error"
+                    )
+                );
+                vm->stack_top--;
+                break;
+            }
+
+            // Concatenates [arg_count] strings, where [arg_count >= 2].
+            // Stack: [ ... ][ string1 ][ string2 ][ string3 ]
+            case PYRO_OPCODE_CONCAT_STRINGS: {
+                int arg_count = (int)READ_BE_U16();
+
+                size_t required_capacity = 0;
+                for (int i = 0; i < arg_count; i++) {
+                    required_capacity += PYRO_AS_STR(vm->stack_top[-arg_count + i])->count;
+                }
+                required_capacity += 1;
+
+                char* array = PYRO_ALLOCATE_ARRAY(vm, char, required_capacity);
+                if (!array) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                size_t byte_count = 0;
+                for (int i = 0; i < arg_count; i++) {
+                    PyroStr* string = PYRO_AS_STR(vm->stack_top[-arg_count + i]);
+                    memcpy(&array[byte_count], string->bytes, string->count);
+                    byte_count += string->count;
+                }
+                array[byte_count] = '\0';
+
+                PyroStr* result = PyroStr_take(array, byte_count, required_capacity, vm);
+                if (!result) {
+                    pyro_panic(vm, "out of memory");
+                    PYRO_FREE_ARRAY(vm, char, array, required_capacity);
+                    break;
+                }
+
+                vm->stack_top[-arg_count] = pyro_obj(result);
+                vm->stack_top -= (arg_count - 1);
+                break;
+            }
 
             // UNOPTIMIZED.
 
@@ -2502,74 +2563,6 @@ static void run(PyroVM* vm) {
                 PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
                 call_end_with_method(vm, receiver);
                 vm->with_stack_count--;
-                break;
-            }
-
-            case PYRO_OPCODE_STRINGIFY: {
-                PyroValue value = pyro_peek(vm, 0);
-                PyroStr* string = pyro_stringify_value(vm, value);
-                if (vm->halt_flag) {
-                    break;
-                }
-                pyro_pop(vm);
-                pyro_push(vm, pyro_obj(string));
-                break;
-            }
-
-            case PYRO_OPCODE_FORMAT: {
-                PyroValue value = pyro_peek(vm, 1);
-                PyroValue format_string = pyro_peek(vm, 0);
-
-                PyroStr* string = pyro_format_value(
-                    vm,
-                    value,
-                    PYRO_AS_STR(format_string)->bytes,
-                    "formatting error"
-                );
-
-                if (vm->halt_flag) {
-                    break;
-                }
-
-                pyro_pop(vm);
-                pyro_pop(vm);
-                pyro_push(vm, pyro_obj(string));
-                break;
-            }
-
-            // There are [count] strings sitting on top of the stack. We want to concatenate
-            // them into a single string, pop the input strings, and replace them with the
-            // result.
-            case PYRO_OPCODE_CONCAT_STRINGS: {
-                uint16_t count = READ_BE_U16();
-
-                PyroBuf* buf = PyroBuf_new(vm);
-                if (!buf) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                for (uint16_t i = 0; i < count; i++) {
-                    PyroValue value = pyro_peek(vm, count - 1 - i);
-                    PyroStr* string = PYRO_AS_STR(value);
-                    if (!PyroBuf_append_bytes(buf, string->count, (uint8_t*)string->bytes, vm)) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                }
-
-                if (vm->halt_flag) {
-                    break;
-                }
-
-                PyroStr* result = PyroBuf_to_str(buf, vm);
-                if (!result) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                vm->stack_top -= count;
-                pyro_push(vm, pyro_obj(result));
                 break;
             }
 
