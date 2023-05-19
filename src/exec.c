@@ -1014,6 +1014,48 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Loads a global variable onto the stack.
+            case PYRO_OPCODE_GET_GLOBAL: {
+                PyroValue name = READ_CONSTANT();
+
+                PyroValue member_index;
+                if (PyroMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
+                    PyroValue value = frame->closure->module->members->values[member_index.as.i64];
+                    pyro_push(vm, value);
+                    break;
+                }
+
+                PyroValue value;
+                if (PyroMap_get(vm->superglobals, name, &value, vm)) {
+                    pyro_push(vm, value);
+                    break;
+                }
+
+                pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
+                break;
+            }
+
+            // Assigns to a global variable.
+            // Stack: [ ... ][ value ]
+            case PYRO_OPCODE_SET_GLOBAL: {
+                PyroValue name = READ_CONSTANT();
+                PyroValue value = vm->stack_top[-1];
+
+                PyroValue member_index;
+                if (PyroMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
+                    frame->closure->module->members->values[member_index.as.i64] = value;
+                    break;
+                }
+
+                if (PyroMap_contains(vm->superglobals, name, vm)) {
+                    pyro_panic(vm, "cannot assign to superglobal '%s'", PYRO_AS_STR(name)->bytes);
+                    break;
+                }
+
+                pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
+                break;
+            }
+
             // UNOPTIMIZED.
 
             case PYRO_OPCODE_CLOSE_UPVALUE: {
@@ -1336,27 +1378,6 @@ static void run(PyroVM* vm) {
 
                 // Pop the default value but leave the class object on the stack.
                 pyro_pop(vm);
-                break;
-            }
-
-            // Loads a global variable onto the stack.
-            case PYRO_OPCODE_GET_GLOBAL: {
-                PyroValue name = READ_CONSTANT();
-
-                PyroValue member_index;
-                if (PyroMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
-                    PyroValue value = frame->closure->module->members->values[member_index.as.i64];
-                    pyro_push(vm, value);
-                    break;
-                }
-
-                PyroValue value;
-                if (PyroMap_get(vm->superglobals, name, &value, vm)) {
-                    pyro_push(vm, value);
-                    break;
-                }
-
-                pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
                 break;
             }
 
@@ -2299,25 +2320,6 @@ static void run(PyroVM* vm) {
                 vm->stack_top = frame->fp;
                 pyro_push(vm, pyro_obj(return_value));
                 vm->frame_count--;
-                break;
-            }
-
-            case PYRO_OPCODE_SET_GLOBAL: {
-                PyroValue name = READ_CONSTANT();
-                PyroValue value = pyro_peek(vm, 0);
-
-                PyroValue member_index;
-                if (PyroMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
-                    frame->closure->module->members->values[member_index.as.i64] = value;
-                    break;
-                }
-
-                if (PyroMap_contains(vm->superglobals, name, vm)) {
-                    pyro_panic(vm, "cannot assign to superglobal '%s'", PYRO_AS_STR(name)->bytes);
-                    break;
-                }
-
-                pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
                 break;
             }
 
