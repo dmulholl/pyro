@@ -1056,7 +1056,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Loads a value from the function's constant table onto the stack.
+            // Pushes a value from the function's constant table onto the top of the stack.
             case PYRO_OPCODE_LOAD_CONSTANT: {
                 PyroValue constant = READ_CONSTANT();
                 pyro_push(vm, constant);
@@ -1113,8 +1113,20 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Pushes the value [null] onto the top of the stack.
+            case PYRO_OPCODE_LOAD_NULL:
+                pyro_push(vm, pyro_null());
+                break;
 
+            // Pushes the value [true] onto the top of the stack.
+            case PYRO_OPCODE_LOAD_TRUE:
+                pyro_push(vm, pyro_bool(true));
+                break;
 
+            // Pushes the value [false] onto the top of the stack.
+            case PYRO_OPCODE_LOAD_FALSE:
+                pyro_push(vm, pyro_bool(false));
+                break;
 
             // UNOPTIMIZED.
 
@@ -2057,10 +2069,6 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case PYRO_OPCODE_LOAD_FALSE:
-                pyro_push(vm, pyro_bool(false));
-                break;
-
             case PYRO_OPCODE_LOAD_I64_0:
                 pyro_push(vm, pyro_i64(0));
                 break;
@@ -2099,14 +2107,6 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_LOAD_I64_9:
                 pyro_push(vm, pyro_i64(9));
-                break;
-
-            case PYRO_OPCODE_LOAD_NULL:
-                pyro_push(vm, pyro_null());
-                break;
-
-            case PYRO_OPCODE_LOAD_TRUE:
-                pyro_push(vm, pyro_bool(true));
                 break;
 
             case PYRO_OPCODE_JUMP_BACK: {
