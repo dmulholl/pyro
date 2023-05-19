@@ -778,6 +778,8 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // UNOPTIMIZED.
+
             case PYRO_OPCODE_MAKE_CLOSURE: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
                 PyroMod* module = frame->closure->module;
@@ -805,8 +807,6 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // UNOPTIMIZED.
-
             case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
                 PyroMod* module = frame->closure->module;
@@ -826,7 +826,9 @@ static void run(PyroVM* vm) {
                 }
 
                 vm->stack_top -= default_value_count;
-                pyro_push(vm, pyro_obj(closure));
+                if (!pyro_push(vm, pyro_obj(closure))) {
+                    break;
+                }
 
                 for (size_t i = 0; i < closure->upvalue_count; i++) {
                     uint8_t is_local = READ_BYTE();
