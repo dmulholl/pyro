@@ -221,7 +221,8 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
 
 
 static PyroUpvalue* capture_upvalue(PyroVM* vm, PyroValue* local) {
-    // Before creating a new upvalue object, look for an existing one in the list of open upvalues.
+    // Before creating a new upvalue object, check for an existing one in the list of open
+    // upvalues.
     PyroUpvalue* prev_upvalue = NULL;
     PyroUpvalue* curr_upvalue = vm->open_upvalues;
 
@@ -721,10 +722,9 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // UNOPTIMIZED: opcodes below this point have not yet been optimized or documented.
-
-
-
+            // Implements the expression: [value(arg1, arg2, ..., *args)], where [args] is a
+            // vector or tuple to be unpacked. The callee and its arguments should be sitting
+            // on top of the stack.
             case PYRO_OPCODE_CALL_VALUE_WITH_UNPACK: {
                 uint8_t arg_count = READ_BYTE();
                 PyroValue last_arg = pyro_pop(vm);
@@ -781,13 +781,16 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_MAKE_CLOSURE: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
                 PyroMod* module = frame->closure->module;
+
                 PyroClosure* closure = PyroClosure_new(vm, fn, module);
                 if (!closure) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                pyro_push(vm, pyro_obj(closure));
+                if (!pyro_push(vm, pyro_obj(closure))) {
+                    break;
+                }
 
                 for (size_t i = 0; i < closure->upvalue_count; i++) {
                     uint8_t is_local = READ_BYTE();
@@ -801,6 +804,8 @@ static void run(PyroVM* vm) {
 
                 break;
             }
+
+            // UNOPTIMIZED.
 
             case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
