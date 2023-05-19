@@ -760,6 +760,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Pushes a new class object onto the top of the stack.
             case PYRO_OPCODE_MAKE_CLASS: {
                 PyroClass* class = PyroClass_new(vm);
                 if (!class) {
@@ -779,6 +780,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [receiver.field_name].
+            // Stack: [ ... ][ receiver ]
             case PYRO_OPCODE_GET_FIELD: {
                 PyroValue field_name = READ_CONSTANT();
                 PyroValue receiver = vm->stack_top[-1];
@@ -808,6 +810,7 @@ static void run(PyroVM* vm) {
             }
 
             // Implements the expression: [receiver.field_name].
+            // Stack: [ ... ][ receiver ]
             case PYRO_OPCODE_GET_PUB_FIELD: {
                 PyroValue field_name = READ_CONSTANT();
                 PyroValue receiver = vm->stack_top[-1];
@@ -841,6 +844,70 @@ static void run(PyroVM* vm) {
                         PYRO_AS_STR(field_name)->bytes
                     );
                     break;
+                }
+
+                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                break;
+            }
+
+            // Implements the expression: [receiver.field_name = value].
+            // Stack: [ ... ][ receiver ][ value ]
+            case PYRO_OPCODE_SET_FIELD: {
+                PyroValue field_name = READ_CONSTANT();
+                PyroValue receiver = vm->stack_top[-2];
+                PyroValue value = vm->stack_top[-1];
+
+                if (PYRO_IS_INSTANCE(receiver)) {
+                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
+                    PyroValue field_index;
+                    if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        instance->fields[field_index.as.i64] = value;
+                        vm->stack_top[-2] = value;
+                        vm->stack_top--;
+                        break;
+                    }
+                }
+
+                if (PYRO_IS_CLASS(receiver)) {
+                    PyroClass* class = PYRO_AS_CLASS(receiver);
+                    if (PyroMap_contains(class->static_fields, field_name, vm)) {
+                        PyroMap_set(class->static_fields, field_name, value, vm);
+                        vm->stack_top[-2] = value;
+                        vm->stack_top--;
+                        break;
+                    }
+                }
+
+                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                break;
+            }
+
+            // Implements the expression: [receiver.field_name = value].
+            // Stack: [ ... ][ receiver ][ value ]
+            case PYRO_OPCODE_SET_PUB_FIELD: {
+                PyroValue field_name = READ_CONSTANT();
+                PyroValue receiver = vm->stack_top[-2];
+                PyroValue value = vm->stack_top[-1];
+
+                if (PYRO_IS_INSTANCE(receiver)) {
+                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
+                    PyroValue field_index;
+                    if (PyroMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
+                        instance->fields[field_index.as.i64] = value;
+                        vm->stack_top[-2] = value;
+                        vm->stack_top--;
+                        break;
+                    }
+                }
+
+                if (PYRO_IS_CLASS(receiver)) {
+                    PyroClass* class = PYRO_AS_CLASS(receiver);
+                    if (PyroMap_contains(class->static_fields, field_name, vm)) {
+                        PyroMap_set(class->static_fields, field_name, value, vm);
+                        vm->stack_top[-2] = value;
+                        vm->stack_top--;
+                        break;
+                    }
                 }
 
                 pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
@@ -2206,64 +2273,6 @@ static void run(PyroVM* vm) {
                 vm->stack_top = frame->fp;
                 pyro_push(vm, pyro_obj(return_value));
                 vm->frame_count--;
-                break;
-            }
-
-            case PYRO_OPCODE_SET_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
-                PyroValue receiver = pyro_peek(vm, 1);
-
-                if (PYRO_IS_INSTANCE(receiver)) {
-                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
-                    PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
-                        PyroValue new_value = pyro_pop(vm); // pop the value
-                        pyro_pop(vm); // pop the instance
-                        instance->fields[field_index.as.i64] = new_value;
-                        pyro_push(vm, new_value);
-                        break;
-                    }
-                } else if (PYRO_IS_CLASS(receiver)) {
-                    PyroClass* class = PYRO_AS_CLASS(receiver);
-                    if (PyroMap_contains(class->static_fields, field_name, vm)) {
-                        PyroValue new_value = pyro_pop(vm); // pop the value
-                        pyro_pop(vm); // pop the class
-                        PyroMap_set(class->static_fields, field_name, new_value, vm);
-                        pyro_push(vm, new_value);
-                        break;
-                    }
-                }
-
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_PUB_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
-                PyroValue receiver = pyro_peek(vm, 1);
-
-                if (PYRO_IS_INSTANCE(receiver)) {
-                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
-                    PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
-                        PyroValue new_value = pyro_pop(vm); // pop the value
-                        pyro_pop(vm); // pop the instance
-                        instance->fields[field_index.as.i64] = new_value;
-                        pyro_push(vm, new_value);
-                        break;
-                    }
-                } else if (PYRO_IS_CLASS(receiver)) {
-                    PyroClass* class = PYRO_AS_CLASS(receiver);
-                    if (PyroMap_contains(class->static_fields, field_name, vm)) {
-                        PyroValue new_value = pyro_pop(vm); // pop the value
-                        pyro_pop(vm); // pop the class
-                        PyroMap_set(class->static_fields, field_name, new_value, vm);
-                        pyro_push(vm, new_value);
-                        break;
-                    }
-                }
-
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
                 break;
             }
 
