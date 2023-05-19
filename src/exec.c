@@ -807,6 +807,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
                 PyroMod* module = frame->closure->module;
+
                 PyroClosure* closure = PyroClosure_new(vm, fn, module);
                 if (!closure) {
                     pyro_panic(vm, "out of memory");
@@ -821,11 +822,7 @@ static void run(PyroVM* vm) {
                         break;
                     }
                 }
-
                 vm->stack_top -= default_value_count;
-                if (!pyro_push(vm, pyro_obj(closure))) {
-                    break;
-                }
 
                 for (size_t i = 0; i < closure->upvalue_count; i++) {
                     uint8_t is_local = READ_BYTE();
@@ -837,6 +834,7 @@ static void run(PyroVM* vm) {
                     }
                 }
 
+                pyro_push(vm, pyro_obj(closure));
                 break;
             }
 
