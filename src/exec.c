@@ -870,6 +870,63 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Loads the local variable at the specified index onto the stack.
+            case PYRO_OPCODE_GET_LOCAL: {
+                uint8_t index = READ_BYTE();
+                pyro_push(vm, frame->fp[index]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_0: {
+                pyro_push(vm, frame->fp[0]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_1: {
+                pyro_push(vm, frame->fp[1]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_2: {
+                pyro_push(vm, frame->fp[2]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_3: {
+                pyro_push(vm, frame->fp[3]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_4: {
+                pyro_push(vm, frame->fp[4]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_5: {
+                pyro_push(vm, frame->fp[5]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_6: {
+                pyro_push(vm, frame->fp[6]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_7: {
+                pyro_push(vm, frame->fp[7]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_8: {
+                pyro_push(vm, frame->fp[8]);
+                break;
+            }
+
+            case PYRO_OPCODE_GET_LOCAL_9: {
+                pyro_push(vm, frame->fp[9]);
+                break;
+            }
+
             // UNOPTIMIZED.
 
             case PYRO_OPCODE_MAKE_CLOSURE: {
@@ -1206,62 +1263,6 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL: {
-                uint8_t index = READ_BYTE();
-                pyro_push(vm, frame->fp[index]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_0: {
-                pyro_push(vm, frame->fp[0]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_1: {
-                pyro_push(vm, frame->fp[1]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_2: {
-                pyro_push(vm, frame->fp[2]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_3: {
-                pyro_push(vm, frame->fp[3]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_4: {
-                pyro_push(vm, frame->fp[4]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_5: {
-                pyro_push(vm, frame->fp[5]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_6: {
-                pyro_push(vm, frame->fp[6]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_7: {
-                pyro_push(vm, frame->fp[7]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_8: {
-                pyro_push(vm, frame->fp[8]);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_LOCAL_9: {
-                pyro_push(vm, frame->fp[9]);
                 break;
             }
 
