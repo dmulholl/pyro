@@ -1056,6 +1056,66 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Loads a value from the function's constant table onto the stack.
+            case PYRO_OPCODE_LOAD_CONSTANT: {
+                PyroValue constant = READ_CONSTANT();
+                pyro_push(vm, constant);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_0: {
+                pyro_push(vm, frame->closure->fn->constants[0]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_1: {
+                pyro_push(vm, frame->closure->fn->constants[1]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_2: {
+                pyro_push(vm, frame->closure->fn->constants[2]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_3: {
+                pyro_push(vm, frame->closure->fn->constants[3]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_4: {
+                pyro_push(vm, frame->closure->fn->constants[4]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_5: {
+                pyro_push(vm, frame->closure->fn->constants[5]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_6: {
+                pyro_push(vm, frame->closure->fn->constants[6]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_7: {
+                pyro_push(vm, frame->closure->fn->constants[7]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_8: {
+                pyro_push(vm, frame->closure->fn->constants[8]);
+                break;
+            }
+
+            case PYRO_OPCODE_LOAD_CONSTANT_9: {
+                pyro_push(vm, frame->closure->fn->constants[9]);
+                break;
+            }
+
+
+
+
             // UNOPTIMIZED.
 
             case PYRO_OPCODE_CLOSE_UPVALUE: {
@@ -1994,62 +2054,6 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_push(vm, pyro_bool(pyro_is_truthy(result)));
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT: {
-                PyroValue constant = READ_CONSTANT();
-                pyro_push(vm, constant);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_0: {
-                pyro_push(vm, frame->closure->fn->constants[0]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_1: {
-                pyro_push(vm, frame->closure->fn->constants[1]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_2: {
-                pyro_push(vm, frame->closure->fn->constants[2]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_3: {
-                pyro_push(vm, frame->closure->fn->constants[3]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_4: {
-                pyro_push(vm, frame->closure->fn->constants[4]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_5: {
-                pyro_push(vm, frame->closure->fn->constants[5]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_6: {
-                pyro_push(vm, frame->closure->fn->constants[6]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_7: {
-                pyro_push(vm, frame->closure->fn->constants[7]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_8: {
-                pyro_push(vm, frame->closure->fn->constants[8]);
-                break;
-            }
-
-            case PYRO_OPCODE_LOAD_CONSTANT_9: {
-                pyro_push(vm, frame->closure->fn->constants[9]);
                 break;
             }
 
