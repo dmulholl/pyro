@@ -1229,6 +1229,11 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Pops and discards the value on top of the stack.
+            case PYRO_OPCODE_POP:
+                vm->stack_top--;
+                break;
+
             // UNOPTIMIZED.
 
             case PYRO_OPCODE_CLOSE_UPVALUE: {
@@ -2320,10 +2325,6 @@ static void run(PyroVM* vm) {
                 pyro_pop(vm);
                 break;
             }
-
-            case PYRO_OPCODE_POP:
-                pyro_pop(vm);
-                break;
 
             case PYRO_OPCODE_POP_ECHO_IN_REPL: {
                 PyroValue value = pyro_peek(vm, 0);
