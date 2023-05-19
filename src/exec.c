@@ -778,6 +778,75 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements the expression: [receiver.field_name].
+            case PYRO_OPCODE_GET_FIELD: {
+                PyroValue field_name = READ_CONSTANT();
+                PyroValue receiver = vm->stack_top[-1];
+
+                if (PYRO_IS_INSTANCE(receiver)) {
+                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
+                    PyroValue field_index;
+                    if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        // Replace the instance with the field value.
+                        vm->stack_top[-1] = instance->fields[field_index.as.i64];
+                        break;
+                    }
+                }
+
+                if (PYRO_IS_CLASS(receiver)) {
+                    PyroClass* class = PYRO_AS_CLASS(receiver);
+                    PyroValue value;
+                    if (PyroMap_get(class->static_fields, field_name, &value, vm)) {
+                        // Replace the class with the field value.
+                        vm->stack_top[-1] = value;
+                        break;
+                    }
+                }
+
+                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                break;
+            }
+
+            // Implements the expression: [receiver.field_name].
+            case PYRO_OPCODE_GET_PUB_FIELD: {
+                PyroValue field_name = READ_CONSTANT();
+                PyroValue receiver = vm->stack_top[-1];
+
+                if (PYRO_IS_INSTANCE(receiver)) {
+                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
+                    PyroValue field_index;
+                    if (PyroMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
+                        // Replace the instance with the field value.
+                        vm->stack_top[-1] = instance->fields[field_index.as.i64];
+                        break;
+                    } else if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        pyro_panic(vm, "field '%s' is private", PYRO_AS_STR(field_name)->bytes);
+                        break;
+                    }
+                }
+
+                if (PYRO_IS_CLASS(receiver)) {
+                    PyroClass* class = PYRO_AS_CLASS(receiver);
+                    PyroValue value;
+                    if (PyroMap_get(class->static_fields, field_name, &value, vm)) {
+                        // Replace the class with the field value.
+                        vm->stack_top[-1] = value;
+                        break;
+                    }
+                }
+
+                if (PYRO_IS_MOD(receiver)) {
+                    pyro_panic(vm,
+                        "invalid field name '.%s'; receiver is a module, did you mean to use '::'",
+                        PYRO_AS_STR(field_name)->bytes
+                    );
+                    break;
+                }
+
+                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                break;
+            }
+
             // UNOPTIMIZED.
 
             case PYRO_OPCODE_MAKE_CLOSURE: {
@@ -1094,67 +1163,6 @@ static void run(PyroVM* vm) {
 
                 // Pop the default value but leave the class object on the stack.
                 pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
-                PyroValue receiver = pyro_peek(vm, 0);
-
-                if (PYRO_IS_INSTANCE(receiver)) {
-                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
-                    PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
-                        pyro_pop(vm); // pop the instance
-                        pyro_push(vm, instance->fields[field_index.as.i64]);
-                        break;
-                    }
-                } else if (PYRO_IS_CLASS(receiver)) {
-                    PyroClass* class = PYRO_AS_CLASS(receiver);
-                    PyroValue value;
-                    if (PyroMap_get(class->static_fields, field_name, &value, vm)) {
-                        pyro_pop(vm); // pop the class
-                        pyro_push(vm, value);
-                        break;
-                    }
-                }
-
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_PUB_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
-                PyroValue receiver = pyro_peek(vm, 0);
-
-                if (PYRO_IS_INSTANCE(receiver)) {
-                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
-                    PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
-                        pyro_pop(vm); // pop the instance
-                        pyro_push(vm, instance->fields[field_index.as.i64]);
-                        break;
-                    } else if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
-                        pyro_panic(vm, "field '%s' is private", PYRO_AS_STR(field_name)->bytes);
-                        break;
-                    }
-                } else if (PYRO_IS_CLASS(receiver)) {
-                    PyroClass* class = PYRO_AS_CLASS(receiver);
-                    PyroValue value;
-                    if (PyroMap_get(class->static_fields, field_name, &value, vm)) {
-                        pyro_pop(vm); // pop the class
-                        pyro_push(vm, value);
-                        break;
-                    }
-                } else if (PYRO_IS_MOD(receiver)) {
-                    pyro_panic(vm,
-                        "invalid field name '%s'; receiver is a module, did you mean to use '::'",
-                        PYRO_AS_STR(field_name)->bytes
-                    );
-                    break;
-                }
-
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
                 break;
             }
 
