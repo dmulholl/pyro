@@ -27,10 +27,10 @@ static void push_call_frame(PyroVM* vm, PyroClosure* closure, PyroValue* frame_p
 }
 
 
-// - If we're calling [closure] as a function, the [closure] object and [arg_count] arguments should
-//   be sitting on top of the stack.
-// - If we're calling [closure] as a method, the receiver object and [arg_count] arguments should be
-//   sitting on top of the stack.
+// - If we're calling [closure] as a function, the [closure] object and [arg_count] arguments
+//   should be sitting on top of the stack.
+// - If we're calling [closure] as a method, the receiver object and [arg_count] arguments
+//   should be sitting on top of the stack.
 static void call_closure(PyroVM* vm, PyroClosure* closure, uint8_t arg_count) {
     PyroValue* frame_pointer = vm->stack_top - arg_count - 1;
 
@@ -663,7 +663,8 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // UNOPTIMIZED: opcodes below this point have not yet been optimized or documented.
+            // Implements the expression: [value(arg1, arg2, ...)].
+            // The callee and its arguments should be sitting on top of the stack.
             case PYRO_OPCODE_CALL_VALUE: {
                 uint8_t arg_count = READ_BYTE();
                 call_value(vm, arg_count);
@@ -719,6 +720,10 @@ static void run(PyroVM* vm) {
                 call_value(vm, 9);
                 break;
             }
+
+            // UNOPTIMIZED: opcodes below this point have not yet been optimized or documented.
+
+
 
             case PYRO_OPCODE_CALL_VALUE_WITH_UNPACK: {
                 uint8_t arg_count = READ_BYTE();
