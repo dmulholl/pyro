@@ -1246,6 +1246,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Loads a global variable onto the stack.
             case PYRO_OPCODE_GET_GLOBAL: {
                 PyroValue name = READ_CONSTANT();
 
