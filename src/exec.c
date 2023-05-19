@@ -790,10 +790,6 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                if (!pyro_push(vm, pyro_obj(closure))) {
-                    break;
-                }
-
                 for (size_t i = 0; i < closure->upvalue_count; i++) {
                     uint8_t is_local = READ_BYTE();
                     uint8_t index = READ_BYTE();
@@ -804,6 +800,7 @@ static void run(PyroVM* vm) {
                     }
                 }
 
+                pyro_push(vm, pyro_obj(closure));
                 break;
             }
 
