@@ -1467,6 +1467,65 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Calls a method and pushes its return value on to the stack.
+            // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg3 ]
+            // After:  [ ... ][ return_value ]
+            case PYRO_OPCODE_CALL_METHOD: {
+                PyroStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
+                PyroValue method = pyro_get_method(vm, receiver, method_name);
+
+                if (PYRO_IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), arg_count);
+                    break;
+                }
+
+                if (PYRO_IS_CLOSURE(method)) {
+                    call_closure(vm, PYRO_AS_CLOSURE(method), arg_count);
+                    break;
+                }
+
+                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                break;
+            }
+
+            // Calls a method and pushes its return value on to the stack.
+            // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg3 ]
+            // After:  [ ... ][ return_value ]
+            case PYRO_OPCODE_CALL_PUB_METHOD: {
+                PyroStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
+                PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
+
+                if (PYRO_IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), arg_count);
+                    break;
+                }
+
+                if (PYRO_IS_CLOSURE(method)) {
+                    call_closure(vm, PYRO_AS_CLOSURE(method), arg_count);
+                    break;
+                }
+
+                if (!PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                    pyro_panic(vm, "method '%s' is private", method_name->bytes);
+                    break;
+                }
+
+                if (PYRO_IS_MOD(receiver)) {
+                    pyro_panic(vm,
+                        "invalid method name ':%s'; receiver is a module, did you mean to use '::'",
+                        method_name->bytes
+                    );
+                    break;
+                }
+
+                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -1931,55 +1990,6 @@ static void run(PyroVM* vm) {
 
                 // Pop the subclass, leave the superclass behind as the [super] variable.
                 pyro_pop(vm);
-                break;
-            }
-
-            // The receiver value and [arg_count] arguments are sitting on top of the stack.
-            case PYRO_OPCODE_CALL_METHOD: {
-                PyroStr* method_name = READ_STRING();
-                uint8_t arg_count = READ_BYTE();
-                PyroValue receiver = pyro_peek(vm, arg_count);
-
-                PyroValue method = pyro_get_method(vm, receiver, method_name);
-                if (PYRO_IS_NATIVE_FN(method)) {
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), arg_count);
-                } else if (PYRO_IS_CLOSURE(method)) {
-                    call_closure(vm, PYRO_AS_CLOSURE(method), arg_count);
-                } else {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                    break;
-                }
-
-                break;
-            }
-
-            // The receiver value and [arg_count] arguments are sitting on top of the stack.
-            case PYRO_OPCODE_CALL_PUB_METHOD: {
-                PyroStr* method_name = READ_STRING();
-                uint8_t arg_count = READ_BYTE();
-                PyroValue receiver = pyro_peek(vm, arg_count);
-
-                PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
-                if (PYRO_IS_NATIVE_FN(method)) {
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), arg_count);
-                } else if (PYRO_IS_CLOSURE(method)) {
-                    call_closure(vm, PYRO_AS_CLOSURE(method), arg_count);
-                } else {
-                    if (PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
-                        if (PYRO_IS_MOD(receiver)) {
-                            pyro_panic(vm,
-                                "invalid method name '%s'; receiver is a module, did you mean to use '::'",
-                                method_name->bytes
-                            );
-                        } else {
-                            pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                        }
-                    } else {
-                        pyro_panic(vm, "method '%s' is private", method_name->bytes);
-                    }
-                    break;
-                }
-
                 break;
             }
 
