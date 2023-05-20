@@ -1282,9 +1282,54 @@ static void run(PyroVM* vm) {
             }
 
             // Pops and discards the value on top of the stack.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ]
             case PYRO_OPCODE_POP:
                 vm->stack_top--;
                 break;
+
+            // Pushes the value of a module member onto the stack.
+            // Before: [ ... ][ module ]
+            // After:  [ ... ][ value ]
+            case PYRO_OPCODE_GET_MEMBER: {
+                PyroValue member_name = READ_CONSTANT();
+                PyroValue receiver = vm->stack_top[-1];
+
+                if (!PYRO_IS_MOD(receiver)) {
+                    if (PYRO_IS_INSTANCE(receiver)) {
+                        pyro_panic(vm,
+                            "invalid member access '::%s', receiver is an object instance, did you mean to use ':'",
+                            PYRO_AS_STR(member_name)->bytes
+                        );
+                    } else if (PYRO_IS_CLASS(receiver)) {
+                        pyro_panic(vm,
+                            "invalid member access '::%s', receiver is a class, did you mean to use ':'",
+                            PYRO_AS_STR(member_name)->bytes
+                        );
+                    } else {
+                        pyro_panic(vm,
+                            "invalid member access '::%s', receiver is not a module",
+                            PYRO_AS_STR(member_name)->bytes
+                        );
+                    }
+                    break;
+                }
+
+                PyroMod* module = PYRO_AS_MOD(receiver);
+                PyroValue member_index;
+                if (PyroMap_get(module->pub_member_indexes, member_name, &member_index, vm)) {
+                    vm->stack_top[-1] = module->members->values[member_index.as.i64];
+                    break;
+                }
+
+                if (PyroMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
+                    pyro_panic(vm, "module member '%s' is private", PYRO_AS_STR(member_name)->bytes);
+                } else {
+                    pyro_panic(vm, "module has no member '%s'", PYRO_AS_STR(member_name)->bytes);
+                }
+
+                break;
+            }
 
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
@@ -1609,44 +1654,6 @@ static void run(PyroVM* vm) {
 
                 // Pop the default value but leave the class object on the stack.
                 pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_MEMBER: {
-                PyroValue member_name = READ_CONSTANT();
-                PyroValue receiver = pyro_pop(vm);
-
-                if (!PYRO_IS_MOD(receiver)) {
-                    if (PYRO_IS_INSTANCE(receiver)) {
-                        pyro_panic(vm,
-                            "invalid member access '::%s', receiver is an object instance, did you mean to use ':'",
-                            PYRO_AS_STR(member_name)->bytes
-                        );
-                    } else if (PYRO_IS_CLASS(receiver)) {
-                        pyro_panic(vm,
-                            "invalid member access '::%s', receiver is a class, did you mean to use ':'",
-                            PYRO_AS_STR(member_name)->bytes
-                        );
-                    } else {
-                        pyro_panic(vm,
-                            "invalid member access '::%s', receiver is not a module",
-                            PYRO_AS_STR(member_name)->bytes
-                        );
-                    }
-                    break;
-                }
-
-                PyroMod* module = PYRO_AS_MOD(receiver);
-                PyroValue member_index;
-
-                if (PyroMap_get(module->pub_member_indexes, member_name, &member_index, vm)) {
-                    pyro_push(vm, module->members->values[member_index.as.i64]);
-                } else if (PyroMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
-                    pyro_panic(vm, "module member '%s' is private", PYRO_AS_STR(member_name)->bytes);
-                } else {
-                    pyro_panic(vm, "module has no member '%s'", PYRO_AS_STR(member_name)->bytes);
-                }
-
                 break;
             }
 
