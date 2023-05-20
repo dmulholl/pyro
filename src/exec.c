@@ -1335,8 +1335,8 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ receiver ]
             // After:  [ ... ][ bound_method ]
             case PYRO_OPCODE_GET_METHOD: {
-                PyroValue receiver = vm->stack_top[-1];
                 PyroStr* method_name = READ_STRING();
+                PyroValue receiver = vm->stack_top[-1];
 
                 PyroValue method = pyro_get_method(vm, receiver, method_name);
                 if (PYRO_IS_NULL(method)) {
@@ -1358,8 +1358,8 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ receiver ]
             // After:  [ ... ][ bound_method ]
             case PYRO_OPCODE_GET_PUB_METHOD: {
-                PyroValue receiver = vm->stack_top[-1];
                 PyroStr* method_name = READ_STRING();
+                PyroValue receiver = vm->stack_top[-1];
 
                 PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
                 if (PYRO_IS_NULL(method)) {
@@ -1393,8 +1393,8 @@ static void run(PyroVM* vm) {
             // After:  [ ... ][ bound_method ]
             case PYRO_OPCODE_GET_SUPER_METHOD: {
                 PyroStr* method_name = READ_STRING();
-                PyroClass* superclass = PYRO_AS_CLASS(vm->stack_top[-1]);
                 PyroValue receiver = vm->stack_top[-2];
+                PyroClass* superclass = PYRO_AS_CLASS(vm->stack_top[-1]);
 
                 PyroValue method;
                 if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
