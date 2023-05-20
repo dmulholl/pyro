@@ -9,7 +9,7 @@ CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
 		 -Wno-unused-result
 
 # Extra flags for release builds.
-RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O2
+RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O3
 
 # Extra flags for debug builds.
 DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DEBUG_STRESS_GC
@@ -136,22 +136,22 @@ help: ## Prints available commands.
 build/common/sqlite.o: lib/sqlite/sqlite3.c lib/sqlite/sqlite3.h
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/sqlite.o\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/sqlite/sqlite3.c -o build/common/sqlite.o
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/sqlite/sqlite3.c -o build/common/sqlite.o
 
 build/common/bestline.o: lib/bestline/bestline.c lib/bestline/bestline.h
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/bestline.o\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/bestline/bestline.c -o build/common/bestline.o
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/bestline/bestline.c -o build/common/bestline.o
 
 build/common/args.o: lib/args/args.c lib/args/args.h
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/args.o\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/args/args.c -o build/common/args.o
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/args/args.c -o build/common/args.o
 
 build/common/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/mt64.o\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c lib/mt64/mt64.c -o build/common/mt64.o
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/mt64/mt64.c -o build/common/mt64.o
 
 # ---------------- #
 #  Embedded Files  #
@@ -160,7 +160,7 @@ build/common/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
 build/common/embeds.o: build/common/embeds.c
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/embeds.o\n"
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG -c build/common/embeds.c -o build/common/embeds.o
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c build/common/embeds.c -o build/common/embeds.o
 
 build/common/embeds.c: build/bin/embed $(shell find ./embed -type f)
 	@mkdir -p build/common
@@ -173,7 +173,7 @@ build/common/embeds.c: build/bin/embed $(shell find ./embed -type f)
 
 build/bin/embed: tools/embed.c
 	@mkdir -p build/bin
-	@$(CC) $(CFLAGS) -O2 -D NDEBUG tools/embed.c -o build/bin/embed
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG tools/embed.c -o build/bin/embed
 
 # ---------------------- #
 #  Test Compiled Module  #
@@ -181,7 +181,7 @@ build/bin/embed: tools/embed.c
 
 tests/compiled_module.so: tests/compiled_module.c inc/*.h
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.so\n"
-	@${CC} ${CFLAGS} -O2 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
+	@${CC} ${CFLAGS} -O3 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
 
 check-compiled-module:
 	@rm -f ./tests/compiled_module.so
