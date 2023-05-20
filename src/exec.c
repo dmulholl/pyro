@@ -665,19 +665,25 @@ static void run(PyroVM* vm) {
             }
 
             // Duplicates the top item on the stack.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ][ value ][ value ]
             case PYRO_OPCODE_DUP: {
                 pyro_push(vm, vm->stack_top[-1]);
                 break;
             }
 
             // Duplicates the top 2 items on the stack.
+            // Before: [ ... ][ value1 ][ value2 ]
+            // After:  [ ... ][ value1 ][ value2 ][ value1 ][ value2 ]
             case PYRO_OPCODE_DUP_2: {
                 pyro_push(vm, vm->stack_top[-2]);
                 pyro_push(vm, vm->stack_top[-2]);
                 break;
             }
 
-            // Implements the statement: [assert expr].
+            // Implements the statement: [assert <expression>].
+            // Before: [ ... ][ value ]
+            // After:  [ ... ]
             case PYRO_OPCODE_ASSERT: {
                 PyroValue expr = pyro_pop(vm);
                 if (!pyro_is_truthy(expr)) {
@@ -686,9 +692,9 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Implements the expression: [value(arg1, arg2, ...)].
-            // The callee and its arguments should be sitting on top of the stack.
-            // Stack: [ ... ][ callee ][ arg1 ][ arg2 ]
+            // Implements the expression: [callee(arg1, arg2, arg3, ...)].
+            // Before: [ ... ][ callee ][ arg1 ][ arg2 ][ arg3 ]
+            // After:  [ ... ][ return_value ]
             case PYRO_OPCODE_CALL_VALUE: {
                 uint8_t arg_count = READ_BYTE();
                 call_value(vm, arg_count);
@@ -745,10 +751,10 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Implements the expression: [value(arg1, arg2, ..., *args)], where [args] is a
-            // vector or tuple to be unpacked. The callee and its arguments should be sitting
-            // on top of the stack.
-            // Stack: [ ... ][ callee ][ arg1 ][ arg2 ][ args ]
+            // Implements the expression: [callee(arg1, arg2, ..., *args)], where [args] is a
+            // vector or tuple to be unpacked.
+            // Before: [ ... ][ callee ][ arg1 ][ arg2 ][ args ]
+            // After:  [ ... ][ return_value ]
             case PYRO_OPCODE_CALL_VALUE_WITH_UNPACK: {
                 uint8_t arg_count = READ_BYTE();
                 PyroValue last_arg = pyro_pop(vm);
@@ -784,7 +790,9 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Pushes a new class object onto the top of the stack.
+            // Pushes a new class object onto the stack.
+            // Before: [ ... ]
+            // After:  [ ... ][ class ]
             case PYRO_OPCODE_MAKE_CLASS: {
                 PyroClass* class = PyroClass_new(vm);
                 if (!class) {
