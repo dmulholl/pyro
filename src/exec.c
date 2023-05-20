@@ -1413,6 +1413,60 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Replaces the iterable value on top of the stack with an iterator.
+            // Before: [ ... ][ iterable ]
+            // After:  [ ... ][ iterator ]
+            case PYRO_OPCODE_GET_ITERATOR: {
+                PyroValue receiver = vm->stack_top[-1];
+                PyroValue iter_method = pyro_get_method(vm, receiver, vm->str_dollar_iter);
+
+                if (PYRO_IS_NATIVE_FN(iter_method)) {
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(iter_method), 0);
+                    break;
+                }
+
+                if (PYRO_IS_CLOSURE(iter_method)) {
+                    call_closure(vm, PYRO_AS_CLOSURE(iter_method), 0);
+                    break;
+                }
+
+                pyro_panic(vm,
+                    "type '%s' is not iterable",
+                    pyro_get_type_name(vm, receiver)->bytes
+                );
+                break;
+            }
+
+            // Pushes the next value from an iterator onto the stack.
+            // Before: [ ... ][ iterator ]
+            // After:  [ ... ][ iterator ][ value ]
+            case PYRO_OPCODE_GET_NEXT_FROM_ITERATOR: {
+                PyroValue receiver = vm->stack_top[-1];
+
+                if (PYRO_IS_ITER(receiver)) {
+                    PyroValue next_value = PyroIter_next(PYRO_AS_ITER(receiver), vm);
+                    pyro_push(vm, next_value);
+                    break;
+                }
+
+                PyroValue next_method = pyro_get_method(vm, receiver, vm->str_dollar_next);
+
+                if (PYRO_IS_NATIVE_FN(next_method)) {
+                    if (!pyro_push(vm, receiver)) break;
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(next_method), 0);
+                    break;
+                }
+
+                if (PYRO_IS_CLOSURE(next_method)) {
+                    if (!pyro_push(vm, receiver)) break;
+                    call_closure(vm, PYRO_AS_CLOSURE(next_method), 0);
+                    break;
+                }
+
+                pyro_panic(vm, "invalid iterator: no :$next() method");
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2093,52 +2147,6 @@ static void run(PyroVM* vm) {
                     call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
                 } else {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
-                }
-
-                break;
-            }
-
-            case PYRO_OPCODE_GET_ITERATOR: {
-                PyroValue receiver = pyro_peek(vm, 0);
-                PyroValue iter_method = pyro_get_method(vm, receiver, vm->str_dollar_iter);
-
-                if (PYRO_IS_NATIVE_FN(iter_method)) {
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(iter_method), 0);
-                    break;
-                }
-
-                if (PYRO_IS_CLOSURE(iter_method)) {
-                    call_closure(vm, PYRO_AS_CLOSURE(iter_method), 0);
-                    break;
-                }
-
-                pyro_panic(vm,
-                    "type '%s' is not iterable",
-                    pyro_get_type_name(vm, receiver)->bytes
-                );
-                break;
-            }
-
-            case PYRO_OPCODE_GET_NEXT_FROM_ITERATOR: {
-                PyroValue receiver = pyro_peek(vm, 0);
-
-                if (PYRO_IS_ITER(receiver)) {
-                    PyroValue next_value = PyroIter_next(PYRO_AS_ITER(receiver), vm);
-                    pyro_push(vm, next_value);
-                    break;
-                }
-
-                PyroValue next_method = pyro_get_method(vm, receiver, vm->str_dollar_next);
-
-                if (PYRO_IS_NATIVE_FN(next_method)) {
-                    pyro_push(vm, receiver);
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(next_method), 0);
-                } else if (PYRO_IS_CLOSURE(next_method)) {
-                    pyro_push(vm, receiver);
-                    call_closure(vm, PYRO_AS_CLOSURE(next_method), 0);
-                } else {
-                    pyro_panic(vm, "invalid iterator: no $next() method");
-                    break;
                 }
 
                 break;
