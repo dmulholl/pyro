@@ -2082,7 +2082,7 @@ static void run(PyroVM* vm) {
                 } else {
                     if (PYRO_IS_MOD(receiver)) {
                         pyro_panic(vm,
-                            "invalid method name '%s'; receiver is a module, did you mean to use '::'",
+                            "invalid method name ':%s'; receiver is a module, did you mean to use '::'",
                             method_name->bytes
                         );
                     } else {
