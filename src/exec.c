@@ -1331,6 +1331,88 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Loads a bound method onto the stack.
+            // Before: [ ... ][ receiver ]
+            // After:  [ ... ][ bound_method ]
+            case PYRO_OPCODE_GET_METHOD: {
+                PyroValue receiver = vm->stack_top[-1];
+                PyroStr* method_name = READ_STRING();
+
+                PyroValue method = pyro_get_method(vm, receiver, method_name);
+                if (PYRO_IS_NULL(method)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, receiver, PYRO_AS_OBJ(method));
+                if (!bound_method) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                vm->stack_top[-1] = pyro_obj(bound_method);
+                break;
+            }
+
+            // Loads a bound method onto the stack.
+            // Before: [ ... ][ receiver ]
+            // After:  [ ... ][ bound_method ]
+            case PYRO_OPCODE_GET_PUB_METHOD: {
+                PyroValue receiver = vm->stack_top[-1];
+                PyroStr* method_name = READ_STRING();
+
+                PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
+                if (PYRO_IS_NULL(method)) {
+                    if (PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                        if (PYRO_IS_MOD(receiver)) {
+                            pyro_panic(vm,
+                                "invalid method name ':%s'; receiver is a module, did you mean to use '::'",
+                                method_name->bytes
+                            );
+                        } else {
+                            pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                        }
+                    } else {
+                        pyro_panic(vm, "method '%s' is private", method_name->bytes);
+                    }
+                    break;
+                }
+
+                PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, receiver, PYRO_AS_OBJ(method));
+                if (!bound_method) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                vm->stack_top[-1] = pyro_obj(bound_method);
+                break;
+            }
+
+            // Loads a bound superclass-method onto the stack.
+            // Before: [ ... ][ receiver ][ superclass ]
+            // After:  [ ... ][ bound_method ]
+            case PYRO_OPCODE_GET_SUPER_METHOD: {
+                PyroStr* method_name = READ_STRING();
+                PyroClass* superclass = PYRO_AS_CLASS(vm->stack_top[-1]);
+                PyroValue receiver = vm->stack_top[-2];
+
+                PyroValue method;
+                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, receiver, PYRO_AS_OBJ(method));
+                if (!bound_method) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                vm->stack_top[-2] = pyro_obj(bound_method);
+                vm->stack_top--;
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -1654,81 +1736,6 @@ static void run(PyroVM* vm) {
 
                 // Pop the default value but leave the class object on the stack.
                 pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_METHOD: {
-                PyroValue receiver = pyro_peek(vm, 0);
-                PyroStr* method_name = READ_STRING();
-
-                PyroValue method = pyro_get_method(vm, receiver, method_name);
-                if (PYRO_IS_NULL(method)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                    break;
-                }
-
-                PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, receiver, PYRO_AS_OBJ(method));
-                if (!bound_method) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the receiver and replace it with the bound method.
-                vm->stack_top[-1] = pyro_obj(bound_method);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_PUB_METHOD: {
-                PyroValue receiver = pyro_peek(vm, 0);
-                PyroStr* method_name = READ_STRING();
-
-                PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
-                if (PYRO_IS_NULL(method)) {
-                    if (PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
-                        if (PYRO_IS_MOD(receiver)) {
-                            pyro_panic(vm,
-                                "invalid method name '%s'; receiver is a module, did you mean to use '::'",
-                                method_name->bytes
-                            );
-                        } else {
-                            pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                        }
-                    } else {
-                        pyro_panic(vm, "method '%s' is private", method_name->bytes);
-                    }
-                    break;
-                }
-
-                PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, receiver, PYRO_AS_OBJ(method));
-                if (!bound_method) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the receiver and replace it with the bound method.
-                vm->stack_top[-1] = pyro_obj(bound_method);
-                break;
-            }
-
-            case PYRO_OPCODE_GET_SUPER_METHOD: {
-                PyroStr* method_name = READ_STRING();
-                PyroClass* superclass = PYRO_AS_CLASS(pyro_pop(vm));
-                PyroValue receiver = pyro_peek(vm, 0);
-
-                PyroValue method;
-                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                    break;
-                }
-
-                PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, receiver, PYRO_AS_OBJ(method));
-                if (!bound_method) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the receiver and replace it with the bound method.
-                vm->stack_top[-1] = pyro_obj(bound_method);
                 break;
             }
 
