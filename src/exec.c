@@ -674,6 +674,34 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements the expression: [needle in haystack].
+            // Before: [ ... ][ needle ][ haystack ]
+            // After:  [ ... ][ result ]
+            case PYRO_OPCODE_BINARY_IN: {
+                PyroValue method = pyro_get_method(vm, vm->stack_top[-1], vm->str_dollar_contains);
+                if (PYRO_IS_NULL(method)) {
+                    pyro_panic(vm,
+                        "invalid operand type for 'in' operator: '%s' has no $contains() method",
+                        pyro_get_type_name(vm, vm->stack_top[-1])->bytes
+                    );
+                    break;
+                }
+
+                // Swap the values on the stack so we have:
+                // Stack: [ ... ][ haystack ][ needle ]
+                PyroValue temp = vm->stack_top[-2];
+                vm->stack_top[-2] = vm->stack_top[-1];
+                vm->stack_top[-1] = temp;
+
+                PyroValue result = pyro_call_method(vm, method, 1);
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                pyro_push(vm, pyro_bool(pyro_is_truthy(result)));
+                break;
+            }
+
             // Implements the expression: [~operand].
             // Before: [ ... ][ operand ]
             // After:  [ ... ][ ~operand ]
@@ -1554,6 +1582,13 @@ static void run(PyroVM* vm) {
             }
 
             // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP_BACK: {
+                uint16_t offset = READ_BE_U16();
+                frame->ip -= offset;
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
             case PYRO_OPCODE_JUMP_IF_TRUE: {
                 uint16_t offset = READ_BE_U16();
                 if (pyro_is_truthy(vm->stack_top[-1])) {
@@ -1566,6 +1601,15 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_JUMP_IF_FALSE: {
                 uint16_t offset = READ_BE_U16();
                 if (!pyro_is_truthy(vm->stack_top[-1])) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_POP_JUMP_IF_FALSE: {
+                uint16_t offset = READ_BE_U16();
+                if (!pyro_is_truthy(pyro_pop(vm))) {
                     frame->ip += offset;
                 }
                 break;
@@ -2243,36 +2287,6 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case PYRO_OPCODE_BINARY_IN: {
-                PyroValue right = pyro_pop(vm);
-                PyroValue left = pyro_pop(vm);
-
-                PyroValue method = pyro_get_method(vm, right, vm->str_dollar_contains);
-                if (PYRO_IS_NULL(method)) {
-                    pyro_panic(vm,
-                        "invalid operand type for 'in' operator: '%s' has no $contains() method",
-                        pyro_get_type_name(vm, right)->bytes
-                    );
-                    break;
-                }
-
-                pyro_push(vm, right);
-                pyro_push(vm, left);
-                PyroValue result = pyro_call_method(vm, method, 1);
-                if (vm->halt_flag) {
-                    break;
-                }
-
-                pyro_push(vm, pyro_bool(pyro_is_truthy(result)));
-                break;
-            }
-
-            case PYRO_OPCODE_JUMP_BACK: {
-                uint16_t offset = READ_BE_U16();
-                frame->ip -= offset;
-                break;
-            }
-
             case PYRO_OPCODE_MAKE_MAP: {
                 uint16_t entry_count = READ_BE_U16();
 
@@ -2430,14 +2444,6 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_POP_JUMP_IF_FALSE: {
-                uint16_t offset = READ_BE_U16();
-                if (!pyro_is_truthy(pyro_pop(vm))) {
-                    frame->ip += offset;
-                }
                 break;
             }
 
