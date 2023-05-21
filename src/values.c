@@ -1,20 +1,6 @@
 #include "../inc/pyro.h"
 
 
-bool pyro_is_truthy(PyroValue value) {
-    switch (value.type) {
-        case PYRO_VALUE_BOOL:
-            return value.as.boolean;
-        case PYRO_VALUE_NULL:
-            return false;
-        case PYRO_VALUE_OBJ:
-            return value.as.obj->type != PYRO_OBJECT_ERR;
-        default:
-            return true;
-    }
-}
-
-
 PyroClass* pyro_get_class(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_CHAR:

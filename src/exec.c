@@ -309,6 +309,26 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
     return PYRO_AS_MOD(module_value);
 }
 
+// Returns true if the value is 'kinda-falsey'.
+// The set of 'kinda-falsey' values is: [false, null, err, 0, 0.0, ""].
+static inline bool is_kinda_falsey(PyroValue value) {
+    switch (value.type) {
+        case PYRO_VALUE_BOOL:
+            return value.as.boolean == false;
+        case PYRO_VALUE_NULL:
+            return true;
+        case PYRO_VALUE_I64:
+            return value.as.i64 == 0;
+        case PYRO_VALUE_CHAR:
+            return value.as.u32 == 0;
+        case PYRO_VALUE_F64:
+            return value.as.f64 == 0.0;
+        case PYRO_VALUE_OBJ:
+            return PYRO_IS_ERR(value) || (PYRO_IS_STR(value) && PYRO_AS_STR(value)->count == 0);
+        default:
+            return false;
+    }
+}
 
 void call_end_with_method(PyroVM* vm, PyroValue receiver) {
     PyroValue end_with_method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
@@ -1526,6 +1546,67 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP: {
+                uint16_t offset = READ_BE_U16();
+                frame->ip += offset;
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP_IF_TRUE: {
+                uint16_t offset = READ_BE_U16();
+                if (pyro_is_truthy(vm->stack_top[-1])) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP_IF_FALSE: {
+                uint16_t offset = READ_BE_U16();
+                if (!pyro_is_truthy(vm->stack_top[-1])) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP_IF_ERR: {
+                uint16_t offset = READ_BE_U16();
+                if (PYRO_IS_ERR(vm->stack_top[-1])) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP_IF_NOT_ERR: {
+                uint16_t offset = READ_BE_U16();
+                if (!PYRO_IS_ERR(vm->stack_top[-1])) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP_IF_NOT_NULL: {
+                uint16_t offset = READ_BE_U16();
+                if (!PYRO_IS_NULL(vm->stack_top[-1])) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
+            // Jumps the instruction pointer to the specified offset in the bytecode.
+            case PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY: {
+                uint16_t offset = READ_BE_U16();
+                if (!is_kinda_falsey(vm->stack_top[-1])) {
+                    frame->ip += offset;
+                }
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2159,80 +2240,6 @@ static void run(PyroVM* vm) {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
                 }
 
-                break;
-            }
-
-            case PYRO_OPCODE_JUMP: {
-                uint16_t offset = READ_BE_U16();
-                frame->ip += offset;
-                break;
-            }
-
-            case PYRO_OPCODE_JUMP_IF_ERR: {
-                uint16_t offset = READ_BE_U16();
-                if (PYRO_IS_ERR(pyro_peek(vm, 0))) {
-                    frame->ip += offset;
-                }
-                break;
-            }
-
-            case PYRO_OPCODE_JUMP_IF_FALSE: {
-                uint16_t offset = READ_BE_U16();
-                if (!pyro_is_truthy(pyro_peek(vm, 0))) {
-                    frame->ip += offset;
-                }
-                break;
-            }
-
-            case PYRO_OPCODE_JUMP_IF_NOT_ERR: {
-                uint16_t offset = READ_BE_U16();
-                if (!PYRO_IS_ERR(pyro_peek(vm, 0))) {
-                    frame->ip += offset;
-                }
-                break;
-            }
-
-            // The set of 'kinda-falsey' values is: false, null, err, 0, 0.0, "".
-            case PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY: {
-                uint16_t offset = READ_BE_U16();
-                PyroValue value = pyro_peek(vm, 0);
-                bool is_kinda_falsey = false;
-
-                if (PYRO_IS_BOOL(value) && value.as.boolean == false) {
-                    is_kinda_falsey = true;
-                } else if (PYRO_IS_NULL(value)) {
-                    is_kinda_falsey = true;
-                } else if (PYRO_IS_ERR(value)) {
-                    is_kinda_falsey = true;
-                } else if (PYRO_IS_I64(value) && value.as.i64 == 0) {
-                    is_kinda_falsey = true;
-                } else if (PYRO_IS_CHAR(value) && value.as.u32 == 0) {
-                    is_kinda_falsey = true;
-                } else if (PYRO_IS_F64(value) && value.as.f64 == 0.0) {
-                    is_kinda_falsey = true;
-                } else if (PYRO_IS_STR(value) && PYRO_AS_STR(value)->count == 0) {
-                    is_kinda_falsey = true;
-                }
-
-                if (!is_kinda_falsey) {
-                    frame->ip += offset;
-                }
-                break;
-            }
-
-            case PYRO_OPCODE_JUMP_IF_NOT_NULL: {
-                uint16_t offset = READ_BE_U16();
-                if (!PYRO_IS_NULL(pyro_peek(vm, 0))) {
-                    frame->ip += offset;
-                }
-                break;
-            }
-
-            case PYRO_OPCODE_JUMP_IF_TRUE: {
-                uint16_t offset = READ_BE_U16();
-                if (pyro_is_truthy(pyro_peek(vm, 0))) {
-                    frame->ip += offset;
-                }
                 break;
             }
 

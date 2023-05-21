@@ -170,9 +170,20 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value);
 bool pyro_compare_eq_strict(PyroValue a, PyroValue b);
 
 // Returns true if the value is truthy.
-bool pyro_is_truthy(PyroValue value);
+static inline bool pyro_is_truthy(PyroValue value) {
+    switch (value.type) {
+        case PYRO_VALUE_BOOL:
+            return value.as.boolean;
+        case PYRO_VALUE_NULL:
+            return false;
+        case PYRO_VALUE_OBJ:
+            return value.as.obj->type != PYRO_OBJECT_ERR;
+        default:
+            return true;
+    }
+}
 
-// True if [value] is an object of the specified type.
+// Returns true if [value] is an object of the specified type.
 static inline bool pyro_is_obj_of_type(PyroValue value, PyroObjectType type) {
     return PYRO_IS_OBJ(value) && PYRO_AS_OBJ(value)->type == type;
 }
