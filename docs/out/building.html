@@ -212,23 +212,26 @@ Baked Application Binaries
 You can compile a Pyro script and a collection of modules into a single-file binary.
 </p>
 <p>
-To compile a baked binary, place a script file named <code>main.pyro</code> in the <code>embed</code> directory, along with any required modules. Then run:
+To compile a 'baked binary', place a script file named <code>main.pyro</code> in the <code>embed</code> directory, along with any modules it needs to import.
+Then run:
 </p>
 <pre>
-$ make baked-app
+$ make app
 </pre>
 <p>
 The application will be compiled as <code>build/release/app</code>.
 </p>
 <p>
-The <code>main.pyro</code> script acts as the application's entry point.
-If this file contains a <code>$main()</code> function, it will be called automatically.
+The <code>main.pyro</code> script acts as the application's entry point &mdash; executing the binary executes this script.
+</p>
+<p>
+If the <code>main.pyro</code> script contains a <code>$main()</code> function, it will be called automatically.
 </p>
 <p>
 You can specify a custom name for the binary by setting the <code>APPNAME</code> variable, e.g.
 </p>
 <pre>
-$ make baked-app APPNAME=foobar
+$ make app APPNAME=foobar
 </pre>
         </article>
         

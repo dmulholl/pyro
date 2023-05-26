@@ -122,18 +122,20 @@ You can import the embedded modules in the usual way --- the `embed` directory f
 
 You can compile a Pyro script and a collection of modules into a single-file binary.
 
-To compile a baked binary, place a script file named `main.pyro` in the `embed` directory, along with any required modules. Then run:
+To compile a 'baked binary', place a script file named `main.pyro` in the `embed` directory, along with any modules it needs to import.
+Then run:
 
 ::: code
-    $ make baked-app
+    $ make app
 
 The application will be compiled as `build/release/app`.
 
-The `main.pyro` script acts as the application's entry point.
-If this file contains a `$main()` function, it will be called automatically.
+The `main.pyro` script acts as the application's entry point --- executing the binary executes this script.
+
+If the `main.pyro` script contains a `$main()` function, it will be called automatically.
 
 You can specify a custom name for the binary by setting the `APPNAME` variable, e.g.
 
 ::: code
-    $ make baked-app APPNAME=foobar
+    $ make app APPNAME=foobar
 
