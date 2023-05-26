@@ -83,8 +83,9 @@ debug-trace: $(OBJ_FILES)
 		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
-baked-app: ## Builds a baked-application binary.
-baked-app: $(OBJ_FILES)
+.PHONY: app
+app: ## Builds a baked-application binary.
+app: $(OBJ_FILES)
 	@mkdir -p build/release
 	@printf "\e[1;32mBuilding\e[0m build/release/$(APPNAME)\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) \
