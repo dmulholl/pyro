@@ -333,15 +333,15 @@ char* pyro_get_version_string(void) {
 
     if (strlen(PYRO_VERSION_LABEL) > 0) {
         if (strlen(PYRO_VERSION_BUILD) > 0) {
-            format_string = "v%d.%d.%d-%s (%s)";
+            format_string = "Pyro v%d.%d.%d-%s (%s)";
         } else {
-            format_string = "v%d.%d.%d-%s";
+            format_string = "Pyro v%d.%d.%d-%s";
         }
     } else {
         if (strlen(PYRO_VERSION_BUILD) > 0) {
-            format_string = "v%d.%d.%d %.0s(%s)";
+            format_string = "Pyro v%d.%d.%d %.0s(%s)";
         } else {
-            format_string = "v%d.%d.%d";
+            format_string = "Pyro v%d.%d.%d";
         }
     }
 
