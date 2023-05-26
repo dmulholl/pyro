@@ -38,7 +38,7 @@ You can now run Pyro like any other installed binary:
 ::: code
     $ pyro
 
-Running Pyro without a script argument launches the REPL --- an interactive environment where you can try running Pyro commands directly, e.g.
+Running Pyro without a script argument launches the REPL --- an interactive environment where you can run Pyro commands directly, e.g.
 
 ::: code
     >>> 1 + 2;
