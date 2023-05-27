@@ -468,7 +468,7 @@ void PyroQueue_clear(PyroQueue* queue, PyroVM* vm);
 
 typedef enum {
     PYRO_ITER_EMPTY,
-    PYRO_ITER_ENUM,
+    PYRO_ITER_ENUMERATE,
     PYRO_ITER_FILE_LINES,
     PYRO_ITER_FUNC_FILTER,
     PYRO_ITER_FUNC_MAP,

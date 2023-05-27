@@ -193,7 +193,7 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue iter_enumerate(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroIter* src_iter = PYRO_AS_ITER(args[-1]);
 
-    PyroIter* new_iter = PyroIter_new((PyroObject*)src_iter, PYRO_ITER_ENUM, vm);
+    PyroIter* new_iter = PyroIter_new((PyroObject*)src_iter, PYRO_ITER_ENUMERATE, vm);
     if (!new_iter) {
         pyro_panic(vm, "enumerate(): out of memory");
         return pyro_null();

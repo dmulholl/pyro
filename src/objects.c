@@ -1932,7 +1932,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             }
         }
 
-        case PYRO_ITER_ENUM: {
+        case PYRO_ITER_ENUMERATE: {
             PyroIter* src_iter = (PyroIter*)iter->source;
             PyroValue next_value = PyroIter_next(src_iter, vm);
             if (PYRO_IS_ERR(next_value)) {
