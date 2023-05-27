@@ -1,1 +1,2 @@
-echo "get -- not implemented";
+echo "The GET command is a stub -- it hasn't been implemented yet.";
+

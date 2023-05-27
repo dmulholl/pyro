@@ -118,7 +118,7 @@ static const char* CHECK_HELPTEXT =
 static const char* GET_HELPTEXT =
     "Usage: pyro get <module>\n"
     "\n"
-    "  Not implemented.\n"
+    "  This command is a stub -- it hasn't been implemented yet.\n"
     "\n"
     "Arguments:\n"
     "  <module>             Module to download.\n"
