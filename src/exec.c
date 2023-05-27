@@ -1651,6 +1651,63 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Sets the local variable at [index] to the value on top of the stack.
+            case PYRO_OPCODE_SET_LOCAL: {
+                uint8_t index = READ_BYTE();
+                frame->fp[index] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_0: {
+                frame->fp[0] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_1: {
+                frame->fp[1] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_2: {
+                frame->fp[2] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_3: {
+                frame->fp[3] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_4: {
+                frame->fp[4] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_5: {
+                frame->fp[5] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_6: {
+                frame->fp[6] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_7: {
+                frame->fp[7] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_8: {
+                frame->fp[8] = vm->stack_top[-1];
+                break;
+            }
+
+            case PYRO_OPCODE_SET_LOCAL_9: {
+                frame->fp[9] = vm->stack_top[-1];
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -1733,7 +1790,7 @@ static void run(PyroVM* vm) {
                 }
 
                 size_t new_member_index = module->members->count;
-                if (!PyroVec_append(module->members, pyro_peek(vm, 0), vm)) {
+                if (!PyroVec_append(module->members, vm->stack_top[-1], vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -1763,7 +1820,7 @@ static void run(PyroVM* vm) {
                 }
 
                 size_t new_member_index = module->members->count;
-                if (!PyroVec_append(module->members, pyro_peek(vm, 0), vm)) {
+                if (!PyroVec_append(module->members, vm->stack_top[-1], vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -1889,7 +1946,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_DEFINE_PRI_FIELD: {
                 // The field's default value will be sitting on top of the stack.
-                PyroValue default_value = pyro_peek(vm, 0);
+                PyroValue default_value = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the default value.
                 PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
@@ -1919,7 +1976,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_DEFINE_PUB_FIELD: {
                 // The field's default value will be sitting on top of the stack.
-                PyroValue default_value = pyro_peek(vm, 0);
+                PyroValue default_value = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the default value.
                 PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
@@ -1956,7 +2013,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_DEFINE_STATIC_FIELD: {
                 // The field's default value will be sitting on top of the stack.
-                PyroValue default_value = pyro_peek(vm, 0);
+                PyroValue default_value = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the default value.
                 PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
@@ -2071,7 +2128,7 @@ static void run(PyroVM* vm) {
                 }
 
                 PyroClass* superclass = PYRO_AS_CLASS(pyro_peek(vm, 1));
-                PyroClass* subclass = PYRO_AS_CLASS(pyro_peek(vm, 0));
+                PyroClass* subclass = PYRO_AS_CLASS(vm->stack_top[-1]);
 
                 if (superclass == subclass) {
                     pyro_panic(vm, "a class cannot inherit from itself");
@@ -2354,7 +2411,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_DEFINE_PRI_METHOD: {
                 // The method's PyroClosure will be sitting on top of the stack.
-                PyroValue method = pyro_peek(vm, 0);
+                PyroValue method = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the method.
                 PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
@@ -2381,7 +2438,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_DEFINE_PUB_METHOD: {
                 // The method's PyroClosure will be sitting on top of the stack.
-                PyroValue method = pyro_peek(vm, 0);
+                PyroValue method = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the method.
                 PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
@@ -2416,7 +2473,7 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_DEFINE_STATIC_METHOD: {
                 // The method's PyroClosure will be sitting on top of the stack.
-                PyroValue method = pyro_peek(vm, 0);
+                PyroValue method = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the method.
                 PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
@@ -2433,7 +2490,7 @@ static void run(PyroVM* vm) {
             }
 
             case PYRO_OPCODE_POP_ECHO_IN_REPL: {
-                PyroValue value = pyro_peek(vm, 0);
+                PyroValue value = vm->stack_top[-1];
 
                 if (vm->in_repl && !PYRO_IS_NULL(value)) {
                     PyroStr* string = pyro_debugify_value(vm, value);
@@ -2448,7 +2505,7 @@ static void run(PyroVM* vm) {
             }
 
             case PYRO_OPCODE_RETURN: {
-                PyroValue return_value = pyro_peek(vm, 0);
+                PyroValue return_value = vm->stack_top[-1];
 
                 while (vm->with_stack_count > frame->with_stack_count_on_entry) {
                     PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
@@ -2487,65 +2544,9 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            case PYRO_OPCODE_SET_LOCAL: {
-                uint8_t index = READ_BYTE();
-                frame->fp[index] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_0: {
-                frame->fp[0] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_1: {
-                frame->fp[1] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_2: {
-                frame->fp[2] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_3: {
-                frame->fp[3] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_4: {
-                frame->fp[4] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_5: {
-                frame->fp[5] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_6: {
-                frame->fp[6] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_7: {
-                frame->fp[7] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_8: {
-                frame->fp[8] = pyro_peek(vm, 0);
-                break;
-            }
-
-            case PYRO_OPCODE_SET_LOCAL_9: {
-                frame->fp[9] = pyro_peek(vm, 0);
-                break;
-            }
-
             case PYRO_OPCODE_SET_UPVALUE: {
                 uint8_t index = READ_BYTE();
-                *frame->closure->upvalues[index]->location = pyro_peek(vm, 0);
+                *frame->closure->upvalues[index]->location = vm->stack_top[-1];
                 break;
             }
 
@@ -2654,7 +2655,7 @@ static void run(PyroVM* vm) {
                     vm->with_stack_capacity = new_capacity;
                     vm->with_stack = new_array;
                 }
-                vm->with_stack[vm->with_stack_count++] = pyro_peek(vm, 0);
+                vm->with_stack[vm->with_stack_count++] = vm->stack_top[-1];
                 break;
             }
 
