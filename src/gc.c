@@ -145,7 +145,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->panic_buffer);
     mark_object(vm, (PyroObject*)vm->panic_source_id);
 
-    // Each CallFrame in the call stack has a pointer to a PyroClosure.
+    // Each PyroCallFrame in the call stack has a pointer to a PyroClosure.
     for (size_t i = 0; i < vm->frame_count; i++) {
         mark_object(vm, (PyroObject*)vm->frames[i].closure);
     }

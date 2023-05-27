@@ -141,7 +141,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_unary_tilde = NULL;
 
     // Initialize the [frames] stack.
-    vm->frames = PYRO_ALLOCATE_ARRAY(vm, CallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
+    vm->frames = PYRO_ALLOCATE_ARRAY(vm, PyroCallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
     if (!vm->frames) {
         pyro_free_vm(vm);
         return NULL;
@@ -339,7 +339,7 @@ void pyro_free_vm(PyroVM* vm) {
     }
 
     PYRO_FREE_ARRAY(vm, PyroObject*, vm->grey_stack, vm->grey_stack_capacity);
-    PYRO_FREE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity);
+    PYRO_FREE_ARRAY(vm, PyroCallFrame, vm->frames, vm->frame_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity);
 
     free(vm->stack);

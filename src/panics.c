@@ -5,7 +5,7 @@ static void print_stack_trace(PyroVM* vm) {
     pyro_stderr_write(vm, "\nStack Trace:\n\n");
 
     for (size_t i = vm->frame_count; i > 0; i--) {
-        CallFrame* frame = &vm->frames[i - 1];
+        PyroCallFrame* frame = &vm->frames[i - 1];
         PyroFn* fn = frame->closure->fn;
 
         size_t line_number = 1;
@@ -41,7 +41,7 @@ static void panic(
     PyroStr* last_opcode_source_id = NULL;
     size_t last_opcode_line_number = 0;
     if (vm->frame_count > 0) {
-        CallFrame* current_frame = &vm->frames[vm->frame_count - 1];
+        PyroCallFrame* current_frame = &vm->frames[vm->frame_count - 1];
         PyroFn* current_fn = current_frame->closure->fn;
         last_opcode_source_id = current_fn->source_id;
         last_opcode_line_number = 1;
@@ -49,7 +49,7 @@ static void panic(
             size_t current_ip = current_frame->ip - current_fn->code - 1;
             last_opcode_line_number = PyroFn_get_line_number(current_fn, current_ip);
         } else if (vm->frame_count > 1) {
-            CallFrame* outer_frame = &vm->frames[vm->frame_count - 2];
+            PyroCallFrame* outer_frame = &vm->frames[vm->frame_count - 2];
             PyroFn* outer_fn = outer_frame->closure->fn;
             size_t outer_ip = outer_frame->ip - outer_fn->code - 1;
             last_opcode_source_id = outer_fn->source_id;

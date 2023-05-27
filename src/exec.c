@@ -8,7 +8,7 @@
 static void push_call_frame(PyroVM* vm, PyroClosure* closure, PyroValue* frame_pointer) {
     if (vm->frame_count == vm->frame_capacity) {
         size_t new_capacity = PYRO_GROW_CAPACITY(vm->frame_capacity);
-        CallFrame* new_array = PYRO_REALLOCATE_ARRAY(vm, CallFrame, vm->frames, vm->frame_capacity, new_capacity);
+        PyroCallFrame* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroCallFrame, vm->frames, vm->frame_capacity, new_capacity);
         if (!new_array) {
             pyro_panic(vm, "out of memory");
             return;
@@ -17,7 +17,7 @@ static void push_call_frame(PyroVM* vm, PyroClosure* closure, PyroValue* frame_p
         vm->frame_capacity = new_capacity;
     }
 
-    CallFrame* frame = &vm->frames[vm->frame_count];
+    PyroCallFrame* frame = &vm->frames[vm->frame_count];
     vm->frame_count++;
 
     frame->closure = closure;
@@ -395,7 +395,7 @@ static void run(PyroVM* vm) {
         // The last instruction may have changed the frame count or (this can lead to nasty
         // bugs) forced a reallocation of the frame stack so reset the frame pointer for
         // every iteration.
-        CallFrame* frame = &vm->frames[vm->frame_count - 1];
+        PyroCallFrame* frame = &vm->frames[vm->frame_count - 1];
 
         #ifdef PYRO_DEBUG_STRESS_GC
             pyro_collect_garbage(vm);

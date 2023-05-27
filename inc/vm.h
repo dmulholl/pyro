@@ -3,7 +3,7 @@
 
 #include "../lib/mt64/mt64.h"
 
-// We create a new [CallFrame] on the [vm->frames] stack for each function call.
+// We create a new [PyroCallFrame] on the [vm->frames] stack for each function call.
 // - [ip] is the instruction pointer -- it points to the next bytecode instruction to be executed.
 // - [fp] is the frame pointer -- it points to slot zero on the value stack for the function call.
 typedef struct {
@@ -11,7 +11,7 @@ typedef struct {
     uint8_t* ip;
     PyroValue* fp;
     size_t with_stack_count_on_entry;
-} CallFrame;
+} PyroCallFrame;
 
 struct PyroVM {
     // Class objects for builtin types.
@@ -65,7 +65,7 @@ struct PyroVM {
     PyroFile* stdin_file;
 
     // The call stack.
-    CallFrame* frames;
+    PyroCallFrame* frames;
     size_t frame_count;
     size_t frame_capacity;
 
