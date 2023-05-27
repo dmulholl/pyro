@@ -1708,6 +1708,80 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Pushes a new map object onto the stack.
+            // Before: [ ... ][ key1 ][ value1 ][ key2 ][ value2 ]
+            // After:  [ ... ][ map ]
+            case PYRO_OPCODE_MAKE_MAP: {
+                uint16_t entry_count = READ_BE_U16();
+
+                PyroMap* map = PyroMap_new(vm);
+                if (!map) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                // The entries are stored on the stack as [..][key][value][..] pairs.
+                for (PyroValue* slot = vm->stack_top - entry_count * 2; slot < vm->stack_top; slot += 2) {
+                    if (!PyroMap_set(map, slot[0], slot[1], vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= (entry_count * 2);
+                pyro_push(vm, pyro_obj(map));
+                break;
+            }
+
+            // Pushes a new set object onto the stack.
+            // Before: [ ... ][ value1 ][ value2 ][ value3 ]
+            // After:  [ ... ][ set ]
+            case PYRO_OPCODE_MAKE_SET: {
+                uint16_t entry_count = READ_BE_U16();
+
+                PyroMap* map = PyroMap_new_as_set(vm);
+                if (!map) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                for (PyroValue* slot = vm->stack_top - entry_count; slot < vm->stack_top; slot++) {
+                    if (!PyroMap_set(map, *slot, pyro_null(), vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= entry_count;
+                pyro_push(vm, pyro_obj(map));
+                break;
+            }
+
+            // Pushes a new vec object onto the stack.
+            // Before: [ ... ][ value1 ][ value2 ][ value3 ]
+            // After:  [ ... ][ vec ]
+            case PYRO_OPCODE_MAKE_VEC: {
+                uint16_t item_count = READ_BE_U16();
+
+                PyroVec* vec = PyroVec_new_with_capacity(item_count, vm);
+                if (!vec) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (item_count == 0) {
+                    pyro_push(vm, pyro_obj(vec));
+                    break;
+                }
+
+                memcpy(vec->values, vm->stack_top - item_count, sizeof(PyroValue) * item_count);
+                vec->count = item_count;
+
+                vm->stack_top -= item_count;
+                pyro_push(vm, pyro_obj(vec));
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2341,71 +2415,6 @@ static void run(PyroVM* vm) {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
                 }
 
-                break;
-            }
-
-            case PYRO_OPCODE_MAKE_MAP: {
-                uint16_t entry_count = READ_BE_U16();
-
-                PyroMap* map = PyroMap_new(vm);
-                if (!map) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // The entries are stored on the stack as [..][key][value][..] pairs.
-                for (PyroValue* slot = vm->stack_top - entry_count * 2; slot < vm->stack_top; slot += 2) {
-                    if (!PyroMap_set(map, slot[0], slot[1], vm)) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                }
-
-                vm->stack_top -= (entry_count * 2);
-                pyro_push(vm, pyro_obj(map));
-                break;
-            }
-
-            case PYRO_OPCODE_MAKE_SET: {
-                uint16_t entry_count = READ_BE_U16();
-
-                PyroMap* map = PyroMap_new_as_set(vm);
-                if (!map) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                for (PyroValue* slot = vm->stack_top - entry_count; slot < vm->stack_top; slot++) {
-                    if (!PyroMap_set(map, *slot, pyro_null(), vm)) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                }
-
-                vm->stack_top -= entry_count;
-                pyro_push(vm, pyro_obj(map));
-                break;
-            }
-
-            case PYRO_OPCODE_MAKE_VEC: {
-                uint16_t item_count = READ_BE_U16();
-
-                PyroVec* vec = PyroVec_new_with_capacity(item_count, vm);
-                if (!vec) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (item_count == 0) {
-                    pyro_push(vm, pyro_obj(vec));
-                    break;
-                }
-
-                memcpy(vec->values, vm->stack_top - item_count, sizeof(PyroValue) * item_count);
-                vec->count = item_count;
-
-                vm->stack_top -= item_count;
-                pyro_push(vm, pyro_obj(vec));
                 break;
             }
 
