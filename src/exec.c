@@ -1,7 +1,7 @@
 #include "../inc/pyro.h"
 
 
-// Pushes a new function-call-frame onto the call stack.
+// Pushes a new call frame onto the call stack.
 // - [frame_pointer] points to the frame's zeroth local variable slot on the value stack.
 // - If [closure] is a function, the zeroth local variable slot will be unused.
 // - If [closure] is a method, the zeroth local variable slot will contain 'self'.
