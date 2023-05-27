@@ -213,12 +213,6 @@ struct PyroVM {
 };
 
 
-// Peeks at a value on the stack without popping it. Pass [distance = 0] to peek at the value on
-// top of the stack, [distance = 1] to peek at the value below that, etc.
-static inline PyroValue pyro_peek(PyroVM* vm, int distance) {
-    return vm->stack_top[-1 - distance];
-}
-
 // Pushes a value onto the stack. Panics if the stack overflows.
 static inline bool pyro_push(PyroVM* vm, PyroValue value) {
     if (vm->stack_top == vm->stack_max) {
