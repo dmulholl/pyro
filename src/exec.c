@@ -110,7 +110,7 @@ static void call_native_fn(PyroVM* vm, PyroNativeFn* fn, uint8_t arg_count) {
 
 // The value to be called and [arg_count] arguments should be sitting on top of the stack.
 static void call_value(PyroVM* vm, uint8_t arg_count) {
-    PyroValue callee = pyro_peek(vm, arg_count);
+    PyroValue callee = vm->stack_top[-(int)arg_count - 1];
 
     if (!PYRO_IS_OBJ(callee)) {
         pyro_panic(vm, "value is not callable");
@@ -2306,7 +2306,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_CALL_METHOD_WITH_UNPACK: {
                 PyroStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
-                PyroValue receiver = pyro_peek(vm, arg_count);
+                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
                 PyroValue last_arg = pyro_pop(vm);
                 arg_count--;
 
@@ -2353,7 +2353,7 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK: {
                 PyroStr* method_name = READ_STRING();
                 uint8_t arg_count = READ_BYTE();
-                PyroValue receiver = pyro_peek(vm, arg_count);
+                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
                 PyroValue last_arg = pyro_pop(vm);
                 arg_count--;
 
@@ -2877,7 +2877,7 @@ PyroValue pyro_call_method(PyroVM* vm, PyroValue method, uint8_t arg_count) {
 
 
 PyroValue pyro_call_function(PyroVM* vm, uint8_t arg_count) {
-    PyroValue value = pyro_peek(vm, arg_count);
+    PyroValue value = vm->stack_top[-(int)arg_count - 1];
 
     if (PYRO_IS_NATIVE_FN(value)) {
         call_native_fn(vm, PYRO_AS_NATIVE_FN(value), arg_count);
