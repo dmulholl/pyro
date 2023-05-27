@@ -1984,8 +1984,10 @@ static void run(PyroVM* vm) {
                         break;
                     }
 
+                    PyroValue new_member_value = vm->stack_top[-(int)count + i];
                     size_t new_member_index = module->members->count;
-                    if (!PyroVec_append(module->members, pyro_peek(vm, count - 1 - i), vm)) {
+
+                    if (!PyroVec_append(module->members, new_member_value, vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
@@ -2017,8 +2019,10 @@ static void run(PyroVM* vm) {
                         break;
                     }
 
+                    PyroValue new_member_value = vm->stack_top[-(int)count + i];
                     size_t new_member_index = module->members->count;
-                    if (!PyroVec_append(module->members, pyro_peek(vm, count - 1 - i), vm)) {
+
+                    if (!PyroVec_append(module->members, new_member_value, vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
