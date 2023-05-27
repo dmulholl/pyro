@@ -2076,7 +2076,7 @@ static void run(PyroVM* vm) {
                 PyroValue default_value = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the default value.
-                PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
 
                 PyroStr* field_name = READ_STRING();
                 if (PyroMap_contains(class->all_field_indexes, pyro_obj(field_name), vm)) {
@@ -2106,7 +2106,7 @@ static void run(PyroVM* vm) {
                 PyroValue default_value = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the default value.
-                PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
 
                 PyroStr* field_name = READ_STRING();
                 if (PyroMap_contains(class->all_field_indexes, pyro_obj(field_name), vm)) {
@@ -2143,7 +2143,7 @@ static void run(PyroVM* vm) {
                 PyroValue default_value = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the default value.
-                PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
 
                 PyroStr* field_name = READ_STRING();
                 if (PyroMap_contains(class->static_fields, pyro_obj(field_name), vm)) {
@@ -2249,12 +2249,12 @@ static void run(PyroVM* vm) {
             }
 
             case PYRO_OPCODE_INHERIT: {
-                if (!PYRO_IS_CLASS(pyro_peek(vm, 1))) {
+                if (!PYRO_IS_CLASS(vm->stack_top[-2])) {
                     pyro_panic(vm, "invalid superclass value (not a class)");
                     break;
                 }
 
-                PyroClass* superclass = PYRO_AS_CLASS(pyro_peek(vm, 1));
+                PyroClass* superclass = PYRO_AS_CLASS(vm->stack_top[-2]);
                 PyroClass* subclass = PYRO_AS_CLASS(vm->stack_top[-1]);
 
                 if (superclass == subclass) {
@@ -2476,7 +2476,7 @@ static void run(PyroVM* vm) {
                 PyroValue method = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the method.
-                PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
 
                 PyroStr* name = READ_STRING();
                 if (PyroMap_contains(class->pub_instance_methods, pyro_obj(name), vm)) {
@@ -2503,7 +2503,7 @@ static void run(PyroVM* vm) {
                 PyroValue method = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the method.
-                PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
 
                 PyroStr* name = READ_STRING();
                 if (PyroMap_contains(class->all_instance_methods, pyro_obj(name), vm)) {
@@ -2538,7 +2538,7 @@ static void run(PyroVM* vm) {
                 PyroValue method = vm->stack_top[-1];
 
                 // The class object will be on the stack just below the method.
-                PyroClass* class = PYRO_AS_CLASS(pyro_peek(vm, 1));
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
 
                 PyroStr* name = READ_STRING();
                 if (PyroMap_set(class->static_methods, pyro_obj(name), method, vm) == 0) {
