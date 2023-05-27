@@ -115,24 +115,37 @@ static const char* CHECK_HELPTEXT =
     ;
 
 
+static const char* GET_HELPTEXT =
+    "Usage: pyro get <module>\n"
+    "\n"
+    "  Not implemented.\n"
+    "\n"
+    "Arguments:\n"
+    "  <module>             Module to download.\n"
+    "\n"
+    "Flags:\n"
+    "  -h, --help           Print this help text and exit."
+    ;
+
+
 int main(int argc, char* argv[]) {
     // Initialize the root argument parser.
     ArgParser* parser = ap_new_parser();
     if (!parser) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
-        exit(1);
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
     }
 
     char* version_string = pyro_get_version_string();
     if (!version_string) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
-        exit(1);
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
     }
 
     char* helptext_string = pyro_cli_sprintf(HELPTEXT, version_string);
     if (!helptext_string) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
-        exit(1);
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
     }
 
     ap_set_version(parser, version_string);
@@ -149,8 +162,8 @@ int main(int argc, char* argv[]) {
     // Register the parser for the 'test' comand.
     ArgParser* test_cmd_parser = ap_new_cmd(parser, "test");
     if (!test_cmd_parser) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
-        exit(1);
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
     }
 
     ap_set_helptext(test_cmd_parser, TEST_HELPTEXT);
@@ -161,45 +174,59 @@ int main(int argc, char* argv[]) {
     ap_add_str_opt(test_cmd_parser, "import-root i", NULL);
 
     // Register the parser for the 'time' comand.
-    ArgParser* time_cmd_parser = ap_new_cmd(parser, "time");
-    if (!time_cmd_parser) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
-        exit(1);
+    ArgParser* cmd_time = ap_new_cmd(parser, "time");
+    if (!cmd_time) {
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
     }
 
-    ap_set_helptext(time_cmd_parser, TIME_HELPTEXT);
-    ap_set_cmd_callback(time_cmd_parser, pyro_cli_cmd_time);
-    ap_add_str_opt(time_cmd_parser, "max-memory m", NULL);
-    ap_add_str_opt(time_cmd_parser, "stack-size s", NULL);
-    ap_add_str_opt(time_cmd_parser, "import-root i", NULL);
-    ap_add_int_opt(time_cmd_parser, "num-runs n", 10);
+    ap_set_helptext(cmd_time, TIME_HELPTEXT);
+    ap_set_cmd_callback(cmd_time, pyro_cli_cmd_time);
+    ap_add_str_opt(cmd_time, "max-memory m", NULL);
+    ap_add_str_opt(cmd_time, "stack-size s", NULL);
+    ap_add_str_opt(cmd_time, "import-root i", NULL);
+    ap_add_int_opt(cmd_time, "num-runs n", 10);
 
     // Register the parser for the 'check' comand.
-    ArgParser* check_cmd_parser = ap_new_cmd(parser, "check");
-    if (!check_cmd_parser) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
-        exit(1);
+    ArgParser* cmd_check = ap_new_cmd(parser, "check");
+    if (!cmd_check) {
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
     }
 
-    ap_set_helptext(check_cmd_parser, CHECK_HELPTEXT);
-    ap_set_cmd_callback(check_cmd_parser, pyro_cli_cmd_check);
-    ap_add_str_opt(check_cmd_parser, "max-memory m", NULL);
-    ap_add_str_opt(check_cmd_parser, "stack-size s", NULL);
+    ap_set_helptext(cmd_check, CHECK_HELPTEXT);
+    ap_set_cmd_callback(cmd_check, pyro_cli_cmd_check);
+    ap_add_str_opt(cmd_check, "max-memory m", NULL);
+    ap_add_str_opt(cmd_check, "stack-size s", NULL);
+
+    // Register the parser for the 'get' command.
+    ArgParser* cmd_get = ap_new_cmd(parser, "get");
+    if (!cmd_get) {
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
+    }
+
+    ap_set_helptext(cmd_get, GET_HELPTEXT);
+    ap_set_cmd_callback(cmd_get, pyro_cli_cmd_get);
 
     // Parse the command line arguments.
     if (!ap_parse(parser, argc, argv)) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
-        exit(1);
+        ap_free(parser);
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
     }
 
-    if (!ap_found_cmd(parser)) {
-        if (ap_found(parser, "exec")) {
-            pyro_cli_run_exec(parser);
-        } else if (ap_count_args(parser) > 0) {
-            pyro_cli_run_file(parser);
-        } else {
-            pyro_cli_run_repl(parser);
-        }
+    if (ap_found_cmd(parser)) {
+        ap_free(parser);
+        return 0;
+    }
+
+    if (ap_found(parser, "exec")) {
+        pyro_cli_run_exec(parser);
+    } else if (ap_count_args(parser) > 0) {
+        pyro_cli_run_file(parser);
+    } else {
+        pyro_cli_run_repl(parser);
     }
 
     ap_free(parser);

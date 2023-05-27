@@ -11,7 +11,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_get_arg_at_index(cmd_parser, i);
         if (!pyro_exists(path)) {
-            fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
+            fprintf(stderr, "error: invalid path '%s'\n", path);
             exit(1);
         }
 
@@ -20,7 +20,7 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
         size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
         PyroVM* vm = pyro_new_vm(stack_size);
         if (!vm) {
-            fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize Pyro VM.\n");
+            fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
             exit(1);
         }
 
@@ -89,7 +89,6 @@ static void run_verbose_tests(ArgParser* cmd_parser) {
     printf(" · Time: %f secs\n", time);
 
     exit(files_failed > 0 ? 1 : 0);
-
 }
 
 
@@ -103,7 +102,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_get_arg_at_index(cmd_parser, i);
         if (!pyro_exists(path)) {
-            fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
+            fprintf(stderr, "error: invalid path '%s'\n", path);
             exit(1);
         }
 
@@ -113,7 +112,7 @@ static void run_quiet_tests(ArgParser* cmd_parser) {
         size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
         PyroVM* vm = pyro_new_vm(stack_size);
         if (!vm) {
-            fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize Pyro VM.\n");
+            fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
             exit(1);
         }
 

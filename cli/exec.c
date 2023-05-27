@@ -6,7 +6,7 @@ void pyro_cli_run_exec(ArgParser* parser) {
 
     PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {
-        fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize the Pyro VM.\n");
+        fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
         exit(1);
     }
 
@@ -26,8 +26,9 @@ void pyro_cli_run_exec(ArgParser* parser) {
     const char* code = ap_get_str_value(parser, "exec");
     pyro_exec_code(vm, code, strlen(code), "<exec>", NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+        int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);
-        exit(pyro_get_exit_code(vm));
+        exit(exit_code);
     }
 
     pyro_free_vm(vm);

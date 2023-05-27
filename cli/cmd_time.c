@@ -8,7 +8,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
     int num_runs = ap_get_int_value(cmd_parser, "num-runs");
     if (num_runs < 1) {
-        fprintf(stderr, "Pyro CLI error: invalid argument for --num-runs.\n");
+        fprintf(stderr, "error: invalid argument for --num-runs\n");
         exit(1);
     }
 
@@ -17,7 +17,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {
         char* path = ap_get_arg_at_index(cmd_parser, i);
         if (!pyro_exists(path)) {
-            fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
+            fprintf(stderr, "error: invalid path '%s'\n", path);
             exit(1);
         }
 
@@ -26,7 +26,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
         PyroVM* vm = pyro_new_vm(stack_size);
         if (!vm) {
-            fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize Pyro VM.\n");
+            fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
             exit(1);
         }
 
@@ -37,8 +37,9 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
 
         pyro_exec_path(vm, path, vm->main_module);
         if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+            int64_t exit_code = pyro_get_exit_code(vm);
             pyro_free_vm(vm);
-            exit(pyro_get_exit_code(vm));
+            exit(exit_code);
         }
 
         size_t max_name_length = 0;
@@ -82,9 +83,10 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
                         pyro_reset_vm(vm);
                         pyro_push(vm, member_value);
                         pyro_call_function(vm, 0);
-                        if (vm->halt_flag) {
+                        if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+                            int64_t exit_code = pyro_get_exit_code(vm);
                             pyro_free_vm(vm);
-                            exit(1);
+                            exit(exit_code);
                         }
                     }
 

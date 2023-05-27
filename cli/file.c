@@ -6,13 +6,13 @@ void pyro_cli_run_file(ArgParser* parser) {
 
     char* path = ap_get_arg_at_index(parser, 0);
     if (!pyro_exists(path)) {
-        fprintf(stderr, "Pyro CLI error: invalid path '%s'.\n", path);
+        fprintf(stderr, "error: invalid path '%s'\n", path);
         exit(1);
     }
 
     PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {
-        fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize the Pyro VM.\n");
+        fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
         exit(1);
     }
 
@@ -32,15 +32,17 @@ void pyro_cli_run_file(ArgParser* parser) {
     // Compile and execute the script.
     pyro_exec_path(vm, path, NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+        int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);
-        exit(pyro_get_exit_code(vm));
+        exit(exit_code);
     }
 
     // Execute the $main() function if it exists.
     pyro_run_main_func(vm);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+        int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);
-        exit(pyro_get_exit_code(vm));
+        exit(exit_code);
     }
 
     pyro_free_vm(vm);

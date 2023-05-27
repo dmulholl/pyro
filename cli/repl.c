@@ -102,7 +102,7 @@ void pyro_cli_run_repl(ArgParser* parser) {
 
     PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {
-        fprintf(stderr, "Pyro CLI error: out of memory, unable to initialize the Pyro VM.\n");
+        fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
         exit(1);
     }
 
@@ -118,7 +118,7 @@ void pyro_cli_run_repl(ArgParser* parser) {
     pyro_add_import_root(vm, ".");
 
     char* version = pyro_get_version_string();
-    printf("Pyro %s -- Type 'exit' to quit.\n", version);
+    printf("%s -- Type 'exit' to quit.\n", version);
     free(version);
 
     char* code = NULL;
@@ -146,7 +146,7 @@ void pyro_cli_run_repl(ArgParser* parser) {
 
         code = realloc(code, code_count + strlen(line) + 1);
         if (!code) {
-            fprintf(stderr, "Pyro CLI error: failed to allocate memory for input.\n");
+            fprintf(stderr, "error: failed to allocate memory for input\n");
             exit(1);
         }
         memcpy(&code[code_count], line, strlen(line));
@@ -165,10 +165,14 @@ void pyro_cli_run_repl(ArgParser* parser) {
         code[code_count - 1] = ';';
 
         pyro_exec_code(vm, code, code_count, "<repl>", NULL);
+
         if (pyro_get_exit_flag(vm)) {
+            int64_t exit_code = pyro_get_exit_code(vm);
             pyro_free_vm(vm);
-            exit(pyro_get_exit_code(vm));
-        } else if (pyro_get_panic_flag(vm)) {
+            exit(exit_code);
+        }
+
+        if (pyro_get_panic_flag(vm)) {
             pyro_reset_vm(vm);
         }
 
