@@ -1,15 +1,16 @@
 #include "cli.h"
 
 
-// Add the directory containing [path] to the set of import roots.
+// Adds the directory containing [path] to the set of import roots.
 // - [path] can be a script file or a module directory.
+// - Also adds a 'modules' directory inside the parent directory.
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
-    // We call realpath() here because we want to add the directory containing the *actual* script
-    // or directory at [path]. This may be different from the result of a simple dirname() call if
-    // [path] is a symlink.
+    // We call realpath() here because we want to add the directory containing the *actual*
+    // script or directory at [path]. This may be different from the result of a simple
+    // dirname() call if [path] is a symlink.
    char* real_path = pyro_realpath(path);
     if (!real_path) {
-        fprintf(stderr, "Pyro CLI error: failed to resolve path '%s' to determine import roots.\n", path);
+        fprintf(stderr, "error: failed to resolve path '%s' to determine import roots\n", path);
         exit(1);
     }
 
@@ -21,7 +22,7 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     char* buffer = malloc(dirname_length + strlen("/modules") + 1);
     if (!buffer) {
         free(real_path);
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
+        fprintf(stderr, "error: out of memory\n");
         exit(1);
     }
 
@@ -57,7 +58,7 @@ void pyro_cli_add_import_roots_from_environment(PyroVM* vm) {
 
     char* array = pyro_strdup(env_roots_var);
     if (!array) {
-        fprintf(stderr, "Pyro CLI error: out of memory.\n");
+        fprintf(stderr, "error: out of memory\n");
         exit(2);
     }
 
@@ -112,7 +113,7 @@ void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
 
     int64_t size = parse_memory_size(ap_get_str_value(parser, "max-memory"));
     if (size <= 0) {
-        fprintf(stderr, "Pyro CLI error: invalid argument for --max-memory option.\n");
+        fprintf(stderr, "error: invalid argument for --max-memory option\n");
         exit(1);
     }
 
@@ -127,7 +128,7 @@ size_t pyro_cli_get_stack_size(ArgParser* parser) {
 
     int64_t size = parse_memory_size(ap_get_str_value(parser, "stack-size"));
     if (size <= 0) {
-        fprintf(stderr, "Pyro CLI error: invalid argument for --stack-size option.\n");
+        fprintf(stderr, "error: invalid argument for --stack-size option\n");
         exit(1);
     }
 
@@ -138,8 +139,8 @@ size_t pyro_cli_get_stack_size(ArgParser* parser) {
 char* pyro_cli_sprintf(const char* format_string, ...) {
     va_list args;
 
-    // Figure out how much memory we need to allocate. [length] will be the output string length,
-    // not counting the terminating null, so we'll need to allocate [length + 1] bytes.
+    // Figure out how much memory we need to allocate. [length] will be the output string
+    // length, not counting the terminating null, so we'll need to allocate [length + 1] bytes.
     va_start(args, format_string);
     int length = vsnprintf(NULL, 0, format_string, args);
     va_end(args);
