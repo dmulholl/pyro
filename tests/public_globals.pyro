@@ -1,7 +1,7 @@
-var foo;
+pub var foo;
 assert foo == null;
 
-var bar = 1;
+pub var bar = 1;
 assert bar == 1;
 
 bar = 2;
@@ -22,30 +22,30 @@ def access_global() {
 access_global();
 assert bar == 4;
 
-var baz;
-var bam;
+pub var baz;
+pub var bam;
 assert baz == null;
 assert bam == null;
 bam = baz = 123;
 assert baz == 123;
 assert bam == 123;
 
-var a, b, c;
+pub var a, b, c;
 assert a == null;
 assert b == null;
 assert c == null;
 
-var d = 123, e = 456, f = 789;
+pub var d = 123, e = 456, f = 789;
 assert d == 123;
 assert e == 456;
 assert f == 789;
 
-var (g, h, i) = $tup(123, 456, 789);
+pub var (g, h, i) = $tup(123, 456, 789);
 assert g == 123;
 assert h == 456;
 assert i == 789;
 
-var (j, _, l) = $tup(123, 456, 789);
+pub var (j, _, l) = $tup(123, 456, 789);
 assert j == 123;
 assert l == 789;
 
