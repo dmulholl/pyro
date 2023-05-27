@@ -1,29 +1,101 @@
-def f1() {
+# No return statement.
+{
+    def func() {
+    }
+    assert func() == null;
 }
-assert f1() == null;
 
-def f2() {
-    return;
+{
+    def func() {
+        var local = 999;
+        var foo = 123 + 456 + 789 + local;
+    }
+    assert func() == null;
 }
-assert f2() == null;
 
-def f3() {
-    return 123;
+{
+    def func(a, b, c) {
+        var local = 999;
+        var foo = a + b + c + local;
+    }
+    assert func(123, 456, 789) == null;
 }
-assert f3() == 123;
 
-def f4() {
-    return 123, 456;
+# Empty return statement.
+{
+    def func() {
+        return;
+    }
+    assert func() == null;
 }
-assert f4() == $tup(123, 456);
-var (f4_v1, f4_v2) = f4();
-assert f4_v1 == 123;
-assert f4_v2 == 456;
 
-def f5() {
-    return 123, 456, 789;
+{
+    def func() {
+        var local = 999;
+        var foo = 123 + 456 + 789 + local;
+        return;
+    }
+    assert func() == null;
 }
-assert f5() == $tup(123, 456, 789);
-var (f5_v1, f5_v2) = f5();
-assert f5_v1 == 123;
-assert f5_v2 == 456;
+
+{
+    def func(a, b, c) {
+        var local = 999;
+        var foo = a + b + c + local;
+        return;
+    }
+    assert func(123, 456, 789) == null;
+}
+
+# Single return value.
+{
+    def func() {
+        return 987;
+    }
+    assert func() == 987;
+}
+
+{
+    def func() {
+        var local = 999;
+        var foo = 123 + 456 + 789 + local;
+        return 987;
+    }
+    assert func() == 987;
+}
+
+{
+    def func(a, b, c) {
+        var local = 999;
+        var foo = a + b + c + local;
+        return 987;
+    }
+    assert func(123, 456, 789) == 987;
+}
+
+# Multiple return values.
+{
+    def func() {
+        return 987, 654, 321;
+    }
+    assert func() == $tup(987, 654, 321);
+}
+
+{
+    def func() {
+        var local = 999;
+        var foo = 123 + 456 + 789 + local;
+        return 987, 654, 321;
+    }
+    assert func() == $tup(987, 654, 321);
+}
+
+{
+    def func(a, b, c) {
+        var local = 999;
+        var foo = a + b + c + local;
+        return 987, 654, 321;
+    }
+    assert func(123, 456, 789) == $tup(987, 654, 321);
+}
+
