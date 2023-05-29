@@ -21,6 +21,10 @@ All standard library modules are submodules of the root module `std`.
 
     A utility module for writing CGI scripts in Pyro.
 
+[[ [constants](@root/stdlib/constants//) ]]
+
+    Useful constants.
+
 [[ [html](@root/stdlib/html//) ]]
 
     Utility functions for working with HTML.

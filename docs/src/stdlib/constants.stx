@@ -1,0 +1,41 @@
+---
+title: <code>std::constants</code>
+meta_title: Pyro Standard Library &mdash; std::constants
+---
+
+[[ `e: f64` ]]
+
+    Euler's constant.
+
+
+[[ `i64_max: i64` ]]
+
+    The maximum value of an `i64`,
+    i.e. `(2^63) - 1`.
+
+
+[[ `i64_min: i64` ]]
+
+    The minimum value of an `i64`,
+    i.e. `-(2^63)`.
+
+
+[[ `inf: f64` ]]
+
+    Floating-point positive infinity.
+
+
+[[ `nan: f64` ]]
+
+    Floating-point NaN (Not-A-Number).
+
+
+[[ `pi: f64` ]]
+
+    The constant `pi` to the maximum accuracy limit of a 64-bit IEEE 754 float.
+
+
+[[ `tau: f64` ]]
+
+    The constant `tau`, i.e. `pi * 2`, to the maximum accuracy limit of a 64-bit IEEE 754 float.
+

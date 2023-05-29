@@ -6,43 +6,6 @@ meta_title: Pyro Standard Library &mdash; std::math
 This module provides a Pyro interface to the C standard library's mathematical functions.
 
 
-
-### Constants
-
-
-[[ `E: f64` ]]
-
-    Euler's constant.
-
-
-[[ `I64_MAX: i64` ]]
-
-    The maximum allowable value of an `i64`,
-    i.e. `(2^63) - 1`.
-
-
-[[ `I64_MIN: i64` ]]
-
-    The minimum allowable value of an `i64`,
-    i.e. `-(2^63)`.
-
-
-[[ `INF: f64` ]]
-
-    Floating-point positive infinity.
-
-
-[[ `NAN: f64` ]]
-
-    Floating-point NaN (Not-A-Number).
-
-
-[[ `PI: f64` ]]
-
-    The constant π.
-
-
-
 ### Functions
 
 
