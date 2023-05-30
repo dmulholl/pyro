@@ -38,6 +38,19 @@ static PyroValue mod_members(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue mod_all_members(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroMod* mod = PYRO_AS_MOD(args[-1]);
+
+    PyroIter* iter = PyroIter_new((PyroObject*)mod->all_member_indexes, PYRO_ITER_MAP_KEYS, vm);
+    if (!iter) {
+        pyro_panic(vm, "all_members(): out of memory");
+        return pyro_null();
+    }
+
+    return pyro_obj(iter);
+}
+
+
 static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMod* mod = PYRO_AS_MOD(args[-1]);
 
@@ -70,5 +83,6 @@ void pyro_load_std_builtins_mod(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_module, "has_member", mod_has_member, 1);
     pyro_define_pub_method(vm, vm->class_module, "member", mod_member, 1);
     pyro_define_pub_method(vm, vm->class_module, "members", mod_members, 0);
+    pyro_define_pub_method(vm, vm->class_module, "all_members", mod_all_members, 0);
     pyro_define_pub_method(vm, vm->class_module, "globals", mod_globals, 0);
 }
