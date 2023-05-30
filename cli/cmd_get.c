@@ -15,14 +15,14 @@ int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     free(args);
 
     const unsigned char* code;
-    size_t count;
+    size_t code_length;
 
-    if (!pyro_get_embedded("std/cli/get.pyro", &code, &count)) {
+    if (!pyro_get_embedded("std/cli/get.pyro", &code, &code_length)) {
         fprintf(stderr, "error: failed to load std/cli/get.pyro\n");
         exit(1);
     }
 
-    pyro_exec_code(vm, (const char*)code, count, "std/cli/get.pyro", NULL);
+    pyro_exec_code(vm, (const char*)code, code_length, "std/cli/get.pyro", NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);
