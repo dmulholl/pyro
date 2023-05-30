@@ -70,7 +70,10 @@ A module object can also be created by executing a string of source code using t
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <p>
-A module contains <i>members</i> &mdash; its global variables, functions, and classes &mdash; which can be accessed using the member operator, <code>::</code>. A module object also has methods of its own, which can be accessed using the method operator, <code>:</code>, e.g.
+A module contains <i>members</i> &mdash; its global variables, functions, and classes &mdash; which can be accessed using the member operator, <code>::</code>.
+</p>
+<p>
+A module object also has methods of its own, which can be accessed using the method operator, <code>:</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">has_member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
@@ -86,6 +89,17 @@ You can learn more about using modules <a href="../features/modules.html">here</
 Methods
 </h3>
 <dl>
+<div>
+<dt>
+<code>:all_members() -&gt; iter[str]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the module's member names as strings.
+Includes both public and private members.
+</p>
+</dd>
+</div>
 <div>
 <dt>
 <code>:globals() -&gt; map[str, any]</code>
@@ -104,6 +118,9 @@ Returns a new map containing a copy of the module's public members, indexed by n
 <p>
 Returns <code>true</code> if the module contains a member named <code>name</code>, otherwise <code>false</code>.
 </p>
+<p>
+The member can be public or private.
+</p>
 </dd>
 </div>
 <div>
@@ -115,7 +132,7 @@ Returns <code>true</code> if the module contains a member named <code>name</code
 Returns the value of the member <code>name</code>, or an <code>err</code> if <code>name</code> is not defined.
 </p>
 <p>
-(Allows access to both public and private members.)
+Allows access to both public and private members.
 </p>
 </dd>
 </div>
