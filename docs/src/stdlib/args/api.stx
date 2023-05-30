@@ -109,6 +109,10 @@ Call the `:parse()` method on the root `ArgParser` instance to parse the program
 
     You only need to call this method on the root `ArgParser` instance; arguments for commands will be parsed automatically.
 
+[[ `:parse_args(args: vec[str]|tup[str]) -> ArgParser|err` ]]
+
+    Like `:parse()` but parses a `vec` or `tup` of string arguments instead of the program's command line arguments.
+
 
 
 ### Retrieving Flag and Option Values
