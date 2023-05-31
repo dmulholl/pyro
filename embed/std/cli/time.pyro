@@ -1,0 +1,56 @@
+import std::path;
+
+def time_function(file_name, func_name, func, is_first) {
+    if !is_first {
+        echo;
+    }
+
+    echo file_name, "::", func_name;
+    var times = [];
+
+    for i in $range(NUM_RUNS) {
+        var start_time = $clock();
+        var result = try func();
+        var end_time = $clock();
+
+        if $is_err(result) {
+            $exit("    error: ${result}");
+        }
+
+        times:append(end_time - start_time);
+    }
+
+    var mean_time_s = times:iter():sum() / times:count();
+    var mean_time_ms = mean_time_s * 1000;
+    echo "    mean: ${mean_time_ms;.3f} ms";
+}
+
+if NUM_RUNS < 1 {
+    $exit("error: invalid value for --num-runs, must be >= 1");
+}
+
+var is_first = true;
+
+for filepath in $args {
+    if !path::is_file(filepath) {
+        $exit("error: invalid path '${filepath}'");
+    }
+
+    var code = try $read_file(filepath);
+    if $is_err(code) {
+        $exit("error: failed to read file '${filepath}': ${code}");
+    }
+
+    var module = try $exec(code);
+    if $is_err(module) {
+        $exit("error: failed to execute file '${filepath}': ${module}");
+    }
+
+    for name in module:all_members() {
+        if name:starts_with("$time_") && $is_func(module:member(name)) {
+            time_function(filepath, name, module:member(name), is_first);
+            is_first = false;
+        }
+    }
+}
+

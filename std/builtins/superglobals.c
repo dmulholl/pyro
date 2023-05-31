@@ -226,6 +226,12 @@ static PyroValue fn_exit(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
+    result = pyro_stderr_write(vm, "\n");
+    if (result < 0) {
+        pyro_panic(vm, "$exit(): unable to write to the standard error stream");
+        return pyro_null();
+    }
+
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = 1;

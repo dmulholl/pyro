@@ -3,7 +3,6 @@
 
 int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     size_t stack_size = 1024 * 1024;
-
     PyroVM* vm = pyro_new_vm(stack_size);
     if (!vm) {
         fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
@@ -19,6 +18,7 @@ int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
 
     if (!pyro_get_embedded("std/cli/get.pyro", &code, &code_length)) {
         fprintf(stderr, "error: failed to load std/cli/get.pyro\n");
+        pyro_free_vm(vm);
         exit(1);
     }
 
