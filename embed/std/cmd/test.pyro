@@ -1,0 +1,149 @@
+import std::path;
+
+var init_script = "
+var $filepath;
+
+pub def set_filepath(filepath) {
+    $filepath = filepath;
+}
+";
+
+def make_module(filepath) {
+    var module = $exec(init_script);
+    module::set_filepath(filepath);
+    return module;
+}
+
+def add_import_roots_from_path(filepath) {
+    var stashed_roots = $roots:copy();
+
+    var real_path = try path::realpath(filepath);
+    if $is_err(real_path) {
+        $exit("error: failed to resolve path '${filepath}': ${code}");
+    }
+
+    var parent_path = path::dirname(real_path);
+    var modules_path = path::join(parent_path, "modules");
+
+    $roots:append(parent_path);
+    $roots:append(modules_path);
+
+    return stashed_roots;
+}
+
+def restore_stashed_import_roots(stashed_roots) {
+    $roots:clear();
+
+    for root in stashed_roots {
+        $roots:append(root);
+    }
+}
+
+def run_tests_with_errors() {
+    for filepath in $args {
+        if !path::is_file(filepath) {
+            $exit("error: invalid path '${filepath}'");
+        }
+
+        var code = try $read_file(filepath);
+        if $is_err(code) {
+            $exit("error: failed to read file '${filepath}': ${code}");
+        }
+
+        var stashed_roots = add_import_roots_from_path(filepath);
+
+        var module = make_module(filepath);
+        $exec(code, filepath, module);
+
+        for name in module:all_members() {
+            if name:starts_with("$test_") && $is_func(module:member(name)) {
+                module:member(name)();
+            }
+        }
+
+        restore_stashed_import_roots(stashed_roots);
+    }
+}
+
+def run_tests() {
+    var start_time = $clock();
+    var funcs_passed = 0;
+    var funcs_failed = 0;
+    var files_passed = 0;
+    var files_failed = 0;
+
+    for filepath in $args {
+        if !path::is_file(filepath) {
+            $exit("error: invalid path '${filepath}'");
+        }
+
+        var code = try $read_file(filepath);
+        if $is_err(code) {
+            $exit("error: failed to read file '${filepath}': ${code}");
+        }
+
+        $print("[  ····  ]  ${filepath}");
+        $stdout():flush();
+
+        var stashed_roots = add_import_roots_from_path(filepath);
+        var module = make_module(filepath);
+
+        var result = try $exec(code, filepath, module);
+        if $is_err(result) {
+            $print("\r[  \x1B[1;31mFAIL\x1B[0m\n");
+            files_failed += 1;
+            restore_stashed_import_roots(stashed_roots);
+            continue;
+        }
+
+        var had_failed_test_func = false;
+
+        for name in module:all_members() {
+            if name:starts_with("$test_") && $is_func(module:member(name)) {
+                var result = try module:member(name)();
+                if $is_err(result) {
+                    if !had_failed_test_func {
+                        $print("\r[  \x1B[1;31mFAIL\x1B[0m\n");
+                    }
+                    had_failed_test_func = true;
+                    funcs_failed += 1;
+                    $print("            \x1B[1;31m· ${name}\x1B[0m\n");
+                } else {
+                    funcs_passed += 1;
+                }
+            }
+        }
+
+        if had_failed_test_func {
+            files_failed += 1;
+        } else {
+            files_passed += 1;
+            $print("\r[  \x1B[1;32mPASS\x1B[0m\n");
+        }
+
+        restore_stashed_import_roots(stashed_roots);
+    }
+
+    var runtime = $clock() - start_time;
+
+    if files_failed > 0 {
+        $print("\n  \x1B[1;41;30m FAIL \x1B[0m  ");
+    } else {
+        $print("\n  \x1B[1;42;30m PASS \x1B[0m  ");
+    }
+
+    $print("  Files: {}/{}", files_passed, files_passed + files_failed);
+    $print(" · Funcs: {}/{}", funcs_passed, funcs_passed + funcs_failed);
+    $print(" · Time: {} secs\n", runtime);
+
+    if files_failed > 0 {
+        $exit(1);
+    }
+}
+
+if ERRORS {
+    run_tests_with_errors();
+} else {
+    run_tests();
+}
+

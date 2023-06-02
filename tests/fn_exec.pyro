@@ -26,5 +26,5 @@ with mod = $exec(code) {
 
 var the_mod = $exec("");
 assert $is_module(the_mod);
-$exec("pub var foo = 1 + 2 + 3;", the_mod);
+$exec("pub var foo = 1 + 2 + 3;", "the_mod", the_mod);
 assert the_mod::foo == 6;

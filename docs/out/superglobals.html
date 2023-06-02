@@ -259,18 +259,18 @@ Creates a new <a href="builtins/errors.html">error</a>.
 </div>
 <div>
 <dt>
-<code>$exec(code: str) -&gt; module</code> <br> <code>$exec(code: str, mod: module) -&gt; module</code>
+<code>$exec(code: str) -&gt; module</code> <br> <code>$exec(code: str, source_id: str) -&gt; module</code> <br> <code>$exec(code: str, source_id: str, mod: module) -&gt; module</code>
 </dt>
 <dd>
 <p>
-Executes a string of Pyro source code.
+Executes <code>code</code> as a string of Pyro source code.
 </p>
 <ul>
 <li>
-If called with a single argument, executes the code in the context of a new empty module.
+If a <code>source_id</code> argument is specified, it will be used to identify the code in error messages.
 </li>
 <li>
-If called with two arguments, executes the code in the context of the specified module.
+If a <code>module</code> argument is specified, the code will be executed in the context of that module. Otherwise, the code will be executed in the context of a new empty module.
 </li>
 </ul>
 <p>

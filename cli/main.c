@@ -40,8 +40,7 @@ static const char* HELPTEXT =
 static const char* TEST_HELPTEXT =
     "Usage: pyro test [files]\n"
     "\n"
-    "  This command runs unit tests. Each input file is executed in a new VM\n"
-    "  instance.\n"
+    "  This command runs unit tests.\n"
     "\n"
     "  For each input file, Pyro first executes the file, then runs any test\n"
     "  functions it contains, i.e. functions whose names begin with '$test_'.\n"
@@ -61,14 +60,10 @@ static const char* TEST_HELPTEXT =
     "\n"
     "Options:\n"
     "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
-    "  -m, --max-memory <int>     Sets the maximum memory allocation in bytes.\n"
-    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
-    "  -s, --stack-size <int>     Sets the stack size in bytes.\n"
-    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
-    "  -h, --help                 Print this help text and exit.\n"
-    "  -v, --verbose              Show error output."
+    "  -e, --errors               Show standard error output.\n"
+    "  -h, --help                 Print this help text and exit."
     ;
 
 
@@ -162,10 +157,8 @@ int main(int argc, char* argv[]) {
 
     ap_set_helptext(test_cmd_parser, TEST_HELPTEXT);
     ap_set_cmd_callback(test_cmd_parser, pyro_cli_cmd_test);
-    ap_add_flag(test_cmd_parser, "verbose v");
-    ap_add_str_opt(test_cmd_parser, "max-memory m", NULL);
-    ap_add_str_opt(test_cmd_parser, "stack-size s", NULL);
     ap_add_str_opt(test_cmd_parser, "import-root i", NULL);
+    ap_add_flag(test_cmd_parser, "errors e");
 
     // Register the parser for the 'time' comand.
     ArgParser* cmd_time = ap_new_cmd(parser, "time");
@@ -176,8 +169,6 @@ int main(int argc, char* argv[]) {
 
     ap_set_helptext(cmd_time, TIME_HELPTEXT);
     ap_set_cmd_callback(cmd_time, pyro_cli_cmd_time);
-    ap_add_str_opt(cmd_time, "max-memory m", NULL);
-    ap_add_str_opt(cmd_time, "stack-size s", NULL);
     ap_add_str_opt(cmd_time, "import-root i", NULL);
     ap_add_int_opt(cmd_time, "num-runs n", 10);
 

@@ -759,8 +759,8 @@ static PyroValue fn_input(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (arg_count == 0 || arg_count > 2) {
-        pyro_panic(vm, "$exec(): expected 1 or 2 arguments, found %zu", arg_count);
+    if (arg_count == 0 || arg_count > 3) {
+        pyro_panic(vm, "$exec(): expected 1, 2, or 3 arguments, found %zu", arg_count);
         return pyro_null();
     }
 
@@ -771,12 +771,12 @@ static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* code = PYRO_AS_STR(args[0]);
 
     PyroMod* module;
-    if (arg_count == 2) {
-        if (!PYRO_IS_MOD(args[1])) {
+    if (arg_count > 2) {
+        if (!PYRO_IS_MOD(args[2])) {
             pyro_panic(vm, "$exec(): invalid argument [module], expected a module");
             return pyro_null();
         }
-        module = PYRO_AS_MOD(args[1]);
+        module = PYRO_AS_MOD(args[2]);
     } else {
         module = PyroMod_new(vm);
         if (!module) {
@@ -785,9 +785,20 @@ static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
+    const char* source_id;
+    if (arg_count > 1) {
+        if (!PYRO_IS_STR(args[1])) {
+            pyro_panic(vm, "$exec(): invalid argument [source_id], expected a string");
+            return pyro_null();
+        }
+        source_id = PYRO_AS_STR(args[1])->bytes;
+    } else {
+        source_id = "<exec>";
+    }
+
     // Push the module onto the stack to keep it safe from the garbage collector.
     if (!pyro_push(vm, pyro_obj(module))) { return pyro_null(); }
-    pyro_exec_code(vm, code->bytes, code->count, "<exec>", module);
+    pyro_exec_code(vm, code->bytes, code->count, source_id, module);
     pyro_pop(vm);
 
     return pyro_obj(module);
