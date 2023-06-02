@@ -13,6 +13,9 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         exit(1);
     }
 
+    pyro_cli_add_import_roots_from_command_line(vm, cmd_parser);
+    pyro_cli_add_import_roots_from_environment(vm);
+
     int num_runs = ap_get_int_value(cmd_parser, "num-runs");
     if (!pyro_define_global(vm, "NUM_RUNS", pyro_i64(num_runs))) {
         fprintf(stderr, "error: out of memory\n");

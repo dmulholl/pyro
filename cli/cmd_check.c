@@ -6,7 +6,7 @@ int pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
         return 0;
     }
 
-    size_t stack_size = pyro_cli_get_stack_size(cmd_parser);
+    size_t stack_size = 1024 * 1024;
     bool had_panic = false;
 
     for (int i = 0; i < ap_count_args(cmd_parser); i++) {

@@ -83,6 +83,7 @@ static const char* TIME_HELPTEXT =
     "  [files]                    Files to test.\n"
     "\n"
     "Options:\n"
+    "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
     "  -n, --num-runs <int>       Number of times to run each function.\n"
     "\n"
     "Flags:\n"
@@ -149,16 +150,16 @@ int main(int argc, char* argv[]) {
     ap_first_pos_arg_ends_options(parser, true);
 
     // Register the parser for the 'test' comand.
-    ArgParser* test_cmd_parser = ap_new_cmd(parser, "test");
-    if (!test_cmd_parser) {
+    ArgParser* cmd_test = ap_new_cmd(parser, "test");
+    if (!cmd_test) {
         fprintf(stderr, "error: out of memory\n");
         return 1;
     }
 
-    ap_set_helptext(test_cmd_parser, TEST_HELPTEXT);
-    ap_set_cmd_callback(test_cmd_parser, pyro_cli_cmd_test);
-    ap_add_str_opt(test_cmd_parser, "import-root i", NULL);
-    ap_add_flag(test_cmd_parser, "errors e");
+    ap_set_helptext(cmd_test, TEST_HELPTEXT);
+    ap_set_cmd_callback(cmd_test, pyro_cli_cmd_test);
+    ap_add_str_opt(cmd_test, "import-root i", NULL);
+    ap_add_flag(cmd_test, "errors e");
 
     // Register the parser for the 'time' comand.
     ArgParser* cmd_time = ap_new_cmd(parser, "time");
@@ -181,8 +182,6 @@ int main(int argc, char* argv[]) {
 
     ap_set_helptext(cmd_check, CHECK_HELPTEXT);
     ap_set_cmd_callback(cmd_check, pyro_cli_cmd_check);
-    ap_add_str_opt(cmd_check, "max-memory m", NULL);
-    ap_add_str_opt(cmd_check, "stack-size s", NULL);
 
     // Register the parser for the 'get' command.
     ArgParser* cmd_get = ap_new_cmd(parser, "get");

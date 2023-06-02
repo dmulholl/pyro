@@ -1,5 +1,44 @@
 import std::path;
 
+var init_script = "
+var $filepath;
+
+pub def set_filepath(filepath) {
+    $filepath = filepath;
+}
+";
+
+def make_module(filepath) {
+    var module = $exec(init_script);
+    module::set_filepath(filepath);
+    return module;
+}
+
+def add_import_roots_from_path(filepath) {
+    var stashed_roots = $roots:copy();
+
+    var real_path = try path::realpath(filepath);
+    if $is_err(real_path) {
+        $exit("error: failed to resolve path '${filepath}': ${code}");
+    }
+
+    var parent_path = path::dirname(real_path);
+    var modules_path = path::join(parent_path, "modules");
+
+    $roots:append(parent_path);
+    $roots:append(modules_path);
+
+    return stashed_roots;
+}
+
+def restore_stashed_import_roots(stashed_roots) {
+    $roots:clear();
+
+    for root in stashed_roots {
+        $roots:append(root);
+    }
+}
+
 def time_function(file_name, func_name, func, is_first) {
     if !is_first {
         echo;
@@ -41,9 +80,12 @@ for filepath in $args {
         $exit("error: failed to read file '${filepath}': ${code}");
     }
 
-    var module = try $exec(code);
-    if $is_err(module) {
-        $exit("error: failed to execute file '${filepath}': ${module}");
+    var stashed_roots = add_import_roots_from_path(filepath);
+
+    var module = make_module(filepath);
+    var result = try $exec(code, filepath, module);
+    if $is_err(result) {
+        $exit("error: failed to execute file '${filepath}': ${result}");
     }
 
     for name in module:all_members() {
@@ -52,5 +94,7 @@ for filepath in $args {
             is_first = false;
         }
     }
+
+    restore_stashed_import_roots(stashed_roots);
 }
 
