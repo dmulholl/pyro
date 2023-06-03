@@ -107,7 +107,7 @@ def run_tests() {
                     }
                     had_failed_test_func = true;
                     funcs_failed += 1;
-                    $print("            \x1B[1;31m· ${name}\x1B[0m\n");
+                    $print("            \x1B[1;31m× ${name}\x1B[0m\n");
                 } else {
                     funcs_passed += 1;
                 }
