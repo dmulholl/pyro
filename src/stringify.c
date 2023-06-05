@@ -722,6 +722,73 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
 }
 
 
+// With the '%g' format specifier, the precision sets the maximum number of significant digits.
+// Ref: https://stackoverflow.com/a/26702084
+// Ref: https://stackoverflow.com/a/4742599
+// Ref: https://www.exploringbinary.com/the-shortest-decimal-string-that-round-trips-may-not-be-the-nearest/
+static char* get_round_tripable_string_for_f64(PyroVM* vm, double value) {
+    char* sig_fig_15 = pyro_sprintf(vm, "%.15g", value);
+    if (!sig_fig_15) {
+        return NULL;
+    }
+    if (strtod(sig_fig_15, NULL) == value) {
+        return sig_fig_15;
+    }
+    PYRO_FREE_ARRAY(vm, char, sig_fig_15, strlen(sig_fig_15) + 1);
+
+    char* sig_fig_16 = pyro_sprintf(vm, "%.16g", value);
+    if (!sig_fig_16) {
+        return NULL;
+    }
+    if (strtod(sig_fig_16, NULL) == value) {
+        return sig_fig_16;
+    }
+    PYRO_FREE_ARRAY(vm, char, sig_fig_16, strlen(sig_fig_16) + 1);
+
+    // 17 significant digits guarantees a distinct representation for every 64-bit float.
+    return pyro_sprintf(vm, "%.17g", value);
+}
+
+
+static PyroStr* make_debug_string_for_f64(PyroVM* vm, double value) {
+    char* array = get_round_tripable_string_for_f64(vm, value);
+    if (!array) {
+        return NULL;
+    }
+
+    size_t count = strlen(array);
+
+    PyroStr* string = PyroStr_take(array, count, count + 1, vm);
+    if (!string) {
+        PYRO_FREE_ARRAY(vm, char, array, count + 1);
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    // The '%g' format specifier strips a trailing '.0' so we may need to add it back.
+    // We also need to allow for 'nan' and 'inf'.
+    for (size_t i = 0; i < count; i++) {
+        if (string->bytes[i] == '.' || islower(string->bytes[i])) {
+            return string;
+        }
+    }
+
+    PyroStr* suffix = PyroStr_copy(".0", 2, false, vm);
+    if (!suffix) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    PyroStr* string_with_suffix = PyroStr_concat(string, suffix, vm);
+    if (!string_with_suffix) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    return string_with_suffix;
+}
+
+
 PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_debug);
     if (!PYRO_IS_NULL(method)) {
@@ -774,37 +841,7 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     }
 
     if (PYRO_IS_F64(value)) {
-        // With %g, the precision sets the maximum number of significant digits.
-        // Ref: https://stackoverflow.com/a/26702084
-        PyroStr* result = pyro_sprintf_to_obj(vm, "%.17g", value.as.f64);
-        if (!result) {
-            return NULL;
-        }
-
-        // %g strips a trailing '.0'.
-        if (isdigit(result->bytes[result->count - 1])) {
-            for (size_t i = 0; i < result->count; i++) {
-                if (result->bytes[i] == '.') {
-                    return result;
-                }
-            }
-
-            PyroStr* suffix = PyroStr_copy(".0", 2, false, vm);
-            if (!suffix) {
-                pyro_panic(vm, "out of memory");
-                return NULL;
-            }
-
-            PyroStr* result_with_suffix = PyroStr_concat(result, suffix, vm);
-            if (!result_with_suffix) {
-                pyro_panic(vm, "out of memory");
-                return NULL;
-            }
-
-            return result_with_suffix;
-        }
-
-        return result;
+        return make_debug_string_for_f64(vm, value.as.f64);
     }
 
     return pyro_stringify_value(vm, value);

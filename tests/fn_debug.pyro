@@ -2,8 +2,29 @@ assert $debug(null) == `null`;
 assert $debug(true) == `true`;
 assert $debug(false) == `false`;
 
+assert $debug(-123456) == `-123456`;
+assert $debug(-123) == `-123`;
+assert $debug(-1) == `-1`;
+assert $debug(0) == `0`;
+assert $debug(1) == `1`;
 assert $debug(123) == `123`;
-assert $debug(1.25) == `1.25`;
+assert $debug(123456) == `123456`;
+
+assert $debug(-123.456) == `-123.456`;
+assert $debug(-1.0) == `-1.0`;
+assert $debug(0.0) == `0.0`;
+assert $debug(1.0) == `1.0`;
+assert $debug(123.456) == `123.456`;
+
+assert $f64($debug(0.1)) == 0.1;
+assert $f64($debug(0.1)) == 0.10000000000000001;
+
+assert $f64($debug(0.3)) == 0.3;
+assert $f64($debug(0.3)) == 0.29999999999999999;
+
+assert $f64($debug(0.1 + 0.1 + 0.1)) == 0.30000000000000004;
+assert $f64($debug(0.1 + 0.1 + 0.1)) == 0.1 + 0.1 + 0.1;
+assert $f64($debug(0.1 + 0.1 + 0.1)) != 0.3;
 
 assert $debug("foo") == `"foo"`;
 assert $debug("\n") == `"\n"`;
