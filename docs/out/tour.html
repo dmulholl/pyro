@@ -148,7 +148,7 @@ Variables are declared using the <code>var</code> keyword:
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
-Variables must be declared before use. If an initial value isn't specified the variable has the value <code>null</code>.
+Variables must be declared before use. If an initial value isn't specified the variable gets the default value <code>null</code>.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
@@ -341,7 +341,7 @@ You can use the null-coalescing operator <code>??</code> to supply a default val
 <span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Functions which don't explicitly specify a return value have the return value <code>null</code>.
+Functions which don't explicitly specify a return value have the default return value <code>null</code>.
 </p>
 <h3 id="equality">
 Equality

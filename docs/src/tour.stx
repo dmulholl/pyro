@@ -26,7 +26,7 @@ Variables are declared using the `var` keyword:
 ::: code pyro
     var foo = 123;
 
-Variables must be declared before use. If an initial value isn't specified the variable has the value `null`.
+Variables must be declared before use. If an initial value isn't specified the variable gets the default value `null`.
 
 ::: code pyro
     var foo;
@@ -150,7 +150,7 @@ You can use the null-coalescing operator `??` to supply a default value in place
 ::: code pyro
     var result = maybe_null() ?? "default";
 
-Functions which don't explicitly specify a return value have the return value `null`.
+Functions which don't explicitly specify a return value have the default return value `null`.
 
 
 
