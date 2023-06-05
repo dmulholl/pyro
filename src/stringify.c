@@ -774,9 +774,37 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     }
 
     if (PYRO_IS_F64(value)) {
-        // 17 is the minimum number of significant digits that guarantees that any two distinct
-        // IEEE-754 64-bit floats will have distinct representations when converted to decimal.
-        return stringify_f64(vm, value.as.f64, 17);
+        // With %g, the precision sets the maximum number of significant digits.
+        // Ref: https://stackoverflow.com/a/26702084
+        PyroStr* result = pyro_sprintf_to_obj(vm, "%.17g", value.as.f64);
+        if (!result) {
+            return NULL;
+        }
+
+        // %g strips a trailing '.0'.
+        if (isdigit(result->bytes[result->count - 1])) {
+            for (size_t i = 0; i < result->count; i++) {
+                if (result->bytes[i] == '.') {
+                    return result;
+                }
+            }
+
+            PyroStr* suffix = PyroStr_copy(".0", 2, false, vm);
+            if (!suffix) {
+                pyro_panic(vm, "out of memory");
+                return NULL;
+            }
+
+            PyroStr* result_with_suffix = PyroStr_concat(result, suffix, vm);
+            if (!result_with_suffix) {
+                pyro_panic(vm, "out of memory");
+                return NULL;
+            }
+
+            return result_with_suffix;
+        }
+
+        return result;
     }
 
     return pyro_stringify_value(vm, value);

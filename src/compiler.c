@@ -874,22 +874,22 @@ static int64_t parse_int_literal(Parser* parser) {
 }
 
 
-// So, figuring out the maximum possible length of a 64-bit IEEE 754 float literal is complicated.
-// Possible answers [here][1] include 24 characters and... 1079 characters! Setting a 24 character
-// maximum for now but I may want to revisit this at some point.
+// So, figuring out the maximum possible length of a 64-bit IEEE 754 float literal is
+// complicated. Possible answers [here][1] include 24 characters and... 1079 characters!
+// Setting a 64 character maximum for now but I may want to revisit this at some point.
 //
 // [1]: https://stackoverflow.com/questions/1701055/
 //
 static double parse_float_literal(Parser* parser) {
-    char buffer[24 + 1];
+    char buffer[64 + 1];
     size_t count = 0;
 
     for (size_t i = 0; i < parser->previous_token.length; i++) {
         if (parser->previous_token.start[i] == '_') {
             continue;
         }
-        if (count == 24) {
-            ERROR_AT_PREVIOUS_TOKEN("too many digits in floating-point literal (max: 24)");
+        if (count == 64) {
+            ERROR_AT_PREVIOUS_TOKEN("too many digits in floating-point literal (max: 64)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];

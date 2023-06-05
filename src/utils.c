@@ -294,9 +294,9 @@ bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value)
 }
 
 
-// May want to revisit the max allowed literal length of 24.
+// May want to revisit the max allowed literal length of 64.
 bool pyro_parse_string_as_float(const char* string, size_t length, double* value) {
-    char buffer[24 + 1];
+    char buffer[64 + 1];
     size_t count = 0;
     size_t next_index = 0;
 
@@ -308,7 +308,7 @@ bool pyro_parse_string_as_float(const char* string, size_t length, double* value
         buffer[count] = string[next_index];
         next_index++;
         count++;
-        if (count > 24) {
+        if (count > 64) {
             return false;
         }
     }

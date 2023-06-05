@@ -77,9 +77,6 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     * Otherwise, if `arg` has a `:$str()` method, the output of this method will be returned.
     * Otherwise, the default string for `arg` will be returned.
 
-    Note that calling `$debug()` on an `f64` prints its value to 17 decimal digits of precision, stripping trailing zeros after the decimal point.
-    (17 is the minimum number of decimal digits required to guarantee that any two distinct 64-bit floats have distinct representations.)
-
 
 
 [[ `$env(name: str) -> str|err` <br> `$env(name: str, value: any) -> bool` ]]
@@ -141,6 +138,13 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$f64(arg: i64|char|str) -> f64` ]]
+
+    Converts `arg` to a float.
+    String arguments can contain underscores for readability.
+
+
+
 [[ `$field(object: any, field_name: str) -> any` ]]
 
     Gets a field value by name.
@@ -153,13 +157,6 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 [[ `$fields(object: any) -> iter[str]` ]]
 
     Returns an iterator over the object's public field names as strings.
-
-
-
-[[ `$f64(arg: i64|char|str) -> f64` ]]
-
-    Converts `arg` to a float.
-    String arguments can contain underscores for readability.
 
 
 

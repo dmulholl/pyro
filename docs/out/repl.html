@@ -65,9 +65,6 @@
 <a href="#expression-statements">Expression Statements</a>
 </li>
 <li>
-<a href="#floating-point-numbers">Floating-point Numbers</a>
-</li>
-<li>
 <a href="#multi-line-input">Multi-line Input</a>
 </li>
 <li>
@@ -122,44 +119,6 @@ This is equivalent to running:
 <span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="s">&quot;foo&quot;</span> <span class="o">+</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span>
 <span class="s">&quot;foobar&quot;</span>
 </pre>
-<h3 id="floating-point-numbers">
-Floating-point Numbers
-</h3>
-<p>
-You can use the REPL as a simple calculator, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>
-<span class="mi">3</span>
-</pre>
-<p>
-If the value of the expression is a floating-point number, you might be surprised by the output, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.1</span>
-<span class="mf">0.20000000000000001</span>
-</pre>
-<p>
-Pyro is showing you the <code>$debug()</code> output for the expression, and calling <code>$debug()</code> on a floating-point number rounds its value to 17 decimal digits of precision, then strips any trailing zeros after the decimal point.
-(17 is the minimum number of decimal digits required to guarantee that any two distinct 64-bit floats have distinct representations.)
-</p>
-<p>
-This is a feature, not a bug &mdash; <code>$debug()</code> shows you the value you actually have, not the value you expected!
-</p>
-<p>
-If you want a friendlier representation, you can <code>echo</code> the value instead, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="k">echo</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.1</span>
-<span class="mf">0.2</span>
-</pre>
-<p>
-<code>echo</code> calls <code>$str()</code> on its arguments before printing them.
-For floating-point numbers, <code>$str()</code> rounds the value to 6 decimal digits of precision, then strips any trailing zeros after the decimal point.
-</p>
-<p>
-(Note that these are simply default precisions &mdash; you can print a floating-point number to any level of precision using the <code>$fmt()</code> or <code>$print()</code> functions.)
-</p>
 <h3 id="multi-line-input">
 Multi-line Input
 </h3>
