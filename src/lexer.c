@@ -1,7 +1,7 @@
 #include "../inc/pyro.h"
 
 
-static bool is_alpha(char c) {
+static bool is_alpha_or_underscore(char c) {
     if (c >= 'a' && c <= 'z') return true;
     if (c >= 'A' && c <= 'Z') return true;
     if (c == '_') return true;
@@ -604,7 +604,7 @@ Token pyro_next_token(Lexer* lexer) {
 
     char c = next_char(lexer);
 
-    if (is_alpha(c) || c == '$') {
+    if (is_alpha_or_underscore(c) || c == '$') {
         return read_identifier(lexer);
     }
 
