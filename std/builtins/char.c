@@ -58,7 +58,7 @@ static PyroValue char_is_ascii_octal(PyroVM* vm, size_t arg_count, PyroValue* ar
 
 
 static PyroValue char_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(isxdigit(args[-1].as.u32));
+    return pyro_bool(pyro_is_hex_digit(args[-1].as.u32));
 }
 
 

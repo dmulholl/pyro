@@ -68,4 +68,31 @@ static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, 
     return false;
 }
 
+// Returns true if [c] is ASCII A-Z or a-z.
+bool pyro_is_alpha(char c);
+
+// Returns true if [c] is ASCII 0-9.
+bool pyro_is_digit(char c);
+
+// Returns true if [c] is an ASCII whitespace character.
+bool pyro_is_space(char c);
+
+// Returns true if [c] is an ASCII hexadecimal digit.
+bool pyro_is_hex_digit(char c);
+
+// Returns true if [c] is an ASCII octal digit.
+bool pyro_is_octal_digit(char c);
+
+// Returns true if [c] is an ASCII binary digit.
+bool pyro_is_binary_digit(char c);
+
+// Returns true if [c] is a printable ASCII character.
+bool pyro_is_printable(char c);
+
+// Returns true if [c] is a lowercase ASCII character.
+bool pyro_is_lower(char c);
+
+// Returns true if [c] is an uppercase ASCII character.
+bool pyro_is_upper(char c);
+
 #endif

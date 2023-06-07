@@ -9,11 +9,6 @@ static bool is_alpha_or_underscore(char c) {
 }
 
 
-static bool is_digit(char c) {
-    return c >= '0' && c <= '9';
-}
-
-
 static bool is_digit_or_underscore(char c) {
     if (c >= '0' && c <= '9') return true;
     if (c == '_') return true;
@@ -28,44 +23,11 @@ static bool is_digit_or_plus_or_minus(char c) {
 }
 
 
-static bool is_alpha_or_digit(char c) {
+static bool is_alpha_or_digit_or_underscore(char c) {
     if (c >= 'a' && c <= 'z') return true;
     if (c >= 'A' && c <= 'Z') return true;
     if (c >= '0' && c <= '9') return true;
     if (c == '_') return true;
-    return false;
-}
-
-
-static bool is_whitespace(char c) {
-    switch (c) {
-        case '\n':
-        case '\r':
-        case ' ':
-        case '\t':
-            return true;
-        default:
-            return false;
-    }
-}
-
-
-static bool is_hex_digit(char c) {
-    if (c >= '0' && c <= '9') return true;
-    if (c >= 'A' && c <= 'F') return true;
-    if (c >= 'a' && c <= 'f') return true;
-    return false;
-}
-
-
-static bool is_octal_digit(char c) {
-    if (c >= '0' && c <= '7') return true;
-    return false;
-}
-
-
-static bool is_binary_digit(char c) {
-    if (c == '0' || c == '1') return true;
     return false;
 }
 
@@ -238,7 +200,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
 
 
 static Token read_identifier(Lexer* lexer) {
-    while (is_alpha_or_digit(peek(lexer))) {
+    while (is_alpha_or_digit_or_underscore(peek(lexer))) {
         next_char(lexer);
     }
     return make_token(lexer, get_identifier_type(lexer));
@@ -254,7 +216,7 @@ static Token read_number(Lexer* lexer) {
         return make_token(lexer, TOKEN_INT);
     }
 
-    if (peek(lexer) == '.' && is_digit(peek2(lexer))) {
+    if (peek(lexer) == '.' && pyro_is_digit(peek2(lexer))) {
         next_char(lexer);
         while (is_digit_or_underscore(peek(lexer))) {
             next_char(lexer);
@@ -325,8 +287,8 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
 
         case 'x': {
             if (chars_remaining >= 3 &&
-                isxdigit(lexer->next[1]) &&
-                isxdigit(lexer->next[2])
+                pyro_is_hex_digit(lexer->next[1]) &&
+                pyro_is_hex_digit(lexer->next[2])
             ) {
                 return true;
             }
@@ -343,10 +305,10 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
 
         case 'u': {
             if (chars_remaining >= 5 &&
-                isxdigit(lexer->next[1]) &&
-                isxdigit(lexer->next[2]) &&
-                isxdigit(lexer->next[3]) &&
-                isxdigit(lexer->next[4])
+                pyro_is_hex_digit(lexer->next[1]) &&
+                pyro_is_hex_digit(lexer->next[2]) &&
+                pyro_is_hex_digit(lexer->next[3]) &&
+                pyro_is_hex_digit(lexer->next[4])
             ) {
                 return true;
             }
@@ -363,14 +325,14 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
 
         case 'U': {
             if (chars_remaining >= 9 &&
-                isxdigit(lexer->next[1]) &&
-                isxdigit(lexer->next[2]) &&
-                isxdigit(lexer->next[3]) &&
-                isxdigit(lexer->next[4]) &&
-                isxdigit(lexer->next[5]) &&
-                isxdigit(lexer->next[6]) &&
-                isxdigit(lexer->next[7]) &&
-                isxdigit(lexer->next[8])
+                pyro_is_hex_digit(lexer->next[1]) &&
+                pyro_is_hex_digit(lexer->next[2]) &&
+                pyro_is_hex_digit(lexer->next[3]) &&
+                pyro_is_hex_digit(lexer->next[4]) &&
+                pyro_is_hex_digit(lexer->next[5]) &&
+                pyro_is_hex_digit(lexer->next[6]) &&
+                pyro_is_hex_digit(lexer->next[7]) &&
+                pyro_is_hex_digit(lexer->next[8])
             ) {
                 return true;
             }
@@ -387,7 +349,7 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
 
         default: {
             const char* error_message = "invalid escape sequence \\(0x%02X)";
-            if (isprint(lexer->next[0])) {
+            if (pyro_is_printable(lexer->next[0])) {
                 error_message = "invalid escape sequence \\%c";
             }
 
@@ -610,7 +572,7 @@ Token pyro_next_token(Lexer* lexer) {
 
     if (c == '0' && (peek(lexer) == 'x' || peek(lexer) == 'X')) {
         next_char(lexer);
-        while (is_hex_digit(peek(lexer)) || peek(lexer) == '_') {
+        while (pyro_is_hex_digit(peek(lexer)) || peek(lexer) == '_') {
             next_char(lexer);
         }
         return make_token(lexer, TOKEN_HEX_INT);
@@ -618,7 +580,7 @@ Token pyro_next_token(Lexer* lexer) {
 
     if (c == '0' && (peek(lexer) == 'o' || peek(lexer) == 'O')) {
         next_char(lexer);
-        while (is_octal_digit(peek(lexer)) || peek(lexer) == '_') {
+        while (pyro_is_octal_digit(peek(lexer)) || peek(lexer) == '_') {
             next_char(lexer);
         }
         return make_token(lexer, TOKEN_OCTAL_INT);
@@ -626,13 +588,13 @@ Token pyro_next_token(Lexer* lexer) {
 
     if (c == '0' && (peek(lexer) == 'b' || peek(lexer) == 'B')) {
         next_char(lexer);
-        while (is_binary_digit(peek(lexer)) || peek(lexer) == '_') {
+        while (pyro_is_binary_digit(peek(lexer)) || peek(lexer) == '_') {
             next_char(lexer);
         }
         return make_token(lexer, TOKEN_BINARY_INT);
     }
 
-    if (is_digit(c)) {
+    if (pyro_is_digit(c)) {
         return read_number(lexer);
     }
 
@@ -689,7 +651,7 @@ Token pyro_next_token(Lexer* lexer) {
     }
 
     const char* error_message = "unexpected byte value (0x%02X) in input";
-    if (isprint(c)) {
+    if (pyro_is_printable(c)) {
         error_message = "unexpected character '%c' in input";
     }
 
