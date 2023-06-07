@@ -10,8 +10,8 @@ uint64_t pyro_fnv1a_64_opt(const char* string, size_t length);
 uint64_t pyro_djb2_64(const char* string, size_t length);
 uint64_t pyro_sdbm_64(const char* string, size_t length);
 
-// Parse a string as an integer. The string can contain underscores and can begin with 0b, 0o, or
-// 0x to specify the base. Returns true if successful, false if the string was invalid.
+// Parse a string as an integer. The string can contain underscores and can begin with 0b, 0o,
+// or 0x to specify the base. Returns true if successful, false if the string was invalid.
 bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value);
 
 // Parse a string as a float. The string can contain underscores. Returns true if successful,
@@ -38,8 +38,8 @@ char* pyro_strdup(const char* source);
 // - "/foo/bar.txt" --> "bar.txt"
 const char* pyro_basename(const char* path);
 
-// Takes a null-terminated path as input. Returns the length of the directory name prefix within
-// the input string. Does not modify the input string.
+// Takes a null-terminated path as input. Returns the length of the directory name prefix
+// within the input string. Does not modify the input string.
 // - "" --> ""
 // - "/" --> "/"
 // - "/bar.txt" --> "/"
