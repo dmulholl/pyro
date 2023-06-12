@@ -1,9 +1,9 @@
 ---
-title: <code>std::path</code>
-meta_title: Pyro Standard Library &mdash; std::path
+title: <code>std::fs</code>
+meta_title: Pyro Standard Library &mdash; std::fs
 ---
 
-This module contains filepath utilities.
+This module contains file system utilities.
 
 
 ### Functions
@@ -22,7 +22,7 @@ This module contains filepath utilities.
     Examples:
 
     ::: code pyro
-        import std::path::{basename};
+        import std::fs::{basename};
 
         assert basename("") == "";
         assert basename("/") == "";
@@ -50,7 +50,7 @@ This module contains filepath utilities.
     Examples:
 
     ::: code pyro
-        import std::path::{dirname};
+        import std::fs::{dirname};
 
         assert dirname("") == "";
         assert dirname("/") == "/";
@@ -94,7 +94,7 @@ This module contains filepath utilities.
     Examples:
 
     ::: code pyro
-        import std::path::{join};
+        import std::fs::{join};
 
         assert join("") == "";
         assert join("foo") == "foo";
@@ -118,7 +118,7 @@ This module contains filepath utilities.
     Examples:
 
     ::: code pyro
-        import std::path::{normpath};
+        import std::fs::{normpath};
 
         assert normpath("foo//bar") == "foo/bar";
         assert normpath("foo/./bar") == "foo/bar";

@@ -25,6 +25,10 @@ All standard library modules are submodules of the root module `std`.
 
     Useful constants.
 
+[[ [fs](@root/stdlib/fs//) ]]
+
+    File system utilities.
+
 [[ [html](@root/stdlib/html//) ]]
 
     Utility functions for working with HTML.
@@ -44,10 +48,6 @@ All standard library modules are submodules of the root module `std`.
 [[ [mt64](@root/stdlib/mt64//) ]]
 
     A library for generating pseudo-random numbers.
-
-[[ [path](@root/stdlib/path//) ]]
-
-    Filepath utilities.
 
 [[ [pretty](@root/stdlib/pretty//) ]]
 
