@@ -17,26 +17,24 @@ DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DE
 # Core files for the Pyro VM.
 HDR_FILES = inc/*.h
 SRC_FILES = src/*.c std/builtins/*.c std/modules/*.c
+OBJ_FILES = build/common/sqlite.o \
+			build/common/mt64.o \
+			build/common/embeds.o
 
 # Files for the CLI binary.
 CLI_HDR_FILES = cli/*.h
 CLI_SRC_FILES = cli/*.c
+CLI_OBJ_FILES = build/common/bestline.o \
+				build/common/args.o
 
-# Files for the baked-application binary.
+# Files for baked-application binaries.
 APP_SRC_FILES = app/*.c
-
-# Third-party libraries and embedded files.
-OBJ_FILES = build/common/sqlite.o \
-			build/common/bestline.o \
-			build/common/args.o \
-			build/common/mt64.o \
-			build/common/embeds.o
 
 # Default name for the baked-application binary.
 APPNAME ?= app
 
 # --------------- #
-#  Phony Targets  #
+#  Build Targets  #
 # --------------- #
 
 all: ## Builds both the release and debug binaries.
@@ -44,43 +42,59 @@ all: ## Builds both the release and debug binaries.
 	@make release
 
 release: ## Builds the release binary.
-release: $(OBJ_FILES)
+release: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/release
 	@printf "\e[1;32mBuilding\e[0m build/release/pyro\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) \
-		-o build/release/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
+		-o build/release/pyro \
+		$(SRC_FILES) $(OBJ_FILES) \
+		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
+		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/release/pyro --version
 
 debug: ## Builds the debug binary.
-debug: $(OBJ_FILES)
+debug: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
+		-o build/debug/pyro \
+		$(SRC_FILES) $(OBJ_FILES) \
+		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
+		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-sanitize: ## Builds a debug binary with sanitizer checks.
-debug-sanitize: $(OBJ_FILES)
+debug-sanitize: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -fsanitize=address,undefined \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) \
+		-fsanitize=address,undefined \
+		-o build/debug/pyro \
+		$(SRC_FILES) $(OBJ_FILES) \
+		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
+		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-dump: ## Builds a debug binary that also dumps bytecode.
-debug-dump: $(OBJ_FILES)
+debug-dump: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
+		-o build/debug/pyro \
+		$(SRC_FILES) $(OBJ_FILES) \
+		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
+		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 debug-trace: ## Builds a debug binary that also dumps bytecode and traces execution.
-debug-trace: $(OBJ_FILES)
+debug-trace: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION \
-		-o build/debug/pyro $(SRC_FILES) $(OBJ_FILES) $(CLI_SRC_FILES) -lm -ldl -pthread
+		-o build/debug/pyro \
+		$(SRC_FILES) $(OBJ_FILES) \
+		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
+		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
 .PHONY: app
@@ -89,7 +103,14 @@ app: $(OBJ_FILES)
 	@mkdir -p build/release
 	@printf "\e[1;32mBuilding\e[0m build/release/$(APPNAME)\n"
 	@$(CC) $(CFLAGS) $(RELEASE_FLAGS) \
-		-o build/release/$(APPNAME) $(SRC_FILES) $(OBJ_FILES) $(APP_SRC_FILES) -lm -ldl -pthread
+		-o build/release/$(APPNAME) \
+		$(SRC_FILES) $(OBJ_FILES) \
+		$(APP_SRC_FILES) \
+		-lm -ldl -pthread
+
+# ------------------ #
+#  Utility Commands  #
+# ------------------ #
 
 check-release: ## Builds the release binary, then runs the test suite.
 check-release: tests/compiled_module.so
@@ -130,9 +151,9 @@ help: ## Prints available commands.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
 	{printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-# ------------- #
-#  C Libraries  #
-# ------------- #
+# ----------------------- #
+#  Third-Party Libraries  #
+# ----------------------- #
 
 build/common/sqlite.o: lib/sqlite/sqlite3.c lib/sqlite/sqlite3.h
 	@mkdir -p build/common
@@ -182,7 +203,7 @@ build/bin/embed: tools/embed.c
 
 tests/compiled_module.so: tests/compiled_module.c inc/*.h
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.so\n"
-	@${CC} ${CFLAGS} -O3 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
 
 check-compiled-module:
 	@rm -f ./tests/compiled_module.so
