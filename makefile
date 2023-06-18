@@ -17,8 +17,7 @@ DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG -D PYRO_DE
 # Core files for the Pyro VM.
 HDR_FILES = inc/*.h
 SRC_FILES = src/*.c std/builtins/*.c std/modules/*.c
-OBJ_FILES = build/common/sqlite.o \
-			build/common/mt64.o \
+OBJ_FILES = build/common/mt64.o \
 			build/common/embeds.o
 
 # Files for the CLI binary.
