@@ -65,10 +65,6 @@ All standard library modules are submodules of the root module `std`.
 
     A utility module for sending email.
 
-[[ [sqlite](@root/stdlib/sqlite//) ]]
-
-    The SQLite database engine.
-
 [[ [url](@root/stdlib/url//) ]]
 
     A utility module for handling URLs.
