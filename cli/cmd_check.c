@@ -22,7 +22,7 @@ int pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
             exit(1);
         }
 
-        pyro_try_compile_file(vm, path);
+        pyro_try_compile_file(vm, path, ap_found(cmd_parser, "disassemble"));
         if (pyro_get_panic_flag(vm)) {
             had_panic = true;
         }

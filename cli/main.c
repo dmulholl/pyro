@@ -94,13 +94,14 @@ static const char* TIME_HELPTEXT =
 static const char* CHECK_HELPTEXT =
     "Usage: pyro check [files]\n"
     "\n"
-    "  Attempts to compile but not execute the specified files. Can be used to\n"
-    "  check files for syntax errors.\n"
+    "  Attempts to compile but not execute the specified files. Exits with a\n"
+    "  non-zero status code if an input file contains syntax errors.\n"
     "\n"
     "Arguments:\n"
-    "  [files]              Files to compile.\n"
+    "  [files]              Input files.\n"
     "\n"
     "Flags:\n"
+    "  -d, --disassemble    Print the disassembled bytecode for each input file.\n"
     "  -h, --help           Print this help text and exit."
     ;
 
@@ -182,6 +183,7 @@ int main(int argc, char* argv[]) {
 
     ap_set_helptext(cmd_check, CHECK_HELPTEXT);
     ap_set_cmd_callback(cmd_check, pyro_cli_cmd_check);
+    ap_add_flag(cmd_check, "disassemble d");
 
     // Register the parser for the 'get' command.
     ArgParser* cmd_get = ap_new_cmd(parser, "get");

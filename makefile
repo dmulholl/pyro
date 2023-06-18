@@ -74,22 +74,11 @@ debug-sanitize: $(OBJ_FILES) $(CLI_OBJ_FILES)
 		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
-debug-dump: ## Builds a debug binary that also dumps bytecode.
-debug-dump: $(OBJ_FILES) $(CLI_OBJ_FILES)
-	@mkdir -p build/debug
-	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE \
-		-o build/debug/pyro \
-		$(SRC_FILES) $(OBJ_FILES) \
-		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
-		-lm -ldl -pthread
-	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
-
-debug-trace: ## Builds a debug binary that also dumps bytecode and traces execution.
+debug-trace: ## Builds a debug binary that also traces execution.
 debug-trace: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_DUMP_BYTECODE -D PYRO_DEBUG_TRACE_EXECUTION \
+	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_TRACE_EXECUTION \
 		-o build/debug/pyro \
 		$(SRC_FILES) $(OBJ_FILES) \
 		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \

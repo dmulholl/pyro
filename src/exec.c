@@ -2724,12 +2724,12 @@ void pyro_reset_vm(PyroVM* vm) {
 }
 
 
-void pyro_try_compile_file(PyroVM* vm, const char* path) {
+void pyro_try_compile_file(PyroVM* vm, const char* path, bool dump_bytecode) {
     PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_try_compile_file()");
     if (vm->halt_flag) {
         return;
     }
-    pyro_compile(vm, (char*)buf->bytes, buf->count, path);
+    pyro_compile(vm, (char*)buf->bytes, buf->count, path, dump_bytecode);
 }
 
 
@@ -2738,7 +2738,7 @@ void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char
         module = vm->main_module;
     }
 
-    PyroFn* fn = pyro_compile(vm, code, code_length, source_id);
+    PyroFn* fn = pyro_compile(vm, code, code_length, source_id, false);
     if (vm->halt_flag) {
         return;
     }

@@ -24,7 +24,7 @@ void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module);
 void pyro_run_main_func(PyroVM* vm);
 
 // Attempts to compile but not execute the file.
-void pyro_try_compile_file(PyroVM* vm, const char* path);
+void pyro_try_compile_file(PyroVM* vm, const char* path, bool dump_bytecode);
 
 // Calls a value as a method on a receiver, where [method] is a value returned by pyro_get_method()
 // containing one of:

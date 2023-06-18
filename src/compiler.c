@@ -104,6 +104,7 @@ typedef struct {
     const char* src_id;
     size_t num_statements;
     size_t num_expression_statements;
+    bool dump_bytecode;
 } Parser;
 
 
@@ -423,11 +424,11 @@ static PyroFn* end_fn_compiler(Parser* parser) {
     emit_naked_return(parser);
     PyroFn* fn = parser->fn_compiler->fn;
 
-    #ifdef PYRO_DEBUG_DUMP_BYTECODE
+    if (parser->dump_bytecode) {
         if (!parser->had_syntax_error) {
-            pyro_disassemble_function(parser->vm, fn);
+            pyro_disassemble_function(parser->vm, fn, parser->src_id);
         }
-    #endif
+    }
 
     parser->fn_compiler = parser->fn_compiler->enclosing;
     return fn;
@@ -2701,7 +2702,7 @@ static void parse_statement(Parser* parser) {
 /* -------------------- */
 
 
-PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id, bool dump_bytecode) {
     Parser parser;
     parser.fn_compiler = NULL;
     parser.class_compiler = NULL;
@@ -2711,6 +2712,7 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     parser.vm = vm;
     parser.num_statements = 0;
     parser.num_expression_statements = 0;
+    parser.dump_bytecode = dump_bytecode;
 
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we report the
     // correct line number for syntax errors at the end of the input, e.g. a missing trailing
