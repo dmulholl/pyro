@@ -79,4 +79,7 @@ bool pyro_define_pri_field(PyroVM* vm, PyroClass* class, const char* name, PyroV
 // Sets the value of the VM's REPL flag.
 void pyro_set_repl_flag(PyroVM* vm, bool flag);
 
+// Sets the value of the VM's trace_execution flag.
+void pyro_set_trace_execution_flag(PyroVM* vm, bool flag);
+
 #endif

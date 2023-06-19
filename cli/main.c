@@ -25,6 +25,7 @@ static const char* HELPTEXT =
     "\n"
     "Flags:\n"
     "  -h, --help                 Print this help text and exit.\n"
+    "  -t, --trace-execution      Trace bytecode execution. (Debug builds only.)\n"
     "  -v, --version              Print the version number and exit.\n"
     "\n"
     "Commands:\n"
@@ -148,6 +149,7 @@ int main(int argc, char* argv[]) {
     ap_add_str_opt(parser, "max-memory m", NULL);
     ap_add_str_opt(parser, "stack-size s", NULL);
     ap_add_str_opt(parser, "import-root i", NULL);
+    ap_add_flag(parser, "trace-execution t");
     ap_first_pos_arg_ends_options(parser, true);
 
     // Register the parser for the 'test' comand.

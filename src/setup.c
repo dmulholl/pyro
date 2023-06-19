@@ -139,6 +139,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->str_op_binary_greater_greater = NULL;
     vm->str_rop_binary_greater_greater = NULL;
     vm->str_op_unary_tilde = NULL;
+    vm->trace_execution = false;
 
     // Initialize the [frames] stack.
     vm->frames = PYRO_ALLOCATE_ARRAY(vm, PyroCallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
@@ -639,4 +640,8 @@ void pyro_set_max_memory(PyroVM* vm, size_t bytes) {
 
 void pyro_set_repl_flag(PyroVM* vm, bool flag) {
     vm->in_repl = flag;
+}
+
+void pyro_set_trace_execution_flag(PyroVM* vm, bool flag) {
+    vm->trace_execution = flag;
 }

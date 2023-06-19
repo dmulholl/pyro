@@ -29,6 +29,9 @@ void pyro_cli_run_file(ArgParser* parser) {
     pyro_set_args(vm, ap_count_args(parser), args);
     free(args);
 
+    // Set the trace-execution flag.
+    pyro_set_trace_execution_flag(vm, ap_found(parser, "trace-execution"));
+
     // Compile and execute the script.
     pyro_exec_path(vm, path, NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {

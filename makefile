@@ -62,23 +62,12 @@ debug: $(OBJ_FILES) $(CLI_OBJ_FILES)
 		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
-debug-sanitize: ## Builds a debug binary with sanitizer checks.
-debug-sanitize: $(OBJ_FILES) $(CLI_OBJ_FILES)
+sanitize: ## Builds a debug binary with sanitizer checks.
+sanitize: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) \
 		-fsanitize=address,undefined \
-		-o build/debug/pyro \
-		$(SRC_FILES) $(OBJ_FILES) \
-		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
-		-lm -ldl -pthread
-	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
-
-debug-trace: ## Builds a debug binary that also traces execution.
-debug-trace: $(OBJ_FILES) $(CLI_OBJ_FILES)
-	@mkdir -p build/debug
-	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
-	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) -D PYRO_DEBUG_TRACE_EXECUTION \
 		-o build/debug/pyro \
 		$(SRC_FILES) $(OBJ_FILES) \
 		$(CLI_SRC_FILES) $(CLI_OBJ_FILES) \
@@ -114,7 +103,7 @@ check-debug: tests/compiled_module.so
 
 check-sanitize: ## Builds the debug binary with sanitizer checks, then runs the test suite.
 check-sanitize: tests/compiled_module.so
-	@make debug-sanitize
+	@make sanitize
 	@printf "\e[1;32m Running\e[0m build/debug/pyro test tests/*.pyro\n\n"
 	@./build/debug/pyro test ./tests/*.pyro
 

@@ -411,19 +411,22 @@ static void run(PyroVM* vm) {
             }
         #endif
 
-        #ifdef PYRO_DEBUG_TRACE_EXECUTION
-            pyro_stdout_write(vm, "             ");
-            if (vm->stack == vm->stack_top) {
-                pyro_stdout_write(vm, "[ empty ]");
+        #ifdef PYRO_DEBUG
+            if (vm->trace_execution) {
+                size_t ip = frame->ip - frame->closure->fn->code;
+                pyro_disassemble_instruction(vm, frame->closure->fn, ip);
+
+                pyro_stdout_write(vm, "             ");
+                if (vm->stack == vm->stack_top) {
+                    pyro_stdout_write(vm, "[ empty ]");
+                }
+                for (PyroValue* slot = vm->stack; slot < vm->stack_top; slot++) {
+                    pyro_stdout_write(vm, "[ ");
+                    pyro_dump_value(vm, *slot);
+                    pyro_stdout_write(vm, " ]");
+                }
+                pyro_stdout_write(vm, "\n");
             }
-            for (PyroValue* slot = vm->stack; slot < vm->stack_top; slot++) {
-                pyro_stdout_write(vm, "[ ");
-                pyro_dump_value(vm, *slot);
-                pyro_stdout_write(vm, " ]");
-            }
-            pyro_stdout_write(vm, "\n");
-            size_t ip = frame->ip - frame->closure->fn->code;
-            pyro_disassemble_instruction(vm, frame->closure->fn, ip);
         #endif
 
         switch (READ_BYTE()) {
@@ -2696,6 +2699,21 @@ static void run(PyroVM* vm) {
                 pyro_panic(vm, "invalid opcode");
                 break;
         }
+
+        #ifdef PYRO_DEBUG
+            if (vm->trace_execution) {
+                pyro_stdout_write(vm, "             ");
+                if (vm->stack == vm->stack_top) {
+                    pyro_stdout_write(vm, "[ empty ]");
+                }
+                for (PyroValue* slot = vm->stack; slot < vm->stack_top; slot++) {
+                    pyro_stdout_write(vm, "[ ");
+                    pyro_dump_value(vm, *slot);
+                    pyro_stdout_write(vm, " ]");
+                }
+                pyro_stdout_write(vm, "\n");
+            }
+        #endif
     }
 
     while (vm->with_stack_count > with_stack_count_on_entry) {

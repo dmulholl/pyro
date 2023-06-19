@@ -203,13 +203,16 @@ struct PyroVM {
     // only run when this value is 0.
     int gc_disallows;
 
-    // Set to true if the VM executing in a REPL.
+    // This flag is set to true if the VM executing in a REPL.
     bool in_repl;
 
     // Stack of values with pending $end_with() method calls.
     PyroValue* with_stack;
     size_t with_stack_count;
     size_t with_stack_capacity;
+
+    // Prints an execution trace for debugging.
+    bool trace_execution;
 };
 
 
