@@ -1297,6 +1297,10 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
         parse_map_or_set_literal(parser);
     }
 
+    else if (match(parser, TOKEN_EOF)) {
+        ERROR_AT_NEXT_TOKEN("unexpected end of input, expected an expression");
+    }
+
     else {
         ERROR_AT_NEXT_TOKEN(
             "unexpected token '%.*s', expected an expression",
