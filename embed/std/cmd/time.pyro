@@ -1,4 +1,4 @@
-import std::path;
+import std::fs;
 
 var init_script = "
 var $filepath;
@@ -17,13 +17,13 @@ def make_module(filepath) {
 def add_import_roots_from_path(filepath) {
     var stashed_roots = $roots:copy();
 
-    var real_path = try path::realpath(filepath);
+    var real_path = try fs::realpath(filepath);
     if $is_err(real_path) {
         $exit("error: failed to resolve path '${filepath}': ${code}");
     }
 
-    var parent_path = path::dirname(real_path);
-    var modules_path = path::join(parent_path, "modules");
+    var parent_path = fs::dirname(real_path);
+    var modules_path = fs::join(parent_path, "modules");
 
     $roots:append(parent_path);
     $roots:append(modules_path);
@@ -71,7 +71,7 @@ if NUM_RUNS < 1 {
 var is_first = true;
 
 for filepath in $args {
-    if !path::is_file(filepath) {
+    if !fs::is_file(filepath) {
         $exit("error: invalid path '${filepath}'");
     }
 
