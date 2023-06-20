@@ -1,4 +1,4 @@
-name: Tests
+name: Build & Test
 
 on: [push, workflow_dispatch]
 
@@ -10,6 +10,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Test Step
+      - name: List Dir
         run: ls
+
+      - name: Build Pyro
+        run: make debug
 
