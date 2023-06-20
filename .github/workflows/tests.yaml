@@ -1,4 +1,4 @@
-name: Build & Test
+name: "Build & Test"
 
 on: [push, workflow_dispatch]
 
@@ -15,4 +15,7 @@ jobs:
 
       - name: Build Pyro
         run: make debug
+
+      - name: Run Test Suite
+        run: ./build/debug/pyro --version
 
