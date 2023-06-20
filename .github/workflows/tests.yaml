@@ -10,12 +10,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: List Dir
-        run: ls
-
-      - name: Build Pyro
+      - name: Build Debug Binary
         run: make debug
 
       - name: Run Test Suite
-        run: ./build/debug/pyro --version
+        run: ./build/debug/pyro test tests/*.pyro
 
