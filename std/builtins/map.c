@@ -502,10 +502,10 @@ static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 void pyro_load_std_builtins_map(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$map", fn_map, 0);
-    pyro_define_global_fn(vm, "$is_map", fn_is_map, 1);
-    pyro_define_global_fn(vm, "$set", fn_set, -1);
-    pyro_define_global_fn(vm, "$is_set", fn_is_set, 1);
+    pyro_define_superglobal_fn(vm, "$map", fn_map, 0);
+    pyro_define_superglobal_fn(vm, "$is_map", fn_is_map, 1);
+    pyro_define_superglobal_fn(vm, "$set", fn_set, -1);
+    pyro_define_superglobal_fn(vm, "$is_set", fn_is_set, 1);
 
     // Map methods -- private.
     pyro_define_pri_method(vm, vm->class_map, "$iter", map_iter, 0);

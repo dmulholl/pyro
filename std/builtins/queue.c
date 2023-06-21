@@ -80,8 +80,8 @@ static PyroValue queue_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 void pyro_load_std_builtins_queue(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$queue", fn_queue, 0);
-    pyro_define_global_fn(vm, "$is_queue", fn_is_queue, 1);
+    pyro_define_superglobal_fn(vm, "$queue", fn_queue, 0);
+    pyro_define_superglobal_fn(vm, "$is_queue", fn_is_queue, 1);
 
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_queue, "$iter", queue_iter, 0);

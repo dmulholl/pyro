@@ -516,7 +516,7 @@ bool pyro_define_pri_field(PyroVM* vm, PyroClass* class, const char* name, PyroV
 }
 
 
-bool pyro_define_global(PyroVM* vm, const char* name, PyroValue value) {
+bool pyro_define_superglobal(PyroVM* vm, const char* name, PyroValue value) {
     PyroStr* name_string = PyroStr_COPY(name);
     if (!name_string) {
         return false;
@@ -530,12 +530,12 @@ bool pyro_define_global(PyroVM* vm, const char* name, PyroValue value) {
 }
 
 
-bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr, int arity) {
+bool pyro_define_superglobal_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr, int arity) {
     PyroNativeFn* fn_obj = PyroNativeFn_new(vm, fn_ptr, name, arity);
     if (!fn_obj) {
         return false;
     }
-    return pyro_define_global(vm, name, pyro_obj(fn_obj));
+    return pyro_define_superglobal(vm, name, pyro_obj(fn_obj));
 }
 
 
@@ -600,7 +600,7 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
         tup->values[i] = pyro_obj(string);
     }
 
-    pyro_define_global(vm, "$args", pyro_obj(tup));
+    pyro_define_superglobal(vm, "$args", pyro_obj(tup));
     return true;
 }
 

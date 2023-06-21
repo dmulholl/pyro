@@ -400,8 +400,8 @@ static PyroValue file_seek_from_current(PyroVM* vm, size_t arg_count, PyroValue*
 
 void pyro_load_std_builtins_file(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$file", fn_file, -1);
-    pyro_define_global_fn(vm, "$is_file", fn_is_file, 1);
+    pyro_define_superglobal_fn(vm, "$file", fn_file, -1);
+    pyro_define_superglobal_fn(vm, "$is_file", fn_is_file, 1);
 
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_file, "$end_with", file_end_with, 0);

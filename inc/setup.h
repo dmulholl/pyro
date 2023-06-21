@@ -42,11 +42,11 @@ bool pyro_add_import_root_n(PyroVM* vm, const char* path, size_t length);
 
 // Creates a new VM-level global variable. Returns true on success, false if memory could not
 // be allocated.
-bool pyro_define_global(PyroVM* vm, const char* name, PyroValue value);
+bool pyro_define_superglobal(PyroVM* vm, const char* name, PyroValue value);
 
 // Creates a new VM-level global variable pointing to a native function. Returns true on
 // success, false if memory could not be allocated.
-bool pyro_define_global_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr, int arity);
+bool pyro_define_superglobal_fn(PyroVM* vm, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new public member to [module], i.e. creates a module-level global variable called
 // [name] with initial value [value]. Returns true on success, false if memory could not be

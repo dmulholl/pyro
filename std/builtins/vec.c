@@ -595,10 +595,10 @@ static PyroValue vec_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 void pyro_load_std_builtins_vec(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$vec", fn_vec, -1);
-    pyro_define_global_fn(vm, "$is_vec", fn_is_vec, 1);
-    pyro_define_global_fn(vm, "$stack", fn_stack, 0);
-    pyro_define_global_fn(vm, "$is_stack", fn_is_stack, 1);
+    pyro_define_superglobal_fn(vm, "$vec", fn_vec, -1);
+    pyro_define_superglobal_fn(vm, "$is_vec", fn_is_vec, 1);
+    pyro_define_superglobal_fn(vm, "$stack", fn_stack, 0);
+    pyro_define_superglobal_fn(vm, "$is_stack", fn_is_stack, 1);
 
     // Vector methods -- private.
     pyro_define_pri_method(vm, vm->class_vec, "$iter", vec_iter, 0);

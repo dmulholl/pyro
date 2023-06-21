@@ -1325,8 +1325,8 @@ static PyroValue str_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args)
 
 void pyro_load_std_builtins_str(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$str", fn_str, 1);
-    pyro_define_global_fn(vm, "$is_str", fn_is_str, 1);
+    pyro_define_superglobal_fn(vm, "$str", fn_str, 1);
+    pyro_define_superglobal_fn(vm, "$is_str", fn_is_str, 1);
 
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_str, "$contains", str_contains, 1);

@@ -17,7 +17,7 @@ int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
     pyro_cli_add_import_roots_from_environment(vm);
 
     bool errors = ap_found(cmd_parser, "errors");
-    if (!pyro_define_global(vm, "ERRORS", pyro_bool(errors))) {
+    if (!pyro_define_superglobal(vm, "ERRORS", pyro_bool(errors))) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         exit(1);

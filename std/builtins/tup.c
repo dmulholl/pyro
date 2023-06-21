@@ -118,8 +118,8 @@ static PyroValue tup_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 void pyro_load_std_builtins_tup(PyroVM* vm) {
     // Functions.
-    pyro_define_global_fn(vm, "$tup", fn_tup, -1);
-    pyro_define_global_fn(vm, "$is_tup", fn_is_tup, 1);
+    pyro_define_superglobal_fn(vm, "$tup", fn_tup, -1);
+    pyro_define_superglobal_fn(vm, "$is_tup", fn_is_tup, 1);
 
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_tup, "$contains", tup_contains, 1);
