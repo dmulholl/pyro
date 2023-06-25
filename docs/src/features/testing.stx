@@ -15,8 +15,8 @@ Pyro has builtin support for unit tests using the `test` command:
       [files]              Files to test.
 
     Flags:
+      -e, --errors         Show standard error output.
       -h, --help           Print this help text and exit.
-      -v, --verbose        Show error output.
 
 Specify a single file to test:
 
