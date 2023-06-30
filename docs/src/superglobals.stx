@@ -204,6 +204,15 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$import(path: str) -> module` ]]
+
+    Imports `path` as a module, where `path` is an import path, e.g. `"foo"` or `"foo::bar::baz"`.
+
+    Returns the imported module.
+    Panics if `path` is invalid or if the attempt to import the module fails.
+
+
+
 [[ `$input() -> str?` <br> `$input(prompt: str) -> str?` ]]
 
     Reads the next line of input from the standard input stream and returns it as a string.

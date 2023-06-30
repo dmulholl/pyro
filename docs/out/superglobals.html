@@ -399,6 +399,20 @@ String arguments can contain underscores and can begin with <code>0b</code>, <co
 </div>
 <div>
 <dt>
+<code>$import(path: str) -&gt; module</code>
+</dt>
+<dd>
+<p>
+Imports <code>path</code> as a module, where <code>path</code> is an import path, e.g. <code>&quot;foo&quot;</code> or <code>&quot;foo::bar::baz&quot;</code>.
+</p>
+<p>
+Returns the imported module.
+Panics if <code>path</code> is invalid or if the attempt to import the module fails.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$input() -&gt; str?</code> <br> <code>$input(prompt: str) -&gt; str?</code>
 </dt>
 <dd>
