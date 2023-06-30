@@ -246,6 +246,78 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
         return;
     }
 
-    PyroStr* name = PYRO_AS_STR(args[arg_count - 1]);
-    pyro_panic(vm, "unable to locate module '%s'", name->bytes);
+    if (arg_count > 3) {
+        pyro_panic(vm, "unable to locate module '...::%s::%s::%s'",
+            PYRO_AS_STR(args[arg_count - 3])->bytes,
+            PYRO_AS_STR(args[arg_count - 2])->bytes,
+            PYRO_AS_STR(args[arg_count - 1])->bytes
+        );
+        return;
+    }
+
+    if (arg_count == 3) {
+        pyro_panic(vm, "unable to locate module '%s::%s::%s'",
+            PYRO_AS_STR(args[0])->bytes,
+            PYRO_AS_STR(args[1])->bytes,
+            PYRO_AS_STR(args[2])->bytes
+        );
+        return;
+    }
+
+    if (arg_count == 2) {
+        pyro_panic(vm, "unable to locate module '%s::%s'",
+            PYRO_AS_STR(args[0])->bytes,
+            PYRO_AS_STR(args[1])->bytes
+        );
+        return;
+    }
+
+    pyro_panic(vm, "unable to locate module '%s'",
+        PYRO_AS_STR(args[0])->bytes
+    );
+}
+
+
+void pyro_import_module_from_string(PyroVM* vm, const char* path, PyroMod* module) {
+    char* path_copy = pyro_strdup(path);
+    if (!path_copy) {
+        pyro_panic(vm, "out of memory");
+        return;
+    }
+
+    size_t count = 0;
+    char* saveptr;
+    char* token = strtok_r(path_copy, ":", &saveptr);
+
+    while (token != NULL) {
+        if (strlen(token) == 0) {
+            free(path_copy);
+            pyro_panic(vm, "invalid import path '%s'", path);
+            return;
+        }
+
+        PyroStr* token_string = PyroStr_COPY(token);
+        if (!token_string) {
+            free(path_copy);
+            pyro_panic(vm, "out of memory");
+            return;
+        }
+
+        if (!pyro_push(vm, pyro_obj(token_string))) {
+            free(path_copy);
+            return;
+        }
+
+        count++;
+        token = strtok_r(NULL, ":", &saveptr);
+    }
+
+    free(path_copy);
+
+    if (count == 0) {
+        pyro_panic(vm, "invalid import path '%s'", path);
+        return;
+    }
+
+    pyro_import_module(vm, count, vm->stack_top - count, module);
 }
