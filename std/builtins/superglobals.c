@@ -972,6 +972,28 @@ static PyroValue fn_stdin(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_STR(args[0])) {
+        pyro_panic(vm, "$import(): invalid argument [path], expected a string");
+        return pyro_null();
+    }
+
+    PyroMod* module = PyroMod_new(vm);
+    if (!module) {
+        pyro_panic(vm, "$import(): out of memory");
+        return pyro_null();
+    }
+
+    if (!pyro_push(vm, pyro_obj(module))) {
+        return pyro_null();
+    }
+
+    pyro_import_module_from_string(vm, PYRO_AS_STR(args[0])->bytes, module);
+    pyro_pop(vm);
+    return pyro_obj(module);
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1034,4 +1056,5 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$stdin", fn_stdin, -1);
     pyro_define_superglobal_fn(vm, "$stdout", fn_stdout, -1);
     pyro_define_superglobal_fn(vm, "$stderr", fn_stderr, -1);
+    pyro_define_superglobal_fn(vm, "$import", fn_import, 1);
 }
