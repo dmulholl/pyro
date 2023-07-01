@@ -1,0 +1,30 @@
+import lib1 as l1;
+assert $is_module(l1);
+assert l1::mod_name == "lib1";
+
+
+import lib5 as l5;
+assert $is_module(l5);
+assert l5::mod_name == "lib5";
+
+import lib5::mod as l5_mod;
+assert $is_module(l5_mod);
+assert l5_mod::mod_name == "lib5::mod";
+
+
+import lib5::child as l5_child;
+assert $is_module(l5_child);
+assert l5_child::mod_name == "lib5::child";
+
+import lib5::child::mod as l5_child_mod;
+assert $is_module(l5_child_mod);
+assert l5_child_mod::mod_name == "lib5::child::mod";
+
+
+import lib5::child::grandchild as l5_child_grandchild;
+assert $is_module(l5_child_grandchild);
+assert l5_child_grandchild::mod_name == "lib5::child::grandchild";
+
+import lib5::child::grandchild::mod as l5_child_grandchild_mod;
+assert $is_module(l5_child_grandchild_mod);
+assert l5_child_grandchild_mod::mod_name == "lib5::child::grandchild::mod";

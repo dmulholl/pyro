@@ -21,7 +21,6 @@ assert $is_module(lib5_child_mod);
 assert lib5_child_mod::mod_name == "lib5::child::mod";
 
 
-
 var lib5_child_grandchild = $import("lib5::child::grandchild");
 assert $is_module(lib5_child_grandchild);
 assert lib5_child_grandchild::mod_name == "lib5::child::grandchild";

@@ -16,8 +16,8 @@ assert $is_module(alias);
 assert $is_f64(alias::PI);
 assert alias::abs(-1) == 1;
 
-# Importing .pyro modules. Each module has a mod_name variable and a get_mod_name() function so we
-# can check scoping is working properly.
+# Importing .pyro modules. Each module has a mod_name variable and a get_mod_name() function
+# so we can check scoping is working properly.
 var mod_name = "imports";
 
 def get_mod_name() {
