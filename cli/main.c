@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
     ap_add_str_opt(parser, "stack-size s", NULL);
     ap_add_str_opt(parser, "import-root i", NULL);
     ap_add_flag(parser, "trace-execution t");
-    ap_first_pos_arg_ends_options(parser, true);
+    ap_first_pos_arg_ends_option_parsing(parser);
 
     // Register the parser for the 'test' comand.
     ArgParser* cmd_test = ap_new_cmd(parser, "test");
