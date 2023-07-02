@@ -1,0 +1,6 @@
+pub var path = "embed/std/testdir/self.pyro";
+
+def $main() {
+    echo "path: ${path}";
+    echo "args: ${$args}";
+}

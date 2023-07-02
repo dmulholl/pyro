@@ -5,9 +5,10 @@
 #include "../lib/args/args.h"
 #include "../lib/bestline/bestline.h"
 
-void pyro_cli_run_file(ArgParser* parser);
+void pyro_cli_run_path(ArgParser* parser);
 void pyro_cli_run_repl(ArgParser* parser);
 void pyro_cli_run_exec(ArgParser* parser);
+void pyro_cli_run_module(ArgParser* parser);
 
 int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser);
 int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser);

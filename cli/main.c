@@ -18,9 +18,10 @@ static const char* HELPTEXT =
     "  -e, --exec <str>           Execute a string of Pyro code.\n"
     "  -i, --import-root <dir>    Add a directory to the list of import roots.\n"
     "                             (This option can be specified multiple times.)\n"
-    "  -m, --max-memory <int>     Set the maximum memory allocation in bytes.\n"
+    "      --max-memory <int>     Set the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
-    "  -s, --stack-size <int>     Set the stack size in bytes.\n"
+    "  -m, --module <module>      Run an imported module as a script.\n"
+    "      --stack-size <int>     Set the stack size in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
@@ -146,9 +147,10 @@ int main(int argc, char* argv[]) {
     free(helptext_string);
 
     ap_add_str_opt(parser, "exec e", NULL);
-    ap_add_str_opt(parser, "max-memory m", NULL);
+    ap_add_str_opt(parser, "max-memory", NULL);
     ap_add_str_opt(parser, "stack-size s", NULL);
     ap_add_str_opt(parser, "import-root i", NULL);
+    ap_add_greedy_str_opt(parser, "module m");
     ap_add_flag(parser, "trace-execution t");
     ap_first_pos_arg_ends_option_parsing(parser);
 
@@ -211,12 +213,23 @@ int main(int argc, char* argv[]) {
 
     if (ap_found(parser, "exec")) {
         pyro_cli_run_exec(parser);
-    } else if (ap_count_args(parser) > 0) {
-        pyro_cli_run_file(parser);
-    } else {
-        pyro_cli_run_repl(parser);
+        ap_free(parser);
+        return 0;
     }
 
+    if (ap_found(parser, "module")) {
+        pyro_cli_run_module(parser);
+        ap_free(parser);
+        return 0;
+    }
+
+    if (ap_count_args(parser) > 0) {
+        pyro_cli_run_path(parser);
+        ap_free(parser);
+        return 0;
+    }
+
+    pyro_cli_run_repl(parser);
     ap_free(parser);
     return 0;
 }
