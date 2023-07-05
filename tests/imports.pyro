@@ -39,3 +39,35 @@ assert $is_module(l5_child_grandchild_mod);
 assert l5_child_grandchild_mod::mod_name == "lib5::child::grandchild::mod";
 assert l5_child_grandchild_mod::get_mod_name() == "lib5::child::grandchild::mod";
 assert l5_child_grandchild_mod::add(1, 2) == 3;
+
+with func = def() { import lib1; return lib1; } {
+    var mod = func();
+    assert $is_module(mod);
+    assert mod::mod_name == "lib1";
+    assert mod::get_mod_name() == "lib1";
+    assert mod::add(1, 2) == 3;
+}
+
+with func = def() { import lib5; return lib5; } {
+    var mod = func();
+    assert $is_module(mod);
+    assert mod::mod_name == "lib5";
+    assert mod::get_mod_name() == "lib5";
+    assert mod::add(1, 2) == 3;
+}
+
+with func = def() { import lib5::child::grandchild::mod; return mod; } {
+    var mod = func();
+    assert $is_module(mod);
+    assert mod::mod_name == "lib5::child::grandchild::mod";
+    assert mod::get_mod_name() == "lib5::child::grandchild::mod";
+    assert mod::add(1, 2) == 3;
+}
+
+with func = def() { import foo; return foo; } {
+    assert $is_err(try func());
+}
+
+with func = def() { import foo::bar; return bar; } {
+    assert $is_err(try func());
+}
