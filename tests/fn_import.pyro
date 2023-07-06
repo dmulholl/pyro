@@ -39,3 +39,39 @@ assert $is_module(lib5_child_grandchild_mod);
 assert lib5_child_grandchild_mod::mod_name == "lib5::child::grandchild::mod";
 assert lib5_child_grandchild_mod::get_mod_name() == "lib5::child::grandchild::mod";
 assert lib5_child_grandchild_mod::add(1, 2) == 3;
+
+with mod = $import("lib1") {
+    assert $is_module(mod);
+    assert mod::mod_name == "lib1";
+    assert mod::get_mod_name() == "lib1";
+    assert mod::add(1, 2) == 3;
+}
+
+with mod = $import("lib5::child::grandchild::mod") {
+    assert $is_module(mod);
+    assert mod::mod_name == "lib5::child::grandchild::mod";
+    assert mod::get_mod_name() == "lib5::child::grandchild::mod";
+    assert mod::add(1, 2) == 3;
+}
+
+with mod = try $import("lib1") {
+    assert $is_module(mod);
+    assert mod::mod_name == "lib1";
+    assert mod::get_mod_name() == "lib1";
+    assert mod::add(1, 2) == 3;
+}
+
+with mod = try $import("lib5::child::grandchild::mod") {
+    assert $is_module(mod);
+    assert mod::mod_name == "lib5::child::grandchild::mod";
+    assert mod::get_mod_name() == "lib5::child::grandchild::mod";
+    assert mod::add(1, 2) == 3;
+}
+
+with mod = try $import("foo") {
+    assert $is_err(mod);
+}
+
+with mod = try $import("foo::bar") {
+    assert $is_err(mod);
+}
