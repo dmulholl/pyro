@@ -2739,6 +2739,7 @@ void pyro_reset_vm(PyroVM* vm) {
     vm->stack_top = vm->stack;
     vm->frame_count = 0;
     vm->open_upvalues = NULL;
+    vm->with_stack_count = 0;
 }
 
 
