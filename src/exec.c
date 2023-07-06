@@ -2769,7 +2769,7 @@ void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char
     }
 
     #ifdef PYRO_DEBUG
-        PyroValue* saved_stack_top = vm->stack_top;
+        size_t stack_size_before = vm->stack_top - vm->stack;
     #endif
 
     pyro_push(vm, pyro_obj(closure));
@@ -2779,7 +2779,8 @@ void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char
 
     #ifdef PYRO_DEBUG
         if (!vm->halt_flag) {
-            assert(vm->stack_top == saved_stack_top);
+            size_t stack_size_after = vm->stack_top - vm->stack;
+            assert(stack_size_before == stack_size_after);
         }
     #endif
 }
