@@ -320,4 +320,5 @@ void pyro_import_module_from_string(PyroVM* vm, const char* path, PyroMod* modul
     }
 
     pyro_import_module(vm, count, vm->stack_top - count, module);
+    vm->stack_top -= count;
 }
