@@ -269,16 +269,29 @@ static void close_upvalues(PyroVM* vm, PyroValue* slot) {
 
 // Attempts to load the module identified by the [names] array. If the module has already been
 // imported, this will return the cached module object. Otherwise, it will attempt to import,
-// execute, and return the module. Note that this function will import ancestor modules along
-// the [names] path if they haven't already been imported, i.e. if the path is 'foo::bar::baz'
-// this function will first import 'foo' then 'foo::bar' then 'foo::bar::baz', returning
-// 'baz'. This function can call into Pyro code and can set the panic or exit flags.
+// execute, and return the named module.
+//
+// This function will import ancestor modules along the [names] path if they haven't already
+// been imported, i.e. if the path is 'foo::bar::baz' this function will first import 'foo',
+// then 'foo::bar', then 'foo::bar::baz', returning the module 'baz'.
+//
+// This function can call into Pyro code and can set the panic or exit flags.
 static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
+    if (name_count > 16) {
+        pyro_panic(vm, "import list is too long (max: 16 module names)");
+        return NULL;
+    }
+
+    // Make a local copy of the [names] array in case the stack gets reallocated while we're
+    // iterating over the values, invalidating the [names] pointer.
+    PyroValue names_array[16];
+    memcpy(names_array, names, name_count * sizeof(PyroValue));
+
     PyroMap* supermod_modules_map = vm->modules;
     PyroValue module_value;
 
     for (uint8_t i = 0; i < name_count; i++) {
-        PyroValue name = names[i];
+        PyroValue name = names_array[i];
 
         if (PyroMap_get(supermod_modules_map, name, &module_value, vm)) {
             supermod_modules_map = PYRO_AS_MOD(module_value)->submodules;
@@ -297,7 +310,7 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
             return NULL;
         }
 
-        pyro_import_module(vm, i + 1, names, module_object);
+        pyro_import_module(vm, i + 1, names_array, module_object);
         if (vm->halt_flag) {
             PyroMap_remove(supermod_modules_map, name, vm);
             return NULL;
