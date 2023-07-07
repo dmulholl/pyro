@@ -1,9 +1,10 @@
 #include "cli.h"
 
 
-// Adds the directory containing [path] to the set of import roots.
+// Adds the directory containing [path] to the list of import roots.
 // - [path] can be a script file or a module directory.
-// - Also adds a 'modules' directory inside the parent directory.
+// - Adds <parent-directory> to the list of import roots.
+// - Adds <parent-directory>/modules to the list of import roots.
 void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
     // We call realpath() here because we want to add the directory containing the *actual*
     // script or directory at [path]. This may be different from the result of a simple

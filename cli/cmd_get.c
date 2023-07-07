@@ -17,7 +17,7 @@ int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     size_t code_length;
 
     if (!pyro_get_embedded("std/cmd/get.pyro", &code, &code_length)) {
-        fprintf(stderr, "error: failed to load std/cmd/get.pyro\n");
+        fprintf(stderr, "error: failed to load 'embed/std/cmd/get.pyro'\n");
         pyro_free_vm(vm);
         exit(1);
     }

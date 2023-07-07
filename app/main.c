@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
     size_t code_length;
 
     if (!pyro_get_embedded("main.pyro", &code, &code_length)) {
-        fprintf(stderr, "error: missing 'main.pyro' file\n");
+        fprintf(stderr, "error: missing 'embed/main.pyro' file\n");
         exit(1);
     }
 

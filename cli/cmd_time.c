@@ -36,7 +36,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     size_t code_length;
 
     if (!pyro_get_embedded("std/cmd/time.pyro", &code, &code_length)) {
-        fprintf(stderr, "error: failed to load std/cmd/time.pyro\n");
+        fprintf(stderr, "error: failed to load 'embed/std/cmd/time.pyro'\n");
         pyro_free_vm(vm);
         exit(1);
     }
