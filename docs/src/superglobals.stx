@@ -162,7 +162,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$file(path: str) -> file` <br> `$file(path: str, mode: str) -> file` ]]
 
-    Creates a new [file](@root/builtins/files//).
+    Creates a new [file object](@root/builtins/files//).
 
 
 
