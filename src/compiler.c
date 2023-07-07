@@ -43,10 +43,10 @@ typedef struct {
 } Local;
 
 
-// If [is_local] is true the upvalue is capturing a local variable from the immediately surrounding
-// function; [index] is the slot index of this local. If [is_local] is false the upvalue is
-// capturing a chained upvalue from the immediately surrounding function referencing a captured
-// local from a higher scope; [index] is the upvalue index of the captured upvalue.
+// If [is_local] is true the upvalue is capturing a local variable from the immediately
+// surrounding function; [index] is the slot index of this local. If [is_local] is false the
+// upvalue is capturing a chained upvalue from the immediately surrounding function referencing
+// a captured local from a higher scope; [index] is the upvalue index of the captured upvalue.
 typedef struct {
     uint8_t index;
     bool is_local;
@@ -191,8 +191,8 @@ static bool lexemes_are_equal(Token* a, Token* b) {
 }
 
 
-// Appends a single byte to the current function's bytecode. All writes to the bytecode go through
-// this function.
+// Appends a single byte to the current function's bytecode. All writes to the bytecode go
+// through this function.
 static void emit_byte(Parser* parser, uint8_t byte) {
     if (!PyroFn_write(parser->fn_compiler->fn, byte, parser->previous_token.line, parser->vm)) {
         parser->had_memory_error = true;
@@ -260,8 +260,8 @@ static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name
 }
 
 
-// Stores [value] in the current function's constant table and emits bytecode to load it onto the
-// top of the stack.
+// Stores [value] in the current function's constant table and emits bytecode to load it onto
+// the top of the stack.
 // - Uses an optimized instruction set for loading small integer values.
 // - Uses an optimized instruction set for loading constants with small indexes.
 static void emit_load_value_from_constant_table(Parser* parser, PyroValue value) {
@@ -349,7 +349,8 @@ static bool match2(Parser* parser, TokenType type1, TokenType type2) {
 }
 
 
-// Returns true and advances the parser if the next token has type [type1] or [type2] or [type3].
+// Returns true and advances the parser if the next token has type [type1] or [type2] or
+// [type3].
 static bool match3(Parser* parser, TokenType type1, TokenType type2, TokenType type3) {
     if (check(parser, type1) || check(parser, type2) || check(parser, type3)) {
         advance(parser);
@@ -601,9 +602,9 @@ static uint16_t consume_variable_name(Parser* parser, const char* error_message)
 }
 
 
-// Emits bytecode to discard all local variables at scope depth greater than or equal to [depth].
-// Returns the number of locals discarded. (This function doesn't decrement the local count as
-// it's called directly by break statements.)
+// Emits bytecode to discard all local variables at scope depth greater than or equal to
+// [depth]. Returns the number of locals discarded. (This function doesn't decrement the local
+// count as it's called directly by break statements.)
 static int discard_locals(Parser* parser, int depth) {
     int local_count = parser->fn_compiler->local_count;
 
@@ -908,7 +909,8 @@ static double parse_float_literal(Parser* parser) {
 
 
 static uint32_t parse_char_literal(Parser* parser) {
-    // The longest valid character literal is a unicode escape sequence of the form: '\UXXXXXXXX'.
+    // The longest valid character literal is a unicode escape sequence of the form:
+    // '\UXXXXXXXX'
     const size_t max_length = 10;
 
     const char* start = parser->previous_token.start;
@@ -1423,8 +1425,8 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             break;
         }
 
-        // Set this to a null value after the first pass through the while-loop as we only care
-        // about cases of [self.foo] or [self:foo].
+        // Set this to a null value after the first pass through the while-loop as we only
+        // care about cases of [self.foo] or [self:foo].
         last_token_type = TOKEN_UNDEFINED;
     }
 }
@@ -1814,7 +1816,7 @@ static void parse_var_declaration(Parser* parser, Access access) {
 
 
 static void parse_import_stmt(Parser* parser) {
-    // We'll use these arrays if we're explicitly importing named top-level members from the module.
+    // We'll use these arrays if we're explicitly importing named top-level members.
     Token member_names[16];
     uint16_t member_indexes[16];
     int member_count = 0;
@@ -2298,8 +2300,8 @@ static void parse_with_stmt(Parser* parser) {
 }
 
 
-// This helper parses a function definition, i.e. the bit after the name that looks like (...){...}.
-// It emits the bytecode to create an PyroClosure and leave it on top of the stack.
+// This helper parses a function definition, i.e. the bit after the name that looks like
+// (...){...}. It emits the bytecode to create an PyroClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
     FnCompiler fn_compiler;
     if (!init_fn_compiler(parser, &fn_compiler, type, name)) {
@@ -2718,9 +2720,9 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     parser.num_expression_statements = 0;
     parser.dump_bytecode = dump_bytecode;
 
-    // Strip any trailing whitespace before initializing the lexer. This is to ensure we report the
-    // correct line number for syntax errors at the end of the input, e.g. a missing trailing
-    // semicolon.
+    // Strip any trailing whitespace before initializing the lexer. This is to ensure we
+    // report the correct line number for syntax errors at the end of the input, e.g. a
+    // missing trailing semicolon.
     while (src_len > 0 && pyro_is_space(src_code[src_len - 1])) {
         src_len--;
     }
@@ -2738,8 +2740,9 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
         return NULL;
     }
 
-    // We can get a cascade of syntax errors while parsing a single statement but only the first
-    // will be reported. If the [had_syntax_error] flag is set, a panic has already been raised.
+    // We can get a cascade of syntax errors while parsing a single statement but only the
+    // first will be reported. If the [had_syntax_error] flag is set, a panic has already been
+    // raised.
     while (!match(&parser, TOKEN_EOF)) {
         parse_statement(&parser);
         if (parser.had_syntax_error) {
@@ -2753,8 +2756,8 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
 
     PyroFn* fn = end_fn_compiler(&parser);
 
-    // If the code consisted of a single expression statement, we might want to print the value of
-    // the expression if we're running inside a REPL.
+    // If the code consisted of a single expression statement, we might want to print the
+    // value of the expression if we're running inside a REPL.
     if (parser.num_statements == 1 && parser.num_expression_statements == 1) {
         assert(fn->code[fn->code_count - 3] == PYRO_OPCODE_POP);
         fn->code[fn->code_count - 3] = PYRO_OPCODE_POP_ECHO_IN_REPL;
