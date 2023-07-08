@@ -497,13 +497,13 @@ You can find a full description of Pyro's map type [here](@root/builtins/maps//)
 
 ### Errors
 
-Pyro has a dedicated error type, `err`, which a function can return to indicate failure.
+Pyro has a dedicated error type, `err`, which a function can return to indicate failure, e.g.
 
 ::: code pyro
     var err = $err("oops!");
 
 You can check if a value is an `err` using the `$is_err(arg)` function.
-Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`:
+Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`, e.g.
 
 ::: code pyro
     var result = might_fail() !! "default";
@@ -518,26 +518,26 @@ A panic in Pyro is similar to an exception in other languages --- it indicates t
 
 An unhandled panic will result in the program exiting with an error message and a non-zero status code.
 
-You can trap a panic using a `try` expression:
+You can trap a panic using a `try` expression, e.g.
 
 ::: code pyro
     var result = try might_panic();
 
 A `try` expression returns the value of its operand if it evaluates without panicking or an `err` if it panics.
 
-`try` is a unary operator with the same precedence as `!` or `-` so you should wrap lower-precedence expressions in brackets:
+`try` is a unary operator with the same precedence as `!` or `-` so you should wrap lower-precedence expressions in brackets, e.g.
 
 ::: code pyro
     var foo = try (1 / 2);  # 0.5
     var bar = try (1 / 0);  # err
 
-You can use the error-coalescing operator `!!` to provide a default value for a panicking expression:
+You can use the error-coalescing operator `!!` to provide a default value for a panicking expression, e.g.
 
 ::: code pyro
     var foo = try (1 / 2) !! 0;  # 0.5
     var bar = try (1 / 0) !! 0;  # 0
 
-You can raise a panic from your own code by calling the `$panic()` function with an error message:
+You can raise a panic from your own code by calling the `$panic()` function with an error message, e.g.
 
 ::: code pyro
     $panic("oh no!");
