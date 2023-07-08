@@ -2016,6 +2016,160 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Defines a private global variable.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ]
+            case PYRO_OPCODE_DEFINE_PRI_GLOBAL: {
+                PyroMod* module = frame->closure->module;
+                PyroValue name = READ_CONSTANT();
+
+                if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
+                    pyro_pop(vm);
+                    break;
+                }
+
+                if (PyroMap_contains(module->all_member_indexes, name, vm)) {
+                    pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
+                    break;
+                }
+
+                size_t new_member_index = module->members->count;
+                if (!PyroVec_append(module->members, vm->stack_top[-1], vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                    module->members->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
+            // Defines a public global variable.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ]
+            case PYRO_OPCODE_DEFINE_PUB_GLOBAL: {
+                PyroMod* module = frame->closure->module;
+                PyroValue name = READ_CONSTANT();
+
+                if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
+                    pyro_pop(vm);
+                    break;
+                }
+
+                if (PyroMap_contains(module->all_member_indexes, name, vm)) {
+                    pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
+                    break;
+                }
+
+                size_t new_member_index = module->members->count;
+                if (!PyroVec_append(module->members, vm->stack_top[-1], vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                    module->members->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                    PyroMap_remove(module->all_member_indexes, name, vm);
+                    module->members->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
+            // Defines multiple private global variables.
+            // Before: [ ... ][ value1 ][ value2 ][ value3 ]
+            // After:  [ ... ]
+            case PYRO_OPCODE_DEFINE_PRI_GLOBALS: {
+                PyroMod* module = frame->closure->module;
+                uint8_t count = READ_BYTE();
+
+                for (uint8_t i = 0; i < count; i++) {
+                    PyroValue name = READ_CONSTANT();
+                    if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
+                        continue;
+                    }
+
+                    if (PyroMap_contains(module->all_member_indexes, name, vm)) {
+                        pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
+                        break;
+                    }
+
+                    PyroValue new_member_value = vm->stack_top[-(int)count + i];
+                    size_t new_member_index = module->members->count;
+
+                    if (!PyroVec_append(module->members, new_member_value, vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                        module->members->count--;
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= count;
+                break;
+            }
+
+            // Defines multiple public global variables.
+            // Before: [ ... ][ value1 ][ value2 ][ value3 ]
+            // After:  [ ... ]
+            case PYRO_OPCODE_DEFINE_PUB_GLOBALS: {
+                PyroMod* module = frame->closure->module;
+                uint8_t count = READ_BYTE();
+
+                for (uint8_t i = 0; i < count; i++) {
+                    PyroValue name = READ_CONSTANT();
+                    if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
+                        continue;
+                    }
+
+                    if (PyroMap_contains(module->all_member_indexes, name, vm)) {
+                        pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
+                        break;
+                    }
+
+                    PyroValue new_member_value = vm->stack_top[-(int)count + i];
+                    size_t new_member_index = module->members->count;
+
+                    if (!PyroVec_append(module->members, new_member_value, vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                        module->members->count--;
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                        PyroMap_remove(module->all_member_indexes, name, vm);
+                        module->members->count--;
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= count;
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2080,148 +2234,6 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_push(vm, pyro_obj(closure));
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PRI_GLOBAL: {
-                PyroMod* module = frame->closure->module;
-                PyroValue name = READ_CONSTANT();
-
-                if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
-                    pyro_pop(vm);
-                    break;
-                }
-
-                if (PyroMap_contains(module->all_member_indexes, name, vm)) {
-                    pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
-                    break;
-                }
-
-                size_t new_member_index = module->members->count;
-                if (!PyroVec_append(module->members, vm->stack_top[-1], vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                    module->members->count--;
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PUB_GLOBAL: {
-                PyroMod* module = frame->closure->module;
-                PyroValue name = READ_CONSTANT();
-
-                if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
-                    pyro_pop(vm);
-                    break;
-                }
-
-                if (PyroMap_contains(module->all_member_indexes, name, vm)) {
-                    pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
-                    break;
-                }
-
-                size_t new_member_index = module->members->count;
-                if (!PyroVec_append(module->members, vm->stack_top[-1], vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                    module->members->count--;
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                    PyroMap_remove(module->all_member_indexes, name, vm);
-                    module->members->count--;
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PRI_GLOBALS: {
-                PyroMod* module = frame->closure->module;
-                uint8_t count = READ_BYTE();
-
-                for (uint8_t i = 0; i < count; i++) {
-                    PyroValue name = READ_CONSTANT();
-                    if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
-                        continue;
-                    }
-
-                    if (PyroMap_contains(module->all_member_indexes, name, vm)) {
-                        pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
-                        break;
-                    }
-
-                    PyroValue new_member_value = vm->stack_top[-(int)count + i];
-                    size_t new_member_index = module->members->count;
-
-                    if (!PyroVec_append(module->members, new_member_value, vm)) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-
-                    if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                        module->members->count--;
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                }
-
-                vm->stack_top -= count;
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PUB_GLOBALS: {
-                PyroMod* module = frame->closure->module;
-                uint8_t count = READ_BYTE();
-
-                for (uint8_t i = 0; i < count; i++) {
-                    PyroValue name = READ_CONSTANT();
-                    if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
-                        continue;
-                    }
-
-                    if (PyroMap_contains(module->all_member_indexes, name, vm)) {
-                        pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(name)->bytes);
-                        break;
-                    }
-
-                    PyroValue new_member_value = vm->stack_top[-(int)count + i];
-                    size_t new_member_index = module->members->count;
-
-                    if (!PyroVec_append(module->members, new_member_value, vm)) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-
-                    if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                        module->members->count--;
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-
-                    if (PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                        PyroMap_remove(module->all_member_indexes, name, vm);
-                        module->members->count--;
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                }
-
-                vm->stack_top -= count;
                 break;
             }
 
