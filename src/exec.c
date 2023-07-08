@@ -2322,6 +2322,101 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements: [import name1::name2::name3].
+            // The import path is stored on the stack as an array of [arg_count] strings.
+            // Before: [ ... ][ name1 ][ name2 ][ name3 ]
+            // After:  [ ... ][ module ]
+            case PYRO_OPCODE_IMPORT_MODULE: {
+                uint8_t arg_count = READ_BYTE();
+                PyroValue* args = vm->stack_top - arg_count;
+
+                PyroMod* module = load_module(vm, args, arg_count);
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                vm->stack_top -= arg_count;
+                pyro_push(vm, pyro_obj(module));
+                break;
+            }
+
+            // Implements: [import name1::name2::name3::{*}].
+            // The import path is stored on the stack as an array of [arg_count] strings.
+            // Before: [ ... ][ name1 ][ name2 ][ name3 ]
+            // After:  [ ... ]
+            case PYRO_OPCODE_IMPORT_ALL_MEMBERS: {
+                uint8_t arg_count = READ_BYTE();
+                PyroValue* args = vm->stack_top - arg_count;
+
+                PyroMod* current_module = frame->closure->module;
+                PyroMod* imported_module = load_module(vm, args, arg_count);
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                for (size_t i = 0; i < imported_module->pub_member_indexes->entry_array_count; i++) {
+                    PyroMapEntry* entry = &imported_module->pub_member_indexes->entry_array[i];
+                    if (PYRO_IS_TOMBSTONE(entry->key)) {
+                        continue;
+                    }
+
+                    PyroValue member_name = entry->key;
+                    PyroValue member_index_in_imported_module = entry->value;
+                    PyroValue value = imported_module->members->values[member_index_in_imported_module.as.i64];
+
+                    if (PyroMap_contains(current_module->all_member_indexes, member_name, vm)) {
+                        pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(member_name)->bytes);
+                        break;
+                    }
+
+                    size_t member_index_in_current_module = current_module->members->count;
+                    if (!PyroVec_append(current_module->members, value, vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+
+                    if (!PyroMap_set(current_module->all_member_indexes, member_name, pyro_i64(member_index_in_current_module), vm)) {
+                        current_module->members->count--;
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                }
+
+                vm->stack_top -= arg_count;
+                break;
+            }
+
+            // Implements: [import module_name1::module_name2::{member_name1, member_name2}].
+            // The import path is stored on the stack as an array of [module_count] strings.
+            // Before: [ ... ][ module_name1 ][ module_name2 ][ member_name1 ][ member_name2 ]
+            // After:  [ ... ][ member_value1 ][ member_value2 ]
+            case PYRO_OPCODE_IMPORT_NAMED_MEMBERS: {
+                uint8_t module_count = READ_BYTE();
+                uint8_t member_count = READ_BYTE();
+                PyroValue* args = vm->stack_top - module_count - member_count;
+
+                PyroMod* module = load_module(vm, args, module_count);
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                // Reset [args] in case the stack has been reallocated.
+                args = vm->stack_top - module_count - member_count;
+
+                for (uint8_t i = 0; i < member_count; i++) {
+                    PyroValue member_name = args[module_count + i];
+                    PyroValue member_index;
+                    if (!PyroMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
+                        pyro_panic(vm, "module has no member '%s'", PYRO_AS_STR(member_name)->bytes);
+                        break;
+                    }
+                    args[i] = module->members->values[member_index.as.i64];
+                }
+
+                vm->stack_top -= module_count;
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2393,87 +2488,6 @@ static void run(PyroVM* vm) {
                 uint8_t index = READ_BYTE();
                 PyroValue value = *frame->closure->upvalues[index]->location;
                 pyro_push(vm, value);
-                break;
-            }
-
-            // The import path is stored on the stack as an array of [arg_count] strings.
-            case PYRO_OPCODE_IMPORT_MODULE: {
-                uint8_t arg_count = READ_BYTE();
-                PyroValue* args = vm->stack_top - arg_count;
-
-                PyroMod* module = load_module(vm, args, arg_count);
-                if (vm->halt_flag) {
-                    break;
-                }
-
-                vm->stack_top -= arg_count;
-                pyro_push(vm, pyro_obj(module));
-                break;
-            }
-
-            case PYRO_OPCODE_IMPORT_ALL_MEMBERS: {
-                uint8_t arg_count = READ_BYTE();
-                PyroValue* args = vm->stack_top - arg_count;
-
-                PyroMod* current_module = frame->closure->module;
-                PyroMod* imported_module = load_module(vm, args, arg_count);
-                if (vm->halt_flag) {
-                    break;
-                }
-
-                for (size_t i = 0; i < imported_module->pub_member_indexes->entry_array_count; i++) {
-                    PyroMapEntry* entry = &imported_module->pub_member_indexes->entry_array[i];
-                    if (PYRO_IS_TOMBSTONE(entry->key)) {
-                        continue;
-                    }
-
-                    PyroValue member_name = entry->key;
-                    PyroValue member_index_in_imported_module = entry->value;
-                    PyroValue value = imported_module->members->values[member_index_in_imported_module.as.i64];
-
-                    if (PyroMap_contains(current_module->all_member_indexes, member_name, vm)) {
-                        pyro_panic(vm, "the global variable '%s' already exists", PYRO_AS_STR(member_name)->bytes);
-                        break;
-                    }
-
-                    size_t member_index_in_current_module = current_module->members->count;
-                    if (!PyroVec_append(current_module->members, value, vm)) {
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-
-                    if (PyroMap_set(current_module->all_member_indexes, member_name, pyro_i64(member_index_in_current_module), vm) == 0) {
-                        current_module->members->count--;
-                        pyro_panic(vm, "out of memory");
-                        break;
-                    }
-                }
-
-                vm->stack_top -= arg_count;
-                break;
-            }
-
-            case PYRO_OPCODE_IMPORT_NAMED_MEMBERS: {
-                uint8_t module_count = READ_BYTE();
-                uint8_t member_count = READ_BYTE();
-                PyroValue* args = vm->stack_top - module_count - member_count;
-
-                PyroMod* module = load_module(vm, args, module_count);
-                if (vm->halt_flag) {
-                    break;
-                }
-
-                for (uint8_t i = 0; i < member_count; i++) {
-                    PyroValue name = args[module_count + i];
-                    PyroValue member_index;
-                    if (!PyroMap_get(module->all_member_indexes, name, &member_index, vm)) {
-                        pyro_panic(vm, "module has no member '%s'", PYRO_AS_STR(name)->bytes);
-                        break;
-                    }
-                    args[i] = module->members->values[member_index.as.i64];
-                }
-
-                vm->stack_top -= module_count;
                 break;
             }
 
