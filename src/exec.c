@@ -221,8 +221,6 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
 
 
 static PyroUpvalue* capture_upvalue(PyroVM* vm, PyroValue* local) {
-    // Before creating a new upvalue object, check for an existing one in the list of open
-    // upvalues.
     PyroUpvalue* prev_upvalue = NULL;
     PyroUpvalue* curr_upvalue = vm->open_upvalues;
 
@@ -232,6 +230,8 @@ static PyroUpvalue* capture_upvalue(PyroVM* vm, PyroValue* local) {
         prev_upvalue = curr_upvalue;
         curr_upvalue = curr_upvalue->next;
     }
+
+    // Check for an existing upvalue.
     if (curr_upvalue != NULL && curr_upvalue->location == local) {
         return curr_upvalue;
     }
@@ -322,8 +322,7 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
     return PYRO_AS_MOD(module_value);
 }
 
-// Returns true if the value is 'kinda-falsey'.
-// The set of 'kinda-falsey' values is: [false, null, err, 0, 0.0, ""].
+// Returns true if the value is 'kinda-falsey', i.e. one of: [false, null, err, 0, 0.0, ""].
 static inline bool is_kinda_falsey(PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_BOOL:
