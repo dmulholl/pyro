@@ -2227,6 +2227,57 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements [echo value1, value2, value3].
+            // Before: [ ... ][ value1 ][ value2 ][ value3 ]
+            // After:  [ ... ]
+            case PYRO_OPCODE_ECHO: {
+                int arg_count = (int)READ_BYTE();
+
+                for (int i = 0; i < arg_count; i++) {
+                    PyroValue value = vm->stack_top[-arg_count + i];
+                    PyroStr* string = pyro_stringify_value(vm, value);
+                    if (vm->halt_flag) {
+                        break;
+                    }
+                    if (pyro_stdout_write_s(vm, string) < 0) {
+                        pyro_panic(vm, "echo: failed to write to the standard output stream");
+                        break;
+                    }
+                    if (i < arg_count - 1) {
+                        if (pyro_stdout_write_n(vm, " ", 1) < 0) {
+                            pyro_panic(vm, "echo: failed to write to the standard output stream");
+                            break;
+                        }
+                    }
+                }
+
+                if (pyro_stdout_write_n(vm, "\n", 1) < 0) {
+                    pyro_panic(vm, "echo: failed to write to the standard output stream");
+                    break;
+                }
+
+                vm->stack_top -= arg_count;
+                break;
+            }
+
+            // Special opcode for printing the value of expression statements in the REPL.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ]
+            case PYRO_OPCODE_POP_ECHO_IN_REPL: {
+                PyroValue value = vm->stack_top[-1];
+
+                if (vm->in_repl && !PYRO_IS_NULL(value)) {
+                    PyroStr* string = pyro_debugify_value(vm, value);
+                    if (vm->halt_flag) {
+                        break;
+                    }
+                    pyro_stdout_write_f(vm, "%s\n", string->bytes);
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2291,36 +2342,6 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_push(vm, pyro_obj(closure));
-                break;
-            }
-
-            case PYRO_OPCODE_ECHO: {
-                int arg_count = (int)READ_BYTE();
-
-                for (int i = 0; i < arg_count; i++) {
-                    PyroValue value = vm->stack_top[-arg_count + i];
-                    PyroStr* string = pyro_stringify_value(vm, value);
-                    if (vm->halt_flag) {
-                        break;
-                    }
-                    if (pyro_stdout_write_s(vm, string) < 0) {
-                        pyro_panic(vm, "echo: failed to write to the standard output stream");
-                        break;
-                    }
-                    if (i < arg_count - 1) {
-                        if (pyro_stdout_write_n(vm, " ", 1) < 0) {
-                            pyro_panic(vm, "echo: failed to write to the standard output stream");
-                            break;
-                        }
-                    }
-                }
-
-                if (pyro_stdout_write_n(vm, "\n", 1) < 0) {
-                    pyro_panic(vm, "echo: failed to write to the standard output stream");
-                    break;
-                }
-
-                vm->stack_top -= arg_count;
                 break;
             }
 
@@ -2582,21 +2603,6 @@ static void run(PyroVM* vm) {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
                 }
 
-                break;
-            }
-
-            case PYRO_OPCODE_POP_ECHO_IN_REPL: {
-                PyroValue value = vm->stack_top[-1];
-
-                if (vm->in_repl && !PYRO_IS_NULL(value)) {
-                    PyroStr* string = pyro_debugify_value(vm, value);
-                    if (vm->halt_flag) {
-                        break;
-                    }
-                    pyro_stdout_write_f(vm, "%s\n", string->bytes);
-                }
-
-                pyro_pop(vm);
                 break;
             }
 
