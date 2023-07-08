@@ -2278,6 +2278,50 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Unpack a container, i.e. push [count] values from the container onto the stack.
+            // Before: [ ... ][ container ]
+            // After:  [ ... ][ value1 ][ value2 ][ value3 ]
+            case PYRO_OPCODE_UNPACK: {
+                PyroValue container = pyro_pop(vm);
+                uint8_t count = READ_BYTE();
+
+                if (PYRO_IS_TUP(container)) {
+                    PyroTup* tup = PYRO_AS_TUP(container);
+                    if (tup->count < count) {
+                        pyro_panic(vm,
+                            "tuple count is %zu, unpacking requires at least %zu",
+                            tup->count, count
+                        );
+                        break;
+                    }
+                    for (size_t i = 0; i < count; i++) {
+                        if (!pyro_push(vm, tup->values[i])) break;
+                    }
+                    break;
+                }
+
+                if (PYRO_IS_VEC(container)) {
+                    PyroVec* vec = PYRO_AS_VEC(container);
+                    if (vec->count < count) {
+                        pyro_panic(vm,
+                            "vector count is %zu, unpacking requires at least %zu",
+                            vec->count, count
+                        );
+                        break;
+                    }
+                    for (size_t i = 0; i < count; i++) {
+                        if (!pyro_push(vm, vec->values[i])) break;
+                    }
+                    break;
+                }
+
+                pyro_panic(vm,
+                    "type '%s' cannot be unpacked",
+                    pyro_get_type_name(vm, container)->bytes
+                );
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2664,44 +2708,6 @@ static void run(PyroVM* vm) {
 
                 assert(vm->stack_top == vm->stack + stashed_stack_size);
                 assert(vm->frame_count == stashed_frame_count);
-                break;
-            }
-
-            case PYRO_OPCODE_UNPACK: {
-                PyroValue value = pyro_pop(vm);
-                uint8_t count = READ_BYTE();
-
-                if (PYRO_IS_TUP(value)) {
-                    PyroTup* tup = PYRO_AS_TUP(value);
-                    if (tup->count < count) {
-                        pyro_panic(vm,
-                            "tuple count is %zu, unpacking requires at least %zu",
-                            tup->count, count
-                        );
-                        break;
-                    }
-                    for (size_t i = 0; i < count; i++) {
-                        if (!pyro_push(vm, tup->values[i])) break;
-                    }
-                    break;
-                }
-
-                if (PYRO_IS_VEC(value)) {
-                    PyroVec* vec = PYRO_AS_VEC(value);
-                    if (vec->count < count) {
-                        pyro_panic(vm,
-                            "vector count is %zu, unpacking requires at least %zu",
-                            vec->count, count
-                        );
-                        break;
-                    }
-                    for (size_t i = 0; i < count; i++) {
-                        if (!pyro_push(vm, vec->values[i])) break;
-                    }
-                    break;
-                }
-
-                pyro_panic(vm, "value cannot be unpacked");
                 break;
             }
 
