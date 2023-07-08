@@ -2659,15 +2659,14 @@ static void run(PyroVM* vm) {
                 if (PYRO_IS_TUP(value)) {
                     PyroTup* tup = PYRO_AS_TUP(value);
                     if (tup->count < count) {
-                        pyro_panic(
-                            vm,
+                        pyro_panic(vm,
                             "tuple count is %zu, unpacking requires at least %zu",
                             tup->count, count
                         );
-                    } else {
-                        for (size_t i = 0; i < count; i++) {
-                            if (!pyro_push(vm, tup->values[i])) break;
-                        }
+                        break;
+                    }
+                    for (size_t i = 0; i < count; i++) {
+                        if (!pyro_push(vm, tup->values[i])) break;
                     }
                     break;
                 }
@@ -2675,15 +2674,14 @@ static void run(PyroVM* vm) {
                 if (PYRO_IS_VEC(value)) {
                     PyroVec* vec = PYRO_AS_VEC(value);
                     if (vec->count < count) {
-                        pyro_panic(
-                            vm,
+                        pyro_panic(vm,
                             "vector count is %zu, unpacking requires at least %zu",
                             vec->count, count
                         );
-                    } else {
-                        for (size_t i = 0; i < count; i++) {
-                            if (!pyro_push(vm, vec->values[i])) break;
-                        }
+                        break;
+                    }
+                    for (size_t i = 0; i < count; i++) {
+                        if (!pyro_push(vm, vec->values[i])) break;
                     }
                     break;
                 }
@@ -2791,7 +2789,7 @@ void pyro_exec_code(PyroVM* vm, const char* code, size_t code_length, const char
         size_t stack_size_before = vm->stack_top - vm->stack;
     #endif
 
-    pyro_push(vm, pyro_obj(closure));
+    if (!pyro_push(vm, pyro_obj(closure))) return;
     call_value(vm, 0);
     run(vm);
     pyro_pop(vm);
@@ -2826,7 +2824,7 @@ void pyro_exec_file(PyroVM* vm, const char* path, PyroMod* module) {
         return;
     }
 
-    pyro_push(vm, pyro_obj(buf));
+    if (!pyro_push(vm, pyro_obj(buf))) return;
     pyro_exec_code(vm, (char*)buf->bytes, buf->count, path, module);
     pyro_pop(vm);
 }
@@ -2895,7 +2893,7 @@ void pyro_run_main_func(PyroVM* vm) {
         return;
     }
 
-    pyro_push(vm, main_value);
+    if (!pyro_push(vm, main_value)) return;
     call_value(vm, 0);
     run(vm);
     pyro_pop(vm);
