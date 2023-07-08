@@ -1852,6 +1852,83 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Defines a private method on a class.
+            // Before: [ ... ][ class_object ][ method_closure ]
+            // After:  [ ... ][ class_object ]
+            case PYRO_OPCODE_DEFINE_PRI_METHOD: {
+                PyroValue method = vm->stack_top[-1];
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
+
+                PyroStr* name = READ_STRING();
+                if (PyroMap_contains(class->pub_instance_methods, pyro_obj(name), vm)) {
+                    pyro_panic(vm, "cannot override public method '%s' as private", name->bytes);
+                    break;
+                }
+
+                if (!PyroMap_set(class->all_instance_methods, pyro_obj(name), method, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (name == vm->str_dollar_init) {
+                    class->init_method = method;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
+            // Defines a public method on a class.
+            // Before: [ ... ][ class_object ][ method_closure ]
+            // After:  [ ... ][ class_object ]
+            case PYRO_OPCODE_DEFINE_PUB_METHOD: {
+                PyroValue method = vm->stack_top[-1];
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
+
+                PyroStr* name = READ_STRING();
+                if (PyroMap_contains(class->all_instance_methods, pyro_obj(name), vm)) {
+                    if (!PyroMap_contains(class->pub_instance_methods, pyro_obj(name), vm)) {
+                        pyro_panic(vm, "cannot override private method '%s' as public", name->bytes);
+                        break;
+                    }
+                }
+                if (name->count > 0 && name->bytes[0] == '$') {
+                    pyro_panic(vm, "$-prefixed method cannot be declared public");
+                    break;
+                }
+
+                if (!PyroMap_set(class->all_instance_methods, pyro_obj(name), method, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (!PyroMap_set(class->pub_instance_methods, pyro_obj(name), method, vm)) {
+                    PyroMap_remove(class->all_instance_methods, pyro_obj(name), vm);
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
+            // Defines a static method on a class.
+            // Before: [ ... ][ class_object ][ method_closure ]
+            // After:  [ ... ][ class_object ]
+            case PYRO_OPCODE_DEFINE_STATIC_METHOD: {
+                PyroValue method = vm->stack_top[-1];
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
+
+                PyroStr* name = READ_STRING();
+                if (PyroMap_set(class->static_methods, pyro_obj(name), method, vm) == 0) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2493,86 +2570,6 @@ static void run(PyroVM* vm) {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
                 }
 
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PRI_METHOD: {
-                // The method's PyroClosure will be sitting on top of the stack.
-                PyroValue method = vm->stack_top[-1];
-
-                // The class object will be on the stack just below the method.
-                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
-
-                PyroStr* name = READ_STRING();
-                if (PyroMap_contains(class->pub_instance_methods, pyro_obj(name), vm)) {
-                    pyro_panic(vm, "cannot override public method '%s' as private", name->bytes);
-                    break;
-                }
-
-                if (!PyroMap_set(class->all_instance_methods, pyro_obj(name), method, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (name == vm->str_dollar_init) {
-                    class->init_method = method;
-                }
-
-                // Pop the method but leave the class behind on the stack.
-                pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PUB_METHOD: {
-                // The method's PyroClosure will be sitting on top of the stack.
-                PyroValue method = vm->stack_top[-1];
-
-                // The class object will be on the stack just below the method.
-                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
-
-                PyroStr* name = READ_STRING();
-                if (PyroMap_contains(class->all_instance_methods, pyro_obj(name), vm)) {
-                    if (!PyroMap_contains(class->pub_instance_methods, pyro_obj(name), vm)) {
-                        pyro_panic(vm, "cannot override private method '%s' as public", name->bytes);
-                        break;
-                    }
-                }
-                if (name->count > 0 && name->bytes[0] == '$') {
-                    pyro_panic(vm, "$-prefixed method cannot be declared public");
-                    break;
-                }
-
-                if (!PyroMap_set(class->all_instance_methods, pyro_obj(name), method, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (!PyroMap_set(class->pub_instance_methods, pyro_obj(name), method, vm)) {
-                    PyroMap_remove(class->all_instance_methods, pyro_obj(name), vm);
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the method but leave the class behind on the stack.
-                pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_STATIC_METHOD: {
-                // The method's PyroClosure will be sitting on top of the stack.
-                PyroValue method = vm->stack_top[-1];
-
-                // The class object will be on the stack just below the method.
-                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
-
-                PyroStr* name = READ_STRING();
-                if (PyroMap_set(class->static_methods, pyro_obj(name), method, vm) == 0) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the method but leave the class behind on the stack.
-                pyro_pop(vm);
                 break;
             }
 
