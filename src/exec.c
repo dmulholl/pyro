@@ -1364,17 +1364,19 @@ static void run(PyroVM* vm) {
                             "invalid member access '::%s', receiver is an object instance, did you mean to use ':'?",
                             PYRO_AS_STR(member_name)->bytes
                         );
-                    } else if (PYRO_IS_CLASS(receiver)) {
+                        break;
+                    }
+                    if (PYRO_IS_CLASS(receiver)) {
                         pyro_panic(vm,
                             "invalid member access '::%s', receiver is a class, did you mean to use ':'?",
                             PYRO_AS_STR(member_name)->bytes
                         );
-                    } else {
-                        pyro_panic(vm,
-                            "invalid member access '::%s', receiver is not a module",
-                            PYRO_AS_STR(member_name)->bytes
-                        );
+                        break;
                     }
+                    pyro_panic(vm,
+                        "invalid member access '::%s', receiver is not a module",
+                        PYRO_AS_STR(member_name)->bytes
+                    );
                     break;
                 }
 
@@ -1387,10 +1389,10 @@ static void run(PyroVM* vm) {
 
                 if (PyroMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
                     pyro_panic(vm, "module member '%s' is private", PYRO_AS_STR(member_name)->bytes);
-                } else {
-                    pyro_panic(vm, "module has no member '%s'", PYRO_AS_STR(member_name)->bytes);
+                    break;
                 }
 
+                pyro_panic(vm, "module has no member '%s'", PYRO_AS_STR(member_name)->bytes);
                 break;
             }
 
