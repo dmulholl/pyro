@@ -877,7 +877,7 @@ static void run(PyroVM* vm) {
 
             // Pushes a new class object onto the stack.
             // Before: [ ... ]
-            // After:  [ ... ][ class ]
+            // After:  [ ... ][ class_object ]
             case PYRO_OPCODE_MAKE_CLASS: {
                 PyroClass* class = PyroClass_new(vm);
                 if (!class) {
@@ -887,6 +887,63 @@ static void run(PyroVM* vm) {
 
                 class->name = READ_STRING();
                 pyro_push(vm, pyro_obj(class));
+                break;
+            }
+
+            // Implements 'copy-down' inheritance for classes. The superclass object is left
+            // behind on the stack as the target for the [super] variable.
+            // Before: [ ... ][ superclass_object ][ subclass_object ]
+            // After:  [ ... ][ superclass_object ]
+            case PYRO_OPCODE_INHERIT: {
+                if (!PYRO_IS_CLASS(vm->stack_top[-2])) {
+                    pyro_panic(vm, "invalid superclass value (not a class)");
+                    break;
+                }
+
+                PyroClass* superclass = PYRO_AS_CLASS(vm->stack_top[-2]);
+                PyroClass* subclass = PYRO_AS_CLASS(vm->stack_top[-1]);
+
+                if (superclass == subclass) {
+                    pyro_panic(vm, "a class cannot inherit from itself");
+                    break;
+                }
+
+                // "Copy-down inheritance". We copy all the superclass's methods, field indexes,
+                // and field initializers to the subclass. This means that there's no extra
+                // runtime work involved in looking up inherited methods or fields.
+                if (!PyroMap_copy_entries(superclass->all_instance_methods, subclass->all_instance_methods, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!PyroMap_copy_entries(superclass->pub_instance_methods, subclass->pub_instance_methods, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!PyroMap_copy_entries(superclass->all_field_indexes, subclass->all_field_indexes, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!PyroMap_copy_entries(superclass->pub_field_indexes, subclass->pub_field_indexes, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!PyroVec_copy_entries(superclass->default_field_values, subclass->default_field_values, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!PyroMap_copy_entries(superclass->static_methods, subclass->static_methods, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!PyroMap_copy_entries(superclass->static_fields, subclass->static_fields, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                subclass->init_method = superclass->init_method;
+                subclass->superclass = superclass;
+
+                pyro_pop(vm);
                 break;
             }
 
@@ -2352,60 +2409,6 @@ static void run(PyroVM* vm) {
                 }
 
                 vm->stack_top -= module_count;
-                break;
-            }
-
-            case PYRO_OPCODE_INHERIT: {
-                if (!PYRO_IS_CLASS(vm->stack_top[-2])) {
-                    pyro_panic(vm, "invalid superclass value (not a class)");
-                    break;
-                }
-
-                PyroClass* superclass = PYRO_AS_CLASS(vm->stack_top[-2]);
-                PyroClass* subclass = PYRO_AS_CLASS(vm->stack_top[-1]);
-
-                if (superclass == subclass) {
-                    pyro_panic(vm, "a class cannot inherit from itself");
-                    break;
-                }
-
-                // "Copy-down inheritance". We copy all the superclass's methods, field indexes,
-                // and field initializers to the subclass. This means that there's no extra
-                // runtime work involved in looking up inherited methods or fields.
-                if (!PyroMap_copy_entries(superclass->all_instance_methods, subclass->all_instance_methods, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-                if (!PyroMap_copy_entries(superclass->pub_instance_methods, subclass->pub_instance_methods, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-                if (!PyroMap_copy_entries(superclass->all_field_indexes, subclass->all_field_indexes, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-                if (!PyroMap_copy_entries(superclass->pub_field_indexes, subclass->pub_field_indexes, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-                if (!PyroVec_copy_entries(superclass->default_field_values, subclass->default_field_values, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-                if (!PyroMap_copy_entries(superclass->static_methods, subclass->static_methods, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-                if (!PyroMap_copy_entries(superclass->static_fields, subclass->static_fields, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                subclass->init_method = superclass->init_method;
-                subclass->superclass = superclass;
-
-                // Pop the subclass, leave the superclass behind as the [super] variable.
-                pyro_pop(vm);
                 break;
             }
 
