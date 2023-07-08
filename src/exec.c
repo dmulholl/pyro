@@ -1434,12 +1434,12 @@ static void run(PyroVM* vm) {
                                 "invalid method name ':%s'; receiver is a module, did you mean to use '::'?",
                                 method_name->bytes
                             );
-                        } else {
-                            pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                            break;
                         }
-                    } else {
-                        pyro_panic(vm, "method '%s' is private", method_name->bytes);
+                        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                        break;
                     }
+                    pyro_panic(vm, "method '%s' is private", method_name->bytes);
                     break;
                 }
 
@@ -1923,7 +1923,7 @@ static void run(PyroVM* vm) {
                 PyroMod* module = frame->closure->module;
                 PyroValue name = READ_CONSTANT();
 
-                if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
                     pyro_pop(vm);
                     break;
                 }
@@ -1953,7 +1953,7 @@ static void run(PyroVM* vm) {
                 PyroMod* module = frame->closure->module;
                 PyroValue name = READ_CONSTANT();
 
-                if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
                     pyro_pop(vm);
                     break;
                 }
@@ -1992,7 +1992,7 @@ static void run(PyroVM* vm) {
 
                 for (uint8_t i = 0; i < count; i++) {
                     PyroValue name = READ_CONSTANT();
-                    if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                    if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
                         continue;
                     }
 
@@ -2026,8 +2026,7 @@ static void run(PyroVM* vm) {
 
                 for (uint8_t i = 0; i < count; i++) {
                     PyroValue name = READ_CONSTANT();
-
-                    if (PYRO_AS_STR(name)->count == 1 && PYRO_AS_STR(name)->bytes[0] == '_') {
+                    if (strcmp(PYRO_AS_STR(name)->bytes, "_") == 0) {
                         continue;
                     }
 
@@ -2184,7 +2183,8 @@ static void run(PyroVM* vm) {
 
             case PYRO_OPCODE_GET_UPVALUE: {
                 uint8_t index = READ_BYTE();
-                pyro_push(vm, *frame->closure->upvalues[index]->location);
+                PyroValue value = *frame->closure->upvalues[index]->location;
+                pyro_push(vm, value);
                 break;
             }
 
