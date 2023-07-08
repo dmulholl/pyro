@@ -2360,13 +2360,14 @@ static void run(PyroVM* vm) {
                 PyroValue method = pyro_get_method(vm, receiver, method_name);
                 if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
-                } else if (PYRO_IS_CLOSURE(method)) {
+                    break;
+                }
+                if (PYRO_IS_CLOSURE(method)) {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
-                } else {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
 
+                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                 break;
             }
 
@@ -2407,19 +2408,22 @@ static void run(PyroVM* vm) {
                 PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
                 if (PYRO_IS_NATIVE_FN(method)) {
                     call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
-                } else if (PYRO_IS_CLOSURE(method)) {
+                    break;
+                }
+                if (PYRO_IS_CLOSURE(method)) {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
-                } else {
-                    if (PYRO_IS_MOD(receiver)) {
-                        pyro_panic(vm,
-                            "invalid method name ':%s'; receiver is a module, did you mean to use '::'?",
-                            method_name->bytes
-                        );
-                    } else {
-                        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                    }
+                    break;
                 }
 
+                if (PYRO_IS_MOD(receiver)) {
+                    pyro_panic(vm,
+                        "invalid method name ':%s'; receiver is a module, did you mean to use '::'?",
+                        method_name->bytes
+                    );
+                    break;
+                }
+
+                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                 break;
             }
 
