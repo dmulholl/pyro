@@ -1929,6 +1929,93 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Defines a private field on a class.
+            // Before: [ ... ][ class_object ][ default_value ]
+            // After:  [ ... ][ class_object ]
+            case PYRO_OPCODE_DEFINE_PRI_FIELD: {
+                PyroValue default_value = vm->stack_top[-1];
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
+
+                PyroStr* field_name = READ_STRING();
+                if (PyroMap_contains(class->all_field_indexes, pyro_obj(field_name), vm)) {
+                    pyro_panic(vm, "the field '%s' already exists", field_name->bytes);
+                    break;
+                }
+
+                size_t field_index = class->default_field_values->count;
+                if (!PyroVec_append(class->default_field_values, default_value, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (PyroMap_set(class->all_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
+                    class->default_field_values->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
+            // Defines a public field on a class.
+            // Before: [ ... ][ class_object ][ default_value ]
+            // After:  [ ... ][ class_object ]
+            case PYRO_OPCODE_DEFINE_PUB_FIELD: {
+                PyroValue default_value = vm->stack_top[-1];
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
+
+                PyroStr* field_name = READ_STRING();
+                if (PyroMap_contains(class->all_field_indexes, pyro_obj(field_name), vm)) {
+                    pyro_panic(vm, "the field '%s' already exists", field_name->bytes);
+                    break;
+                }
+
+                size_t field_index = class->default_field_values->count;
+                if (!PyroVec_append(class->default_field_values, default_value, vm)) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (PyroMap_set(class->all_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
+                    class->default_field_values->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (PyroMap_set(class->pub_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
+                    PyroMap_remove(class->all_field_indexes, pyro_obj(field_name), vm);
+                    class->default_field_values->count--;
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
+            // Defines a static field on a class.
+            // Before: [ ... ][ class_object ][ default_value ]
+            // After:  [ ... ][ class_object ]
+            case PYRO_OPCODE_DEFINE_STATIC_FIELD: {
+                PyroValue default_value = vm->stack_top[-1];
+                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
+
+                PyroStr* field_name = READ_STRING();
+                if (PyroMap_contains(class->static_fields, pyro_obj(field_name), vm)) {
+                    pyro_panic(vm, "the static field '%s' already exists", field_name->bytes);
+                    break;
+                }
+
+                if (PyroMap_set(class->static_fields, pyro_obj(field_name), default_value, vm) == 0) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                pyro_pop(vm);
+                break;
+            }
+
             // UNOPTIMIZED.
             // Opcodes below this point have not yet been optimized and documented.
 
@@ -2165,96 +2252,6 @@ static void run(PyroVM* vm) {
                 }
 
                 vm->stack_top -= arg_count;
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PRI_FIELD: {
-                // The field's default value will be sitting on top of the stack.
-                PyroValue default_value = vm->stack_top[-1];
-
-                // The class object will be on the stack just below the default value.
-                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
-
-                PyroStr* field_name = READ_STRING();
-                if (PyroMap_contains(class->all_field_indexes, pyro_obj(field_name), vm)) {
-                    pyro_panic(vm, "the field '%s' already exists", field_name->bytes);
-                    break;
-                }
-
-                size_t field_index = class->default_field_values->count;
-                if (!PyroVec_append(class->default_field_values, default_value, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (PyroMap_set(class->all_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
-                    class->default_field_values->count--;
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the default value but leave the class object on the stack.
-                pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_PUB_FIELD: {
-                // The field's default value will be sitting on top of the stack.
-                PyroValue default_value = vm->stack_top[-1];
-
-                // The class object will be on the stack just below the default value.
-                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
-
-                PyroStr* field_name = READ_STRING();
-                if (PyroMap_contains(class->all_field_indexes, pyro_obj(field_name), vm)) {
-                    pyro_panic(vm, "the field '%s' already exists", field_name->bytes);
-                    break;
-                }
-
-                size_t field_index = class->default_field_values->count;
-                if (!PyroVec_append(class->default_field_values, default_value, vm)) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (PyroMap_set(class->all_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
-                    class->default_field_values->count--;
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                if (PyroMap_set(class->pub_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
-                    PyroMap_remove(class->all_field_indexes, pyro_obj(field_name), vm);
-                    class->default_field_values->count--;
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the default value but leave the class object on the stack.
-                pyro_pop(vm);
-                break;
-            }
-
-            case PYRO_OPCODE_DEFINE_STATIC_FIELD: {
-                // The field's default value will be sitting on top of the stack.
-                PyroValue default_value = vm->stack_top[-1];
-
-                // The class object will be on the stack just below the default value.
-                PyroClass* class = PYRO_AS_CLASS(vm->stack_top[-2]);
-
-                PyroStr* field_name = READ_STRING();
-                if (PyroMap_contains(class->static_fields, pyro_obj(field_name), vm)) {
-                    pyro_panic(vm, "the static field '%s' already exists", field_name->bytes);
-                    break;
-                }
-
-                if (PyroMap_set(class->static_fields, pyro_obj(field_name), default_value, vm) == 0) {
-                    pyro_panic(vm, "out of memory");
-                    break;
-                }
-
-                // Pop the default value but leave the class object on the stack.
-                pyro_pop(vm);
                 break;
             }
 
