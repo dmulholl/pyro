@@ -2475,15 +2475,9 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // UNOPTIMIZED.
-            // Opcodes below this point have not yet been optimized and documented.
-
-            case PYRO_OPCODE_CLOSE_UPVALUE: {
-                close_upvalues(vm, vm->stack_top - 1);
-                pyro_pop(vm);
-                break;
-            }
-
+            // Wraps a PyroFn function in a PyroClosure object and pushes it onto the stack.
+            // Before: [ ... ]
+            // After:  [ ... ][ closure_object ]
             case PYRO_OPCODE_MAKE_CLOSURE: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
                 PyroMod* module = frame->closure->module;
@@ -2508,6 +2502,9 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Wraps a PyroFn function in a PyroClosure object and pushes it onto the stack.
+            // Before: [ ... ][ default_value1 ][ default_value2 ][ default_value3 ]
+            // After:  [ ... ][ closure_object ]
             case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
                 PyroMod* module = frame->closure->module;
@@ -2542,10 +2539,25 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // UNOPTIMIZED.
+            // Opcodes below this point have not yet been optimized and documented.
+
+            case PYRO_OPCODE_CLOSE_UPVALUE: {
+                close_upvalues(vm, vm->stack_top - 1);
+                pyro_pop(vm);
+                break;
+            }
+
             case PYRO_OPCODE_GET_UPVALUE: {
                 uint8_t index = READ_BYTE();
                 PyroValue value = *frame->closure->upvalues[index]->location;
                 pyro_push(vm, value);
+                break;
+            }
+
+            case PYRO_OPCODE_SET_UPVALUE: {
+                uint8_t index = READ_BYTE();
+                *frame->closure->upvalues[index]->location = vm->stack_top[-1];
                 break;
             }
 
@@ -2719,12 +2731,6 @@ static void run(PyroVM* vm) {
                     call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
                 }
 
-                break;
-            }
-
-            case PYRO_OPCODE_SET_UPVALUE: {
-                uint8_t index = READ_BYTE();
-                *frame->closure->upvalues[index]->location = vm->stack_top[-1];
                 break;
             }
 
