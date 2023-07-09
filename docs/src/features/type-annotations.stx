@@ -20,7 +20,7 @@ Pyro supports optional type annotations for variable, function, and method decla
         return value + inc;
     }
 
-Pyro doesn't (currently) do anything with these type annotations, apart from verifying their syntax, but they're useful for documenting your code's intended interface.
+Pyro doesn't (currently) do anything with these type annotations, apart from verifying their syntax, but they're useful for documenting your code.
 
 Future versions of Pyro may support optional type-checking or automatic documentation generation using type annotations.
 

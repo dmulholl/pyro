@@ -738,14 +738,14 @@ You can find a full description of Pyro's map type <a href="builtins/maps.html">
 Errors
 </h3>
 <p>
-Pyro has a dedicated error type, <code>err</code>, which a function can return to indicate failure.
+Pyro has a dedicated error type, <code>err</code>, which a function can return to indicate failure, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">);</span>
 </pre>
 <p>
 You can check if a value is an <code>err</code> using the <code>$is_err(arg)</code> function.
-Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator <code>!!</code>:
+Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator <code>!!</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
@@ -763,7 +763,7 @@ A panic in Pyro is similar to an exception in other languages &mdash; it indicat
 An unhandled panic will result in the program exiting with an error message and a non-zero status code.
 </p>
 <p>
-You can trap a panic using a <code>try</code> expression:
+You can trap a panic using a <code>try</code> expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
@@ -772,21 +772,21 @@ You can trap a panic using a <code>try</code> expression:
 A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>err</code> if it panics.
 </p>
 <p>
-<code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets:
+<code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>  <span class="c1"># 0.5</span>
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">);</span>  <span class="c1"># err</span>
 </pre>
 <p>
-You can use the error-coalescing operator <code>!!</code> to provide a default value for a panicking expression:
+You can use the error-coalescing operator <code>!!</code> to provide a default value for a panicking expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0.5</span>
 <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0</span>
 </pre>
 <p>
-You can raise a panic from your own code by calling the <code>$panic()</code> function with an error message:
+You can raise a panic from your own code by calling the <code>$panic()</code> function with an error message, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
