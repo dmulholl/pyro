@@ -1589,7 +1589,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Calls a method and pushes its return value on to the stack.
+            // Calls a public or private method and pushes its return value onto the stack.
             // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg3 ]
             // After:  [ ... ][ return_value ]
             case PYRO_OPCODE_CALL_METHOD: {
@@ -1612,7 +1612,7 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Calls a method and pushes its return value on to the stack.
+            // Calls a public method and pushes its return value onto the stack.
             // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg3 ]
             // After:  [ ... ][ return_value ]
             case PYRO_OPCODE_CALL_PUB_METHOD: {
@@ -1645,6 +1645,188 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                break;
+            }
+
+            // Implements: [super:method(arg1, arg2, arg3)].
+            // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg3 ][ superclass_object ]
+            // After:  [ ... ][ return_value ]
+            case PYRO_OPCODE_CALL_SUPER_METHOD: {
+                PyroClass* superclass = PYRO_AS_CLASS(pyro_pop(vm));
+                PyroStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+
+                PyroValue method;
+                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                if (PYRO_IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), arg_count);
+                    break;
+                }
+
+                call_closure(vm, PYRO_AS_CLOSURE(method), arg_count);
+                break;
+            }
+
+            // Calls a public or private method and pushes its return value onto the stack.
+            // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg_to_unpack ]
+            // After:  [ ... ][ return_value ]
+            case PYRO_OPCODE_CALL_METHOD_WITH_UNPACK: {
+                PyroStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
+                PyroValue last_arg = pyro_pop(vm);
+                arg_count--;
+
+                PyroValue* values;
+                size_t value_count;
+
+                if (PYRO_IS_TUP(last_arg)) {
+                    values = PYRO_AS_TUP(last_arg)->values;
+                    value_count = PYRO_AS_TUP(last_arg)->count;
+                } else if (PYRO_IS_VEC(last_arg)) {
+                    values = PYRO_AS_VEC(last_arg)->values;
+                    value_count = PYRO_AS_VEC(last_arg)->count;
+                } else {
+                    pyro_panic(vm, "can only unpack a vector or tuple");
+                    break;
+                }
+
+                size_t total_args = (size_t)arg_count + value_count;
+                if (total_args > 255) {
+                    pyro_panic(vm, "too many arguments to unpack");
+                    break;
+                }
+
+                for (size_t i = 0; i < value_count; i++) {
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
+                }
+
+                PyroValue method = pyro_get_method(vm, receiver, method_name);
+                if (PYRO_IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
+                    break;
+                }
+                if (PYRO_IS_CLOSURE(method)) {
+                    call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
+                    break;
+                }
+
+                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                break;
+            }
+
+            // Calls a public method and pushes its return value onto the stack.
+            // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg_to_unpack ]
+            // After:  [ ... ][ return_value ]
+            case PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK: {
+                PyroStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
+                PyroValue last_arg = pyro_pop(vm);
+                arg_count--;
+
+                PyroValue* values;
+                size_t value_count;
+
+                if (PYRO_IS_TUP(last_arg)) {
+                    values = PYRO_AS_TUP(last_arg)->values;
+                    value_count = PYRO_AS_TUP(last_arg)->count;
+                } else if (PYRO_IS_VEC(last_arg)) {
+                    values = PYRO_AS_VEC(last_arg)->values;
+                    value_count = PYRO_AS_VEC(last_arg)->count;
+                } else {
+                    pyro_panic(vm, "can only unpack a vector or tuple");
+                    break;
+                }
+
+                size_t total_args = (size_t)arg_count + value_count;
+                if (total_args > 255) {
+                    pyro_panic(vm, "too many arguments to unpack");
+                    break;
+                }
+
+                for (size_t i = 0; i < value_count; i++) {
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
+                }
+
+                PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
+                if (PYRO_IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
+                    break;
+                }
+                if (PYRO_IS_CLOSURE(method)) {
+                    call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
+                    break;
+                }
+
+                if (PYRO_IS_MOD(receiver)) {
+                    pyro_panic(vm,
+                        "invalid method name ':%s'; receiver is a module, did you mean to use '::'?",
+                        method_name->bytes
+                    );
+                    break;
+                }
+
+                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                break;
+            }
+
+            // Implements: [super:method(arg1, arg2, arg_to_unpack)].
+            // Before: [ ... ][ receiver ][ arg1 ][ arg2 ][ arg_to_unpack ][ superclass_object ]
+            // After:  [ ... ][ return_value ]
+            case PYRO_OPCODE_CALL_SUPER_METHOD_WITH_UNPACK: {
+                PyroClass* superclass = PYRO_AS_CLASS(pyro_pop(vm));
+                PyroStr* method_name = READ_STRING();
+                uint8_t arg_count = READ_BYTE();
+                PyroValue last_arg = pyro_pop(vm);
+                arg_count--;
+
+                PyroValue* values;
+                size_t value_count;
+
+                if (PYRO_IS_TUP(last_arg)) {
+                    values = PYRO_AS_TUP(last_arg)->values;
+                    value_count = PYRO_AS_TUP(last_arg)->count;
+                } else if (PYRO_IS_VEC(last_arg)) {
+                    values = PYRO_AS_VEC(last_arg)->values;
+                    value_count = PYRO_AS_VEC(last_arg)->count;
+                } else {
+                    pyro_panic(vm, "can only unpack a vector or tuple");
+                    break;
+                }
+
+                size_t total_args = (size_t)arg_count + value_count;
+                if (total_args > 255) {
+                    pyro_panic(vm, "too many arguments to unpack");
+                    break;
+                }
+
+                for (size_t i = 0; i < value_count; i++) {
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
+                }
+
+                PyroValue method;
+                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    break;
+                }
+
+                if (PYRO_IS_NATIVE_FN(method)) {
+                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
+                    break;
+                }
+
+                call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
                 break;
             }
 
@@ -2558,179 +2740,6 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_SET_UPVALUE: {
                 uint8_t index = READ_BYTE();
                 *frame->closure->upvalues[index]->location = vm->stack_top[-1];
-                break;
-            }
-
-            // The receiver value and [arg_count] arguments are sitting on top of the stack.
-            case PYRO_OPCODE_CALL_METHOD_WITH_UNPACK: {
-                PyroStr* method_name = READ_STRING();
-                uint8_t arg_count = READ_BYTE();
-                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
-                PyroValue last_arg = pyro_pop(vm);
-                arg_count--;
-
-                PyroValue* values;
-                size_t value_count;
-
-                if (PYRO_IS_TUP(last_arg)) {
-                    values = PYRO_AS_TUP(last_arg)->values;
-                    value_count = PYRO_AS_TUP(last_arg)->count;
-                } else if (PYRO_IS_VEC(last_arg)) {
-                    values = PYRO_AS_VEC(last_arg)->values;
-                    value_count = PYRO_AS_VEC(last_arg)->count;
-                } else {
-                    pyro_panic(vm, "can only unpack a vector or tuple");
-                    break;
-                }
-
-                size_t total_args = (size_t)arg_count + value_count;
-                if (total_args > 255) {
-                    pyro_panic(vm, "too many arguments to unpack");
-                    break;
-                }
-
-                for (size_t i = 0; i < value_count; i++) {
-                    if (!pyro_push(vm, values[i])) {
-                        break;
-                    }
-                }
-
-                PyroValue method = pyro_get_method(vm, receiver, method_name);
-                if (PYRO_IS_NATIVE_FN(method)) {
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
-                    break;
-                }
-                if (PYRO_IS_CLOSURE(method)) {
-                    call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
-                    break;
-                }
-
-                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                break;
-            }
-
-            // The receiver value and [arg_count] arguments are sitting on top of the stack.
-            case PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK: {
-                PyroStr* method_name = READ_STRING();
-                uint8_t arg_count = READ_BYTE();
-                PyroValue receiver = vm->stack_top[-(int)arg_count - 1];
-                PyroValue last_arg = pyro_pop(vm);
-                arg_count--;
-
-                PyroValue* values;
-                size_t value_count;
-
-                if (PYRO_IS_TUP(last_arg)) {
-                    values = PYRO_AS_TUP(last_arg)->values;
-                    value_count = PYRO_AS_TUP(last_arg)->count;
-                } else if (PYRO_IS_VEC(last_arg)) {
-                    values = PYRO_AS_VEC(last_arg)->values;
-                    value_count = PYRO_AS_VEC(last_arg)->count;
-                } else {
-                    pyro_panic(vm, "can only unpack a vector or tuple");
-                    break;
-                }
-
-                size_t total_args = (size_t)arg_count + value_count;
-                if (total_args > 255) {
-                    pyro_panic(vm, "too many arguments to unpack");
-                    break;
-                }
-
-                for (size_t i = 0; i < value_count; i++) {
-                    if (!pyro_push(vm, values[i])) {
-                        break;
-                    }
-                }
-
-                PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
-                if (PYRO_IS_NATIVE_FN(method)) {
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
-                    break;
-                }
-                if (PYRO_IS_CLOSURE(method)) {
-                    call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
-                    break;
-                }
-
-                if (PYRO_IS_MOD(receiver)) {
-                    pyro_panic(vm,
-                        "invalid method name ':%s'; receiver is a module, did you mean to use '::'?",
-                        method_name->bytes
-                    );
-                    break;
-                }
-
-                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                break;
-            }
-
-            // The [receiver], [arg_count] args, and the [superclass] are sitting on top of the stack.
-            case PYRO_OPCODE_CALL_SUPER_METHOD: {
-                PyroClass* superclass = PYRO_AS_CLASS(pyro_pop(vm));
-                PyroStr* method_name = READ_STRING();
-                uint8_t arg_count = READ_BYTE();
-
-                PyroValue method;
-                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                    break;
-                }
-
-                if (PYRO_IS_NATIVE_FN(method)) {
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), arg_count);
-                } else {
-                    call_closure(vm, PYRO_AS_CLOSURE(method), arg_count);
-                }
-
-                break;
-            }
-
-            case PYRO_OPCODE_CALL_SUPER_METHOD_WITH_UNPACK: {
-                PyroClass* superclass = PYRO_AS_CLASS(pyro_pop(vm));
-                PyroStr* method_name = READ_STRING();
-                uint8_t arg_count = READ_BYTE();
-                PyroValue last_arg = pyro_pop(vm);
-                arg_count--;
-
-                PyroValue* values;
-                size_t value_count;
-
-                if (PYRO_IS_TUP(last_arg)) {
-                    values = PYRO_AS_TUP(last_arg)->values;
-                    value_count = PYRO_AS_TUP(last_arg)->count;
-                } else if (PYRO_IS_VEC(last_arg)) {
-                    values = PYRO_AS_VEC(last_arg)->values;
-                    value_count = PYRO_AS_VEC(last_arg)->count;
-                } else {
-                    pyro_panic(vm, "can only unpack a vector or tuple");
-                    break;
-                }
-
-                size_t total_args = (size_t)arg_count + value_count;
-                if (total_args > 255) {
-                    pyro_panic(vm, "too many arguments to unpack");
-                    break;
-                }
-
-                for (size_t i = 0; i < value_count; i++) {
-                    if (!pyro_push(vm, values[i])) {
-                        break;
-                    }
-                }
-
-                PyroValue method;
-                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
-                    break;
-                }
-
-                if (PYRO_IS_NATIVE_FN(method)) {
-                    call_native_fn(vm, PYRO_AS_NATIVE_FN(method), total_args);
-                } else {
-                    call_closure(vm, PYRO_AS_CLOSURE(method), total_args);
-                }
-
                 break;
             }
 
