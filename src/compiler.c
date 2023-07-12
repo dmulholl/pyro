@@ -133,7 +133,7 @@ static void parse_type(Parser* parser);
 
 
 // Make a synthetic token to pass a hardcoded string around.
-static Token syntoken(const char* text) {
+static Token make_syntoken(const char* text) {
     return (Token) {
         .type = TOKEN_SYNTHETIC,
         .line = 0,
@@ -144,7 +144,7 @@ static Token syntoken(const char* text) {
 
 
 // Make a synthetic token containing the basename from [source_id].
-static Token basename_syntoken(const char* source_id) {
+static Token make_syntoken_from_basename(const char* source_id) {
     if (strlen(source_id) == 0) {
         return (Token) {
             .type = TOKEN_SYNTHETIC,
@@ -1268,12 +1268,12 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
         consume(parser, TOKEN_IDENTIFIER, "expected superclass method name");
 
         uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
-        emit_load_named_variable(parser, syntoken("self"));    // load the instance
+        emit_load_named_variable(parser, make_syntoken("self"));    // load the instance
 
         if (match(parser, TOKEN_LEFT_PAREN)) {
             bool unpack_last_argument;
             uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
-            emit_load_named_variable(parser, syntoken("super"));   // load the superclass
+            emit_load_named_variable(parser, make_syntoken("super"));   // load the superclass
             if (unpack_last_argument) {
                 emit_byte(parser, PYRO_OPCODE_CALL_SUPER_METHOD_WITH_UNPACK);
             } else {
@@ -1282,14 +1282,14 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             emit_u16be(parser, index);
             emit_byte(parser, arg_count);
         } else {
-            emit_load_named_variable(parser, syntoken("super"));   // load the superclass
+            emit_load_named_variable(parser, make_syntoken("super"));   // load the superclass
             emit_byte(parser, PYRO_OPCODE_GET_SUPER_METHOD);
             emit_u16be(parser, index);
         }
     }
 
     else if (match(parser, TOKEN_DEF)) {
-        parse_function_definition(parser, TYPE_FUNCTION, syntoken("<lambda>"));
+        parse_function_definition(parser, TYPE_FUNCTION, make_syntoken("<lambda>"));
     }
 
     else if (match(parser, TOKEN_LEFT_BRACKET)) {
@@ -1435,7 +1435,7 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
 
 static void parse_try_expr(Parser* parser) {
     FnCompiler fn_compiler;
-    if (!init_fn_compiler(parser, &fn_compiler, TYPE_TRY_EXPR, syntoken("try"))) {
+    if (!init_fn_compiler(parser, &fn_compiler, TYPE_TRY_EXPR, make_syntoken("try"))) {
         return;
     }
 
@@ -2033,7 +2033,7 @@ static void parse_for_in_stmt(Parser* parser) {
 
     // Replace the object on top of the stack with the result of calling :$iter() on it.
     emit_byte(parser, PYRO_OPCODE_GET_ITERATOR);
-    add_local(parser, syntoken("*iterator*"));
+    add_local(parser, make_syntoken("*iterator*"));
 
     // This is the point in the bytecode the loop will jump back to.
     LoopCompiler loop;
@@ -2477,7 +2477,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
         // We declare 'super' as a local variable in a new lexical scope wrapping the method
         // declarations so it can be captured by the upvalue machinery.
         begin_scope(parser);
-        add_local(parser, syntoken("super"));
+        add_local(parser, make_syntoken("super"));
         define_variable(parser, 0, PRIVATE);
 
         emit_load_named_variable(parser, class_name);
@@ -2730,7 +2730,7 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
     FnCompiler fn_compiler;
-    if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, basename_syntoken(src_id))) {
+    if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, make_syntoken_from_basename(src_id))) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
