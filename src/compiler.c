@@ -145,7 +145,9 @@ static Token make_syntoken(const char* text) {
 
 // Make a synthetic token containing the basename from [source_id].
 static Token make_syntoken_from_basename(const char* source_id) {
-    if (strlen(source_id) == 0) {
+    size_t length = strlen(source_id);
+
+    if (length == 0) {
         return (Token) {
             .type = TOKEN_SYNTHETIC,
             .line = 0,
@@ -154,31 +156,21 @@ static Token make_syntoken_from_basename(const char* source_id) {
         };
     }
 
-    const char* last_char = source_id + strlen(source_id) - 1;
-
     // Find the first character of the basename.
-    const char* start = last_char;
+    const char* start = source_id + length;
     while (start > source_id) {
-        if (*(start - 1) == '/') {
+        start--;
+        if (*start == '/') {
+            start++;
             break;
         }
-        start--;
-    }
-
-    // Find the last character of the basename.
-    const char* end = start;
-    while (end < last_char) {
-        /* if (*(end + 1) == '.') { */
-        /*     break; */
-        /* } */
-        end++;
     }
 
     return (Token) {
         .type = TOKEN_SYNTHETIC,
         .line = 0,
         .start = start,
-        .length = end - start + 1
+        .length = (source_id + length) - start,
     };
 }
 
