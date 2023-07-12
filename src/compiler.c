@@ -518,43 +518,44 @@ static void add_local(Parser* parser, Token name) {
 }
 
 
-static void mark_initialized(Parser* parser) {
-    if (parser->fn_compiler->scope_depth == 0) {
-        return;
+// Sets the [is_initialized] flag on the last [count] local variables.
+static void mark_locals_as_initialized(Parser* parser, int count) {
+    if (parser->fn_compiler->scope_depth > 0) {
+        for (int i = 0; i < count; i++) {
+            int index = parser->fn_compiler->local_count - 1 - i;
+            parser->fn_compiler->locals[index].is_initialized = true;
+        }
     }
-    parser->fn_compiler->locals[parser->fn_compiler->local_count - 1].is_initialized = true;
 }
 
 
-static void mark_initialized_multi(Parser* parser, size_t count) {
-    if (parser->fn_compiler->scope_depth == 0) {
-        return;
-    }
-    for (size_t i = 0; i < count; i++) {
-        parser->fn_compiler->locals[parser->fn_compiler->local_count - 1 - i].is_initialized = true;
-    }
+// Sets the [is_initialized] flag on the last local variable.
+static void mark_local_as_initialized(Parser* parser) {
+    mark_locals_as_initialized(parser, 1);
 }
 
 
 static void define_variable(Parser* parser, uint16_t index, Access access) {
     if (parser->fn_compiler->scope_depth > 0) {
-        mark_initialized(parser);
+        mark_local_as_initialized(parser);
         return;
     }
+
     PyroOpcode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBAL : PYRO_OPCODE_DEFINE_PRI_GLOBAL;
     emit_byte(parser, opcode);
     emit_u16be(parser, index);
 }
 
 
-static void define_variables(Parser* parser, uint16_t* indexes, size_t count, Access access) {
+static void define_variables(Parser* parser, uint16_t* indexes, int count, Access access) {
     if (parser->fn_compiler->scope_depth > 0) {
-        mark_initialized_multi(parser, count);
+        mark_locals_as_initialized(parser, count);
         return;
     }
+
     PyroOpcode opcode = (access == PUBLIC) ? PYRO_OPCODE_DEFINE_PUB_GLOBALS : PYRO_OPCODE_DEFINE_PRI_GLOBALS;
     emit_u8_u8(parser, opcode, count);
-    for (size_t i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
         emit_u16be(parser, indexes[i]);
     }
 }
@@ -1769,13 +1770,13 @@ static void parse_expression_stmt(Parser* parser) {
 
 
 static void parse_unpacking_declaration(Parser* parser, Access access) {
-    const size_t var_name_capacity = 16;
+    const int var_name_capacity = 16;
     uint16_t var_name_indexes[16];
-    size_t var_name_count = 0;
+    int var_name_count = 0;
 
     do {
         if (var_name_count == var_name_capacity) {
-            ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", var_name_capacity);
+            ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %d)", var_name_capacity);
             return;
         }
         var_name_indexes[var_name_count++] = consume_variable_name(parser, "expected variable name");
@@ -2052,7 +2053,7 @@ static void parse_for_in_stmt(Parser* parser) {
     }
     for (size_t i = 0; i < loop_vars_count; i++) {
         add_local(parser, loop_vars[i]);
-        mark_initialized(parser);
+        mark_local_as_initialized(parser);
     }
     parse_block(parser);
     end_scope(parser);
@@ -2290,7 +2291,7 @@ static void parse_with_stmt(Parser* parser) {
     begin_scope(parser);
     for (size_t i = 0; i < var_names_count; i++) {
         add_local(parser, var_names[i]);
-        mark_initialized(parser);
+        mark_local_as_initialized(parser);
     }
     parse_block(parser);
     end_scope(parser);
@@ -2390,7 +2391,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
 static void parse_function_declaration(Parser* parser, Access access) {
     uint16_t index = consume_variable_name(parser, "expected a function name");
-    mark_initialized(parser);
+    mark_local_as_initialized(parser);
     parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
     define_variable(parser, index, access);
 }
