@@ -1,13 +1,13 @@
 var global = 1;
 
 def foo(foo_arg) {
-    var foo_local = 2;
+    var foo_local = 2 + foo_arg;
 
     def bar(bar_arg) {
-        var bar_local = 3;
+        var bar_local = 3 + bar_arg;
 
         def baz(baz_arg) {
-            var baz_local = 4;
+            var baz_local = 4 + baz_arg;
             var sum;
             {
                 var baz_inner_local = 5;
@@ -24,22 +24,22 @@ def foo(foo_arg) {
 
 var bar = foo(101);
 var baz = bar(102);
-assert baz(103) == 1 + 101 + 2 + 102 + 3 + 103 + 4 + 5;
+assert baz(103) == 1 + 101 + (2 + 101) + 102 + (3 + 102) + 103 + (4 + 103) + 5;
 
 {
     var bar = foo(201);
-    var baz = bar(201);
-    assert baz(203) == 1 + 201 + 2 + 201 + 3 + 203 + 4 + 5;
+    var baz = bar(202);
+    assert baz(203) == 1 + 201 + (2 + 201) + 202 + (3 + 202) + 203 + (4 + 203) + 5;
 }
 
 with bar = foo(301) {
     with baz = bar(302) {
-        assert baz(303) == 1 + 301 + 2 + 302 + 3 + 303 + 4 + 5;
+        assert baz(303) == 1 + 301 + (2 + 301) + 302 + (3 + 302) + 303 + (4 + 303) + 5;
     }
 }
 
 with bar = foo(401) {
     with baz = bar(402) {
-        assert baz(403) == 1 + 401 + 2 + 402 + 3 + 403 + 4 + 5;
+        assert baz(403) == 1 + 401 + (2 + 401) + 402 + (3 + 402) + 403 + (4 + 403) + 5;
     }
 }
