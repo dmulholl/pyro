@@ -1,13 +1,32 @@
 import std::constants;
 
 assert $is_f64(constants::pi);
-assert constants::pi > 3.14 && constants::pi < 3.15;
-
 assert $is_f64(constants::tau);
 assert $is_f64(constants::e);
+
+assert constants::pi > 3.14 && constants::pi < 3.15;
+
+assert $is_f64(constants::nan);
 assert $is_nan(constants::nan);
+
+assert $is_f64(constants::inf);
 assert $is_inf(constants::inf);
 
 assert $is_i64(constants::i64_max);
 assert $is_i64(constants::i64_min);
 
+assert constants::i8_max == 127;
+assert constants::i8_min == -128;
+
+assert constants::i16_max == 32_767;
+assert constants::i16_min == -32_768;
+
+assert constants::i32_max == 2_147_483_647;
+assert constants::i32_min == -2_147_483_648;
+
+assert constants::i64_max == 9_223_372_036_854_775_807;
+assert constants::i64_min == -9_223_372_036_854_775_807 - 1;
+
+assert constants::u8_max == 255;
+assert constants::u16_max == 65_535;
+assert constants::u32_max == 4_294_967_295;
