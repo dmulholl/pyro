@@ -5,19 +5,55 @@ meta_title: Pyro Standard Library &mdash; std::constants
 
 [[ `e: f64` ]]
 
-    Euler's constant.
+    Euler's constant to the maximum accuracy limit of a 64-bit IEEE 754 float.
+
+
+[[ `i8_max: i64` ]]
+
+    The maximum value of a signed two's-complement 8-bit integer,
+    i.e. `(2^7) - 1` or `127`.
+
+
+[[ `i8_min: i64` ]]
+
+    The minimum value of a signed two's-complement 8-bit integer,
+    i.e. `-(2^7)` or `-128`.
+
+
+[[ `i16_max: i64` ]]
+
+    The maximum value of a signed two's-complement 16-bit integer,
+    i.e. `(2^15) - 1` or `32_767`.
+
+
+[[ `i16_min: i64` ]]
+
+    The minimum value of a signed two's-complement 16-bit integer,
+    i.e. `-(2^15)` or `-32_768`.
+
+
+[[ `i32_max: i64` ]]
+
+    The maximum value of a signed two's-complement 32-bit integer,
+    i.e. `(2^31) - 1` or `2_147_483_647`.
+
+
+[[ `i32_min: i64` ]]
+
+    The minimum value of a signed two's-complement 32-bit integer,
+    i.e. `-(2^31)` or `-2_147_483_648`.
 
 
 [[ `i64_max: i64` ]]
 
-    The maximum value of an `i64`,
-    i.e. `(2^63) - 1`.
+    The maximum value of a signed two's-complement 64-bit integer,
+    i.e. `(2^63) - 1` or `9_223_372_036_854_775_807`.
 
 
 [[ `i64_min: i64` ]]
 
-    The minimum value of an `i64`,
-    i.e. `-(2^63)`.
+    The minimum value of a signed two's-complement 64-bit integer,
+    i.e. `-(2^63)` or `-9_223_372_036_854_775_808`.
 
 
 [[ `inf: f64` ]]
@@ -39,3 +75,25 @@ meta_title: Pyro Standard Library &mdash; std::constants
 
     The constant `tau`, i.e. `pi * 2`, to the maximum accuracy limit of a 64-bit IEEE 754 float.
 
+
+[[ `u8_max: i64` ]]
+
+    The maximum value of an unsigned 8-bit integer,
+    i.e. `(2^8) - 1` or `255`.
+
+
+[[ `u16_max: i64` ]]
+
+    The maximum value of an unsigned 16-bit integer,
+    i.e. `(2^16) - 1` or `65_535`.
+
+
+[[ `u32_max: i64` ]]
+
+    The maximum value of an unsigned 32-bit integer,
+    i.e. `(2^32) - 1` or `4_294_967_295`.
+
+
+### Notes
+
+There is no `u64_max` constant because its value --- `(2^64) - 1` or `18_446_744_073_709_551_615` --- would be too big to fit into Pyro's `i64` integer type.

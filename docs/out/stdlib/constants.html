@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.59</p>
+                <p class="version">Version 0.9.63</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -61,7 +61,73 @@
 </dt>
 <dd>
 <p>
-Euler's constant.
+Euler's constant to the maximum accuracy limit of a 64-bit IEEE 754 float.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>i8_max: i64</code>
+</dt>
+<dd>
+<p>
+The maximum value of a signed two's-complement 8-bit integer,
+i.e. <code>(2^7) - 1</code> or <code>127</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>i8_min: i64</code>
+</dt>
+<dd>
+<p>
+The minimum value of a signed two's-complement 8-bit integer,
+i.e. <code>-(2^7)</code> or <code>-128</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>i16_max: i64</code>
+</dt>
+<dd>
+<p>
+The maximum value of a signed two's-complement 16-bit integer,
+i.e. <code>(2^15) - 1</code> or <code>32_767</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>i16_min: i64</code>
+</dt>
+<dd>
+<p>
+The minimum value of a signed two's-complement 16-bit integer,
+i.e. <code>-(2^15)</code> or <code>-32_768</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>i32_max: i64</code>
+</dt>
+<dd>
+<p>
+The maximum value of a signed two's-complement 32-bit integer,
+i.e. <code>(2^31) - 1</code> or <code>2_147_483_647</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>i32_min: i64</code>
+</dt>
+<dd>
+<p>
+The minimum value of a signed two's-complement 32-bit integer,
+i.e. <code>-(2^31)</code> or <code>-2_147_483_648</code>.
 </p>
 </dd>
 </div>
@@ -71,8 +137,8 @@ Euler's constant.
 </dt>
 <dd>
 <p>
-The maximum value of an <code>i64</code>,
-i.e. <code>(2^63) - 1</code>.
+The maximum value of a signed two's-complement 64-bit integer,
+i.e. <code>(2^63) - 1</code> or <code>9_223_372_036_854_775_807</code>.
 </p>
 </dd>
 </div>
@@ -82,8 +148,8 @@ i.e. <code>(2^63) - 1</code>.
 </dt>
 <dd>
 <p>
-The minimum value of an <code>i64</code>,
-i.e. <code>-(2^63)</code>.
+The minimum value of a signed two's-complement 64-bit integer,
+i.e. <code>-(2^63)</code> or <code>-9_223_372_036_854_775_808</code>.
 </p>
 </dd>
 </div>
@@ -127,7 +193,46 @@ The constant <code>tau</code>, i.e. <code>pi * 2</code>, to the maximum accuracy
 </p>
 </dd>
 </div>
+<div>
+<dt>
+<code>u8_max: i64</code>
+</dt>
+<dd>
+<p>
+The maximum value of an unsigned 8-bit integer,
+i.e. <code>(2^8) - 1</code> or <code>255</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>u16_max: i64</code>
+</dt>
+<dd>
+<p>
+The maximum value of an unsigned 16-bit integer,
+i.e. <code>(2^16) - 1</code> or <code>65_535</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>u32_max: i64</code>
+</dt>
+<dd>
+<p>
+The maximum value of an unsigned 32-bit integer,
+i.e. <code>(2^32) - 1</code> or <code>4_294_967_295</code>.
+</p>
+</dd>
+</div>
 </dl>
+<h3 id="notes">
+Notes
+</h3>
+<p>
+There is no <code>u64_max</code> constant because its value &mdash; <code>(2^64) - 1</code> or <code>18_446_744_073_709_551_615</code> &mdash; would be too big to fit into Pyro's <code>i64</code> integer type.
+</p>
         </article>
         
     </body>
