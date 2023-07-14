@@ -534,3 +534,18 @@ bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b) {
     *result = a + b;
     return false;
 }
+
+
+// Like C23's ckd_sub(). Returns true if the result would overflow.
+bool pyro_ckd_sub(int64_t* result, int64_t a, int64_t b) {
+    if (b < 0 && a > INT64_MAX + b) {
+        return true;
+    }
+
+    if (b > 0 && a < INT64_MIN + b) {
+        return true;
+    }
+
+    *result = a - b;
+    return false;
+}

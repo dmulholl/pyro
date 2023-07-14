@@ -98,4 +98,7 @@ bool pyro_is_upper(char c);
 // Like C23's ckd_add(). Returns true if the result would overflow.
 bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b);
 
+// Like C23's ckd_sub(). Returns true if the result would overflow.
+bool pyro_ckd_sub(int64_t* result, int64_t a, int64_t b);
+
 #endif

@@ -18,3 +18,21 @@ assert $add(constants::i64_min + 1, -1) == constants::i64_min;
 
 assert $is_err(try $add(constants::i64_min, -1));
 assert $is_err(try $add(constants::i64_min + 1, -2));
+
+# Checked subtraction.
+assert $sub(1, 2) == -1;
+assert $sub(1, -2) == 3;
+assert $sub(1.0, 2.0) == -1.0;
+assert $sub(1.0, -2.0) == 3.0;
+
+assert $sub(constants::i64_min, 0) == constants::i64_min;
+assert $sub(constants::i64_min + 1, 1) == constants::i64_min;
+
+assert $is_err(try $sub(constants::i64_min, 1));
+assert $is_err(try $sub(constants::i64_min + 1, 2));
+
+assert $sub(constants::i64_max, 0) == constants::i64_max;
+assert $sub(constants::i64_max - 1, -1) == constants::i64_max;
+
+assert $is_err(try $sub(constants::i64_max, -1));
+assert $is_err(try $sub(constants::i64_max - 1, -2));
