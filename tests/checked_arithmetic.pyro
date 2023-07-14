@@ -1,0 +1,20 @@
+import std::constants;
+
+# Checked addition.
+assert $add(1, 2) == 3;
+assert $add(1, -2) == -1;
+assert $add(1.0, 2.0) == 3.0;
+assert $add(1.0, -2.0) == -1.0;
+assert $add("foo", "bar") == "foobar";
+
+assert $add(constants::i64_max, 0) == constants::i64_max;
+assert $add(constants::i64_max - 1, 1) == constants::i64_max;
+
+assert $is_err(try $add(constants::i64_max, 1));
+assert $is_err(try $add(constants::i64_max - 1, 2));
+
+assert $add(constants::i64_min, 0) == constants::i64_min;
+assert $add(constants::i64_min + 1, -1) == constants::i64_min;
+
+assert $is_err(try $add(constants::i64_min, -1));
+assert $is_err(try $add(constants::i64_min + 1, -2));

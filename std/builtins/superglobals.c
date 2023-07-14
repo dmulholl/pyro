@@ -994,6 +994,20 @@ static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_add(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (PYRO_IS_I64(args[0]) && PYRO_IS_I64(args[1])) {
+        int64_t result;
+        if (pyro_ckd_add(&result, args[0].as.i64, args[1].as.i64)) {
+            pyro_panic(vm, "$add(): signed integer overflow");
+            return pyro_null();
+        }
+        return pyro_i64(result);
+    }
+
+    return pyro_op_binary_plus(vm, args[0], args[1]);
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1057,4 +1071,5 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$stdout", fn_stdout, -1);
     pyro_define_superglobal_fn(vm, "$stderr", fn_stderr, -1);
     pyro_define_superglobal_fn(vm, "$import", fn_import, 1);
+    pyro_define_superglobal_fn(vm, "$add", fn_add, 2);
 }
