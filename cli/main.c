@@ -42,7 +42,8 @@ static const char* HELPTEXT =
 static const char* TEST_HELPTEXT =
     "Usage: pyro test [files]\n"
     "\n"
-    "  This command runs unit tests.\n"
+    "  This command runs unit tests. It exits with a non-zero status code if\n"
+    "  any tests fail.\n"
     "\n"
     "  For each input file, Pyro first executes the file, then runs any test\n"
     "  functions it contains, i.e. functions whose names begin with '$test_'.\n"
@@ -57,6 +58,10 @@ static const char* TEST_HELPTEXT =
     "\n"
     "  Note that test functions take no arguments.\n"
     "\n"
+    "  Use the -e/--errors flag to isolate individual failures. With this flag,\n"
+    "  (only) standard error output is printed, and execution will halt at the\n"
+    "  first failure.\n"
+    "\n"
     "Arguments:\n"
     "  [files]                    Files to test.\n"
     "\n"
@@ -64,7 +69,7 @@ static const char* TEST_HELPTEXT =
     "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
     "\n"
     "Flags:\n"
-    "  -e, --errors               Show standard error output.\n"
+    "  -e, --errors               Show (only) standard error output.\n"
     "  -h, --help                 Print this help text and exit."
     ;
 
