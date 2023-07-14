@@ -1,10 +1,13 @@
 import std::constants;
 
 assert $is_f64(constants::pi);
-assert $is_f64(constants::tau);
-assert $is_f64(constants::e);
-
 assert constants::pi > 3.14 && constants::pi < 3.15;
+
+assert $is_f64(constants::tau);
+assert constants::tau > 6.28 && constants::tau < 6.29;
+
+assert $is_f64(constants::e);
+assert constants::e > 2.71 && constants::e < 2.72;
 
 assert $is_f64(constants::nan);
 assert $is_nan(constants::nan);
