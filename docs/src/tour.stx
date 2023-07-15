@@ -71,6 +71,8 @@ Both behave as you'd expect and support the usual range of numeric operations.
     `%`       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
     `**`      | Power operator. Both operands are converted to floats and the result is a float.
 
+Pyro also has a set of builtin functions for performing [checked arithmetic](@root/features/checked-arithmetic//) with signed integers.
+
 Integer literals can use binary, octal, decimal, or hex notation:
 
 ::: code pyro
