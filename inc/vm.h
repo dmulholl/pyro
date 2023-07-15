@@ -81,8 +81,7 @@ struct PyroVM {
     // Stores global functions and variables, available in all modules.
     PyroMap* superglobals;
 
-    // The tree of imported modules.
-    PyroMap* modules;
+    // The cache of imported modules.
     PyroMap* module_cache;
 
     // The main module is the context in which script files and the REPL execute.

@@ -50,7 +50,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->main_module = NULL;
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
-    vm->modules = NULL;
     vm->module_cache = NULL;
     vm->next_gc_threshold = PYRO_INIT_GC_THRESHOLD;
     vm->objects = NULL;
@@ -266,7 +265,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
 
     // All other object fields.
     vm->superglobals = PyroMap_new(vm);
-    vm->modules = PyroMap_new(vm);
     vm->module_cache = PyroMap_new(vm);
     vm->main_module = PyroMod_new(vm);
     vm->import_roots = PyroVec_new(vm);
@@ -295,24 +293,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     pyro_load_std_builtins_char(vm);
 
     if (vm->memory_allocation_failed) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-
-    // Create the root standard library module.
-    PyroMod* std_mod = PyroMod_new(vm);
-    if (!std_mod) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-
-    PyroStr* std_mod_name = PyroStr_COPY("std");
-    if (!std_mod_name) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-
-    if (!PyroMap_set(vm->modules, pyro_obj(std_mod_name), pyro_obj(std_mod), vm)) {
         pyro_free_vm(vm);
         return NULL;
     }
