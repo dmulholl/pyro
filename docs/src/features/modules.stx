@@ -79,6 +79,13 @@ Finally, the top-level `math` module can be empty and simply function as a conta
 
 Submodules can contain submodules of their own --- there's no hard limit to how deep the nesting can go.
 
+Note that only the final module name in the import chain is declared as a variable in the importing scope, e.g.
+
+::: code pyro
+    import foo::bar::baz;
+
+In this case, only `baz` is declared as a variable in the importing scope.
+
 
 
 ### Parents, Children, Siblings
@@ -113,20 +120,6 @@ A child module can import its sibling -- e.g. in `root/math/calc.pyro`:
 
 A module file is only executed the first time it's imported.
 The imported module is cached and any subsequent imports simply load the module object from the cache.
-
-Importing a submodule automatically executes and adds its ancestor modules to the cache if they haven't already been imported.
-For example, given the statement:
-
-::: code pyro
-    import foo::bar::baz;
-
-* The module `foo` will be executed and added to the cache if it hasn't already been imported.
-
-* The module `foo::bar` will be executed and added to the cache if it hasn't already been imported.
-
-* The module `foo::bar::baz` will be executed and added to the cache if it hasn't already been imported.
-
-Only the final module name in the chain is declared as a variable in the importing scope --- here `baz`.
 
 
 

@@ -171,6 +171,15 @@ root/
 <p>
 Submodules can contain submodules of their own &mdash; there's no hard limit to how deep the nesting can go.
 </p>
+<p>
+Note that only the final module name in the import chain is declared as a variable in the importing scope, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">foo</span><span class="p">::</span><span class="nx">bar</span><span class="p">::</span><span class="nx">baz</span><span class="p">;</span>
+</pre>
+<p>
+In this case, only <code>baz</code> is declared as a variable in the importing scope.
+</p>
 <h3 id="parents-children-siblings">
 Parents, Children, Siblings
 </h3>
@@ -208,27 +217,6 @@ Module Caching
 <p>
 A module file is only executed the first time it's imported.
 The imported module is cached and any subsequent imports simply load the module object from the cache.
-</p>
-<p>
-Importing a submodule automatically executes and adds its ancestor modules to the cache if they haven't already been imported.
-For example, given the statement:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kn">import</span> <span class="nx">foo</span><span class="p">::</span><span class="nx">bar</span><span class="p">::</span><span class="nx">baz</span><span class="p">;</span>
-</pre>
-<ul>
-<li>
-The module <code>foo</code> will be executed and added to the cache if it hasn't already been imported.
-</li>
-<li>
-The module <code>foo::bar</code> will be executed and added to the cache if it hasn't already been imported.
-</li>
-<li>
-The module <code>foo::bar::baz</code> will be executed and added to the cache if it hasn't already been imported.
-</li>
-</ul>
-<p>
-Only the final module name in the chain is declared as a variable in the importing scope &mdash; here <code>baz</code>.
 </p>
 <h3 id="circular-imports">
 Circular Imports
