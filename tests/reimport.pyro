@@ -1,0 +1,19 @@
+import lib6;
+
+lib6::set_value(123);
+assert lib6::get_value() == 123;
+
+{
+    assert lib6::get_value() == 123;
+    import lib6;
+    lib6::set_value(456);
+    assert lib6::get_value() == 456;
+}
+
+assert lib6::get_value() == 456;
+
+import lib6 as alias;
+assert alias::get_value() == 456;
+alias::set_value(789);
+assert alias::get_value() == 789;
+

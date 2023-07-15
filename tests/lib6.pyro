@@ -1,0 +1,9 @@
+var global = 0;
+
+pub def get_value() {
+    return global;
+}
+
+pub def set_value(value) {
+    global = value;
+}
