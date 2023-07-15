@@ -271,59 +271,8 @@ static void close_upvalues(PyroVM* vm, PyroValue* slot) {
 // imported, this will return the cached module object. Otherwise, it will attempt to import,
 // execute, and return the named module.
 //
-// This function will import ancestor modules along the [names] path if they haven't already
-// been imported, i.e. if the path is 'foo::bar::baz' this function will first import 'foo',
-// then 'foo::bar', then 'foo::bar::baz', returning the module 'baz'.
-//
 // This function can call into Pyro code and can set the panic or exit flags.
 static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
-    if (name_count > 16) {
-        pyro_panic(vm, "import list is too long (max: 16 module names)");
-        return NULL;
-    }
-
-    // Make a local copy of the [names] array in case the stack gets reallocated while we're
-    // iterating over the values, invalidating the [names] pointer.
-    PyroValue names_array[16];
-    memcpy(names_array, names, name_count * sizeof(PyroValue));
-
-    PyroMap* supermod_modules_map = vm->modules;
-    PyroValue module_value;
-
-    for (uint8_t i = 0; i < name_count; i++) {
-        PyroValue name = names_array[i];
-
-        if (PyroMap_get(supermod_modules_map, name, &module_value, vm)) {
-            supermod_modules_map = PYRO_AS_MOD(module_value)->submodules;
-            continue;
-        }
-
-        PyroMod* module_object = PyroMod_new(vm);
-        if (!module_object) {
-            pyro_panic(vm, "out of memory");
-            return NULL;
-        }
-
-        module_value = pyro_obj(module_object);
-        if (PyroMap_set(supermod_modules_map, name, module_value, vm) == 0) {
-            pyro_panic(vm, "out of memory");
-            return NULL;
-        }
-
-        pyro_import_module(vm, i + 1, names_array, module_object);
-        if (vm->halt_flag) {
-            PyroMap_remove(supermod_modules_map, name, vm);
-            return NULL;
-        }
-
-        supermod_modules_map = module_object->submodules;
-    }
-
-    return PYRO_AS_MOD(module_value);
-}
-
-
-static PyroMod* new_load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
     PyroBuf* buf = PyroBuf_new_with_capacity(64, vm);
     if (!buf) {
         pyro_panic(vm, "out of memory");
@@ -2565,7 +2514,7 @@ static void run(PyroVM* vm) {
                 uint8_t arg_count = READ_BYTE();
                 PyroValue* args = vm->stack_top - arg_count;
 
-                PyroMod* module = new_load_module(vm, args, arg_count);
+                PyroMod* module = load_module(vm, args, arg_count);
                 if (vm->halt_flag) {
                     break;
                 }
@@ -2584,7 +2533,7 @@ static void run(PyroVM* vm) {
                 PyroValue* args = vm->stack_top - arg_count;
 
                 PyroMod* current_module = frame->closure->module;
-                PyroMod* imported_module = new_load_module(vm, args, arg_count);
+                PyroMod* imported_module = load_module(vm, args, arg_count);
                 if (vm->halt_flag) {
                     break;
                 }
@@ -2630,7 +2579,7 @@ static void run(PyroVM* vm) {
                 uint8_t member_count = READ_BYTE();
                 PyroValue* args = vm->stack_top - module_count - member_count;
 
-                PyroMod* module = new_load_module(vm, args, module_count);
+                PyroMod* module = load_module(vm, args, module_count);
                 if (vm->halt_flag) {
                     break;
                 }
