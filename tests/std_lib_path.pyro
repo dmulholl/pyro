@@ -1,15 +1,15 @@
-import std::path;
-import std::path::{exists, is_file, is_dir, is_symlink};
-import std::path::{basename, dirname, join};
-import std::path::{normpath};
+import std::fs;
+import std::fs::{exists, is_file, is_dir, is_symlink};
+import std::fs::{basename, dirname, join};
+import std::fs::{normpath};
 
 assert exists($filepath);
 assert is_file($filepath);
 assert is_dir(dirname($filepath));
 assert is_file(join(dirname($filepath), basename($filepath)));
 
-assert exists(path::cwd());
-assert is_dir(path::cwd());
+assert exists(fs::cwd());
+assert is_dir(fs::cwd());
 
 # Test basename().
 assert basename("") == "";

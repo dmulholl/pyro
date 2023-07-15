@@ -1,6 +1,6 @@
-import std::path;
+import std::fs;
 
-if path::exists(path::dirname($filepath) + "/compiled_module.so") {
+if fs::exists(fs::dirname($filepath) + "/compiled_module.so") {
     import compiled_module;
     assert $is_module(compiled_module);
     assert compiled_module::add(1, 2) == 3;

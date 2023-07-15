@@ -1,4 +1,4 @@
-import std::path;
+import std::fs;
 
-var realpath = path::realpath($filepath);
-assert path::is_file(realpath);
+var realpath = fs::realpath($filepath);
+assert fs::is_file(realpath);

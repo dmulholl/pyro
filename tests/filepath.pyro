@@ -1,2 +1,2 @@
-import std::path;
-assert path::basename($filepath) == "filepath.pyro";
+import std::fs;
+assert fs::basename($filepath) == "filepath.pyro";

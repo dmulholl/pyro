@@ -1,7 +1,7 @@
-import std::path;
+import std::fs;
 
-var test_dir = path::dirname($filepath);
-var temp_filename = path::join(test_dir, "temp_data.txt");
+var test_dir = fs::dirname($filepath);
+var temp_filename = fs::join(test_dir, "temp_data.txt");
 
 var file;
 
@@ -42,4 +42,4 @@ with file = $file(temp_filename, "r") {
     assert file:read_line() == null;
 }
 
-path::remove(temp_filename);
+fs::remove(temp_filename);

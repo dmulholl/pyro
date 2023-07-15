@@ -1,10 +1,10 @@
-import std::path;
+import std::fs;
 
 assert !$is_file(123);
 assert !$is_file("foo");
 
-var test_dir = path::dirname($filepath);
-var temp_filename = path::join(test_dir, "temp_data.txt");
+var test_dir = fs::dirname($filepath);
+var temp_filename = fs::join(test_dir, "temp_data.txt");
 
 assert $write_file(temp_filename, "foobar") == 6;
 assert $read_file(temp_filename) == "foobar";
@@ -69,4 +69,4 @@ with file = $file(temp_filename, "r") {
     assert file:read_string() == "";
 }
 
-path::remove(temp_filename);
+fs::remove(temp_filename);
