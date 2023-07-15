@@ -55,10 +55,13 @@
                 <hr>
             </header>
             <p>
-Signed integer overflow in C is undefined behaviour.
+Pyro is implemented in C where signed integer overflow is undefined behaviour.
 </p>
 <p>
-Pyro's arithmetic operators don't check for overflow. Instead, Pyro has a set of builtin functions for performing checked arithmetic.
+Overflow happens if the result of an integer operation is outside the range of the integer type &mdash; e.g. the addition operation <code>i64_max + 1</code> will overflow because the sum of the two numbers is outside the range of the <code>i64</code> type.
+</p>
+<p>
+Pyro's arithmetic operators don't check for integer overflow. Instead, Pyro has a set of builtin functions for performing checked arithmetic.
 </p>
 <dl>
 <div>
