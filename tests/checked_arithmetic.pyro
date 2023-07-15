@@ -1,4 +1,4 @@
-import std::constants;
+import std::constants::{i64_max, i64_min};
 
 # Checked addition.
 assert $add(1, 2) == 3;
@@ -7,17 +7,17 @@ assert $add(1.0, 2.0) == 3.0;
 assert $add(1.0, -2.0) == -1.0;
 assert $add("foo", "bar") == "foobar";
 
-assert $add(constants::i64_max, 0) == constants::i64_max;
-assert $add(constants::i64_max - 1, 1) == constants::i64_max;
+assert $add(i64_max, 0) == i64_max;
+assert $add(i64_max - 1, 1) == i64_max;
 
-assert $is_err(try $add(constants::i64_max, 1));
-assert $is_err(try $add(constants::i64_max - 1, 2));
+assert $is_err(try $add(i64_max, 1));
+assert $is_err(try $add(i64_max - 1, 2));
 
-assert $add(constants::i64_min, 0) == constants::i64_min;
-assert $add(constants::i64_min + 1, -1) == constants::i64_min;
+assert $add(i64_min, 0) == i64_min;
+assert $add(i64_min + 1, -1) == i64_min;
 
-assert $is_err(try $add(constants::i64_min, -1));
-assert $is_err(try $add(constants::i64_min + 1, -2));
+assert $is_err(try $add(i64_min, -1));
+assert $is_err(try $add(i64_min + 1, -2));
 
 # Checked subtraction.
 assert $sub(1, 2) == -1;
@@ -25,14 +25,102 @@ assert $sub(1, -2) == 3;
 assert $sub(1.0, 2.0) == -1.0;
 assert $sub(1.0, -2.0) == 3.0;
 
-assert $sub(constants::i64_min, 0) == constants::i64_min;
-assert $sub(constants::i64_min + 1, 1) == constants::i64_min;
+assert $sub(i64_min, 0) == i64_min;
+assert $sub(i64_min + 1, 1) == i64_min;
 
-assert $is_err(try $sub(constants::i64_min, 1));
-assert $is_err(try $sub(constants::i64_min + 1, 2));
+assert $is_err(try $sub(i64_min, 1));
+assert $is_err(try $sub(i64_min + 1, 2));
 
-assert $sub(constants::i64_max, 0) == constants::i64_max;
-assert $sub(constants::i64_max - 1, -1) == constants::i64_max;
+assert $sub(i64_max, 0) == i64_max;
+assert $sub(i64_max - 1, -1) == i64_max;
 
-assert $is_err(try $sub(constants::i64_max, -1));
-assert $is_err(try $sub(constants::i64_max - 1, -2));
+assert $is_err(try $sub(i64_max, -1));
+assert $is_err(try $sub(i64_max - 1, -2));
+
+# Checked multiplication.
+assert $mul(1, 2.0) == 2.0;
+assert $mul("foo", 3) == "foofoofoo";
+
+assert $mul(-1, -1) == 1;
+assert $mul(-1, 0) == 0;
+assert $mul(-1, 1) == -1;
+assert $mul(0, -1) == 0;
+assert $mul(0, 0) == 0;
+assert $mul(0, 1) == 0;
+assert $mul(1, -1) == -1;
+assert $mul(1, 0) == 0;
+assert $mul(1, 1) == 1;
+
+assert $mul(1, 2) == 2;
+assert $mul(1, -2) == -2;
+assert $mul(-1, 2) == -2;
+assert $mul(-1, -2) == 2;
+assert $mul(2, 1) == 2;
+assert $mul(2, -1) == -2;
+assert $mul(-2, 1) == -2;
+assert $mul(-2, -1) == 2;
+
+assert $mul(2, 4) == 8;
+assert $mul(2, -4) == -8;
+assert $mul(-2, 4) == -8;
+assert $mul(-2, -4) == 8;
+assert $mul(4, 2) == 8;
+assert $mul(4, -2) == -8;
+assert $mul(-4, 2) == -8;
+assert $mul(-4, -2) == 8;
+
+assert $is_err(try $mul(i64_max, -2));
+assert $mul(i64_max, -1) == -i64_max;
+assert $mul(i64_max, 0) == 0;
+assert $mul(i64_max, 1) == i64_max;
+assert $is_err(try $mul(i64_max, 2));
+
+assert $is_err(try $mul(-2, i64_max));
+assert $mul(-1, i64_max) == -i64_max;
+assert $mul(0, i64_max) == 0;
+assert $mul(1, i64_max) == i64_max;
+assert $is_err(try $mul(2, i64_max));
+
+assert $is_err(try $mul(-i64_max, 2));
+assert $mul(-i64_max, -1) == i64_max;
+assert $mul(-i64_max, 0) == 0;
+assert $mul(-i64_max, 1) == -i64_max;
+assert $is_err(try $mul(-i64_max, 2));
+
+assert $is_err(try $mul(-2, -i64_max));
+assert $mul(-1, -i64_max) == i64_max;
+assert $mul(0, -i64_max) == 0;
+assert $mul(1, -i64_max) == -i64_max;
+assert $is_err(try $mul(2, -i64_max));
+
+assert $is_err(try $mul(i64_min, -2));
+assert $is_err(try $mul(i64_min, -1));
+assert $mul(i64_min, 0) == 0;
+assert $mul(i64_min, 1) == i64_min;
+assert $is_err(try $mul(i64_min, 2));
+
+assert $is_err(try $mul(-2, i64_min));
+assert $is_err(try $mul(-1, i64_min));
+assert $mul(0, i64_min) == 0;
+assert $mul(1, i64_min) == i64_min;
+assert $is_err(try $mul(2, i64_min));
+
+assert $is_err(try $mul((i64_max // 2), 3));
+assert $is_err(try $mul((i64_max // 2), -3));
+assert $is_err(try $mul((i64_max // -2), 3));
+assert $is_err(try $mul((i64_max // -2), -3));
+
+assert $is_err(try $mul(3, (i64_max // 2)));
+assert $is_err(try $mul(-3, (i64_max // 2)));
+assert $is_err(try $mul(3, (i64_max // -2)));
+assert $is_err(try $mul(-3, (i64_max // -2)));
+
+assert $is_err(try $mul((i64_min // 2), 3));
+assert $is_err(try $mul((i64_min // 2), -3));
+assert $is_err(try $mul((i64_min // -2), 3));
+assert $is_err(try $mul((i64_min // -2), -3));
+
+assert $is_err(try $mul(3, (i64_min // 2)));
+assert $is_err(try $mul(-3, (i64_min // 2)));
+assert $is_err(try $mul(3, (i64_min // -2)));
+assert $is_err(try $mul(-3, (i64_min // -2)));

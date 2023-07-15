@@ -101,4 +101,7 @@ bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b);
 // Like C23's ckd_sub(). Returns true if the result would overflow.
 bool pyro_ckd_sub(int64_t* result, int64_t a, int64_t b);
 
+// Like C23's ckd_mul(). Returns true if the result would overflow.
+bool pyro_ckd_mul(int64_t* result, int64_t a, int64_t b);
+
 #endif
