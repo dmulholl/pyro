@@ -83,6 +83,7 @@ struct PyroVM {
 
     // The tree of imported modules.
     PyroMap* modules;
+    PyroMap* module_cache;
 
     // The main module is the context in which script files and the REPL execute.
     PyroMod* main_module;

@@ -51,6 +51,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->max_bytes = SIZE_MAX;
     vm->memory_allocation_failed = false;
     vm->modules = NULL;
+    vm->module_cache = NULL;
     vm->next_gc_threshold = PYRO_INIT_GC_THRESHOLD;
     vm->objects = NULL;
     vm->open_upvalues = NULL;
@@ -266,6 +267,7 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     // All other object fields.
     vm->superglobals = PyroMap_new(vm);
     vm->modules = PyroMap_new(vm);
+    vm->module_cache = PyroMap_new(vm);
     vm->main_module = PyroMod_new(vm);
     vm->import_roots = PyroVec_new(vm);
     vm->stdout_file = PyroFile_new(vm, stdout);
@@ -311,18 +313,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     }
 
     if (!PyroMap_set(vm->modules, pyro_obj(std_mod_name), pyro_obj(std_mod), vm)) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-
-    // Temporarily support "$std" as an alias for backwards compatibility.
-    PyroStr* std_mod_alias = PyroStr_COPY("$std");
-    if (!std_mod_alias) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-
-    if (!PyroMap_set(vm->modules, pyro_obj(std_mod_alias), pyro_obj(std_mod), vm)) {
         pyro_free_vm(vm);
         return NULL;
     }

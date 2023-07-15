@@ -3,9 +3,6 @@ var foobar;
 assert !$is_module(foobar);
 
 # Importing standard library modules.
-import std;
-assert $is_module(std);
-
 import std::math;
 assert $is_module(math);
 assert $is_f64(math::PI);

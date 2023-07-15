@@ -1,8 +1,5 @@
 assert !$is_module(123);
 
-import $std;
-assert $is_module($std);
-
 import std::math;
 assert $is_module(math);
 assert math::abs(-1) == 1;
