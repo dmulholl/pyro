@@ -41,6 +41,14 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$add(a: any, b: any) -> any` ]]
+
+    Checked addition. Returns `a + b`.
+
+    If `a` and `b` are both `i64` values, this function will panic if the result of the operation would overflow.
+
+
+
 [[ `$bool(arg: any) -> bool` ]]
 
     Converts `arg` to a `bool`.
@@ -419,6 +427,14 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$mul(a: any, b: any) -> any` ]]
+
+    Checked multiplication. Returns `a * b`.
+
+    If `a` and `b` are both `i64` values, this function will panic if the result of the operation would overflow.
+
+
+
 [[ `$panic(error_message: any)` <br> `$panic(format_string: str, *args: any)` ]]
 
     Panics with the specified error message.
@@ -543,6 +559,14 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 [[ `$str(arg: any) -> str` ]]
 
     Creates a new [string](@root/builtins/strings//) by stringifying the argument.
+
+
+
+[[ `$sub(a: any, b: any) -> any` ]]
+
+    Checked subtraction. Returns `a - b`.
+
+    If `a` and `b` are both `i64` values, this function will panic if the result of the operation would overflow.
 
 
 

@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.63</p>
+                <p class="version">Version 0.9.66</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -115,6 +115,19 @@ Runs a shell command and returns its output as a string.
 </p>
 <p>
 This is a convenience shortcut for the <code>$shell()</code> function which provides more control over input and output.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$add(a: any, b: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Checked addition. Returns <code>a + b</code>.
+</p>
+<p>
+If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
 </p>
 </dd>
 </div>
@@ -754,6 +767,19 @@ Returns an iterator over the object's public method names as strings.
 </div>
 <div>
 <dt>
+<code>$mul(a: any, b: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Checked multiplication. Returns <code>a * b</code>.
+</p>
+<p>
+If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$panic(error_message: any)</code> <br> <code>$panic(format_string: str, *args: any)</code>
 </dt>
 <dd>
@@ -959,6 +985,19 @@ If called with one argument, sets the standard output stream to <code>arg</code>
 <dd>
 <p>
 Creates a new <a href="builtins/strings.html">string</a> by stringifying the argument.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$sub(a: any, b: any) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Checked subtraction. Returns <code>a - b</code>.
+</p>
+<p>
+If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
 </p>
 </dd>
 </div>

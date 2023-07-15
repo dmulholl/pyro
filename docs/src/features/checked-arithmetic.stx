@@ -1,0 +1,33 @@
+---
+title: Checked Arithmetic
+meta_title: Pyro &mdash; Checked Arithmetic
+---
+
+Signed integer overflow in C is undefined behaviour.
+
+Pyro's arithmetic operators don't check for overflow. Instead, Pyro has a set of builtin functions for performing checked arithmetic.
+
+
+[[ `$add(a: any, b: any) -> any` ]]
+
+    Checked addition. Returns `a + b`.
+
+    If `a` and `b` are both `i64` values, this function will panic if the result of the operation would overflow.
+
+
+[[ `$mul(a: any, b: any) -> any` ]]
+
+    Checked multiplication. Returns `a * b`.
+
+    If `a` and `b` are both `i64` values, this function will panic if the result of the operation would overflow.
+
+
+[[ `$sub(a: any, b: any) -> any` ]]
+
+    Checked subtraction. Returns `a - b`.
+
+    If `a` and `b` are both `i64` values, this function will panic if the result of the operation would overflow.
+
+
+Pyro doesn't have a dedicated function for checked division --- the only case of integer division that can overflow is `i64_min` divided by `-1`.
+

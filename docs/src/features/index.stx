@@ -15,11 +15,14 @@ meta_title: Pyro &mdash; Language Features
 * [With Blocks](@root/features/with-blocks//)
 * [Conditional Scoped Variables](@root/features/conditional-scoped-variables//)
 * [Loop Closures](@root/features/loop-closures//)
+* [Checked Arithmetic](@root/features/checked-arithmetic//)
+
 
 ### Testing & Benchmarking
 
 * [Unit Tests](@root/features/testing//)
 * [Benchmarking](@root/features/benchmarking//)
+
 
 ### Language Reference
 
