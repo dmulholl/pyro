@@ -1,6 +1,6 @@
 ---
 title: Indexing
-subtitle: This tutorial shows you how to add indexing support to a user-defined type.
+subtitle: This tutorial demonstrates Pyro's support for indexing by adding indexing support to a user-defined type.
 meta_title: Pyro Tutorials &mdash; Indexing
 ---
 
