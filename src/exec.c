@@ -2721,15 +2721,18 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // UNOPTIMIZED.
-            // Opcodes below this point have not yet been optimized and documented.
-
+            // Pops a local variable that has been captured by an upvalue.
+            // Before: [ ... ][ local_variable ]
+            // After:  [ ... ]
             case PYRO_OPCODE_CLOSE_UPVALUE: {
                 close_upvalues(vm, vm->stack_top - 1);
                 pyro_pop(vm);
                 break;
             }
 
+            // Pushes the value of an upvalue onto the stack.
+            // Before: [ ... ]
+            // After:  [ ... ][ value ]
             case PYRO_OPCODE_GET_UPVALUE: {
                 uint8_t index = READ_BYTE();
                 PyroValue value = *frame->closure->upvalues[index]->location;
@@ -2737,12 +2740,18 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Sets the value of an upvalue.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ][ value ]
             case PYRO_OPCODE_SET_UPVALUE: {
                 uint8_t index = READ_BYTE();
                 *frame->closure->upvalues[index]->location = vm->stack_top[-1];
                 break;
             }
 
+            // Pushes the value on top of the stack onto the with_stack.
+            // Before: [ ... ][ with_block_local ]
+            // After:  [ ... ][ with_block_local ]
             case PYRO_OPCODE_START_WITH: {
                 if (vm->with_stack_count == vm->with_stack_capacity) {
                     size_t new_capacity = PYRO_GROW_CAPACITY(vm->with_stack_capacity);
@@ -2758,6 +2767,10 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // This opcode is executed if we exit a with-block by falling off the end, i.e.
+            // not by panicking or returning early.
+            // Before: [ ... ]
+            // After:  [ ... ]
             case PYRO_OPCODE_END_WITH: {
                 PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
                 call_end_with_method(vm, receiver);
