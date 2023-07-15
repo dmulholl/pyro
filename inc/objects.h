@@ -170,7 +170,6 @@ void PyroVec_insert_at_index(PyroVec* vec, size_t index, PyroValue value, PyroVM
 
 struct PyroMod {
     PyroObject obj;
-    PyroMap* submodules;
 
     // Stores the module's global members.
     PyroVec* members;

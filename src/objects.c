@@ -1177,15 +1177,9 @@ PyroMod* PyroMod_new(PyroVM* vm) {
     }
 
     module->obj.class = vm->class_module;
-    module->submodules = NULL;
     module->members = NULL;
     module->all_member_indexes = NULL;
     module->pub_member_indexes = NULL;
-
-    module->submodules = PyroMap_new(vm);
-    if (!module->submodules) {
-        return NULL;
-    }
 
     module->members = PyroVec_new(vm);
     if (!module->members) {

@@ -261,7 +261,6 @@ static void blacken_object(PyroVM* vm, PyroObject* object) {
 
         case PYRO_OBJECT_MODULE: {
             PyroMod* module = (PyroMod*)object;
-            mark_object(vm, (PyroObject*)module->submodules);
             mark_object(vm, (PyroObject*)module->members);
             mark_object(vm, (PyroObject*)module->all_member_indexes);
             mark_object(vm, (PyroObject*)module->pub_member_indexes);
