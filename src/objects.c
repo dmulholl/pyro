@@ -197,12 +197,12 @@ PyroInstance* PyroInstance_new(PyroVM* vm, PyroClass* class) {
 // This function returns a pointer to a slot in [index_array]. This slot can (1) be empty,
 // (2) contain a tombstone, or (3) contain the index of an entry in [entry_array].
 //
-// - If the slot is empty or contains a tombstone, the map does not contain an entry matching [key].
-//   If a new entry with [key] is appended to [entry_array], its index should be inserted into the
-//   slot returned by this function.
+// - If the slot is empty or contains a tombstone, the map does not contain an entry matching
+//   [key]. If a new entry with [key] is appended to [entry_array], its index should be
+//   inserted into the slot returned by this function.
 //
-// - If the slot contains a non-negative index value, the map contains an entry matching [key].
-//   This entry can be found in [entry_array] at the specified index.
+// - If the slot contains a non-negative index value, the map contains an entry matching
+//   [key]. This entry can be found in [entry_array] at the specified index.
 //
 // Note that [index_array] must have a non-zero length before this function is called.
 static int64_t* find_entry(
@@ -212,8 +212,8 @@ static int64_t* find_entry(
     size_t index_array_capacity,
     PyroValue key
 ) {
-    // Capacity is always a power of 2 so we can use bitwise-AND as a fast modulo operator, i.e.
-    // this is equivalent to: i = key_hash % index_array_capacity.
+    // Capacity is always a power of 2 so we can use bitwise-AND as a fast modulo operator,
+    // i.e. this is equivalent to: i = key_hash % index_array_capacity.
     size_t i = (size_t)pyro_hash_value(vm, key) & (index_array_capacity - 1);
     int64_t* first_tombstone = NULL;
 
@@ -234,8 +234,8 @@ static int64_t* find_entry(
 
 
 // This function is used for looking up strings in the interned-strings pool. If the pool of
-// interned strings contains an entry identical to [string], it returns a pointer to that string,
-// otherwise it returns NULL.
+// interned strings contains an entry identical to [string], it returns a pointer to that
+// string, otherwise it returns NULL.
 static PyroStr* find_string_in_pool(
     PyroMap* string_pool,
     const char* string,
@@ -271,10 +271,10 @@ static PyroStr* find_string_in_pool(
 }
 
 
-// This function doubles the capacity of the index array, then rebuilds the index. (Rebuilding the
-// index has the side-effect of eliminating any tombstone slots. This function also takes the
-// opportunity to eliminate any tombstones from the entry array so when this function returns
-// the map contains no tombstone entries.)
+// This function doubles the capacity of the index array, then rebuilds the index. (Rebuilding
+// the index has the side-effect of eliminating any tombstone slots. This function also takes
+// the opportunity to eliminate any tombstones from the entry array so when this function
+// returns the map contains no tombstone entries.)
 static bool resize_index_array(PyroMap* map, PyroVM* vm) {
     size_t new_index_array_capacity = PYRO_GROW_CAPACITY(map->index_array_capacity);
 
@@ -293,7 +293,7 @@ static bool resize_index_array(PyroMap* map, PyroVM* vm) {
     map->index_array_count = map->live_entry_count;
     map->max_load_threshold = new_index_array_capacity * PYRO_MAX_HASHMAP_LOAD;
 
-    // 1. If the entry array contains tombstones, this is a good time to compact it by removing
+    // If the entry array contains tombstones, this is a good time to compact it by removing
     // them while we're rebuilding the index.
     if (map->entry_array_count > map->live_entry_count) {
         size_t dst_index = 0;
@@ -324,7 +324,7 @@ static bool resize_index_array(PyroMap* map, PyroVM* vm) {
         return true;
     }
 
-    // 2. The entry array doesn't contain any tombstones so all we need to do is rebuild the index.
+    // No tombstones so we just need to rebuild the index.
     for (size_t i = 0; i < map->entry_array_count; i++) {
         int64_t* slot = find_entry(
             vm,
