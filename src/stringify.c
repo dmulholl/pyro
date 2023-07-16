@@ -802,7 +802,7 @@ static PyroStr* make_debug_string_for_f64(PyroVM* vm, double value) {
 PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_debug);
     if (!PYRO_IS_NULL(method)) {
-        pyro_push(vm, value);
+        if (!pyro_push(vm, value)) return NULL;
         PyroValue result = pyro_call_method(vm, method, 0);
         if (vm->halt_flag) {
             return NULL;
@@ -1071,8 +1071,8 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
             pyro_panic(vm, "%s: out of memory", err_prefix);
             return NULL;
         }
-        pyro_push(vm, value);
-        pyro_push(vm, pyro_obj(format_string_object));
+        if (!pyro_push(vm, value)) return NULL;
+        if (!pyro_push(vm, pyro_obj(format_string_object))) return NULL;
         PyroValue result = pyro_call_method(vm, method, 1);
         if (vm->halt_flag) {
             return NULL;
