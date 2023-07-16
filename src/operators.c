@@ -82,15 +82,15 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_plus);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_plus);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -138,15 +138,15 @@ PyroValue pyro_op_binary_minus(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_minus);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_minus);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -218,15 +218,15 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_star);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_star);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -290,15 +290,15 @@ PyroValue pyro_op_binary_slash(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_slash);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_slash);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -362,15 +362,15 @@ PyroValue pyro_op_binary_slash_slash(PyroVM* vm, PyroValue left, PyroValue right
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_slash_slash);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_slash_slash);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -393,15 +393,15 @@ PyroValue pyro_op_binary_bar(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_bar);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_bar);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -424,15 +424,15 @@ PyroValue pyro_op_binary_amp(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_amp);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_amp);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -455,15 +455,15 @@ PyroValue pyro_op_binary_caret(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_caret);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_caret);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -527,15 +527,15 @@ PyroValue pyro_op_binary_percent(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_percent);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_percent);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -583,15 +583,15 @@ PyroValue pyro_op_binary_star_star(PyroVM* vm, PyroValue left, PyroValue right) 
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_star_star);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_star_star);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -614,15 +614,15 @@ PyroValue pyro_op_binary_less_less(PyroVM* vm, PyroValue left, PyroValue right) 
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_less_less);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_less_less);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -645,15 +645,15 @@ PyroValue pyro_op_binary_greater_greater(PyroVM* vm, PyroValue left, PyroValue r
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_greater_greater);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return pyro_null();
+        if (!pyro_push(vm, right)) return pyro_null();
         return pyro_call_method(vm, left_method, 1);
     }
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_greater_greater);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return pyro_null();
+        if (!pyro_push(vm, left)) return pyro_null();
         return pyro_call_method(vm, right_method, 1);
     }
 
@@ -686,7 +686,7 @@ PyroValue pyro_op_unary_plus(PyroVM* vm, PyroValue operand) {
 
     PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_plus);
     if (!PYRO_IS_NULL(method)) {
-        pyro_push(vm, operand);
+        if (!pyro_push(vm, operand)) return pyro_null();
         return pyro_call_method(vm, method, 0);
     }
 
@@ -713,7 +713,7 @@ PyroValue pyro_op_unary_minus(PyroVM* vm, PyroValue operand) {
 
     PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_minus);
     if (!PYRO_IS_NULL(method)) {
-        pyro_push(vm, operand);
+        if (!pyro_push(vm, operand)) return pyro_null();
         return pyro_call_method(vm, method, 0);
     }
 
@@ -733,7 +733,7 @@ PyroValue pyro_op_unary_tilde(PyroVM* vm, PyroValue operand) {
 
     PyroValue method = pyro_get_method(vm, operand, vm->str_op_unary_tilde);
     if (!PYRO_IS_NULL(method)) {
-        pyro_push(vm, operand);
+        if (!pyro_push(vm, operand)) return pyro_null();
         return pyro_call_method(vm, method, 0);
     }
 
@@ -923,8 +923,8 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
 
             PyroValue method = pyro_get_method(vm, left, vm->str_op_binary_equals_equals);
             if (!PYRO_IS_NULL(method)) {
-                pyro_push(vm, left);
-                pyro_push(vm, right);
+                if (!pyro_push(vm, left)) return false;
+                if (!pyro_push(vm, right)) return false;
                 PyroValue result = pyro_call_method(vm, method, 1);
                 if (vm->halt_flag) {
                     return false;
@@ -940,8 +940,8 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
         PyroValue method = pyro_get_method(vm, right, vm->str_op_binary_equals_equals);
 
         if (!PYRO_IS_NULL(method)) {
-            pyro_push(vm, right);
-            pyro_push(vm, left);
+            if (!pyro_push(vm, right)) return false;
+            if (!pyro_push(vm, left)) return false;
             PyroValue result = pyro_call_method(vm, method, 1);
             if (vm->halt_flag) {
                 return false;
@@ -1020,8 +1020,8 @@ bool pyro_op_compare_lt(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_less);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return false;
+        if (!pyro_push(vm, right)) return false;
         PyroValue result = pyro_call_method(vm, left_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1031,8 +1031,8 @@ bool pyro_op_compare_lt(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_less);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return false;
+        if (!pyro_push(vm, left)) return false;
         PyroValue result = pyro_call_method(vm, right_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1120,8 +1120,8 @@ bool pyro_op_compare_le(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_less_equals);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return false;
+        if (!pyro_push(vm, right)) return false;
         PyroValue result = pyro_call_method(vm, left_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1131,8 +1131,8 @@ bool pyro_op_compare_le(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_less_equals);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return false;
+        if (!pyro_push(vm, left)) return false;
         PyroValue result = pyro_call_method(vm, right_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1212,8 +1212,8 @@ bool pyro_op_compare_gt(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_greater);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return false;
+        if (!pyro_push(vm, right)) return false;
         PyroValue result = pyro_call_method(vm, left_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1223,8 +1223,8 @@ bool pyro_op_compare_gt(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_greater);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return false;
+        if (!pyro_push(vm, left)) return false;
         PyroValue result = pyro_call_method(vm, right_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1312,8 +1312,8 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue left_method = pyro_get_method(vm, left, vm->str_op_binary_greater_equals);
     if (!PYRO_IS_NULL(left_method)) {
-        pyro_push(vm, left);
-        pyro_push(vm, right);
+        if (!pyro_push(vm, left)) return false;
+        if (!pyro_push(vm, right)) return false;
         PyroValue result = pyro_call_method(vm, left_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1323,8 +1323,8 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
 
     PyroValue right_method = pyro_get_method(vm, right, vm->str_rop_binary_greater_equals);
     if (!PYRO_IS_NULL(right_method)) {
-        pyro_push(vm, right);
-        pyro_push(vm, left);
+        if (!pyro_push(vm, right)) return false;
+        if (!pyro_push(vm, left)) return false;
         PyroValue result = pyro_call_method(vm, right_method, 1);
         if (vm->halt_flag) {
             return false;
@@ -1413,8 +1413,8 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         default: {
             PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_get);
             if (!PYRO_IS_NULL(method)) {
-                pyro_push(vm, receiver);
-                pyro_push(vm, key);
+                if (!pyro_push(vm, receiver)) return pyro_null();
+                if (!pyro_push(vm, key)) return pyro_null();
                 return pyro_call_method(vm, method, 1);
             }
             pyro_panic(vm, "object does not support [] indexing");
@@ -1457,9 +1457,9 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
         default: {
             PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_set);
             if (!PYRO_IS_NULL(method)) {
-                pyro_push(vm, receiver);
-                pyro_push(vm, key);
-                pyro_push(vm, value);
+                if (!pyro_push(vm, receiver)) return pyro_null();
+                if (!pyro_push(vm, key)) return pyro_null();
+                if (!pyro_push(vm, value)) return pyro_null();
                 return pyro_call_method(vm, method, 2);
             }
             pyro_panic(vm, "object does not support [] index assignment");
