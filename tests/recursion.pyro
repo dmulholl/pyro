@@ -1,0 +1,19 @@
+def func(count, arg1, arg2, arg3, arg4, arg5) {
+    var local1 = 1;
+    var local2 = 2;
+    var local3 = 3;
+    var local4 = 4;
+    var local5 = 5;
+
+    var sum = arg1 + (arg2 + (arg3 + (arg4 + (arg5 + (local1 + (local2 + (local3 + (local4 + (local5)))))))));
+
+    if count > 0 {
+        return sum + func(count - 1, arg1 + 1, arg2 + 2, arg3 + 3, arg4 + 4, arg5 + 5);
+    }
+
+    return sum;
+}
+
+for count in $range(25) {
+    var result = func(count, 1, 2, 3, 4, 5);
+}
