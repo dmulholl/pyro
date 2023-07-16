@@ -771,18 +771,12 @@ static int compare_strings(PyroStr* a, PyroStr* b) {
 }
 
 
+// Performs a lexicographic comparison using element values.
 // Can call into Pyro code and set the panic or exit flags.
 // - Returns -1 if a < b.
 // - Returns 0 if a == b.
 // - Returns 1 if a > b.
 static int compare_tuples(PyroVM* vm, PyroTup* a, PyroTup* b) {
-    if (PyroTup_check_equal(a, b, vm)) {
-        return 0;
-    }
-    if (vm->halt_flag) {
-        return 0;
-    }
-
     size_t min_len = a->count < b->count ? a->count : b->count;
 
     for (size_t i = 0; i < min_len; i++) {
@@ -795,6 +789,13 @@ static int compare_tuples(PyroVM* vm, PyroTup* a, PyroTup* b) {
         if (pyro_op_compare_gt(vm, a->values[i], b->values[i])) {
             return 1;
         }
+        if (vm->halt_flag) {
+            return 0;
+        }
+    }
+
+    if (a->count == b->count) {
+        return 0;
     }
 
     return a->count < b->count ? -1 : 1;
