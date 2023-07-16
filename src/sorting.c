@@ -50,9 +50,9 @@ static void insertion_sort_slice(PyroVM* vm, PyroValue* array, size_t low, size_
 static void insertion_sort_slice_with_cb(PyroVM* vm, PyroValue* array, size_t low, size_t high, PyroValue callback) {
     for (size_t i = low + 1; i <= high; i++) {
         for (size_t j = i; j > low; j--) {
-            pyro_push(vm, callback);
-            pyro_push(vm, array[j]);
-            pyro_push(vm, array[j - 1]);
+            if (!pyro_push(vm, callback)) return;
+            if (!pyro_push(vm, array[j])) return;
+            if (!pyro_push(vm, array[j - 1])) return;
             PyroValue item_j_is_less_than_previous = pyro_call_function(vm, 2);
 
             if (vm->halt_flag) {
@@ -90,9 +90,9 @@ static size_t partition_slice_with_cb(PyroVM* vm, PyroValue* array, size_t low, 
     size_t i = low;
 
     for (size_t j = low; j < high; j++) {
-        pyro_push(vm, callback);
-        pyro_push(vm, array[j]);
-        pyro_push(vm, pivot);
+        if (!pyro_push(vm, callback)) return 0;
+        if (!pyro_push(vm, array[j])) return 0;
+        if (!pyro_push(vm, pivot)) return 0;
         PyroValue item_j_is_less_than_pivot = pyro_call_function(vm, 2);
 
         if (vm->halt_flag) {
@@ -278,9 +278,9 @@ static void merge_with_cb(
             continue;
         }
 
-        pyro_push(vm, callback);
-        pyro_push(vm, aux_array[j]);
-        pyro_push(vm, aux_array[i]);
+        if (!pyro_push(vm, callback)) return;
+        if (!pyro_push(vm, aux_array[j])) return;
+        if (!pyro_push(vm, aux_array[i])) return;
         PyroValue item_j_is_less_than_item_i = pyro_call_function(vm, 2);
 
         if (vm->halt_flag) {
@@ -413,9 +413,9 @@ bool pyro_is_sorted_with_callback(PyroVM* vm, PyroValue* values, size_t count, P
         PyroValue a = values[i];
         PyroValue b = values[i + 1];
 
-        pyro_push(vm, callback);
-        pyro_push(vm, b);
-        pyro_push(vm, a);
+        if (!pyro_push(vm, callback)) return false;
+        if (!pyro_push(vm, b)) return false;
+        if (!pyro_push(vm, a)) return false;
         PyroValue b_is_less_than_a = pyro_call_function(vm, 2);
 
         if (vm->halt_flag) {
