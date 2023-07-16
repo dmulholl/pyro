@@ -223,18 +223,36 @@ Pyro executes the `self.pyro` file, then the `$main()` function if it finds one.
 
 
 
-### Importing Files/Strings
+### Importing using $exec()
 
-You can import any file as a module using the `$exec()` function, which executes a string of Pyro source code as a new module, e.g.
+You can import a file as a module using the `$exec()` function, which executes a string of Pyro source code as a new module, e.g.
 
 ::: code pyro
-    var source_code = $read_file("path/to/file.pyro");
-    var module = $exec(source_code);
-
-Unlike the `import` statement, this doesn't add the new module to the cache.
+    var code = $read_file("path/to/file.pyro");
+    var mod = $exec(code);
 
 You can also use the `$exec()` function to create a new module directly from a string, e.g.
 
 ::: code pyro
-    var module = $exec(`pub def func() { return "foobar"; }`);
-    assert module::func() == "foobar";
+    var mod = $exec(`pub def func() { return "foobar"; }`);
+    assert mod::func() == "foobar";
+
+
+
+### Importing using $import()
+
+You can import a module using the `$import()` function which takes the module's import path as a string, e.g.
+
+::: code pyro
+    var mod = $import("std::math");
+    assert mod::abs(-1) == 1;
+
+You can wrap the `$import()` function in a `try` expression to check if a module exists, e.g.
+
+::: code pyro
+    var mod = try $import("foo::bar::baz");
+
+    if $is_err(mod) {
+        echo "not found";
+    }
+
