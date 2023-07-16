@@ -428,9 +428,9 @@ PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm) {
 }
 
 
-// This function appends a new entry to the map's entry array. It returns -1 if memory could not
-// be allocated for the new entry -- in this case the map is unchanged. Otherwise it returns the
-// index of the new entry.
+// This function appends a new entry to the map's entry array. It returns -1 if memory could
+// not be allocated for the new entry -- in this case the map is unchanged. Otherwise it
+// returns the index of the new entry.
 static int64_t append_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->entry_array_count == map->entry_array_capacity) {
         size_t new_entry_array_capacity = PYRO_GROW_CAPACITY(map->entry_array_capacity);
@@ -1680,10 +1680,11 @@ PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm) {
 PyroBuf* PyroFile_read(PyroFile* file, const char* err_prefix, PyroVM* vm) {
     FILE* file_stream = file->stream;
 
-    // If the file is seekable, we want to determine its size and read it using a single fread().
+    // If the file is seekable, we want to determine its size and read it using a single call
+    // to fread().
     // - In theory, fseek() returns 0 if the file is seekable, -1 if not.
-    // - In practice, if the file stream is connected to an interactive terminal, fseek() returns 0
-    //   but has no effect. In this case, [end_pos - start_pos] can be negative.
+    // - In practice, if the file stream is connected to an interactive terminal, fseek()
+    //   returns 0 but has no effect. In this case, [end_pos - start_pos] can be negative.
     int64_t start_pos = ftell(file_stream);
     int seek_result = fseek(file_stream, 0, SEEK_END);
     int64_t end_pos = ftell(file_stream);
@@ -1894,8 +1895,9 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 return next_value;
             }
 
-            pyro_push(vm, pyro_obj(iter->callback));
-            pyro_push(vm, next_value);
+            if (!pyro_push(vm, pyro_obj(iter->callback))) return pyro_obj(vm->error);
+            if (!pyro_push(vm, next_value)) return pyro_obj(vm->error);
+
             PyroValue result = pyro_call_function(vm, 1);
             if (vm->halt_flag) {
                 return pyro_obj(vm->error);
@@ -1913,8 +1915,9 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                     return next_value;
                 }
 
-                pyro_push(vm, pyro_obj(iter->callback));
-                pyro_push(vm, next_value);
+                if (!pyro_push(vm, pyro_obj(iter->callback))) return pyro_obj(vm->error);
+                if (!pyro_push(vm, next_value)) return pyro_obj(vm->error);
+
                 PyroValue result = pyro_call_function(vm, 1);
                 if (vm->halt_flag) {
                     return pyro_obj(vm->error);
@@ -1948,7 +1951,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_GENERIC: {
             PyroValue next_method = pyro_get_method(vm, pyro_obj(iter->source), vm->str_dollar_next);
-            pyro_push(vm, pyro_obj(iter->source));
+            if (!pyro_push(vm, pyro_obj(iter->source))) return pyro_obj(vm->error);
             PyroValue result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
                 return pyro_obj(vm->error);
@@ -2045,7 +2048,9 @@ PyroStr* PyroIter_join(PyroIter* iter, const char* sep, size_t sep_length, PyroV
         pyro_panic(vm, "out of memory");
         return NULL;
     }
-    pyro_push(vm, pyro_obj(buf)); // Protect from GC in case we call into Pyro code.
+
+    // Protect the buffer from the garbage collector in case we call into Pyro code.
+    if (!pyro_push(vm, pyro_obj(buf))) return NULL;
 
     bool is_first_item = true;
 
@@ -2065,7 +2070,7 @@ PyroStr* PyroIter_join(PyroIter* iter, const char* sep, size_t sep_length, PyroV
             }
         }
 
-        pyro_push(vm, next_value); // Stringification can call into Pyro code and trigger the GC.
+        if (!pyro_push(vm, next_value)) return NULL;
         PyroStr* value_string = pyro_stringify_value(vm, next_value);
         if (vm->halt_flag) {
             return NULL;
