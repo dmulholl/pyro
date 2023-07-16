@@ -271,8 +271,12 @@ static void close_upvalues(PyroVM* vm, PyroValue* slot) {
 // imported, this will return the cached module object. Otherwise, it will attempt to import,
 // execute, and return the named module.
 //
-// This function can call into Pyro code and can set the panic or exit flags.
+// This function can set the panic or exit flags. It will panic if the module cannot be found,
+// if the module code contains syntax errors, if the VM runs out of memory, or if executing
+// the code results in a panic.
 static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
+    assert(name_count >= 1);
+
     PyroBuf* buf = PyroBuf_new_with_capacity(64, vm);
     if (!buf) {
         pyro_panic(vm, "out of memory");
@@ -285,12 +289,13 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
             pyro_panic(vm, "out of memory");
             return NULL;
         }
-        if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"::", vm)) {
-            pyro_panic(vm, "out of memory");
-            return NULL;
+        if (i < name_count - 1) {
+            if (!PyroBuf_append_bytes(buf, 2, (uint8_t*)"::", vm)) {
+                pyro_panic(vm, "out of memory");
+                return NULL;
+            }
         }
     }
-    buf->count -= 2;
 
     PyroStr* import_path = PyroBuf_to_str(buf, vm);
     if (!import_path) {
