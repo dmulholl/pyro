@@ -1069,12 +1069,11 @@ static PyroValue str_to_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "to_hex(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(buf));
 
     for (size_t i = 0; i < str->count; i++) {
         if (!PyroBuf_append_hex_escaped_byte(buf, str->bytes[i], vm)) {
-        pyro_panic(vm, "to_hex(): out of memory");
-        return pyro_null();
+            pyro_panic(vm, "to_hex(): out of memory");
+            return pyro_null();
         }
     }
 
@@ -1084,7 +1083,6 @@ static PyroValue str_to_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    pyro_pop(vm);
     return pyro_obj(output_string);
 }
 
