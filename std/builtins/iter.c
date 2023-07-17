@@ -23,32 +23,36 @@ static PyroValue fn_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // If the argument is iterable, call its :iter() method.
     PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
-    if (!PYRO_IS_NULL(iter_method)) {
-        pyro_push(vm, args[0]);
-        PyroValue result = pyro_call_method(vm, iter_method, 0);
-        if (vm->halt_flag) {
+    if (PYRO_IS_NULL(iter_method)) {
+        pyro_panic(vm,
+            "$iter(): invalid argument type '%s', expected an iterator or an iterable type",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
+        return pyro_null();
+    }
+
+    if (!pyro_push(vm, args[0])) return pyro_null();
+    PyroValue result = pyro_call_method(vm, iter_method, 0);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    if (PYRO_IS_ITER(result)) {
+        return result;
+    }
+
+    if (PYRO_IS_OBJ(result) && pyro_has_method(vm, result, vm->str_dollar_next)) {
+        PyroIter* iter = PyroIter_new(PYRO_AS_OBJ(result), PYRO_ITER_GENERIC, vm);
+        if (!iter) {
+            pyro_panic(vm, "$iter(): out of memory");
             return pyro_null();
         }
-
-        if (PYRO_IS_ITER(result)) {
-            return result;
-        }
-
-        if (PYRO_IS_OBJ(result) && pyro_has_method(vm, result, vm->str_dollar_next)) {
-            pyro_push(vm, result);
-            PyroIter* iter = PyroIter_new(PYRO_AS_OBJ(result), PYRO_ITER_GENERIC, vm);
-            if (!iter) {
-                pyro_panic(vm, "$iter(): out of memory");
-                return pyro_null();
-            }
-            pyro_pop(vm);
-            return pyro_obj(iter);
-        }
+        return pyro_obj(iter);
     }
 
     pyro_panic(vm,
-        "$iter(): invalid argument type '%s', expected an iterator or an iterable type",
-        pyro_get_type_name(vm, args[0])->bytes
+        "$iter(): invalid type '%s' returned by :$iter(), not an iterator",
+        pyro_get_type_name(vm, result)->bytes
     );
     return pyro_null();
 }
