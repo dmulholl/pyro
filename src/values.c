@@ -109,7 +109,7 @@ inline static bool is_numerically_equal_to_i64(double value) {
 }
 
 
-// All builtin types follow the rule that values that compare as equal should also hash as equal.
+// All builtin types follow the rule that values that compare as equal also hash as equal.
 uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_NULL:
@@ -171,7 +171,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
                 default: {
                     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_hash);
                     if (!PYRO_IS_NULL(method)) {
-                        pyro_push(vm, value);
+                        if (!pyro_push(vm, value)) return 0;
                         PyroValue result = pyro_call_method(vm, method, 0);
                         if (vm->halt_flag) {
                             return 0;
