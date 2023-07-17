@@ -125,13 +125,10 @@ static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (PYRO_IS_ERR(next_value)) {
             break;
         }
-
-        pyro_push(vm, next_value);
         if (!PyroVec_append(vec, next_value, vm)) {
             pyro_panic(vm, "to_vec(): out of memory");
             return pyro_null();
         }
-        pyro_pop(vm); // next_value
     }
 
     pyro_pop(vm); // vec
