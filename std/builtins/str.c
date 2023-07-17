@@ -739,16 +739,18 @@ static PyroValue str_strip_prefix_chars(PyroVM* vm, size_t arg_count, PyroValue*
 static PyroValue str_strip(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         return str_strip_ascii_ws(vm, arg_count, args);
-    } else if (arg_count == 1) {
+    }
+
+    if (arg_count == 1) {
         if (!PYRO_IS_STR(args[0])) {
             pyro_panic(vm, "strip(): invalid argument [bytes], expected a string");
             return pyro_null();
         }
         return str_strip_bytes(vm, arg_count, args);
-    } else {
-        pyro_panic(vm, "strip(): expected 0 or 1 arguments, found %zu", arg_count);
-        return pyro_null();
     }
+
+    pyro_panic(vm, "strip(): expected 0 or 1 arguments, found %zu", arg_count);
+    return pyro_null();
 }
 
 
