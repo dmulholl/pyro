@@ -930,7 +930,6 @@ static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* 
         pyro_panic(vm, "split_on_ascii_ws(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(vec));
 
     const char* whitespace = " \t\r\n\v\f";
 
@@ -962,12 +961,10 @@ static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* 
                 pyro_panic(vm, "split_on_ascii_ws(): out of memory");
                 return pyro_null();
             }
-            pyro_push(vm, pyro_obj(new_string));
             if (!PyroVec_append(vec, pyro_obj(new_string), vm)) {
                 pyro_panic(vm, "split_on_ascii_ws(): out of memory");
                 return pyro_null();
             }
-            pyro_pop(vm);
             while (memchr(whitespace, *current, 6) != NULL) {
                 current++;
             }
@@ -982,14 +979,12 @@ static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* 
         pyro_panic(vm, "split_on_ascii_ws(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(new_string));
+
     if (!PyroVec_append(vec, pyro_obj(new_string), vm)) {
         pyro_panic(vm, "split_on_ascii_ws(): out of memory");
         return pyro_null();
     }
-    pyro_pop(vm);
 
-    pyro_pop(vm); // pop the vector
     return pyro_obj(vec);
 }
 
