@@ -102,66 +102,6 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-/* static PyroValue buf_write_be_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
-/*     PyroBuf* buf = PYRO_AS_BUF(args[-1]); */
-
-/*     if (!PYRO_IS_I64(args[0])) { */
-/*         pyro_panic(vm, "$write_be_u16(): invalid argument"); */
-/*         return pyro_null(); */
-/*     } */
-
-/*     int64_t value = args[0].as.i64; */
-/*     if (value < 0 || value > UINT16_MAX) { */
-/*         pyro_panic(vm, "$write_be_u16(): invalid argument, (%d) is out of range", value); */
-/*         return pyro_null(); */
-/*     } */
-
-/*     uint8_t byte1 = (value >> 8) & 0xFF;    // MSB */
-/*     uint8_t byte2 = value & 0xFF;           // LSB */
-
-/*     if (!PyroBuf_append_byte(buf, byte1, vm)) { */
-/*         return pyro_bool(false); */
-/*     } */
-
-/*     if (!PyroBuf_append_byte(buf, byte2, vm)) { */
-/*         buf->count--; */
-/*         return pyro_bool(false); */
-/*     } */
-
-/*     return pyro_bool(true); */
-/* } */
-
-
-/* static PyroValue buf_write_le_u16(PyroVM* vm, size_t arg_count, PyroValue* args) { */
-/*     PyroBuf* buf = PYRO_AS_BUF(args[-1]); */
-
-/*     if (!PYRO_IS_I64(args[0])) { */
-/*         pyro_panic(vm, ERR_TYPE_ERROR, "Invalid argument to :write_be_u16()."); */
-/*         return pyro_null(); */
-/*     } */
-
-/*     int64_t value = args[0].as.i64; */
-/*     if (value < 0 || value > UINT16_MAX) { */
-/*         pyro_panic(vm, ERR_VALUE_ERROR, "Out-of-range argument (%d) to :write_be_u16().", value); */
-/*         return pyro_null(); */
-/*     } */
-
-/*     uint8_t byte1 = (value >> 8) & 0xFF;    // MSB */
-/*     uint8_t byte2 = value & 0xFF;           // LSB */
-
-/*     if (!PyroBuf_append_byte(buf, byte2, vm)) { */
-/*         return pyro_bool(false); */
-/*     } */
-
-/*     if (!PyroBuf_append_byte(buf, byte1, vm)) { */
-/*         buf->count--; */
-/*         return pyro_bool(false); */
-/*     } */
-
-/*     return pyro_bool(true); */
-/* } */
-
-
 static PyroValue buf_to_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroBuf* buf = PYRO_AS_BUF(args[-1]);
     PyroStr* string = PyroBuf_to_str(buf, vm);
