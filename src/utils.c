@@ -98,7 +98,7 @@ static inline uint8_t hex_to_int(char c) {
 
 
 // Copies [src_count] bytes from [src] to [dst], processing backslashed escape sequences.
-// - Returns the number of bytes written to [dst] - this will be less than or equal to [src_count].
+// - Returns the number of bytes written to [dst] - always less than or equal to [src_count].
 // - Does not add a terminating null to [dst].
 // - [dst] can be the same buffer as [src] - i.e. it's safe for a buffer to overwrite itself.
 // - Ignores unrecognised escape sequences - i.e. copies them verbatim to [dst].
@@ -242,8 +242,8 @@ size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char*
 }
 
 
-// The max allowable length for an integer literal is 65 --- a plus or minus sign followed by
-// 64 binary digits.
+// The maximum length of an integer literal (less underscores) is 65 -- a plus or minus sign,
+// followed by 64 binary digits.
 bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value) {
     char buffer[65 + 1];
     size_t count = 0;
@@ -327,6 +327,7 @@ bool pyro_parse_string_as_float(const char* string, size_t length, double* value
 
     return true;
 }
+
 
 char* pyro_get_version_string(void) {
     char* format_string;
