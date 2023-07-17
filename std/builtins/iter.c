@@ -115,7 +115,7 @@ static PyroValue iter_to_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "to_vec(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(vec));
+    if (!pyro_push(vm, pyro_obj(vec))) return pyro_null();
 
     while (true) {
         PyroValue next_value = PyroIter_next(iter, vm);
@@ -167,7 +167,7 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "to_set(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(map));
+    if (!pyro_push(vm, pyro_obj(map))) return pyro_null();
 
     while (true) {
         PyroValue next_value = PyroIter_next(iter, vm);
@@ -333,7 +333,7 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "skip_last(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(vec));
+    if (!pyro_push(vm, pyro_obj(vec))) return pyro_null();
 
     while (true) {
         PyroValue value = PyroIter_next(iter, vm);
