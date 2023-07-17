@@ -992,7 +992,9 @@ static PyroValue str_split_on_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* 
 static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         return str_split_on_ascii_ws(vm, arg_count, args);
-    } else if (arg_count > 1) {
+    }
+
+    if (arg_count > 1) {
         pyro_panic(vm, "split(): expected 0 or 1 arguments, found %zu", arg_count);
         return pyro_null();
     }
@@ -1010,14 +1012,12 @@ static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "split(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(vec));
 
     if (str->count < sep->count || sep->count == 0) {
         if (!PyroVec_append(vec, pyro_obj(str), vm)) {
             pyro_panic(vm, "split(): out of memory");
             return pyro_null();
         }
-        pyro_pop(vm);
         return pyro_obj(vec);
     }
 
@@ -1032,12 +1032,10 @@ static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 pyro_panic(vm, "split(): out of memory");
                 return pyro_null();
             }
-            pyro_push(vm, pyro_obj(new_string));
             if (!PyroVec_append(vec, pyro_obj(new_string), vm)) {
                 pyro_panic(vm, "split(): out of memory");
                 return pyro_null();
             }
-            pyro_pop(vm);
             current += sep->count;
             start = current;
         } else {
@@ -1050,14 +1048,12 @@ static PyroValue str_split(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "split(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(new_string));
+
     if (!PyroVec_append(vec, pyro_obj(new_string), vm)) {
         pyro_panic(vm, "split(): out of memory");
         return pyro_null();
     }
-    pyro_pop(vm);
 
-    pyro_pop(vm); // pop the vector
     return pyro_obj(vec);
 }
 
