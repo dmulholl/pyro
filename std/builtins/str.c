@@ -1152,12 +1152,14 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     // Call the :$iter() method to get an iterator.
-    pyro_push(vm, args[0]); // receiver for the :$iter() method call
+    if (!pyro_push(vm, args[0])) return pyro_null();
     PyroValue iterator = pyro_call_method(vm, iter_method, 0);
     if (vm->halt_flag) {
         return pyro_null();
     }
-    pyro_push(vm, iterator); // protect from GC
+
+    // Protect the iterator from the garbage collector.
+    if (!pyro_push(vm, iterator)) return pyro_null();
 
     // Get the iterator's :$next() method.
     PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
@@ -1165,19 +1167,20 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "join(): invalid argument [items], iterator has no :$next() method");
         return pyro_null();
     }
-    pyro_push(vm, next_method); // protect from GC
 
     PyroBuf* buf = PyroBuf_new(vm);
     if (!buf) {
         pyro_panic(vm, "join(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(buf)); // protect from GC
+
+    // Protect the buffer from the garbage collector.
+    if (!pyro_push(vm, pyro_obj(buf))) return pyro_null();
 
     bool is_first_item = true;
 
     while (true) {
-        pyro_push(vm, iterator); // receiver for the :$next() method call
+        if (!pyro_push(vm, iterator)) return pyro_null();
         PyroValue next_value = pyro_call_method(vm, next_method, 0);
         if (vm->halt_flag) {
             return pyro_null();
@@ -1193,19 +1196,15 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
             }
         }
 
-        pyro_push(vm, next_value);
         PyroStr* value_string = pyro_stringify_value(vm, next_value);
         if (vm->halt_flag) {
             return pyro_null();
         }
-        pyro_pop(vm); // next_value
 
-        pyro_push(vm, pyro_obj(value_string));
         if (!PyroBuf_append_bytes(buf, value_string->count, (uint8_t*)value_string->bytes, vm)) {
             pyro_panic(vm, "join(): out of memory");
             return pyro_null();
         }
-        pyro_pop(vm); // value_string
 
         is_first_item = false;
     }
@@ -1217,9 +1216,7 @@ static PyroValue str_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     pyro_pop(vm); // buf
-    pyro_pop(vm); // next_method
     pyro_pop(vm); // iterator
-
     return pyro_obj(output_string);
 }
 
