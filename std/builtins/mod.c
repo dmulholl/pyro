@@ -68,7 +68,7 @@ static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
         PyroValue member_name = entry->key;
         PyroValue member_index = entry->value;
         PyroValue member_value = mod->members->values[member_index.as.i64];
-        if (PyroMap_set(new_map, member_name, member_value, vm) == 0) {
+        if (!PyroMap_set(new_map, member_name, member_value, vm)) {
             pyro_panic(vm, "globals(): out of memory");
             return pyro_null();
         }
