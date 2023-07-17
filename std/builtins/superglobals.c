@@ -797,7 +797,7 @@ static PyroValue fn_exec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     // Push the module onto the stack to keep it safe from the garbage collector.
-    if (!pyro_push(vm, pyro_obj(module))) { return pyro_null(); }
+    if (!pyro_push(vm, pyro_obj(module))) return pyro_null();
     pyro_exec_code(vm, code->bytes, code->count, source_id, module);
     pyro_pop(vm);
 
