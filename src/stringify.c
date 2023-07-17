@@ -1093,6 +1093,15 @@ PyroStr* pyro_format(
     PyroValue* args,
     const char* err_prefix
 ) {
+    // Create a local copy of the [args] array in case [args] is a pointer into the stack and
+    // the stack gets reallocated while we're iterating over the values.
+    if (arg_count > 32) {
+        pyro_panic(vm, "%s: too many arguments to format (max: 32)", err_prefix);
+        return NULL;
+    }
+    PyroValue args_copy[32];
+    memcpy(args_copy, args, arg_count * sizeof(PyroValue));
+
     // Storage for the optional index in {index:format_specifier}.
     const size_t index_capacity = 16;
     size_t index_count = 0;
@@ -1197,9 +1206,9 @@ PyroStr* pyro_format(
 
         PyroStr* formatted_arg;
         if (specifier_count == 0) {
-            formatted_arg = pyro_stringify_value(vm, args[arg_index]);
+            formatted_arg = pyro_stringify_value(vm, args_copy[arg_index]);
         } else {
-            formatted_arg = pyro_format_value(vm, args[arg_index], specifier, err_prefix);
+            formatted_arg = pyro_format_value(vm, args_copy[arg_index], specifier, err_prefix);
         }
         if (vm->halt_flag) {
             return NULL;
