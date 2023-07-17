@@ -295,7 +295,8 @@ static PyroValue iter_skip_first(PyroVM* vm, size_t arg_count, PyroValue* args) 
         PyroValue result = PyroIter_next(iter, vm);
         if (vm->halt_flag) {
             return pyro_null();
-        } else if (PYRO_IS_ERR(result)) {
+        }
+        if (PYRO_IS_ERR(result)) {
             pyro_panic(
                 vm,
                 "skip_first(): failed to skip first %d items, iterator exhausted after %d items",
@@ -342,13 +343,10 @@ static PyroValue iter_skip_last(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (PYRO_IS_ERR(value)) {
             break;
         }
-
-        pyro_push(vm, value);
         if (!PyroVec_append(vec, value, vm)) {
             pyro_panic(vm, "skip_last(): out of memory");
             return pyro_null();
         }
-        pyro_pop(vm); // value
     }
 
     if (vec->count < (size_t)num_to_skip) {
