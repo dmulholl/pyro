@@ -793,7 +793,6 @@ static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_STR(args[1])) {
         pyro_panic(vm, "replace(): invalid argument [new], expected a string");
         return pyro_null();
-        return pyro_null();
     }
     PyroStr* new = PYRO_AS_STR(args[1]);
 
@@ -806,7 +805,6 @@ static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "replace(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(buf)); // keep the buffer safe from the GC
 
     size_t index = 0;
     size_t last_possible_match_index = str->count - old->count;
@@ -840,7 +838,6 @@ static PyroValue str_replace(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    pyro_pop(vm); // pop the buffer
     return pyro_obj(new_str);
 }
 
