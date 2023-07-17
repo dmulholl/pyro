@@ -240,9 +240,14 @@ static PyroValue vec_copy(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue vec_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
+    PyroValue target = args[0];
 
     for (size_t i = 0; i < vec->count; i++) {
-        if (pyro_op_compare_eq(vm, vec->values[i], args[0])) {
+        bool found = pyro_op_compare_eq(vm, vec->values[i], target);
+        if (vm->halt_flag) {
+            return pyro_bool(false);
+        }
+        if (found) {
             return pyro_bool(true);
         }
     }
