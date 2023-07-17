@@ -465,9 +465,9 @@ static PyroValue iter_reduce(PyroVM* vm, size_t arg_count, PyroValue* args) {
             break;
         }
 
-        pyro_push(vm, callback);
-        pyro_push(vm, accumulator);
-        pyro_push(vm, item);
+        if (!pyro_push(vm, callback)) return pyro_null();
+        if (!pyro_push(vm, accumulator)) return pyro_null();
+        if (!pyro_push(vm, item)) return pyro_null();
         accumulator = pyro_call_function(vm, 2);
         if (vm->halt_flag) {
             return pyro_null();
