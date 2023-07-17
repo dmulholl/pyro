@@ -215,7 +215,7 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
             continue;
         }
 
-        if (PyroMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
+        if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
             pyro_panic(vm, "union(): out of memory");
             return pyro_null();
         }
@@ -228,7 +228,7 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
             continue;
         }
 
-        if (PyroMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
+        if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
             pyro_panic(vm, "union(): out of memory");
             return pyro_null();
         }
@@ -261,7 +261,7 @@ static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args)
         }
 
         if (PyroMap_contains(map2, entry->key, vm)) {
-            if (PyroMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
+            if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "intersection(): out of memory");
                 return pyro_null();
             }
@@ -295,7 +295,7 @@ static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
 
         if (!PyroMap_contains(map2, entry->key, vm)) {
-            if (PyroMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
+            if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "difference(): out of memory");
                 return pyro_null();
             }
@@ -329,7 +329,7 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
         }
 
         if (!PyroMap_contains(map2, entry->key, vm)) {
-            if (PyroMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
+            if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
                 return pyro_null();
             }
@@ -344,7 +344,7 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
         }
 
         if (!PyroMap_contains(map1, entry->key, vm)) {
-            if (PyroMap_set(new_map, entry->key, pyro_null(), vm) == 0) {
+            if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
                 return pyro_null();
             }
