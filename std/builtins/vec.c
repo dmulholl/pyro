@@ -20,12 +20,12 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
 
         // Call the object's :$iter() method to get an iterator.
-        pyro_push(vm, args[0]); // receiver for the $iter() method call
+        if (!pyro_push(vm, args[0])) return pyro_null();
         PyroValue iterator = pyro_call_method(vm, iter_method, 0);
         if (vm->halt_flag) {
             return pyro_null();
         }
-        pyro_push(vm, iterator); // protect from GC
+        if (!pyro_push(vm, iterator)) return pyro_null(); // protect from GC
 
         // Get the iterator's :$next() method.
         PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
@@ -33,17 +33,16 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
             pyro_panic(vm, "$vec(): invalid argument [arg], iterator has no :$next() method");
             return pyro_null();
         }
-        pyro_push(vm, next_method); // protect from GC
 
         PyroVec* vec = PyroVec_new(vm);
         if (!vec) {
             pyro_panic(vm, "$vec(): out of memory");
             return pyro_null();
         }
-        pyro_push(vm, pyro_obj(vec)); // protect from GC
+        if (!pyro_push(vm, pyro_obj(vec))) return pyro_null(); // protect from GC
 
         while (true) {
-            pyro_push(vm, iterator); // receiver for the :$next() method call
+            if (!pyro_push(vm, iterator)) return pyro_null();
             PyroValue next_value = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
                 return pyro_null();
@@ -51,16 +50,13 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
             if (PYRO_IS_ERR(next_value)) {
                 break;
             }
-            pyro_push(vm, next_value); // protect from GC
             if (!PyroVec_append(vec, next_value, vm)) {
                 pyro_panic(vm, "$vec(): out of memory");
                 return pyro_null();
             }
-            pyro_pop(vm); // next_value
         }
 
         pyro_pop(vm); // vec
-        pyro_pop(vm); // next_method
         pyro_pop(vm); // iterator
         return pyro_obj(vec);
     }
