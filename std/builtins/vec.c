@@ -303,6 +303,7 @@ static PyroValue vec_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue vec_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
+    PyroValue filter_func = args[0];
 
     PyroVec* new_vec = PyroVec_new(vm);
     if (!vec) {
@@ -312,8 +313,8 @@ static PyroValue vec_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
     pyro_push(vm, pyro_obj(new_vec));
 
     for (size_t i = 0; i < vec->count; i++) {
-        pyro_push(vm, args[0]); // push the filter function
-        pyro_push(vm, vec->values[i]); // push the argument for the filter function
+        if (!pyro_push(vm, filter_func)) return pyro_null();
+        if (!pyro_push(vm, vec->values[i])) return pyro_null();
         PyroValue result = pyro_call_function(vm, 1);
         if (vm->halt_flag) {
             return pyro_null();
