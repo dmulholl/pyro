@@ -30,7 +30,7 @@ static PyroValue map_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue map_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMap* map = PYRO_AS_MAP(args[-1]);
-    if (PyroMap_set(map, args[0], args[1], vm) == 0) {
+    if (!PyroMap_set(map, args[0], args[1], vm)) {
         pyro_panic(vm, "set(): out of memory");
     }
     return pyro_null();
@@ -133,12 +133,14 @@ static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     // Call the object's :$iter() method to get an iterator.
-    pyro_push(vm, args[0]); // receiver for the $iter() method call
+    if (!pyro_push(vm, args[0])) return pyro_null();
     PyroValue iterator = pyro_call_method(vm, iter_method, 0);
     if (vm->halt_flag) {
         return pyro_null();
     }
-    pyro_push(vm, iterator); // protect from GC
+
+    // Protect the iterator from the garbage collector.
+    if (!pyro_push(vm, iterator)) return pyro_null();
 
     // Get the iterator's :$next() method.
     PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
@@ -146,17 +148,18 @@ static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "$set(): invalid argument [arg], :$iter() returns an object with no :$next() method");
         return pyro_null();
     }
-    pyro_push(vm, next_method); // protect from GC
 
     PyroMap* map = PyroMap_new_as_set(vm);
     if (!map) {
         pyro_panic(vm, "$set(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(map)); // protect from GC
+
+    // Protect the map from the garbage collector.
+    if (!pyro_push(vm, pyro_obj(map))) return pyro_null();
 
     while (true) {
-        pyro_push(vm, iterator); // receiver for the :$next() method call
+        if (!pyro_push(vm, iterator)) return pyro_null();
         PyroValue next_value = pyro_call_method(vm, next_method, 0);
         if (vm->halt_flag) {
             return pyro_null();
@@ -164,16 +167,13 @@ static PyroValue fn_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (PYRO_IS_ERR(next_value)) {
             break;
         }
-        pyro_push(vm, next_value); // protect from GC
-        if (PyroMap_set(map, next_value, pyro_null(), vm) == 0) {
+        if (!PyroMap_set(map, next_value, pyro_null(), vm)) {
             pyro_panic(vm, "$set(): out of memory");
             return pyro_null();
         }
-        pyro_pop(vm); // next_value
     }
 
     pyro_pop(vm); // map
-    pyro_pop(vm); // next_method
     pyro_pop(vm); // iterator
     return pyro_obj(map);
 }
