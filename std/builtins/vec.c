@@ -528,13 +528,11 @@ static PyroValue vec_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_obj(new_vec);
     }
 
-    pyro_push(vm, pyro_obj(new_vec));
     PyroValue* new_array = PYRO_ALLOCATE_ARRAY(vm, PyroValue, length);
     if (!new_array) {
         pyro_panic(vm, "slice(): out of memory");
         return pyro_null();
     }
-    pyro_pop(vm); // new_vec
 
     memcpy(new_array, &vec->values[start_index], sizeof(PyroValue) * length);
     new_vec->values = new_array;
