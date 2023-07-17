@@ -283,7 +283,7 @@ static PyroValue vec_map(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "map(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(new_vec));
+    if (!pyro_push(vm, pyro_obj(new_vec))) return pyro_null();
 
     for (size_t i = 0; i < vec->count; i++) {
         if (!pyro_push(vm, map_func)) return pyro_null();
@@ -310,7 +310,7 @@ static PyroValue vec_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "filter(): out of memory");
         return pyro_null();
     }
-    pyro_push(vm, pyro_obj(new_vec));
+    if (!pyro_push(vm, pyro_obj(new_vec))) return pyro_null();
 
     for (size_t i = 0; i < vec->count; i++) {
         if (!pyro_push(vm, filter_func)) return pyro_null();
