@@ -91,15 +91,6 @@ static PyroValue str_is_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue str_is_empty_or_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->count == 0) {
-        return pyro_bool(true);
-    }
-    return str_is_ascii(vm, arg_count, args);
-}
-
-
 static PyroValue str_is_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
     if (str->count == 0) {
@@ -121,15 +112,6 @@ static PyroValue str_is_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) 
     }
 
     return pyro_bool(true);
-}
-
-
-static PyroValue str_is_empty_or_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->count == 0) {
-        return pyro_bool(true);
-    }
-    return str_is_ascii_ws(vm, arg_count, args);
 }
 
 
@@ -157,15 +139,6 @@ static PyroValue str_is_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     return pyro_bool(true);
-}
-
-
-static PyroValue str_is_empty_or_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->count == 0) {
-        return pyro_bool(true);
-    }
-    return str_is_utf8_ws(vm, arg_count, args);
 }
 
 
@@ -265,15 +238,6 @@ static PyroValue str_is_utf8(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     return pyro_bool(true);
-}
-
-
-static PyroValue str_is_empty_or_utf8(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (str->count == 0) {
-        return pyro_bool(true);
-    }
-    return str_is_utf8(vm, arg_count, args);
 }
 
 
@@ -1377,11 +1341,4 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_decimal", str_is_ascii_decimal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_octal", str_is_ascii_octal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_hex", str_is_ascii_hex, 0);
-
-    // Deprecated.
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ws", str_is_empty_or_ascii_ws, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ascii_ws", str_is_empty_or_ascii_ws, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_ascii", str_is_empty_or_ascii, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_utf8", str_is_empty_or_utf8, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_empty_or_utf8_ws", str_is_empty_or_utf8_ws, 0);
 }

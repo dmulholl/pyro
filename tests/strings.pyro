@@ -519,17 +519,6 @@ def $test_is_ascii_ws() {
 }
 
 
-def $test_is_empty_or_ascii_ws() {
-    assert "":is_empty_or_ascii_ws();
-    assert " ":is_empty_or_ascii_ws();
-    assert " \t\r\n ":is_empty_or_ascii_ws();
-
-    assert !"a":is_empty_or_ascii_ws();
-    assert !"abc":is_empty_or_ascii_ws();
-    assert !"abc def":is_empty_or_ascii_ws();
-}
-
-
 def $test_is_ws() {
     assert " ":is_ws();
     assert " \t\r\n ":is_ws();
@@ -538,17 +527,6 @@ def $test_is_ws() {
     assert !"a":is_ws();
     assert !"abc":is_ws();
     assert !"abc def":is_ws();
-}
-
-
-def $test_is_empty_or_ws() {
-    assert "":is_empty_or_ws();
-    assert " ":is_empty_or_ws();
-    assert " \t\r\n ":is_empty_or_ws();
-
-    assert !"a":is_empty_or_ws();
-    assert !"abc":is_empty_or_ws();
-    assert !"abc def":is_empty_or_ws();
 }
 
 
@@ -563,20 +541,6 @@ def $test_is_utf8_ws() {
 
     assert " \u0020\u0085\u00A0\u1680 ":is_utf8_ws();
     assert !"🔥":is_utf8_ws();
-}
-
-
-def $test_is_empty_or_utf8_ws() {
-    assert "":is_empty_or_utf8_ws();
-    assert " ":is_empty_or_utf8_ws();
-    assert " \t\r\n ":is_empty_or_utf8_ws();
-
-    assert !"a":is_empty_or_utf8_ws();
-    assert !"abc":is_empty_or_utf8_ws();
-    assert !"abc def":is_empty_or_utf8_ws();
-
-    assert " \u0020\u0085\u00A0\u1680 ":is_empty_or_utf8_ws();
-    assert !"🔥":is_empty_or_utf8_ws();
 }
 
 
@@ -635,16 +599,6 @@ def $test_is_ascii() {
 }
 
 
-def $test_is_empty_or_ascii() {
-    assert "":is_empty_or_ascii();
-    assert " ":is_empty_or_ascii();
-    assert "abc":is_empty_or_ascii();
-
-    assert !"a\xFFb":is_empty_or_ascii();
-    assert !"a§b€c👍d":is_empty_or_ascii();
-}
-
-
 def $test_is_utf8() {
     assert " ":is_utf8();
     assert "abc":is_utf8();
@@ -652,16 +606,6 @@ def $test_is_utf8() {
 
     assert !"":is_utf8();
     assert !"a\x80b":is_utf8();
-}
-
-
-def $test_is_empty_or_utf8() {
-    assert "":is_empty_or_utf8();
-    assert " ":is_empty_or_utf8();
-    assert "abc":is_empty_or_utf8();
-    assert "a§b€c👍d":is_empty_or_utf8();
-
-    assert !"a\x80b":is_empty_or_utf8();
 }
 
 
