@@ -129,14 +129,14 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue fn_remove(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "rm(): invalid argument [path], expected a string");
+        pyro_panic(vm, "remove(): invalid argument [path], expected a string");
         return pyro_null();
     }
 
     PyroStr* path = PYRO_AS_STR(args[0]);
 
     if (pyro_remove(path->bytes) != 0) {
-        pyro_panic(vm, "rm(): unable to delete '%s'", path->bytes);
+        pyro_panic(vm, "remove(): unable to delete '%s'", path->bytes);
     }
 
     return pyro_null();
