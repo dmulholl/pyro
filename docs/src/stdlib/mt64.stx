@@ -22,7 +22,7 @@ An `MT64` object supports the following methods:
 
 [[ `:rand_float() -> f64` ]]
 
-    Returns a uniformly-distributed random float from the half-open interval `[0, 1)` --- i.e. the interval from zero up to but not including 1. The generator produces floats with 53 bits of precision.
+    Returns a uniformly-distributed random float from the half-open interval `[0, 1)` --- i.e. the interval from zero up to but not including 1.
 
 [[ `:rand_int(n: i64) -> i64` ]]
 
