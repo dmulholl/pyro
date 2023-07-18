@@ -416,7 +416,7 @@ static void run(PyroVM* vm) {
         // every iteration.
         PyroCallFrame* frame = &vm->frames[vm->frame_count - 1];
 
-        #ifdef PYRO_DEBUG_STRESS_GC
+        #ifdef PYRO_DEBUG_STRESS_GARBAGE_COLLECTION
             pyro_collect_garbage(vm);
             if (vm->halt_flag) {
                 break;
