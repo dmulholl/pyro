@@ -15,7 +15,6 @@ PyroVM* pyro_new_vm(size_t stack_size) {
     vm->stack = stack;
     vm->stack_top = stack;
     vm->stack_max = stack + (stack_size/sizeof(PyroValue));
-    vm->stack_size = stack_size;
 
     // Initialize or zero-out all fields before attempting to allocate memory.
     vm->bytes_allocated = sizeof(PyroVM) + stack_size;
@@ -313,8 +312,9 @@ void pyro_free_vm(PyroVM* vm) {
     PYRO_FREE_ARRAY(vm, PyroCallFrame, vm->frames, vm->frame_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity);
 
+    size_t stack_capacity = (vm->stack_max - vm->stack) * sizeof(PyroValue);
     free(vm->stack);
-    vm->bytes_allocated -= vm->stack_size;
+    vm->bytes_allocated -= stack_capacity;
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);

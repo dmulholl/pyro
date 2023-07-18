@@ -3004,3 +3004,8 @@ PyroValue pyro_call_function(PyroVM* vm, uint8_t arg_count) {
     run(vm);
     return pyro_pop(vm);
 }
+
+
+bool pyro_move_stack(PyroVM* vm) {
+    return true;
+}

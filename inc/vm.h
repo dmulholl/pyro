@@ -75,7 +75,6 @@ struct PyroVM {
     PyroValue* stack;
     PyroValue* stack_top;
     PyroValue* stack_max;
-    size_t stack_size;
 
     // 64-bit Mersenne Twister PRNG.
     MT64 mt64;
@@ -228,6 +227,14 @@ static inline bool pyro_push(PyroVM* vm, PyroValue value) {
     }
     *vm->stack_top = value;
     vm->stack_top++;
+
+    #ifdef PYRO_DEBUG_STRESS_STACK_REALLOCATION
+        if (!pyro_move_stack(vm)) {
+            pyro_panic(vm, "out of memory: failed to move stack");
+            return false;
+        }
+    #endif
+
     return true;
 }
 
