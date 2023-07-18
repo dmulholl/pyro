@@ -355,7 +355,9 @@ void call_end_with_method(PyroVM* vm, PyroValue receiver) {
         return;
     }
 
-    if (!pyro_push(vm, receiver)) return;
+    if (!pyro_push(vm, receiver)) {
+        return;
+    }
 
     bool stashed_halt_flag = vm->halt_flag;
     bool stashed_exit_flag = vm->exit_flag;
@@ -871,7 +873,9 @@ static void run(PyroVM* vm) {
                 }
 
                 for (size_t i = 0; i < value_count; i++) {
-                    if (!pyro_push(vm, values[i])) break;
+                    if (!pyro_push(vm, values[i])) {
+                        break;
+                    }
                 }
 
                 call_value(vm, total_args);
