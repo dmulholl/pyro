@@ -186,7 +186,7 @@ static PyroValue fn_is_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue set_add(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMap* map = PYRO_AS_MAP(args[-1]);
-    if (PyroMap_set(map, args[0], pyro_null(), vm) == 0) {
+    if (!PyroMap_set(map, args[0], pyro_null(), vm)) {
         pyro_panic(vm, "add(): out of memory");
     }
     return pyro_null();
@@ -208,13 +208,15 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
+    // Protect the map from the garbage collector.
+    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
+
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
             pyro_panic(vm, "union(): out of memory");
             return pyro_null();
@@ -223,17 +225,16 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
             pyro_panic(vm, "union(): out of memory");
             return pyro_null();
         }
     }
 
+    pyro_pop(vm); // new_map
     return pyro_obj(new_map);
 }
 
@@ -253,13 +254,15 @@ static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args)
         return pyro_null();
     }
 
+    // Protect the map from the garbage collector.
+    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
+
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (PyroMap_contains(map2, entry->key, vm)) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "intersection(): out of memory");
@@ -268,6 +271,7 @@ static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args)
         }
     }
 
+    pyro_pop(vm); // new_map
     return pyro_obj(new_map);
 }
 
@@ -287,13 +291,15 @@ static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
+    // Protect the map from the garbage collector.
+    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
+
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map2, entry->key, vm)) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "difference(): out of memory");
@@ -302,6 +308,7 @@ static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
+    pyro_pop(vm); // new_map
     return pyro_obj(new_map);
 }
 
@@ -321,13 +328,15 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
         return pyro_null();
     }
 
+    // Protect the map from the garbage collector.
+    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
+
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map2, entry->key, vm)) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
@@ -338,11 +347,9 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map1, entry->key, vm)) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
@@ -351,6 +358,7 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
         }
     }
 
+    pyro_pop(vm); // new_map
     return pyro_obj(new_map);
 }
 
@@ -370,11 +378,9 @@ static PyroValue set_is_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args)
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map2, entry->key, vm)) {
             return pyro_bool(false);
         }
@@ -399,11 +405,9 @@ static PyroValue set_is_proper_subset_of(PyroVM* vm, size_t arg_count, PyroValue
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map2, entry->key, vm)) {
             return pyro_bool(false);
         }
@@ -428,11 +432,9 @@ static PyroValue set_is_superset_of(PyroVM* vm, size_t arg_count, PyroValue* arg
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map1, entry->key, vm)) {
             return pyro_bool(false);
         }
@@ -457,11 +459,9 @@ static PyroValue set_is_proper_superset_of(PyroVM* vm, size_t arg_count, PyroVal
 
     for (size_t i = 0; i < map2->entry_array_count; i++) {
         PyroMapEntry* entry = &map2->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map1, entry->key, vm)) {
             return pyro_bool(false);
         }
@@ -486,11 +486,9 @@ static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
         PyroMapEntry* entry = &map1->entry_array[i];
-
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-
         if (!PyroMap_contains(map2, entry->key, vm)) {
             return pyro_bool(false);
         }
