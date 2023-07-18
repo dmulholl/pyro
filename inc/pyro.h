@@ -40,8 +40,9 @@
     #define PYRO_INIT_GC_THRESHOLD (1024 * 1024 * 4)
 #endif
 
-// This value determines the interval between garbage collections. After each garbage collection
-// the threshold for the next collection is set to vm->bytes_allocated * PYRO_GC_HEAP_GROW_FACTOR.
+// This value determines the interval between garbage collections. After each garbage
+// collection the threshold for the next collection is set to:
+// [vm->bytes_allocated *  PYRO_GC_HEAP_GROW_FACTOR]
 #ifndef PYRO_GC_HEAP_GROW_FACTOR
     #define PYRO_GC_HEAP_GROW_FACTOR 2
 #endif

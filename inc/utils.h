@@ -27,8 +27,8 @@ char* pyro_get_version_string(void);
 // - Returns NULL if memory cannot be allocated for the copy.
 char* pyro_strdup(const char* source);
 
-// Takes a null-termminated path as input. Returns a pointer to the beginning of the final path
-// element within the input string. Does not modify the input string.
+// Takes a null-termminated path as input. Returns a pointer to the beginning of the final
+// path element within the input string. Does not modify the input string.
 // - "" --> ""
 // - "/" --> ""
 // - "/bar.txt" --> "bar.txt"
@@ -54,7 +54,7 @@ size_t pyro_dirname(const char* path);
 PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len);
 
 // Copies [src_count] bytes from [src] to [dst], processing backslashed escape sequences.
-// - Returns the number of bytes written to [dst] - this will be less than or equal to [src_count].
+// - Returns the number of bytes written to [dst] -- always less than or equal to [src_count].
 // - Does not add a terminating null to [dst].
 // - [dst] can be the same buffer as [src] - i.e. it's safe for a buffer to overwrite itself.
 // - Ignores unrecognised escape sequences - i.e. copies them verbatim to [dst].

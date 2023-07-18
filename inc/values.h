@@ -1,8 +1,8 @@
 #ifndef pyro_values_h
 #define pyro_values_h
 
-// Type-set for Pyro's fundamental [PyroValue] type. Every [PyroValue] has a [.type] field with
-// one of these enum values.
+// Type-set for Pyro's fundamental [PyroValue] type. Every [PyroValue] has a [.type] field
+// with one of these enum values.
 typedef enum {
     PYRO_VALUE_BOOL,       // A Pyro boolean, true or false.
     PYRO_VALUE_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
@@ -13,8 +13,8 @@ typedef enum {
     PYRO_VALUE_TOMBSTONE,  // Used internally by the map implementation.
 } PyroValueType;
 
-// Tagged union for Pyro's fundamental [PyroValue] type. Every value in Pyro is a [PyroValue], e.g.
-// variables, vector entries, map keys, map values, etc.
+// Tagged union for Pyro's fundamental [PyroValue] type. Every value in Pyro is a [PyroValue],
+// e.g.  variables, vector entries, map keys, map values, etc.
 typedef struct {
     PyroValueType type;
     union {
@@ -159,8 +159,8 @@ PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue value, PyroStr* method_name)
 bool pyro_has_method(PyroVM* vm, PyroValue value, PyroStr* method_name);
 bool pyro_has_pub_method(PyroVM* vm, PyroValue value, PyroStr* method_name);
 
-// Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call into
-// Pyro code.
+// Dumps a value to the VM's output stream for debugging. This doesn't allocate memory or call
+// into Pyro code.
 void pyro_dump_value(PyroVM* vm, PyroValue value);
 
 // Returns the value's 64-bit hash.

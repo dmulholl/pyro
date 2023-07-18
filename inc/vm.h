@@ -4,8 +4,10 @@
 #include "../lib/mt64/mt64.h"
 
 // We create a new [PyroCallFrame] on the [vm->frames] stack for each function call.
-// - [ip] is the instruction pointer -- it points to the next bytecode instruction to be executed.
-// - [fp] is the frame pointer -- it points to slot zero on the value stack for the function call.
+// - [ip] is the instruction pointer -- it points to the next bytecode instruction to be
+//   executed.
+// - [fp] is the frame pointer -- it points to slot zero on the value stack for the function
+//   call.
 typedef struct {
     PyroClosure* closure;
     uint8_t* ip;
@@ -192,15 +194,17 @@ struct PyroVM {
     // The VM's maximum allowed memory allocation measured in bytes.
     size_t max_bytes;
 
-    // The next garbage collection will trigger when [bytes_allocated] breaches this threshold.
+    // The next garbage collection will trigger when [bytes_allocated] breaches this
+    // threshold.
     size_t next_gc_threshold;
 
-    // This flag starts off false. It gets toggled to true if an attempt to allocate memory fails.
+    // This flag starts off false. It gets toggled to true if an attempt to allocate memory
+    // fails.
     bool memory_allocation_failed;
 
-    // This acts like a stack of disallow tokens for the garbage collector. To disallow garbage
-    // collection, add 1. To restore the previous state, subtract 1. The garbage collector can
-    // only run when this value is 0.
+    // This acts like a stack of disallow tokens for the garbage collector. To disallow
+    // garbage collection, add 1. To restore the previous state, subtract 1. The garbage
+    // collector can only run when this value is 0.
     int gc_disallows;
 
     // This flag is set to true if the VM executing in a REPL.

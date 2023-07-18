@@ -22,9 +22,9 @@ struct PyroStr {
 // - If [count] is zero, returns an empty string.
 PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_escapes, PyroVM* vm);
 
-// Creates a new string object by taking ownership of the heap-allocated array [bytes]. Assumes
-// [bytes] was allocated using PYRO_ALLOCATE_ARRAY(); it will be freed by the garbage collector
-// using PYRO_FREE_ARRAY().
+// Creates a new string object by taking ownership of the heap-allocated array [bytes].
+// Assumes [bytes] was allocated using PYRO_ALLOCATE_ARRAY(); it will be freed by the garbage
+// collector using PYRO_FREE_ARRAY().
 // - Returns NULL if the attempt to allocate memory for the new string object fails.
 // - If the return value is NULL, ownership of [bytes] is returned to the caller.
 // - If the return value is NULL, [bytes] is unchanged.
@@ -48,8 +48,8 @@ PyroStr* PyroStr_concat_n_codepoints_as_utf8(uint32_t codepoint, size_t n, PyroV
 // Returns NULL if memory cannot be allocated for the new string.
 PyroStr* PyroStr_concat_codepoints_as_utf8(uint32_t cp1, uint32_t cp2, PyroVM* vm);
 
-// Creates a new string by prepending/appending a utf-8 encoded codepoint to an existing string.
-// Returns NULL if memory cannot be allocated for the new string.
+// Creates a new string by prepending/appending a utf-8 encoded codepoint to an existing
+// string. Returns NULL if memory cannot be allocated for the new string.
 PyroStr* PyroStr_prepend_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, PyroVM* vm);
 PyroStr* PyroStr_append_codepoint_as_utf8(PyroStr* str, uint32_t codepoint, PyroVM* vm);
 
@@ -71,9 +71,9 @@ struct PyroMap {
     // and [index_array] can contain independently varying numbers of tombstones.
     size_t live_entry_count;
 
-    // This array is the map's data store -- new entries are appended to this array so iterating
-    // over it preserves insertion order. [entry_array_count] includes both live entries and
-    // tombstones.
+    // This array is the map's data store -- new entries are appended to this array so
+    // iterating over it preserves insertion order. [entry_array_count] includes both live
+    // entries and tombstones.
     PyroMapEntry* entry_array;
     size_t entry_array_capacity;
     size_t entry_array_count;
@@ -109,17 +109,17 @@ bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm);
 // - Returns 2 if an existing entry was successfully updated.
 int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm);
 
-// Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false] if
-// the operation failed because memory could not be allocated for the new entries. The operation
-// may fail after some of the entries have successfully been copied.
+// Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false]
+// if the operation failed because memory could not be allocated for the new entries. The
+// operation may fail after some of the entries have successfully been copied.
 bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm);
 
-// Attempts to update an existing entry. Returns [true] if successful, [false] if no corresponding
-// entry was found.
+// Attempts to update an existing entry. Returns [true] if successful, [false] if no
+// corresponding entry was found.
 bool PyroMap_update_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm);
 
-// Creates a new map object by copying [src]. Returns NULL if sufficient memory cannot be allocated
-// for the copy.
+// Creates a new map object by copying [src]. Returns NULL if sufficient memory cannot be
+// allocated for the copy.
 PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm);
 
 /* ------- */
@@ -141,19 +141,19 @@ void PyroVec_clear(PyroVec* vec, PyroVM* vm);
 // Returns true if the value was successfully appended, false if memory allocation failed.
 bool PyroVec_append(PyroVec* vec, PyroValue value, PyroVM* vm);
 
-// Returns a copy of the [src] vector. Returns NULL if memory cannot be allocated for the copy.
+// Returns a copy of the [src] vector. Returns NULL if memory allocation fails.
 PyroVec* PyroVec_copy(PyroVec* src, PyroVM* vm);
 
-// Appends all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false] if
-// the operation failed because enough memory could not be allocated for the extra entries.
+// Appends all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false]
+// if the operation failed because enough memory could not be allocated for the extra entries.
 bool PyroVec_copy_entries(PyroVec* src, PyroVec* dst, PyroVM* vm);
 
-// Removes and returns the last item from the vector. Panics and returns NULL_VAL if the vector
-// is emtpy.
+// Removes and returns the last item from the vector. Panics and returns NULL_VAL if the
+// vector is emtpy.
 PyroValue PyroVec_remove_last(PyroVec* vec, PyroVM* vm);
 
-// Removes and returns the first item from the vector. Panics and returns NULL_VAL if the vector
-// is emtpy.
+// Removes and returns the first item from the vector. Panics and returns NULL_VAL if the
+// vector is emtpy.
 PyroValue PyroVec_remove_first(PyroVec* vec, PyroVM* vm);
 
 // Removes and returns the item at [index]. Panics and returns NULL_VAL if the index is out of
@@ -222,21 +222,21 @@ typedef struct {
 
 PyroFn* PyroFn_new(PyroVM* vm);
 
-// Writes [byte] to the function's bytecode array. Returns [true] if the write succeeded, [false] if
-// the write failed because memory could not be allocated.
+// Writes [byte] to the function's bytecode array. Returns [true] if the write succeeded,
+// [false] if the write failed because memory could not be allocated.
 bool PyroFn_write(PyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm);
 
-// This method adds a value to the function's constant table and returns its index. If an identical
-// value is already present in the table it avoids adding a duplicate and returns the index of
-// the existing entry instead. Returns -1 if the operation failed because sufficient memory
-// could not be allocated for the constant table.
+// This method adds a value to the function's constant table and returns its index. If an
+// identical value is already present in the table it avoids adding a duplicate and returns
+// the index of the existing entry instead. Returns -1 if the operation failed because
+// sufficient memory could not be allocated for the constant table.
 int64_t PyroFn_add_constant(PyroFn* fn, PyroValue value, PyroVM* vm);
 
 // Returns the length in bytes of the arguments for the opcode at the specified index.
 size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip);
 
-// This method returns the source code line number corresponding to the bytecode instruction at
-// index [ip].
+// This method returns the source code line number corresponding to the bytecode instruction
+// at index [ip].
 size_t PyroFn_get_line_number(PyroFn* fn, size_t ip);
 
 /* ---------------- */
@@ -386,7 +386,7 @@ void PyroBuf_clear(PyroBuf* buf, PyroVM* vm);
 
 // Resizes the buffer's capacity to [new_capacity].
 // - Returns true on success.
-// - Returns false if sufficient memory cannot be allocated. In this case, the buffer is unchanged.
+// - Returns false if memory allocation fails. In this case, the buffer is unchanged.
 // - Requires: [new_capacity >= count].
 bool PyroBuf_resize_capacity(PyroBuf* buf, size_t new_capacity, PyroVM* vm);
 
@@ -396,18 +396,19 @@ bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm
 // Appends a byte value to the buffer as a hex-escaped string: \x##.
 bool PyroBuf_append_hex_escaped_byte(PyroBuf* buf, uint8_t byte, PyroVM* vm);
 
-// Writes a printf-style formatted string to the buffer. Returns the number of bytes written if the
-// entire string can be written to the buffer. Otherwise writes nothing to the buffer and returns -1.
+// Writes a printf-style formatted string to the buffer. Returns the number of bytes written
+// if the entire string can be written to the buffer. Otherwise writes nothing to the buffer
+// and returns -1.
 int64_t PyroBuf_write_f(PyroBuf* buf, PyroVM* vm, const char* format_string, ...);
 int64_t PyroBuf_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
-// Writes a printf-style formatted string to the buffer. If sufficient memory cannot be allocated to
-// write the entire string, writes as much of the string as possible.
+// Writes a printf-style formatted string to the buffer. If sufficient memory cannot be
+// allocated to write the entire string, writes as much of the string as possible.
 void PyroBuf_try_write_fv(PyroBuf* buf, PyroVM* vm, const char* format_string, va_list args);
 
 // This function converts the contents of the buffer into a string, leaving a valid but empty
-// buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in this
-// case the buffer is unchanged.
+// buffer behind. Returns NULL if memory cannot be allocated for the new string object -- in
+// this case the buffer is unchanged.
 PyroStr* PyroBuf_to_str(PyroBuf* buf, PyroVM* vm);
 
 /* ----- */
@@ -422,9 +423,9 @@ struct PyroFile {
 
 PyroFile* PyroFile_new(PyroVM* vm, FILE* stream);
 
-// Reads the next line from the file and returns it as a string, stripping the terminating LF or
-// CRLF. Returns NULL on EOF. Will panic and return NULL if memory allocation fails or if an I/O
-// read error occurs.
+// Reads the next line from the file and returns it as a string, stripping the terminating LF
+// or CRLF. Returns NULL on EOF. Will panic and return NULL if memory allocation fails or if
+// an I/O read error occurs.
 PyroStr* PyroFile_read_line(PyroFile* file, PyroVM* vm);
 
 // Reads the file into a a buffer. Panics and returns NULL if an error occurs.
@@ -455,7 +456,8 @@ bool PyroQueue_enqueue(PyroQueue* queue, PyroValue value, PyroVM* vm);
 // Returns true if a value was successfully dequeued, false if the queue was empty.
 bool PyroQueue_dequeue(PyroQueue* queue, PyroValue* value, PyroVM* vm);
 
-// Returns the next value without removing it. Returns true on success, false if the queue was empty.
+// Returns the next value without removing it. Returns true on success, false if the queue was
+// empty.
 bool PyroQueue_peek(PyroQueue* queue, PyroValue* value, PyroVM* vm);
 
 // Clears all entries from the queue.
@@ -509,8 +511,8 @@ PyroIter* PyroIter_empty(PyroVM* vm);
 // [vm->halt_flag] before relying on the return value.
 PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm);
 
-// Stringifies the elements returned by the iterator and joins them into a string, separated by
-// [sep]. This method can call into Pyro code and can panic or set the exit flag. Check
+// Stringifies the elements returned by the iterator and joins them into a string, separated
+// by [sep]. This method can call into Pyro code and can panic or set the exit flag. Check
 // [vm->halt_flag] before relying on the result.
 PyroStr* PyroIter_join(PyroIter* iter, const char* sep, size_t sep_length, PyroVM* vm);
 
@@ -518,8 +520,9 @@ PyroStr* PyroIter_join(PyroIter* iter, const char* sep, size_t sep_length, PyroV
 /*  Resource Pointers  */
 /* ------------------- */
 
-// This object type is a wrapper for heap-allocated objects not managed by Pyro's garbage collector.
-// The garbage collector will call the callback function before freeing the object.
+// This object type is a wrapper for heap-allocated objects not managed by Pyro's garbage
+// collector.  The garbage collector will call the callback function before freeing the
+// object.
 
 typedef void (*pyro_free_rp_callback_t)(PyroVM* vm, void* pointer);
 

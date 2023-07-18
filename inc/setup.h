@@ -62,12 +62,12 @@ bool pyro_define_pri_member(PyroVM* vm, PyroMod* module, const char* name, PyroV
 // function. Returns true on success, false if memory could not be allocated.
 bool pyro_define_pub_member_fn(PyroVM* vm, PyroMod* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
-// Convenience function for adding a new private member to [module] where the value is a native
-// function. Returns true on success, false if memory could not be allocated.
+// Convenience function for adding a new private member to [module] where the value is a
+// native function. Returns true on success, false if memory could not be allocated.
 bool pyro_define_pri_member_fn(PyroVM* vm, PyroMod* module, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
-// Adds a new public method to the class. Returns true on success, false if memory could not be
-// allocated.
+// Adds a new public method to the class. Returns true on success, false if memory could not
+// be allocated.
 bool pyro_define_pub_method(PyroVM* vm, PyroClass* class, const char* name, pyro_native_fn_t fn_ptr, int arity);
 
 // Adds a new private method to the class. Returns true on success, false if memory could not

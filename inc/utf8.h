@@ -8,12 +8,12 @@ typedef struct {
     uint8_t length;
 } Utf8CodePoint;
 
-// Attempts to read a utf-8-encoded unicode codepoint from the start of the buffer [src]. Returns
-// [true] if a valid codepoint can be read, otherwise [false].
+// Attempts to read a utf-8-encoded unicode codepoint from the start of the buffer [src].
+// Returns [true] if a valid codepoint can be read, otherwise [false].
 bool pyro_read_utf8_codepoint(const uint8_t src[], size_t src_len, Utf8CodePoint* out);
 
-// Attempts to read a utf-8-encoded unicode codepoint from the end of the buffer [src]. Returns
-// [true] if a valid codepoint can be read, otherwise [false].
+// Attempts to read a utf-8-encoded unicode codepoint from the end of the buffer [src].
+// Returns [true] if a valid codepoint can be read, otherwise [false].
 bool pyro_read_trailing_utf8_codepoint(const uint8_t src[], size_t src_len, Utf8CodePoint* out);
 
 // Writes a unicode codepoint to [dst], encoded as utf-8. Returns the number of bytes written
