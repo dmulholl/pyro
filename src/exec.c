@@ -1983,8 +1983,8 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                // The entries are stored on the stack as [..][key][value][..] pairs.
-                for (PyroValue* slot = vm->stack_top - entry_count * 2; slot < vm->stack_top; slot += 2) {
+                for (uint16_t i = 0; i < entry_count; i++) {
+                    PyroValue* slot = vm->stack_top - (entry_count - i) * 2;
                     if (!PyroMap_set(map, slot[0], slot[1], vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
@@ -2008,7 +2008,8 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                for (PyroValue* slot = vm->stack_top - entry_count; slot < vm->stack_top; slot++) {
+                for (uint16_t i = 0; i < entry_count; i++) {
+                    PyroValue* slot = vm->stack_top - (entry_count - i);
                     if (!PyroMap_set(map, *slot, pyro_null(), vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
