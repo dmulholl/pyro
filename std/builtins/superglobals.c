@@ -977,6 +977,7 @@ static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "$import(): invalid argument [path], expected a string");
         return pyro_null();
     }
+    PyroStr* import_path = PYRO_AS_STR(args[0]);
 
     PyroMod* module = PyroMod_new(vm);
     if (!module) {
@@ -988,7 +989,7 @@ static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    pyro_import_module_from_string(vm, PYRO_AS_STR(args[0])->bytes, module);
+    pyro_import_module_from_string(vm, import_path->bytes, module);
     pyro_pop(vm);
     return pyro_obj(module);
 }
