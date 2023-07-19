@@ -96,31 +96,45 @@ struct PyroMap {
 PyroMap* PyroMap_new(PyroVM* vm);
 PyroMap* PyroMap_new_as_weakref(PyroVM* vm);
 PyroMap* PyroMap_new_as_set(PyroVM* vm);
+
+// Gets an entry from the map. This function can call into Pyro code via pyro_op_compare_eq()
+// and so can set the panic and/or exit flags.
 bool PyroMap_get(PyroMap* map, PyroValue key, PyroValue* value, PyroVM* vm);
-bool PyroMap_contains(PyroMap* map, PyroValue key, PyroVM* vm);
-void PyroMap_clear(PyroMap* map, PyroVM* vm);
 
-// Removes an entry from the map. Returns true if the map contained an entry for [key].
-bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm);
-
-// Adds a new entry to the map or updates an existing entry.
+// Adds a new entry to the map or updates an existing entry. This function can call into Pyro
+// code via pyro_op_compare_eq() and so can set the panic and/or exit flags.
 // - Returns 0 if the entry was not added because additional memory could not be allocated.
 // - Returns 1 if a new entry was successfully added to the map.
 // - Returns 2 if an existing entry was successfully updated.
 int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm);
 
-// Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false]
-// if the operation failed because memory could not be allocated for the new entries. The
-// operation may fail after some of the entries have successfully been copied.
-bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm);
+// Removes an entry from the map. Returns true if the map contained an entry for [key].
+// This function can call into Pyro code via pyro_op_compare_eq() and so can set the panic
+// and/or exit flags.
+bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm);
+
+// Returns true if the map contains [key].  This function can call into Pyro code via
+// pyro_op_compare_eq() and so can set the panic and/or exit flags.
+bool PyroMap_contains(PyroMap* map, PyroValue key, PyroVM* vm);
 
 // Attempts to update an existing entry. Returns [true] if successful, [false] if no
-// corresponding entry was found.
+// corresponding entry was found.  This function can call into Pyro code via
+// pyro_op_compare_eq() and so can set the panic and/or exit flags.
 bool PyroMap_update_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm);
+
+// Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false]
+// if the operation failed because memory could not be allocated for the new entries. The
+// operation may fail after some of the entries have successfully been copied.  This function
+// can call into Pyro code via pyro_op_compare_eq() and so can set the panic and/or exit
+// flags.
+bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm);
 
 // Creates a new map object by copying [src]. Returns NULL if sufficient memory cannot be
 // allocated for the copy.
 PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm);
+
+// Clears all entries from the map.
+void PyroMap_clear(PyroMap* map, PyroVM* vm);
 
 /* ------- */
 /* Vectors */

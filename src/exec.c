@@ -334,7 +334,7 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
 
     pyro_import_module(vm, name_count, names, module);
     if (vm->halt_flag) {
-        PyroMap_remove(vm->module_cache, pyro_obj(import_path), vm);
+        /* PyroMap_remove(vm->module_cache, pyro_obj(import_path), vm); */
         return NULL;
     }
 

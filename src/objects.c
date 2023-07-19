@@ -205,6 +205,8 @@ PyroInstance* PyroInstance_new(PyroVM* vm, PyroClass* class) {
 //   [key]. This entry can be found in [entry_array] at the specified index.
 //
 // Note that [index_array] must have a non-zero length before this function is called.
+//
+// This function can call into Pyro code and can set the panic and/or exit flags.
 static int64_t* find_entry(
     PyroVM* vm,
     PyroMapEntry* entry_array,
@@ -224,8 +226,14 @@ static int64_t* find_entry(
             return first_tombstone == NULL ? slot : first_tombstone;
         } else if (*slot == TOMBSTONE) {
             if (first_tombstone == NULL) first_tombstone = slot;
-        } else if (pyro_op_compare_eq(vm, key, entry_array[*slot].key)) {
-            return slot;
+        } else {
+            bool result = pyro_op_compare_eq(vm, key, entry_array[*slot].key);
+            if (vm->halt_flag) {
+                return NULL;
+            }
+            if (result) {
+                return slot;
+            }
         }
 
         i = (i + 1) & (index_array_capacity - 1);
@@ -236,7 +244,7 @@ static int64_t* find_entry(
 // This function is used for looking up strings in the interned-strings pool. If the pool of
 // interned strings contains an entry identical to [string], it returns a pointer to that
 // string, otherwise it returns NULL.
-static PyroStr* find_string_in_pool(
+static PyroStr* find_interned_string(
     PyroMap* string_pool,
     const char* string,
     size_t count,
@@ -276,7 +284,10 @@ static PyroStr* find_string_in_pool(
 // the opportunity to eliminate any tombstones from the entry array so when this function
 // returns the map contains no tombstone entries.)
 static bool resize_index_array(PyroMap* map, PyroVM* vm) {
-    size_t new_index_array_capacity = PYRO_GROW_CAPACITY(map->index_array_capacity);
+    size_t new_index_array_capacity = 8;
+    if (map->index_array_capacity > 0) {
+        new_index_array_capacity = map->index_array_capacity * 2;
+    }
 
     int64_t* new_index_array = PYRO_ALLOCATE_ARRAY(vm, int64_t, new_index_array_capacity);
     if (!new_index_array) {
@@ -287,54 +298,59 @@ static bool resize_index_array(PyroMap* map, PyroVM* vm) {
         new_index_array[i] = EMPTY;
     }
 
-    PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
-    map->index_array = new_index_array;
-    map->index_array_capacity = new_index_array_capacity;
-    map->index_array_count = map->live_entry_count;
-    map->max_load_threshold = new_index_array_capacity * PYRO_MAX_HASHMAP_LOAD;
+    PyroMapEntry* new_entry_array = map->entry_array;
 
-    // If the entry array contains tombstones, this is a good time to compact it by removing
-    // them while we're rebuilding the index.
+    // If the entry array contains tombstones, compact it by removing them.
     if (map->entry_array_count > map->live_entry_count) {
+        new_entry_array = PYRO_ALLOCATE_ARRAY(vm, PyroMapEntry, map->entry_array_capacity);
+        if (!new_entry_array) {
+            PYRO_FREE_ARRAY(vm, int64_t, new_index_array, new_index_array_capacity);
+            return false;
+        }
         size_t dst_index = 0;
-
         for (size_t src_index = 0; src_index < map->entry_array_count; src_index++) {
             if (PYRO_IS_TOMBSTONE(map->entry_array[src_index].key)) {
                 continue;
             }
-
-            if (src_index > dst_index) {
-                map->entry_array[dst_index] = map->entry_array[src_index];
-            }
-
-            int64_t* slot = find_entry(
-                vm,
-                map->entry_array,
-                new_index_array,
-                new_index_array_capacity,
-                map->entry_array[src_index].key
-            );
-
-            *slot = (int64_t)dst_index;
+            new_entry_array[dst_index] = map->entry_array[src_index];
             dst_index++;
         }
-
         assert(dst_index == map->live_entry_count);
-        map->entry_array_count = map->live_entry_count;
-        return true;
     }
 
-    // No tombstones so we just need to rebuild the index.
-    for (size_t i = 0; i < map->entry_array_count; i++) {
+    // Rebuild the index.
+    for (size_t entry_index = 0; entry_index < map->live_entry_count; entry_index++) {
         int64_t* slot = find_entry(
             vm,
-            map->entry_array,
+            new_entry_array,
             new_index_array,
             new_index_array_capacity,
-            map->entry_array[i].key
+            new_entry_array[entry_index].key
         );
-        *slot = (int64_t)i;
+
+        if (vm->halt_flag) {
+            PYRO_FREE_ARRAY(vm, int64_t, new_index_array, new_index_array_capacity);
+            if (new_entry_array != map->entry_array) {
+                PYRO_FREE_ARRAY(vm, PyroMapEntry, new_entry_array, map->entry_array_capacity);
+            }
+            return false;
+        }
+
+        *slot = (int64_t)entry_index;
     }
+
+    PYRO_FREE_ARRAY(vm, int64_t, map->index_array, map->index_array_capacity);
+    map->index_array = new_index_array;
+    map->index_array_capacity = new_index_array_capacity;
+    map->index_array_count = map->live_entry_count;
+
+    if (new_entry_array != map->entry_array) {
+        PYRO_FREE_ARRAY(vm, PyroMapEntry, map->entry_array, map->entry_array_capacity);
+        map->entry_array = new_entry_array;
+        map->entry_array_count = map->live_entry_count;
+    }
+
+    map->max_load_threshold = new_index_array_capacity * PYRO_MAX_HASHMAP_LOAD;
 
     return true;
 }
@@ -464,6 +480,9 @@ int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     }
 
     int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
+    if (vm->halt_flag) {
+        return 0;
+    }
 
     // 1. The slot is empty.
     if (*slot == EMPTY) {
@@ -472,12 +491,15 @@ int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
                 return 0;
             }
             slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
+            if (vm->halt_flag) {
+                return 0;
+            }
         }
-        int64_t index = append_entry(map, key, value, vm);
-        if (index < 0) {
+        int64_t entry_index = append_entry(map, key, value, vm);
+        if (entry_index < 0) {
             return 0;
         }
-        *slot = index;
+        *slot = entry_index;
         map->live_entry_count++;
         map->index_array_count++;
         return 1;
@@ -485,11 +507,11 @@ int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
 
     // 2. The slot contains a tombstone.
     if (*slot == TOMBSTONE) {
-        int64_t index = append_entry(map, key, value, vm);
-        if (index < 0) {
+        int64_t entry_index = append_entry(map, key, value, vm);
+        if (entry_index < 0) {
             return 0;
         }
-        *slot = index;
+        *slot = entry_index;
         map->live_entry_count++;
         return 1;
     }
@@ -507,7 +529,7 @@ bool PyroMap_update_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* 
     }
 
     int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (*slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
         return false;
     }
 
@@ -523,7 +545,7 @@ bool PyroMap_get(PyroMap* map, PyroValue key, PyroValue* value, PyroVM* vm) {
     }
 
     int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (*slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
         return false;
     }
 
@@ -538,7 +560,7 @@ bool PyroMap_contains(PyroMap* map, PyroValue key, PyroVM* vm) {
     }
 
     int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (*slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
         return false;
     }
 
@@ -552,7 +574,7 @@ bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm) {
     }
 
     int64_t* slot = find_entry(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (*slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
         return false;
     }
 
@@ -569,7 +591,7 @@ bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm) {
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (PyroMap_set(dst, entry->key, entry->value, vm) == 0) {
+        if (!PyroMap_set(dst, entry->key, entry->value, vm)) {
             return false;
         }
     }
@@ -617,7 +639,7 @@ PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
 
     uint64_t hash = PYRO_STRING_HASH(bytes, count);
 
-    PyroStr* interned_string = find_string_in_pool(vm->string_pool, bytes, count, hash);
+    PyroStr* interned_string = find_interned_string(vm->string_pool, bytes, count, hash);
     if (interned_string) {
         PYRO_FREE_ARRAY(vm, char, bytes, capacity);
         return interned_string;
@@ -656,7 +678,7 @@ PyroStr* PyroStr_copy(const char* src, size_t count, bool process_backslashed_es
     assert(vm->string_pool != NULL);
     uint64_t hash = PYRO_STRING_HASH(src, count);
 
-    PyroStr* interned_string = find_string_in_pool(vm->string_pool, src, count, hash);
+    PyroStr* interned_string = find_interned_string(vm->string_pool, src, count, hash);
     if (interned_string) {
         return interned_string;
     }
