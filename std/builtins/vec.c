@@ -234,7 +234,7 @@ static PyroValue vec_copy(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "copy(): out of memory");
         return pyro_null();
     }
-    return pyro_obj(vec);
+    return pyro_obj(copy);
 }
 
 

@@ -1313,6 +1313,7 @@ PyroVec* PyroVec_copy(PyroVec* src_vec, PyroVM* vm) {
         return NULL;
     }
     memcpy(new_vec->values, src_vec->values, sizeof(PyroValue) * src_vec->count);
+    new_vec->count = src_vec->count;
     return new_vec;
 }
 

@@ -98,11 +98,20 @@ def $test_reverse() {
 def $test_copy() {
     var vec = [123, 456, 789];
     var copy = vec:copy();
+
     assert $is_vec(copy);
     assert copy:count() == 3;
     assert copy[0] == 123;
     assert copy[1] == 456;
     assert copy[2] == 789;
+
+    vec[0] = 111;
+    assert vec[0] == 111;
+    assert copy[0] == 123;
+
+    copy[2] = 333;
+    assert vec[2] == 789;
+    assert copy[2] == 333;
 }
 
 
