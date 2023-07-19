@@ -1433,7 +1433,7 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
     switch (PYRO_AS_OBJ(receiver)->type) {
         case PYRO_OBJECT_MAP: {
             PyroMap* map = PYRO_AS_MAP(receiver);
-            if (PyroMap_set(map, key, value, vm) == 0) {
+            if (!PyroMap_set(map, key, value, vm)) {
                 pyro_panic(vm, "out of memory");
             }
             return value;
