@@ -98,12 +98,22 @@ def $test_copy() {
         "abc" = 123,
         "def" = 456,
     };
+    assert map:count() == 2;
+    assert map["abc"] == 123;
+    assert map["def"] == 456;
 
     var copy = map:copy();
-
     assert copy:count() == 2;
     assert copy["abc"] == 123;
     assert copy["def"] == 456;
+
+    map["abc"] = 111;
+    assert map["abc"] == 111;
+    assert copy["abc"] == 123;
+
+    copy["def"] = 222;
+    assert map["def"] == 456;
+    assert copy["def"] == 222;
 }
 
 
