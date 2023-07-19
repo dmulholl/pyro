@@ -136,6 +136,10 @@ PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm);
 // Clears all entries from the map.
 void PyroMap_clear(PyroMap* map, PyroVM* vm);
 
+// Removes an entry from the map. This function cannot panic and is safe to call while the VM
+// is in a panicking state. The entry key must be a string.
+bool PyroMap_safe_remove(PyroMap* map, PyroStr* key, PyroVM* vm);
+
 /* ------- */
 /* Vectors */
 /* ------- */
