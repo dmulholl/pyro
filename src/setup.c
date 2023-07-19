@@ -7,17 +7,12 @@ PyroVM* pyro_new_vm(size_t stack_size) {
         return NULL;
     }
 
-    PyroValue* stack = malloc(stack_size);
-    if (!stack) {
-        free(vm);
-        return NULL;
-    }
-    vm->stack = stack;
-    vm->stack_top = stack;
-    vm->stack_max = stack + (stack_size/sizeof(PyroValue));
+    vm->stack = NULL;
+    vm->stack_top = NULL;
+    vm->stack_max = NULL;
 
     // Initialize or zero-out all fields before attempting to allocate memory.
-    vm->bytes_allocated = sizeof(PyroVM) + stack_size;
+    vm->bytes_allocated = sizeof(PyroVM);
     vm->frames = NULL;
     vm->frame_count = 0;
     vm->frame_capacity = 0;
@@ -311,10 +306,7 @@ void pyro_free_vm(PyroVM* vm) {
     PYRO_FREE_ARRAY(vm, PyroObject*, vm->grey_stack, vm->grey_stack_capacity);
     PYRO_FREE_ARRAY(vm, PyroCallFrame, vm->frames, vm->frame_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity);
-
-    size_t stack_capacity = (vm->stack_max - vm->stack) * sizeof(PyroValue);
-    free(vm->stack);
-    vm->bytes_allocated -= stack_capacity;
+    PYRO_FREE_ARRAY(vm, PyroValue, vm->stack, vm->stack_max - vm->stack);
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);

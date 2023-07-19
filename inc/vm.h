@@ -218,18 +218,20 @@ struct PyroVM {
     bool trace_execution;
 };
 
-
 // Debug function -- reallocates the stack without changing its size. We use this to stress-
 // test stack-reallocation in debug builds.
 bool pyro_move_stack(PyroVM* vm);
+bool pyro_reallocate_stack(PyroVM* vm);
 
-
-// Pushes a value onto the stack. Panics if the stack overflows.
+// Pushes a value onto the stack.
 static inline bool pyro_push(PyroVM* vm, PyroValue value) {
     if (vm->stack_top == vm->stack_max) {
-        pyro_panic(vm, "stack overflow");
-        return false;
+        if (!pyro_reallocate_stack(vm)) {
+            pyro_panic(vm, "out of memory: failed to reallocate stack");
+            return false;
+        }
     }
+
     *vm->stack_top = value;
     vm->stack_top++;
 

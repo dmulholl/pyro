@@ -24,7 +24,7 @@
 // both in bytes. To allocate a new block of memory use [pointer = NULL] and [old_size = 0].
 // To free a block of memory set [new_size = 0]. Allocation/reallocation can fail if
 // sufficient memory is not available; in this case the function returns NULL. If reallocation
-// fails, the input pointer remains valid, i.e.  the memory it points to will not have been
+// fails, the input pointer remains valid, i.e. the memory it points to will not have been
 // freed.
 void* pyro_realloc(PyroVM* vm, void* pointer, size_t old_size, size_t new_size);
 

@@ -3033,6 +3033,40 @@ PyroValue pyro_call_function(PyroVM* vm, uint8_t arg_count) {
 }
 
 
+bool pyro_reallocate_stack(PyroVM* vm) {
+    size_t stack_count = vm->stack_top - vm->stack;
+    size_t old_capacity = vm->stack_max - vm->stack;
+
+    size_t new_capacity = PYRO_INITIAL_VALUE_STACK_CAPACITY;
+    if (old_capacity > 0) {
+        new_capacity = old_capacity * 2;
+    }
+
+    PyroValue* old_stack_base = vm->stack;
+    PyroValue* new_stack = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vm->stack, old_capacity, new_capacity);
+    if (!new_stack) {
+        return false;
+    }
+
+    vm->stack = new_stack;
+    vm->stack_max = new_stack + new_capacity;
+    vm->stack_top = new_stack + stack_count;
+
+    for (size_t i = 0; i < vm->frame_count; i++) {
+        PyroCallFrame* frame = vm->frames + i;
+        size_t fp_offset = frame->fp - old_stack_base;
+        frame->fp = new_stack + fp_offset;
+    }
+
+    for (PyroUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
+        size_t location_offset = upvalue->location - old_stack_base;
+        upvalue->location = new_stack + location_offset;
+    }
+
+    return true;
+}
+
+
 bool pyro_move_stack(PyroVM* vm) {
     size_t stack_capacity = vm->stack_max - vm->stack;
     size_t stack_capacity_bytes = stack_capacity * sizeof(PyroValue);
