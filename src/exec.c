@@ -2022,8 +2022,10 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
+                if (!pyro_push(vm, pyro_obj(map))) break;
+
                 for (uint16_t i = 0; i < entry_count; i++) {
-                    PyroValue* key = vm->stack_top - (entry_count - i) * 2;
+                    PyroValue* key = vm->stack_top - 1 - (entry_count - i) * 2;
                     PyroValue* value = key + 1;
                     if (!PyroMap_set(map, *key, *value, vm)) {
                         pyro_panic(vm, "out of memory");
@@ -2031,7 +2033,7 @@ static void run(PyroVM* vm) {
                     }
                 }
 
-                vm->stack_top -= (entry_count * 2);
+                vm->stack_top -= entry_count * 2 + 1;
                 pyro_push(vm, pyro_obj(map));
                 break;
             }
@@ -2048,15 +2050,17 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
+                if (!pyro_push(vm, pyro_obj(map))) break;
+
                 for (uint16_t i = 0; i < entry_count; i++) {
-                    PyroValue* value = vm->stack_top - (entry_count - i);
+                    PyroValue* value = vm->stack_top - 1 - (entry_count - i);
                     if (!PyroMap_set(map, *value, pyro_null(), vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
                 }
 
-                vm->stack_top -= entry_count;
+                vm->stack_top -= entry_count + 1;
                 pyro_push(vm, pyro_obj(map));
                 break;
             }
