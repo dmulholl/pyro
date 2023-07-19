@@ -6,19 +6,31 @@
 // - If [closure] is a function, the zeroth local variable slot will be unused.
 // - If [closure] is a method, the zeroth local variable slot will contain 'self'.
 static void push_call_frame(PyroVM* vm, PyroClosure* closure, PyroValue* frame_pointer) {
-    if (vm->frame_count == vm->frame_capacity) {
-        size_t new_capacity = PYRO_GROW_CAPACITY(vm->frame_capacity);
-        PyroCallFrame* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroCallFrame, vm->frames, vm->frame_capacity, new_capacity);
+    if (vm->call_stack_count == vm->call_stack_capacity) {
+        size_t new_capacity = PYRO_INITIAL_CALL_STACK_CAPACITY;
+        if (vm->call_stack_capacity > 0) {
+            new_capacity = vm->call_stack_capacity * 2;
+        }
+
+        PyroCallFrame* new_array = PYRO_REALLOCATE_ARRAY(
+            vm,
+            PyroCallFrame,
+            vm->call_stack,
+            vm->call_stack_capacity,
+            new_capacity
+        );
+
         if (!new_array) {
-            pyro_panic(vm, "out of memory");
+            pyro_panic(vm, "out of memory: unable to reallocate the call stack");
             return;
         }
-        vm->frames = new_array;
-        vm->frame_capacity = new_capacity;
+
+        vm->call_stack = new_array;
+        vm->call_stack_capacity = new_capacity;
     }
 
-    PyroCallFrame* frame = &vm->frames[vm->frame_count];
-    vm->frame_count++;
+    PyroCallFrame* frame = &vm->call_stack[vm->call_stack_count];
+    vm->call_stack_count++;
 
     frame->closure = closure;
     frame->ip = closure->fn->code;
@@ -390,7 +402,7 @@ void call_end_with_method(PyroVM* vm, PyroValue receiver) {
 
 static void run(PyroVM* vm) {
     size_t with_stack_count_on_entry = vm->with_stack_count;
-    size_t frame_count_on_entry = vm->frame_count;
+    size_t frame_count_on_entry = vm->call_stack_count;
     assert(frame_count_on_entry >= 1);
 
     // Reads the next byte from the bytecode as a uint8_t value.
@@ -408,14 +420,14 @@ static void run(PyroVM* vm) {
     #define READ_STRING() PYRO_AS_STR(READ_CONSTANT())
 
     for (;;) {
-        if (vm->halt_flag || vm->frame_count < frame_count_on_entry) {
+        if (vm->halt_flag || vm->call_stack_count < frame_count_on_entry) {
             break;
         }
 
         // The last instruction may have changed the frame count or (this can lead to nasty
         // bugs) forced a reallocation of the frame stack so reset the frame pointer for
         // every iteration.
-        PyroCallFrame* frame = &vm->frames[vm->frame_count - 1];
+        PyroCallFrame* frame = &vm->call_stack[vm->call_stack_count - 1];
 
         #ifdef PYRO_DEBUG_STRESS_GARBAGE_COLLECTION
             pyro_collect_garbage(vm);
@@ -2091,7 +2103,7 @@ static void run(PyroVM* vm) {
                 vm->stack_top = frame->fp + 1;
                 vm->stack_top[-1] = return_value;
 
-                vm->frame_count--;
+                vm->call_stack_count--;
                 break;
             }
 
@@ -2123,7 +2135,7 @@ static void run(PyroVM* vm) {
                 vm->stack_top = frame->fp + 1;
                 vm->stack_top[-1] = return_value;
 
-                vm->frame_count--;
+                vm->call_stack_count--;
                 break;
             }
 
@@ -2640,7 +2652,7 @@ static void run(PyroVM* vm) {
             // After:  [ ... ][ return_value ]
             case PYRO_OPCODE_TRY: {
                 size_t stashed_stack_size = vm->stack_top - vm->stack;
-                size_t stashed_frame_count = vm->frame_count;
+                size_t stashed_call_stack_count = vm->call_stack_count;
 
                 vm->try_depth++;
                 call_closure(vm, PYRO_AS_CLOSURE(vm->stack_top[-1]), 0);
@@ -2659,7 +2671,7 @@ static void run(PyroVM* vm) {
                     vm->memory_allocation_failed = false;
                     vm->stack_top = vm->stack + stashed_stack_size;
                     close_upvalues(vm, vm->stack_top);
-                    vm->frame_count = stashed_frame_count;
+                    vm->call_stack_count = stashed_call_stack_count;
 
                     PyroStr* error_message = PyroBuf_to_str(vm->panic_buffer, vm);
                     if (!error_message) {
@@ -2689,7 +2701,7 @@ static void run(PyroVM* vm) {
                 }
 
                 assert(vm->stack_top == vm->stack + stashed_stack_size);
-                assert(vm->frame_count == stashed_frame_count);
+                assert(vm->call_stack_count == stashed_call_stack_count);
                 break;
             }
 
@@ -2856,7 +2868,7 @@ void pyro_reset_vm(PyroVM* vm) {
     vm->exit_flag = false;
     vm->exit_code = 0;
     vm->stack_top = vm->stack;
-    vm->frame_count = 0;
+    vm->call_stack_count = 0;
     vm->open_upvalues = NULL;
     vm->with_stack_count = 0;
 }
@@ -3052,8 +3064,8 @@ bool pyro_reallocate_stack(PyroVM* vm) {
     vm->stack_max = new_stack + new_capacity;
     vm->stack_top = new_stack + stack_count;
 
-    for (size_t i = 0; i < vm->frame_count; i++) {
-        PyroCallFrame* frame = vm->frames + i;
+    for (size_t i = 0; i < vm->call_stack_count; i++) {
+        PyroCallFrame* frame = vm->call_stack + i;
         size_t fp_offset = frame->fp - old_stack_base;
         frame->fp = new_stack + fp_offset;
     }
@@ -3087,8 +3099,8 @@ bool pyro_move_stack(PyroVM* vm) {
     vm->stack_max = new_stack + stack_capacity;
     vm->stack_top = new_stack + stack_count;
 
-    for (size_t i = 0; i < vm->frame_count; i++) {
-        PyroCallFrame* frame = vm->frames + i;
+    for (size_t i = 0; i < vm->call_stack_count; i++) {
+        PyroCallFrame* frame = vm->call_stack + i;
         size_t fp_offset = frame->fp - old_stack_base;
         frame->fp = new_stack + fp_offset;
     }

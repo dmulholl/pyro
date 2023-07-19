@@ -67,9 +67,9 @@ struct PyroVM {
     PyroFile* stdin_file;
 
     // The call stack.
-    PyroCallFrame* frames;
-    size_t frame_count;
-    size_t frame_capacity;
+    PyroCallFrame* call_stack;
+    size_t call_stack_count;
+    size_t call_stack_capacity;
 
     // The value stack.
     PyroValue* stack;

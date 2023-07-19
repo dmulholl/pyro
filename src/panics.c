@@ -4,8 +4,8 @@
 static void print_stack_trace(PyroVM* vm) {
     pyro_stderr_write(vm, "\nStack Trace:\n\n");
 
-    for (size_t i = vm->frame_count; i > 0; i--) {
-        PyroCallFrame* frame = &vm->frames[i - 1];
+    for (size_t i = vm->call_stack_count; i > 0; i--) {
+        PyroCallFrame* frame = &vm->call_stack[i - 1];
         PyroFn* fn = frame->closure->fn;
 
         size_t line_number = 1;
@@ -40,16 +40,16 @@ static void panic(
     // number of the last instruction.
     PyroStr* last_opcode_source_id = NULL;
     size_t last_opcode_line_number = 0;
-    if (vm->frame_count > 0) {
-        PyroCallFrame* current_frame = &vm->frames[vm->frame_count - 1];
+    if (vm->call_stack_count > 0) {
+        PyroCallFrame* current_frame = &vm->call_stack[vm->call_stack_count - 1];
         PyroFn* current_fn = current_frame->closure->fn;
         last_opcode_source_id = current_fn->source_id;
         last_opcode_line_number = 1;
         if (current_frame->ip > current_fn->code) {
             size_t current_ip = current_frame->ip - current_fn->code - 1;
             last_opcode_line_number = PyroFn_get_line_number(current_fn, current_ip);
-        } else if (vm->frame_count > 1) {
-            PyroCallFrame* outer_frame = &vm->frames[vm->frame_count - 2];
+        } else if (vm->call_stack_count > 1) {
+            PyroCallFrame* outer_frame = &vm->call_stack[vm->call_stack_count - 2];
             PyroFn* outer_fn = outer_frame->closure->fn;
             size_t outer_ip = outer_frame->ip - outer_fn->code - 1;
             last_opcode_source_id = outer_fn->source_id;
@@ -70,20 +70,20 @@ static void panic(
         pyro_stderr_write_f(vm, "%s:%zu\n  syntax error: ", syntax_error_source_id, syntax_error_line_number);
         pyro_stderr_write_fv(vm, format_string, args);
         pyro_stderr_write(vm, "\n");
-        if (vm->frame_count > 0) {
+        if (vm->call_stack_count > 0) {
             pyro_stderr_write_f(vm,
                 "\n%s:%zu\n  panic: invalid source code\n",
                 last_opcode_source_id->bytes,
                 last_opcode_line_number
             );
         }
-        if (vm->frame_count > 1) {
+        if (vm->call_stack_count > 1) {
             print_stack_trace(vm);
         }
         return;
     }
 
-    if (vm->frame_count > 0) {
+    if (vm->call_stack_count > 0) {
         pyro_stderr_write_f(vm, "%s:%zu\n  ", last_opcode_source_id->bytes, last_opcode_line_number);
     }
 
@@ -91,7 +91,7 @@ static void panic(
     pyro_stderr_write_fv(vm, format_string, args);
     pyro_stderr_write(vm, "\n");
 
-    if (vm->frame_count > 1) {
+    if (vm->call_stack_count > 1) {
         print_stack_trace(vm);
     }
 }

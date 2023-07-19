@@ -12,9 +12,9 @@ PyroVM* pyro_new_vm() {
     vm->stack = NULL;
     vm->stack_top = NULL;
     vm->stack_max = NULL;
-    vm->frames = NULL;
-    vm->frame_count = 0;
-    vm->frame_capacity = 0;
+    vm->call_stack = NULL;
+    vm->call_stack_count = 0;
+    vm->call_stack_capacity = 0;
     vm->class_buf = NULL;
     vm->class_err = NULL;
     vm->class_file = NULL;
@@ -133,14 +133,6 @@ PyroVM* pyro_new_vm() {
     vm->str_rop_binary_greater_greater = NULL;
     vm->str_op_unary_tilde = NULL;
     vm->trace_execution = false;
-
-    // Initialize the [frames] stack.
-    vm->frames = PYRO_ALLOCATE_ARRAY(vm, PyroCallFrame, PYRO_INITIAL_CALL_FRAME_CAPACITY);
-    if (!vm->frames) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
-    vm->frame_capacity = PYRO_INITIAL_CALL_FRAME_CAPACITY;
 
     // Initialize the MT64 PRNG.
     mt64_init(&vm->mt64);
@@ -303,7 +295,7 @@ void pyro_free_vm(PyroVM* vm) {
     }
 
     PYRO_FREE_ARRAY(vm, PyroObject*, vm->grey_stack, vm->grey_stack_capacity);
-    PYRO_FREE_ARRAY(vm, PyroCallFrame, vm->frames, vm->frame_capacity);
+    PYRO_FREE_ARRAY(vm, PyroCallFrame, vm->call_stack, vm->call_stack_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->stack, vm->stack_max - vm->stack);
 

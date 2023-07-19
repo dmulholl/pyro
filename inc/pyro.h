@@ -27,11 +27,11 @@
 #endif
 
 // Sets the initial capacity of the call stack -- the argument is the number of call frames.
-#ifndef PYRO_INITIAL_CALL_FRAME_CAPACITY
+#ifndef PYRO_INITIAL_CALL_STACK_CAPACITY
     #ifdef PYRO_DEBUG
-        #define PYRO_INITIAL_CALL_FRAME_CAPACITY 2
+        #define PYRO_INITIAL_CALL_STACK_CAPACITY 2
     #else
-        #define PYRO_INITIAL_CALL_FRAME_CAPACITY 64
+        #define PYRO_INITIAL_CALL_STACK_CAPACITY 64
     #endif
 #endif
 
