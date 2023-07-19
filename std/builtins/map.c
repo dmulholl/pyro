@@ -208,8 +208,8 @@ static PyroValue set_union(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    // Protect the map from the garbage collector.
-    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    // Protect the map from the garbage collector. Calling get/set/contains on a map can call
+    // pyro_op_compare_eq() which can call Pyro code.
     if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -254,8 +254,8 @@ static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args)
         return pyro_null();
     }
 
-    // Protect the map from the garbage collector.
-    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    // Protect the map from the garbage collector. Calling get/set/contains on a map can call
+    // pyro_op_compare_eq() which can call Pyro code.
     if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -263,7 +263,11 @@ static PyroValue set_intersection(PyroVM* vm, size_t arg_count, PyroValue* args)
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (PyroMap_contains(map2, entry->key, vm)) {
+        bool found = PyroMap_contains(map2, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (found) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "intersection(): out of memory");
                 return pyro_null();
@@ -291,8 +295,8 @@ static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    // Protect the map from the garbage collector.
-    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    // Protect the map from the garbage collector. Calling get/set/contains on a map can call
+    // pyro_op_compare_eq() which can call Pyro code.
     if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -300,7 +304,11 @@ static PyroValue set_difference(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map2, entry->key, vm)) {
+        bool found = PyroMap_contains(map2, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "difference(): out of memory");
                 return pyro_null();
@@ -328,8 +336,8 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
         return pyro_null();
     }
 
-    // Protect the map from the garbage collector.
-    // (Calling get/set on a map can call pyro_op_compare_eq() which can call Pyro code.)
+    // Protect the map from the garbage collector. Calling get/set/contains on a map can call
+    // pyro_op_compare_eq() which can call Pyro code.
     if (!pyro_push(vm, pyro_obj(new_map))) return pyro_null();
 
     for (size_t i = 0; i < map1->entry_array_count; i++) {
@@ -337,7 +345,11 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map2, entry->key, vm)) {
+        bool found = PyroMap_contains(map2, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
                 return pyro_null();
@@ -350,7 +362,11 @@ static PyroValue set_symmetric_difference(PyroVM* vm, size_t arg_count, PyroValu
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map1, entry->key, vm)) {
+        bool found = PyroMap_contains(map1, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             if (!PyroMap_set(new_map, entry->key, pyro_null(), vm)) {
                 pyro_panic(vm, "symmetric_difference(): out of memory");
                 return pyro_null();
@@ -381,7 +397,11 @@ static PyroValue set_is_subset_of(PyroVM* vm, size_t arg_count, PyroValue* args)
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map2, entry->key, vm)) {
+        bool found = PyroMap_contains(map2, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             return pyro_bool(false);
         }
     }
@@ -408,7 +428,11 @@ static PyroValue set_is_proper_subset_of(PyroVM* vm, size_t arg_count, PyroValue
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map2, entry->key, vm)) {
+        bool found = PyroMap_contains(map2, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             return pyro_bool(false);
         }
     }
@@ -435,7 +459,11 @@ static PyroValue set_is_superset_of(PyroVM* vm, size_t arg_count, PyroValue* arg
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map1, entry->key, vm)) {
+        bool found = PyroMap_contains(map1, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             return pyro_bool(false);
         }
     }
@@ -462,7 +490,11 @@ static PyroValue set_is_proper_superset_of(PyroVM* vm, size_t arg_count, PyroVal
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map1, entry->key, vm)) {
+        bool found = PyroMap_contains(map1, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             return pyro_bool(false);
         }
     }
@@ -489,7 +521,11 @@ static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) 
         if (PYRO_IS_TOMBSTONE(entry->key)) {
             continue;
         }
-        if (!PyroMap_contains(map2, entry->key, vm)) {
+        bool found = PyroMap_contains(map2, entry->key, vm);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (!found) {
             return pyro_bool(false);
         }
     }
