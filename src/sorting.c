@@ -13,8 +13,9 @@ static void swap(PyroValue* a, PyroValue* b) {
 /* ----------- */
 
 
-// Fisher-Yates/Durstenfeld shuffling: we iterate over the array and at each index choose randomly
-// from the remaining unshuffled entries, i.e. for each i we choose j from the interval [i, count).
+// Fisher-Yates/Durstenfeld shuffling: we iterate over the array and at each index choose
+// randomly from the remaining unshuffled entries, i.e. for each i we choose j from the
+// interval [i, count).
 void pyro_shuffle(PyroVM* vm, PyroValue* values, size_t count) {
     for (size_t i = 0; i < count; i++) {
         size_t j = i + mt64_gen_int(&vm->mt64, count - i);
@@ -79,9 +80,9 @@ static void insertion_sort_slice_with_cb(PyroVM* vm, PyroValue* array, size_t lo
 /* ----------- */
 
 
-// The partitioning routine uses the last element as the pivot. It returns the sorted (i.e. final)
-// index of the pivot value. After partitioning, no element to the left of the pivot is greater
-// than it, no element to the right of the pviot is less than it.
+// The partitioning routine uses the last element as the pivot. It returns the sorted (i.e.
+// final) index of the pivot value. After partitioning, no element to the left of the pivot is
+// greater than it, no element to the right of the pviot is less than it.
 
 
 // Partitions the slice array[low..high] where the indices are inclusive.
@@ -151,9 +152,17 @@ static void quicksort_slice_with_cb(PyroVM* vm, PyroValue* array, size_t low, si
 
     // After partitioning, the element at index p is at its final location.
     size_t p = partition_slice_with_cb(vm, array, low, high, callback);
+    if (vm->halt_flag) {
+        return;
+    }
 
     // Sort the elements before the partition index.
-    if (p > 1) quicksort_slice_with_cb(vm, array, low, p - 1, callback);
+    if (p > 1) {
+        quicksort_slice_with_cb(vm, array, low, p - 1, callback);
+        if (vm->halt_flag) {
+            return;
+        }
+    }
 
     // Sort the elements after the partition index.
     quicksort_slice_with_cb(vm, array, p + 1, high, callback);
@@ -174,9 +183,17 @@ static void quicksort_slice(PyroVM* vm, PyroValue* array, size_t low, size_t hig
 
     // After partitioning, the element at index p is at its final location.
     size_t p = partition_slice(vm, array, low, high);
+    if (vm->halt_flag) {
+        return;
+    }
 
     // Sort the elements before the partition index.
-    if (p > 1) quicksort_slice(vm, array, low, p - 1);
+    if (p > 1) {
+        quicksort_slice(vm, array, low, p - 1);
+        if (vm->halt_flag) {
+            return;
+        }
+    }
 
     // Sort the elements after the partition index.
     quicksort_slice(vm, array, p + 1, high);
@@ -322,7 +339,15 @@ static void mergesort_slice_with_cb(
     size_t mid = low + (high - low) / 2;
 
     mergesort_slice_with_cb(vm, array, aux_array, low, mid, callback);
+    if (vm->halt_flag) {
+        return;
+    }
+
     mergesort_slice_with_cb(vm, array, aux_array, mid + 1, high, callback);
+    if (vm->halt_flag) {
+        return;
+    }
+
     merge_with_cb(vm, array, aux_array, low, mid, high, callback);
 }
 
@@ -339,7 +364,15 @@ static void mergesort_slice(PyroVM* vm, PyroValue* array, PyroValue* aux_array, 
     size_t mid = low + (high - low) / 2;
 
     mergesort_slice(vm, array, aux_array, low, mid);
+    if (vm->halt_flag) {
+        return;
+    }
+
     mergesort_slice(vm, array, aux_array, mid + 1, high);
+    if (vm->halt_flag) {
+        return;
+    }
+
     merge(vm, array, aux_array, low, mid, high);
 }
 
