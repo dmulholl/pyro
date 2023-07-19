@@ -13,7 +13,8 @@ RELEASE_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"release"' -D NDEBUG -O3
 
 # Extra flags for debug builds.
 DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG \
-			  -D PYRO_DEBUG_STRESS_GARBAGE_COLLECTION
+			  -D PYRO_DEBUG_STRESS_GARBAGE_COLLECTION \
+			  -D PYRO_DEBUG_STRESS_STACK_REALLOCATION
 
 # Core files for the Pyro VM.
 HDR_FILES = inc/*.h
