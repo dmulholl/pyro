@@ -402,8 +402,8 @@ void call_end_with_method(PyroVM* vm, PyroValue receiver) {
 
 static void run(PyroVM* vm) {
     size_t with_stack_count_on_entry = vm->with_stack_count;
-    size_t frame_count_on_entry = vm->call_stack_count;
-    assert(frame_count_on_entry >= 1);
+    size_t call_stack_count_on_entry = vm->call_stack_count;
+    assert(call_stack_count_on_entry >= 1);
 
     // Reads the next byte from the bytecode as a uint8_t value.
     #define READ_BYTE() (*frame->ip++)
@@ -420,7 +420,7 @@ static void run(PyroVM* vm) {
     #define READ_STRING() PYRO_AS_STR(READ_CONSTANT())
 
     for (;;) {
-        if (vm->halt_flag || vm->call_stack_count < frame_count_on_entry) {
+        if (vm->halt_flag || vm->call_stack_count < call_stack_count_on_entry) {
             break;
         }
 
@@ -2651,7 +2651,7 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ closure_object ]
             // After:  [ ... ][ return_value ]
             case PYRO_OPCODE_TRY: {
-                size_t stashed_stack_size = vm->stack_top - vm->stack;
+                size_t stashed_stack_count = vm->stack_top - vm->stack;
                 size_t stashed_call_stack_count = vm->call_stack_count;
 
                 vm->try_depth++;
@@ -2669,7 +2669,7 @@ static void run(PyroVM* vm) {
                     vm->panic_count = 0;
                     vm->exit_code = 0;
                     vm->memory_allocation_failed = false;
-                    vm->stack_top = vm->stack + stashed_stack_size;
+                    vm->stack_top = vm->stack + stashed_stack_count;
                     close_upvalues(vm, vm->stack_top);
                     vm->call_stack_count = stashed_call_stack_count;
 
@@ -2700,7 +2700,7 @@ static void run(PyroVM* vm) {
                     vm->stack_top[-1] = pyro_obj(err);
                 }
 
-                assert(vm->stack_top == vm->stack + stashed_stack_size);
+                assert(vm->stack_top == vm->stack + stashed_stack_count);
                 assert(vm->call_stack_count == stashed_call_stack_count);
                 break;
             }
