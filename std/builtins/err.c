@@ -43,8 +43,8 @@ static PyroValue fn_is_err(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue err_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroErr* err = PYRO_AS_ERR(args[-1]);
-    if (PyroMap_set(err->details, args[0], args[1], vm) == 0) {
-        pyro_panic(vm, "err:set(): out of memory");
+    if (!PyroMap_set(err->details, args[0], args[1], vm)) {
+        pyro_panic(vm, "set(): out of memory");
     }
     return pyro_null();
 }

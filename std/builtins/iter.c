@@ -177,7 +177,7 @@ static PyroValue iter_to_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (PYRO_IS_ERR(next_value)) {
             break;
         }
-        if (PyroMap_set(map, next_value, pyro_null(), vm) == 0) {
+        if (!PyroMap_set(map, next_value, pyro_null(), vm)) {
             pyro_panic(vm, "to_set(): out of memory");
             return pyro_null();
         }
