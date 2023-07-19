@@ -1,0 +1,132 @@
+class Number {
+    pub var value;
+
+    def $init(value) {
+        self.value = value;
+    }
+
+    def $op_binary_equals_equals(other) {
+        if $is_instance_of(other, Number) {
+            return self.value == other.value;
+        }
+        return false;
+    }
+
+    def $op_binary_less(other) {
+        if $is_instance_of(other, Number) {
+            return self.value < other.value;
+        }
+        $panic("invalid comparison");
+    }
+
+    def $hash() {
+        return $hash(self.value);
+    }
+}
+
+var map = $map();
+for i in $range(100) {
+    map[Number(i)] = i;
+}
+assert map:count() == 100;
+assert map[Number(1)] == 1;
+assert map[Number(99)] == 99;
+assert Number(1) in map;
+assert Number(99) in map;
+
+var map_from_literal = {
+    Number(0) = 0,
+    Number(1) = 1,
+    Number(2) = 2,
+    Number(3) = 3,
+    Number(4) = 4,
+    Number(5) = 5,
+    Number(6) = 6,
+    Number(7) = 7,
+    Number(8) = 8,
+    Number(9) = 9,
+};
+assert map_from_literal:count() == 10;
+assert map_from_literal[Number(1)] == 1;
+assert map_from_literal[Number(2)] == 2;
+assert map_from_literal[Number(8)] == 8;
+assert map_from_literal[Number(9)] == 9;
+
+var set = $set();
+for i in $range(100) {
+    set:add(Number(i));
+}
+assert set:count() == 100;
+assert Number(1) in set;
+assert Number(99) in set;
+
+var set_from_literal = {
+    Number(0),
+    Number(1),
+    Number(2),
+    Number(3),
+    Number(4),
+    Number(5),
+    Number(6),
+    Number(7),
+    Number(8),
+    Number(9),
+};
+assert set_from_literal:count() == 10;
+assert Number(1) in set_from_literal;
+assert Number(9) in set_from_literal;
+
+var vec = [
+    Number(8),
+    Number(1),
+    Number(9),
+    Number(0),
+    Number(2),
+    Number(6),
+    Number(4),
+    Number(5),
+    Number(3),
+    Number(7),
+];
+
+var vec_s1 = vec:copy();
+assert !vec_s1:is_sorted();
+vec_s1:sort();
+assert vec_s1:is_sorted();
+assert vec_s1[0] == Number(0);
+assert vec_s1[9] == Number(9);
+
+var vec_s2 = vec:copy();
+assert !vec_s2:is_sorted();
+vec_s2:sort(def(a, b) { return a.value < b.value; });
+assert vec_s2:is_sorted();
+assert vec_s2[0] == Number(0);
+assert vec_s2[9] == Number(9);
+
+var vec_q1 = vec:copy();
+assert !vec_q1:is_sorted();
+vec_q1:quicksort();
+assert vec_q1:is_sorted();
+assert vec_q1[0] == Number(0);
+assert vec_q1[9] == Number(9);
+
+var vec_q2 = vec:copy();
+assert !vec_q2:is_sorted();
+vec_q2:quicksort(def(a, b) { return a.value < b.value; });
+assert vec_q2:is_sorted();
+assert vec_q2[0] == Number(0);
+assert vec_q2[9] == Number(9);
+
+var vec_m1 = vec:copy();
+assert !vec_m1:is_sorted();
+vec_m1:mergesort();
+assert vec_m1:is_sorted();
+assert vec_m1[0] == Number(0);
+assert vec_m1[9] == Number(9);
+
+var vec_m2 = vec:copy();
+assert !vec_m2:is_sorted();
+vec_m2:mergesort(def(a, b) { return a.value < b.value; });
+assert vec_m2:is_sorted();
+assert vec_m2[0] == Number(0);
+assert vec_m2[9] == Number(9);
