@@ -2190,7 +2190,7 @@ static void run(PyroVM* vm) {
                 }
 
                 if (!PyroMap_set(class->pub_instance_methods, pyro_obj(name), method, vm)) {
-                    PyroMap_remove(class->all_instance_methods, pyro_obj(name), vm);
+                    PyroMap_safe_remove(class->all_instance_methods, name, vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -2271,8 +2271,8 @@ static void run(PyroVM* vm) {
                 }
 
                 if (PyroMap_set(class->pub_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
-                    PyroMap_remove(class->all_field_indexes, pyro_obj(field_name), vm);
                     class->default_field_values->count--;
+                    PyroMap_safe_remove(class->all_field_indexes, field_name, vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -2359,15 +2359,15 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                if (!PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm)) {
                     module->members->count--;
                     pyro_panic(vm, "out of memory");
                     break;
                 }
 
-                if (PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                    PyroMap_remove(module->all_member_indexes, name, vm);
+                if (!PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm)) {
                     module->members->count--;
+                    PyroMap_safe_remove(module->all_member_indexes, PYRO_AS_STR(name), vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -2439,15 +2439,15 @@ static void run(PyroVM* vm) {
                         break;
                     }
 
-                    if (PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
+                    if (!PyroMap_set(module->all_member_indexes, name, pyro_i64(new_member_index), vm)) {
                         module->members->count--;
                         pyro_panic(vm, "out of memory");
                         break;
                     }
 
-                    if (PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm) == 0) {
-                        PyroMap_remove(module->all_member_indexes, name, vm);
+                    if (!PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm)) {
                         module->members->count--;
+                        PyroMap_safe_remove(module->all_member_indexes, PYRO_AS_STR(name), vm);
                         pyro_panic(vm, "out of memory");
                         break;
                     }

@@ -134,7 +134,7 @@ void pyro_free_object(PyroVM* vm, PyroObject* object) {
         case PYRO_OBJECT_STR: {
             PyroStr* string = (PyroStr*)object;
             if (string->bytes) {
-                PyroMap_remove(vm->string_pool, pyro_obj(string), vm);
+                PyroMap_safe_remove(vm->string_pool, string, vm);
                 PYRO_FREE_ARRAY(vm, char, string->bytes, string->capacity);
             }
             FREE_OBJECT(vm, PyroStr, object);

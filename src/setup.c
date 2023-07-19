@@ -337,14 +337,14 @@ bool pyro_define_pub_member(PyroVM* vm, PyroMod* module, const char* name, PyroV
         return false;
     }
 
-    if (PyroMap_set(module->all_member_indexes, name_value, pyro_i64(member_index), vm) == 0) {
+    if (!PyroMap_set(module->all_member_indexes, name_value, pyro_i64(member_index), vm)) {
         module->members->count--;
         return false;
     }
 
-    if (PyroMap_set(module->pub_member_indexes, name_value, pyro_i64(member_index), vm) == 0) {
-        PyroMap_remove(module->all_member_indexes, name_value, vm);
+    if (!PyroMap_set(module->pub_member_indexes, name_value, pyro_i64(member_index), vm)) {
         module->members->count--;
+        PyroMap_safe_remove(module->all_member_indexes, name_string, vm);
         return false;
     }
 
@@ -390,7 +390,7 @@ bool pyro_define_pub_method(PyroVM* vm, PyroClass* class, const char* name, pyro
     }
 
     if (!PyroMap_set(class->pub_instance_methods, pyro_obj(name_string), pyro_obj(fn_obj), vm)) {
-        PyroMap_remove(class->all_instance_methods, pyro_obj(name_string), vm);
+        PyroMap_safe_remove(class->all_instance_methods, name_string, vm);
         return false;
     }
 
@@ -439,8 +439,8 @@ bool pyro_define_pub_field(PyroVM* vm, PyroClass* class, const char* name, PyroV
     }
 
     if (PyroMap_set(class->pub_field_indexes, pyro_obj(name_string), pyro_i64(field_index), vm) == 0) {
-        PyroMap_remove(class->all_field_indexes, pyro_obj(name_string), vm);
         class->default_field_values->count--;
+        PyroMap_safe_remove(class->all_field_indexes, name_string, vm);
         return false;
     }
 
