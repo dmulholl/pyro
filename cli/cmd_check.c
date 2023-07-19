@@ -6,8 +6,7 @@ int pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
         return 0;
     }
 
-    size_t stack_size = 1024 * 1024;
-    PyroVM* vm = pyro_new_vm(stack_size);
+    PyroVM* vm = pyro_new_vm();
     if (!vm) {
         fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
         exit(1);

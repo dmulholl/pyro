@@ -21,8 +21,6 @@ static const char* HELPTEXT =
     "      --max-memory <int>     Set the maximum memory allocation in bytes.\n"
     "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "  -m, --module <module>      Run an imported module as a script.\n"
-    "      --stack-size <int>     Set the stack size in bytes.\n"
-    "                             (Append 'K' for KB, 'M' for MB, 'G' for GB.)\n"
     "\n"
     "Flags:\n"
     "  -h, --help                 Print this help text and exit.\n"
@@ -153,7 +151,6 @@ int main(int argc, char* argv[]) {
 
     ap_add_str_opt(parser, "exec e", NULL);
     ap_add_str_opt(parser, "max-memory", NULL);
-    ap_add_str_opt(parser, "stack-size s", NULL);
     ap_add_str_opt(parser, "import-root i", NULL);
     ap_add_greedy_str_opt(parser, "module m");
     ap_add_flag(parser, "trace-execution t");

@@ -1,18 +1,17 @@
 #include "../inc/pyro.h"
 
 
-PyroVM* pyro_new_vm(size_t stack_size) {
+PyroVM* pyro_new_vm() {
     PyroVM* vm = malloc(sizeof(PyroVM));
     if (!vm) {
         return NULL;
     }
 
+    // Initialize or zero-out all fields before attempting to allocate memory.
+    vm->bytes_allocated = sizeof(PyroVM);
     vm->stack = NULL;
     vm->stack_top = NULL;
     vm->stack_max = NULL;
-
-    // Initialize or zero-out all fields before attempting to allocate memory.
-    vm->bytes_allocated = sizeof(PyroVM);
     vm->frames = NULL;
     vm->frame_count = 0;
     vm->frame_capacity = 0;

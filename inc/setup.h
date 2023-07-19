@@ -1,9 +1,8 @@
 #ifndef pyro_setup_h
 #define pyro_setup_h
 
-// Initializes a new VM. [stack_size] is the size of the VM's stack in bytes.
-// Returns NULL if the attempt to allocate memory for the VM fails.
-PyroVM* pyro_new_vm(size_t stack_size);
+// Initializes a new VM. Returns NULL if memory allocation fails.
+PyroVM* pyro_new_vm();
 
 // Frees a VM instance and all heap-allocated memory owned by that VM.
 void pyro_free_vm(PyroVM* vm);

@@ -2,15 +2,13 @@
 
 
 void pyro_cli_run_path(ArgParser* parser) {
-    size_t stack_size = pyro_cli_get_stack_size(parser);
-
     char* path = ap_get_arg_at_index(parser, 0);
     if (!pyro_exists(path)) {
         fprintf(stderr, "error: invalid path '%s'\n", path);
         exit(1);
     }
 
-    PyroVM* vm = pyro_new_vm(stack_size);
+    PyroVM* vm = pyro_new_vm();
     if (!vm) {
         fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
         exit(1);

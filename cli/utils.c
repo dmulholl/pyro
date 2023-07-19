@@ -122,21 +122,6 @@ void pyro_cli_set_max_memory(PyroVM* vm, ArgParser* parser) {
 }
 
 
-size_t pyro_cli_get_stack_size(ArgParser* parser) {
-    if (!ap_found(parser, "stack-size")) {
-        return 1024 * 1024;
-    }
-
-    int64_t size = parse_memory_size(ap_get_str_value(parser, "stack-size"));
-    if (size <= 0) {
-        fprintf(stderr, "error: invalid argument for --stack-size option\n");
-        exit(1);
-    }
-
-    return (size_t)size;
-}
-
-
 char* pyro_cli_sprintf(const char* format_string, ...) {
     va_list args;
 
