@@ -107,7 +107,11 @@ static PyroValue tup_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroTup* tup = PYRO_AS_TUP(args[-1]);
 
     for (size_t i = 0; i < tup->count; i++) {
-        if (pyro_op_compare_eq(vm, tup->values[i], args[0])) {
+        bool found = pyro_op_compare_eq(vm, tup->values[i], args[0]);
+        if (vm->halt_flag) {
+            return pyro_bool(false);
+        }
+        if (found) {
             return pyro_bool(true);
         }
     }
