@@ -112,7 +112,7 @@ Now we can create instances of <code>Complex</code> numbers, e.g.
 <span class="k">assert</span> <span class="nx">c</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
 </pre>
 <p>
-To make our <code>Complex</code> numbers <i>useful</i>, we want to be able to compare them and to perform arithmetic with them.
+To make our <code>Complex</code> numbers useful, we want to be able to compare them and to perform arithmetic with them.
 </p>
 <h3 id="equality">
 Equality
@@ -135,7 +135,10 @@ We can overload the <code>==</code> operator for our custom <code>Complex</code>
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$op_binary_equals_equals</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">&amp;&amp;</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">&amp;&amp;</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="cp">...</span>
@@ -167,7 +170,10 @@ We can overload the binary addition operator, <code>+</code>, for our <code>Comp
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$op_binary_plus</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;invalid operation&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="cp">...</span>

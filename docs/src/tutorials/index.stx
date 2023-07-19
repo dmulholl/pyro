@@ -13,4 +13,4 @@ meta_title: Pyro Tutorials
 
 [[ [Indexing](@root/tutorials/indexing//) ]]
 
-    This tutorial shows you how to add indexing support to a user-defined type by building a custom `ListMap` type that maps keys to lists of values.
+    This tutorial demonstrates adding indexing support to a user-defined type by building a custom `ListMap` type that maps keys to lists of values.

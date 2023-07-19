@@ -40,7 +40,7 @@ Now we can create instances of `Complex` numbers, e.g.
     assert c.re == 1;
     assert c.im == 2;
 
-To make our `Complex` numbers *useful*, we want to be able to compare them and to perform arithmetic with them.
+To make our `Complex` numbers useful, we want to be able to compare them and to perform arithmetic with them.
 
 
 
@@ -62,7 +62,10 @@ We can overload the `==` operator for our custom `Complex` number type by defini
         ...
 
         def $op_binary_equals_equals(other) {
-            return self.re == other.re && self.im == other.im;
+            if $is_instance_of(other, Complex) {
+                return self.re == other.re && self.im == other.im;
+            }
+            return false;
         }
 
         ...
@@ -92,7 +95,10 @@ We can overload the binary addition operator, `+`, for our `Complex` number type
         ...
 
         def $op_binary_plus(other) {
-            return Complex(self.re + other.re, self.im + other.im);
+            if $is_instance_of(other, Complex) {
+                return Complex(self.re + other.re, self.im + other.im);
+            }
+            $panic("invalid operation");
         }
 
         ...
