@@ -18,7 +18,7 @@ static void swap(PyroValue* a, PyroValue* b) {
 // interval [i, count).
 void pyro_shuffle(PyroVM* vm, PyroValue* values, size_t count) {
     for (size_t i = 0; i < count; i++) {
-        size_t j = i + mt64_gen_int(&vm->mt64, count - i);
+        size_t j = i + pyro_xoshiro256ss_next_in_range(&vm->prng_state, count - i);
         swap(&values[i], &values[j]);
     }
 }

@@ -382,7 +382,7 @@ static PyroValue vec_remove_random(PyroVM* vm, size_t arg_count, PyroValue* args
         return pyro_null();
     }
 
-    size_t index = mt64_gen_int(&vm->mt64, vec->count);
+    size_t index = pyro_xoshiro256ss_next_in_range(&vm->prng_state, vec->count);
     return PyroVec_remove_at_index(vec, index, vm);
 }
 
@@ -395,7 +395,7 @@ static PyroValue vec_random(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    size_t index = mt64_gen_int(&vm->mt64, vec->count);
+    size_t index = pyro_xoshiro256ss_next_in_range(&vm->prng_state, vec->count);
     return vec->values[index];
 }
 

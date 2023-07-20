@@ -1,8 +1,6 @@
 #ifndef pyro_vm_h
 #define pyro_vm_h
 
-#include "../lib/mt64/mt64.h"
-
 // We create a new [PyroCallFrame] on the [vm->frames] stack for each function call.
 // - [ip] is the instruction pointer -- it points to the next bytecode instruction to be
 //   executed.
@@ -77,7 +75,6 @@ struct PyroVM {
     PyroValue* stack_max;
 
     // PRNG state.
-    MT64 mt64;
     pyro_xoshiro256ss_state_t prng_state;
 
     // Stores global functions and variables, available in all modules.

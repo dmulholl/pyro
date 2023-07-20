@@ -135,7 +135,6 @@ PyroVM* pyro_new_vm() {
     vm->trace_execution = false;
 
     // Initialize the PRNG.
-    mt64_init(&vm->mt64);
     pyro_xoshiro256ss_init(&vm->prng_state, pyro_random_seed());
 
     // We need to initialize these classes before we create any objects.
