@@ -24,14 +24,6 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
         return true;
     }
 
-    if (strcmp(name->bytes, "mt64") == 0) {
-        pyro_load_std_mod_mt64(vm, module);
-        if (vm->memory_allocation_failed) {
-            pyro_panic(vm, "out of memory");
-        }
-        return true;
-    }
-
     if (strcmp(name->bytes, "prng") == 0) {
         pyro_load_std_mod_prng(vm, module);
         if (vm->memory_allocation_failed) {

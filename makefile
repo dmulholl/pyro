@@ -19,8 +19,7 @@ DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG \
 # Core files for the Pyro VM.
 HDR_FILES = inc/*.h
 SRC_FILES = src/*.c std/builtins/*.c std/modules/*.c
-OBJ_FILES = build/common/mt64.o \
-			build/common/embeds.o
+OBJ_FILES = build/common/embeds.o
 
 # Files for the CLI binary.
 CLI_HDR_FILES = cli/*.h
@@ -148,11 +147,6 @@ build/common/args.o: lib/args/args.c lib/args/args.h
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/args.o\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/args/args.c -o build/common/args.o
-
-build/common/mt64.o: lib/mt64/mt64.c lib/mt64/mt64.h
-	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m build/common/mt64.o\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/mt64/mt64.c -o build/common/mt64.o
 
 # ---------------- #
 #  Embedded Files  #

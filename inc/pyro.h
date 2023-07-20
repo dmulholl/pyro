@@ -110,7 +110,6 @@ typedef struct PyroMod PyroMod;
 typedef struct PyroFile PyroFile;
 
 // Pyro headers.
-#include "../lib/mt64/mt64.h"
 #include "./opcodes.h"
 #include "./lexer.h"
 #include "./values.h"
