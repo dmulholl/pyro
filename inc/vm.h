@@ -76,8 +76,9 @@ struct PyroVM {
     PyroValue* stack_top;
     PyroValue* stack_max;
 
-    // 64-bit Mersenne Twister PRNG.
+    // PRNG state.
     MT64 mt64;
+    pyro_xoshiro256ss_state_t prng_state;
 
     // Stores global functions and variables, available in all modules.
     PyroMap* superglobals;

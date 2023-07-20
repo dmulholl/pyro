@@ -115,6 +115,7 @@ typedef struct PyroFile PyroFile;
 #include "./values.h"
 #include "./objects.h"
 #include "./panics.h"
+#include "./prng.h"
 #include "./vm.h"
 #include "./compiler.h"
 #include "./debug.h"
@@ -133,6 +134,5 @@ typedef struct PyroFile PyroFile;
 #include "./stdlib_builtins.h"
 #include "./stdlib_modules.h"
 #include "./embeds.h"
-#include "./prng.h"
 
 #endif

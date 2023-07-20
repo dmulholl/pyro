@@ -5,9 +5,7 @@ meta_title: Pyro Standard Library &mdash; std::prng
 
 [1]: https://en.wikipedia.org/wiki/Mersenne_Twister
 
-This module contains convenience functions for generating pseudo-random numbers using the default pseudo-random number generator (currently a 64-bit [Mersenne Twister][1], initialized with a random seed).
-
-To generate a repeatable sequence of pseudo-random numbers, use a generator from the `std::mt64` module.
+This module contains functions for generating pseudo-random numbers.
 
 
 
@@ -22,10 +20,3 @@ To generate a repeatable sequence of pseudo-random numbers, use a generator from
 [[ `rand_int(n: i64) -> i64` ]]
 
     Returns a uniformly-distributed random integer from the half-open interval `[0, n)`, i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
-
-
-[[ `rand_int_in_range(lower: i64, upper: i64) -> i64` ]]
-
-    Returns a uniformly-distributed random integer from the half-open interval `[lower, upper)`, i.e. the interval from `lower` up to but not including `upper`.
-
-    The arguments can be positive or negative or mixed as long as `lower` is less than or equal to `upper`.
