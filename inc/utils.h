@@ -104,4 +104,12 @@ bool pyro_ckd_sub(int64_t* result, int64_t a, int64_t b);
 // Like C23's ckd_mul(). Returns true if the result would overflow.
 bool pyro_ckd_mul(int64_t* result, int64_t a, int64_t b);
 
+// Simple hash combiner. Returns h1 * 3 + h2. This is safer than simply using XOR to combine
+// the hashes as XOR maps pairwise identical values to zero.
+uint64_t pyro_hash_combine(uint64_t h1, uint64_t h2);
+
+// Generates a randomish value suitable for seeding a PRNG. Uses locally available sources of
+// entropy. Not suitable for cryptographic use.
+uint64_t pyro_random_seed();
+
 #endif

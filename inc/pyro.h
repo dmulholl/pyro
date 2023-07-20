@@ -133,5 +133,6 @@ typedef struct PyroFile PyroFile;
 #include "./stdlib_builtins.h"
 #include "./stdlib_modules.h"
 #include "./embeds.h"
+#include "./prng.h"
 
 #endif

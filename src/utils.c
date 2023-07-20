@@ -593,3 +593,36 @@ bool pyro_ckd_mul(int64_t* result, int64_t a, int64_t b) {
     *result = a * b;
     return false;
 }
+
+
+uint64_t pyro_hash_combine(uint64_t h1, uint64_t h2) {
+    return (h1 << 1) + h1 + h2;
+}
+
+
+uint64_t pyro_random_seed() {
+    // Arbitrary starting point. This is the default seed from the 64-bit Mersenne Twister.
+    uint64_t seed = UINT64_C(5489);
+
+    // The current unix timestamp in seconds.
+    seed = pyro_hash_combine(seed, (uint64_t)time(NULL));
+
+    // The number of clock ticks since the program was launched.
+    seed = pyro_hash_combine(seed, (uint64_t)clock());
+
+    // The next available heap address.
+    void* addr = malloc(sizeof(int));
+    free(addr);
+    seed = pyro_hash_combine(seed, (uint64_t)addr);
+
+    // The address of a local variable.
+    seed = pyro_hash_combine(seed, (uint64_t)&seed);
+
+    // The address of a local function.
+    seed = pyro_hash_combine(seed, (uint64_t)&pyro_random_seed);
+
+    // The address of a standard library function.
+    seed = pyro_hash_combine(seed, (uint64_t)&time);
+
+    return seed;
+}
