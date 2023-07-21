@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -68,7 +68,7 @@ Arguments:
   [files]              Files to test.
 
 Flags:
-  -e, --errors         Show standard error output.
+  -e, --errors         Show (only) standard error output.
   -h, --help           Print this help text and exit.
 </pre>
 <p>
@@ -111,6 +111,10 @@ An <code>assert</code> statement passes if its operand expression evaluates as <
 </p>
 <p>
 Note that test functions take no arguments.
+</p>
+<p>
+Use the <code>-e/--errors</code> flag to isolate individual test failures.
+With this flag, (only) standard error output is printed, and execution will halt at the first panic.
 </p>
 <h3 id="module-level-tests">
 Module-Level Tests

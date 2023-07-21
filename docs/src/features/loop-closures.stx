@@ -6,7 +6,7 @@ meta_title: Pyro &mdash; Loop Closures
 ::: insert toc
 
 
-Pyro has three different kinds of loops, and the loop variables behave differently in each case.
+Pyro has three different kinds of loops --- closing over the loop variable behaves differently in each case.
 
 
 

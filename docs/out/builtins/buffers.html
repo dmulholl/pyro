@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -123,7 +123,7 @@ Indices are zero-based. Indexing is equivalent to using the buffer's <code>:get(
 String Building
 </h3>
 <p>
-Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the overhead of creating temporary strings along the way.
+Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the overhead of creating temporary strings along the way, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">();</span>
@@ -135,7 +135,7 @@ Writing to a buffer and then converting it to a string is an efficient way of as
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">is_empty</span><span class="p">();</span>
 </pre>
 <p>
-Calling the <code>:to_str()</code> method converts the content of the buffer into a string, leaving a valid but empty buffer object  behind.
+Calling the buffer's <code>:to_str()</code> method converts its content into a string, leaving a valid but empty buffer object behind.
 </p>
 <p>
 (This is different from calling <code>$str(buf)</code> on a buffer, which returns a string contining a <i>copy</i> of the buffer's content, leaving the buffer itself unchanged.)

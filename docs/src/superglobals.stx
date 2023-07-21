@@ -578,7 +578,10 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$type(arg: any) -> str` ]]
 
-    Returns the type of `arg` as a string.
+    Returns the type of `arg` as a string, e.g. `"i64"`, `"f64"`, `"vec"`, `"map"`, `"bool"`, etc.
+
+    If `arg` is an instance of a class, this function returns the class name.
+
 
 
 

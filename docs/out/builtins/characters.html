@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -89,7 +89,7 @@ Panics if the argument is out of range.
 Character Literals
 </h3>
 <p>
-Character literals use single quotes:
+Character literals use single quotes, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
@@ -97,28 +97,30 @@ Character literals use single quotes:
 <span class="kd">var</span> <span class="nx">c3</span> <span class="p">=</span> <span class="sc">&#39;🔥&#39;</span><span class="p">;</span>
 </pre>
 <p>
-A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point.
+A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;\x61&#39;</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="sc">&#39;\u20AC&#39;</span> <span class="o">==</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
 </pre>
 <p>
-Character literals support the same backslashed escape sequences as strings.
+Character literals support the same backslashed escape sequences as <a href="../builtins/strings.html">strings</a>.
 </p>
 <h3 id="conversions">
 Conversions
 </h3>
 <p>
-You can convert a character to a string using the <code>$str()</code> function  &mdash; this returns a string containing the UTF-8 encoded representation of the codepoint:
+You can convert a character to a string using the <code>$str()</code> function  &mdash; this returns a string containing the UTF-8 encoded representation of the codepoint, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;a&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;\x61&quot;</span><span class="p">;</span>
+
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;🔥&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;🔥&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;🔥&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;\xF0\x9F\x94\xA5&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can convert a character to an integer using the <code>$i64()</code> function or an integer to a character using the <code>$char()</code> function:
+You can convert a character to an integer using the <code>$i64()</code> function or an integer to a character using the <code>$char()</code> function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">97</span><span class="p">;</span>
@@ -128,20 +130,20 @@ You can convert a character to an integer using the <code>$i64()</code> function
 Concatenating
 </h3>
 <p>
-If you add two characters together using the <code>+</code> operator, the result will be a UTF-8 encoded string:
+If you add two characters together using the <code>+</code> operator, the result will be a UTF-8 encoded string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">+</span> <span class="sc">&#39;y&#39;</span> <span class="o">==</span> <span class="s">&quot;xy&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Similarly, you can prepend or append a character to a string using the <code>+</code> operator:
+Similarly, you can prepend or append a character to a string using the <code>+</code> operator, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">+</span> <span class="s">&quot;yz&quot;</span> <span class="o">==</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;xy&quot;</span> <span class="o">+</span> <span class="sc">&#39;z&#39;</span> <span class="o">==</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can multiply a character by an integer <code>n</code> to produce a string with <code>n</code> UTF-8 encoded copies of the character:
+You can multiply a character by an integer <code>n</code> to produce a string containing <code>n</code> UTF-8 encoded copies of the character, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;xxx&quot;</span><span class="p">;</span>

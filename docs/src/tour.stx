@@ -71,7 +71,7 @@ Both behave as you'd expect and support the usual range of numeric operations.
     `%`       | Modulo/remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
     `**`      | Power operator. Both operands are converted to floats and the result is a float.
 
-Pyro also has a set of builtin functions for performing [checked arithmetic](@root/features/checked-arithmetic//) with signed integers.
+Pyro also has a set of builtin functions for performing [checked arithmetic](@root/features/checked-arithmetic//) with integers.
 
 Integer literals can use binary, octal, decimal, or hex notation:
 
@@ -126,7 +126,7 @@ You can find a full description of the character type [here](@root/builtins/char
 ### Booleans
 
 A boolean value is either `true` or `false`.
-You can convert any value to a boolean using the `$bool(arg)` function.
+You can convert any value to a boolean using the `$bool()` function.
 
 ::: code pyro
     assert $bool(123) == true;
@@ -181,14 +181,14 @@ Tuples compare as equal if they have the same length and their elements are equa
     var bar = $tup("foo", 123);
     assert foo == bar;
 
-Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order:
+Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order, e.g.
 
 ::: code pyro
     var foo = {1, 2, 3};
     var bar = {3, 2, 1};
     assert foo == bar;
 
-By default, other objects are equal only if they are the same object:
+By default, other objects are equal only if they are the same object, e.g.
 
 ::: code pyro
     class Object {}
@@ -199,7 +199,7 @@ By default, other objects are equal only if they are the same object:
     assert obj1 == obj1;
     assert obj1 != obj2;
 
-You can overload the equality operator to customize its behaviour for your own types.
+You can [overload](@root/tutorials/operator-overloading//) the equality operator to customize its behaviour for your own types.
 
 
 
@@ -229,7 +229,7 @@ You can use the comparison operators directly on tuples, e.g.
 
 Tuples are compared lexicographically by element.
 
-You can overload the comparison operators to customize their behaviour for your own types
+You can [overload](@root/tutorials/operator-overloading//) the comparison operators to customize their behaviour for your own types
 
 
 
@@ -274,7 +274,7 @@ See the [string formatting](@root/features/formatting//) documentation for a det
 
 ### Loops
 
-Pyro has support for several different looping constructs.
+Pyro has support for three different looping constructs.
 The simplest is the infinite loop:
 
 ::: code pyro

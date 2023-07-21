@@ -15,7 +15,7 @@ A simple logging library. Logging levels, in increasing order of severity, are:
 * `ERROR`
 * `FATAL`
 
-A set of convenience functions are available for logging to the standard error stream.
+A set of convenience functions are provided for logging to the standard error stream.
 Use a `Logger` instance to customize the timestamp format and destination file.
 
 

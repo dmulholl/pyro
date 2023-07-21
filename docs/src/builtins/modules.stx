@@ -30,7 +30,7 @@ A module object also has methods of its own, which can be accessed using the met
     var globals = mod:globals();
     assert globals["foo"] == 3;
 
-You can learn more about using modules [here][1].
+You can learn more about importing modules [here][1].
 
 
 

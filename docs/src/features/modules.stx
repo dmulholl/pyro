@@ -129,7 +129,7 @@ In general, circular imports are fine --- module `foo` can import module `bar` a
 
 Note that trying to *use* a member from an imported module that hasn't finished initializing can result in a panic.
 
-Note that you can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
+You can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
 
 ::: code pyro
     def do_some_math(value) {
@@ -137,7 +137,7 @@ Note that you can avoid the problems that sometimes result from top-level circul
         return math::abs(value) * math::pi;
     }
 
-This import will only fire when the function is run. (Imported modules are cached so the module won't be re-imported every time the function runs.)
+This import will only fire when the function is run. (Imported modules are cached so the module won't be re-imported every time the function is called.)
 
 
 
@@ -215,7 +215,7 @@ To customize Pyro's import behaviour:
 
 ### Executing Module Directories
 
-You can execute a module directory as a script if it contains a `self.pyro` file:
+You can execute a module directory as a script if it contains a `self.pyro` file, e.g.
 
     $ pyro path/to/module/directory
 

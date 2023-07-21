@@ -44,7 +44,7 @@ Note that the empty literal `{}` will create an empty map --- use `$set()` to cr
 
 ### Iterating
 
-Sets are iterable:
+Sets are iterable, e.g.
 
 ::: code pyro
     for item in {1, 2, 3} {
@@ -55,7 +55,7 @@ Sets are iterable:
 
 ### Containment
 
-You can check if a set contains an item using the `in` operator:
+You can check if a set contains an item using the `in` operator, e.g.
 
 ::: code pyro
     var set = {"foo", "bar", "baz"};

@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -467,7 +467,7 @@ Returns the <code>char</code> at <code>index</code>, where <code>index</code> is
 This is a potentially expensive method as it needs to seek forward from the beginning of the string.
 </p>
 <p>
-Note that it will panic if it encounters invalid UTF-8 along the way.
+This method will panic if it encounters invalid UTF-8.
 </p>
 </dd>
 </div>
@@ -480,10 +480,10 @@ Note that it will panic if it encounters invalid UTF-8 along the way.
 Returns the number of UTF-8 encoded Unicode code points in the string.
 </p>
 <p>
-This is a potentially expensive method as it needs to traverse the string.
+This is a potentially expensive method as it needs to traverse the entire string.
 </p>
 <p>
-Note that it will panic if it encounters invalid UTF-8.
+This method will panic if the string contains invalid UTF-8.
 </p>
 </dd>
 </div>

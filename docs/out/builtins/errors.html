@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -72,16 +72,16 @@ An error object, <code>err</code>, can be returned by a function to indicate fai
 <dl>
 <div>
 <dt>
-<code>$err() -&gt; err</code> <br> <code>$err(message: any) -&gt; err</code> <br> <code>$err(format_string: str, arg1: any, arg2: any, ...) -&gt; err</code>
+<code>$err() -&gt; err</code> <br> <code>$err(message: any) -&gt; err</code> <br> <code>$err(format_string: str, *args: any) -&gt; err</code>
 </dt>
 <dd>
 <p>
 Creates a new <code>err</code> object.
-Every <code>err</code> has a <code>message</code> string and a <code>details</code> map.
+Every <code>err</code> object has a <code>message</code> string and a <code>details</code> map.
 </p>
 <ul>
 <li>
-If called with no arguments, returns an error with an empty <code>message</code> string.
+If called with no arguments, returns a new <code>err</code> object with an empty <code>message</code> string.
 </li>
 <li>
 If called with a single argument, stringifies that argument and uses the result as the error's <code>message</code> string.
@@ -95,7 +95,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dl>
 <p>
 You can use the <code>$is_err(arg)</code> function to check if a value is an <code>err</code>.
-Alternatively, you can use the error-coalescing operator <code>!!</code> to supply a default value for an operation that might return an error:
+Alternatively, you can use the error-coalescing operator <code>!!</code> to supply a default value for an operation that might return an error, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
@@ -104,7 +104,7 @@ Alternatively, you can use the error-coalescing operator <code>!!</code> to supp
 Error Message
 </h3>
 <p>
-Stringifying an error returns its <code>message</code>:
+Stringifying an <code>err</code> returns its <code>message</code> string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
@@ -114,7 +114,7 @@ Stringifying an error returns its <code>message</code>:
 Error Details
 </h3>
 <p>
-Every error object contains a <code>details</code> map which you can use to store arbitrary data about the error.
+Every <code>err</code> object contains a <code>details</code> map which you can use to store arbitrary data about the error.
 You can index into this <code>details</code> map directly on the <code>err</code> object itself, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">

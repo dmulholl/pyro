@@ -14,7 +14,8 @@ A regex library, a built-in SQLite implementation, and a networking library are 
 
 Packaging is on the medium-length finger.
 
-I'm planning to add a `build` command to Pyro which will bundle up a script and all of its dependencies into a zip archive which it will append to a copy of the Pyro binary to create an easily-distributable single-file executable.
+I'm planning to add a `build` command to Pyro which will bundle up a script and all of its dependencies into an easily-distributable single-file executable.
+([Baked application binaries](@root/building//#baked-application-binaries) are a prototype implementation.)
 
 'Virtual environments' and friends are a hell which Pyro will attempt to avoid at all costs.
 

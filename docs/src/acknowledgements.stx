@@ -3,24 +3,21 @@ title: Acknowledgements
 meta_title: Pyro &mdash; Acknowledgements
 ---
 
+[0]: @root/license//
 [1]: http://craftinginterpreters.com
-[2]: http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/emt.html
-[3]: https://github.com/jart/bestline
-[4]: https://sqlite.org
-
+[2]: https://github.com/jart/bestline
+[3]: https://prng.di.unimi.it
 
 I was inspired to build Pyro by reading Bob Nystrom's wonderful book [Crafting Interpreters][1], so many of the cleverest ideas in the implementation build on his work.
 
-As Pyro develops it will incorporate code from external libraries and projects released under permissive open source licenses --- e.g. MIT, BSD, or public domain. These inclusions will be noted here.
+All code unique to Pyro is released under the [Zero-Clause BSD][0] (0BSD) license.
 
-(*) Like most modern programming languages, Pyro stands on the shoulders of giants. Particular thanks must go to all those who have built, maintained, and expanded the C programming language and its standard library over the years --- their work provides the foundation on which Pyro is built.
+Code incorporated from external libraries and projects will be listed below.
+(Pyro will only incorporate code released under permissive open source licenses --- e.g. MIT, BSD, or public domain.)
 
-(*) Many of the implementation's core mechanics were adapted from or inspired by *Lox*, the sample language from Bob Nystrom's [Crafting Interpreters][1] book. This code was released under the MIT license.
-
-(*) The `std::prng` module's Mersenne Twister was adapted from the [original implementation][2] by the algorithm's inventors, Takuji Nishimura and Makoto Matsumoto. This code was released under the 3-clause BSD license.
-
-(*) The REPL uses the [Bestline][3] library by Justine Tunney to provide support for line-editing.
+(*) The REPL uses the [Bestline][2] library by Justine Tunney to provide support for line-editing.
     This code was released under the 2-clause BSD license.
 
-(*) Pyro ships with a builtin copy of the [SQLite][4] database engine.
-    This code has been placed by its authors in the public domain.
+(*) Pyro's pseudo-random number generator uses the `xoshiro256**` algorithm by David Blackman and Sebastiano Vigna.
+    The implementation is based on [code by the original authors][3] released into the public domain.
+

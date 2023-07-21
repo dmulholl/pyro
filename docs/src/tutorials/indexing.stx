@@ -9,7 +9,7 @@ meta_title: Pyro Tutorials &mdash; Indexing
 
 You can add indexing support to a user-defined type by implementing `$get()` and/or `$set()` methods --- these methods let us index into instances of the type using `[]` syntax.
 
-As an example, let's build a simple a simple `ListMap` type that maps keys to lists of values.
+As an example, let's build a simple `ListMap` type that maps keys to lists of values.
 If we try to look up a key that isn't in the map, we'll get back an empty list.
 
 

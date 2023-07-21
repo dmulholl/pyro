@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -1017,7 +1017,10 @@ Creates a new <a href="builtins/tuples.html">tuple</a>.
 </dt>
 <dd>
 <p>
-Returns the type of <code>arg</code> as a string.
+Returns the type of <code>arg</code> as a string, e.g. <code>&quot;i64&quot;</code>, <code>&quot;f64&quot;</code>, <code>&quot;vec&quot;</code>, <code>&quot;map&quot;</code>, <code>&quot;bool&quot;</code>, etc.
+</p>
+<p>
+If <code>arg</code> is an instance of a class, this function returns the class name.
 </p>
 </dd>
 </div>

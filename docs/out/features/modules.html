@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -231,7 +231,7 @@ In general, circular imports are fine &mdash; module <code>foo</code> can import
 Note that trying to <i>use</i> a member from an imported module that hasn't finished initializing can result in a panic.
 </p>
 <p>
-Note that you can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
+You can avoid the problems that sometimes result from top-level circular imports by importing the required module inside a function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">do_some_math</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
@@ -240,7 +240,7 @@ Note that you can avoid the problems that sometimes result from top-level circul
 <span class="p">}</span>
 </pre>
 <p>
-This import will only fire when the function is run. (Imported modules are cached so the module won't be re-imported every time the function runs.)
+This import will only fire when the function is run. (Imported modules are cached so the module won't be re-imported every time the function is called.)
 </p>
 <h3 id="aliasing">
 Aliasing
@@ -344,7 +344,7 @@ The value should be a list of <code>:</code> separated directory paths.
 Executing Module Directories
 </h3>
 <p>
-You can execute a module directory as a script if it contains a <code>self.pyro</code> file:
+You can execute a module directory as a script if it contains a <code>self.pyro</code> file, e.g.
 </p>
 <pre>
 $ pyro path/to/module/directory

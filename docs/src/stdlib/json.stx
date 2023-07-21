@@ -24,7 +24,7 @@ This module contains utility functions for working with JSON.
     * A JSON array is unmarshalled as a `vec`.
     * Supports input with trailing commas and single-line comments beginning with `//`.
 
-    Returns an `err` if `arg` isn't a valid JSON string.
+    Returns an `err` if `arg` is not a valid JSON string.
 
 
 [[ `to_json(arg: any, indent: i64 = 0) -> str|err` ]]

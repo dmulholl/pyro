@@ -179,6 +179,7 @@ A string is an immutable sequence of bytes. You can iterate over this sequence i
 You can index into a string to get (but not set) individual byte values. Each byte value is returned as a single-byte string, e.g.
 
 ::: code pyro
+
     assert "foo"[0] == "f";
     assert "foo"[1] == "o";
     assert "foo"[2] == "o";
@@ -232,15 +233,15 @@ This is equivalent to calling the string's `:contains()` method.
 
     This is a potentially expensive method as it needs to seek forward from the beginning of the string.
 
-    Note that it will panic if it encounters invalid UTF-8 along the way.
+    This method will panic if it encounters invalid UTF-8.
 
 [[ `:char_count() -> i64` ]]
 
     Returns the number of UTF-8 encoded Unicode code points in the string.
 
-    This is a potentially expensive method as it needs to traverse the string.
+    This is a potentially expensive method as it needs to traverse the entire string.
 
-    Note that it will panic if it encounters invalid UTF-8.
+    This method will panic if the string contains invalid UTF-8.
 
 [[ `:chars() -> iter[char]` ]]
 

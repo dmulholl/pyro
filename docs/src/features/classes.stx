@@ -80,7 +80,7 @@ Methods are bound to their instances and you can pass them around just like any 
 
 ### Public/Private Members
 
-Fields and methods are private by default --- use the `pub` keyword to make them public:
+Fields and methods are private by default --- use the `pub` keyword to make them public, e.g.
 
 ::: code pyro
     class Foo {
@@ -97,13 +97,13 @@ Fields and methods are private by default --- use the `pub` keyword to make them
     }
 
 * Public members can be accessed from inside or outside the class.
-* Private members can only be accessed from inside the class using `self` or `super`.
+* Private members can only be accessed from inside the class using the `self` or `super` keywords.
 
 
 
 ### The Self Keyword
 
-Use the `self` keyword inside a class to access the instance's fields and methods:
+Use the `self` keyword inside a class to access the instance's fields and methods, e.g.
 
 ::: code pyro
     class Foo {
@@ -143,7 +143,9 @@ Static members can't be accessed from instances of the class:
     assert $is_err(try obj.count);
     assert $is_err(try obj:increment());
 
-Note that you can't use `self` or `super` inside static methods.
+All static members are public.
+
+Note that you can't use the `self` or `super` keywords inside static methods.
 
 
 
@@ -151,7 +153,7 @@ Note that you can't use `self` or `super` inside static methods.
 
 Uninitialized fields have the default value `null`.
 
-You can specify default values for fields, e.g.
+You can specify a default value for a field in a class definition, e.g.
 
 ::: code pyro
     class Foo {
@@ -227,13 +229,13 @@ is equivalent to calling the instance's `$set(key, value)` method.
 
 ### Dollar Methods
 
-You can implement the `$`-prefixed methods listed below to overload operators or add support for various language features to your types:
+You can implement the `$`-prefixed methods listed below to overload operators or to add support for various language features to user-defined types:
 
 
 [[ `:$call(arg1: any, arg2: any, ...) -> any` ]]
 
     Implementing this method makes instances of the type callable.
-    (When an instance is called, the call will be handled by this method.)
+    When an instance is called, the call will be handled by this method.
 
 
 [[ `:$contains(item: any) -> bool` ]]

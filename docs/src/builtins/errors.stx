@@ -8,12 +8,12 @@ meta_title: Pyro &mdash; Errors
 
 An error object, `err`, can be returned by a function to indicate failure.
 
-[[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, arg1: any, arg2: any, ...) -> err` ]]
+[[ `$err() -> err` <br> `$err(message: any) -> err` <br> `$err(format_string: str, *args: any) -> err` ]]
 
     Creates a new `err` object.
-    Every `err` has a `message` string and a `details` map.
+    Every `err` object has a `message` string and a `details` map.
 
-    * If called with no arguments, returns an error with an empty `message` string.
+    * If called with no arguments, returns a new `err` object with an empty `message` string.
 
     * If called with a single argument, stringifies that argument and uses the result as the error's `message` string.
 
@@ -21,7 +21,7 @@ An error object, `err`, can be returned by a function to indicate failure.
 
 
 You can use the `$is_err(arg)` function to check if a value is an `err`.
-Alternatively, you can use the error-coalescing operator `!!` to supply a default value for an operation that might return an error:
+Alternatively, you can use the error-coalescing operator `!!` to supply a default value for an operation that might return an error, e.g.
 
 ::: code pyro
     var foo = might_fail() !! "default";
@@ -30,7 +30,8 @@ Alternatively, you can use the error-coalescing operator `!!` to supply a defaul
 
 ### Error Message
 
-Stringifying an error returns its `message`:
+Stringifying an `err` returns its `message` string, e.g.
+
 
 ::: code pyro
     var err = $err("oh no!");
@@ -40,7 +41,7 @@ Stringifying an error returns its `message`:
 
 ### Error Details
 
-Every error object contains a `details` map which you can use to store arbitrary data about the error.
+Every `err` object contains a `details` map which you can use to store arbitrary data about the error.
 You can index into this `details` map directly on the `err` object itself, e.g.
 
 ::: code pyro

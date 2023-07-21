@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -228,9 +228,12 @@ We can overload the binary multiplication operator, <code>*</code>, for our <cod
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;invalid operation&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="cp">...</span>
@@ -311,10 +314,10 @@ Hashing
 Do we want to use our custom <code>Complex</code> number type as a key in <a href="../builtins/maps.html">hash maps</a> or as an entry in <a href="../builtins/sets.html">sets</a>?
 </p>
 <p>
-If so, we need to define a <code>$hash()</code> method to ensure that instances that compare as equal using <code>==</code> also have the same hash value.
+If so, we need to define a custom <code>$hash()</code> method to ensure that instances that compare as equal using <code>==</code> also have the same hash value.
 </p>
 <p>
-An easy way to do this is to XOR the hashes of the real and imaginary parts, e.g.
+An easy way to do this for our <code>Complex</code> number type is to <code>XOR</code> the hashes of the real and imaginary parts, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Complex</span> <span class="p">{</span>

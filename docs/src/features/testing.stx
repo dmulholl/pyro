@@ -15,7 +15,7 @@ Pyro has builtin support for unit tests using the `test` command:
       [files]              Files to test.
 
     Flags:
-      -e, --errors         Show standard error output.
+      -e, --errors         Show (only) standard error output.
       -h, --help           Print this help text and exit.
 
 Specify a single file to test:
@@ -47,6 +47,9 @@ An `assert` statement passes if its operand expression evaluates as *truthy* or 
 (In Pyro, the values `false`, `null`, and `err` are *falsey*; all other values are *truthy*.)
 
 Note that test functions take no arguments.
+
+Use the `-e/--errors` flag to isolate individual test failures.
+With this flag, (only) standard error output is printed, and execution will halt at the first panic.
 
 
 ### Module-Level Tests

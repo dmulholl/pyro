@@ -21,9 +21,9 @@ If you don't explicitly return a value from a function, its return value is `nul
 
 
 
-### Functions as Values
+### Functions As Values
 
-Functions are first-class citizens in Pyro, meaning you can assign them to variables and pass them around just like any other value.
+Functions are first-class citizens in Pyro, meaning you can assign them to variables and pass them around just like any other value, e.g.
 
 ::: code pyro
     def add(a, b) {
@@ -37,7 +37,7 @@ Functions are first-class citizens in Pyro, meaning you can assign them to varia
 
 ### Anonymous Functions
 
-You can declare and use functions anonymously:
+You can declare and use functions anonymously, e.g.
 
 ::: code pyro
     var add = def(a, b) {
@@ -109,7 +109,7 @@ A default argument value must be a simple literal --- one of `i64`, `f64`, `char
 
 A variadic function is a function that accepts a variable number of arguments.
 
-To define a variadic function in Pyro, prefix its final parameter with a `*`, e.g.
+To define a variadic function, prefix its final parameter with a `*`, e.g.
 
 ::: code pyro
     def vfunc(arg1, arg2, *args) {
@@ -129,17 +129,10 @@ The variadic arguments are available inside the function as a tuple.
 When calling a function, you can 'unpack' the final argument using a `*` if it's a tuple or vector, e.g.
 
 ::: code pyro
-    def add(*args) {
-        var sum = 0;
-        for arg in args {
-            sum += arg;
-        }
-        return sum;
-    }
-
     var numbers = [1, 2, 3];
-    assert add(*numbers) == 6;
-    assert add(1, 2, *numbers) == 9;
+
+    var sum1 = add(*numbers);           # add(1, 2, 3)
+    var sum2 = add(123, 456, *numbers); # add(123, 456, 1, 2, 3)
 
 
 
@@ -180,7 +173,7 @@ Functions can return multiple values, e.g.
 
     assert get_values() == $tup(123, 456);
 
-This is syntactic sugar for returning a tuple, i.e. it's equivalent to:
+This is syntactic sugar for returning a tuple --- i.e. it's equivalent to:
 
 ::: code pyro
     def get_values() {

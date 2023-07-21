@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -59,7 +59,7 @@
 <a href="#function-definitions">Function Definitions</a>
 </li>
 <li>
-<a href="#functions-as-values">Functions as Values</a>
+<a href="#functions-as-values">Functions As Values</a>
 </li>
 <li>
 <a href="#anonymous-functions">Anonymous Functions</a>
@@ -100,10 +100,10 @@ Function definitions look like this:
 If you don't explicitly return a value from a function, its return value is <code>null</code>.
 </p>
 <h3 id="functions-as-values">
-Functions as Values
+Functions As Values
 </h3>
 <p>
-Functions are first-class citizens in Pyro, meaning you can assign them to variables and pass them around just like any other value.
+Functions are first-class citizens in Pyro, meaning you can assign them to variables and pass them around just like any other value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
@@ -117,7 +117,7 @@ Functions are first-class citizens in Pyro, meaning you can assign them to varia
 Anonymous Functions
 </h3>
 <p>
-You can declare and use functions anonymously:
+You can declare and use functions anonymously, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">add</span> <span class="p">=</span> <span class="kd">def</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
@@ -192,7 +192,7 @@ Variadic Functions
 A variadic function is a function that accepts a variable number of arguments.
 </p>
 <p>
-To define a variadic function in Pyro, prefix its final parameter with a <code>*</code>, e.g.
+To define a variadic function, prefix its final parameter with a <code>*</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">vfunc</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="o">*</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
@@ -213,17 +213,10 @@ Unpacking Arguments
 When calling a function, you can 'unpack' the final argument using a <code>*</code> if it's a tuple or vector, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="o">*</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">sum</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">for</span> <span class="nx">arg</span> <span class="k">in</span> <span class="nx">args</span> <span class="p">{</span>
-        <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">arg</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">sum</span><span class="p">;</span>
-<span class="p">}</span>
-
 <span class="kd">var</span> <span class="nx">numbers</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
-<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="o">*</span><span class="nx">numbers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="nx">numbers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">sum1</span> <span class="p">=</span> <span class="nx">add</span><span class="p">(</span><span class="o">*</span><span class="nx">numbers</span><span class="p">);</span>           <span class="c1"># add(1, 2, 3)</span>
+<span class="kd">var</span> <span class="nx">sum2</span> <span class="p">=</span> <span class="nx">add</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="o">*</span><span class="nx">numbers</span><span class="p">);</span> <span class="c1"># add(123, 456, 1, 2, 3)</span>
 </pre>
 <h3 id="trailing-commas">
 Trailing Commas
@@ -266,7 +259,7 @@ Functions can return multiple values, e.g.
 <span class="k">assert</span> <span class="nx">get_values</span><span class="p">()</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
 </pre>
 <p>
-This is syntactic sugar for returning a tuple, i.e. it's equivalent to:
+This is syntactic sugar for returning a tuple &mdash; i.e. it's equivalent to:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">get_values</span><span class="p">()</span> <span class="p">{</span>

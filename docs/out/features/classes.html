@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -160,7 +160,7 @@ Methods are bound to their instances and you can pass them around just like any 
 Public/Private Members
 </h3>
 <p>
-Fields and methods are private by default &mdash; use the <code>pub</code> keyword to make them public:
+Fields and methods are private by default &mdash; use the <code>pub</code> keyword to make them public, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
@@ -181,14 +181,14 @@ Fields and methods are private by default &mdash; use the <code>pub</code> keywo
 Public members can be accessed from inside or outside the class.
 </li>
 <li>
-Private members can only be accessed from inside the class using <code>self</code> or <code>super</code>.
+Private members can only be accessed from inside the class using the <code>self</code> or <code>super</code> keywords.
 </li>
 </ul>
 <h3 id="the-self-keyword">
 The Self Keyword
 </h3>
 <p>
-Use the <code>self</code> keyword inside a class to access the instance's fields and methods:
+Use the <code>self</code> keyword inside a class to access the instance's fields and methods, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
@@ -230,7 +230,10 @@ Static members can't be accessed from instances of the class:
 <span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">obj</span><span class="p">:</span><span class="nx">increment</span><span class="p">());</span>
 </pre>
 <p>
-Note that you can't use <code>self</code> or <code>super</code> inside static methods.
+All static members are public.
+</p>
+<p>
+Note that you can't use the <code>self</code> or <code>super</code> keywords inside static methods.
 </p>
 <h3 id="field-initializers">
 Field Initializers
@@ -239,7 +242,7 @@ Field Initializers
 Uninitialized fields have the default value <code>null</code>.
 </p>
 <p>
-You can specify default values for fields, e.g.
+You can specify a default value for a field in a class definition, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
@@ -322,7 +325,7 @@ is equivalent to calling the instance's <code>$set(key, value)</code> method.
 Dollar Methods
 </h3>
 <p>
-You can implement the <code>$</code>-prefixed methods listed below to overload operators or add support for various language features to your types:
+You can implement the <code>$</code>-prefixed methods listed below to overload operators or to add support for various language features to user-defined types:
 </p>
 <dl>
 <div>
@@ -332,7 +335,7 @@ You can implement the <code>$</code>-prefixed methods listed below to overload o
 <dd>
 <p>
 Implementing this method makes instances of the type callable.
-(When an instance is called, the call will be handled by this method.)
+When an instance is called, the call will be handled by this method.
 </p>
 </dd>
 </div>

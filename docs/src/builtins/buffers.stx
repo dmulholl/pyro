@@ -47,7 +47,7 @@ Indices are zero-based. Indexing is equivalent to using the buffer's `:get()` an
 
 ### String Building
 
-Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the overhead of creating temporary strings along the way.
+Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the overhead of creating temporary strings along the way, e.g.
 
 ::: code pyro
     var buf = $buf();
@@ -58,7 +58,7 @@ Writing to a buffer and then converting it to a string is an efficient way of as
     assert result == "foobar";
     assert buf:is_empty();
 
-Calling the `:to_str()` method converts the content of the buffer into a string, leaving a valid but empty buffer object  behind.
+Calling the buffer's `:to_str()` method converts its content into a string, leaving a valid but empty buffer object behind.
 
 (This is different from calling `$str(buf)` on a buffer, which returns a string contining a *copy* of the buffer's content, leaving the buffer itself unchanged.)
 

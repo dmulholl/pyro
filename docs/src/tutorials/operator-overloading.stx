@@ -150,9 +150,12 @@ We can overload the binary multiplication operator, `*`, for our `Complex` numbe
         ...
 
         def $op_binary_star(other) {
-            var re = self.re * other.re - self.im * other.im;
-            var im = self.re * other.im + self.im * other.re;
-            return Complex(re, im);
+            if $is_instance_of(other, Complex) {
+                var re = self.re * other.re - self.im * other.im;
+                var im = self.re * other.im + self.im * other.re;
+                return Complex(re, im);
+            }
+            $panic("invalid operation");
         }
 
         ...
@@ -223,9 +226,9 @@ The `$rop_binary_star()` method is a fallback --- it's only called if the object
 
 Do we want to use our custom `Complex` number type as a key in [hash maps][3] or as an entry in [sets][4]?
 
-If so, we need to define a `$hash()` method to ensure that instances that compare as equal using `==` also have the same hash value.
+If so, we need to define a custom `$hash()` method to ensure that instances that compare as equal using `==` also have the same hash value.
 
-An easy way to do this is to XOR the hashes of the real and imaginary parts, e.g.
+An easy way to do this for our `Complex` number type is to `XOR` the hashes of the real and imaginary parts, e.g.
 
 ::: code pyro
     class Complex {
@@ -237,7 +240,6 @@ An easy way to do this is to XOR the hashes of the real and imaginary parts, e.g
 
         ...
     }
-
 
 
 

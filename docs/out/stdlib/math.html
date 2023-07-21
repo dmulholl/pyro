@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -70,7 +70,9 @@ Functions
 Returns the absolute value of <code>x</code>. The output type is the same as the input type.
 </p>
 <p>
-Note that the absolute value of <code>I64_MIN</code> (i.e. the most negative integer) is undefined as the result cannot be represented as an <code>i64</code>.
+Note that the absolute value of <code>std::constants::i64_min</code> (i.e. the most negative <code>i64</code> integer) is undefined as the result cannot be represented as an <code>i64</code> value.
+</p>
+<p>
 If you provide an optional <code>i64_min</code> argument, its value will be returned as a fallback in this case.
 Otherwise, the return value will be whatever integer is returned by the underlying C implementation &mdash; typically a negative value.
 </p>

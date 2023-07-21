@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -248,7 +248,7 @@ Power operator. Both operands are converted to floats and the result is a float.
 </tbody>
 </table>
 <p>
-Pyro also has a set of builtin functions for performing <a href="features/checked-arithmetic.html">checked arithmetic</a> with signed integers.
+Pyro also has a set of builtin functions for performing <a href="features/checked-arithmetic.html">checked arithmetic</a> with integers.
 </p>
 <p>
 Integer literals can use binary, octal, decimal, or hex notation:
@@ -310,7 +310,7 @@ Booleans
 </h3>
 <p>
 A boolean value is either <code>true</code> or <code>false</code>.
-You can convert any value to a boolean using the <code>$bool(arg)</code> function.
+You can convert any value to a boolean using the <code>$bool()</code> function.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$bool</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span><span class="p">;</span>
@@ -377,7 +377,7 @@ Tuples compare as equal if they have the same length and their elements are equa
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
-Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order:
+Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
@@ -385,7 +385,7 @@ Sets compare as equal if they are set-equivalent, i.e. if they contain the same 
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
-By default, other objects are equal only if they are the same object:
+By default, other objects are equal only if they are the same object, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Object</span> <span class="p">{}</span>
@@ -397,7 +397,7 @@ By default, other objects are equal only if they are the same object:
 <span class="k">assert</span> <span class="nx">obj1</span> <span class="o">!=</span> <span class="nx">obj2</span><span class="p">;</span>
 </pre>
 <p>
-You can overload the equality operator to customize its behaviour for your own types.
+You can <a href="tutorials/operator-overloading.html">overload</a> the equality operator to customize its behaviour for your own types.
 </p>
 <h3 id="comparisons">
 Comparisons
@@ -432,7 +432,7 @@ You can use the comparison operators directly on tuples, e.g.
 Tuples are compared lexicographically by element.
 </p>
 <p>
-You can overload the comparison operators to customize their behaviour for your own types
+You can <a href="tutorials/operator-overloading.html">overload</a> the comparison operators to customize their behaviour for your own types
 </p>
 <h3 id="printing">
 Printing
@@ -492,7 +492,7 @@ See the <a href="features/formatting.html">string formatting</a> documentation f
 Loops
 </h3>
 <p>
-Pyro has support for several different looping constructs.
+Pyro has support for three different looping constructs.
 The simplest is the infinite loop:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">

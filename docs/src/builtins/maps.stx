@@ -13,7 +13,7 @@ A hash map, `map`, is a collection of key-value pairs.
 
     Creates a new `map` object.
 
-Pyro's `map` type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
+Pyro's `map` type preserves insertion order so when you iterate over a `map` you get its entries back in the same order you inserted them.
 
 
 
@@ -71,7 +71,7 @@ If the map doesn't contain an entry corresponding to `key`, the expression `map[
 
 You can iterate over a map in three different ways.
 
-1. Iterating over a map directly returns key-value tuples which you can unpack in a for-loop as shown below:
+1. Iterating over a map directly returns key-value tuples which you can unpack in a for-loop, e.g.
 
 ::: code pyro
     for (key, value) in map {
@@ -79,14 +79,14 @@ You can iterate over a map in three different ways.
         echo value;
     }
 
-2. The `:keys()` method returns an iterator over the map's keys:
+2. The `:keys()` method returns an iterator over the map's keys, e.g.
 
 ::: code pyro
     for key in map:keys() {
         echo key;
     }
 
-(3) The `:values()` method returns an iterator over the map's values:
+(3) The `:values()` method returns an iterator over the map's values, e.g.
 
 ::: code pyro
     for value in map:values() {

@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.9.66</p>
+                <p class="version">Version 0.10.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -94,7 +94,7 @@ Creates a new <code>map</code> object.
 </div>
 </dl>
 <p>
-Pyro's <code>map</code> type preserves insertion order so when you iterate over a map you get its entries back in the same order you inserted them.
+Pyro's <code>map</code> type preserves insertion order so when you iterate over a <code>map</code> you get its entries back in the same order you inserted them.
 </p>
 <h3 id="map-literals">
 Map Literals
@@ -158,7 +158,7 @@ You can iterate over a map in three different ways.
 </p>
 <ol>
 <li>
-Iterating over a map directly returns key-value tuples which you can unpack in a for-loop as shown below:
+Iterating over a map directly returns key-value tuples which you can unpack in a for-loop, e.g.
 </li>
 </ol>
 <pre class="lang-pyro pygments" data-lang="pyro">
@@ -169,7 +169,7 @@ Iterating over a map directly returns key-value tuples which you can unpack in a
 </pre>
 <ol start="2">
 <li>
-The <code>:keys()</code> method returns an iterator over the map's keys:
+The <code>:keys()</code> method returns an iterator over the map's keys, e.g.
 </li>
 </ol>
 <pre class="lang-pyro pygments" data-lang="pyro">
@@ -180,7 +180,7 @@ The <code>:keys()</code> method returns an iterator over the map's keys:
 <ol start="3">
 <li>
 <p>
-The <code>:values()</code> method returns an iterator over the map's values:
+The <code>:values()</code> method returns an iterator over the map's values, e.g.
 </p>
 </li>
 </ol>

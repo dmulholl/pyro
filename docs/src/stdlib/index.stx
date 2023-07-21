@@ -45,17 +45,13 @@ All standard library modules are submodules of the root module `std`.
 
     Mathematical functions.
 
-[[ [mt64](@root/stdlib/mt64//) ]]
-
-    A library for generating pseudo-random numbers.
-
 [[ [pretty](@root/stdlib/pretty//) ]]
 
     Support for pretty-printing.
 
 [[ [prng](@root/stdlib/prng//) ]]
 
-    Convenience functions for generating pseudo-random numbers.
+    Utilities for generating pseudo-random numbers.
 
 [[ [pyro](@root/stdlib/pyro//) ]]
 
