@@ -9,8 +9,14 @@ meta_title: Pyro Standard Library &mdash; std::pyro
 A utility module for interacting with the Pyro VM.
 
 
+::: insert toc
 
-### Constants
+
+### Variables
+
+[[ `module_cache: map[str, module]` ]]
+
+    The VM's cache of imported modules, indexed by import path.
 
 [[ `version_string: str` ]]
 
@@ -18,12 +24,11 @@ A utility module for interacting with the Pyro VM.
 
 [[ `version_tuple: tup[i64, i64, i64, str, str]` ]]
 
-    The language version as a tuple containing `(MAJOR, MINIOR, PATCH, LABEL, BUILD)` elements.
+    The language version as a tuple containing `(MAJOR, MINOR, PATCH, LABEL, BUILD)` elements.
 
     * `MAJOR`, `MINOR`, and `PATCH` are [semantic versioning][1] integers.
     * `LABEL` is a string containing a pre-release label, e.g. `"alpha1"`, `"beta2"`, `"rc3"`. May be an empty string.
     * `BUILD` is a string containing build information, e.g. `"release"`, `"debug"`. May be an empty string.
-
 
 
 ### Functions

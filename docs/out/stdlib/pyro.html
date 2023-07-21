@@ -57,10 +57,28 @@
             <p>
 A utility module for interacting with the Pyro VM.
 </p>
-<h3 id="constants">
-Constants
+<ul class="stx-toc">
+<li>
+<a href="#variables">Variables</a>
+</li>
+<li>
+<a href="#functions">Functions</a>
+</li>
+</ul>
+<h3 id="variables">
+Variables
 </h3>
 <dl>
+<div>
+<dt>
+<code>module_cache: map[str, module]</code>
+</dt>
+<dd>
+<p>
+The VM's cache of imported modules, indexed by import path.
+</p>
+</dd>
+</div>
 <div>
 <dt>
 <code>version_string: str</code>
@@ -77,7 +95,7 @@ The language version as a string.
 </dt>
 <dd>
 <p>
-The language version as a tuple containing <code>(MAJOR, MINIOR, PATCH, LABEL, BUILD)</code> elements.
+The language version as a tuple containing <code>(MAJOR, MINOR, PATCH, LABEL, BUILD)</code> elements.
 </p>
 <ul>
 <li>

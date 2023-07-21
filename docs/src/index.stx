@@ -37,7 +37,7 @@ the control code for your pacemaker/anti-ballistic missile defence system in it 
 ### Design Goals
 
 * *Legibility* --- Pyro code should be easy to read and understand.
-* *Simplicity* --- Simple problems should have simple solutions.
+* *Simplicity* --- Common problems should have simple solutions.
 * *Elegance* --- A well-crafted tool should be a pleasure to use.
 
 
