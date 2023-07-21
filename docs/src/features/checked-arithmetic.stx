@@ -3,9 +3,13 @@ title: Checked Arithmetic
 meta_title: Pyro &mdash; Checked Arithmetic
 ---
 
-Pyro is implemented in C --- a language where signed integer overflow is classified as undefined behaviour.
+[1]: https://en.cppreference.com/w/c/language/behavior
 
-Overflow happens if the result of an integer operation is outside the range of the integer type --- e.g. the addition operation `i64_max + 1` will overflow because the sum of the two numbers is outside the range of the `i64` type.
+
+Pyro is implemented in C --- a language where signed integer overflow is classified as [undefined behaviour][1].
+
+::: infobox
+    Overflow happens if the result of an integer operation is outside the range of the integer type --- e.g. the addition operation `i64_max + 1` will overflow because the sum of the two numbers is outside the range of the `i64` type.
 
 Pyro's standard arithmetic operators don't check for integer overflow. Instead, Pyro has a set of builtin functions for performing checked arithmetic.
 
