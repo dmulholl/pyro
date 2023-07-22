@@ -63,18 +63,14 @@ Functions
 <dl>
 <div>
 <dt>
-<code>abs(x: i64|f64) -&gt; i64|f64</code> <br> <code>abs(x: i64|f64, i64_min: any) -&gt; any</code>
+<code>abs(x: i64|f64) -&gt; i64|f64</code>
 </dt>
 <dd>
 <p>
 Returns the absolute value of <code>x</code>. The output type is the same as the input type.
 </p>
 <p>
-Note that the absolute value of <code>std::constants::i64_min</code> (i.e. the most negative <code>i64</code> integer) is undefined as the result cannot be represented as an <code>i64</code> value.
-</p>
-<p>
-If you provide an optional <code>i64_min</code> argument, its value will be returned as a fallback in this case.
-Otherwise, the return value will be whatever integer is returned by the underlying C implementation &mdash; typically a negative value.
+If <code>x</code> is an <code>i64</code> and its value is equal to <code>i64_min</code> (i.e. the most negative <code>i64</code> integer), the function will panic as the result cannot be represented as an <code>i64</code> value.
 </p>
 </dd>
 </div>

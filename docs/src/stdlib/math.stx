@@ -9,14 +9,11 @@ This module provides a Pyro interface to the C standard library's mathematical f
 ### Functions
 
 
-[[ `abs(x: i64|f64) -> i64|f64` <br> `abs(x: i64|f64, i64_min: any) -> any` ]]
+[[ `abs(x: i64|f64) -> i64|f64` ]]
 
     Returns the absolute value of `x`. The output type is the same as the input type.
 
-    Note that the absolute value of `std::constants::i64_min` (i.e. the most negative `i64` integer) is undefined as the result cannot be represented as an `i64` value.
-
-    If you provide an optional `i64_min` argument, its value will be returned as a fallback in this case.
-    Otherwise, the return value will be whatever integer is returned by the underlying C implementation --- typically a negative value.
+    If `x` is an `i64` and its value is equal to `i64_min` (i.e. the most negative `i64` integer), the function will panic as the result cannot be represented as an `i64` value.
 
 
 [[ `acos(x: i64|f64) -> f64` ]]

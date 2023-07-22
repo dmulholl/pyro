@@ -1,4 +1,5 @@
 import std::math;
+import std::constants;
 
 assert math::abs(1) == 1;
 assert math::abs(-1) == 1;
@@ -6,10 +7,4 @@ assert math::abs(-1) == 1;
 assert math::abs(1.0) == 1.0;
 assert math::abs(-1.0) == 1.0;
 
-assert math::abs(1, 0) == 1;
-assert math::abs(1.0, 0.0) == 1.0;
-assert math::abs(-1, 0) == 1;
-assert math::abs(-1.0, 0.0) == 1.0;
-
-assert math::abs(math::I64_MIN, 0) == 0;
-assert math::abs(math::I64_MIN, "foo") == "foo";
+assert $is_err(try math::abs(constants::i64_min));

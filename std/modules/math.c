@@ -2,31 +2,19 @@
 
 
 static PyroValue fn_abs(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (arg_count == 1) {
-        if (PYRO_IS_I64(args[0])) {
-            return pyro_i64(imaxabs(args[0].as.i64));
-        } else if (PYRO_IS_F64(args[0])) {
-            return pyro_f64(fabs(args[0].as.f64));
+    if (PYRO_IS_I64(args[0])) {
+        if (args[0].as.i64 == INT64_MIN) {
+            pyro_panic(vm, "abs(): invalid argument i64_min, result would overflow");
+            return pyro_null();
         }
-        pyro_panic(vm, "abs(): invalid argument, expected a number");
-        return pyro_null();
+        return pyro_i64(imaxabs(args[0].as.i64));
     }
 
-    if (arg_count == 2) {
-        if (PYRO_IS_I64(args[0])) {
-            if (args[0].as.i64 == INT64_MIN) {
-                return args[1];
-            } else {
-                return pyro_i64(imaxabs(args[0].as.i64));
-            }
-        } else if (PYRO_IS_F64(args[0])) {
-            return pyro_f64(fabs(args[0].as.f64));
-        }
-        pyro_panic(vm, "abs(): invalid argument, expected a number");
-        return pyro_null();
+    if (PYRO_IS_F64(args[0])) {
+        return pyro_f64(fabs(args[0].as.f64));
     }
 
-    pyro_panic(vm, "abs(): expected 1 or 2 arguments, found %zu", arg_count);
+    pyro_panic(vm, "abs(): invalid argument, expected a number");
     return pyro_null();
 }
 
@@ -238,7 +226,7 @@ static PyroValue fn_floor(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 void pyro_load_std_mod_math(PyroVM* vm, PyroMod* module) {
-    pyro_define_pub_member_fn(vm, module, "abs", fn_abs, -1);
+    pyro_define_pub_member_fn(vm, module, "abs", fn_abs, 1);
     pyro_define_pub_member_fn(vm, module, "acos", fn_acos, 1);
     pyro_define_pub_member_fn(vm, module, "asin", fn_asin, 1);
     pyro_define_pub_member_fn(vm, module, "atan", fn_atan, 1);
