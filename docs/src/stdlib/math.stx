@@ -13,7 +13,7 @@ This module provides a Pyro interface to the C standard library's mathematical f
 
     Returns the absolute value of `x`. The output type is the same as the input type.
 
-    If `x` is an `i64` and its value is equal to `i64_min` (i.e. the most negative `i64` integer), the function will panic as the result cannot be represented as an `i64` value.
+    Panics if the argument is an `i64` with value `i64_min` (i.e. the most negative `i64` integer) as the result cannot be represented as an `i64` value.
 
 
 [[ `acos(x: i64|f64) -> f64` ]]
