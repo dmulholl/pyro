@@ -323,6 +323,10 @@ PyroValue pyro_op_binary_slash_slash(PyroVM* vm, PyroValue left, PyroValue right
                         pyro_panic(vm, "division by zero");
                         return pyro_null();
                     }
+                    if (left.as.i64 == INT64_MIN && right.as.i64 == -1) {
+                        pyro_panic(vm, "division results in signed integer overflow");
+                        return pyro_null();
+                    }
                     return pyro_i64(left.as.i64 / right.as.i64);
                 case PYRO_VALUE_F64:
                     if (right.as.f64 == 0.0) {

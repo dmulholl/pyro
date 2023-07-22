@@ -1,21 +1,37 @@
-# Float division.
+import std::constants::{i64_min};
+
+# Floating-point division.
 assert 10 / 5 == 2.0;
-assert 10.0 / 5.0 == 2.0;
-assert 10.0 / 5 == 2.0;
 assert 10 / 5.0 == 2.0;
+assert 10.0 / 5 == 2.0;
+assert 10.0 / 5.0 == 2.0;
 
 assert 11 / 5 == 2.2;
-assert 11.0 / 5.0 == 2.2;
-assert 11.0 / 5 == 2.2;
 assert 11 / 5.0 == 2.2;
+assert 11.0 / 5 == 2.2;
+assert 11.0 / 5.0 == 2.2;
+
+assert $is_err(try (1 / 0));
+assert $is_err(try (1 / 0.0));
+assert $is_err(try (1.0 / 0));
+assert $is_err(try (1.0 / 0.0));
+
+assert !$is_err(try (i64_min / -1));
 
 # Truncated division.
 assert 10 // 5 == 2;
-assert 10.0 // 5.0 == 2.0;
-assert 10.0 // 5 == 2.0;
 assert 10 // 5.0 == 2.0;
+assert 10.0 // 5 == 2.0;
+assert 10.0 // 5.0 == 2.0;
 
 assert 11 // 5 == 2;
-assert 11.0 // 5.0 == 2.0;
-assert 11.0 // 5 == 2.0;
 assert 11 // 5.0 == 2.0;
+assert 11.0 // 5 == 2.0;
+assert 11.0 // 5.0 == 2.0;
+
+assert $is_err(try (1 // 0));
+assert $is_err(try (1 // 0.0));
+assert $is_err(try (1.0 // 0));
+assert $is_err(try (1.0 // 0.0));
+
+assert $is_err(try (i64_min // -1));
