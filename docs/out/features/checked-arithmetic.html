@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.10.1</p>
+                <p class="version">Version 0.10.2</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -107,7 +107,7 @@ If <code>a</code> and <code>b</code> are both <code>i64</code> values, this func
 </div>
 </dl>
 <p>
-Pyro doesn't have a dedicated function for checked division &mdash; the only case of integer division that can overflow is <code>i64_min</code> divided by <code>-1</code>.
+Pyro doesn't have a dedicated function for checked division. The only case of integer division that can overflow is <code>i64_min // -1</code>  &mdash; the truncating-division operator <code>//</code> automatically checks for this case, along with division by zero.
 </p>
         </article>
         

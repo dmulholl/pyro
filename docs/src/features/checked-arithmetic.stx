@@ -35,5 +35,4 @@ Pyro's standard arithmetic operators don't check for integer overflow. Instead, 
     If `a` and `b` are both `i64` values, this function will panic if the result of the operation would overflow.
 
 
-Pyro doesn't have a dedicated function for checked division --- the only case of integer division that can overflow is `i64_min` divided by `-1`.
-
+Pyro doesn't have a dedicated function for checked division. The only case of integer division that can overflow is `i64_min // -1`  --- the truncating-division operator `//` automatically checks for this case, along with division by zero.
