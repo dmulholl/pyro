@@ -10,7 +10,7 @@ def make_closure_over_local() {
 }
 
 var foo = make_closure_over_local();
-assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert 1 + (2 + (3 + (4 + 5))) == 15;
 assert foo() == "local";
 
 
@@ -24,11 +24,11 @@ def make_closure_over_arg(arg) {
 }
 
 var bar = make_closure_over_arg("apples");
-assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert 1 + (2 + (3 + (4 + 5))) == 15;
 assert bar() == "apples";
 
 var baz = make_closure_over_arg("oranges");
-assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert 1 + (2 + (3 + (4 + 5))) == 15;
 assert baz() == "oranges";
 
 
@@ -48,7 +48,7 @@ def outer() {
 
 var middle = outer();
 var inner = middle();
-assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert 1 + (2 + (3 + (4 + 5))) == 15;
 assert inner() == 123;
 
 
@@ -63,5 +63,5 @@ def simple_outer() {
     return inner();
 }
 
-assert 1 + 2 + 3 + 4 + 5 == 15; # Overwrite the stack with garbage.
+assert 1 + (2 + (3 + (4 + 5))) == 15;
 assert simple_outer() == 123;

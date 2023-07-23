@@ -1,0 +1,139 @@
+var abc = 123;
+
+def outer() {
+    var abc = 456;
+
+    def inner() {
+        return abc;
+    }
+
+    return inner();
+}
+
+assert abc == 123;
+assert outer() == 456;
+
+
+
+def make_closure() {
+    var local = 123;
+
+    def closure() {
+        return local;
+    }
+
+    return closure;
+}
+
+var closure = make_closure();
+assert closure() == 123;
+
+
+
+def make_closure_over_arg(arg) {
+    def closure() {
+        return arg;
+    }
+    return closure;
+}
+
+var c1 = make_closure_over_arg("foo");
+var c2 = make_closure_over_arg("bar");
+assert c1() == "foo";
+assert c2() == "bar";
+
+
+
+def outer_with_assignment() {
+    var local = 123;
+    local = 456;
+
+    def inner() {
+        return local;
+    }
+
+    return inner();
+}
+
+assert outer_with_assignment() == 456;
+
+
+
+def outer_with_middle_and_inner() {
+    var local = 123;
+
+    def middle() {
+        def inner() {
+            return local;
+        }
+        return inner;
+    }
+
+    return middle;
+}
+
+var middle = outer_with_middle_and_inner();
+var inner = middle();
+assert inner() == 123;
+
+
+
+def outer_with_multiple_locals() {
+    var foo = 1;
+    var bar = 2;
+
+    def middle() {
+        var baz = 3;
+        var bam = 4;
+
+        def inner() {
+            return foo + bar + baz + bam;
+        }
+
+        return inner();
+    }
+
+    return middle();
+}
+
+assert outer_with_multiple_locals() == 1 + 2 + 3 + 4;
+
+
+
+def outer_with_inner_assignment() {
+    var local = 123;
+
+    def inner() {
+        local = 456;
+    }
+
+    inner();
+    return local;
+}
+
+assert outer_with_inner_assignment() == 456;
+
+
+
+var get;
+var set;
+
+def closure_with_get_set() {
+    var local = 123;
+
+    def getter() {
+        return local;
+    }
+
+    def setter(value) {
+        local = value;
+    }
+
+    get = getter;
+    set = setter;
+}
+
+closure_with_get_set();
+assert get() == 123;
+set(456);
+assert get() == 456;

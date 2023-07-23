@@ -1,0 +1,88 @@
+var get;
+var set;
+
+
+def func() {
+    var local = 123;
+
+    def getter() {
+        return local;
+    }
+
+    def setter(value) {
+        local = value;
+    }
+
+    get = getter;
+    set = setter;
+
+    $panic("oh no!");
+}
+
+try func();
+assert 1 + (2 + (3 + (4 + 5))) == 15;
+assert get() == 123;
+set(321);
+assert get() == 321;
+
+{
+    try func();
+    assert 1 + (2 + (3 + (4 + 5))) == 15;
+    assert get() == 123;
+    set(321);
+    assert get() == 321;
+}
+
+
+def outer() {
+    var local = 456;
+
+    def inner() {
+        def getter() {
+            return local;
+        }
+
+        def setter(value) {
+            local = value;
+        }
+
+        get = getter;
+        set = setter;
+    }
+
+    inner();
+    $panic("oh no!");
+}
+
+try outer();
+assert 1 + (2 + (3 + (4 + 5))) == 15;
+assert get() == 456;
+set(654);
+assert get() == 654;
+
+{
+    try outer();
+    assert 1 + (2 + (3 + (4 + 5))) == 15;
+    assert get() == 456;
+    set(654);
+    assert get() == 654;
+}
+
+
+def try_outer() {
+    try outer();
+}
+
+try_outer();
+assert 1 + (2 + (3 + (4 + 5))) == 15;
+assert get() == 456;
+set(654);
+assert get() == 654;
+
+{
+    try_outer();
+    assert 1 + (2 + (3 + (4 + 5))) == 15;
+    assert get() == 456;
+    set(654);
+    assert get() == 654;
+}
