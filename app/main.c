@@ -1,9 +1,7 @@
 #include "../inc/pyro.h"
 
 int main(int argc, char* argv[]) {
-    size_t stack_size = 1024 * 1024;
-
-    PyroVM* vm = pyro_new_vm(stack_size);
+    PyroVM* vm = pyro_new_vm();
     if (!vm) {
         fprintf(stderr, "error: out of memory\n");
         exit(1);
