@@ -3,7 +3,7 @@
 # ----------- #
 
 # Common flags for both release and debug builds.
-CFLAGS = -Wall -Wextra --std=c11 --pedantic -fwrapv \
+CFLAGS = -Wall -Wextra --std=c11 --pedantic \
 		 -Wno-unused-parameter \
 		 -Wno-unused-function \
 		 -Wno-unused-result
