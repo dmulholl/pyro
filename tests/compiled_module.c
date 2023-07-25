@@ -1,4 +1,4 @@
-#include "../inc/pyro.h"
+#include "../src/includes/pyro.h"
 
 static PyroValue fn_add(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_op_binary_plus(vm, args[0], args[1]);

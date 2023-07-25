@@ -17,18 +17,18 @@ DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG \
 			  -D PYRO_DEBUG_STRESS_STACK_REALLOCATION
 
 # Core files for the Pyro VM.
-HDR_FILES = inc/*.h
-SRC_FILES = src/*.c std/builtins/*.c std/modules/*.c
+HDR_FILES = src/includes/*.h
+SRC_FILES = src/core/*.c src/builtins/*.c src/stdlib/*.c
 OBJ_FILES = build/common/embeds.o
 
 # Files for the CLI binary.
-CLI_HDR_FILES = cli/*.h
-CLI_SRC_FILES = cli/*.c
+CLI_HDR_FILES = cmd/cli/*.h
+CLI_SRC_FILES = cmd/cli/*.c
 CLI_OBJ_FILES = build/common/bestline.o \
 				build/common/args.o
 
 # Files for baked-application binaries.
-APP_SRC_FILES = app/*.c
+APP_SRC_FILES = cmd/app/*.c
 
 # Default name for the baked-application binary.
 APPNAME ?= app
@@ -166,15 +166,16 @@ build/common/embeds.c: build/bin/embed $(shell find ./embed -type f)
 #  Utility Binaries  #
 # ------------------ #
 
-build/bin/embed: tools/embed.c
+build/bin/embed: etc/embed.c
 	@mkdir -p build/bin
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG tools/embed.c -o build/bin/embed
+	@printf "\e[1;32mBuilding\e[0m build/bin/embed\n"
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG etc/embed.c -o build/bin/embed
 
 # ---------------------- #
 #  Test Compiled Module  #
 # ---------------------- #
 
-tests/compiled_module.so: tests/compiled_module.c inc/*.h
+tests/compiled_module.so: tests/compiled_module.c src/includes/*.h
 	@printf "\e[1;32mBuilding\e[0m tests/compiled_module.so\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o tests/compiled_module.so tests/compiled_module.c
 
