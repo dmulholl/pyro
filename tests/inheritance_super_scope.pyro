@@ -10,7 +10,7 @@ class B < A {
         return "b-foo";
     }
 
-    pub def super_foo() {
+    pub def test() {
         return super:foo();
     }
 }
@@ -20,7 +20,10 @@ class C < B {
 }
 
 
-# Verify that `super` is lexically-scoped, i.e. even though the method is called on an instance
-# of C the `super` in B resolves lexically to A.
+# Verify that `super` is lexically-scoped, i.e. even though the method is called on an
+# instance of C the `super` in B resolves lexically to A.
+var b = B();
+assert b:test() == "a-foo";
+
 var c = C();
-assert c:super_foo() == "a-foo";
+assert c:test() == "a-foo";

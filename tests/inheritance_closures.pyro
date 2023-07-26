@@ -16,6 +16,15 @@ class B < A {
 }
 
 
+class C < B {
+}
+
+
 var b = B();
-var closure = b:get_closure();
-assert closure() == "a-foo";
+var b_closure = b:get_closure();
+assert b_closure() == "a-foo";
+
+
+var c = C();
+var c_closure = c:get_closure();
+assert c_closure() == "a-foo";
