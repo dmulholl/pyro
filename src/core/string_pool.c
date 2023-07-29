@@ -1,7 +1,8 @@
 #include "../includes/pyro.h"
 
 
-// We use the address of this variable as a tombstone entry in the pool.
+// Dummy variable. We use its address as a 'tombstone' entry in the pool to mark where
+// previous entries have been deleted.
 static int pyro_string_pool_tombstone;
 
 
