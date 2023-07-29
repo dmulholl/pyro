@@ -4,11 +4,11 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 10
-#define PYRO_VERSION_PATCH 2
+#define PYRO_VERSION_PATCH 3
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
-    #define PYRO_VERSION_LABEL ""
+    #define PYRO_VERSION_LABEL "dev"
 #endif
 
 // Build label, e.g. "release", "debug".
@@ -116,6 +116,7 @@ typedef struct PyroFile PyroFile;
 #include "./objects.h"
 #include "./panics.h"
 #include "./prng.h"
+#include "./string_pool.h"
 #include "./vm.h"
 #include "./compiler.h"
 #include "./debug.h"

@@ -93,7 +93,7 @@ struct PyroVM {
     PyroBuf* panic_buffer;
 
     // Interned string pool.
-    PyroMap* string_pool;
+    PyroStrPool string_pool;
 
     // Linked list of open upvalues pointing to variables still on the stack.
     PyroUpvalue* open_upvalues;

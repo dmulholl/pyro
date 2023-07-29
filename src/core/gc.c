@@ -136,7 +136,6 @@ static void mark_roots(PyroVM* vm) {
     // Other object fields.
     mark_object(vm, (PyroObject*)vm->superglobals);
     mark_object(vm, (PyroObject*)vm->module_cache);
-    mark_object(vm, (PyroObject*)vm->string_pool);
     mark_object(vm, (PyroObject*)vm->main_module);
     mark_object(vm, (PyroObject*)vm->import_roots);
     mark_object(vm, (PyroObject*)vm->stdout_file);

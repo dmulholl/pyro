@@ -119,7 +119,6 @@ PyroVM* pyro_new_vm() {
     vm->str_vec = NULL;
     vm->str_source = NULL;
     vm->str_line = NULL;
-    vm->string_pool = NULL;
     vm->try_depth = 0;
     vm->with_stack = NULL;
     vm->with_stack_count = 0;
@@ -158,11 +157,7 @@ PyroVM* pyro_new_vm() {
     }
 
     // We need to initialize the interned strings pool before we create any strings.
-    vm->string_pool = PyroMap_new_as_weakref(vm);
-    if (!vm->string_pool) {
-        pyro_free_vm(vm);
-        return NULL;
-    }
+    PyroStrPool_init(&vm->string_pool);
 
     // Canned objects.
     vm->empty_string = PyroStr_COPY("");
@@ -298,6 +293,8 @@ void pyro_free_vm(PyroVM* vm) {
     PYRO_FREE_ARRAY(vm, PyroCallFrame, vm->call_stack, vm->call_stack_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity);
     PYRO_FREE_ARRAY(vm, PyroValue, vm->stack, vm->stack_max - vm->stack);
+
+    PyroStrPool_free(&vm->string_pool, vm);
 
     assert(vm->bytes_allocated == sizeof(PyroVM));
     free(vm);
