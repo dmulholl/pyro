@@ -94,7 +94,6 @@ struct PyroMap {
 };
 
 PyroMap* PyroMap_new(PyroVM* vm);
-PyroMap* PyroMap_new_as_weakref(PyroVM* vm);
 PyroMap* PyroMap_new_as_set(PyroVM* vm);
 
 // Gets an entry from the map. This function can call into Pyro code via pyro_op_compare_eq()

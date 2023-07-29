@@ -365,16 +365,6 @@ PyroMap* PyroMap_new_as_set(PyroVM* vm) {
 }
 
 
-PyroMap* PyroMap_new_as_weakref(PyroVM* vm) {
-    PyroMap* map = PyroMap_new(vm);
-    if (!map) {
-        return NULL;
-    }
-    map->obj.type = PYRO_OBJECT_MAP_AS_WEAKREF;
-    return map;
-}
-
-
 PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm) {
     PyroMap* dst = PyroMap_new(vm);
     if (!dst) {

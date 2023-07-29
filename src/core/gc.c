@@ -308,9 +308,6 @@ static void blacken_object(PyroVM* vm, PyroObject* object) {
             break;
         }
 
-        case PYRO_OBJECT_MAP_AS_WEAKREF:
-            break;
-
         case PYRO_OBJECT_ERR: {
             PyroErr* err = (PyroErr*)object;
             mark_object(vm, (PyroObject*)err->message);

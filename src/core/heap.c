@@ -90,7 +90,6 @@ void pyro_free_object(PyroVM* vm, PyroObject* object) {
             break;
         }
 
-        case PYRO_OBJECT_MAP_AS_WEAKREF:
         case PYRO_OBJECT_MAP_AS_SET:
         case PYRO_OBJECT_MAP: {
             PyroMap* map = (PyroMap*)object;

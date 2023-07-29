@@ -293,10 +293,6 @@ static void pyro_dump_object(PyroVM* vm, PyroObject* object) {
             pyro_stdout_write(vm, "<iter>");
             break;
 
-        case PYRO_OBJECT_MAP_AS_WEAKREF:
-            pyro_stdout_write(vm, "<weakref map>");
-            break;
-
         default:
             pyro_stdout_write(vm, "<object>");
             break;
