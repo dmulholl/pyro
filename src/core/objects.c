@@ -540,7 +540,7 @@ bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm) {
 }
 
 
-bool PyroMap_safe_remove(PyroMap* map, PyroStr* key, PyroVM* vm) {
+bool PyroMap_fast_remove(PyroMap* map, PyroStr* key, PyroVM* vm) {
     if (map->live_entry_count == 0) {
         return false;
     }
@@ -554,10 +554,34 @@ bool PyroMap_safe_remove(PyroMap* map, PyroStr* key, PyroVM* vm) {
             return false;
         } else if (*slot == TOMBSTONE) {
             // Skip over the tombstone and keep looking for a matching entry.
-        } else if (PYRO_IS_STR(map->entry_array[*slot].key) && PYRO_AS_STR(map->entry_array[*slot].key) == key) {
+        } else if (PYRO_AS_STR(map->entry_array[*slot].key) == key) {
             map->entry_array[*slot].key = pyro_tombstone();
             *slot = TOMBSTONE;
             map->live_entry_count--;
+            return true;
+        }
+
+        i = (i + 1) & (map->index_array_capacity - 1);
+    }
+}
+
+
+bool PyroMap_fast_get(PyroMap* map, PyroStr* key, PyroValue* value, PyroVM* vm) {
+    if (map->live_entry_count == 0) {
+        return false;
+    }
+
+    size_t i = (size_t)key->hash & (map->index_array_capacity - 1);
+
+    for (;;) {
+        int64_t* slot = &map->index_array[i];
+
+        if (*slot == EMPTY) {
+            return false;
+        } else if (*slot == TOMBSTONE) {
+            // Skip over the tombstone and keep looking for a matching entry.
+        } else if (PYRO_AS_STR(map->entry_array[*slot].key) == key) {
+            *value = map->entry_array[*slot].value;
             return true;
         }
 

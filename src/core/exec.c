@@ -203,7 +203,7 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
             PyroClass* class = PYRO_AS_OBJ(callee)->class;
 
             PyroValue call_method;
-            if (!PyroMap_get(class->all_instance_methods, pyro_obj(vm->str_dollar_call), &call_method, vm)) {
+            if (!PyroMap_fast_get(class->all_instance_methods, vm->str_dollar_call, &call_method, vm)) {
                 pyro_panic(vm, "object is not callable");
                 return;
             }
@@ -317,7 +317,7 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
     }
 
     PyroValue cached_module;
-    if (PyroMap_get(vm->module_cache, pyro_obj(import_path), &cached_module, vm)) {
+    if (PyroMap_fast_get(vm->module_cache, import_path, &cached_module, vm)) {
         return PYRO_AS_MOD(cached_module);
     }
 
@@ -334,7 +334,7 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
 
     pyro_import_module(vm, name_count, names, module);
     if (vm->halt_flag) {
-        PyroMap_safe_remove(vm->module_cache, import_path, vm);
+        PyroMap_fast_remove(vm->module_cache, import_path, vm);
         return NULL;
     }
 
@@ -993,13 +993,13 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ receiver ]
             // After:  [ ... ][ field_value ]
             case PYRO_OPCODE_GET_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
+                PyroStr* field_name = READ_STRING();
                 PyroValue receiver = vm->stack_top[-1];
 
                 if (PYRO_IS_INSTANCE(receiver)) {
                     PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
                     PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                    if (PyroMap_fast_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
                         // Replace the instance with the field value.
                         vm->stack_top[-1] = instance->fields[field_index.as.i64];
                         break;
@@ -1009,14 +1009,14 @@ static void run(PyroVM* vm) {
                 if (PYRO_IS_CLASS(receiver)) {
                     PyroClass* class = PYRO_AS_CLASS(receiver);
                     PyroValue value;
-                    if (PyroMap_get(class->static_fields, field_name, &value, vm)) {
+                    if (PyroMap_fast_get(class->static_fields, field_name, &value, vm)) {
                         // Replace the class with the field value.
                         vm->stack_top[-1] = value;
                         break;
                     }
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
                 break;
             }
 
@@ -1024,18 +1024,18 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ receiver ]
             // After:  [ ... ][ field_value ]
             case PYRO_OPCODE_GET_PUB_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
+                PyroStr* field_name = READ_STRING();
                 PyroValue receiver = vm->stack_top[-1];
 
                 if (PYRO_IS_INSTANCE(receiver)) {
                     PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
                     PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
+                    if (PyroMap_fast_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
                         // Replace the instance with the field value.
                         vm->stack_top[-1] = instance->fields[field_index.as.i64];
                         break;
-                    } else if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
-                        pyro_panic(vm, "field '%s' is private", PYRO_AS_STR(field_name)->bytes);
+                    } else if (PyroMap_fast_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        pyro_panic(vm, "field '%s' is private", field_name->bytes);
                         break;
                     }
                 }
@@ -1043,7 +1043,7 @@ static void run(PyroVM* vm) {
                 if (PYRO_IS_CLASS(receiver)) {
                     PyroClass* class = PYRO_AS_CLASS(receiver);
                     PyroValue value;
-                    if (PyroMap_get(class->static_fields, field_name, &value, vm)) {
+                    if (PyroMap_fast_get(class->static_fields, field_name, &value, vm)) {
                         // Replace the class with the field value.
                         vm->stack_top[-1] = value;
                         break;
@@ -1053,12 +1053,12 @@ static void run(PyroVM* vm) {
                 if (PYRO_IS_MOD(receiver)) {
                     pyro_panic(vm,
                         "invalid field name '.%s'; receiver is a module, did you mean to use '::'?",
-                        PYRO_AS_STR(field_name)->bytes
+                        field_name->bytes
                     );
                     break;
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
                 break;
             }
 
@@ -1066,14 +1066,14 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ receiver ][ value ]
             // After:  [ ... ][ value ]
             case PYRO_OPCODE_SET_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
+                PyroStr* field_name = READ_STRING();
                 PyroValue receiver = vm->stack_top[-2];
                 PyroValue value = vm->stack_top[-1];
 
                 if (PYRO_IS_INSTANCE(receiver)) {
                     PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
                     PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                    if (PyroMap_fast_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
                         instance->fields[field_index.as.i64] = value;
                         vm->stack_top[-2] = value;
                         vm->stack_top--;
@@ -1083,15 +1083,15 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_CLASS(receiver)) {
                     PyroClass* class = PYRO_AS_CLASS(receiver);
-                    if (PyroMap_contains(class->static_fields, field_name, vm)) {
-                        PyroMap_set(class->static_fields, field_name, value, vm);
+                    if (PyroMap_contains(class->static_fields, pyro_obj(field_name), vm)) {
+                        PyroMap_set(class->static_fields, pyro_obj(field_name), value, vm);
                         vm->stack_top[-2] = value;
                         vm->stack_top--;
                         break;
                     }
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
                 break;
             }
 
@@ -1099,14 +1099,14 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ receiver ][ value ]
             // After:  [ ... ][ value ]
             case PYRO_OPCODE_SET_PUB_FIELD: {
-                PyroValue field_name = READ_CONSTANT();
+                PyroStr* field_name = READ_STRING();
                 PyroValue receiver = vm->stack_top[-2];
                 PyroValue value = vm->stack_top[-1];
 
                 if (PYRO_IS_INSTANCE(receiver)) {
                     PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
                     PyroValue field_index;
-                    if (PyroMap_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
+                    if (PyroMap_fast_get(instance->obj.class->pub_field_indexes, field_name, &field_index, vm)) {
                         instance->fields[field_index.as.i64] = value;
                         vm->stack_top[-2] = value;
                         vm->stack_top--;
@@ -1116,15 +1116,15 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_CLASS(receiver)) {
                     PyroClass* class = PYRO_AS_CLASS(receiver);
-                    if (PyroMap_contains(class->static_fields, field_name, vm)) {
-                        PyroMap_set(class->static_fields, field_name, value, vm);
+                    if (PyroMap_contains(class->static_fields, pyro_obj(field_name), vm)) {
+                        PyroMap_set(class->static_fields, pyro_obj(field_name), value, vm);
                         vm->stack_top[-2] = value;
                         vm->stack_top--;
                         break;
                     }
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", PYRO_AS_STR(field_name)->bytes);
+                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
                 break;
             }
 
@@ -1220,22 +1220,22 @@ static void run(PyroVM* vm) {
             // Before: [ ... ]
             // After:  [ ... ][ value ]
             case PYRO_OPCODE_GET_GLOBAL: {
-                PyroValue name = READ_CONSTANT();
+                PyroStr* name = READ_STRING();
 
                 PyroValue member_index;
-                if (PyroMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
+                if (PyroMap_fast_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
                     PyroValue value = frame->closure->module->members->values[member_index.as.i64];
                     pyro_push(vm, value);
                     break;
                 }
 
                 PyroValue value;
-                if (PyroMap_get(vm->superglobals, name, &value, vm)) {
+                if (PyroMap_fast_get(vm->superglobals, name, &value, vm)) {
                     pyro_push(vm, value);
                     break;
                 }
 
-                pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
+                pyro_panic(vm, "undefined variable '%s'", name->bytes);
                 break;
             }
 
@@ -1243,21 +1243,21 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ value ]
             // After:  [ ... ][ value ]
             case PYRO_OPCODE_SET_GLOBAL: {
-                PyroValue name = READ_CONSTANT();
+                PyroStr* name = READ_STRING();
                 PyroValue value = vm->stack_top[-1];
 
                 PyroValue member_index;
-                if (PyroMap_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
+                if (PyroMap_fast_get(frame->closure->module->all_member_indexes, name, &member_index, vm)) {
                     frame->closure->module->members->values[member_index.as.i64] = value;
                     break;
                 }
 
-                if (PyroMap_contains(vm->superglobals, name, vm)) {
-                    pyro_panic(vm, "cannot assign to superglobal '%s'", PYRO_AS_STR(name)->bytes);
+                if (PyroMap_contains(vm->superglobals, pyro_obj(name), vm)) {
+                    pyro_panic(vm, "cannot assign to superglobal '%s'", name->bytes);
                     break;
                 }
 
-                pyro_panic(vm, "undefined variable '%s'", PYRO_AS_STR(name)->bytes);
+                pyro_panic(vm, "undefined variable '%s'", name->bytes);
                 break;
             }
 
@@ -1458,44 +1458,44 @@ static void run(PyroVM* vm) {
             // Before: [ ... ][ module ]
             // After:  [ ... ][ value ]
             case PYRO_OPCODE_GET_MEMBER: {
-                PyroValue member_name = READ_CONSTANT();
+                PyroStr* member_name = READ_STRING();
                 PyroValue receiver = vm->stack_top[-1];
 
                 if (!PYRO_IS_MOD(receiver)) {
                     if (PYRO_IS_INSTANCE(receiver)) {
                         pyro_panic(vm,
                             "invalid member access '::%s', receiver is an object instance, did you mean to use ':'?",
-                            PYRO_AS_STR(member_name)->bytes
+                            member_name->bytes
                         );
                         break;
                     }
                     if (PYRO_IS_CLASS(receiver)) {
                         pyro_panic(vm,
                             "invalid member access '::%s', receiver is a class, did you mean to use ':'?",
-                            PYRO_AS_STR(member_name)->bytes
+                            member_name->bytes
                         );
                         break;
                     }
                     pyro_panic(vm,
                         "invalid member access '::%s', receiver is not a module",
-                        PYRO_AS_STR(member_name)->bytes
+                        member_name->bytes
                     );
                     break;
                 }
 
                 PyroMod* module = PYRO_AS_MOD(receiver);
                 PyroValue member_index;
-                if (PyroMap_get(module->pub_member_indexes, member_name, &member_index, vm)) {
+                if (PyroMap_fast_get(module->pub_member_indexes, member_name, &member_index, vm)) {
                     vm->stack_top[-1] = module->members->values[member_index.as.i64];
                     break;
                 }
 
-                if (PyroMap_get(module->all_member_indexes, member_name, &member_index, vm)) {
-                    pyro_panic(vm, "module member '%s' is private", PYRO_AS_STR(member_name)->bytes);
+                if (PyroMap_fast_get(module->all_member_indexes, member_name, &member_index, vm)) {
+                    pyro_panic(vm, "module member '%s' is private", member_name->bytes);
                     break;
                 }
 
-                pyro_panic(vm, "module has no member '%s'", PYRO_AS_STR(member_name)->bytes);
+                pyro_panic(vm, "module has no member '%s'", member_name->bytes);
                 break;
             }
 
@@ -1565,7 +1565,7 @@ static void run(PyroVM* vm) {
                 PyroClass* superclass = PYRO_AS_CLASS(vm->stack_top[-1]);
 
                 PyroValue method;
-                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+                if (!PyroMap_fast_get(superclass->all_instance_methods, method_name, &method, vm)) {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
@@ -1703,7 +1703,7 @@ static void run(PyroVM* vm) {
                 uint8_t arg_count = READ_BYTE();
 
                 PyroValue method;
-                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+                if (!PyroMap_fast_get(superclass->all_instance_methods, method_name, &method, vm)) {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
@@ -1862,7 +1862,7 @@ static void run(PyroVM* vm) {
                 }
 
                 PyroValue method;
-                if (!PyroMap_get(superclass->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+                if (!PyroMap_fast_get(superclass->all_instance_methods, method_name, &method, vm)) {
                     pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
                     break;
                 }
@@ -2194,7 +2194,7 @@ static void run(PyroVM* vm) {
                 }
 
                 if (!PyroMap_set(class->pub_instance_methods, pyro_obj(name), method, vm)) {
-                    PyroMap_safe_remove(class->all_instance_methods, name, vm);
+                    PyroMap_fast_remove(class->all_instance_methods, name, vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -2276,7 +2276,7 @@ static void run(PyroVM* vm) {
 
                 if (PyroMap_set(class->pub_field_indexes, pyro_obj(field_name), pyro_i64(field_index), vm) == 0) {
                     class->default_field_values->count--;
-                    PyroMap_safe_remove(class->all_field_indexes, field_name, vm);
+                    PyroMap_fast_remove(class->all_field_indexes, field_name, vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -2371,7 +2371,7 @@ static void run(PyroVM* vm) {
 
                 if (!PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm)) {
                     module->members->count--;
-                    PyroMap_safe_remove(module->all_member_indexes, PYRO_AS_STR(name), vm);
+                    PyroMap_fast_remove(module->all_member_indexes, PYRO_AS_STR(name), vm);
                     pyro_panic(vm, "out of memory");
                     break;
                 }
@@ -2451,7 +2451,7 @@ static void run(PyroVM* vm) {
 
                     if (!PyroMap_set(module->pub_member_indexes, name, pyro_i64(new_member_index), vm)) {
                         module->members->count--;
-                        PyroMap_safe_remove(module->all_member_indexes, PYRO_AS_STR(name), vm);
+                        PyroMap_fast_remove(module->all_member_indexes, PYRO_AS_STR(name), vm);
                         pyro_panic(vm, "out of memory");
                         break;
                     }

@@ -16,7 +16,7 @@ PyroClass* pyro_get_class(PyroVM* vm, PyroValue value) {
 PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) {
     if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
-        if (PyroMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_fast_get(PYRO_AS_CLASS(receiver)->static_methods, method_name, &method, vm)) {
             return method;
         }
         return pyro_null();
@@ -28,7 +28,7 @@ PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) 
             return class->all_instance_methods_cached_value;
         }
         PyroValue method;
-        if (PyroMap_get(class->all_instance_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_fast_get(class->all_instance_methods, method_name, &method, vm)) {
             class->all_instance_methods_cached_name = method_name;
             class->all_instance_methods_cached_value = method;
             return method;
@@ -42,7 +42,7 @@ PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) 
 PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) {
     if (PYRO_IS_CLASS(receiver)) {
         PyroValue method;
-        if (PyroMap_get(PYRO_AS_CLASS(receiver)->static_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_fast_get(PYRO_AS_CLASS(receiver)->static_methods, method_name, &method, vm)) {
             return method;
         }
         return pyro_null();
@@ -54,7 +54,7 @@ PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroStr* method_na
             return class->pub_instance_methods_cached_value;
         }
         PyroValue method;
-        if (PyroMap_get(class->pub_instance_methods, pyro_obj(method_name), &method, vm)) {
+        if (PyroMap_fast_get(class->pub_instance_methods, method_name, &method, vm)) {
             class->pub_instance_methods_cached_name = method_name;
             class->pub_instance_methods_cached_value = method;
             return method;
