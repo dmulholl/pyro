@@ -2758,3 +2758,51 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
 
     return fn;
 }
+
+
+PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id) {
+    Parser parser;
+    parser.fn_compiler = NULL;
+    parser.class_compiler = NULL;
+    parser.had_syntax_error = false;
+    parser.had_memory_error = false;
+    parser.src_id = src_id;
+    parser.vm = vm;
+    parser.num_statements = 0;
+    parser.num_expression_statements = 0;
+    parser.dump_bytecode = false;
+
+    // Strip any trailing whitespace before initializing the lexer. This is to ensure we
+    // report the correct line number for syntax errors at the end of the input.
+    while (src_len > 0 && pyro_is_space(src_code[src_len - 1])) {
+        src_len--;
+    }
+    pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
+
+    FnCompiler fn_compiler;
+    if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, make_syntoken_from_basename(src_id))) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    // Prime the token pump by reading the first token from the lexer.
+    advance(&parser);
+    if (parser.had_syntax_error) {
+        return NULL;
+    }
+
+    parse_expression(&parser, false, false);
+    emit_byte(&parser, PYRO_OPCODE_RETURN);
+
+    if (parser.had_syntax_error) {
+        return NULL;
+    }
+
+    if (parser.had_memory_error) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    PyroFn* fn = end_fn_compiler(&parser);
+    return fn;
+}

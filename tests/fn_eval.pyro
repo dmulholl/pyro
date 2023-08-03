@@ -1,0 +1,32 @@
+assert $is_err(try $eval());
+assert $is_err(try $eval(""));
+assert $is_err(try $eval(123));
+
+assert $eval(`1`) == 1;
+assert $eval(`1 + 2`) == 3;
+assert $eval(`1 + 2 * 3`) == 7;
+
+assert $eval(`"foo"`) == "foo";
+assert $eval(`"foo" + "bar"`) == "foobar";
+
+var foo = 123;
+var bar = 456;
+assert $eval("${foo} + ${bar}") == 579;
+
+var vec = $eval(`[123, 456]`);
+assert $is_vec(vec);
+assert vec:count() == 2;
+assert vec[0] == 123;
+assert vec[1] == 456;
+
+var add_func = $eval(`def(a, b) { return a + b; }`);
+assert add_func(1, 2) == 3;
+
+var add_func_result = $eval(`def(a, b) { return a + b; }(1, 2)`);
+assert add_func_result == 3;
+
+var try_pass = $eval(`try (1/2)`);
+assert try_pass == 0.5;
+
+var try_fail = $eval(`try (1/0)`);
+assert $is_err(try_fail);

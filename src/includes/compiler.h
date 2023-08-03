@@ -9,4 +9,7 @@
 // - [dump_bytecode] is a debugging flag for dumping the compiled bytecode to stdout.
 PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id, bool dump_bytecode);
 
+// Compiles a single expression into a function that returns the expression's value.
+PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len, const char* src_id);
+
 #endif

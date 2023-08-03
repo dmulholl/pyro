@@ -61,10 +61,10 @@ PyroValue pyro_call_method(PyroVM* vm, PyroValue method, uint8_t arg_count);
 // Returns the value returned by the function.
 //
 // Before calling this function the value itself and its arguments should be pushed onto the
-// stack.  These values (and the return value of the function) will be popped off the stack
+// stack. These values (and the return value of the function) will be popped off the stack
 // before this function returns.
 //
-// The called function can set the panic or exit flags so the caller should check
+// The called function can set the panic and/or exit flags so the caller should check
 // [vm->halt_flag] immediately on return before using the result. If the halt flag is set the
 // caller should clean up any allocated resources and unwind the call stack.
 //

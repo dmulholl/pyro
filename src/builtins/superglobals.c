@@ -1037,6 +1037,48 @@ static PyroValue fn_mul(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_eval(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_STR(args[0])) {
+        pyro_panic(vm, "$eval(): invalid argument [expr], expected a string");
+        return pyro_null();
+    }
+
+    PyroStr* code = PYRO_AS_STR(args[0]);
+    if (code->count == 0) {
+        pyro_panic(vm, "$eval(): invalid argument [expr], empty string");
+        return pyro_null();
+    }
+
+    PyroFn* fn = pyro_compile_expression(vm, code->bytes, code->count, "<eval>");
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    PyroMod* module = PyroMod_new(vm);
+    if (!module) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    PyroClosure* closure = PyroClosure_new(vm, fn, module);
+    if (!closure) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    if (!pyro_push(vm, pyro_obj(closure))) {
+        return pyro_null();
+    }
+
+    PyroValue result = pyro_call_function(vm, 0);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
+    return result;
+}
+
+
 /* -------- */
 /*  Public  */
 /* -------- */
@@ -1103,4 +1145,5 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$add", fn_add, 2);
     pyro_define_superglobal_fn(vm, "$sub", fn_sub, 2);
     pyro_define_superglobal_fn(vm, "$mul", fn_mul, 2);
+    pyro_define_superglobal_fn(vm, "$eval", fn_eval, 1);
 }
