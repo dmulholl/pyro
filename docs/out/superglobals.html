@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.10.2</p>
+                <p class="version">Version 0.10.5</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -268,11 +268,24 @@ Creates a new <a href="builtins/errors.html">error</a>.
 </div>
 <div>
 <dt>
+<code>$eval(expr: str) -&gt; any</code>
+</dt>
+<dd>
+<p>
+Compiles a string of Pyro code as an expression, executes it, and returns its value.
+</p>
+<p>
+Panics if the argument is not a valid expression.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$exec(code: str) -&gt; module</code> <br> <code>$exec(code: str, source_id: str) -&gt; module</code> <br> <code>$exec(code: str, source_id: str, mod: module) -&gt; module</code>
 </dt>
 <dd>
 <p>
-Executes <code>code</code> as a string of Pyro source code.
+Compiles and executes <code>code</code> as a string of Pyro code.
 </p>
 <ul>
 <li>

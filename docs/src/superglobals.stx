@@ -126,9 +126,17 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$eval(expr: str) -> any` ]]
+
+    Compiles a string of Pyro code as an expression, executes it, and returns its value.
+
+    Panics if the argument is not a valid expression.
+
+
+
 [[ `$exec(code: str) -> module` <br> `$exec(code: str, source_id: str) -> module` <br> `$exec(code: str, source_id: str, mod: module) -> module` ]]
 
-    Executes `code` as a string of Pyro source code.
+    Compiles and executes `code` as a string of Pyro code.
 
     * If a `source_id` argument is specified, it will be used to identify the code in error messages.
     * If a `module` argument is specified, the code will be executed in the context of that module. Otherwise, the code will be executed in the context of a new empty module.
