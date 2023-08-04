@@ -128,8 +128,6 @@ def pp_value(buf: buf, value: any, indent: i64, current_indent: i64) {
         pp_vec(buf, value, indent, current_indent);
     } else if $is_instance(value) {
         pp_instance(buf, value, indent, current_indent);
-    } else if $is_f64(value) {
-        buf:write($str(value));
     } else if $is_set(value) {
         pp_set(buf, value, indent, current_indent);
     } else {
