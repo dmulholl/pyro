@@ -172,8 +172,8 @@ size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char*
             // 8-bit hex-encoded byte value: \xXX.
             case 'x':
                 if (src_chars_remaining >= 4 &&
-                    pyro_is_hex_digit(src[i + 2]) &&
-                    pyro_is_hex_digit(src[i + 3])
+                    pyro_is_ascii_hex_digit(src[i + 2]) &&
+                    pyro_is_ascii_hex_digit(src[i + 3])
                 ) {
                     dst[dst_count++] = (hex_to_int(src[i + 2]) << 4) | hex_to_int(src[i + 3]);
                     i += 4;
@@ -185,10 +185,10 @@ size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char*
             // 16-bit hex-encoded unicode code point: \uXXXX. Output as utf-8.
             case 'u': {
                 if (src_chars_remaining >= 6 &&
-                    pyro_is_hex_digit(src[i + 2]) &&
-                    pyro_is_hex_digit(src[i + 3]) &&
-                    pyro_is_hex_digit(src[i + 4]) &&
-                    pyro_is_hex_digit(src[i + 5])
+                    pyro_is_ascii_hex_digit(src[i + 2]) &&
+                    pyro_is_ascii_hex_digit(src[i + 3]) &&
+                    pyro_is_ascii_hex_digit(src[i + 4]) &&
+                    pyro_is_ascii_hex_digit(src[i + 5])
                 ) {
                     uint16_t codepoint =
                         (hex_to_int(src[i + 2]) << 12) |
@@ -206,14 +206,14 @@ size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char*
             // 32-bit hex-encoded unicode code point: \UXXXXXXXX. Output as utf-8.
             case 'U': {
                 if (src_chars_remaining >= 10 &&
-                    pyro_is_hex_digit(src[i + 2]) &&
-                    pyro_is_hex_digit(src[i + 3]) &&
-                    pyro_is_hex_digit(src[i + 4]) &&
-                    pyro_is_hex_digit(src[i + 5]) &&
-                    pyro_is_hex_digit(src[i + 6]) &&
-                    pyro_is_hex_digit(src[i + 7]) &&
-                    pyro_is_hex_digit(src[i + 8]) &&
-                    pyro_is_hex_digit(src[i + 9])
+                    pyro_is_ascii_hex_digit(src[i + 2]) &&
+                    pyro_is_ascii_hex_digit(src[i + 3]) &&
+                    pyro_is_ascii_hex_digit(src[i + 4]) &&
+                    pyro_is_ascii_hex_digit(src[i + 5]) &&
+                    pyro_is_ascii_hex_digit(src[i + 6]) &&
+                    pyro_is_ascii_hex_digit(src[i + 7]) &&
+                    pyro_is_ascii_hex_digit(src[i + 8]) &&
+                    pyro_is_ascii_hex_digit(src[i + 9])
                 ) {
                     uint32_t codepoint =
                         (hex_to_int(src[i + 2]) << 28) |
@@ -457,19 +457,19 @@ PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len
 }
 
 
-bool pyro_is_alpha(char c) {
+bool pyro_is_ascii_alpha(char c) {
     if (c >= 'a' && c <= 'z') return true;
     if (c >= 'A' && c <= 'Z') return true;
     return false;
 }
 
 
-bool pyro_is_digit(char c) {
+bool pyro_is_ascii_digit(char c) {
     return c >= '0' && c <= '9';
 }
 
 
-bool pyro_is_space(char c) {
+bool pyro_is_ascii_space(char c) {
     switch (c) {
         case ' ':
         case '\f':
@@ -484,7 +484,7 @@ bool pyro_is_space(char c) {
 }
 
 
-bool pyro_is_hex_digit(char c) {
+bool pyro_is_ascii_hex_digit(char c) {
     if (c >= '0' && c <= '9') return true;
     if (c >= 'A' && c <= 'F') return true;
     if (c >= 'a' && c <= 'f') return true;
@@ -492,31 +492,31 @@ bool pyro_is_hex_digit(char c) {
 }
 
 
-bool pyro_is_octal_digit(char c) {
+bool pyro_is_ascii_octal_digit(char c) {
     if (c >= '0' && c <= '7') return true;
     return false;
 }
 
 
-bool pyro_is_binary_digit(char c) {
+bool pyro_is_ascii_binary_digit(char c) {
     if (c == '0' || c == '1') return true;
     return false;
 }
 
 
-bool pyro_is_printable(char c) {
+bool pyro_is_ascii_printable(char c) {
     if (c >= 32 && c <= 126) return true;
     return false;
 }
 
 
-bool pyro_is_lower(char c) {
+bool pyro_is_ascii_lower(char c) {
     if (c >= 'a' && c <= 'z') return true;
     return false;
 }
 
 
-bool pyro_is_upper(char c) {
+bool pyro_is_ascii_upper(char c) {
     if (c >= 'A' && c <= 'Z') return true;
     return false;
 }

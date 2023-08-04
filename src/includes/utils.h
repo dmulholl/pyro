@@ -69,31 +69,31 @@ static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, 
 }
 
 // Returns true if [c] is ASCII A-Z or a-z.
-bool pyro_is_alpha(char c);
+bool pyro_is_ascii_alpha(char c);
 
 // Returns true if [c] is ASCII 0-9.
-bool pyro_is_digit(char c);
+bool pyro_is_ascii_digit(char c);
 
 // Returns true if [c] is an ASCII whitespace character.
-bool pyro_is_space(char c);
+bool pyro_is_ascii_space(char c);
 
 // Returns true if [c] is an ASCII hexadecimal digit.
-bool pyro_is_hex_digit(char c);
+bool pyro_is_ascii_hex_digit(char c);
 
 // Returns true if [c] is an ASCII octal digit.
-bool pyro_is_octal_digit(char c);
+bool pyro_is_ascii_octal_digit(char c);
 
 // Returns true if [c] is an ASCII binary digit.
-bool pyro_is_binary_digit(char c);
+bool pyro_is_ascii_binary_digit(char c);
 
 // Returns true if [c] is a printable ASCII character.
-bool pyro_is_printable(char c);
+bool pyro_is_ascii_printable(char c);
 
 // Returns true if [c] is a lowercase ASCII character.
-bool pyro_is_lower(char c);
+bool pyro_is_ascii_lower(char c);
 
 // Returns true if [c] is an uppercase ASCII character.
-bool pyro_is_upper(char c);
+bool pyro_is_ascii_upper(char c);
 
 // Like C23's ckd_add(). Returns true if the result would overflow.
 bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b);

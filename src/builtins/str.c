@@ -1263,7 +1263,7 @@ static PyroValue str_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args)
 
     for (size_t i = 0; i < str->count; i++) {
         char c = str->bytes[i];
-        if (!pyro_is_hex_digit(c)) {
+        if (!pyro_is_ascii_hex_digit(c)) {
             return pyro_bool(false);
         }
     }
