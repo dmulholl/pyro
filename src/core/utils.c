@@ -524,6 +524,12 @@ bool pyro_is_ascii_upper(char c) {
 
 // Like C23's ckd_add(). Returns true if the result would overflow.
 bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b) {
+    #if defined __has_builtin
+        #if __has_builtin(__builtin_add_overflow)
+            return __builtin_add_overflow(a, b, result);
+        #endif
+    #endif
+
     if (b > 0 && a > INT64_MAX - b) {
         return true;
     }
@@ -539,6 +545,12 @@ bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b) {
 
 // Like C23's ckd_sub(). Returns true if the result would overflow.
 bool pyro_ckd_sub(int64_t* result, int64_t a, int64_t b) {
+    #if defined __has_builtin
+        #if __has_builtin(__builtin_sub_overflow)
+            return __builtin_sub_overflow(a, b, result);
+        #endif
+    #endif
+
     if (b < 0 && a > INT64_MAX + b) {
         return true;
     }
@@ -554,6 +566,12 @@ bool pyro_ckd_sub(int64_t* result, int64_t a, int64_t b) {
 
 // Like C23's ckd_mul(). Returns true if the result would overflow.
 bool pyro_ckd_mul(int64_t* result, int64_t a, int64_t b) {
+    #if defined __has_builtin
+        #if __has_builtin(__builtin_mul_overflow)
+            return __builtin_mul_overflow(a, b, result);
+        #endif
+    #endif
+
     if (a == 0 || b == 0) {
         *result = 0;
         return false;
