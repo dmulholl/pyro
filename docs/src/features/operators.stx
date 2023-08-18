@@ -70,7 +70,7 @@ The logical operators are `||` (OR), `&&` (AND), and `!` (NOT). They evaluate th
 
 In Pyro, the values `false`, `null`, and `err` are *falsey*; all other values are *truthy*.
 
-The logical operators `||` and `&&` are short-circuiting.
+The logical operators `||` and `&&` are value-preserving and short-circuiting.
 
 The value of the logical-OR expression `a || b` is the value of the first operand if that operand is *truthy*, otherwise the value of the second operand.
 

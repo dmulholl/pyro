@@ -338,7 +338,7 @@ The logical operators are <code>||</code> (OR), <code>&amp;&amp;</code> (AND), a
 In Pyro, the values <code>false</code>, <code>null</code>, and <code>err</code> are <i>falsey</i>; all other values are <i>truthy</i>.
 </p>
 <p>
-The logical operators <code>||</code> and <code>&amp;&amp;</code> are short-circuiting.
+The logical operators <code>||</code> and <code>&amp;&amp;</code> are value-preserving and short-circuiting.
 </p>
 <p>
 The value of the logical-OR expression <code>a || b</code> is the value of the first operand if that operand is <i>truthy</i>, otherwise the value of the second operand.
