@@ -56,6 +56,9 @@
             </header>
             <ul class="stx-toc">
 <li>
+<a href="#tuple-literals">Tuple Literals</a>
+</li>
+<li>
 <a href="#equality">Equality</a>
 </li>
 <li>
@@ -81,7 +84,7 @@ A tuple, <code>tup</code>, is an immutable array of values.
 <dl>
 <div>
 <dt>
-<code>$tup() -&gt; tup</code> <br> <code>$tup(arg1: any, arg2: any, ...) -&gt; tup</code>
+<code>$tup(*args: any) -&gt; tup</code>
 </dt>
 <dd>
 <p>
@@ -91,17 +94,40 @@ The arguments provide the tuple's values.
 </dd>
 </div>
 </dl>
+<h3 id="tuple-literals">
+Tuple Literals
+</h3>
 <p>
-Note that trailing commas are allowed in function calls, e.g
+You can create a tuple using literal syntax, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">tup</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span>
+<span class="kd">var</span> <span class="nx">tup</span> <span class="p">=</span> <span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">);</span>
+</pre>
+<p>
+Trailing commas are allowed, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">tup</span> <span class="p">=</span> <span class="p">(</span>
     <span class="s">&quot;foo&quot;</span><span class="p">,</span>
     <span class="s">&quot;bar&quot;</span><span class="p">,</span>
     <span class="s">&quot;baz&quot;</span><span class="p">,</span>
 <span class="p">);</span>
-
-<span class="k">assert</span> <span class="nx">tup</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">);</span>
+</pre>
+<p>
+The empty literal <code>()</code> will create an empty tuple.
+</p>
+<p>
+Note that parentheses containing a single expression will be parsed as grouping parentheses, not as a tuple literal, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
+</pre>
+<p>
+To create a single-valued tuple, either use the <code>$tup()</code> function or add a trailing comma, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">tup1</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">tup2</span> <span class="p">=</span> <span class="p">(</span><span class="mi">123</span><span class="p">,);</span>
 </pre>
 <h3 id="equality">
 Equality
@@ -121,7 +147,7 @@ Comparison
 You can compare tuples using the comparison operators, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">&lt;</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="k">assert</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
 </pre>
 <p>
 Tuples are compared lexicographically by element.
@@ -153,7 +179,7 @@ Iterating
 Tuples are iterable, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
@@ -164,7 +190,7 @@ Containment
 You can check if a tuple contains an item using the <code>in</code> operator, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">if</span> <span class="mi">123</span> <span class="k">in</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="mi">123</span> <span class="k">in</span> <span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;found&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>

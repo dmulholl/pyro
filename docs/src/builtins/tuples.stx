@@ -9,22 +9,41 @@ meta_title: Pyro &mdash; Tuples
 
 A tuple, `tup`, is an immutable array of values.
 
-[[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
+[[ `$tup(*args: any) -> tup` ]]
 
     Creates a new `tup` object.
     The arguments provide the tuple's values.
 
 
-Note that trailing commas are allowed in function calls, e.g
+
+### Tuple Literals
+
+You can create a tuple using literal syntax, e.g.
 
 ::: code pyro
-    var tup = $tup(
+    var tup = ("foo", "bar", "baz");
+
+Trailing commas are allowed, e.g.
+
+::: code pyro
+    var tup = (
         "foo",
         "bar",
         "baz",
     );
 
-    assert tup == $tup("foo", "bar", "baz");
+The empty literal `()` will create an empty tuple.
+
+Note that parentheses containing a single expression will be parsed as grouping parentheses, not as a tuple literal, e.g.
+
+::: code pyro
+    assert (123) == 123;
+
+To create a single-valued tuple, either use the `$tup()` function or add a trailing comma, e.g.
+
+::: code pyro
+    var tup1 = $tup(123);
+    var tup2 = (123,);
 
 
 
@@ -45,7 +64,7 @@ Tuples compare as equal using the `==` operator if they have the same length and
 You can compare tuples using the comparison operators, `<`, `<=`, `>`, `>=`, e.g.
 
 ::: code pyro
-    assert $tup(1, 2, 3) < $tup(1, 2, 4);
+    assert (1, 2, 3) < (1, 2, 4);
 
 Tuples are compared lexicographically by element.
 A comparison will panic if the elements are not comparable.
@@ -75,7 +94,7 @@ Indices are zero-based. Indexing is equivalent to using the tuple's `:get()` met
 Tuples are iterable, e.g.
 
 ::: code pyro
-    for item in $tup(123, 456, 789) {
+    for item in (123, 456, 789) {
         echo item;
     }
 
@@ -86,7 +105,7 @@ Tuples are iterable, e.g.
 You can check if a tuple contains an item using the `in` operator, e.g.
 
 ::: code pyro
-    if 123 in $tup(123, 456, 789) {
+    if 123 in (123, 456, 789) {
         echo "found";
     }
 

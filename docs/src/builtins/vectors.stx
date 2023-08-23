@@ -34,6 +34,8 @@ Trailing commas are allowed, e.g.
         "baz",
     ];
 
+The empty literal `[]` will create an empty vector.
+
 
 
 ### Indexing
