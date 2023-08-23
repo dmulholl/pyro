@@ -25,7 +25,7 @@ Pyro is a classic braces-and-semicolons language. If you've used any C-family la
 * Take Pyro for a test drive with the [quickstart tutorial][2].
 * Learn more about the language by taking the [tour][3].
 
-Pyro is an experimental language that's still under development --- you should only write
+Pyro is an experimental language that's still under development &mdash; you should only write
 the control code for your pacemaker/anti-ballistic missile defence system in it if you're feeling particularly adventurous.
 
 
