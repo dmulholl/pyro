@@ -20,7 +20,7 @@ Pyro is a classic braces-and-semicolons language. If you've used any C-family la
 
 
 
-### Getting Started
+## Getting Started
 
 * Take Pyro for a test drive with the [quickstart tutorial][2].
 * Learn more about the language by taking the [tour][3].
@@ -30,7 +30,7 @@ the control code for your pacemaker/anti-ballistic missile defence system in it 
 
 
 
-### Design Goals
+## Design Goals
 
 * *Legibility* &mdash; Pyro code should be easy to read and understand.
 * *Simplicity* &mdash; Common problems should have simple solutions.
@@ -38,7 +38,7 @@ the control code for your pacemaker/anti-ballistic missile defence system in it 
 
 
 
-### Internals
+## Internals
 
 * Pyro compiles source code into bytecode which it executes using a stack-based VM.
 
@@ -46,6 +46,6 @@ the control code for your pacemaker/anti-ballistic missile defence system in it 
 
 
 
-### License
+## License
 
 Zero-Clause BSD (0BSD).
