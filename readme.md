@@ -41,7 +41,6 @@ the control code for your pacemaker/anti-ballistic missile defence system in it 
 ## Internals
 
 * Pyro compiles source code into bytecode which it executes using a stack-based VM.
-
 * Pyro manages memory using a simple mark-and-sweep garbage collector.
 
 
