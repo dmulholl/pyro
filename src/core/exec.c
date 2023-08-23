@@ -2065,6 +2065,29 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Pushes a new tup object onto the stack.
+            // Before: [ ... ][ value1 ][ value2 ][ value3 ]
+            // After:  [ ... ][ tup ]
+            case PYRO_OPCODE_MAKE_TUP: {
+                uint16_t item_count = READ_BE_U16();
+
+                PyroTup* tup = PyroTup_new(item_count, vm);
+                if (!tup) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+
+                if (item_count == 0) {
+                    pyro_push(vm, pyro_obj(tup));
+                    break;
+                }
+
+                memcpy(tup->values, vm->stack_top - item_count, sizeof(PyroValue) * item_count);
+                vm->stack_top -= item_count;
+                pyro_push(vm, pyro_obj(tup));
+                break;
+            }
+
             // Pushes a new vec object onto the stack.
             // Before: [ ... ][ value1 ][ value2 ][ value3 ]
             // After:  [ ... ][ vec ]

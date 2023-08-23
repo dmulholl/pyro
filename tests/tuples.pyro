@@ -127,3 +127,24 @@ def $test_in() {
     assert false == "abc" in tup;
     assert !("abc" in tup);
 }
+
+def $test_tuple_literals() {
+    assert $is_tup(());
+    assert ():count() == 0;
+    assert () == ();
+
+    assert !$is_tup((123));
+    assert (123) == 123;
+
+    assert $is_tup((123,));
+    assert (123,) == $tup(123);
+    assert (123,):count() == 1;
+
+    assert $is_tup((123, 456));
+    assert (123, 456) == $tup(123, 456);
+    assert (123, 456):count() == 2;
+
+    assert $is_tup((123, 456,));
+    assert (123, 456,) == $tup(123, 456);
+    assert (123, 456,):count() == 2;
+}

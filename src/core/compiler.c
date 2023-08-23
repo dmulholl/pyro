@@ -987,20 +987,23 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
     if (can_assign && match(parser, TOKEN_EQUAL)) {
         parse_expression(parser, true, true);
         emit_store_named_variable(parser, name);
+    }
 
-    } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
+    else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
         emit_load_named_variable(parser, name);
         parse_expression(parser, true, true);
         emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
         emit_store_named_variable(parser, name);
+    }
 
-    } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
+    else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
         emit_load_named_variable(parser, name);
         parse_expression(parser, true, true);
         emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
         emit_store_named_variable(parser, name);
+    }
 
-    } else {
+    else {
         emit_load_named_variable(parser, name);
     }
 }
@@ -1121,10 +1124,33 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
     }
 
     else if (match(parser, TOKEN_LEFT_PAREN)) {
+        if (match(parser, TOKEN_RIGHT_PAREN)) {
+            emit_byte(parser, PYRO_OPCODE_MAKE_TUP);
+            emit_u16be(parser, 0);
+            return token_type;
+        }
+
         parse_expression(parser, can_assign_in_parens, can_assign_in_parens);
+
+        if (match(parser, TOKEN_COMMA)) {
+            uint16_t count = 1;
+            do {
+                if (check(parser, TOKEN_RIGHT_PAREN)) {
+                    break;
+                }
+                parse_expression(parser, true, true);
+                count++;
+            } while (match(parser, TOKEN_COMMA));
+            consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after tuple literal");
+            emit_byte(parser, PYRO_OPCODE_MAKE_TUP);
+            emit_u16be(parser, count);
+            return token_type;
+        }
+
         if (match_assignment_token(parser) && !can_assign_in_parens) {
             ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
         }
+
         consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after expression");
     }
 

@@ -1107,6 +1107,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_MAKE_MAP:
         case PYRO_OPCODE_MAKE_SET:
         case PYRO_OPCODE_MAKE_VEC:
+        case PYRO_OPCODE_MAKE_TUP:
         case PYRO_OPCODE_POP_JUMP_IF_FALSE:
         case PYRO_OPCODE_SET_FIELD:
         case PYRO_OPCODE_SET_PUB_FIELD:
