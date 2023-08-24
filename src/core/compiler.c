@@ -120,10 +120,10 @@ typedef enum Access {
 /* -------------------- */
 
 
-static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in_parens);
+static void parse_expression(Parser* parser, bool can_assign);
+static void parse_unary_expr(Parser* parser, bool can_assign);
 static void parse_statement(Parser* parser);
 static void parse_function_definition(Parser* parser, FnType type, Token name);
-static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens);
 static void parse_type(Parser* parser);
 
 
@@ -672,7 +672,7 @@ static uint8_t parse_argument_list(Parser* parser, bool* unpack_last_argument) {
         if (match(parser, TOKEN_STAR)) {
             unpack = true;
         }
-        parse_expression(parser, false, true);
+        parse_expression(parser, false);
         if (arg_count == 255) {
             ERROR_AT_PREVIOUS_TOKEN("too many arguments (max: 255)");
         }
@@ -940,16 +940,16 @@ static void parse_map_or_set_literal(Parser* parser) {
         if (check(parser, TOKEN_RIGHT_BRACE)) {
             break;
         }
-        parse_expression(parser, false, true);
+        parse_expression(parser, false);
         if (count == 0) {
             if (match(parser, TOKEN_EQUAL)) {
-                parse_expression(parser, false, true);
+                parse_expression(parser, false);
             } else {
                 is_map = false;
             }
         } else if (is_map) {
             consume(parser, TOKEN_EQUAL, "expected '=' after key");
-            parse_expression(parser, false, true);
+            parse_expression(parser, false);
         }
         count++;
     } while (match(parser, TOKEN_COMMA));
@@ -972,7 +972,7 @@ static void parse_vec_literal(Parser* parser) {
         if (check(parser, TOKEN_RIGHT_BRACKET)) {
             break;
         }
-        parse_expression(parser, false, true);
+        parse_expression(parser, true);
         count++;
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' after vector literal");
@@ -985,20 +985,20 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
     Token name = parser->previous_token;
 
     if (can_assign && match(parser, TOKEN_EQUAL)) {
-        parse_expression(parser, true, true);
+        parse_expression(parser, true);
         emit_store_named_variable(parser, name);
     }
 
     else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
         emit_load_named_variable(parser, name);
-        parse_expression(parser, true, true);
+        parse_expression(parser, true);
         emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
         emit_store_named_variable(parser, name);
     }
 
     else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
         emit_load_named_variable(parser, name);
-        parse_expression(parser, true, true);
+        parse_expression(parser, true);
         emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
         emit_store_named_variable(parser, name);
     }
@@ -1083,7 +1083,7 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
 }
 
 
-static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
+static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     TokenType token_type = parser->next_token.type;
 
     if (match(parser, TOKEN_TRUE)) {
@@ -1130,7 +1130,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
             return token_type;
         }
 
-        parse_expression(parser, can_assign_in_parens, can_assign_in_parens);
+        parse_expression(parser, true);
 
         if (match(parser, TOKEN_COMMA)) {
             uint16_t count = 1;
@@ -1138,17 +1138,13 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
                 if (check(parser, TOKEN_RIGHT_PAREN)) {
                     break;
                 }
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
                 count++;
             } while (match(parser, TOKEN_COMMA));
             consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after tuple literal");
             emit_byte(parser, PYRO_OPCODE_MAKE_TUP);
             emit_u16be(parser, count);
             return token_type;
-        }
-
-        if (match_assignment_token(parser) && !can_assign_in_parens) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
         }
 
         consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after expression");
@@ -1186,7 +1182,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
         uint16_t string_count = 1;
 
         while (true) {
-            parse_expression(parser, false, false);
+            parse_expression(parser, false);
             if (parser->had_syntax_error || parser->had_memory_error) {
                 return TOKEN_UNDEFINED;
             }
@@ -1334,8 +1330,8 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign, bool can_as
 }
 
 
-static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    TokenType last_token_type = parse_primary_expr(parser, can_assign, can_assign_in_parens);
+static void parse_call_expr(Parser* parser, bool can_assign) {
+    TokenType last_token_type = parse_primary_expr(parser, can_assign);
 
     while (true) {
         if (match(parser, TOKEN_LEFT_PAREN)) {
@@ -1363,21 +1359,21 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
         }
 
         else if (match(parser, TOKEN_LEFT_BRACKET)) {
-            parse_expression(parser, true, true);
+            parse_expression(parser, true);
             consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' after index");
             if (can_assign && match(parser, TOKEN_EQUAL)) {
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
                 emit_byte(parser, PYRO_OPCODE_SET_INDEX);
             } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
                 emit_byte(parser, PYRO_OPCODE_DUP_2);
                 emit_byte(parser, PYRO_OPCODE_GET_INDEX);
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
                 emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
                 emit_byte(parser, PYRO_OPCODE_SET_INDEX);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
                 emit_byte(parser, PYRO_OPCODE_DUP_2);
                 emit_byte(parser, PYRO_OPCODE_GET_INDEX);
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
                 emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
                 emit_byte(parser, PYRO_OPCODE_SET_INDEX);
             } else {
@@ -1391,18 +1387,18 @@ static void parse_call_expr(Parser* parser, bool can_assign, bool can_assign_in_
             consume(parser, TOKEN_IDENTIFIER, "expected a field name after '.'");
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
             if (can_assign && match(parser, TOKEN_EQUAL)) {
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
                 emit_u8_u16be(parser, set_opcode, index);
             } else if (can_assign && match(parser, TOKEN_PLUS_EQUAL)) {
                 emit_byte(parser, PYRO_OPCODE_DUP);
                 emit_u8_u16be(parser, get_opcode, index);
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
                 emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
                 emit_u8_u16be(parser, set_opcode, index);
             } else if (can_assign && match(parser, TOKEN_MINUS_EQUAL)) {
                 emit_byte(parser, PYRO_OPCODE_DUP);
                 emit_u8_u16be(parser, get_opcode, index);
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
                 emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
                 emit_u8_u16be(parser, set_opcode, index);
             } else {
@@ -1458,7 +1454,7 @@ static void parse_try_expr(Parser* parser) {
     }
 
     begin_scope(parser);
-    parse_unary_expr(parser, false, true);
+    parse_unary_expr(parser, false);
     emit_byte(parser, PYRO_OPCODE_RETURN);
 
     PyroFn* fn = end_fn_compiler(parser);
@@ -1471,54 +1467,54 @@ static void parse_try_expr(Parser* parser) {
 }
 
 
-static void parse_power_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_call_expr(parser, can_assign, can_assign_in_parens);
+static void parse_power_expr(Parser* parser, bool can_assign) {
+    parse_call_expr(parser, can_assign);
     if (match(parser, TOKEN_STAR_STAR)) {
-        parse_unary_expr(parser, false, can_assign_in_parens);
+        parse_unary_expr(parser, false);
         emit_byte(parser, PYRO_OPCODE_BINARY_STAR_STAR);
     }
 }
 
 
-static void parse_unary_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
+static void parse_unary_expr(Parser* parser, bool can_assign) {
     if (match(parser, TOKEN_MINUS)) {
-        parse_unary_expr(parser, false, can_assign_in_parens);
+        parse_unary_expr(parser, false);
         emit_byte(parser, PYRO_OPCODE_UNARY_MINUS);
     } else if (match(parser, TOKEN_PLUS)) {
-        parse_unary_expr(parser, false, can_assign_in_parens);
+        parse_unary_expr(parser, false);
         emit_byte(parser, PYRO_OPCODE_UNARY_PLUS);
     } else if (match(parser, TOKEN_BANG)) {
-        parse_unary_expr(parser, false, can_assign_in_parens);
+        parse_unary_expr(parser, false);
         emit_byte(parser, PYRO_OPCODE_UNARY_BANG);
     } else if (match(parser, TOKEN_TRY)) {
         parse_try_expr(parser);
         emit_byte(parser, PYRO_OPCODE_TRY);
     } else if (match(parser, TOKEN_TILDE)) {
-        parse_unary_expr(parser, false, can_assign_in_parens);
+        parse_unary_expr(parser, false);
         emit_byte(parser, PYRO_OPCODE_UNARY_TILDE);
     } else {
-        parse_power_expr(parser, can_assign, can_assign_in_parens);
+        parse_power_expr(parser, can_assign);
     }
 }
 
 
-static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_unary_expr(parser, can_assign, can_assign_in_parens);
+static void parse_bitwise_expr(Parser* parser, bool can_assign) {
+    parse_unary_expr(parser, can_assign);
     while (true) {
         if (match(parser, TOKEN_CARET)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_unary_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_CARET);
         } else if (match(parser, TOKEN_AMP)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_unary_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_AMP);
         } else if (match(parser, TOKEN_BAR)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_unary_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_BAR);
         } else if (match(parser, TOKEN_LESS_LESS)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_unary_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_LESS_LESS);
         } else if (match(parser, TOKEN_GREATER_GREATER)) {
-            parse_unary_expr(parser, false, can_assign_in_parens);
+            parse_unary_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_GREATER_GREATER);
         } else {
             break;
@@ -1527,20 +1523,20 @@ static void parse_bitwise_expr(Parser* parser, bool can_assign, bool can_assign_
 }
 
 
-static void parse_multiplicative_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_bitwise_expr(parser, can_assign, can_assign_in_parens);
+static void parse_multiplicative_expr(Parser* parser, bool can_assign) {
+    parse_bitwise_expr(parser, can_assign);
     while (true) {
         if (match(parser, TOKEN_STAR)) {
-            parse_bitwise_expr(parser, false, can_assign_in_parens);
+            parse_bitwise_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_STAR);
         } else if (match(parser, TOKEN_SLASH)) {
-            parse_bitwise_expr(parser, false, can_assign_in_parens);
+            parse_bitwise_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_SLASH);
         } else if (match(parser, TOKEN_SLASH_SLASH)) {
-            parse_bitwise_expr(parser, false, can_assign_in_parens);
+            parse_bitwise_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_SLASH_SLASH);
         } else if (match(parser, TOKEN_PERCENT)) {
-            parse_bitwise_expr(parser, false, can_assign_in_parens);
+            parse_bitwise_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_PERCENT);
         } else {
             break;
@@ -1549,14 +1545,14 @@ static void parse_multiplicative_expr(Parser* parser, bool can_assign, bool can_
 }
 
 
-static void parse_additive_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_multiplicative_expr(parser, can_assign, can_assign_in_parens);
+static void parse_additive_expr(Parser* parser, bool can_assign) {
+    parse_multiplicative_expr(parser, can_assign);
     while (true) {
         if (match(parser, TOKEN_PLUS)) {
-            parse_multiplicative_expr(parser, false, can_assign_in_parens);
+            parse_multiplicative_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_PLUS);
         } else if (match(parser, TOKEN_MINUS)) {
-            parse_multiplicative_expr(parser, false, can_assign_in_parens);
+            parse_multiplicative_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
         } else {
             break;
@@ -1565,23 +1561,23 @@ static void parse_additive_expr(Parser* parser, bool can_assign, bool can_assign
 }
 
 
-static void parse_comparative_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_additive_expr(parser, can_assign, can_assign_in_parens);
+static void parse_comparative_expr(Parser* parser, bool can_assign) {
+    parse_additive_expr(parser, can_assign);
     while (true) {
         if (match(parser, TOKEN_GREATER)) {
-            parse_additive_expr(parser, false, can_assign_in_parens);
+            parse_additive_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_GREATER);
         } else if (match(parser, TOKEN_GREATER_EQUAL)) {
-            parse_additive_expr(parser, false, can_assign_in_parens);
+            parse_additive_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_GREATER_EQUAL);
         } else if (match(parser, TOKEN_LESS)) {
-            parse_additive_expr(parser, false, can_assign_in_parens);
+            parse_additive_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_LESS);
         } else if (match(parser, TOKEN_LESS_EQUAL)) {
-            parse_additive_expr(parser, false, can_assign_in_parens);
+            parse_additive_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_LESS_EQUAL);
         } else if (match(parser, TOKEN_IN)) {
-            parse_additive_expr(parser, false, can_assign_in_parens);
+            parse_additive_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_IN);
         } else {
             break;
@@ -1590,14 +1586,14 @@ static void parse_comparative_expr(Parser* parser, bool can_assign, bool can_ass
 }
 
 
-static void parse_equality_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_comparative_expr(parser, can_assign, can_assign_in_parens);
+static void parse_equality_expr(Parser* parser, bool can_assign) {
+    parse_comparative_expr(parser, can_assign);
     while (true) {
         if (match(parser, TOKEN_EQUAL_EQUAL)) {
-            parse_comparative_expr(parser, false, can_assign_in_parens);
+            parse_comparative_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_EQUAL_EQUAL);
         } else if (match(parser, TOKEN_BANG_EQUAL)) {
-            parse_comparative_expr(parser, false, can_assign_in_parens);
+            parse_comparative_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_BANG_EQUAL);
         } else {
             break;
@@ -1608,33 +1604,33 @@ static void parse_equality_expr(Parser* parser, bool can_assign, bool can_assign
 
 // The logical operators && and || are short-circuiting and leave behind a truthy or falsey
 // operand to indicate their result.
-static void parse_logical_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_equality_expr(parser, can_assign, can_assign_in_parens);
+static void parse_logical_expr(Parser* parser, bool can_assign) {
+    parse_equality_expr(parser, can_assign);
     while (true) {
         if (match(parser, TOKEN_AMP_AMP)) {
             size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_FALSE);
             emit_byte(parser, PYRO_OPCODE_POP);
-            parse_equality_expr(parser, false, can_assign_in_parens);
+            parse_equality_expr(parser, false);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_BAR_BAR)) {
             size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_TRUE);
             emit_byte(parser, PYRO_OPCODE_POP);
-            parse_equality_expr(parser, false, can_assign_in_parens);
+            parse_equality_expr(parser, false);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_HOOK_HOOK)) {
             size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_NOT_NULL);
             emit_byte(parser, PYRO_OPCODE_POP);
-            parse_equality_expr(parser, false, can_assign_in_parens);
+            parse_equality_expr(parser, false);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_BANG_BANG)) {
             size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_NOT_ERR);
             emit_byte(parser, PYRO_OPCODE_POP);
-            parse_equality_expr(parser, false, can_assign_in_parens);
+            parse_equality_expr(parser, false);
             patch_jump(parser, jump_to_end);
         } else if (match(parser, TOKEN_ELSE)) {
             size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY);
             emit_byte(parser, PYRO_OPCODE_POP);
-            parse_equality_expr(parser, false, can_assign_in_parens);
+            parse_equality_expr(parser, false);
             patch_jump(parser, jump_to_end);
         } else {
             break;
@@ -1643,24 +1639,24 @@ static void parse_logical_expr(Parser* parser, bool can_assign, bool can_assign_
 }
 
 
-static void parse_conditional_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_logical_expr(parser, can_assign, can_assign_in_parens);
+static void parse_conditional_expr(Parser* parser, bool can_assign) {
+    parse_logical_expr(parser, can_assign);
     if (match(parser, TOKEN_HOOK)) {
         size_t jump_to_false_branch = emit_jump(parser, PYRO_OPCODE_JUMP_IF_FALSE);
         emit_byte(parser, PYRO_OPCODE_POP);
-        parse_logical_expr(parser, false, can_assign_in_parens);
+        parse_logical_expr(parser, false);
         size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP);
         consume(parser, TOKEN_COLON_BAR, "expected ':|' after condition");
         patch_jump(parser, jump_to_false_branch);
         emit_byte(parser, PYRO_OPCODE_POP);
-        parse_logical_expr(parser, false, can_assign_in_parens);
+        parse_logical_expr(parser, false);
         patch_jump(parser, jump_to_end);
     }
 }
 
 
-static void parse_assignment_expr(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_conditional_expr(parser, can_assign, can_assign_in_parens);
+static void parse_assignment_expr(Parser* parser, bool can_assign) {
+    parse_conditional_expr(parser, can_assign);
 
     if (can_assign && match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
@@ -1668,8 +1664,8 @@ static void parse_assignment_expr(Parser* parser, bool can_assign, bool can_assi
 }
 
 
-static void parse_expression(Parser* parser, bool can_assign, bool can_assign_in_parens) {
-    parse_assignment_expr(parser, can_assign, can_assign_in_parens);
+static void parse_expression(Parser* parser, bool can_assign) {
+    parse_assignment_expr(parser, can_assign);
 }
 
 
@@ -1741,7 +1737,7 @@ static void parse_echo_stmt(Parser* parser) {
         return;
     }
 
-    parse_expression(parser, true, true);
+    parse_expression(parser, true);
     count++;
 
     while (match(parser, TOKEN_COMMA)) {
@@ -1749,7 +1745,7 @@ static void parse_echo_stmt(Parser* parser) {
             ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'echo' (max: 255)");
             return;
         }
-        parse_expression(parser, true, true);
+        parse_expression(parser, true);
         count++;
     }
 
@@ -1759,7 +1755,7 @@ static void parse_echo_stmt(Parser* parser) {
 
 
 static void parse_assert_stmt(Parser* parser) {
-    parse_expression(parser, false, true);
+    parse_expression(parser, false);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
             "assignment is not allowed in 'assert' statements, wrap in '()' to enable"
@@ -1781,7 +1777,7 @@ static void parse_typedef_stmt(Parser* parser) {
 
 
 static void parse_expression_stmt(Parser* parser) {
-    parse_expression(parser, true, true);
+    parse_expression(parser, true);
     consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
     emit_byte(parser, PYRO_OPCODE_POP);
 }
@@ -1806,7 +1802,7 @@ static void parse_unpacking_declaration(Parser* parser, Access access) {
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after variable names");
     consume(parser, TOKEN_EQUAL, "expected '=' after variable list");
 
-    parse_expression(parser, true, true);
+    parse_expression(parser, true);
     emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_name_count);
 
     define_variables(parser, var_name_indexes, var_name_count, access);
@@ -1823,7 +1819,7 @@ static void parse_var_declaration(Parser* parser, Access access) {
                 parse_type(parser);
             }
             if (match(parser, TOKEN_EQUAL)) {
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
             } else {
                 emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
             }
@@ -1958,7 +1954,7 @@ static void parse_if_stmt(Parser* parser) {
     }
 
     // Parse the condition.
-    parse_expression(parser, false, true);
+    parse_expression(parser, false);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
             "assignment is not allowed in 'if' conditions, wrap in '()' to enable"
@@ -2046,7 +2042,7 @@ static void parse_for_in_stmt(Parser* parser) {
     consume(parser, TOKEN_IN, "expected keyword 'in'");
 
     // This is the object we'll be iterating over.
-    parse_expression(parser, true, true);
+    parse_expression(parser, true);
     consume(parser, TOKEN_LEFT_BRACE, "expected '{' before the loop body");
 
     // Replace the object on top of the stack with the result of calling :$iter() on it.
@@ -2133,7 +2129,13 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     size_t exit_jump_index = 0;
     if (!match(parser, TOKEN_SEMICOLON)) {
         loop_has_condition = true;
-        parse_expression(parser, false, true);
+        parse_expression(parser, false);
+        if (match_assignment_token(parser)) {
+            ERROR_AT_PREVIOUS_TOKEN(
+                "assignment is not allowed in 'loop' conditions, wrap in '()' to enable"
+            );
+            return;
+        }
         consume(parser, TOKEN_SEMICOLON, "expected ';' after loop condition");
         exit_jump_index = emit_jump(parser, PYRO_OPCODE_POP_JUMP_IF_FALSE);
     }
@@ -2143,7 +2145,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         size_t body_jump_index = emit_jump(parser, PYRO_OPCODE_JUMP);
 
         size_t increment_index = parser->fn_compiler->fn->code_count;
-        parse_expression(parser, true, true);
+        parse_expression(parser, true);
         emit_byte(parser, PYRO_OPCODE_POP);
         consume(parser, TOKEN_LEFT_BRACE, "expected '{' before loop body");
 
@@ -2231,7 +2233,7 @@ static void parse_while_stmt(Parser* parser) {
     parser->fn_compiler->loop_compiler = &loop;
 
     // Parse the condition.
-    parse_expression(parser, false, true);
+    parse_expression(parser, false);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
             "assignment is not allowed in 'while' conditions, wrap in '()' to enable"
@@ -2298,7 +2300,7 @@ static void parse_with_stmt(Parser* parser) {
         return;
     }
 
-    parse_expression(parser, true, true);
+    parse_expression(parser, true);
     emit_byte(parser, PYRO_OPCODE_START_WITH);
     parser->fn_compiler->with_block_depth++;
     if (unpack_vars) {
@@ -2451,7 +2453,7 @@ static void parse_field_declaration(Parser* parser, Access access) {
 
         if (match(parser, TOKEN_EQUAL)) {
             if (access == STATIC) {
-                parse_expression(parser, true, true);
+                parse_expression(parser, true);
             } else {
                 parse_default_value_expression(parser, "field");
             }
@@ -2573,11 +2575,11 @@ static void parse_return_stmt(Parser* parser) {
         return;
     }
 
-    parse_expression(parser, true, true);
+    parse_expression(parser, true);
     size_t count = 1;
 
     while (match(parser, TOKEN_COMMA)) {
-        parse_expression(parser, true, true);
+        parse_expression(parser, true);
         count++;
     }
 
@@ -2817,7 +2819,7 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
         return NULL;
     }
 
-    parse_expression(&parser, false, false);
+    parse_expression(&parser, false);
     emit_byte(&parser, PYRO_OPCODE_RETURN);
 
     if (parser.had_syntax_error) {
