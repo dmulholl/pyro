@@ -7,7 +7,7 @@ A queue object, `queue`, is a FIFO (first-in-first-out) container type.
 
 [[ `$queue() -> queue` ]]
 
-    Creates a new `queue` object.
+    Creates a new queue.
 
 
 ### Methods

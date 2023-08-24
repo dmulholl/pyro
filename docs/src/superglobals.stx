@@ -578,7 +578,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$tup() -> tup` <br> `$tup(arg1: any, arg2: any, ...) -> tup` ]]
+[[ `$tup(*args: any) -> tup` ]]
 
     Creates a new [tuple](@root/builtins/tuples//).
 

@@ -10,7 +10,7 @@ A vector, `vec`, is a dynamic array of values.
 
 [[ `$vec() -> vec` <br> `$vec(arg: iterable) -> vec` <br> `$vec(size: i64, fill_value: any) -> vec` ]]
 
-    Creates a new `vec` object.
+    Creates a new vector.
 
     * If called with zero arguments, creates an empty vector.
     * If called with a single iterable argument, fills the new vector by iterating over the argument.

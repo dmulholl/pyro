@@ -11,7 +11,7 @@ A tuple, `tup`, is an immutable array of values.
 
 [[ `$tup(*args: any) -> tup` ]]
 
-    Creates a new `tup` object.
+    Creates a new tuple.
     The arguments provide the tuple's values.
 
 

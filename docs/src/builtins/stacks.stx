@@ -7,7 +7,7 @@ A stack object, `stack`, is a LIFO (last-in-first-out) container type.
 
 [[ `$stack() -> stack` ]]
 
-    Creates a new `stack` object.
+    Creates a new stack.
 
 
 ### Methods

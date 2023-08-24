@@ -159,7 +159,7 @@ The <code>$shell()</code> function provides more control over input and output. 
 You can provide an input string to <code>$shell()</code> which will be written to the command's <code>stdin</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;cat&quot;</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;cat&quot;</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
 </pre>
 <h3 id="fibonacci-numbers">
 Fibonacci numbers

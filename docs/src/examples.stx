@@ -68,7 +68,7 @@ The `$shell()` function provides more control over input and output. It returns 
 You can provide an input string to `$shell()` which will be written to the command's `stdin`:
 
 ::: code pyro
-    assert $shell("cat", "foo bar") == $tup(0, "foo bar", "");
+    assert $shell("cat", "foo bar") == (0, "foo bar", "");
 
 
 

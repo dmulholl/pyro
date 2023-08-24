@@ -11,7 +11,7 @@ A byte buffer, `buf`, is a dynamic array of bytes.
 
 [[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
 
-    Creates a new `buf` object.
+    Creates a new byte buffer.
 
     * If called with zero arguments, creates a new empty buffer.
     * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.

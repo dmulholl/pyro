@@ -11,7 +11,7 @@ A hash map, `map`, is a collection of key-value pairs.
 
 [[ `$map() -> map` ]]
 
-    Creates a new `map` object.
+    Creates a new map.
 
 Pyro's `map` type preserves insertion order so when you iterate over a `map` you get its entries back in the same order you inserted them.
 

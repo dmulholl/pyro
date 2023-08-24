@@ -11,7 +11,7 @@ A set object, `set`, is an unordered collection of distinct values.
 
 [[ `$set() -> set` <br> `$set(arg: iterable) -> set` ]]
 
-    Creates a new `set` object.
+    Creates a new set.
     If `arg` is iterable, initializes the new set by iterating over its values.
 
 Alternatively, you can create a set by draining an iterator, e.g.
