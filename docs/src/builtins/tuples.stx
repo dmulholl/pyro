@@ -38,12 +38,14 @@ Note that parentheses containing a single expression will be parsed as grouping 
 
 ::: code pyro
     assert (123) == 123;
+    assert (1 + 2) == 3;
 
-To create a single-valued tuple, either use the `$tup()` function or add a trailing comma, e.g.
+To create a single-valued tuple, either use the `$tup()` function or add a trailing comma after the expression, e.g.
 
 ::: code pyro
     var tup1 = $tup(123);
     var tup2 = (123,);
+    var tup3 = (1 + 2,);
 
 
 
