@@ -97,7 +97,7 @@ Float literals require a decimal point and can also use underscores to improve r
 
 ### Strings
 
-A string, `str`, is an immutable array of bytes.
+A [string](@root/builtins/strings//), `str`, is an immutable array of bytes.
 
 ::: code pyro
     var string = "hello pyro";
@@ -110,7 +110,7 @@ You can find a full description of the string type [here](@root/builtins/strings
 
 ### Characters
 
-A character, `char`, is an unsigned 32-bit integer representing a Unicode code point.
+A [character](@root/builtins/characters//), `char`, is an unsigned 32-bit integer representing a Unicode code point.
 
 Character literals use single quotes:
 
@@ -167,21 +167,21 @@ Numbers compare as equal using `==` if their values are numerically equal, e.g.
     assert 'a' == 97;
     assert 'b' == 98.0;
 
-Strings compare as equal if they have the same content, e.g.
+[Strings](@root/builtins/strings//) compare as equal if they have the same content, e.g.
 
 ::: code pyro
     var foo = "foobar";
     var bar = "foobar";
     assert foo == bar;
 
-Tuples compare as equal if they have the same length and their elements are equal, e.g.
+[Tuples](@root/builtins/tuples//) compare as equal if they have the same length and their elements are equal, e.g.
 
 ::: code pyro
-    var foo = $tup("foo", 123);
-    var bar = $tup("foo", 123);
+    var foo = ("foo", 123);
+    var bar = ("foo", 123);
     assert foo == bar;
 
-Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order, e.g.
+[Sets](@root/builtins/sets//) compare as equal if they are set-equivalent, i.e. if they contain the same items in any order, e.g.
 
 ::: code pyro
     var foo = {1, 2, 3};
@@ -211,23 +211,23 @@ You can use the comparison operators (`<`, `<=`, `>`, `>=`) with any combination
     assert 2.0 > 1;
     assert 'a' > 42;
 
-The comparison operators also work with strings, e.g.
+The comparison operators also work with [strings](@root/builtins/strings//), e.g.
 
 ::: code pyro
     assert "abc" < "def";
 
-Strings are compared lexicographically by byte value, e.g.
+[Strings](@root/builtins/strings//) are compared lexicographically by byte value, e.g.
 
 ::: code pyro
     assert "a" < "aa";
     assert "aa" < "aaa";
 
-You can use the comparison operators directly on tuples, e.g.
+You can use the comparison operators directly on [tuples](@root/builtins/tuples//), e.g.
 
 ::: code pyro
-    assert $tup(1, 2, 3) < $tup(1, 2, 4);
+    assert (1, 2, 3) < (1, 2, 4);
 
-Tuples are compared lexicographically by element.
+[Tuples](@root/builtins/tuples//) are compared lexicographically by element.
 
 You can [overload](@root/tutorials/operator-overloading//) the comparison operators to customize their behaviour for your own types
 
@@ -447,7 +447,7 @@ Classes are a big enough topic to deserve a page of their own which you can find
 
 ### Vectors
 
-Pyro has a builtin vector type, `vec` --- a dynamic array similar to a `list` in Python. You can create a `vec` using a vector-literal, e.g.
+Pyro has a builtin [vector](@root/builtins/vectors//) type, `vec` --- a dynamic array similar to a `list` in Python. You can create a `vec` using a vector-literal, e.g.
 
 ::: code pyro
     var vec = ["foo", "bar"];
@@ -476,7 +476,7 @@ You can find a full description of Pyro's `vec` type [here](@root/builtins/vecto
 
 ### Maps
 
-Pyro has a builtin map type, `map` --- an ordered hash-map similar to a `dict` in Python. You can create a `map` using a map-literal, e.g.
+Pyro has a builtin [map](@root/builtins/maps//) type, `map` --- an ordered hash-map similar to a `dict` in Python. You can create a `map` using a map-literal, e.g.
 
 ::: code pyro
     var map = {
@@ -499,7 +499,7 @@ You can find a full description of Pyro's map type [here](@root/builtins/maps//)
 
 ### Errors
 
-Pyro has a dedicated error type, `err`, which a function can return to indicate failure, e.g.
+Pyro has a dedicated [error](@root/builtins/errors//) type, `err`, which a function can return to indicate failure, e.g.
 
 ::: code pyro
     var err = $err("oops!");
@@ -550,7 +550,7 @@ If the panic is unhandled, the error message will be printed to the standard err
 
 ### Modules
 
-A module is a Pyro file loaded as a library. Modules are loaded using the `import` keyword.
+A [module](@root/builtins/modules//) is a Pyro file loaded as a library. Modules are loaded using the `import` keyword.
 
 Assume we have a file called `math.pyro` containing math functions:
 
@@ -586,7 +586,7 @@ Note that the `$main()` function won't be run if you import the same file as a m
 
 ### Unpacking
 
-You can unpack the values of a tuple or vector in a `var` declaration using `()`, e.g.
+You can unpack the values of a [tuple](@root/builtins/tuples//) or [vector](@root/builtins/vectors//) in a `var` declaration using `()`, e.g.
 
 ::: code pyro
     var (foo, bar, baz) = $tup(123, 456, 789);
@@ -638,7 +638,7 @@ String literals can contain arbitrary byte sequences including null bytes and in
 
 ### Testing
 
-Pyro has builtin support for unit tests.
+Pyro has builtin support for [unit tests](@root/features/testing//).
 
 Use the `assert` statement to test your code, e.g.
 

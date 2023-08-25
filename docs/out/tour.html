@@ -277,7 +277,7 @@ Float literals require a decimal point and can also use underscores to improve r
 Strings
 </h3>
 <p>
-A string, <code>str</code>, is an immutable array of bytes.
+A <a href="builtins/strings.html">string</a>, <code>str</code>, is an immutable array of bytes.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">string</span> <span class="p">=</span> <span class="s">&quot;hello pyro&quot;</span><span class="p">;</span>
@@ -292,7 +292,7 @@ You can find a full description of the string type <a href="builtins/strings.htm
 Characters
 </h3>
 <p>
-A character, <code>char</code>, is an unsigned 32-bit integer representing a Unicode code point.
+A <a href="builtins/characters.html">character</a>, <code>char</code>, is an unsigned 32-bit integer representing a Unicode code point.
 </p>
 <p>
 Character literals use single quotes:
@@ -361,7 +361,7 @@ Numbers compare as equal using <code>==</code> if their values are numerically e
 <span class="k">assert</span> <span class="sc">&#39;b&#39;</span> <span class="o">==</span> <span class="mf">98.0</span><span class="p">;</span>
 </pre>
 <p>
-Strings compare as equal if they have the same content, e.g.
+<a href="builtins/strings.html">Strings</a> compare as equal if they have the same content, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
@@ -369,15 +369,15 @@ Strings compare as equal if they have the same content, e.g.
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
-Tuples compare as equal if they have the same length and their elements are equal, e.g.
+<a href="builtins/tuples.html">Tuples</a> compare as equal if they have the same length and their elements are equal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
-Sets compare as equal if they are set-equivalent, i.e. if they contain the same items in any order, e.g.
+<a href="builtins/sets.html">Sets</a> compare as equal if they are set-equivalent, i.e. if they contain the same items in any order, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
@@ -410,26 +410,26 @@ You can use the comparison operators (<code>&lt;</code>, <code>&lt;=</code>, <co
 <span class="k">assert</span> <span class="sc">&#39;a&#39;</span> <span class="p">&gt;</span> <span class="mi">42</span><span class="p">;</span>
 </pre>
 <p>
-The comparison operators also work with strings, e.g.
+The comparison operators also work with <a href="builtins/strings.html">strings</a>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Strings are compared lexicographically by byte value, e.g.
+<a href="builtins/strings.html">Strings</a> are compared lexicographically by byte value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="s">&quot;a&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aa&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;aa&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aaa&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can use the comparison operators directly on tuples, e.g.
+You can use the comparison operators directly on <a href="builtins/tuples.html">tuples</a>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">&lt;</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="k">assert</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
 </pre>
 <p>
-Tuples are compared lexicographically by element.
+<a href="builtins/tuples.html">Tuples</a> are compared lexicographically by element.
 </p>
 <p>
 You can <a href="tutorials/operator-overloading.html">overload</a> the comparison operators to customize their behaviour for your own types
@@ -683,7 +683,7 @@ Classes are a big enough topic to deserve a page of their own which you can find
 Vectors
 </h3>
 <p>
-Pyro has a builtin vector type, <code>vec</code> &mdash; a dynamic array similar to a <code>list</code> in Python. You can create a <code>vec</code> using a vector-literal, e.g.
+Pyro has a builtin <a href="builtins/vectors.html">vector</a> type, <code>vec</code> &mdash; a dynamic array similar to a <code>list</code> in Python. You can create a <code>vec</code> using a vector-literal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">];</span>
@@ -716,7 +716,7 @@ You can find a full description of Pyro's <code>vec</code> type <a href="builtin
 Maps
 </h3>
 <p>
-Pyro has a builtin map type, <code>map</code> &mdash; an ordered hash-map similar to a <code>dict</code> in Python. You can create a <code>map</code> using a map-literal, e.g.
+Pyro has a builtin <a href="builtins/maps.html">map</a> type, <code>map</code> &mdash; an ordered hash-map similar to a <code>dict</code> in Python. You can create a <code>map</code> using a map-literal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span>
@@ -741,7 +741,7 @@ You can find a full description of Pyro's map type <a href="builtins/maps.html">
 Errors
 </h3>
 <p>
-Pyro has a dedicated error type, <code>err</code>, which a function can return to indicate failure, e.g.
+Pyro has a dedicated <a href="builtins/errors.html">error</a> type, <code>err</code>, which a function can return to indicate failure, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">);</span>
@@ -801,7 +801,7 @@ If the panic is unhandled, the error message will be printed to the standard err
 Modules
 </h3>
 <p>
-A module is a Pyro file loaded as a library. Modules are loaded using the <code>import</code> keyword.
+A <a href="builtins/modules.html">module</a> is a Pyro file loaded as a library. Modules are loaded using the <code>import</code> keyword.
 </p>
 <p>
 Assume we have a file called <code>math.pyro</code> containing math functions:
@@ -841,7 +841,7 @@ Note that the <code>$main()</code> function won't be run if you import the same 
 Unpacking
 </h3>
 <p>
-You can unpack the values of a tuple or vector in a <code>var</code> declaration using <code>()</code>, e.g.
+You can unpack the values of a <a href="builtins/tuples.html">tuple</a> or <a href="builtins/vectors.html">vector</a> in a <code>var</code> declaration using <code>()</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
@@ -896,7 +896,7 @@ String literals can contain arbitrary byte sequences including null bytes and in
 Testing
 </h3>
 <p>
-Pyro has builtin support for unit tests.
+Pyro has builtin support for <a href="features/testing.html">unit tests</a>.
 </p>
 <p>
 Use the <code>assert</code> statement to test your code, e.g.
