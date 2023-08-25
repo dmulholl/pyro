@@ -149,6 +149,9 @@ def $test_tuple_literals() {
     assert $is_tup((123, 456,));
     assert (123, 456,) == $tup(123, 456);
     assert (123, 456,):count() == 2;
+
+    assert (1 + 2) == 3;
+    assert (1 + 2,) == $tup(3);
 }
 
 def $test_compare_empty_tuples() {
@@ -166,4 +169,10 @@ def $test_compare_empty_tuples() {
 
     assert () <= ();
     assert () >= ();
+
+    assert () < (1,);
+    assert () < (1, 2);
+
+    assert (1,) > ();
+    assert (1, 2) > ();
 }
