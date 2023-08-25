@@ -55,6 +55,9 @@ def $test_tuple_comparisons() {
     assert $tup(1, 2, 3) >= $tup(1, 2, 3);
     assert $tup(1, 2, 3) >= $tup(1, 2, 2);
     assert $tup(1, 2, 3) >= $tup(1, 2);
+
+    assert $tup(1, 1) < $tup(1, 1, 1);
+    assert $tup(1, 1, 1) < $tup(1, 1, 1, 1);
 }
 
 def $test_slice() {
@@ -146,4 +149,21 @@ def $test_tuple_literals() {
     assert $is_tup((123, 456,));
     assert (123, 456,) == $tup(123, 456);
     assert (123, 456,):count() == 2;
+}
+
+def $test_compare_empty_tuples() {
+    assert () == ();
+    assert $tup() == $tup();
+    assert () == $tup();
+    assert $tup() == ();
+
+    var foo = ();
+    var bar = $tup();
+    assert foo == foo;
+    assert bar == bar;
+    assert foo == bar;
+    assert bar == foo;
+
+    assert () <= ();
+    assert () >= ();
 }

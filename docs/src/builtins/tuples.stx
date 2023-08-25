@@ -66,7 +66,12 @@ You can compare tuples using the comparison operators, `<`, `<=`, `>`, `>=`, e.g
 ::: code pyro
     assert (1, 2, 3) < (1, 2, 4);
 
-Tuples are compared lexicographically by element.
+Tuples are compared lexicographically by element, e.g.
+
+::: code pyro
+    assert (1, 1) < (1, 1, 1);
+    assert (1, 1, 1) < (1, 1, 1, 1)
+
 A comparison will panic if the elements are not comparable.
 
 
