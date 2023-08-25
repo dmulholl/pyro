@@ -60,7 +60,7 @@ Tuples compare as equal using the `==` operator if they have the same length and
 
 
 
-### Comparison
+### Comparisons
 
 
 You can compare tuples using the comparison operators, `<`, `<=`, `>`, `>=`, e.g.
