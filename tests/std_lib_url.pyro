@@ -27,9 +27,11 @@ assert url_encode("?") == "%3F";
 assert url_encode("@") == "%40";
 assert url_encode("[") == "%5B";
 assert url_encode("]") == "%5D";
-assert url_encode(" !$! ") == "%20%21%24%21%20";
 
+assert url_encode(" !$! ") == "%20%21%24%21%20";
 assert url_encode(" !foo! ") == "%20%21foo%21%20";
+assert url_encode("\n") == "%0A";
+assert url_encode("foo\nbar") == "foo%0Abar";
 
 # Test url-decoding.
 assert url_decode("+") == " ";

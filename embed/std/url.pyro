@@ -11,7 +11,9 @@ pub def url_encode(input: str) -> str {
     var buf = $buf();
 
     for byte in input:bytes() {
-        if byte in url_reserved_bytes {
+        if byte < 32 || byte > 126 {
+            buf:write("%{:02X}", byte);
+        } else if byte in url_reserved_bytes {
             buf:write("%{:02X}", byte);
         } else {
             buf:write_byte(byte);
