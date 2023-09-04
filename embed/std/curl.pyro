@@ -1,0 +1,225 @@
+import std::url;
+
+def extract_response_headers(curl_stderr_output: str) -> vec[str] {
+    return curl_stderr_output
+        :lines()
+        :filter(def(line) { return line:starts_with("< "); })
+        :map(def(line) { return line:slice(2):strip(); })
+        :filter(def(line) { return !line:is_empty(); })
+        :to_vec();
+}
+
+
+def extract_response_status(status_line: str) -> i64|err {
+    if !status_line:starts_with("HTTP") {
+        return $err("invalid response");
+    }
+
+    var words = status_line:split();
+    if words:count() < 2 {
+        return $err("invalid response");
+    }
+
+    var status = try $i64(words[1]);
+    if $is_err(status) {
+        return $err("invalid response");
+    }
+
+    return status;
+}
+
+
+def make_response(headers: vec[str], body: str) -> Response|err {
+    if headers:is_empty() {
+        return $err("invalid response");
+    }
+
+    var status = extract_response_status(headers[0]);
+    if $is_err(status) {
+        return status;
+    }
+
+    var response = Response();
+    response.status = status;
+    response.body = body;
+    response.raw_headers = headers:join("\n");
+
+    return response;
+}
+
+
+pub class Response {
+    pub var status: i64 = 0;
+    pub var body: str = "";
+    pub var raw_headers: str = "";
+}
+
+
+pub class Request {
+    var url: str = "";
+    var body: str = "";
+    var debug: bool = false;
+    var timeout_secs: f64 = 0.0;
+    var params: map[str, vec[str]];
+    var headers: vec[str];
+
+    def $init() {
+        self.params = {};
+        self.headers = [];
+    }
+
+    pub def url(value: str) -> Request {
+        self.url = value;
+        return self;
+    }
+
+    pub def param(key, value) -> Request {
+        key = $str(key);
+        value = $str(value);
+
+        if key in self.params {
+            self.params[key]:append(value);
+        } else {
+            self.params[key] = [value];
+        }
+
+        return self;
+    }
+
+    pub def header(value: str) -> Request {
+        self.headers:append(value);
+        return self;
+    }
+
+    pub def body(value: str) -> Request {
+        self.body = value;
+        return self;
+    }
+
+    pub def debug() -> Request {
+        self.debug = true;
+        return self;
+    }
+
+    pub def timeout(seconds: f64) -> Request {
+        self.timeout_secs = seconds;
+        return self;
+    }
+
+    pub def GET() -> Response|err {
+        if self.url:is_empty() {
+            return $err("GET(): missing url");
+        }
+
+        var command = "curl --verbose --silent --request GET";
+
+        if self.timeout_secs > 0.0 {
+            command += " --max-time ${self.timeout_secs}";
+        }
+
+        for header in self.headers {
+            var escaped_header = header:replace(`"`, `\"`);
+            command += " --header \"${escaped_header}\"";
+        }
+
+        var url = self.url;
+        if self.params:count() > 0 {
+            url += "?" + self:make_query_string();
+        }
+
+        var escaped_url = url:replace(`"`, `\"`);
+        command += " \"${escaped_url}\"";
+
+        if self.debug {
+            echo "-" * 80;
+            echo "CALL:", command;
+            echo "-" * 80;
+        }
+
+        var result = try $shell(command);
+        if $is_err(result) {
+            return $err("GET(): ${result}");
+        }
+
+        var (exit_code, stdout_output, stderr_output) = result;
+        if exit_code != 0 {
+            return $err("GET(): ${stderr_output:strip()}");
+        }
+
+        if self.debug {
+            echo stderr_output:strip();
+            echo "-" * 80;
+        }
+
+        var headers = extract_response_headers(stderr_output);
+        return make_response(headers, stdout_output);
+    }
+
+    pub def POST() -> Response|err {
+        if self.url:is_empty() {
+            return $err("POST(): missing url");
+        }
+
+        var body = self.body;
+        var command = "curl --verbose --silent --request POST";
+
+        if self.timeout_secs > 0.0 {
+            command += " --max-time ${self.timeout_secs}";
+        }
+
+        if self.params:count() > 0 {
+            body = self:make_query_string();
+            command += ` --header "Content-Type: application/x-www-form-urlencoded"`;
+        }
+
+        for header in self.headers {
+            var escaped_header = header:replace(`"`, `\"`);
+            command += " --header \"${escaped_header}\"";
+        }
+
+        command += " --data-binary @-";
+
+        var escaped_url = self.url:replace(`"`, `\"`);
+        command += " \"${escaped_url}\"";
+
+        if self.debug {
+            echo "-" * 80;
+            echo "CALL:", command;
+            echo "-" * 80;
+            echo "BODY:", body;
+            echo "-" * 80;
+        }
+
+        var result = try $shell(command, body);
+        if $is_err(result) {
+            return $err("POST(): ${result}");
+        }
+
+        var (exit_code, stdout_output, stderr_output) = result;
+        if exit_code != 0 {
+            return $err("POST(): ${stderr_output:strip()}");
+        }
+
+        if self.debug {
+            echo stderr_output:strip();
+            echo "-" * 80;
+        }
+
+        var headers = extract_response_headers(stderr_output);
+        return make_response(headers, stdout_output);
+    }
+
+    def make_query_string() -> str {
+        var list = [];
+
+        for (key, values) in self.params {
+            var encoded_key = url::url_encode(key);
+            for value in values {
+                var encoded_value = url::url_encode(value);
+                list:append("${encoded_key}=${encoded_value}");
+            }
+        }
+
+        return list:join("&");
+    }
+}
