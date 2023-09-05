@@ -1,5 +1,6 @@
 import std::url;
 
+
 def extract_response_headers(curl_stderr_output: str) -> vec[str] {
     return curl_stderr_output
         :lines()
@@ -222,4 +223,19 @@ pub class Request {
 
         return list:join("&");
     }
+}
+
+
+pub def GET(url: str) -> Response|err {
+    return Request()
+        :url(url)
+        :GET();
+}
+
+
+pub def POST(url: str, body: str) -> Response|err {
+    return Request()
+        :url(url)
+        :body(body)
+        :POST();
 }
