@@ -1,0 +1,158 @@
+---
+title: <code>std::curl</code>
+meta_title: Pyro Standard Library &mdash; std::curl
+---
+
+[1]: @root/stdlib/curl/examples//
+
+
+A library for making HTTP requests using the system's `curl` binary.
+
+You can find a set of examples [here][1].
+
+::: insert toc
+
+
+### Functions
+
+[[ `DELETE(url: str, body: str = "") -> Response|err` ]]
+
+    Convenience function for making a simple `DELETE` request.
+
+[[ `GET(url: str) -> Response|err` ]]
+
+    Convenience function for making a simple `GET` request.
+
+[[ `HEAD(url: str) -> Response|err` ]]
+
+    Convenience function for making a simple `HEAD` request.
+
+[[ `OPTIONS(url: str) -> Response|err` ]]
+
+    Convenience function for making a simple `OPTIONS` request.
+
+[[ `PATCH(url: str, body: str) -> Response|err` ]]
+
+    Convenience function for making a simple `PATCH` request.
+
+[[ `POST(url: str, body: str) -> Response|err` ]]
+
+    Convenience function for making a simple `POST` request.
+
+[[ `PUT(url: str, body: str) -> Response|err` ]]
+
+    Convenience function for making a simple `PUT` request.
+
+
+### Requests
+
+[[ `Request() -> Request` ]]
+
+    Creates a new `Request` object.
+
+`Request` objects have the following public methods:
+
+[[ `:body(value: str) -> Request` ]]
+
+    Sets the request's body to `value`.
+
+    Returns the request object to enable chaining.
+
+[[ `:header(value: str) -> Request` ]]
+
+    Adds a header to the request.
+
+    Returns the request object to enable chaining.
+
+[[ `:url(value: str) -> Request` ]]
+
+    Sets the request's URL.
+
+    Returns the request object to enable chaining.
+
+[[ `:param(key: any, value: any) -> Request` ]]
+
+    Adds a key/value parameter pair to the request --- `key` and `value` will be automatically stringified if they are not already strings.
+
+    If the request is one of (`GET`, `HEAD`, `OPTIONS`), the parameter pair will be URL-encoded and appended to the URL's query string.
+
+    If the request is one of (`POST`, `PUT`, `PATCH`, `DELETE`), the parameter pair will be URL-encoded and appended to the request's body in `application/x-www-form-urlencoded` format.
+    A `Content-Type` header will be automatically added to the request.
+
+    Returns the request object to enable chaining.
+
+[[ `:timeout(seconds: f64) -> Request` ]]
+
+    Sets a timeout for the request, measured in (fractional) seconds.
+    If the request hangs for longer than the specified timeout, it will return an `err`.
+
+    Returns the request object to enable chaining.
+
+[[ `:HEAD() -> Response|err` ]]
+
+    Sends a `HEAD` request.
+
+[[ `:GET() -> Response|err` ]]
+
+    Sends a `GET` request.
+
+[[ `:OPTIONS() -> Response|err` ]]
+
+    Sends an `OPTIONS` request.
+
+[[ `:POST() -> Response|err` ]]
+
+    Sends a `POST` request.
+
+[[ `:PUT() -> Response|err` ]]
+
+    Sends a `PUT` request.
+
+[[ `:PATCH() -> Response|err` ]]
+
+    Sends a `PATCH` request.
+
+[[ `:DELETE() -> Response|err` ]]
+
+    Sends a `DELETE` request.
+
+
+### Responses
+
+`Response` objects have the following public fields:
+
+::: code pyro
+    class Response {
+        # The response's HTTP status code.
+        pub var status: i64;
+
+        # The response's body.
+        pub var body: str;
+
+        # The response's headers, including the status line.
+        pub var raw_headers: str;
+
+        # The response's headers as a map of key/value pairs.
+        # Keys are converted to lower-case ASCII.
+        pub var headers: map[str, str];
+    }
+
+`Response` objects have the following public methods:
+
+[[ `:from_json() -> map|vec|str|i64|f64|bool|null|err` ]]
+
+    Attempts to parse the response body as JSON.
+    Returns the resulting value.
+
+    Returns an `err` if the response body is not valid JSON.
+
+[[ `:has_header(key: str) -> bool` ]]
+
+    Returns `true` if the response has a header named `key`, where `key` is a case-insensitive string.
+
+[[ `:header(key: str) -> str|err` ]]
+
+    Returns the value of the header `key`, where `key` is a case-insensitive string.
+
+    Returns an `err` if the header does not exist.
+
