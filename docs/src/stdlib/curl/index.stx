@@ -88,17 +88,25 @@ You can find a set of examples [here][1].
 
     Returns the request object to enable chaining.
 
-[[ `:HEAD() -> Response|err` ]]
+[[ `:DELETE() -> Response|err` ]]
 
-    Sends a `HEAD` request.
+    Sends a `DELETE` request.
 
 [[ `:GET() -> Response|err` ]]
 
     Sends a `GET` request.
 
+[[ `:HEAD() -> Response|err` ]]
+
+    Sends a `HEAD` request.
+
 [[ `:OPTIONS() -> Response|err` ]]
 
     Sends an `OPTIONS` request.
+
+[[ `:PATCH() -> Response|err` ]]
+
+    Sends a `PATCH` request.
 
 [[ `:POST() -> Response|err` ]]
 
@@ -107,14 +115,6 @@ You can find a set of examples [here][1].
 [[ `:PUT() -> Response|err` ]]
 
     Sends a `PUT` request.
-
-[[ `:PATCH() -> Response|err` ]]
-
-    Sends a `PATCH` request.
-
-[[ `:DELETE() -> Response|err` ]]
-
-    Sends a `DELETE` request.
 
 
 ### Responses

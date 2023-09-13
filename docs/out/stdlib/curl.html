@@ -18,7 +18,7 @@
                 <p class="tagline">A scripting language for people who enjoy the simpler things in life.</p>
             
             
-                <p class="version">Version 0.10.8</p>
+                <p class="version">Version 0.10.11</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -240,11 +240,11 @@ Returns the request object to enable chaining.
 </div>
 <div>
 <dt>
-<code>:HEAD() -&gt; Response|err</code>
+<code>:DELETE() -&gt; Response|err</code>
 </dt>
 <dd>
 <p>
-Sends a <code>HEAD</code> request.
+Sends a <code>DELETE</code> request.
 </p>
 </dd>
 </div>
@@ -260,11 +260,31 @@ Sends a <code>GET</code> request.
 </div>
 <div>
 <dt>
+<code>:HEAD() -&gt; Response|err</code>
+</dt>
+<dd>
+<p>
+Sends a <code>HEAD</code> request.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:OPTIONS() -&gt; Response|err</code>
 </dt>
 <dd>
 <p>
 Sends an <code>OPTIONS</code> request.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:PATCH() -&gt; Response|err</code>
+</dt>
+<dd>
+<p>
+Sends a <code>PATCH</code> request.
 </p>
 </dd>
 </div>
@@ -285,26 +305,6 @@ Sends a <code>POST</code> request.
 <dd>
 <p>
 Sends a <code>PUT</code> request.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:PATCH() -&gt; Response|err</code>
-</dt>
-<dd>
-<p>
-Sends a <code>PATCH</code> request.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:DELETE() -&gt; Response|err</code>
-</dt>
-<dd>
-<p>
-Sends a <code>DELETE</code> request.
 </p>
 </dd>
 </div>
