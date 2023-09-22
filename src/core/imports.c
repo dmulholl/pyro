@@ -127,30 +127,30 @@ static bool try_load_embedded_module(PyroVM* vm, uint8_t arg_count, PyroValue* a
 
 
 // Given 'import foo::bar::baz', we want to check for:
-// 1. BASE/foo/bar/baz.so
-// 2. BASE/foo/bar/baz.pyro
-// 3. BASE/foo/bar/baz/self.so
-// 4. BASE/foo/bar/baz/self.pyro
-// 5. BASE/foo/bar/baz
+// 1. ROOT/foo/bar/baz.so
+// 2. ROOT/foo/bar/baz.pyro
+// 3. ROOT/foo/bar/baz/self.so
+// 4. ROOT/foo/bar/baz/self.pyro
+// 5. ROOT/foo/bar/baz
 static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
     for (size_t i = 0; i < vm->import_roots->count; i++) {
-        PyroStr* base = PYRO_AS_STR(vm->import_roots->values[i]);
-        if (base->count == 0) {
-            base = PyroStr_COPY(".");
-            if (!base) {
+        PyroStr* root = PYRO_AS_STR(vm->import_roots->values[i]);
+        if (root->count == 0) {
+            root = PyroStr_COPY(".");
+            if (!root) {
                 pyro_panic(vm, "out of memory");
                 return true;
             }
         }
 
         // Support `$roots` entries with or without a trailing slash.
-        bool base_has_trailing_slash = false;
-        if (base->bytes[base->count - 1] == '/') {
-            base_has_trailing_slash = true;
+        bool root_has_trailing_slash = false;
+        if (root->bytes[root->count - 1] == '/') {
+            root_has_trailing_slash = true;
         }
 
-        // Allocate enough space for "BASE/foo/bar/baz/self.pyro".
-        size_t path_capacity = base_has_trailing_slash ? base->count : base->count + 1;
+        // Allocate enough space for "ROOT/foo/bar/baz/self.pyro".
+        size_t path_capacity = root_has_trailing_slash ? root->count : root->count + 1;
         for (uint8_t j = 0; j < arg_count; j++) {
             path_capacity += PYRO_AS_STR(args[j])->count + 1;
         }
@@ -162,14 +162,14 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
             return true;
         }
 
-        // Start with path = BASE/
-        memcpy(path, base->bytes, base->count);
-        size_t path_count = base->count;
-        if (!base_has_trailing_slash) {
+        // Start with path = ROOT/
+        memcpy(path, root->bytes, root->count);
+        size_t path_count = root->count;
+        if (!root_has_trailing_slash) {
             path[path_count++] = '/';
         }
 
-        // Assemble path = BASE/foo/bar/baz/
+        // Assemble path = ROOT/foo/bar/baz/
         for (uint8_t j = 0; j < arg_count; j++) {
             PyroStr* name = PYRO_AS_STR(args[j]);
             memcpy(path + path_count, name->bytes, name->count);
@@ -177,7 +177,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
             path[path_count++] = '/';
         }
 
-        // 1. Try file: BASE/foo/bar/baz.so
+        // 1. Try file: ROOT/foo/bar/baz.so
         memcpy(path + path_count - 1, ".so", strlen(".so") + 1);
         if (pyro_is_file(path)) {
             PyroStr* module_name = PYRO_AS_STR(args[arg_count - 1]);
@@ -186,7 +186,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
             return true;
         }
 
-        // 2. Try file: BASE/foo/bar/baz.pyro
+        // 2. Try file: ROOT/foo/bar/baz.pyro
         memcpy(path + path_count - 1, ".pyro", strlen(".pyro") + 1);
         if (pyro_is_file(path)) {
             pyro_exec_file(vm, path, module);
@@ -194,7 +194,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
             return true;
         }
 
-        // 3. Try file: BASE/foo/bar/baz/self.so
+        // 3. Try file: ROOT/foo/bar/baz/self.so
         memcpy(path + path_count - 1, "/self.so", strlen("/self.so") + 1);
         if (pyro_is_file(path)) {
             PyroStr* module_name = PYRO_AS_STR(args[arg_count - 1]);
@@ -203,7 +203,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
             return true;
         }
 
-        // 4. Try file: BASE/foo/bar/baz/self.pyro
+        // 4. Try file: ROOT/foo/bar/baz/self.pyro
         memcpy(path + path_count - 1, "/self.pyro", strlen("/self.pyro") + 1);
         if (pyro_is_file(path)) {
             pyro_exec_file(vm, path, module);
@@ -211,7 +211,7 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
             return true;
         }
 
-        // 5. Try dir: BASE/foo/bar/baz
+        // 5. Try dir: ROOT/foo/bar/baz
         path[path_count - 1] = '\0';
         if (pyro_is_dir(path)) {
             PYRO_FREE_ARRAY(vm, char, path, path_capacity);
