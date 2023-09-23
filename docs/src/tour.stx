@@ -296,7 +296,7 @@ The `loop` statement also supports C-style loops with an initializer, a conditio
         echo i;
     }
 
-The `for` keyword in Pyro is used for looping over iterators:
+The `for` keyword in Pyro is used for looping over [iterators](@root/features/iterators//):
 
 ::: code pyro
     var vec = ["foo", "bar", "baz"];
