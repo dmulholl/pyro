@@ -4,6 +4,7 @@ meta_title: Pyro &mdash; Syntax Highlighting
 ---
 
 [1]: https://github.com/dmulholl/pyro-lexer
+[2]: https://marketplace.visualstudio.com/items?itemName=dmulholl.pyro-lang
 
 
 ### Vim
@@ -16,11 +17,18 @@ To enable syntax-highlighting in Vim, copy this file to your `~/.vim/syntax` dir
     cp ./etc/pyro.vim ~/.vim/syntax/
 
 
+
+### Visual Studio Code
+
+You can find a syntax-highlighting extension for Pyro in VS Code's [Extension Marketplace][2].
+
+
+
 ### Pygments
 
 You can find a Pygments lexer for Pyro [here][1].
 
-To install this lexer run:
+You can install this lexer directly from the Python package index by running:
 
 ::: code
     pip install pyro-lexer
