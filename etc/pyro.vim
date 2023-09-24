@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.4.8
+" v0.4.10
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -34,8 +34,8 @@ syn match pyroNumber "\<\d\+\(\d\|_\)*\>"
 syn match pyroNumber "\<0x\(\x\|_\)\+\>"
 syn match pyroNumber "\<0o\(\o\|_\)\+\>"
 syn match pyroNumber "\<0b[01_]\+\>"
-syn match pyroNumber "\<\d\+\.\d*\(e[-+]\=\d\+\)\=\>"
-syn match pyroNumber "\<\d\+e[-+]\=\d\+\>"
+syn match pyroNumber "\<\d\(\d\|_\)*\.\(\d\|_\)\+\(e[-+]\=\(\d\|_\)\+\)\=\>"
+syn match pyroNumber "\<\d\(\d\|_\)*e[-+]\=\(\d\|_\)\+\>"
 syn case match
 
 " Default highlighting styles.
