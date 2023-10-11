@@ -1,0 +1,82 @@
+{
+    let foo = 123;
+    assert foo == 123;
+
+    let bar = 456, baz = 789;
+    assert bar == 456;
+    assert baz == 789;
+
+    let (a, b, c) = (123, 456, 789);
+    assert a == 123;
+    assert b == 456;
+    assert c == 789;
+}
+
+{
+    let foo = 123;
+    {
+        var foo = 456;
+        assert foo == 456;
+        foo = 789;
+        assert foo == 789;
+    }
+    assert foo == 123;
+}
+
+def func() {
+    let local = 123;
+    assert local == 123;
+    return local;
+}
+assert func() == 123;
+
+def outer() {
+    let outer_local = 123;
+    assert outer_local == 123;
+
+    def inner() {
+        let inner_local = 456;
+        assert inner_local == 456;
+        return outer_local + inner_local;
+    }
+
+    return inner;
+}
+var inner = outer();
+assert inner() == 579;
+
+var src1 = `
+{
+    let foo = 123;
+    foo = 456;
+}
+`;
+assert $is_err(try $exec(src1));
+
+var src2 = `
+{
+    let foo = 123;
+    {
+        foo = 456;
+    }
+}
+`;
+assert $is_err(try $exec(src2));
+
+var src3 = `
+def func() {
+    let foo = 123;
+    foo = 456;
+}
+`;
+assert $is_err(try $exec(src3));
+
+var src4 = `
+def outer() {
+    let foo = 123;
+    def inner() {
+        foo = 456;
+    }
+}
+`;
+assert $is_err(try $exec(src4));

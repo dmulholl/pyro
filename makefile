@@ -33,6 +33,9 @@ APP_SRC_FILES = cmd/app/*.c
 # Default name for the baked-application binary.
 APPNAME ?= app
 
+# Default to showing the help text.
+.DEFAULT_GOAL := help
+
 # --------------- #
 #  Build Targets  #
 # --------------- #

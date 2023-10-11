@@ -157,6 +157,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
             break;
 
         case 'l':
+            if (check_keyword(lexer, "let")) return TOKEN_LET;
             if (check_keyword(lexer, "loop")) return TOKEN_LOOP;
             break;
 

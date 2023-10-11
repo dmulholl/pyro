@@ -40,6 +40,7 @@ typedef struct {
     int depth;              // scope depth of the block in which the variable was declared
     bool is_initialized;    // true after the variable has been defined
     bool is_captured;       // true if the local is captured by a closure
+    bool is_constant;       // true if the local is a constant
 } Local;
 
 
@@ -428,21 +429,25 @@ static PyroFn* end_fn_compiler(Parser* parser) {
 }
 
 
-static int resolve_local(Parser* parser, FnCompiler* fn_compiler, Token* name) {
+static bool resolve_local(Parser* parser, FnCompiler* fn_compiler, Token* name, int* local_index, bool* is_constant) {
     for (int i = fn_compiler->local_count - 1; i >= 0; i--) {
         Local* local = &fn_compiler->locals[i];
         if (lexemes_are_equal(name, &local->name)) {
             if (local->is_initialized) {
-                return i;
+                *local_index = i;
+                *is_constant = local->is_constant;
+                return true;
             }
             ERROR_AT_PREVIOUS_TOKEN("can't read a local variable in its own initializer");
+            return true;
         }
     }
-    return -1;
+    return false;
 }
 
 
-// [index] is the closed-over local variable's slot index.
+// If the upvalue is local, [index] is the closed-over local variable's slot index.
+// If the upvalue is not local, [index] is an upvalue index in the enclosing function scope.
 // Returns the index of the newly created upvalue in the function's upvalue list.
 static int add_upvalue(Parser* parser, FnCompiler* fn_compiler, uint8_t index, bool is_local) {
     size_t upvalue_count = fn_compiler->fn->upvalue_count;
@@ -468,32 +473,35 @@ static int add_upvalue(Parser* parser, FnCompiler* fn_compiler, uint8_t index, b
 
 
 // Looks for a local variable declared in any of the surrounding functions.
-// If it finds one, it returns the 'upvalue index' for that variable.
-// A return value of -1 means the variable is either global or undefined.
-static int resolve_upvalue(Parser* parser, FnCompiler* fn_compiler, Token* name) {
+// If it finds one, it returns true and the 'upvalue index' for that variable.
+// A return value of false means the variable is either global or undefined.
+static bool resolve_upvalue(Parser* parser, FnCompiler* fn_compiler, Token* name, int* upvalue_index, bool* is_constant) {
     if (fn_compiler->enclosing == NULL) {
-        return -1;
+        return false;
     }
 
     // Look for a matching local variable in the directly enclosing function.
     // If we find one, capture it and return the upvalue index.
-    int local = resolve_local(parser, fn_compiler->enclosing, name);
-    if (local != -1) {
-        fn_compiler->enclosing->locals[local].is_captured = true;
-        return add_upvalue(parser, fn_compiler, (uint8_t)local, true);
+    int resolved_local_index;
+    if (resolve_local(parser, fn_compiler->enclosing, name, &resolved_local_index, is_constant)) {
+        fn_compiler->enclosing->locals[resolved_local_index].is_captured = true;
+        *upvalue_index = add_upvalue(parser, fn_compiler, (uint8_t)resolved_local_index, true);
+        *is_constant = fn_compiler->enclosing->locals[resolved_local_index].is_constant;
+        return true;
     }
 
     // Look for a matching local variable beyond the immediately enclosing function by
     // recursively walking the chain of nested compilers. If we find one, the most deeply
     // nested call will capture it and return its upvalue index. As the recursive calls
     // unwind we'll construct a chain of upvalues leading to the captured variable.
-    int upvalue = resolve_upvalue(parser, fn_compiler->enclosing, name);
-    if (upvalue != -1) {
-        return add_upvalue(parser, fn_compiler, (uint8_t)upvalue, false);
+    int resolved_upvalue_index;
+    if (resolve_upvalue(parser, fn_compiler->enclosing, name, &resolved_upvalue_index, is_constant)) {
+        *upvalue_index = add_upvalue(parser, fn_compiler, (uint8_t)resolved_upvalue_index, false);
+        return true;
     }
 
     // No matching local variable in any enclosing scope.
-    return -1;
+    return false;
 }
 
 
@@ -511,25 +519,26 @@ static void add_local(Parser* parser, Token name) {
 
 
 // Sets the [is_initialized] flag on the last [count] local variables.
-static void mark_locals_as_initialized(Parser* parser, int count) {
+static void mark_locals_as_initialized(Parser* parser, int count, bool is_constant) {
     if (parser->fn_compiler->scope_depth > 0) {
         for (int i = 0; i < count; i++) {
             int index = parser->fn_compiler->local_count - 1 - i;
             parser->fn_compiler->locals[index].is_initialized = true;
+            parser->fn_compiler->locals[index].is_constant = is_constant;
         }
     }
 }
 
 
 // Sets the [is_initialized] flag on the last local variable.
-static void mark_local_as_initialized(Parser* parser) {
-    mark_locals_as_initialized(parser, 1);
+static void mark_local_as_initialized(Parser* parser, bool is_constant) {
+    mark_locals_as_initialized(parser, 1, is_constant);
 }
 
 
-static void define_variable(Parser* parser, uint16_t index, Access access) {
+static void define_variable(Parser* parser, uint16_t index, Access access, bool is_constant) {
     if (parser->fn_compiler->scope_depth > 0) {
-        mark_local_as_initialized(parser);
+        mark_local_as_initialized(parser, is_constant);
         return;
     }
 
@@ -539,9 +548,9 @@ static void define_variable(Parser* parser, uint16_t index, Access access) {
 }
 
 
-static void define_variables(Parser* parser, uint16_t* indexes, int count, Access access) {
+static void define_variables(Parser* parser, uint16_t* indexes, int count, Access access, bool is_constant) {
     if (parser->fn_compiler->scope_depth > 0) {
-        mark_locals_as_initialized(parser, count);
+        mark_locals_as_initialized(parser, count, is_constant);
         return;
     }
 
@@ -571,7 +580,7 @@ static void declare_variable(Parser* parser, Token name) {
             break;
         }
         if (lexemes_are_equal(&name, &local->name)) {
-            ERROR_AT_PREVIOUS_TOKEN("a variable with this name already exists in this scope");
+            ERROR_AT_PREVIOUS_TOKEN("'%.*s' already exists in this scope", name.length, name.start);
         }
     }
 
@@ -687,8 +696,11 @@ static uint8_t parse_argument_list(Parser* parser, bool* unpack_last_argument) {
 
 // Emits bytecode to load the value of the named variable onto the stack.
 static void emit_load_named_variable(Parser* parser, Token name) {
-    int local_index = resolve_local(parser, parser->fn_compiler, &name);
-    if (local_index != -1) {
+    bool is_constant;
+
+    // Load a local variable.
+    int local_index;
+    if (resolve_local(parser, parser->fn_compiler, &name, &local_index, &is_constant)) {
         switch (local_index) {
             case 0: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_0); break;
             case 1: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_1); break;
@@ -707,12 +719,14 @@ static void emit_load_named_variable(Parser* parser, Token name) {
         return;
     }
 
-    int upvalue_index = resolve_upvalue(parser, parser->fn_compiler, &name);
-    if (upvalue_index != -1) {
+    // Load an upvalue.
+    int upvalue_index;
+    if (resolve_upvalue(parser, parser->fn_compiler, &name, &upvalue_index, &is_constant)) {
         emit_u8_u8(parser, PYRO_OPCODE_GET_UPVALUE, (uint8_t)upvalue_index);
         return;
     }
 
+    // Load a global variable.
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
     emit_byte(parser, PYRO_OPCODE_GET_GLOBAL);
     emit_u16be(parser, const_index);
@@ -721,8 +735,16 @@ static void emit_load_named_variable(Parser* parser, Token name) {
 
 // Emits bytecode to set the named variable to the value on top of the stack.
 static void emit_store_named_variable(Parser* parser, Token name) {
-    int local_index = resolve_local(parser, parser->fn_compiler, &name);
-    if (local_index != -1) {
+    bool is_constant;
+
+    // Set a local variable.
+    int local_index;
+    if (resolve_local(parser, parser->fn_compiler, &name, &local_index, &is_constant)) {
+        if (is_constant) {
+            ERROR_AT_PREVIOUS_TOKEN("invalid assignment to constant '%.*s'", name.length, name.start);
+            return;
+        }
+
         switch (local_index) {
             case 0: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_0); break;
             case 1: emit_byte(parser, PYRO_OPCODE_SET_LOCAL_1); break;
@@ -738,15 +760,23 @@ static void emit_store_named_variable(Parser* parser, Token name) {
                 emit_u8_u8(parser, PYRO_OPCODE_SET_LOCAL, (uint8_t)local_index);
                 break;
         }
+
         return;
     }
 
-    int upvalue_index = resolve_upvalue(parser, parser->fn_compiler, &name);
-    if (upvalue_index != -1) {
+    // Set an upvalue.
+    int upvalue_index;
+    if (resolve_upvalue(parser, parser->fn_compiler, &name, &upvalue_index, &is_constant)) {
+        if (is_constant) {
+            ERROR_AT_PREVIOUS_TOKEN("invalid assignment to constant '%.*s'", name.length, name.start);
+            return;
+        }
+
         emit_u8_u8(parser, PYRO_OPCODE_SET_UPVALUE, (uint8_t)upvalue_index);
         return;
     }
 
+    // Set a global variable.
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
     emit_byte(parser, PYRO_OPCODE_SET_GLOBAL);
     emit_u16be(parser, const_index);
@@ -1783,7 +1813,7 @@ static void parse_expression_stmt(Parser* parser) {
 }
 
 
-static void parse_unpacking_declaration(Parser* parser, Access access) {
+static void parse_unpacking_declaration(Parser* parser, Access access, bool is_constant) {
     const int var_name_capacity = 16;
     uint16_t var_name_indexes[16];
     int var_name_count = 0;
@@ -1805,14 +1835,14 @@ static void parse_unpacking_declaration(Parser* parser, Access access) {
     parse_expression(parser, true);
     emit_u8_u8(parser, PYRO_OPCODE_UNPACK, var_name_count);
 
-    define_variables(parser, var_name_indexes, var_name_count, access);
+    define_variables(parser, var_name_indexes, var_name_count, access, is_constant);
 }
 
 
-static void parse_var_declaration(Parser* parser, Access access) {
+static void parse_var_declaration(Parser* parser, Access access, bool is_constant) {
     do {
         if (match(parser, TOKEN_LEFT_PAREN)) {
-            parse_unpacking_declaration(parser, access);
+            parse_unpacking_declaration(parser, access, is_constant);
         } else {
             uint16_t index = consume_variable_name(parser, "expected variable name");
             if (match(parser, TOKEN_COLON)) {
@@ -1823,7 +1853,7 @@ static void parse_var_declaration(Parser* parser, Access access) {
             } else {
                 emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
             }
-            define_variable(parser, index, access);
+            define_variable(parser, index, access, is_constant);
         }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_SEMICOLON, "expected ';' after variable declaration");
@@ -1919,14 +1949,14 @@ static void parse_import_stmt(Parser* parser) {
         for (int i = 0; i < member_count; i++) {
             declare_variable(parser, member_names[i]);
         }
-        define_variables(parser, member_indexes, member_count, PRIVATE);
+        define_variables(parser, member_indexes, member_count, PRIVATE, false);
     } else {
         if (alias_count > 1) {
             ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement");
             return;
         }
         declare_variable(parser, module_name);
-        define_variable(parser, module_index, PRIVATE);
+        define_variable(parser, module_index, PRIVATE, false);
     }
 
     consume(parser, TOKEN_SEMICOLON, "expected ';' after import statement");
@@ -1950,7 +1980,9 @@ static void parse_if_stmt(Parser* parser) {
 
     // Parse condition-scoped variables as locals.
     if (match(parser, TOKEN_VAR)) {
-        parse_var_declaration(parser, PRIVATE);
+        parse_var_declaration(parser, PRIVATE, false);
+    } else if (match(parser, TOKEN_LET)) {
+        parse_var_declaration(parser, PRIVATE, true);
     }
 
     // Parse the condition.
@@ -2067,7 +2099,7 @@ static void parse_for_in_stmt(Parser* parser) {
     }
     for (size_t i = 0; i < loop_vars_count; i++) {
         add_local(parser, loop_vars[i]);
-        mark_local_as_initialized(parser);
+        mark_local_as_initialized(parser, false);
     }
     parse_block(parser);
     end_scope(parser);
@@ -2110,7 +2142,9 @@ static void parse_c_style_loop_stmt(Parser* parser) {
     if (match(parser, TOKEN_SEMICOLON)) {
         // No initializer clause.
     } else if (match(parser, TOKEN_VAR)) {
-        parse_var_declaration(parser, PRIVATE);
+        parse_var_declaration(parser, PRIVATE, false);
+    } else if (match(parser, TOKEN_LET)) {
+        parse_var_declaration(parser, PRIVATE, true);
     } else {
         parse_expression_stmt(parser);
     }
@@ -2311,7 +2345,7 @@ static void parse_with_stmt(Parser* parser) {
     begin_scope(parser);
     for (size_t i = 0; i < var_names_count; i++) {
         add_local(parser, var_names[i]);
-        mark_local_as_initialized(parser);
+        mark_local_as_initialized(parser, false);
     }
     parse_block(parser);
     end_scope(parser);
@@ -2347,7 +2381,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
             fn_compiler.fn->is_variadic = true;
         }
         uint16_t index = consume_variable_name(parser, "expected parameter name");
-        define_variable(parser, index, PRIVATE);
+        define_variable(parser, index, PRIVATE, false);
         fn_compiler.fn->arity++;
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
@@ -2411,9 +2445,9 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
 static void parse_function_declaration(Parser* parser, Access access) {
     uint16_t index = consume_variable_name(parser, "expected a function name");
-    mark_local_as_initialized(parser);
+    mark_local_as_initialized(parser, false);
     parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
-    define_variable(parser, index, access);
+    define_variable(parser, index, access, false);
 }
 
 
@@ -2481,7 +2515,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
     declare_variable(parser, parser->previous_token);
 
     emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLASS, index);
-    define_variable(parser, index, access);
+    define_variable(parser, index, access, false);
 
     // Push a new class compiler onto the implicit linked-list stack.
     ClassCompiler class_compiler;
@@ -2498,7 +2532,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
         // declarations so it can be captured by the upvalue machinery.
         begin_scope(parser);
         add_local(parser, make_syntoken("super"));
-        define_variable(parser, 0, PRIVATE);
+        define_variable(parser, 0, PRIVATE, false);
 
         emit_load_named_variable(parser, class_name);
         emit_byte(parser, PYRO_OPCODE_INHERIT);
@@ -2647,7 +2681,9 @@ static void parse_statement(Parser* parser) {
             return;
         }
         if (match(parser, TOKEN_VAR)) {
-            parse_var_declaration(parser, PUBLIC);
+            parse_var_declaration(parser, PUBLIC, false);
+        } else if (match(parser, TOKEN_LET)) {
+            parse_var_declaration(parser, PUBLIC, true);
         } else if (match(parser, TOKEN_DEF)) {
             parse_function_declaration(parser, PUBLIC);
         } else if (match(parser, TOKEN_CLASS)) {
@@ -2664,7 +2700,9 @@ static void parse_statement(Parser* parser) {
             return;
         }
         if (match(parser, TOKEN_VAR)) {
-            parse_var_declaration(parser, PRIVATE);
+            parse_var_declaration(parser, PRIVATE, false);
+        } else if (match(parser, TOKEN_LET)) {
+            parse_var_declaration(parser, PRIVATE, true);
         } else if (match(parser, TOKEN_DEF)) {
             parse_function_declaration(parser, PRIVATE);
         } else if (match(parser, TOKEN_CLASS)) {
@@ -2681,7 +2719,9 @@ static void parse_statement(Parser* parser) {
             parse_block(parser);
             end_scope(parser);
         } else if (match(parser, TOKEN_VAR)) {
-            parse_var_declaration(parser, PRIVATE);
+            parse_var_declaration(parser, PRIVATE, false);
+        } else if (match(parser, TOKEN_LET)) {
+            parse_var_declaration(parser, PRIVATE, true);
         } else if (match(parser, TOKEN_DEF)) {
             parse_function_declaration(parser, PRIVATE);
         } else if (match(parser, TOKEN_CLASS)) {
