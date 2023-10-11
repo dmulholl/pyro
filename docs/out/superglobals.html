@@ -433,7 +433,10 @@ Imports <code>path</code> as a module, where <code>path</code> is an import path
 </p>
 <p>
 Returns the imported module.
-Panics if <code>path</code> is invalid or if the attempt to import the module fails.
+Panics if <code>path</code> is invalid or if the attempt to load and execute the module fails.
+</p>
+<p>
+Note that this function ignores the module cache &mdash; i.e. the <code>$import()</code> function will always reload and execute the latest version of the module's code.
 </p>
 </dd>
 </div>
