@@ -88,6 +88,9 @@
 <li>
 <a href="#importing-using-import">Importing using $import()</a>
 </li>
+<li>
+<a href="#assigning-to-members">Assigning to members</a>
+</li>
 </ul>
 <hr>
 <p>
@@ -106,13 +109,13 @@ The imported module's name becomes a variable in the importing scope:
 <span class="k">assert</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
 </pre>
 <p>
-Use the member access operator <code>::</code> to access a module's top-level members &mdash; i.e. variables, functions, and classes.
+Use the member access operator <code>::</code> to access a module's top-level members &mdash; i.e. its global variables, functions, and classes.
 </p>
 <h3 id="public-private-members">
 Public/Private Members
 </h3>
 <p>
-A module's top-level members (variables, functions, and classes) are private by default
+A module's top-level members (i.e. its global variables, functions, and classes) are private by default
 &mdash; use the <code>pub</code> keyword to make them public, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
@@ -373,7 +376,7 @@ You can also use the <code>$exec()</code> function to create a new module direct
 Importing using $import()
 </h3>
 <p>
-You can import a module using the <code>$import()</code> function which takes the module's import path as a string, e.g.
+You can import a module using the <code>$import()</code> function, which takes the module's import path as a string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$import</span><span class="p">(</span><span class="s">&quot;std::math&quot;</span><span class="p">);</span>
@@ -388,6 +391,40 @@ You can wrap the <code>$import()</code> function in a <code>try</code> expressio
 <span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;not found&quot;</span><span class="p">;</span>
 <span class="p">}</span>
+</pre>
+<p>
+Note that the <code>$import()</code> function ignores the module cache &mdash; unlike an <code>import</code> statement, it will always reload and execute the latest version of the module's code.
+</p>
+<h3 id="assigning-to-members">
+Assigning to members
+</h3>
+<p>
+Pyro doesn't allow direct assignment to module members from outside the module, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="c1"># in module.pyro</span>
+<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+</pre>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="c1"># in script.pyro</span>
+<span class="kn">import</span> <span class="nx">module</span><span class="p">;</span>
+<span class="nx">module</span><span class="p">::</span><span class="nx">number</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
+</pre>
+<p>
+If you want to allow assignment to a module member from outside the module, use a member function, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="c1"># in module.pyro</span>
+<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+
+<span class="kd">pub</span> <span class="kd">def</span> <span class="nx">set_number</span><span class="p">(</span><span class="nx">new_value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">number</span> <span class="p">=</span> <span class="nx">new_value</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="c1"># in script.pyro</span>
+<span class="kn">import</span> <span class="nx">module</span><span class="p">;</span>
+<span class="nx">module</span><span class="p">::</span><span class="nx">set_number</span><span class="p">(</span><span class="mi">456</span><span class="p">);</span>
 </pre>
         </article>
         

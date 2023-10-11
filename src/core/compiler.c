@@ -1458,11 +1458,14 @@ static void parse_call_expr(Parser* parser, bool can_assign) {
         }
 
         else if (match(parser, TOKEN_COLON_COLON)) {
-            consume(parser, TOKEN_IDENTIFIER, "expected a member name after '::'");
-            uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
+            if (!consume(parser, TOKEN_IDENTIFIER, "expected a member name after '::'")) {
+                break;
+            }
+            Token name = parser->previous_token;
+            uint16_t index = make_string_constant_from_identifier(parser, &name);
             emit_u8_u16be(parser, PYRO_OPCODE_GET_MEMBER, index);
             if (match_assignment_token(parser)) {
-                ERROR_AT_PREVIOUS_TOKEN("cannot assign to a module member from outside the module");
+                ERROR_AT_PREVIOUS_TOKEN("invalid assignment to '%.*s', cannot assign to module members", name.length, name.start);
             }
         }
 

@@ -19,13 +19,13 @@ The imported module's name becomes a variable in the importing scope:
 ::: code pyro
     assert math::abs(-1) == 1;
 
-Use the member access operator `::` to access a module's top-level members --- i.e. variables, functions, and classes.
+Use the member access operator `::` to access a module's top-level members --- i.e. its global variables, functions, and classes.
 
 
 
 ### Public/Private Members
 
-A module's top-level members (variables, functions, and classes) are private by default
+A module's top-level members (i.e. its global variables, functions, and classes) are private by default
 --- use the `pub` keyword to make them public, e.g.
 
 ::: code pyro
@@ -241,7 +241,7 @@ You can also use the `$exec()` function to create a new module directly from a s
 
 ### Importing using $import()
 
-You can import a module using the `$import()` function which takes the module's import path as a string, e.g.
+You can import a module using the `$import()` function, which takes the module's import path as a string, e.g.
 
 ::: code pyro
     var mod = $import("std::math");
@@ -256,3 +256,34 @@ You can wrap the `$import()` function in a `try` expression to check if a module
         echo "not found";
     }
 
+Note that the `$import()` function ignores the module cache --- unlike an `import` statement, it will always reload and execute the latest version of the module's code.
+
+
+
+### Assigning to members
+
+Pyro doesn't allow direct assignment to module members from outside the module, e.g.
+
+::: code pyro
+    # in module.pyro
+    pub var number = 123;
+
+::: code pyro
+    # in script.pyro
+    import module;
+    module::number = 456; # syntax error
+
+If you want to allow assignment to a module member from outside the module, use a member function, e.g.
+
+::: code pyro
+    # in module.pyro
+    pub var number = 123;
+
+    pub def set_number(new_value) {
+        number = new_value;
+    }
+
+::: code pyro
+    # in script.pyro
+    import module;
+    module::set_number(456);
