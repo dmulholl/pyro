@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.4.10
+" v0.4.11
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -19,7 +19,7 @@ syn match pyroEscape #\%(\\u\x\{4}\|\\U\x\{8}\)# contained
 syn match pyroInterpolation #${[_$a-zA-Z0-9 .,:;?()\[\]`'"!&|^*/%+-]\+}# contained
 
 " Keywords.
-syn keyword pyroKeyword var def class typedef with
+syn keyword pyroKeyword var let def class typedef with
 syn keyword pyroKeyword pub pri static
 syn keyword pyroKeyword if else for while in loop
 syn keyword pyroKeyword return break continue
