@@ -15,12 +15,29 @@
 {
     let foo = 123;
     {
+        let foo = 456;
+        assert foo == 456;
+    }
+    assert foo == 123;
+}
+
+{
+    let foo = 123;
+    {
         var foo = 456;
         assert foo == 456;
         foo = 789;
         assert foo == 789;
     }
     assert foo == 123;
+}
+
+{
+    let vec = ["foo", "bar"];
+    assert vec:count() == 2;
+    vec:append("baz");
+    assert vec:count() == 3;
+    assert "baz" in vec;
 }
 
 def func() {

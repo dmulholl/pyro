@@ -1,5 +1,12 @@
 let foo = 123;
 assert foo == 123;
+
+{
+    let foo = 456;
+    assert foo == 456;
+}
+assert foo == 123;
+
 {
     var foo = 456;
     assert foo == 456;
@@ -16,6 +23,12 @@ let (a, b, c) = (123, 456, 789);
 assert a == 123;
 assert b == 456;
 assert c == 789;
+
+let vec = ["foo", "bar"];
+assert vec:count() == 2;
+vec:append("baz");
+assert vec:count() == 3;
+assert "baz" in vec;
 
 def func() {
     return foo;
