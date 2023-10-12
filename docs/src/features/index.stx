@@ -16,6 +16,7 @@ meta_title: Pyro &mdash; Language Features
 * [Conditional Scoped Variables](@root/features/conditional-scoped-variables//)
 * [Loop Closures](@root/features/loop-closures//)
 * [Checked Arithmetic](@root/features/checked-arithmetic//)
+* [Constants](@root/features/constants//)
 
 
 ### Testing & Benchmarking

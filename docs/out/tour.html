@@ -65,6 +65,9 @@ Pyro begs, borrows, and steals from every language I've ever used, but it drags 
 <a href="#variables">Variables</a>
 </li>
 <li>
+<a href="#constants">Constants</a>
+</li>
+<li>
 <a href="#numbers">Numbers</a>
 </li>
 <li>
@@ -148,21 +151,21 @@ Variables are declared using the <code>var</code> keyword:
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
-Variables must be declared before use. If an initial value isn't specified the variable gets the default value <code>null</code>.
+Variables must be declared before use. If an initial value isn't specified, the variable gets the default value <code>null</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
 </pre>
 <p>
-You can declare multiple variables in a single statement:
+You can declare multiple variables in a single statement, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">baz</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span> <span class="nx">bam</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
 </pre>
 <p>
-Variables have lexical scope and declarations inside blocks will shadow outer declarations:
+Variables have lexical scope and declarations inside blocks will shadow outer declarations, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
@@ -175,10 +178,29 @@ Variables have lexical scope and declarations inside blocks will shadow outer de
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
-Identifier names (this includes variables, functions, and classes) should begin with an ASCII letter or an underscore and contain only ASCII letters, numbers, and underscores.
+Identifier names (i.e. variables, constants, functions, and classes) should begin with an ASCII letter or an underscore and contain only ASCII letters, numbers, and underscores.
 </p>
 <p>
 Names beginning with a <code>$</code> symbol are special &mdash; this namespace is reserved by the language for builtin variables and functions.
+</p>
+<h3 id="constants">
+Constants
+</h3>
+<p>
+Use the <code>let</code> keyword to declare a constant, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">let</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+</pre>
+<p>
+Constants work just like variables, but can only be assigned a value in their declaration statement, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">let</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="nx">value</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
+</pre>
+<p>
+You can learn more about constants <a href="features/constants.html">here</a>.
 </p>
 <h3 id="numbers">
 Numbers

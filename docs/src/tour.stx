@@ -26,19 +26,19 @@ Variables are declared using the `var` keyword:
 ::: code pyro
     var foo = 123;
 
-Variables must be declared before use. If an initial value isn't specified the variable gets the default value `null`.
+Variables must be declared before use. If an initial value isn't specified, the variable gets the default value `null`, e.g.
 
 ::: code pyro
     var foo;
     assert foo == null;
 
-You can declare multiple variables in a single statement:
+You can declare multiple variables in a single statement, e.g.
 
 ::: code pyro
     var foo, bar;
     var baz = 123, bam = 456;
 
-Variables have lexical scope and declarations inside blocks will shadow outer declarations:
+Variables have lexical scope and declarations inside blocks will shadow outer declarations, e.g.
 
 ::: code pyro
     var foo = 123;
@@ -50,9 +50,26 @@ Variables have lexical scope and declarations inside blocks will shadow outer de
 
     assert foo == 123;
 
-Identifier names (this includes variables, functions, and classes) should begin with an ASCII letter or an underscore and contain only ASCII letters, numbers, and underscores.
+Identifier names (i.e. variables, constants, functions, and classes) should begin with an ASCII letter or an underscore and contain only ASCII letters, numbers, and underscores.
 
 Names beginning with a `$` symbol are special --- this namespace is reserved by the language for builtin variables and functions.
+
+
+
+### Constants
+
+Use the `let` keyword to declare a constant, e.g.
+
+::: code pyro
+    let value = 123;
+
+Constants work just like variables, but can only be assigned a value in their declaration statement, e.g.
+
+::: code pyro
+    let value = 123;
+    value = 456; # syntax error
+
+You can learn more about constants [here](@root/features/constants//).
 
 
 

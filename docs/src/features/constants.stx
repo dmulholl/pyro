@@ -1,0 +1,75 @@
+---
+title: Constants
+meta_title: Pyro &mdash; Constants
+---
+
+::: insert toc
+::: hr
+
+
+Use the `let` keyword to declare a constant, e.g.
+
+::: code pyro
+    let value = 123;
+
+Constants work just like variables, but can only be assigned a value in their declaration statement, e.g.
+
+::: code pyro
+    let value = 123;
+    value = 456; # syntax error
+
+
+
+### Shadowing
+
+Like variables, constants have lexical scope, and declarations inside inner blocks will shadow outer declarations, e.g.
+
+::: code pyro
+    let foo = 123;
+
+    {
+        let foo = 456;
+        assert foo == 456;
+    }
+
+    assert foo == 123;
+
+A variable-declaration can shadow a constant-declaration and vice versa, e.g.
+
+::: code pyro
+    let foo = 123;
+
+    {
+        var foo = 456;
+        assert foo == 456;
+        foo = 789;
+        assert foo == 789;
+    }
+
+    assert foo == 123;
+
+
+
+### Unpacking
+
+Like variables, constants support unpacking, e.g.
+
+::: code pyro
+    let (foo, bar, baz) = (123, 456, 789);
+    assert foo == 123;
+    assert bar == 456;
+    assert baz == 789;
+
+
+
+### Mutable Objects
+
+A mutable object assigned to a constant remains mutable --- i.e. the constant cannot be reassigned but the object itself can still be changed, e.g.
+
+::: code pyro
+    let vec = ["foo", "bar"];
+
+    vec:append("baz");
+    assert "baz" in vec;
+
+    vec = []; # syntax error
