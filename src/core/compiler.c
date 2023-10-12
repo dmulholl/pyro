@@ -93,6 +93,20 @@ typedef struct ClassCompiler {
 } ClassCompiler;
 
 
+typedef struct GlobalConstant GlobalConstant;
+struct GlobalConstant {
+    Token name;
+    GlobalConstant* next;
+};
+
+
+typedef struct GlobalAssignment GlobalAssignment;
+struct GlobalAssignment {
+    Token name;
+    GlobalAssignment* next;
+};
+
+
 typedef struct {
     Lexer lexer;
     Token previous_token;
@@ -106,6 +120,8 @@ typedef struct {
     size_t num_statements;
     size_t num_expression_statements;
     bool dump_bytecode;
+    GlobalConstant* global_constants;
+    GlobalAssignment* global_assignments;
 } Parser;
 
 
@@ -126,6 +142,8 @@ static void parse_unary_expr(Parser* parser, bool can_assign);
 static void parse_statement(Parser* parser);
 static void parse_function_definition(Parser* parser, FnType type, Token name);
 static void parse_type(Parser* parser);
+static void log_global_constant(Parser* parser, Token name);
+static void log_global_assignment(Parser* parser, Token name);
 
 
 /* ----------------- */
@@ -562,10 +580,11 @@ static void define_variables(Parser* parser, uint16_t* indexes, int count, Acces
 }
 
 
-// Add a newly declared local variable to the compiler's locals list.
-static void declare_variable(Parser* parser, Token name) {
+static void declare_variable(Parser* parser, Token name, bool is_constant) {
     if (parser->fn_compiler->scope_depth == 0) {
-        // Don't do anything for globals.
+        if (is_constant) {
+            log_global_constant(parser, name);
+        }
         return;
     }
 
@@ -589,9 +608,9 @@ static void declare_variable(Parser* parser, Token name) {
 
 
 // Called when declaring a variable or function parameter.
-static uint16_t consume_variable_name(Parser* parser, const char* error_message) {
+static uint16_t consume_variable_name(Parser* parser, const char* error_message, bool is_constant) {
     consume(parser, TOKEN_IDENTIFIER, error_message);
-    declare_variable(parser, parser->previous_token);
+    declare_variable(parser, parser->previous_token, is_constant);
 
     // Local variables are referenced by index not by name so we don't need to add the name
     // of a local to the list of constants. This return value will simply be ignored.
@@ -780,6 +799,7 @@ static void emit_store_named_variable(Parser* parser, Token name) {
     uint16_t const_index = make_string_constant_from_identifier(parser, &name);
     emit_byte(parser, PYRO_OPCODE_SET_GLOBAL);
     emit_u16be(parser, const_index);
+    log_global_assignment(parser, name);
 }
 
 
@@ -1826,7 +1846,7 @@ static void parse_unpacking_declaration(Parser* parser, Access access, bool is_c
             ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %d)", var_name_capacity);
             return;
         }
-        var_name_indexes[var_name_count++] = consume_variable_name(parser, "expected variable name");
+        var_name_indexes[var_name_count++] = consume_variable_name(parser, "expected variable name", is_constant);
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
@@ -1847,7 +1867,7 @@ static void parse_var_declaration(Parser* parser, Access access, bool is_constan
         if (match(parser, TOKEN_LEFT_PAREN)) {
             parse_unpacking_declaration(parser, access, is_constant);
         } else {
-            uint16_t index = consume_variable_name(parser, "expected variable name");
+            uint16_t index = consume_variable_name(parser, "expected variable name", is_constant);
             if (match(parser, TOKEN_COLON)) {
                 parse_type(parser);
             }
@@ -1950,7 +1970,7 @@ static void parse_import_stmt(Parser* parser) {
             return;
         }
         for (int i = 0; i < member_count; i++) {
-            declare_variable(parser, member_names[i]);
+            declare_variable(parser, member_names[i], false);
         }
         define_variables(parser, member_indexes, member_count, PRIVATE, false);
     } else {
@@ -1958,7 +1978,7 @@ static void parse_import_stmt(Parser* parser) {
             ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement");
             return;
         }
-        declare_variable(parser, module_name);
+        declare_variable(parser, module_name, false);
         define_variable(parser, module_index, PRIVATE, false);
     }
 
@@ -2383,7 +2403,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
         if (match(parser, TOKEN_STAR)) {
             fn_compiler.fn->is_variadic = true;
         }
-        uint16_t index = consume_variable_name(parser, "expected parameter name");
+        uint16_t index = consume_variable_name(parser, "expected parameter name", false);
         define_variable(parser, index, PRIVATE, false);
         fn_compiler.fn->arity++;
         if (match(parser, TOKEN_COLON)) {
@@ -2447,7 +2467,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 
 
 static void parse_function_declaration(Parser* parser, Access access) {
-    uint16_t index = consume_variable_name(parser, "expected a function name");
+    uint16_t index = consume_variable_name(parser, "expected a function name", false);
     mark_local_as_initialized(parser, false);
     parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
     define_variable(parser, index, access, false);
@@ -2515,7 +2535,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
     Token class_name = parser->previous_token;
 
     uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
-    declare_variable(parser, parser->previous_token);
+    declare_variable(parser, parser->previous_token, false);
 
     emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLASS, index);
     define_variable(parser, index, access, false);
@@ -2767,6 +2787,92 @@ static void parse_statement(Parser* parser) {
 }
 
 
+/* ------------------------------------- */
+/*  Log Global Declarations/Assignments  */
+/* ------------------------------------- */
+
+
+static void log_global_constant(Parser* parser, Token name) {
+    GlobalConstant* global_constant = pyro_realloc(parser->vm, NULL, 0, sizeof(GlobalConstant));
+    if (!global_constant) {
+        parser->had_memory_error = true;
+        return;
+    }
+
+    global_constant->name = name;
+    global_constant->next = NULL;
+
+    if (parser->global_constants) {
+        global_constant->next = parser->global_constants;
+        parser->global_constants = global_constant;
+    } else {
+        parser->global_constants = global_constant;
+    }
+}
+
+
+static void free_global_constants(Parser* parser) {
+    while (parser->global_constants) {
+        GlobalConstant* next = parser->global_constants->next;
+        pyro_realloc(parser->vm, parser->global_constants, sizeof(GlobalConstant), 0);
+        parser->global_constants = next;
+    }
+}
+
+
+static void log_global_assignment(Parser* parser, Token name) {
+    GlobalAssignment* global_asignment = pyro_realloc(parser->vm, NULL, 0, sizeof(GlobalAssignment));
+    if (!global_asignment) {
+        parser->had_memory_error = true;
+        return;
+    }
+
+    global_asignment->name = name;
+    global_asignment->next = NULL;
+
+    if (parser->global_assignments) {
+        global_asignment->next = parser->global_assignments;
+        parser->global_assignments = global_asignment;
+    } else {
+        parser->global_assignments = global_asignment;
+    }
+}
+
+
+static void free_global_assignments(Parser* parser) {
+    while (parser->global_assignments) {
+        GlobalAssignment* next = parser->global_assignments->next;
+        pyro_realloc(parser->vm, parser->global_assignments, sizeof(GlobalAssignment), 0);
+        parser->global_assignments = next;
+    }
+}
+
+
+static void check_global_constants(Parser* parser) {
+    GlobalAssignment* global_assignment = parser->global_assignments;
+
+    while (global_assignment) {
+        GlobalConstant* global_constant = parser->global_constants;
+
+        while (global_constant) {
+            if (lexemes_are_equal(&global_assignment->name, &global_constant->name)) {
+                pyro_syntax_error(
+                    parser->vm, 
+                    parser->src_id, 
+                    global_assignment->name.line, 
+                    "invalid assignment to global constant '%.*s'", 
+                    global_assignment->name.length, 
+                    global_assignment->name.start
+                );
+                return;
+            }
+            global_constant = global_constant->next;
+        }
+
+        global_assignment = global_assignment->next; 
+    }
+}
+
 /* -------------------- */
 /*  Compiler Interface  */
 /* -------------------- */
@@ -2783,6 +2889,8 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     parser.num_statements = 0;
     parser.num_expression_statements = 0;
     parser.dump_bytecode = dump_bytecode;
+    parser.global_constants = NULL;
+    parser.global_assignments = NULL;
 
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we
     // report the correct line number for syntax errors at the end of the input, e.g. a
@@ -2810,11 +2918,11 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     while (!match(&parser, TOKEN_EOF)) {
         parse_statement(&parser);
         if (parser.had_syntax_error) {
-            return NULL;
+            break;
         }
         if (parser.had_memory_error) {
             pyro_panic(vm, "out of memory");
-            return NULL;
+            break;
         }
     }
 
@@ -2823,9 +2931,14 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     // If the code consisted of a single expression statement, we might want to print the
     // value of the expression if we're running inside a REPL.
     if (parser.num_statements == 1 && parser.num_expression_statements == 1) {
-        assert(fn->code[fn->code_count - 3] == PYRO_OPCODE_POP);
-        fn->code[fn->code_count - 3] = PYRO_OPCODE_POP_ECHO_IN_REPL;
+        if (fn->code_count >= 3 && fn->code[fn->code_count - 3] == PYRO_OPCODE_POP) {
+            fn->code[fn->code_count - 3] = PYRO_OPCODE_POP_ECHO_IN_REPL;
+        }
     }
+
+    check_global_constants(&parser);
+    free_global_constants(&parser);
+    free_global_assignments(&parser);
 
     return fn;
 }
@@ -2842,6 +2955,8 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
     parser.num_statements = 0;
     parser.num_expression_statements = 0;
     parser.dump_bytecode = false;
+    parser.global_constants = NULL;
+    parser.global_assignments = NULL;
 
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we
     // report the correct line number for syntax errors at the end of the input.
@@ -2865,15 +2980,15 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
     parse_expression(&parser, false);
     emit_byte(&parser, PYRO_OPCODE_RETURN);
 
-    if (parser.had_syntax_error) {
-        return NULL;
-    }
-
     if (parser.had_memory_error) {
         pyro_panic(vm, "out of memory");
-        return NULL;
     }
 
     PyroFn* fn = end_fn_compiler(&parser);
+    
+    check_global_constants(&parser);
+    free_global_constants(&parser);
+    free_global_assignments(&parser);
+
     return fn;
 }

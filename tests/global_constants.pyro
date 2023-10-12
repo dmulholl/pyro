@@ -1,0 +1,72 @@
+let foo = 123;
+assert foo == 123;
+{
+    var foo = 456;
+    assert foo == 456;
+    foo = 789;
+    assert foo == 789;
+}
+assert foo == 123;
+
+let bar = 456, baz = 789;
+assert bar == 456;
+assert baz == 789;
+
+let (a, b, c) = (123, 456, 789);
+assert a == 123;
+assert b == 456;
+assert c == 789;
+
+def func() {
+    return foo;
+}
+assert func() == 123;
+
+def outer() {
+    def inner() {
+        return foo;
+    }
+    return inner;
+}
+var inner = outer();
+assert inner() == 123;
+
+var src1 = `
+let foo = 123;
+foo = 456;
+`;
+assert $is_err(try $exec(src1));
+
+var src2 = `
+let foo = 123;
+{
+    foo = 456;
+}
+`;
+assert $is_err(try $exec(src2));
+
+var src3 = `
+let foo = 123;
+
+def func() {
+    foo = 456;
+}
+`;
+assert $is_err(try $exec(src3));
+
+var src4 = `
+let foo = 123;
+
+def outer() {
+    def inner() {
+        foo = 456;
+    }
+}
+`;
+assert $is_err(try $exec(src4));
+
+var src5 = `
+let (a, b, c) = (1, 2, 3);
+a = 4;
+`;
+assert $is_err(try $exec(src5));

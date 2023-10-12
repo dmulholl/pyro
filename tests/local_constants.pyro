@@ -80,3 +80,11 @@ def outer() {
 }
 `;
 assert $is_err(try $exec(src4));
+
+var src5 = `
+{
+    let (a, b, c) = (1, 2, 3);
+    a = 4;
+}
+`;
+assert $is_err(try $exec(src5));
