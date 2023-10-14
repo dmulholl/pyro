@@ -252,7 +252,7 @@ static uint16_t add_value_to_constant_table(Parser* parser, PyroValue value) {
         parser->had_memory_error = true;
         return 0;
     } else if (index > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("too many constants in function");
+        ERROR_AT_PREVIOUS_TOKEN("the function's constant table is full (max: %d values)", UINT16_MAX);
         return 0;
     }
     return (uint16_t)index;
@@ -456,7 +456,7 @@ static bool resolve_local(Parser* parser, FnCompiler* fn_compiler, Token* name, 
                 *is_constant = local->is_constant;
                 return true;
             }
-            ERROR_AT_PREVIOUS_TOKEN("can't read a local variable in its own initializer");
+            ERROR_AT_PREVIOUS_TOKEN("can't access local '%.*s' in initializing expression", name->length, name->start);
             return true;
         }
     }
@@ -479,6 +479,7 @@ static int add_upvalue(Parser* parser, FnCompiler* fn_compiler, uint8_t index, b
         }
     }
 
+    // TODO: investigate whether this low limit is really necessary.
     if (upvalue_count == 256) {
         ERROR_AT_PREVIOUS_TOKEN("too many closure variables in function (max: 256)");
         return 0;
@@ -525,7 +526,7 @@ static bool resolve_upvalue(Parser* parser, FnCompiler* fn_compiler, Token* name
 
 static void add_local(Parser* parser, Token name) {
     if (parser->fn_compiler->local_count == 256) {
-        ERROR_AT_PREVIOUS_TOKEN("too many local variables in scope (max 256)");
+        ERROR_AT_PREVIOUS_TOKEN("too many local variables in scope (max: 256)");
         return;
     }
     Local* local = &parser->fn_compiler->locals[parser->fn_compiler->local_count++];
@@ -599,7 +600,7 @@ static void declare_variable(Parser* parser, Token name, bool is_constant) {
             break;
         }
         if (lexemes_are_equal(&name, &local->name)) {
-            ERROR_AT_PREVIOUS_TOKEN("'%.*s' already exists in this scope", name.length, name.start);
+            ERROR_AT_PREVIOUS_TOKEN("'%.*s' has already been declared in this scope", name.length, name.start);
         }
     }
 
@@ -672,7 +673,7 @@ static void patch_jump(Parser* parser, size_t index) {
 
     size_t jump = parser->fn_compiler->fn->code_count - index - 2;
     if (jump > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("too much code to jump over");
+        ERROR_AT_PREVIOUS_TOKEN("jump length exceeds maximum limit (max: %d bytes of bytecode)", UINT16_MAX);
         return;
     }
 
@@ -2059,7 +2060,7 @@ static void emit_loop(Parser* parser, size_t start_bytecode_count) {
 
     size_t offset = parser->fn_compiler->fn->code_count - start_bytecode_count + 2;
     if (offset > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("loop body is too large");
+        ERROR_AT_PREVIOUS_TOKEN("loop body is too large (max: %d bytes of bytecode)", UINT16_MAX);
     }
 
     emit_byte(parser, (offset >> 8) & 0xff);
@@ -2189,7 +2190,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         parse_expression(parser, false);
         if (match_assignment_token(parser)) {
             ERROR_AT_PREVIOUS_TOKEN(
-                "assignment is not allowed in 'loop' conditions, wrap in '()' to enable"
+                "assignment is not allowed in loop conditions, wrap in '()' to enable"
             );
             return;
         }
@@ -2293,7 +2294,7 @@ static void parse_while_stmt(Parser* parser) {
     parse_expression(parser, false);
     if (match_assignment_token(parser)) {
         ERROR_AT_PREVIOUS_TOKEN(
-            "assignment is not allowed in 'while' conditions, wrap in '()' to enable"
+            "assignment is not allowed in while conditions, wrap in '()' to enable"
         );
         return;
     }
@@ -2424,18 +2425,6 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
         }
     } while (match(parser, TOKEN_COMMA));
     consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after function parameters");
-
-    // Check the arity for known method names.
-    if (type == TYPE_METHOD) {
-        if (strcmp(fn_compiler.fn->name->bytes, "$fmt") == 0 && fn_compiler.fn->arity != 1) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid method definition, $fmt() takes 1 argument");
-            return;
-        }
-        if (strcmp(fn_compiler.fn->name->bytes, "$str") == 0 && fn_compiler.fn->arity != 0) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid method definition, $str() takes no arguments");
-            return;
-        }
-    }
 
     if (match(parser, TOKEN_RIGHT_ARROW)) {
         parse_type(parser);
@@ -2857,11 +2846,11 @@ static void check_global_constants(Parser* parser) {
         while (global_constant) {
             if (lexemes_are_equal(&global_assignment->name, &global_constant->name)) {
                 pyro_syntax_error(
-                    parser->vm, 
-                    parser->src_id, 
-                    global_assignment->name.line, 
-                    "invalid assignment to global constant '%.*s'", 
-                    global_assignment->name.length, 
+                    parser->vm,
+                    parser->src_id,
+                    global_assignment->name.line,
+                    "invalid assignment to global constant '%.*s'",
+                    global_assignment->name.length,
                     global_assignment->name.start
                 );
                 return;
@@ -2869,7 +2858,7 @@ static void check_global_constants(Parser* parser) {
             global_constant = global_constant->next;
         }
 
-        global_assignment = global_assignment->next; 
+        global_assignment = global_assignment->next;
     }
 }
 
@@ -2985,7 +2974,7 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
     }
 
     PyroFn* fn = end_fn_compiler(&parser);
-    
+
     check_global_constants(&parser);
     free_global_constants(&parser);
     free_global_assignments(&parser);
