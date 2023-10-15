@@ -12,7 +12,10 @@ file in the site header:
 * `tagline`
 * `version`
 
-It supports the following includes:
+
+### Includes
+
+This theme supports the following includes:
 
 * `menu`
 
@@ -33,6 +36,9 @@ It supports the following includes:
     used to add custom JavaScript to a site without directly editing the
     theme's template files.
 
+
+### Copy Buttons
+
 All `<pre>` blocks get an automatically-generated 'copy' button for copying the
 content to the clipboard. To disable this button, add a `no-copy` classs to
 the `<pre>` tag, e.g. in HTML:
@@ -45,6 +51,9 @@ Or in Syntext:
 
     ::: code .no-copy
         No copy button.
+
+
+### License
 
 This theme is distributed under the following license:
 
