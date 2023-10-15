@@ -1,8 +1,8 @@
 # Pyro
 
-[1]: http://www.dmulholl.com/docs/pyro/master/
-[2]: http://www.dmulholl.com/docs/pyro/master/quickstart.html
-[3]: http://www.dmulholl.com/docs/pyro/master/tour.html
+[1]: https://www.dmulholl.com/docs/pyro/master/
+[2]: https://www.dmulholl.com/docs/pyro/master/quickstart.html
+[3]: https://www.dmulholl.com/docs/pyro/master/tour.html
 
 
 Pyro is a dynamically-typed, garbage-collected scripting language implemented in C. This means that it lives in roughly the same neighbourhood in programming language space as languages like Python or Ruby.

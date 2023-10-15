@@ -5,6 +5,7 @@ meta_title: Pyro &mdash; License
 
 All code unique to Pyro is released under the Zero-Clause BSD licence (0BSD):
 
+::: code .no-copy
     Permission to use, copy, modify, and/or distribute this
     software for any purpose with or without fee is hereby
     granted.

@@ -5,8 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Pyro &mdash; Constants</title>
         <link rel="stylesheet" href="../assets/fonts.css">
-        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/graphite.css?v=2">
         <link rel="stylesheet" href="../assets/pygments.css">
+        <script src="../assets/code.js"></script>
         
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
@@ -65,7 +66,7 @@
 <a href="#mutable-objects">Mutable Objects</a>
 </li>
 <li>
-<a href="#repl">REPL</a>
+<a href="#constant-in-the-repl">Constant in the REPL</a>
 </li>
 </ul>
 <hr>
@@ -139,11 +140,11 @@ A mutable object assigned to a constant remains mutable &mdash; i.e. the constan
 
 <span class="nx">vec</span> <span class="p">=</span> <span class="p">[];</span> <span class="c1"># syntax error</span>
 </pre>
-<h3 id="repl">
-REPL
+<h3 id="constant-in-the-repl">
+Constant in the REPL
 </h3>
 <p>
-You might notice that in the REPL, globally-scoped constansts aren't... constant.
+You might notice that in the REPL, globally-scoped constansts aren't acually constant.
 They behave just like variables.
 </p>
 <p>

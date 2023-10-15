@@ -18,6 +18,7 @@ The following keywords are reserved by the language and cannot be used as identi
 * `if`
 * `import`
 * `in`
+* `let`
 * `loop`
 * `null`
 * `pri`
@@ -42,7 +43,6 @@ The following keywords are reserved for future use:
 * `defer`
 * `enum`
 * `guard`
-* `let`
 * `match`
 * `reimport`
 * `run`
