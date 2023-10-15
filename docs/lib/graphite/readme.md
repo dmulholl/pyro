@@ -13,7 +13,7 @@ file in the site header:
 * `version`
 
 
-### Includes
+## Includes
 
 This theme supports the following includes:
 
@@ -37,7 +37,7 @@ This theme supports the following includes:
     theme's template files.
 
 
-### Copy Buttons
+## Copy Buttons
 
 All `<pre>` blocks get an automatically-generated 'copy' button for copying the
 content to the clipboard. To disable this button, add a `no-copy` classs to
@@ -53,7 +53,7 @@ Or in Syntext:
         No copy button.
 
 
-### License
+## License
 
 This theme is distributed under the following license:
 
