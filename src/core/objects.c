@@ -1069,7 +1069,6 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_ECHO:
         case PYRO_OPCODE_GET_LOCAL:
         case PYRO_OPCODE_GET_UPVALUE:
-        case PYRO_OPCODE_IMPORT_ALL_MEMBERS:
         case PYRO_OPCODE_IMPORT_MODULE:
         case PYRO_OPCODE_SET_LOCAL:
         case PYRO_OPCODE_SET_UPVALUE:

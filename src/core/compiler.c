@@ -1886,38 +1886,28 @@ static void parse_var_declaration(Parser* parser, Access access, bool is_constan
 
 static void parse_import_stmt(Parser* parser) {
     // We'll use these arrays if we're explicitly importing named top-level members.
-    Token member_names[16];
-    uint16_t member_indexes[16];
-    int member_count = 0;
+    Token member_names[64];
+    uint16_t member_name_indexes[64];
+    int member_name_count = 0;
 
     // Read the first module name.
     if (!consume(parser, TOKEN_IDENTIFIER, "expected a module name after 'import'")) return;
-    uint16_t module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
-    emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, module_index);
+    uint16_t module_name_index = make_string_constant_from_identifier(parser, &parser->previous_token);
+    emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, module_name_index);
     Token module_name = parser->previous_token;
     int module_count = 1;
 
     // Read one ::module or ::{...} chunk per iteration.
     while (match(parser, TOKEN_COLON_COLON)) {
         if (match(parser, TOKEN_LEFT_BRACE)) {
-            if (match(parser, TOKEN_STAR)) {
-                if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after '*' in import statement")) return;
-                if (!consume(parser, TOKEN_SEMICOLON, "expected ';' after '{*}' in import statement")) return;
-                if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth != 0) {
-                    ERROR_AT_PREVIOUS_TOKEN("can only import {*} at global scope");
-                    return;
-                }
-                member_count = -1;
-                break;
-            }
             do {
                 if (!consume(parser, TOKEN_IDENTIFIER, "expected member name in import statement")) return;
-                member_indexes[member_count] = make_string_constant_from_identifier(parser, &parser->previous_token);
-                emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, member_indexes[member_count]);
-                member_names[member_count] = parser->previous_token;
-                member_count++;
-                if (member_count > 16) {
-                    ERROR_AT_PREVIOUS_TOKEN("too many member names in import statement (max: 16)");
+                member_name_indexes[member_name_count] = make_string_constant_from_identifier(parser, &parser->previous_token);
+                emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, member_name_indexes[member_name_count]);
+                member_names[member_name_count] = parser->previous_token;
+                member_name_count++;
+                if (member_name_count > 64) {
+                    ERROR_AT_PREVIOUS_TOKEN("too many member names in import statement (max: 64)");
                     return;
                 }
             } while (match(parser, TOKEN_COMMA));
@@ -1925,8 +1915,8 @@ static void parse_import_stmt(Parser* parser) {
             break;
         }
         if (!consume(parser, TOKEN_IDENTIFIER, "expected module name in import statement")) return;
-        module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
-        emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, module_index);
+        module_name_index = make_string_constant_from_identifier(parser, &parser->previous_token);
+        emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, module_name_index);
         module_name = parser->previous_token;
         module_count++;
     }
@@ -1936,27 +1926,23 @@ static void parse_import_stmt(Parser* parser) {
         return;
     }
 
-    if (member_count == -1) {
-        emit_byte(parser, PYRO_OPCODE_IMPORT_ALL_MEMBERS);
-        emit_byte(parser, module_count);
-        return;
-    } else if (member_count == 0) {
+    if (member_name_count == 0) {
         emit_byte(parser, PYRO_OPCODE_IMPORT_MODULE);
         emit_byte(parser, module_count);
     } else {
         emit_byte(parser, PYRO_OPCODE_IMPORT_NAMED_MEMBERS);
         emit_byte(parser, module_count);
-        emit_byte(parser, member_count);
+        emit_byte(parser, member_name_count);
     }
 
     int alias_count = 0;
     if (match(parser, TOKEN_AS)) {
         do {
             if (!consume(parser, TOKEN_IDENTIFIER, "expected alias name in import statement")) return;
-            module_index = make_string_constant_from_identifier(parser, &parser->previous_token);
+            module_name_index = make_string_constant_from_identifier(parser, &parser->previous_token);
             module_name = parser->previous_token;
             member_names[alias_count] = parser->previous_token;
-            member_indexes[alias_count] = module_index;
+            member_name_indexes[alias_count] = module_name_index;
             alias_count++;
             if (alias_count > 16) {
                 ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement (max: 16)");
@@ -1965,22 +1951,22 @@ static void parse_import_stmt(Parser* parser) {
         } while (match(parser, TOKEN_COMMA));
     }
 
-    if (member_count > 0) {
-        if (alias_count > 0 && alias_count != member_count) {
+    if (member_name_count > 0) {
+        if (alias_count > 0 && alias_count != member_name_count) {
             ERROR_AT_PREVIOUS_TOKEN("alias and member numbers do not match in import statement");
             return;
         }
-        for (int i = 0; i < member_count; i++) {
+        for (int i = 0; i < member_name_count; i++) {
             declare_variable(parser, member_names[i], false);
         }
-        define_variables(parser, member_indexes, member_count, PRIVATE, false);
+        define_variables(parser, member_name_indexes, member_name_count, PRIVATE, false);
     } else {
         if (alias_count > 1) {
             ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement");
             return;
         }
         declare_variable(parser, module_name, false);
-        define_variable(parser, module_index, PRIVATE, false);
+        define_variable(parser, module_name_index, PRIVATE, false);
     }
 
     consume(parser, TOKEN_SEMICOLON, "expected ';' after import statement");

@@ -249,9 +249,6 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_BINARY_GREATER_EQUAL:
             return atomic_instruction(vm, "BINARY_GREATER_EQUAL", ip);
 
-        case PYRO_OPCODE_IMPORT_ALL_MEMBERS:
-            return u8_instruction(vm, "IMPORT_ALL_MEMBERS", fn, ip);
-
         case PYRO_OPCODE_IMPORT_MODULE:
             return u8_instruction(vm, "IMPORT_MODULE", fn, ip);
 
