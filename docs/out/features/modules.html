@@ -19,7 +19,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.10.14</p>
+                <p class="version">Version 0.11.0-dev</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -296,15 +296,6 @@ You can alias the imported members using a comma-separated <code>as</code> list,
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::{</span><span class="nx">cos</span><span class="p">,</span> <span class="nx">sin</span><span class="p">}</span> <span class="kn">as</span> <span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
-<p>
-You can import <i>all</i> the top-level members from a module using an asterisk, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kn">import</span> <span class="nx">math</span><span class="p">::{</span><span class="o">*</span><span class="p">};</span>
-</pre>
-<p>
-Note that you can only use this <code>{*}</code> syntax at global scope in a script or module file &mdash; i.e. you can't import <code>{*}</code> inside a block or function.
-</p>
 <h3 id="import-roots">
 Import Roots
 </h3>
