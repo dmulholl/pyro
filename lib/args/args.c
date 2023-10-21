@@ -118,7 +118,7 @@ typedef struct {
 } Vec;
 
 
-static Vec* vec_new() {
+static Vec* vec_new(void) {
     Vec* vec = malloc(sizeof(Vec));
     if (!vec) {
         return NULL;
@@ -179,7 +179,7 @@ typedef struct {
 } Map;
 
 
-static Map* map_new() {
+static Map* map_new(void) {
     Map* map = malloc(sizeof(Map));
     if (!map) {
         return NULL;
@@ -409,7 +409,7 @@ static bool option_try_set(Option* opt, char* arg) {
 }
 
 
-static Option* option_new() {
+static Option* option_new(void) {
     Option *option = malloc(sizeof(Option));
     if (!option) {
         return NULL;
@@ -422,7 +422,7 @@ static Option* option_new() {
 }
 
 
-static Option* option_new_flag() {
+static Option* option_new_flag(void) {
     Option *opt = option_new();
     if (!opt) {
         return NULL;
@@ -642,7 +642,7 @@ struct ArgParser {
 };
 
 
-ArgParser* ap_new_parser() {
+ArgParser* ap_new_parser(void) {
     ArgParser *parser = malloc(sizeof(ArgParser));
     if (!parser) {
         return NULL;
@@ -1095,27 +1095,31 @@ ArgParser* ap_get_parent(ArgParser* parser) {
 
 // Parse an option of the form --name=value or -n=value.
 static void ap_handle_equals_opt(ArgParser* parser, const char* prefix, const char* arg, ArgStream* stream) {
-    char* name = str_dup(arg);
-    if (!name) {
+    char* array = str_dup(arg);
+    if (!array) {
         ap_set_memory_error_flag(parser);
         return;
     }
 
-    *strchr(name, '=') = '\0';
-    char *value = strchr(arg, '=') + 1;
+    *strchr(array, '=') = '\0';
+    char* name = array;
+    char* value = strchr(arg, '=') + 1;
 
     Option* option;
     bool found = map_get(parser->option_map, name, (void**)&option);
 
     if (!found) {
+        free(array);
         exit_with_error("%s%s is not a recognised option name", prefix, name);
     }
 
     if (option->type == OPT_FLAG) {
+        free(array);
         exit_with_error("flag %s%s does not accept an argument", prefix, name);
     }
 
     if (strlen(value) == 0) {
+        free(array);
         exit_with_error("missing argument for %s%s", prefix, name);
     }
 
@@ -1131,7 +1135,7 @@ static void ap_handle_equals_opt(ArgParser* parser, const char* prefix, const ch
         }
     }
 
-    free(name);
+    free(array);
 }
 
 
