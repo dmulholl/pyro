@@ -2,7 +2,7 @@
 #define pyro_setup_h
 
 // Initializes a new VM. Returns NULL if memory allocation fails.
-PyroVM* pyro_new_vm();
+PyroVM* pyro_new_vm(void);
 
 // Frees a VM instance and all heap-allocated memory owned by that VM.
 void pyro_free_vm(PyroVM* vm);

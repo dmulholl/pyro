@@ -618,7 +618,7 @@ uint64_t pyro_hash_combine(uint64_t h1, uint64_t h2) {
 }
 
 
-uint64_t pyro_random_seed() {
+uint64_t pyro_random_seed(void) {
     // Arbitrary starting point. This is the default seed from the 64-bit Mersenne Twister.
     uint64_t seed = UINT64_C(5489);
 

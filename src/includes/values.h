@@ -88,12 +88,12 @@ static inline PyroValue pyro_obj(void* value) {
 }
 
 // Creates a Pyro tombstone value.
-static inline PyroValue pyro_tombstone() {
+static inline PyroValue pyro_tombstone(void) {
     return (PyroValue){PYRO_VALUE_TOMBSTONE, {.i64 = 0}};
 }
 
 // Creates a Pyro null value.
-static inline PyroValue pyro_null() {
+static inline PyroValue pyro_null(void) {
     return (PyroValue){PYRO_VALUE_NULL, {.i64 = 0}};
 }
 

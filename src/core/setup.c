@@ -1,7 +1,7 @@
 #include "../includes/pyro.h"
 
 
-PyroVM* pyro_new_vm() {
+PyroVM* pyro_new_vm(void) {
     PyroVM* vm = malloc(sizeof(PyroVM));
     if (!vm) {
         return NULL;

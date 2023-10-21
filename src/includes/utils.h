@@ -110,6 +110,6 @@ uint64_t pyro_hash_combine(uint64_t h1, uint64_t h2);
 
 // Generates a randomish value suitable for seeding a PRNG. Uses locally available sources of
 // entropy. Not suitable for cryptographic use.
-uint64_t pyro_random_seed();
+uint64_t pyro_random_seed(void);
 
 #endif

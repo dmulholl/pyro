@@ -15,7 +15,7 @@ struct PyroStr {
 
 // Creates a new string object by copying the null-terminated C-string [src].
 // - Ignores backslashed escape sequences.
-#define PyroStr_COPY(src) PyroStr_copy((src), strlen((src)), false, vm)
+#define PyroStr_COPY(src) PyroStr_copy(src, strlen((src)), false, vm)
 
 // Creates a new string object by copying [count] bytes from [src], which must be non-NULL.
 // - Returns NULL if the attempt to allocate memory for the new string object fails.
