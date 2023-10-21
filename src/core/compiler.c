@@ -2903,9 +2903,9 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
 
     PyroFn* fn = end_fn_compiler(&parser);
 
-    // If the code consisted of a single expression statement, we might want to print the
-    // value of the expression if we're running inside a REPL.
-    if (parser.num_statements == 1 && parser.num_expression_statements == 1) {
+    // If we're running in a REPL and the code consisted of a single expression statement,
+    // we may want to print the value of the expression.
+    if (vm->in_repl && parser.num_statements == 1 && parser.num_expression_statements == 1) {
         if (fn->code_count >= 3 && fn->code[fn->code_count - 3] == PYRO_OPCODE_POP) {
             fn->code[fn->code_count - 3] = PYRO_OPCODE_POP_ECHO_IN_REPL;
         }
