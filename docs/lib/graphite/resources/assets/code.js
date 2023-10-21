@@ -1,5 +1,5 @@
-// Add a copy button to <pre> tags.
-function addCopyButton() {
+// Add a copy button to <pre> tags unless they have a 'no-copy' class.
+document.addEventListener("DOMContentLoaded", function() {
     if (!navigator.clipboard) {
         return;
     }
@@ -25,6 +25,4 @@ function addCopyButton() {
             setTimeout(() => copyBtn.innerText = "[COPY]", 1000);
         })
     })
-}
-
-document.addEventListener("DOMContentLoaded", addCopyButton);
+});
