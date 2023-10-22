@@ -1,0 +1,7 @@
+import std::pyro;
+
+assert $is_str(pyro::version_string);
+assert $is_tup(pyro::version_tuple);
+
+assert $is_err(pyro::address(123));
+assert $is_str(pyro::address(pyro));

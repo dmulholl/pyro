@@ -21,10 +21,20 @@ pub def add(x, y) {
 
 with mod = $exec(code) {
     assert $is_module(mod);
+    assert $is_func(mod::add);
     assert mod::add(1, 2) == 3;
 }
 
-var the_mod = $exec("");
-assert $is_module(the_mod);
-$exec("pub var foo = 1 + 2 + 3;", "the_mod", the_mod);
-assert the_mod::foo == 6;
+with mod = $exec("pub var foo = 123;") {
+    assert $is_module(mod);
+    assert mod::foo == 123;
+
+    var output_mod = $exec("pub var bar = 456;", "mod", mod);
+    assert output_mod == mod;
+
+    assert mod::foo == 123;
+    assert mod::bar == 456;
+
+    assert output_mod::foo == 123;
+    assert output_mod::bar == 456;
+}
