@@ -182,11 +182,13 @@ class Lexer {
     var input: str;
     var count: i64;
     var index: i64;
+    var strict: bool;
 
-    def $init(input: str) {
+    def $init(input: str, strict: bool) {
         self.input = input;
         self.count = input:count();
         self.index = 0;
+        self.strict = strict;
     }
 
     pub def next() -> Token {
@@ -195,12 +197,17 @@ class Lexer {
         }
 
         if self.index < self.count && self.input:match("//", self.index) {
+            if self.strict {
+                $panic("invalid comment, comments are not allowed in strict mode");
+            }
+
             while self.index < self.count {
                 self.index += 1;
                 if self.input[self.index - 1] == "\n" {
                     break;
                 }
             }
+
             while self.index < self.count && self.input[self.index]:is_ws() {
                 self.index += 1;
             }
@@ -339,12 +346,14 @@ class Lexer {
 
 class Parser {
     var input: str;
+    var strict: bool;
     var lexer: Lexer;
     var next_token: Token;
 
-    def $init(input: str) {
+    def $init(input: str, strict: bool) {
         self.input = input;
-        self.lexer = Lexer(input);
+        self.strict = strict;
+        self.lexer = Lexer(input, strict);
         self.next_token = self.lexer:next();
     }
 
@@ -436,9 +445,15 @@ class Parser {
         while !self:check("RIGHT_BRACKET") {
             var value = self:parse_value();
             vec:append(value);
-            if !self:match("COMMA") {
-                break;
+
+            if self:match("COMMA") {
+                if self.strict && self:match("RIGHT_BRACKET") {
+                    $panic("invalid comma, trailing commas in arrays are not allowed in strict mode");
+                }
+                continue;
             }
+
+            break;
         }
 
         if !self:match("RIGHT_BRACKET") {
@@ -468,9 +483,14 @@ class Parser {
             var value = self:parse_value();
             map[key] = value;
 
-            if !self:match("COMMA") {
-                break;
+            if self:match("COMMA") {
+                if self.strict && self:match("RIGHT_BRACE") {
+                    $panic("invalid comma, trailing commas in objects are not allowed in strict mode");
+                }
+                continue;
             }
+
+            break;
         }
 
         if !self:match("RIGHT_BRACE") {
@@ -573,7 +593,7 @@ class Parser {
 }
 
 
-pub def from_json(json: str) -> map|vec|str|i64|f64|bool|null|err {
+pub def from_json(json: str, strict: bool = false) -> map|vec|str|i64|f64|bool|null|err {
     if !$is_str(json) {
         return $err("from_json(): invalid argument, expected a string: found {}", $type(json));
     }
@@ -582,7 +602,7 @@ pub def from_json(json: str) -> map|vec|str|i64|f64|bool|null|err {
         return $err("from_json(): invalid argument, empty string");
     }
 
-    var result = try Parser(json):parse();
+    var result = try Parser(json, strict):parse();
     if $is_err(result) {
         return $err("from_json(): {}", result);
     }

@@ -74,16 +74,18 @@ class Baz {
     pub var foo;
     pub var bar;
     pub var baz;
+    var bam;
 
-    def $init(foo, bar, baz) {
+    def $init(foo, bar, baz, bam) {
         self.foo = foo;
         self.bar = bar;
         self.baz = baz;
+        self.bam = bam;
     }
 }
-var obj1 = Baz(1, 2, 3);
-var obj2 = Baz("A", "B", "C");
+var obj1 = Baz(1, 2, 3, 4);
 assert to_json(obj1) == `{"foo": 1, "bar": 2, "baz": 3}`;
+var obj2 = Baz("A", "B", "C", "D");
 assert to_json(obj2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
 
 assert $is_err(to_json($stdin()));
@@ -270,6 +272,152 @@ assert $is_err(from_json(`"`));
 assert $is_err(from_json(`"foo`));
 assert $is_err(from_json(`'foo'`));
 assert $is_err(from_json(`123 456`));
+
+# ------------------------------------ #
+#  Unmarshall from JSON: strict=false  #
+# ------------------------------------ #
+
+var unmarshal_unstrict = `
+{
+  // this is a comment
+  "number": 123,
+  "string": "foobar",
+  "list1": [123, 456, 789,],
+  "list2" [
+    "foo",
+    // this is another comment
+    "bar",
+  ],
+  "bool": true,
+  "object": {
+    // this is a third comment
+    "field1": 123,
+    "field2": 456,
+  },
+}
+`;
+assert $is_obj(from_json(unmarshal_unstrict, false));
+
+# ------------------------------------ #
+#  Unmarshall from JSON: strict=true  #
+# ------------------------------------ #
+
+var unmarshal_strict_pass = `
+{
+  "number": 123,
+  "string": "foobar",
+  "list1": [123, 456, 789],
+  "list2" [
+    "foo",
+    "bar"
+  ],
+  "bool": true,
+  "object": {
+    "field1": 123,
+    "field2": 456
+  }
+}
+`;
+assert $is_obj(from_json(unmarshal_strict_pass, true));
+
+var unmarshal_strict_fail = `
+{
+  // this is a comment
+  "number": 123,
+  "string": "foobar",
+  "list1": [123, 456, 789,],
+  "list2" [
+    "foo",
+    // this is another comment
+    "bar",
+  ],
+  "bool": true,
+  "object": {
+    // this is a third comment
+    "field1": 123,
+    "field2": 456,
+  },
+}
+`;
+assert $is_err(from_json(unmarshal_strict_fail, true));
+
+var unmarshal_strict_has_comment_1 = `
+// this is a comment
+{
+  "number": 123
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_comment_1, true));
+
+var unmarshal_strict_has_comment_2 = `
+{
+  // this is a comment
+  "number": 123
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_comment_2, true));
+
+var unmarshal_strict_has_comment_3 = `
+{
+  "number": 123,
+  "list": [
+    123,
+    // this is a comment
+    456
+  ]
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_comment_3, true));
+
+var unmarshal_strict_has_trailing_comma_1 = `
+{
+  "number": 123,
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_trailing_comma_1, true));
+
+var unmarshal_strict_has_trailing_comma_2 = `
+{
+  "number": 123,
+  "list": [123, 456,]
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_trailing_comma_2, true));
+
+var unmarshal_strict_has_trailing_comma_3 = `
+{
+  "number": 123,
+  "list": [123, 456],
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_trailing_comma_3, true));
+
+var unmarshal_strict_has_trailing_comma_4 = `
+{
+  "number": 123,
+  "list": [123, 456],
+  "object": {"foo": 123, "bar": 456,}
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_trailing_comma_4, true));
+
+var unmarshal_strict_has_trailing_comma_5 = `
+{
+  "number": 123,
+  "list": [123, 456],
+  "object": {"foo": 123, "bar": 456},
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_trailing_comma_5, true));
+
+var unmarshal_strict_has_trailing_comma_6 = `
+{
+  "number": 123,
+  "list": [123, 456,],
+  "object": {"foo": 123, "bar": 456,},
+}
+`;
+assert $is_err(from_json(unmarshal_strict_has_trailing_comma_6, true));
 
 # ---------------- #
 #  Pretty Printer  #
