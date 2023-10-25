@@ -78,7 +78,7 @@ Returns an <code>err</code> if <code>json</code> is not valid JSON.
 </div>
 <div>
 <dt>
-<code>from_json(json: str) -&gt; map|vec|str|i64|f64|bool|null|err</code>
+<code>from_json(json: str, strict: bool = false) -&gt; map|vec|str|i64|f64|bool|null|err</code>
 </dt>
 <dd>
 <p>
@@ -91,12 +91,14 @@ A JSON object is unmarshalled as a <code>map</code>.
 <li>
 A JSON array is unmarshalled as a <code>vec</code>.
 </li>
-<li>
-Supports input with trailing commas and single-line comments beginning with <code>//</code>.
-</li>
 </ul>
 <p>
-Returns an <code>err</code> if <code>arg</code> is not a valid JSON string.
+By default, the parser accepts input JSON containing trailing commas and single-line
+comments beginning with <code>//</code>.
+Set <code>strict</code> to <code>true</code> to parse the input in strict mode.
+</p>
+<p>
+Returns an <code>err</code> if <code>json</code> is not a valid JSON string.
 </p>
 </dd>
 </div>
@@ -132,10 +134,10 @@ The set of valid input values is:
 <code>str</code>
 </li>
 <li>
-A <code>vec</code> or <code>tup</code> containing valid values.
+A <code>vec</code> or <code>tup</code> containing valid input values.
 </li>
 <li>
-A <code>map</code> containing string keys and valid values.
+A <code>map</code> containing string keys and valid input values.
 </li>
 <li>
 An object with a <code>:$json()</code> method that returns a string containing JSON.
