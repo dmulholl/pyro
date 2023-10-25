@@ -83,14 +83,52 @@ class Baz {
         self.bam = bam;
     }
 }
-var obj1 = Baz(1, 2, 3, 4);
-assert to_json(obj1) == `{"foo": 1, "bar": 2, "baz": 3}`;
-var obj2 = Baz("A", "B", "C", "D");
-assert to_json(obj2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
+var baz1 = Baz(1, 2, 3, 4);
+assert to_json(baz1) == `{"foo": 1, "bar": 2, "baz": 3}`;
+var baz2 = Baz("A", "B", "C", "D");
+assert to_json(baz2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
 
 assert $is_err(to_json($stdin()));
 assert $is_err(to_json($err()));
 assert $is_err(to_json('a'));
+
+# ----------------------------------- #
+#  Marshall to JSON: cycle detection  #
+# ----------------------------------- #
+
+var map1 = $map();
+map1:set("itself", map1);
+assert $is_err(to_json(map1));
+
+var map2 = $map();
+map2:set("list", ["foo", map2, "bar"]);
+assert $is_err(to_json(map2));
+
+var vec1 = $vec();
+vec1:append(vec1);
+assert $is_err(to_json(vec1));
+
+var vec2 = $vec();
+vec2:append({"list" = ["foo", vec2, "bar"]});
+assert $is_err(to_json(vec2));
+
+var vec_in_tup = $vec();
+var tup = $tup("foo", vec_in_tup, "bar");
+vec_in_tup:append(tup);
+assert $is_err(to_json(tup));
+
+class Object {
+    pub var object: Object;
+    pub var list: vec;
+}
+
+var obj1 = Object();
+obj1.object = obj1;
+assert $is_err(to_json(obj1));
+
+var obj2 = Object();
+obj2.list = ["foo", obj2, "bar"];
+assert $is_err(to_json(obj2));
 
 # --------------------------- #
 #  Marshall to indented JSON  #

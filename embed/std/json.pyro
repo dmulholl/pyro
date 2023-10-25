@@ -3,7 +3,7 @@
 # ------------------ #
 
 
-def marshall_map(buf: buf, map: map, indent: i64, current_indent: i64) {
+def marshall_map(containers: stack, buf: buf, map: map, indent: i64, current_indent: i64) {
     if map:count() == 0 {
         buf:write("{}");
         return;
@@ -30,7 +30,7 @@ def marshall_map(buf: buf, map: map, indent: i64, current_indent: i64) {
 
         buf:write($debug(key));
         buf:write(": ");
-        marshall_value(buf, value, indent, current_indent + indent);
+        marshall_value(containers, buf, value, indent, current_indent + indent);
         is_first = false;
     }
 
@@ -42,7 +42,7 @@ def marshall_map(buf: buf, map: map, indent: i64, current_indent: i64) {
 }
 
 
-def marshall_vec(buf: buf, vec: vec|tup, indent: i64, current_indent: i64) {
+def marshall_vec(containers: stack, buf: buf, vec: vec|tup, indent: i64, current_indent: i64) {
     if vec:count() == 0 {
         buf:write("[]");
         return;
@@ -59,7 +59,7 @@ def marshall_vec(buf: buf, vec: vec|tup, indent: i64, current_indent: i64) {
             buf:write(", ");
         }
         buf:write(spaces);
-        marshall_value(buf, value, indent, current_indent + indent);
+        marshall_value(containers, buf, value, indent, current_indent + indent);
         is_first = false;
     }
 
@@ -100,7 +100,7 @@ def marshall_instance_with_method(buf: buf, obj: instance, indent: i64, current_
 }
 
 
-def marshall_instance(buf: buf, obj: instance, indent: i64, current_indent: i64) {
+def marshall_instance(containers: stack, buf: buf, obj: instance, indent: i64, current_indent: i64) {
     if $fields(obj):count() == 0 {
         buf:write("{}");
         return;
@@ -120,7 +120,7 @@ def marshall_instance(buf: buf, obj: instance, indent: i64, current_indent: i64)
 
         var field_value = $field(obj, field_name);
         buf:write(`"{}": `, field_name);
-        marshall_value(buf, field_value, indent, current_indent + indent);
+        marshall_value(containers, buf, field_value, indent, current_indent + indent);
         is_first = false;
     }
 
@@ -132,12 +132,8 @@ def marshall_instance(buf: buf, obj: instance, indent: i64, current_indent: i64)
 }
 
 
-def marshall_value(buf: buf, value: any, indent: i64, current_indent: i64) {
-    if $is_map(value) {
-        marshall_map(buf, value, indent, current_indent);
-    } else if $is_vec(value) || $is_tup(value) {
-        marshall_vec(buf, value, indent, current_indent);
-    } else if $is_str(value) {
+def marshall_value(containers: stack, buf: buf, value: any, indent: i64, current_indent: i64) {
+    if $is_str(value) {
         buf:write($debug(value));
     } else if $is_i64(value) {
         buf:write($debug(value));
@@ -147,10 +143,36 @@ def marshall_value(buf: buf, value: any, indent: i64, current_indent: i64) {
         buf:write($debug(value));
     } else if $is_null(value) {
         buf:write($debug(value));
+    } else if $is_map(value) {
+        if containers:contains(value) {
+            $panic("cycle detected: map contains itself");
+        }
+        containers:push(value);
+        marshall_map(containers, buf, value, indent, current_indent);
+        containers:pop();
+    } else if $is_vec(value) {
+        if containers:contains(value) {
+            $panic("cycle detected: vector contains itself");
+        }
+        containers:push(value);
+        marshall_vec(containers, buf, value, indent, current_indent);
+        containers:pop();
+    } else if $is_tup(value) {
+        if containers:contains(value) {
+            $panic("cycle detected: tuple contains itself");
+        }
+        containers:push(value);
+        marshall_vec(containers, buf, value, indent, current_indent);
+        containers:pop();
     } else if $has_method(value, "$json") {
         marshall_instance_with_method(buf, value, indent, current_indent);
     } else if $is_instance(value) {
-        marshall_instance(buf, value, indent, current_indent);
+        if containers:contains(value) {
+            $panic("cycle detected: object contains itself");
+        }
+        containers:push(value);
+        marshall_instance(containers, buf, value, indent, current_indent);
+        containers:pop();
     } else {
         $panic("invalid input: type: {}, value: {}", $type(value), $debug(value));
     }
@@ -158,9 +180,10 @@ def marshall_value(buf: buf, value: any, indent: i64, current_indent: i64) {
 
 
 pub def to_json(arg: any, indent: i64 = 0) -> str|err {
+    var containers = $stack();
     var buf = $buf();
 
-    var result = try marshall_value(buf, arg, indent, 0);
+    var result = try marshall_value(containers, buf, arg, indent, 0);
     if $is_err(result) {
         return $err("to_json(): {}", result);
     }
