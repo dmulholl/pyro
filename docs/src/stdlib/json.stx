@@ -48,6 +48,4 @@ This module contains utility functions for working with JSON.
     * An object with a `:$json()` method that returns a string containing JSON.
     * Any object whose public field values can be marshalled as JSON.
 
-    Note that this function does not check for cycles in the input, e.g. a `vec` that contains itself.
-
     Returns an `err` if `arg` cannot be marshalled as JSON.
