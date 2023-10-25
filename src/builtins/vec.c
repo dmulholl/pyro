@@ -643,6 +643,7 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
 
     // Stack methods -- private.
     pyro_define_pri_method(vm, vm->class_stack, "$iter", vec_iter, 0);
+    pyro_define_pri_method(vm, vm->class_stack, "$contains", vec_contains, 1);
 
     // Stack methods -- public.
     pyro_define_pub_method(vm, vm->class_stack, "count", vec_count, 0);
