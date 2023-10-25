@@ -16,6 +16,10 @@ A stack object, `stack`, is a LIFO (last-in-first-out) container type.
 
     Removes all items from the stack.
 
+[[ `:contains(value: any) -> bool` ]]
+
+    Returns `true` if the stack contains an item equal to `value`, otherwise `false`.
+
 [[ `:count() -> i64` ]]
 
     Returns the number of items in the stack.
