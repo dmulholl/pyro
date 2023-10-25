@@ -17,7 +17,7 @@ You can check if a stack contains an item using the `in` operator, e.g.
 
 ::: code pyro
     var stack = $stack();
-    stack.push("foo");
+    stack:push("foo");
     assert "foo" in stack;
 
 This is equivalent to calling the stack's `:contains()` method.
