@@ -89,6 +89,8 @@ var obj2 = Baz("A", "B", "C", "D");
 assert to_json(obj2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
 
 assert $is_err(to_json($stdin()));
+assert $is_err(to_json($err()));
+assert $is_err(to_json('a'));
 
 # --------------------------- #
 #  Marshall to indented JSON  #
