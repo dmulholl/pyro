@@ -4,21 +4,29 @@ var foo = $stack();
 assert $is_stack(foo);
 assert foo:count() == 0;
 assert foo:is_empty();
+assert !foo:contains("xyz");
 assert $is_err(foo:pop());
 assert $is_err(foo:peek());
 
 foo:push("abc");
+assert foo:count() == 1;
+assert foo:contains("abc");
+assert !foo:contains("xyz");
 assert foo:peek() == "abc";
+
 foo:push("def");
+assert foo:count() == 2;
+assert foo:contains("def");
+assert !foo:contains("xyz");
 assert foo:peek() == "def";
 
-assert foo:count() == 2;
 assert !foo:is_empty();
-
 assert foo:pop() == "def";
+assert foo:count() == 1;
 assert foo:pop() == "abc";
 assert foo:count() == 0;
 assert foo:is_empty();
+assert !foo:contains("xyz");
 
 var bar = $stack();
 for i in $range(5) {
