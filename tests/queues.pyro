@@ -6,18 +6,35 @@ assert foo:count() == 0;
 assert foo:is_empty();
 assert $is_err(foo:dequeue());
 assert $is_err(foo:peek());
+assert !("xyz" in foo);
+assert !foo:contains("xyz");
 
 foo:enqueue("abc");
+assert foo:count() == 1;
+assert !foo:is_empty();
 assert foo:peek() == "abc";
+assert "abc" in foo;
+assert foo:contains("abc");
+assert !("xyz" in foo);
+assert !foo:contains("xyz");
 
 foo:enqueue("def");
+assert foo:count() == 2;
+assert !foo:is_empty();
 assert foo:peek() == "abc";
+assert "def" in foo;
+assert foo:contains("def");
+assert !("xyz" in foo);
+assert !foo:contains("xyz");
 
 foo:enqueue("ghi");
-assert foo:peek() == "abc";
-
 assert foo:count() == 3;
 assert !foo:is_empty();
+assert foo:peek() == "abc";
+assert "ghi" in foo;
+assert foo:contains("ghi");
+assert !("xyz" in foo);
+assert !foo:contains("xyz");
 
 assert foo:dequeue() == "abc";
 assert foo:dequeue() == "def";
@@ -25,6 +42,10 @@ assert foo:dequeue() == "ghi";
 
 assert foo:count() == 0;
 assert foo:is_empty();
+assert !("abc" in foo);
+assert !foo:contains("abc");
+assert !("xyz" in foo);
+assert !foo:contains("xyz");
 
 for i in $range(100) {
     foo:enqueue(i);

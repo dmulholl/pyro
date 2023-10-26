@@ -29,11 +29,30 @@ Queues are iterable, e.g.
 
 
 
+### Containment
+
+You can check if a queue contains an item using the `in` operator, e.g.
+
+::: code pyro
+    var queue = $queue();
+    queue:enqueue("foo");
+    queue:enqueue("bar");
+
+    assert "foo" in queue;
+
+This is equivalent to calling the queue's `:contains()` method.
+
+
+
 ### Methods
 
 [[ `:clear()` ]]
 
     Removes all items from the queue.
+
+[[ `:contains(value: any) -> bool` ]]
+
+    Returns `true` if the queue contains an item equal to `value`, otherwise `false`.
 
 [[ `:count() -> i64` ]]
 

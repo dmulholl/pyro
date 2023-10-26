@@ -78,6 +78,29 @@ static PyroValue queue_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue queue_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroQueue* queue = PYRO_AS_QUEUE(args[-1]);
+    PyroValue target = args[0];
+
+    PyroQueueItem* next_item = queue->head;
+
+    while (next_item) {
+        bool found = pyro_op_compare_eq(vm, next_item->value, target);
+        if (vm->halt_flag) {
+            return pyro_bool(false);
+        }
+
+        if (found) {
+            return pyro_bool(true);
+        }
+
+        next_item = next_item->next;
+    }
+
+    return pyro_bool(false);
+}
+
+
 void pyro_load_std_builtins_queue(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$queue", fn_queue, 0);
@@ -85,6 +108,7 @@ void pyro_load_std_builtins_queue(PyroVM* vm) {
 
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_queue, "$iter", queue_iter, 0);
+    pyro_define_pri_method(vm, vm->class_queue, "$contains", queue_contains, 1);
 
     // Methods -- public.
     pyro_define_pub_method(vm, vm->class_queue, "count", queue_count, 0);
@@ -94,4 +118,5 @@ void pyro_load_std_builtins_queue(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_queue, "is_empty", queue_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_queue, "clear", queue_clear, 0);
     pyro_define_pub_method(vm, vm->class_queue, "iter", queue_iter, 0);
+    pyro_define_pub_method(vm, vm->class_queue, "contains", queue_contains, 1);
 }
