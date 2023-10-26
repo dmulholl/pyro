@@ -93,4 +93,5 @@ void pyro_load_std_builtins_queue(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_queue, "peek", queue_peek, 0);
     pyro_define_pub_method(vm, vm->class_queue, "is_empty", queue_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_queue, "clear", queue_clear, 0);
+    pyro_define_pub_method(vm, vm->class_queue, "iter", queue_iter, 0);
 }

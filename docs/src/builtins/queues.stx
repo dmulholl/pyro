@@ -3,11 +3,30 @@ title: Queues
 meta_title: Pyro &mdash; Queues
 ---
 
+::: insert toc
+::: hr
+
 A queue object, `queue`, is a FIFO (first-in-first-out) container type.
 
 [[ `$queue() -> queue` ]]
 
     Creates a new queue.
+
+
+
+### Iterating
+
+Queues are iterable, e.g.
+
+::: code pyro
+    var queue = $queue();
+    queue:enqueue("foo");
+    queue:enqueue("bar");
+
+    for item in queue {
+        echo item;
+    }
+
 
 
 ### Methods
@@ -32,6 +51,10 @@ A queue object, `queue`, is a FIFO (first-in-first-out) container type.
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the queue is empty.
+
+[[ `:iter() -> iter` ]]
+
+    Returns an `iter` object wrapping the queue.
 
 [[ `:peek() -> any` ]]
 
