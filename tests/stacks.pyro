@@ -38,12 +38,12 @@ var bar = $stack();
 for i in $range(5) {
     bar:push(i);
 }
-
 var index = 0;
 for item in bar {
     assert item == index;
     index += 1;
 }
+assert $is_iter(bar:iter());
 
 def $test_clear() {
     var stack = $stack();

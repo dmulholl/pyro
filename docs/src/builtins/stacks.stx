@@ -3,11 +3,29 @@ title: Stacks
 meta_title: Pyro &mdash; Stacks
 ---
 
+::: insert toc
+::: hr
+
 A stack object, `stack`, is a LIFO (last-in-first-out) container type.
 
 [[ `$stack() -> stack` ]]
 
     Creates a new stack.
+
+
+
+### Iterating
+
+Stacks are iterable, e.g.
+
+::: code pyro
+    var stack = $stack();
+    stack:push("foo");
+    stack:push("bar");
+
+    for item in stack {
+        echo item;
+    }
 
 
 
@@ -18,6 +36,8 @@ You can check if a stack contains an item using the `in` operator, e.g.
 ::: code pyro
     var stack = $stack();
     stack:push("foo");
+    stack:push("bar");
+
     assert "foo" in stack;
 
 This is equivalent to calling the stack's `:contains()` method.
@@ -41,6 +61,10 @@ This is equivalent to calling the stack's `:contains()` method.
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the stack is empty.
+
+[[ `:iter() -> iter` ]]
+
+    Returns an `iter` object wrapping the stack.
 
 [[ `:peek() -> any` ]]
 

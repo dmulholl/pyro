@@ -653,4 +653,5 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_stack, "peek", stack_peek, 0);
     pyro_define_pub_method(vm, vm->class_stack, "clear", vec_clear, 0);
     pyro_define_pub_method(vm, vm->class_stack, "contains", vec_contains, 1);
+    pyro_define_pub_method(vm, vm->class_stack, "iter", vec_iter, 0);
 }
