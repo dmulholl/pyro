@@ -1237,6 +1237,7 @@ PyroVec* PyroVec_new(PyroVM* vm) {
     }
     vec->count = 0;
     vec->capacity = 0;
+    vec->version = 0;
     vec->values = NULL;
     vec->obj.class = vm->class_vec;
     return vec;
@@ -1770,6 +1771,7 @@ PyroIter* PyroIter_new(PyroObject* source, PyroIterType iter_type, PyroVM* vm) {
     if (!iter) {
         return NULL;
     }
+
     iter->obj.class = vm->class_iter;
     iter->source = source;
     iter->iter_type = iter_type;
@@ -1780,6 +1782,12 @@ PyroIter* PyroIter_new(PyroObject* source, PyroIterType iter_type, PyroVM* vm) {
     iter->range_stop = 0;
     iter->range_step = 0;
     iter->next_queue_item = NULL;
+    iter->container_version = 0;
+
+    if (iter_type == PYRO_ITER_VEC) {
+        iter->container_version = ((PyroVec*)source)->version;
+    }
+
     return iter;
 }
 
@@ -1797,11 +1805,22 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_VEC: {
             PyroVec* vec = (PyroVec*)iter->source;
+
+            if (vec->version != iter->container_version) {
+                if (vec->obj.type == PYRO_OBJECT_VEC_AS_STACK) {
+                    pyro_panic(vm, "container [stack] cannot be modified while iterating");
+                    return pyro_obj(vm->error);
+                }
+                pyro_panic(vm, "container [vec] cannot be modified while iterating");
+                return pyro_obj(vm->error);
+            }
+
             if (iter->next_index < vec->count) {
                 iter->next_index++;
                 PyroValue result = vec->values[iter->next_index - 1];
                 return result;
             }
+
             return pyro_obj(vm->error);
         }
 

@@ -1,0 +1,69 @@
+# Vectors.
+var vec = ["foo", "bar"];
+
+assert $is_err(try def() {
+    for item in vec {
+        vec:append("baz");
+    }
+}());
+
+assert $is_err(try def() {
+    for item in vec {
+        vec[0] = "baz";
+    }
+}());
+
+assert $is_err(try def() {
+    for item in vec {
+        vec:sort();
+    }
+}());
+
+assert $is_err(try def() {
+    for item in vec {
+        vec:shuffle();
+    }
+}());
+
+var vec_iter = vec:iter();
+assert $is_err(try def() {
+    for item in vec_iter {
+        vec:append("baz");
+    }
+}());
+
+assert $is_err(try def() {
+    for item in vec {
+        vec:clear();
+    }
+}());
+
+# Stacks.
+var stack = $stack();
+stack:push("foo");
+stack:push("bar");
+
+assert $is_err(try def() {
+    for item in stack {
+        stack:push("baz");
+    }
+}());
+
+assert $is_err(try def() {
+    for item in stack {
+        stack:pop();
+    }
+}());
+
+var stack_iter = stack:iter();
+assert $is_err(try def() {
+    for item in stack_iter {
+        stack:push("baz");
+    }
+}());
+
+assert $is_err(try def() {
+    for item in stack {
+        stack:clear();
+    }
+}());

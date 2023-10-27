@@ -148,6 +148,7 @@ struct PyroVec {
     PyroObject obj;
     size_t count;
     size_t capacity;
+    size_t version;
     PyroValue* values;
 };
 
@@ -516,6 +517,7 @@ typedef struct {
     int64_t range_step;
     PyroQueueItem* next_queue_item;
     PyroObject* callback;
+    size_t container_version;
 } PyroIter;
 
 // Creates a new iterator. Returns NULL if the attempt to allocate memory fails.

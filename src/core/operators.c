@@ -1449,6 +1449,7 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
                 int64_t index = key.as.i64;
                 if (index >= 0 && (size_t)index < vec->count) {
                     vec->values[index] = value;
+                    vec->version++;
                     return value;
                 }
                 pyro_panic(vm, "index is out of range");
