@@ -1440,6 +1440,7 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
             if (!PyroMap_set(map, key, value, vm)) {
                 pyro_panic(vm, "out of memory");
             }
+            map->version++;
             return value;
         }
 

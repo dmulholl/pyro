@@ -30,9 +30,12 @@ static PyroValue map_is_empty(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue map_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMap* map = PYRO_AS_MAP(args[-1]);
+    map->version++;
+
     if (!PyroMap_set(map, args[0], args[1], vm)) {
         pyro_panic(vm, "set(): out of memory");
     }
+
     return pyro_null();
 }
 
@@ -49,6 +52,7 @@ static PyroValue map_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue map_remove(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMap* map = PYRO_AS_MAP(args[-1]);
+    map->version++;
     return pyro_bool(PyroMap_remove(map, args[0], vm));
 }
 
@@ -105,6 +109,7 @@ static PyroValue map_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue map_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMap* map = PYRO_AS_MAP(args[-1]);
+    map->version++;
     PyroMap_clear(map, vm);
     return pyro_null();
 }
@@ -186,9 +191,12 @@ static PyroValue fn_is_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue set_add(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMap* map = PYRO_AS_MAP(args[-1]);
+    map->version++;
+
     if (!PyroMap_set(map, args[0], pyro_null(), vm)) {
         pyro_panic(vm, "add(): out of memory");
     }
+
     return pyro_null();
 }
 

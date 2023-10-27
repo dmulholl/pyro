@@ -66,6 +66,7 @@ typedef struct {
 // array returns the entries in insertion order.
 struct PyroMap {
     PyroObject obj;
+    size_t version;
 
     // The number of live entries in the map. In addition to these live entries [entry_array]
     // and [index_array] can contain independently varying numbers of tombstones.

@@ -327,6 +327,7 @@ PyroMap* PyroMap_new(PyroVM* vm) {
         return NULL;
     }
 
+    map->version = 0;
     map->entry_array = NULL;
     map->entry_array_count = 0;
     map->entry_array_capacity = 0;
@@ -1788,6 +1789,10 @@ PyroIter* PyroIter_new(PyroObject* source, PyroIterType iter_type, PyroVM* vm) {
         iter->container_version = ((PyroVec*)source)->version;
     }
 
+    if (iter_type == PYRO_ITER_MAP_KEYS || iter_type == PYRO_ITER_MAP_VALUES || iter_type == PYRO_ITER_MAP_ENTRIES) {
+        iter->container_version = ((PyroMap*)source)->version;
+    }
+
     return iter;
 }
 
@@ -1887,6 +1892,16 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_MAP_KEYS: {
             PyroMap* map = (PyroMap*)iter->source;
+
+            if (map->version != iter->container_version) {
+                if (map->obj.type == PYRO_OBJECT_MAP_AS_SET) {
+                    pyro_panic(vm, "container [set] cannot be modified while iterating");
+                    return pyro_obj(vm->error);
+                }
+                pyro_panic(vm, "container [map] cannot be modified while iterating");
+                return pyro_obj(vm->error);
+            }
+
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
@@ -1895,11 +1910,18 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 }
                 return entry->key;
             }
+
             return pyro_obj(vm->error);
         }
 
         case PYRO_ITER_MAP_VALUES: {
             PyroMap* map = (PyroMap*)iter->source;
+
+            if (map->version != iter->container_version) {
+                pyro_panic(vm, "container [map] cannot be modified while iterating");
+                return pyro_obj(vm->error);
+            }
+
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
@@ -1908,11 +1930,18 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 }
                 return entry->value;
             }
+
             return pyro_obj(vm->error);
         }
 
         case PYRO_ITER_MAP_ENTRIES: {
             PyroMap* map = (PyroMap*)iter->source;
+
+            if (map->version != iter->container_version) {
+                pyro_panic(vm, "container [map] cannot be modified while iterating");
+                return pyro_obj(vm->error);
+            }
+
             while (iter->next_index < map->entry_array_count) {
                 PyroMapEntry* entry = &map->entry_array[iter->next_index];
                 iter->next_index++;
@@ -1930,6 +1959,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 tup->values[1] = entry->value;
                 return pyro_obj(tup);
             }
+
             return pyro_obj(vm->error);
         }
 

@@ -25,9 +25,8 @@ assert $is_err(try def() {
     }
 }());
 
-var vec_iter = vec:iter();
 assert $is_err(try def() {
-    for item in vec_iter {
+    for item in vec:iter() {
         vec:append("baz");
     }
 }());
@@ -55,9 +54,8 @@ assert $is_err(try def() {
     }
 }());
 
-var stack_iter = stack:iter();
 assert $is_err(try def() {
-    for item in stack_iter {
+    for item in stack:iter() {
         stack:push("baz");
     }
 }());
@@ -65,5 +63,83 @@ assert $is_err(try def() {
 assert $is_err(try def() {
     for item in stack {
         stack:clear();
+    }
+}());
+
+# Maps.
+var map = {"foo" = 123, "bar" = 456};
+
+assert $is_err(try def() {
+    for entry in map {
+        map["baz"] = 789;
+    }
+}());
+
+assert $is_err(try def() {
+    for entry in map {
+        map:set("baz",  789);
+    }
+}());
+
+assert $is_err(try def() {
+    for entry in map:iter() {
+        map["baz"] = 789;
+    }
+}());
+
+assert $is_err(try def() {
+    for entry in map:iter() {
+        map:set("baz",  789);
+    }
+}());
+
+assert $is_err(try def() {
+    for key in map:keys() {
+        map["baz"] = 789;
+    }
+}());
+
+assert $is_err(try def() {
+    for key in map:keys() {
+        map:set("baz",  789);
+    }
+}());
+
+assert $is_err(try def() {
+    for value in map:values() {
+        map["baz"] = 789;
+    }
+}());
+
+assert $is_err(try def() {
+    for value in map:values() {
+        map:set("baz",  789);
+    }
+}());
+
+assert $is_err(try def() {
+    for entry in map {
+        map:clear();
+    }
+}());
+
+# Sets.
+var set = {123, 456};
+
+assert $is_err(try def() {
+    for item in set {
+        set:add(789);
+    }
+}());
+
+assert $is_err(try def() {
+    for item in set {
+        set:remove(123);
+    }
+}());
+
+assert $is_err(try def() {
+    for item in set {
+        set:clear();
     }
 }());

@@ -149,7 +149,8 @@ def benchmark() {
 
     # Iterating over a map.
     for (key, value) in map {
-        map[key] = value;
+        var entry_value = map[key];
+        assert map[key] == entry_value;
     }
 }
 
