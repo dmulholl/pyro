@@ -1813,10 +1813,10 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
             if (vec->version != iter->container_version) {
                 if (vec->obj.type == PYRO_OBJECT_VEC_AS_STACK) {
-                    pyro_panic(vm, "container [stack] cannot be modified while iterating");
+                    pyro_panic(vm, "stack was modified while iterating");
                     return pyro_obj(vm->error);
                 }
-                pyro_panic(vm, "container [vec] cannot be modified while iterating");
+                pyro_panic(vm, "vector was modified while iterating");
                 return pyro_obj(vm->error);
             }
 
@@ -1883,7 +1883,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 }
                 pyro_panic(
                     vm,
-                    "String contains invalid utf-8 at byte index %zu",
+                    "string contains invalid utf-8 at byte index %zu",
                     iter->next_index
                 );
             }
@@ -1895,10 +1895,10 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
             if (map->version != iter->container_version) {
                 if (map->obj.type == PYRO_OBJECT_MAP_AS_SET) {
-                    pyro_panic(vm, "container [set] cannot be modified while iterating");
+                    pyro_panic(vm, "set was modified while iterating");
                     return pyro_obj(vm->error);
                 }
-                pyro_panic(vm, "container [map] cannot be modified while iterating");
+                pyro_panic(vm, "map was modified while iterating");
                 return pyro_obj(vm->error);
             }
 
@@ -1918,7 +1918,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             PyroMap* map = (PyroMap*)iter->source;
 
             if (map->version != iter->container_version) {
-                pyro_panic(vm, "container [map] cannot be modified while iterating");
+                pyro_panic(vm, "map was modified while iterating");
                 return pyro_obj(vm->error);
             }
 
@@ -1938,7 +1938,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             PyroMap* map = (PyroMap*)iter->source;
 
             if (map->version != iter->container_version) {
-                pyro_panic(vm, "container [map] cannot be modified while iterating");
+                pyro_panic(vm, "map was modified while iterating");
                 return pyro_obj(vm->error);
             }
 
