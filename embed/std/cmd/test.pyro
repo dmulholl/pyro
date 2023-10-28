@@ -90,7 +90,7 @@ def run_tests() {
 
         var result = try $exec(code, filepath, module);
         if $is_err(result) {
-            $print("\r[  \x1B[1;31mFAIL\x1B[0m\n");
+            $print("\r[  \x1B[1;31mFAIL\x1B[0m  ]\n");
             files_failed += 1;
             restore_stashed_import_roots(stashed_roots);
             continue;
@@ -103,7 +103,7 @@ def run_tests() {
                 var result = try module:member(name)();
                 if $is_err(result) {
                     if !had_failed_test_func {
-                        $print("\r[  \x1B[1;31mFAIL\x1B[0m\n");
+                        $print("\r[  \x1B[1;31mFAIL\x1B[0m  ]\n");
                     }
                     had_failed_test_func = true;
                     funcs_failed += 1;
@@ -118,7 +118,7 @@ def run_tests() {
             files_failed += 1;
         } else {
             files_passed += 1;
-            $print("\r[  \x1B[1;32mPASS\x1B[0m\n");
+            $print("\r[  \x1B[1;32mPASS\x1B[0m  ]\n");
         }
 
         restore_stashed_import_roots(stashed_roots);
@@ -146,4 +146,3 @@ if ERRORS {
 } else {
     run_tests();
 }
-
