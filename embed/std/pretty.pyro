@@ -1,135 +1,138 @@
-def pp_instance(buf: buf, instance: instance, indent: i64, current_indent: i64) {
+def print_instance(buf: buf, instance: instance, indent: i64, current_indent: i64) {
     if $fields(instance):count() == 0 {
         buf:write($debug(instance));
         return;
     }
 
+    if indent == 0 {
+        buf:write($type(instance));
+        buf:write(" {");
+        var is_first = true;
+
+        for field_name in $fields(instance) {
+            if !is_first {
+                buf:write(", ");
+            }
+            buf:write(field_name);
+            buf:write(": ");
+            print_value(buf, $field(instance, field_name), 0, 0);
+            is_first = false;
+        }
+
+        buf:write("}");
+        return;
+    }
+
     var spaces = " " * (current_indent + indent);
-    var is_first = true;
     buf:write($type(instance));
     buf:write(" {");
 
     for field_name in $fields(instance) {
-        if indent > 0 {
-            buf:write(is_first ? "\n" :| ",\n");
-        } else if !is_first {
-            buf:write(", ");
-        }
+        buf:write("\n");
         buf:write(spaces);
-
-        var field_value = $field(instance, field_name);
         buf:write(field_name);
         buf:write(": ");
-        pp_value(buf, field_value, indent, current_indent + indent);
-        is_first = false;
+        print_value(buf, $field(instance, field_name), indent, current_indent + indent);
     }
 
-    if indent > 0 {
-        buf:write("\n");
-        buf:write(" " * current_indent);
-    }
+    buf:write("\n");
+    buf:write(" " * current_indent);
     buf:write("}");
 }
 
 
-def pp_map(buf: buf, map: map, indent: i64, current_indent: i64) {
+def print_map(buf: buf, map: map, indent: i64, current_indent: i64) {
     if map:count() == 0 {
         buf:write("{}");
         return;
     }
 
+    if indent == 0 {
+        buf:write("{");
+        var is_first = true;
+
+        for (key, value) in map {
+            if !is_first {
+                buf:write(", ");
+            }
+            buf:write($debug(key));
+            buf:write(" = ");
+            print_value(buf, value, 0, 0);
+            is_first = false;
+        }
+
+        buf:write("}");
+        return;
+    }
+
     var spaces = " " * (current_indent + indent);
-    var is_first = true;
     buf:write("{");
 
     for (key, value) in map {
-        if indent > 0 {
-            buf:write(is_first ? "\n" :| ",\n");
-        } else if !is_first {
-            buf:write(", ");
-        }
+        buf:write("\n");
         buf:write(spaces);
         buf:write($debug(key));
         buf:write(" = ");
-        pp_value(buf, value, indent, current_indent + indent);
-        is_first = false;
+        print_value(buf, value, indent, current_indent + indent);
+        buf:write(",");
     }
 
-    if indent > 0 {
-        buf:write("\n");
-        buf:write(" " * current_indent);
-    }
+    buf:write("\n");
+    buf:write(" " * current_indent);
     buf:write("}");
 }
 
 
-def pp_vec(buf: buf, vec: vec, indent: i64, current_indent: i64) {
-    if vec:count() == 0 {
-        buf:write("[]");
+def print_container(buf: buf, container: vec|tup|stack|queue|set, indent: i64, current_indent: i64, opener: str, closer: str) {
+    if container:count() == 0 {
+        buf:write(opener);
+        buf:write(closer);
+        return;
+    }
+
+    if indent == 0 {
+        buf:write(opener);
+        var is_first = true;
+
+        for item in container {
+            if !is_first {
+                buf:write(", ");
+            }
+            print_value(buf, item, 0, 0);
+            is_first = false;
+        }
+
+        buf:write(closer);
         return;
     }
 
     var spaces = " " * (current_indent + indent);
-    var is_first = true;
-    buf:write("[");
+    buf:write(opener);
 
-    for item in vec {
-        if indent > 0 {
-            buf:write(is_first ? "\n" :| ",\n");
-        } else if !is_first {
-            buf:write(", ");
-        }
-        buf:write(spaces);
-        pp_value(buf, item, indent, current_indent + indent);
-        is_first = false;
-    }
-
-    if indent > 0 {
+    for item in container {
         buf:write("\n");
-        buf:write(" " * current_indent);
+        buf:write(spaces);
+        print_value(buf, item, indent, current_indent + indent);
+        buf:write(",");
     }
-    buf:write("]");
+
+    buf:write("\n");
+    buf:write(" " * current_indent);
+    buf:write(closer);
 }
 
 
-def pp_set(buf: buf, set: set, indent: i64, current_indent: i64) {
-    if set:count() == 0 {
-        buf:write("{}");
-        return;
-    }
-
-    var spaces = " " * (current_indent + indent);
-    var is_first = true;
-    buf:write("{");
-
-    for item in set {
-        if indent > 0 {
-            buf:write(is_first ? "\n" :| ",\n");
-        } else if !is_first {
-            buf:write(", ");
-        }
-        buf:write(spaces);
-        pp_value(buf, item, indent, current_indent + indent);
-        is_first = false;
-    }
-
-    if indent > 0 {
-        buf:write("\n");
-        buf:write(" " * current_indent);
-    }
-    buf:write("}");
-}
-
-
-def pp_value(buf: buf, value: any, indent: i64, current_indent: i64) {
-    if $is_map(value) {
-        pp_map(buf, value, indent, current_indent);
-    } else if $is_vec(value) || $is_tup(value) {
-        pp_vec(buf, value, indent, current_indent);
-    } else if $is_instance(value) {
-        pp_instance(buf, value, indent, current_indent);
+def print_value(buf: buf, value: any, indent: i64, current_indent: i64) {
+    if $is_vec(value) || $is_stack(value) || $is_queue(value) {
+        print_container(buf, value, indent, current_indent, "[", "]");
+    } else if $is_tup(value) {
+        print_container(buf, value, indent, current_indent, "(", ")");
     } else if $is_set(value) {
-        pp_set(buf, value, indent, current_indent);
+        print_container(buf, value, indent, current_indent, "{", "}");
+    } else if $is_map(value) {
+        print_map(buf, value, indent, current_indent);
+    } else if $is_instance(value) {
+        print_instance(buf, value, indent, current_indent);
     } else {
         buf:write($debug(value));
     }
@@ -137,7 +140,12 @@ def pp_value(buf: buf, value: any, indent: i64, current_indent: i64) {
 
 
 pub def print(arg: any, indent: i64 = 4) -> str {
+    if indent < 0 {
+        indent = 0;
+    }
+
     var buf = $buf();
-    pp_value(buf, arg, indent, 0);
+    print_value(buf, arg, indent, 0);
+
     return buf:to_str();
 }

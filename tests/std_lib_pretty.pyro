@@ -1,0 +1,94 @@
+import std::pretty;
+
+assert pretty::print(null) == `null`;
+assert pretty::print(true) == `true`;
+assert pretty::print(false) == `false`;
+assert pretty::print(123) == `123`;
+assert pretty::print(123.456) == `123.456`;
+
+# Vectors.
+var vec0 = [];
+assert pretty::print(vec0) == `[]`;
+assert pretty::print(vec0, 0) == `[]`;
+
+var vec1 = ["foo"];
+assert pretty::print(vec1) == `
+[
+    "foo",
+]
+`:strip();
+assert pretty::print(vec1, 0) == `["foo"]`;
+
+var vec2 = ["foo", "bar"];
+assert pretty::print(vec2) == `
+[
+    "foo",
+    "bar",
+]
+`:strip();
+assert pretty::print(vec2, 0) == `["foo", "bar"]`;
+
+# Maps.
+var map0 = {};
+assert pretty::print(map0) == `{}`;
+assert pretty::print(map0, 0) == `{}`;
+
+var map1 = {"key1" = 123};
+assert pretty::print(map1) == `
+{
+    "key1" = 123,
+}
+`:strip();
+assert pretty::print(map1, 0) == `{"key1" = 123}`;
+
+var map2 = {"key1" = 123, "key2" = 456};
+assert pretty::print(map2) == `
+{
+    "key1" = 123,
+    "key2" = 456,
+}
+`:strip();
+assert pretty::print(map2, 0) == `{"key1" = 123, "key2" = 456}`;
+
+# Objects.
+class Object {
+    pub var field1 = 123;
+    pub var field2 = 456;
+    pri var field3 = 789;
+}
+
+var obj = Object();
+assert pretty::print(obj) == `
+Object {
+    field1: 123
+    field2: 456
+}
+`:strip();
+assert pretty::print(obj, 0) == `Object {field1: 123, field2: 456}`;
+
+# Mixed.
+var vec_with_map = [123, map2, 456];
+assert pretty::print(vec_with_map) == `
+[
+    123,
+    {
+        "key1" = 123,
+        "key2" = 456,
+    },
+    456,
+]
+`:strip();
+assert pretty::print(vec_with_map, 0) == `[123, {"key1" = 123, "key2" = 456}, 456]`;
+
+var map_with_vec = {"key1" = 123, "key2" = vec2, "key3" = 456};
+assert pretty::print(map_with_vec) == `
+{
+    "key1" = 123,
+    "key2" = [
+        "foo",
+        "bar",
+    ],
+    "key3" = 456,
+}
+`:strip();
+assert pretty::print(map_with_vec, 0) == `{"key1" = 123, "key2" = ["foo", "bar"], "key3" = 456}`;
