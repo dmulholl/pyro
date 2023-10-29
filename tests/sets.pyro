@@ -1,31 +1,62 @@
 assert !$is_set("foobar");
 
-var foo = $set();
-assert $is_set(foo);
-assert foo:count() == 0;
-assert foo:is_empty();
+var set = $set();
+assert $is_set(set);
+assert set:count() == 0;
+assert set:is_empty();
 
-foo:add("abc");
-foo:add("def");
-foo:add(123);
-foo:add(456);
+set:add("abc");
+set:add("def");
+assert set:count() == 2;
+assert !set:is_empty();
+assert set:contains("abc");
+assert set:contains("def");
+assert !set:contains("xyz");
+for item in set {
+    assert $is_str(item);
+}
 
-foo:add("abc");
-foo:add(123);
+set:add(123);
+set:add(456);
+assert set:count() == 4;
+assert !set:is_empty();
+assert set:contains("abc");
+assert set:contains("def");
+assert set:contains(123);
+assert set:contains(456);
+assert !set:contains("xyz");
+assert !set:contains(999);
+for item in set {
+    assert $is_str(item) || $is_i64(item);
+}
 
-assert foo:count() == 4;
-assert !foo:is_empty();
-assert foo:contains("abc");
-assert foo:contains(123);
-assert !foo:contains("foo");
-assert !foo:contains(999);
+set:add("abc");
+set:add(123);
+assert set:count() == 4;
+assert !set:is_empty();
+assert set:contains("abc");
+assert set:contains("def");
+assert set:contains(123);
+assert set:contains(456);
+assert !set:contains("xyz");
+assert !set:contains(999);
+for item in set {
+    assert $is_str(item) || $is_i64(item);
+}
 
-foo:remove("abc");
-foo:remove(123);
-
-assert foo:count() == 2;
-assert !foo:contains("abc");
-assert !foo:contains(123);
+set:remove("abc");
+set:remove(123);
+assert set:count() == 2;
+assert !set:is_empty();
+assert !set:contains("abc");
+assert set:contains("def");
+assert !set:contains(123);
+assert set:contains(456);
+assert !set:contains("xyz");
+assert !set:contains(999);
+for item in set {
+    assert $is_str(item) || $is_i64(item);
+}
 
 
 def $test_make_set_from_iterable() {
