@@ -160,6 +160,10 @@ Two sets `A` and `B` will compare as equal using the `==` operator, `A == B`, if
 
     Equivalent to `receiver >= other`.
 
+[[ `:iter() -> iter` ]]
+
+    Returns an `iter` object wrapping the set.
+
 [[ `:remove(item: any)` ]]
 
     Removes `item` from the set.
