@@ -151,6 +151,11 @@ If the format specifier consists of a single question mark, e.g. <code>{:?}</cod
 </li>
 <li>
 <p>
+If the format specifier consists of a double question mark, e.g. <code>{:??}</code>, this is equivalent to calling <code>$type()</code> on the value.
+</p>
+</li>
+<li>
+<p>
 Otherwise, the format specifier is passed to the value's <code>:$fmt(format_specifier)</code> method if it exists.
 </p>
 </li>

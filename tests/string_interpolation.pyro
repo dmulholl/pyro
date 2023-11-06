@@ -15,6 +15,10 @@ class Object {
         return "OBJECT";
     }
 
+    def $debug() {
+        return "DEBUG";
+    }
+
     def $fmt(format_specifier) {
         return "<" + format_specifier + ">";
     }
@@ -60,14 +64,18 @@ assert "${obj.field + 1}" == "124";
 assert "${obj:method()}" == "456";
 assert "${obj:method() + 1}" == "457";
 assert "${obj}" == `OBJECT`;
-assert "${obj;format_specifier}" == `<format_specifier>`;
+assert "${obj;xyz}" == `<xyz>`;
+assert "${obj;?}" == `DEBUG`;
+assert "${obj;??}" == `Object`;
 
 assert "${Object().field}" == "123";
 assert "${Object().field + 1}" == "124";
 assert "${Object():method()}" == "456";
 assert "${Object():method() + 1}" == "457";
 assert "${Object()}" == `OBJECT`;
-assert "${Object();format_specifier}" == `<format_specifier>`;
+assert "${Object();xyz}" == `<xyz>`;
+assert "${Object();?}" == `DEBUG`;
+assert "${Object();??}" == `Object`;
 
 var source_code_1 = `${}`;
 assert $is_err(try $exec(source_code_1));
@@ -169,6 +177,12 @@ assert $is_err(try "${foo;!!!}");
 # Format a string.
 assert "${foo;5}" == `  foo`;
 assert "${foo;-5}" == `foo  `;
+
+# Test the debug format specifier.
+assert "${foo;?}" == `"foo"`;
+
+# Test the type format specifier.
+assert "${foo;??}" == `str`;
 
 # Test nested format specifiers.
 assert "${"${int;05d}";7}" == `  00123`;

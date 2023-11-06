@@ -1048,6 +1048,10 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
         return pyro_debugify_value(vm, value);
     }
 
+    if (strlen(format_specifier) == 2 && format_specifier[0] == '?' && format_specifier[1] == '?') {
+        return pyro_get_type_name(vm, value);
+    }
+
     if (PYRO_IS_I64(value)) {
         return format_i64(vm, value, format_specifier, err_prefix);
     }

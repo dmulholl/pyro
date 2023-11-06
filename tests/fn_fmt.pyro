@@ -134,9 +134,29 @@ def $test_formatting_string() {
 }
 
 
-class Foo {
+def $test_debug_format_specifier() {
+    var foo = "foo";
+    assert $fmt("{}", foo) == `foo`;
+    assert $fmt("{:?}", foo) == `"foo"`;
+    assert $fmt("{0:?}", foo) == `"foo"`;
+}
+
+
+def $test_type_format_specifier() {
+    var foo = "foo";
+    assert $fmt("{}", foo) == `foo`;
+    assert $fmt("{:??}", foo) == `str`;
+    assert $fmt("{0:??}", foo) == `str`;
+}
+
+
+class Object {
     def $str() {
-        return "<foo>";
+        return "<object>";
+    }
+
+    def $debug() {
+        return "<debug>";
     }
 
     def $fmt(arg) {
@@ -146,8 +166,19 @@ class Foo {
 
 
 def $test_custom_methods() {
-    var foo = Foo();
-    assert $str(foo) == "<foo>";
-    assert $fmt("{}", foo) == "<foo>";
-    assert $fmt("{:xyz}", foo) == "<xyz>";
+    var object = Object();
+    assert $str(object) == "<object>";
+    assert $debug(object) == `<debug>`;
+
+    assert $fmt("{}", object) == "<object>";
+    assert $fmt("{0}", object) == "<object>";
+
+    assert $fmt("{:?}", object) == "<debug>";
+    assert $fmt("{0:?}", object) == "<debug>";
+
+    assert $fmt("{:??}", object) == "Object";
+    assert $fmt("{0:??}", object) == "Object";
+
+    assert $fmt("{:xyz}", object) == "<xyz>";
+    assert $fmt("{0:xyz}", object) == "<xyz>";
 }

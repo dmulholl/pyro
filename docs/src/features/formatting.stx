@@ -49,6 +49,8 @@ If you specify both, the index comes first, e.g.
 
 (*) If the format specifier consists of a single question mark, e.g. `{:?}`, this is equivalent to calling `$debug()` on the value.
 
+(*) If the format specifier consists of a double question mark, e.g. `{:??}`, this is equivalent to calling `$type()` on the value.
+
 (*) Otherwise, the format specifier is passed to the value's `:$fmt(format_specifier)` method if it exists.
 
 
