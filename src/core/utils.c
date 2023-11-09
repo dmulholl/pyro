@@ -630,8 +630,8 @@ uint64_t pyro_random_seed(void) {
 
     // The next available heap address.
     void* addr = malloc(sizeof(int));
-    free(addr);
     seed = pyro_hash_combine(seed, (uint64_t)addr);
+    free(addr);
 
     // The address of a local variable.
     seed = pyro_hash_combine(seed, (uint64_t)&seed);

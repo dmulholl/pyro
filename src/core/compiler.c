@@ -501,7 +501,7 @@ static bool resolve_upvalue(Parser* parser, FnCompiler* fn_compiler, Token* name
 
     // Look for a matching local variable in the directly enclosing function.
     // If we find one, capture it and return the upvalue index.
-    int resolved_local_index;
+    int resolved_local_index = 0;
     if (resolve_local(parser, fn_compiler->enclosing, name, &resolved_local_index, is_constant)) {
         fn_compiler->enclosing->locals[resolved_local_index].is_captured = true;
         *upvalue_index = add_upvalue(parser, fn_compiler, (uint8_t)resolved_local_index, true);
@@ -513,7 +513,7 @@ static bool resolve_upvalue(Parser* parser, FnCompiler* fn_compiler, Token* name
     // recursively walking the chain of nested compilers. If we find one, the most deeply
     // nested call will capture it and return its upvalue index. As the recursive calls
     // unwind we'll construct a chain of upvalues leading to the captured variable.
-    int resolved_upvalue_index;
+    int resolved_upvalue_index = 0;
     if (resolve_upvalue(parser, fn_compiler->enclosing, name, &resolved_upvalue_index, is_constant)) {
         *upvalue_index = add_upvalue(parser, fn_compiler, (uint8_t)resolved_upvalue_index, false);
         return true;
@@ -719,7 +719,7 @@ static void emit_load_named_variable(Parser* parser, Token name) {
     bool is_constant;
 
     // Load a local variable.
-    int local_index;
+    int local_index = 0;
     if (resolve_local(parser, parser->fn_compiler, &name, &local_index, &is_constant)) {
         switch (local_index) {
             case 0: emit_byte(parser, PYRO_OPCODE_GET_LOCAL_0); break;
@@ -755,10 +755,10 @@ static void emit_load_named_variable(Parser* parser, Token name) {
 
 // Emits bytecode to set the named variable to the value on top of the stack.
 static void emit_store_named_variable(Parser* parser, Token name) {
-    bool is_constant;
+    bool is_constant = false;
 
     // Set a local variable.
-    int local_index;
+    int local_index = 0;
     if (resolve_local(parser, parser->fn_compiler, &name, &local_index, &is_constant)) {
         if (is_constant) {
             ERROR_AT_PREVIOUS_TOKEN("invalid assignment to constant '%.*s'", name.length, name.start);

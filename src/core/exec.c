@@ -3060,36 +3060,38 @@ bool pyro_reallocate_stack(PyroVM* vm) {
 }
 
 
-bool pyro_move_stack(PyroVM* vm) {
-    size_t stack_capacity = vm->stack_max - vm->stack;
-    size_t stack_capacity_bytes = stack_capacity * sizeof(PyroValue);
+#ifdef PYRO_DEBUG_STRESS_STACK_REALLOCATION
+    bool pyro_move_stack(PyroVM* vm) {
+        size_t stack_capacity = vm->stack_max - vm->stack;
+        size_t stack_capacity_bytes = stack_capacity * sizeof(PyroValue);
 
-    size_t stack_count = vm->stack_top - vm->stack;
-    size_t stack_count_bytes = stack_count * sizeof(PyroValue);
+        size_t stack_count = vm->stack_top - vm->stack;
+        size_t stack_count_bytes = stack_count * sizeof(PyroValue);
 
-    PyroValue* new_stack = malloc(stack_capacity_bytes);
-    if (!new_stack) {
-        return false;
+        PyroValue* new_stack = malloc(stack_capacity_bytes);
+        if (!new_stack) {
+            return false;
+        }
+
+        PyroValue* old_stack = vm->stack;
+        memcpy(new_stack, old_stack, stack_count_bytes);
+
+        vm->stack = new_stack;
+        vm->stack_max = new_stack + stack_capacity;
+        vm->stack_top = new_stack + stack_count;
+
+        for (size_t i = 0; i < vm->call_stack_count; i++) {
+            PyroCallFrame* frame = vm->call_stack + i;
+            size_t fp_offset = frame->fp - old_stack;
+            frame->fp = new_stack + fp_offset;
+        }
+
+        for (PyroUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
+            size_t location_offset = upvalue->location - old_stack;
+            upvalue->location = new_stack + location_offset;
+        }
+
+        free(old_stack);
+        return true;
     }
-
-    PyroValue* old_stack_base = vm->stack;
-    memcpy(new_stack, vm->stack, stack_count_bytes);
-    free(vm->stack);
-
-    vm->stack = new_stack;
-    vm->stack_max = new_stack + stack_capacity;
-    vm->stack_top = new_stack + stack_count;
-
-    for (size_t i = 0; i < vm->call_stack_count; i++) {
-        PyroCallFrame* frame = vm->call_stack + i;
-        size_t fp_offset = frame->fp - old_stack_base;
-        frame->fp = new_stack + fp_offset;
-    }
-
-    for (PyroUpvalue* upvalue = vm->open_upvalues; upvalue != NULL; upvalue = upvalue->next) {
-        size_t location_offset = upvalue->location - old_stack_base;
-        upvalue->location = new_stack + location_offset;
-    }
-
-    return true;
-}
+#endif
