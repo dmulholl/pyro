@@ -33,6 +33,9 @@ APP_SRC_FILES = cmd/app/*.c
 # Default name for the baked-application binary.
 APPNAME ?= app
 
+# The repository's last git tag.
+LAST_GIT_TAG = $(shell git describe --tags --abbrev=0)
+
 # Default to showing the help text.
 .DEFAULT_GOAL := help
 
@@ -186,3 +189,26 @@ check-compiled-module:
 	@rm -f ./tests/compiled_module.so
 	@make tests/compiled_module.so
 	@./build/debug/pyro test -v ./tests/import_compiled_module.pyro
+
+# -------- #
+#  Docker  #
+# -------- #
+
+docker-build: ## Builds a Docker image.
+	docker build -t pyro .
+
+docker-run: ## Runs the Pyro REPL in a newly-built Docker image.
+docker-run: docker-build
+	docker run --rm -it pyro
+
+docker-bash: ## Runs a Bash shell in a newly-built Docker image.
+docker-bash: docker-build
+	docker run --rm -it pyro bash
+
+docker-push: ## Builds and pushes a new Docker image to the Docker Hub repository.
+docker-push: docker-build
+	docker login --username dmulholl
+	docker tag pyro dmulholl/pyro:latest
+	docker push dmulholl/pyro:latest
+	docker tag pyro dmulholl/pyro:${LAST_GIT_TAG}
+	docker push dmulholl/pyro:${LAST_GIT_TAG}
