@@ -216,12 +216,14 @@ struct PyroVM {
     bool trace_execution;
 };
 
-// Debug function -- reallocates the stack without changing its size. We use this to stress-
-// test stack-reallocation in debug builds.
-bool pyro_move_stack(PyroVM* vm);
-
 // Reallocates the stack.
 bool pyro_reallocate_stack(PyroVM* vm);
+
+// DEBUG function -- this function reallocates the stack without changing its size. It has no
+// purpose in release builds but we use it in debug builds to stress-test stack-reallocation.
+#ifdef PYRO_DEBUG_STRESS_STACK_REALLOCATION
+    bool pyro_move_stack(PyroVM* vm);
+#endif
 
 // Pushes a value onto the stack.
 static inline bool pyro_push(PyroVM* vm, PyroValue value) {
