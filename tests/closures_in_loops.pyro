@@ -1,17 +1,32 @@
 # Test closures in 'loop' statements.
-var loop_closures = [];
+var loop_closures_1 = [];
 
 loop var i = 0; i < 3; i += 1 {
-    loop_closures:append(def() {
+    loop_closures_1:append(def() {
         return i;
     });
 }
 
-var loop_values = loop_closures:map(def(closure) { return closure(); });
-assert loop_values:count() == 3;
-assert loop_values[0] == 3;
-assert loop_values[1] == 3;
-assert loop_values[2] == 3;
+var loop_values_1 = loop_closures_1:map(def(closure) { return closure(); });
+assert loop_values_1:count() == 3;
+assert loop_values_1[0] == 3;
+assert loop_values_1[1] == 3;
+assert loop_values_1[2] == 3;
+
+var loop_closures_2 = [];
+var j;
+
+loop j = 0; j < 3; j += 1 {
+    loop_closures_2:append(def() {
+        return j;
+    });
+}
+
+var loop_values_2 = loop_closures_2:map(def(closure) { return closure(); });
+assert loop_values_2:count() == 3;
+assert loop_values_2[0] == 3;
+assert loop_values_2[1] == 3;
+assert loop_values_2[2] == 3;
 
 # Test closures in 'for' statements.
 var for_closures = [];
@@ -29,14 +44,14 @@ assert for_values[1] == 1;
 assert for_values[2] == 2;
 
 # Test closures in 'while' statements.
-var i = 0;
+var k = 0;
 var while_closures = [];
 
-while i < 3 {
+while k < 3 {
     while_closures:append(def() {
-        return i;
+        return k;
     });
-    i += 1;
+    k += 1;
 }
 
 var while_values = while_closures:map(def(closure) { return closure(); });
