@@ -1,4 +1,4 @@
-# Test closures in 'loop' statements.
+# Test closures in 'loop' statements with a variable declaration.
 var loop_closures_1 = [];
 
 loop var i = 0; i < 3; i += 1 {
@@ -13,6 +13,7 @@ assert loop_values_1[0] == 3;
 assert loop_values_1[1] == 3;
 assert loop_values_1[2] == 3;
 
+# Test closures in 'loop' statements without a variable declaration.
 var loop_closures_2 = [];
 var j;
 
