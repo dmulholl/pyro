@@ -1,8 +1,8 @@
 #include "../includes/pyro.h"
 
 // -------------------------------------------------------------------------
-// xoshiro256** 1.0
-//
+// BEGIN xoshiro256** 1.0
+// -------------------------------------------------------------------------
 // Adapted from: https://prng.di.unimi.it/xoshiro256starstar.c
 //
 // The original source code contained the following license declaration:
@@ -16,14 +16,14 @@
 // See <http://creativecommons.org/publicdomain/zero/1.0/>.
 // -------------------------------------------------------------------------
 
-static inline uint64_t rotate(uint64_t x, int k) {
+static inline uint64_t pyro_xoshiro256ss_rotate(uint64_t x, int k) {
     return (x << k) | (x >> (64 - k));
 }
 
 uint64_t pyro_xoshiro256ss_next(pyro_xoshiro256ss_state_t* state) {
     uint64_t* s = state->s;
 
-    const uint64_t result = rotate(s[1] * 5, 7) * 9;
+    const uint64_t result = pyro_xoshiro256ss_rotate(s[1] * 5, 7) * 9;
     const uint64_t t = s[1] << 17;
 
     s[2] ^= s[0];
@@ -32,7 +32,7 @@ uint64_t pyro_xoshiro256ss_next(pyro_xoshiro256ss_state_t* state) {
     s[0] ^= s[3];
 
     s[2] ^= t;
-    s[3] = rotate(s[3], 45);
+    s[3] = pyro_xoshiro256ss_rotate(s[3], 45);
 
     return result;
 }
@@ -43,8 +43,8 @@ uint64_t pyro_xoshiro256ss_next(pyro_xoshiro256ss_state_t* state) {
 
 
 // -------------------------------------------------------------------------
-// SplitMix64
-//
+// BEGIN SplitMix64
+// -------------------------------------------------------------------------
 // Adapted from: https://prng.di.unimi.it/splitmix64.c
 //
 // The original source code contained the following license declaration:

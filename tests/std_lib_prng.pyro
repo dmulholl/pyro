@@ -1,38 +1,29 @@
 import std::prng;
 
+assert $is_i64(prng::rand_int(10));
 assert $is_f64(prng::rand_float());
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
-assert prng::rand_float() >= 0.0 && prng::rand_float() < 1.0;
 
-assert $is_i64(prng::rand_int(3));
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
-assert prng::rand_int(3) >= 0 && prng::rand_int(3) < 3;
+for _ in $range(100) {
+    let value = prng::rand_int(10);
+    assert value >= 0 && value < 10;
+}
+
+for _ in $range(100) {
+    let value = prng::rand_float();
+    assert value >= 0.0 && value < 1.0;
+}
 
 var generator = prng::Generator();
 assert $is_instance_of(generator, prng::Generator);
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
-assert generator:rand_int(3) >= 0 && generator:rand_int(3) < 3;
+assert $is_i64(generator:rand_int(10));
+assert $is_f64(generator:rand_float());
+
+for _ in $range(100) {
+    let value = generator:rand_int(10);
+    assert value >= 0 && value < 10;
+}
+
+for _ in $range(100) {
+    let value = generator:rand_float();
+    assert value >= 0.0 && value < 1.0;
+}
