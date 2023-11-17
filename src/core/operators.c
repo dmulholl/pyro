@@ -838,17 +838,20 @@ static int pyro_compare_int_and_float(int64_t a, double b) {
         return 1;
     }
 
-    double b_whole_part = b >= 0.0 ? floor(b) : ceil(b);
-    double b_fract_part = b - b_whole_part;
+    double b_int_part = b >= 0.0 ? floor(b) : ceil(b);
+    double b_fract_part = b - b_int_part;
 
-    if ((int64_t)b_whole_part == a) {
+    if ((int64_t)b_int_part == a) {
         if (b_fract_part == 0.0) {
             return 0;
         }
-        return a > 0 ? -1 : 1;
-    } else {
-        return a < (int64_t)b_whole_part ? -1 : 1;
+        if (b_fract_part > 0.0) {
+            return -1;
+        }
+        return 1;
     }
+
+    return a < (int64_t)b_int_part ? -1 : 1;
 }
 
 

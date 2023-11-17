@@ -1,4 +1,13 @@
 # Integers.
+assert 0 == 0;
+assert 1 == 1;
+assert 123 == 123;
+
+assert 0 != 1;
+assert 1 != 0;
+assert 123 != 124;
+assert 124 != 123;
+
 assert 0 < 0 == false;
 assert 0 < 1 == true;
 assert 1 < 0 == false;
@@ -16,6 +25,14 @@ assert 0 >= 1 == false;
 assert 1 >= 0 == true;
 
 # Floats.
+assert 0.0 == 0.0;
+assert 1.0 == 1.0;
+
+assert 0.0 != 1.0;
+assert 1.0 != 0.0;
+assert 2.0 != 1.0;
+assert 1.0 != 2.0;
+
 assert 0.0 < 0.0 == false;
 assert 0.0 < 1.0 == true;
 assert 1.0 < 0.0 == false;
@@ -32,7 +49,40 @@ assert 0.0 >= 0.0 == true;
 assert 0.0 >= 1.0 == false;
 assert 1.0 >= 0.0 == true;
 
+assert 123.456 == 123.456;
+assert 123.456 != 123.455;
+assert 123.455 != 123.456;
+
+assert 123.456 < 123.457;
+assert 123.456 <= 123.457;
+assert 123.456 <= 123.456;
+
+assert 123.456 > 123.456 == false;
+assert 123.456 >= 123.456;
+assert 123.456 >= 123.455;
+
+assert 123.456 > 123.0;
+assert 123.456 >= 123.0;
+assert 123.456 < 123.0 == false;
+
+assert 123.456 < 124.0;
+assert 123.456 <= 124.0;
+assert 123.456 > 124.0 == false;
+
+assert -123.456 < -123.0;
+assert -123.456 <= -123.0;
+assert -123.456 > -123.0 == false;
+
+assert -123.456 > -124.0;
+assert -123.456 >= -124.0;
+assert -123.456 < -124.0 == false;
+
 # Characters.
+assert 'a' == 'a';
+
+assert 'a' != 'b';
+assert 'b' != 'a';
+
 assert 'a' < 'a' == false;
 assert 'a' < 'b' == true;
 assert 'b' < 'a' == false;
@@ -50,6 +100,9 @@ assert 'a' >= 'b' == false;
 assert 'b' >= 'a' == true;
 
 # Mixed types.
+assert 1 == 1.0;
+assert 1.0 == 1;
+
 assert 1 < 1.1;
 assert 1 < 'a';
 assert 1.0 < 2;
@@ -89,3 +142,27 @@ assert 'a' >= 1;
 assert 'a' >= 97;
 assert 'a' >= 1.0;
 assert 'a' >= 97.0;
+
+assert 0.123 > 0;
+assert 0.123 >= 0;
+assert 0.123 < 0 == false;
+
+assert -0.123 < 0;
+assert -0.123 <= 0;
+assert -0.123 > 0 == false;
+
+assert 123.456 > 123;
+assert 123.456 >= 123;
+assert 123.456 < 123 == false;
+
+assert 123.456 < 124;
+assert 123.456 <= 124;
+assert 123.456 > 124 == false;
+
+assert -123.456 < -123;
+assert -123.456 <= -123;
+assert -123.456 > -123 == false;
+
+assert -123.456 > -124;
+assert -123.456 >= -124;
+assert -123.456 < -124 == false;
