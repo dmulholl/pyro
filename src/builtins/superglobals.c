@@ -455,16 +455,27 @@ static PyroValue fn_is_instance_of(PyroVM* vm, size_t arg_count, PyroValue* args
 
 
 static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    PyroStr* out_str;
-    PyroStr* err_str;
-    int exit_code;
-
     if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "$(): invalid argument [command], expected a string");
         return pyro_null();
     }
 
+    PyroStr* out_str;
+    PyroStr* err_str;
+    int exit_code;
+
     if (!pyro_exec_shell_cmd(vm, PYRO_AS_STR(args[0])->bytes, NULL, 0, &out_str, &err_str, &exit_code)) {
+        return pyro_null();
+    }
+
+    if (exit_code != 0) {
+        size_t count = err_str->count;
+
+        while (count > 0 && (err_str->bytes[count-1] == '\r' || err_str->bytes[count-1] == '\n')) {
+            count--;
+        }
+
+        pyro_panic(vm, "$(): exit code: %i: %.*s", exit_code, count, err_str->bytes);
         return pyro_null();
     }
 
