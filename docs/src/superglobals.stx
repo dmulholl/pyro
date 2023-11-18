@@ -37,6 +37,8 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     Runs a shell command and returns its output as a string.
 
+    Panics if the command was not found or if the command returns a non-zero exit code.
+
     This is a convenience shortcut for the `$shell()` function which provides more control over input and output.
 
 
@@ -511,6 +513,8 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
 
     If `input` is specified, its content will be written to the command's `stdin`.
+
+    Returns a non-zero exit code if the command was not found.
 
 
 
