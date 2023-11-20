@@ -1,0 +1,50 @@
+pub def mkdir(path: str) {
+    let result = try $cmd("mkdir", ["-p", path]);
+    if $is_err(result) {
+        $panic("mkdir(): ${result}");
+    }
+
+    let (exit_code, std_out, std_err) = result;
+    if exit_code != 0 {
+        $panic("mkdir(): ${std_err:strip()}");
+    }
+}
+
+
+pub def rm(path: str) {
+    let result = try $cmd("rm", ["-rf", path]);
+    if $is_err(result) {
+        $panic("rm(): ${result}");
+    }
+
+    let (exit_code, std_out, std_err) = result;
+    if exit_code != 0 {
+        $panic("rm(): ${std_err:strip()}");
+    }
+}
+
+
+pub def mv(src: str, dst: str) {
+    let result = try $cmd("mv", ["-f", src, dst]);
+    if $is_err(result) {
+        $panic("mv(): ${result}");
+    }
+
+    let (exit_code, std_out, std_err) = result;
+    if exit_code != 0 {
+        $panic("mv(): ${std_err:strip()}");
+    }
+}
+
+
+pub def cp(src: str, dst: str) {
+    let result = try $cmd("cp", ["-rf", src, dst]);
+    if $is_err(result) {
+        $panic("cp(): ${result}");
+    }
+
+    let (exit_code, std_out, std_err) = result;
+    if exit_code != 0 {
+        $panic("cp(): ${std_err:strip()}");
+    }
+}
