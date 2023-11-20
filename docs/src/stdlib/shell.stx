@@ -1,0 +1,20 @@
+---
+title: <code>std::shell</code>
+meta_title: Pyro Standard Library &mdash; std::shell
+---
+
+Pyro wrappers for shell commands.
+
+
+### Functions
+
+
+[[ `cmd(cmd: str, *args: str) -> str` ]]
+
+    Runs an arbitrary shell command.
+    Arguments are automatically shell-escaped.
+
+    On success, returns the command's standard output.
+
+    Panics if the command cannot be found or if the command exits with
+    a non-zero status code.

@@ -79,6 +79,20 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$cmd(path: str) -> tup[i64, str, str]` <br> `$cmd(path: str, args: vec[str]) -> tup[i64, str, str]` <br> `$cmd(path: str, args: vec[str], input: str|buf) -> tup[i64, str, str]` ]]
+
+    Executes a file.
+
+    * If `path` contains a `/` character, it will be treated as a filepath. Otherwise, the directories specified by the `PATH` environment variable will be searched for the named file.
+    * If an `args` vector is specified, its entries will be appended to the program's argument list. (The program's argument list automatically gets `path` as its first entry.)
+    * If an `input` string is specified, its content will be written to the program's `stdin` stream.
+
+    Returns a three-item tuple containing the program's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
+
+    Returns a non-zero exit code if the program was not found.
+
+
+
 [[ `$debug(arg: any) -> str` ]]
 
     Returns a string representing `arg` suitable for use in debugging.
@@ -510,9 +524,9 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     Runs a shell command.
 
-    Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
+    If an `input` string is specified, its content will be written to the command's `stdin` stream.
 
-    If `input` is specified, its content will be written to the command's `stdin`.
+    Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
 
     Returns a non-zero exit code if the command was not found.
 

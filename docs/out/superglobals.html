@@ -25,7 +25,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.11.11</p>
+                <p class="version">Version 0.12.0-dev</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -188,6 +188,33 @@ Creates a new <a href="builtins/characters.html">character</a>.
 <p>
 Returns the number of seconds since the program was launched.
 This function is a wrapper around the C standard library's <code>clock()</code> function.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$cmd(path: str) -&gt; tup[i64, str, str]</code> <br> <code>$cmd(path: str, args: vec[str]) -&gt; tup[i64, str, str]</code> <br> <code>$cmd(path: str, args: vec[str], input: str|buf) -&gt; tup[i64, str, str]</code>
+</dt>
+<dd>
+<p>
+Executes a file.
+</p>
+<ul>
+<li>
+If <code>path</code> contains a <code>/</code> character, it will be treated as a filepath. Otherwise, the directories specified by the <code>PATH</code> environment variable will be searched for the named file.
+</li>
+<li>
+If an <code>args</code> vector is specified, its entries will be appended to the program's argument list. (The program's argument list automatically gets <code>path</code> as its first entry.)
+</li>
+<li>
+If an <code>input</code> string is specified, its content will be written to the program's <code>stdin</code> stream.
+</li>
+</ul>
+<p>
+Returns a three-item tuple containing the program's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
+</p>
+<p>
+Returns a non-zero exit code if the program was not found.
 </p>
 </dd>
 </div>
@@ -913,10 +940,10 @@ Creates a new <a href="builtins/sets.html">set</a>.
 Runs a shell command.
 </p>
 <p>
-Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
+If an <code>input</code> string is specified, its content will be written to the command's <code>stdin</code> stream.
 </p>
 <p>
-If <code>input</code> is specified, its content will be written to the command's <code>stdin</code>.
+Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
 </p>
 <p>
 Returns a non-zero exit code if the command was not found.

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro &mdash; Checked Arithmetic</title>
+        <title>Pyro Standard Library &mdash; std::shell</title>
 
         
 
@@ -18,7 +18,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-features-checked-arithmetic node-features node">
+    <body class="node-stdlib-shell node-stdlib node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -58,65 +58,36 @@
 
         <article class="main">
             <header class="title">
-                <h1>Checked Arithmetic</h1>
+                <h1><code>std::shell</code></h1>
                 
                 <hr>
             </header>
             <p>
-Pyro is implemented in C &mdash; a language where signed integer overflow is classified as <a href="https://en.cppreference.com/w/c/language/behavior">undefined behaviour</a>.
+Pyro wrappers for shell commands.
 </p>
-<div class="infobox">
-<p>
-Overflow happens if the result of an integer operation is outside the range of the integer type &mdash; e.g. the addition operation <code>i64_max + 1</code> will overflow because the sum of the two numbers is outside the range of the <code>i64</code> type.
-</p>
-</div>
-<p>
-Pyro's standard arithmetic operators don't check for integer overflow. Instead, Pyro has a set of builtin functions for performing checked arithmetic.
-</p>
+<h3 id="functions">
+Functions
+</h3>
 <dl>
 <div>
 <dt>
-<code>$add(a: any, b: any) -&gt; any</code>
+<code>cmd(cmd: str, *args: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Checked addition. Returns <code>a + b</code>.
+Runs an arbitrary shell command.
+Arguments are automatically shell-escaped.
 </p>
 <p>
-If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$mul(a: any, b: any) -&gt; any</code>
-</dt>
-<dd>
-<p>
-Checked multiplication. Returns <code>a * b</code>.
+On success, returns the command's standard output.
 </p>
 <p>
-If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$sub(a: any, b: any) -&gt; any</code>
-</dt>
-<dd>
-<p>
-Checked subtraction. Returns <code>a - b</code>.
-</p>
-<p>
-If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
+Panics if the command cannot be found or if the command exits with
+a non-zero status code.
 </p>
 </dd>
 </div>
 </dl>
-<p>
-Pyro doesn't have a dedicated function for checked division. The only case of integer division that can overflow is <code>i64_min // -1</code>  &mdash; the truncating-division operator <code>//</code> automatically checks for this case, along with division by zero.
-</p>
         </article>
 
         
