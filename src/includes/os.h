@@ -68,6 +68,31 @@ bool pyro_exec_shell_cmd(
     int* exit_code
 );
 
+// Executes [cmd] via execvp().
+// - [cmd] is a null-terminated string specifying an executable file.
+// - If [cmd] contains a '/', it will be treated as a filepath.
+// - If [cmd] does not contain a '/', it will be searched for on PATH.
+// - [argv] is null-terminated array of null-terminated strings.
+// - The first entry of [argv] should be [cmd].
+// - If [stdin_input_length > 0], [stdin_input] will be written to the program's
+//   standard input stream.
+// - Returns the program's stdout output as [stdout_output].
+// - Returns the program's stderr output as [stderr_output].
+// - Returns the program's exit code as [exit_code].
+// - If [cmd] is not found, the exit code will be non-zero and [stderr_ouput]
+//   will contain an error message.
+// If the return value is false, the function has panicked.
+bool pyro_exec_cmd(
+    PyroVM* vm,
+    const char* cmd,
+    char* const argv[],
+    const uint8_t* stdin_input,
+    size_t stdin_input_length,
+    PyroStr** stdout_output,
+    PyroStr** stderr_output,
+    int* exit_code
+);
+
 // Attempts to load a dynamic library as a Pyro module. Can panic or set the exit flag.
 // Caller should check [vm->halt_flag] immediately on return.
 void pyro_dlopen_as_module(PyroVM* vm, const char* path, const char* mod_name, PyroMod* module);

@@ -548,6 +548,105 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+// We need to support three styles:
+// - $cmd("path")
+// - $cmd("path", ["arg1", "arg2"])
+// - $cmd("path", ["arg1", "arg2"], "input for stdin")
+static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    char* cmd;
+    char** argv = NULL;
+    uint8_t* stdin_input = NULL;
+    size_t stdin_input_length = 0;
+    PyroStr* stdout_output;
+    PyroStr* stderr_output;
+    int exit_code;
+
+    if (arg_count == 0 || arg_count > 3) {
+        pyro_panic(vm, "$cmd(): expected 1, 2, or 3 arguments, found %zu", arg_count);
+        return pyro_null();
+    }
+
+    // Setup [cmd].
+    if (!PYRO_IS_STR(args[0])) {
+        pyro_panic(vm, "$cmd(): invalid argument [path], expected a string");
+        return pyro_null();
+    }
+    cmd = PYRO_AS_STR(args[0])->bytes;
+
+    // Setup [argv].
+    if (arg_count == 1) {
+        argv = malloc(sizeof(char**) * 2);
+        if (!argv) {
+            pyro_panic(vm, "out of memory");
+            return pyro_null();
+        }
+        argv[0] = cmd;
+        argv[1] = NULL;
+    } else {
+        if (!PYRO_IS_VEC(args[1])) {
+            pyro_panic(vm, "$cmd(): invalid argument [args], expected a vector");
+            return pyro_null();
+        }
+
+        PyroValue* values = PYRO_AS_VEC(args[1])->values;
+        size_t count = PYRO_AS_VEC(args[1])->count;
+
+        argv = malloc(sizeof(char**) * (count + 2));
+        if (!argv) {
+            pyro_panic(vm, "out of memory");
+            return pyro_null();
+        }
+
+        for (size_t i = 0; i < count; i++) {
+            PyroValue value = values[i];
+            if (!PYRO_IS_STR(value)) {
+                free(argv);
+                pyro_panic(vm, "$cmd(): invalid argument [args], expected a vector of strings");
+                return pyro_null();
+            }
+            argv[i+1] = PYRO_AS_STR(value)->bytes;
+        }
+
+        argv[0] = cmd;
+        argv[count + 1] = NULL;
+    }
+
+    // Setup [stdin_input] and [stdin_input_length].
+    if (arg_count == 3) {
+        if (PYRO_IS_STR(args[2])) {
+            stdin_input = (uint8_t*)PYRO_AS_STR(args[2])->bytes;
+            stdin_input_length = PYRO_AS_STR(args[2])->count;
+        } else if (PYRO_IS_BUF(args[2])) {
+            stdin_input = PYRO_AS_BUF(args[2])->bytes;
+            stdin_input_length = PYRO_AS_BUF(args[2])->count;
+        } else {
+            free(argv);
+            pyro_panic(vm, "$cmd(): invalid argument [input], expected a string or buffer");
+            return pyro_null();
+        }
+    }
+
+    if (!pyro_exec_cmd(vm, cmd, argv, stdin_input, stdin_input_length, &stdout_output, &stderr_output, &exit_code)) {
+        free(argv);
+        return pyro_null();
+    }
+
+    PyroTup* tup = PyroTup_new(3, vm);
+    if (!tup) {
+        free(argv);
+        pyro_panic(vm, "$cmd(): out of memory");
+        return pyro_null();
+    }
+
+    tup->values[0] = pyro_i64(exit_code);
+    tup->values[1] = pyro_obj(stdout_output);
+    tup->values[2] = pyro_obj(stderr_output);
+
+    free(argv);
+    return pyro_obj(tup);
+}
+
+
 static PyroValue fn_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* string = pyro_debugify_value(vm, args[0]);
     if (vm->halt_flag) {
@@ -1157,4 +1256,5 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$sub", fn_sub, 2);
     pyro_define_superglobal_fn(vm, "$mul", fn_mul, 2);
     pyro_define_superglobal_fn(vm, "$eval", fn_eval, 1);
+    pyro_define_superglobal_fn(vm, "$cmd", fn_cmd, -1);
 }
