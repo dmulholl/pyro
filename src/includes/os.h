@@ -52,22 +52,6 @@ bool pyro_chdir(const char* path);
 // Wrapper for POSIX chroot(). Returns true on success, false on failure.
 bool pyro_chroot(const char* path);
 
-// Executes [cmd] as a shell command, where [cmd] is a null-terminated string.
-// - If [input_length > 0], writes [input] to the command's standard input.
-// - Returns the command's stdout output as [output].
-// - Returns the command's stderr output as [error].
-// - Returns the command's exit code as [exit_code].
-// Returns true on success, panics and returns false on failure.
-bool pyro_exec_shell_cmd(
-    PyroVM* vm,
-    const char* cmd,
-    const uint8_t* input,
-    size_t input_length,
-    PyroStr** output,
-    PyroStr** error,
-    int* exit_code
-);
-
 // Executes [cmd] via execvp().
 // - [cmd] is a null-terminated string specifying an executable file.
 // - If [cmd] contains a '/', it will be treated as a filepath.
