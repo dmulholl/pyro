@@ -63,7 +63,7 @@
                 <hr>
             </header>
             <p>
-Pyro wrappers for shell commands.
+Pyro wrappers for common shell utilities.
 </p>
 <h3 id="functions">
 Functions
@@ -71,19 +71,65 @@ Functions
 <dl>
 <div>
 <dt>
-<code>cmd(cmd: str, *args: str) -&gt; str</code>
+<code>cp(src: str, dst: str)</code>
 </dt>
 <dd>
 <p>
-Runs an arbitrary shell command.
-Arguments are automatically shell-escaped.
+Equivalent to running the shell command:
 </p>
+<pre>
+cp -rf &lt;src&gt; &lt;dst&gt;
+</pre>
 <p>
-On success, returns the command's standard output.
+Panics if the <code>cp</code> command cannot be found or if it exits with a non-zero status code.
 </p>
+</dd>
+</div>
+<div>
+<dt>
+<code>mkdir(path: str)</code>
+</dt>
+<dd>
 <p>
-Panics if the command cannot be found or if the command exits with
-a non-zero status code.
+Equivalent to running the shell command:
+</p>
+<pre>
+mkdir -p &lt;path&gt;
+</pre>
+<p>
+Panics if the <code>mkdir</code> command cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>mv(src: str, dst: str)</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command:
+</p>
+<pre>
+mv -f &lt;src&gt; &lt;dst&gt;
+</pre>
+<p>
+Panics if the <code>mv</code> command cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>rm(path: str)</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command:
+</p>
+<pre>
+rm -rf &lt;path&gt;
+</pre>
+<p>
+Panics if the <code>rm</code> command cannot be found or if it exits with a non-zero status code.
 </p>
 </dd>
 </div>

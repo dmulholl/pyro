@@ -3,18 +3,50 @@ title: <code>std::shell</code>
 meta_title: Pyro Standard Library &mdash; std::shell
 ---
 
-Pyro wrappers for shell commands.
+Pyro wrappers for common shell utilities.
 
 
 ### Functions
 
 
-[[ `cmd(cmd: str, *args: str) -> str` ]]
+[[ `cp(src: str, dst: str)` ]]
 
-    Runs an arbitrary shell command.
-    Arguments are automatically shell-escaped.
+    Equivalent to running the shell command:
 
-    On success, returns the command's standard output.
+    ::: code
+        cp -rf <src> <dst>
 
-    Panics if the command cannot be found or if the command exits with
-    a non-zero status code.
+    Panics if the `cp` command cannot be found or if it exits with a non-zero status code.
+
+
+
+[[ `mkdir(path: str)` ]]
+
+    Equivalent to running the shell command:
+
+    ::: code
+        mkdir -p <path>
+
+    Panics if the `mkdir` command cannot be found or if it exits with a non-zero status code.
+
+
+
+[[ `mv(src: str, dst: str)` ]]
+
+    Equivalent to running the shell command:
+
+    ::: code
+        mv -f <src> <dst>
+
+    Panics if the `mv` command cannot be found or if it exits with a non-zero status code.
+
+
+
+[[ `rm(path: str)` ]]
+
+    Equivalent to running the shell command:
+
+    ::: code
+        rm -rf <path>
+
+    Panics if the `rm` command cannot be found or if it exits with a non-zero status code.

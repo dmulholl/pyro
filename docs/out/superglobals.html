@@ -122,7 +122,7 @@ Functions
 Runs a shell command and returns its output as a string.
 </p>
 <p>
-Panics if the command was not found or if the command returns a non-zero exit code.
+Panics if the command cannot be found or if the command exits with a non-zero status code.
 </p>
 <p>
 This is a convenience shortcut for the <code>$shell()</code> function which provides more control over input and output.
