@@ -67,7 +67,7 @@ All standard library modules are submodules of the root module `std`.
 
 [[ [shell](@root/stdlib/shell//) ]]
 
-    Pyro wrappers for common shell utilities.
+    Wrappers for common shell utilities.
 
 [[ [url](@root/stdlib/url//) ]]
 

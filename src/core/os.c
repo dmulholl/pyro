@@ -287,8 +287,10 @@ bool pyro_exec_cmd(
         while ((dup2(child_stderr_pipe[1], STDERR_FILENO) == -1) && (errno == EINTR)) {}
         close(child_stderr_pipe[1]);
 
+        // A call to execvp() only returns if it fails.
         execvp(cmd, argv);
-        perror("pyro_exec_cmd(): execvp() failed");
+        char* err_msg = strerror(errno);
+        pyro_stderr_write_f(vm, "exec '%s' error: %s\n", cmd, err_msg);
         exit(1);
     }
 

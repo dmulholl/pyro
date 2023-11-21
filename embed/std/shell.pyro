@@ -48,3 +48,16 @@ pub def cp(src: str, dst: str) {
         $panic("cp(): ${std_err:strip()}");
     }
 }
+
+
+pub def xyz() {
+    let result = try $cmd("xyz");
+    if $is_err(result) {
+        $panic("xyz(): ${result}");
+    }
+
+    let (exit_code, std_out, std_err) = result;
+    if exit_code != 0 {
+        $panic("xyz(): ${std_err:strip()}");
+    }
+}
