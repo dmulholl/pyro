@@ -2,22 +2,15 @@ import std::json;
 import std::url;
 
 pub class Request {
-    pub var method: str;
-    pub var content_type: str;
-
     var body: str?;
-    var data: map[str, vec[str]];
+    var params: map[str, vec[str]];
 
     def $init() {
-        self.method = $env("REQUEST_METHOD");
-        self.content_type = $env("CONTENT_TYPE");
-        self.data = $map();
+        self.params = $map();
 
-        if self.method in $tup("POST", "PUT") {
-            if self.content_type == "application/x-www-form-urlencoded" {
+        if $env("REQUEST_METHOD") in ("POST", "PUT", "PATCH", "DELETE") {
+            if $env("CONTENT_TYPE") == "application/x-www-form-urlencoded" {
                 self:unpack_url_encoded_string(self:body());
-            } else if self.content_type == "multipart/form-data" {
-                # Not implemented.
             }
         }
 
@@ -28,7 +21,7 @@ pub class Request {
     }
 
     def $str() {
-        return $str(self.data);
+        return $str(self.params);
     }
 
     pub def body() -> str {
@@ -40,23 +33,28 @@ pub class Request {
     }
 
     pub def found(key: str) -> bool {
-        return key in self.data;
+        return key in self.params;
     }
 
     pub def value(key: str) -> str|err {
-        var values = self.data[key];
+        var values = self.params[key];
         if $is_err(values) {
-            return $err();
+            return $err("value(): key '${key}' not found");
         }
         return try values:last();
     }
 
     pub def values(key: str) -> vec[str] {
-        return self.data[key] !! [];
+        return self.params[key] !! [];
     }
 
+    # Deprecated.
     pub def data() -> map[str, vec[str]] {
-        return self.data;
+        return self.params;
+    }
+
+    pub def params() -> map[str, vec[str]] {
+        return self.params;
     }
 
     pub def json() -> any {
@@ -78,9 +76,9 @@ pub class Request {
                     continue;
                 }
 
-                var values = self.data[key];
+                var values = self.params[key];
                 if $is_err(values) {
-                    self.data[key] = [value];
+                    self.params[key] = [value];
                 } else {
                     values:append(value);
                 }

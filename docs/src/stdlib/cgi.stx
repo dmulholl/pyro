@@ -14,8 +14,8 @@ A utility module for writing CGI scripts in Pyro.
 
     Utility class for processing CGI requests.
 
-    * Automatically parses values from the request's query string.
-    * Automatically parses values from the request's form data if the `Content-Type` is `application/x-www-form-urlencoded`.
+    * Automatically parses parameter values from the request's query string.
+    * Automatically parses parameter values from the request's body if the `Content-Type` header is `application/x-www-form-urlencoded`.
 
 The `Request` class has the following methods:
 
@@ -25,23 +25,27 @@ The `Request` class has the following methods:
 
 [[ `:found(key) -> bool` ]]
 
-    Returns `true` if at least one value for `key` was found, where `key` is a query-string or form variable.
+    Returns `true` if at least one value for `key` was found, where `key` is a query-string or form parameter.
 
 [[ `:json() -> map|vec|str|i64|f64|bool|null|err` ]]
 
    Attempts to parse the request's body as JSON, returning the result.
    Returns an `err` if the body is not valid JSON.
 
+[[ `:params() -> map[string, vec[str]]` ]]
+
+    Returns a map containing parsed parameter values.
+
 [[ `:value(key) -> str|err` ]]
 
-    Returns the value for `key` where `key` is a query-string or form variable.
+    Returns the value for `key` where `key` is a query-string or form parameter.
 
     * Returns an `err` if `key` was not found.
     * If multiple values were found for `key`, returns the final value to be parsed.
 
 [[ `:values(key) -> vec[str]` ]]
 
-    Returns the list of values for `key` where `key` is a query-string or form variable.
+    Returns the list of values for `key` where `key` is a query-string or form parameter.
 
     Returns an empty vector if `key` was not found.
 

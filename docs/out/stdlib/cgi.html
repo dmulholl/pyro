@@ -87,10 +87,10 @@ Utility class for processing CGI requests.
 </p>
 <ul>
 <li>
-Automatically parses values from the request's query string.
+Automatically parses parameter values from the request's query string.
 </li>
 <li>
-Automatically parses values from the request's form data if the <code>Content-Type</code> is <code>application/x-www-form-urlencoded</code>.
+Automatically parses parameter values from the request's body if the <code>Content-Type</code> header is <code>application/x-www-form-urlencoded</code>.
 </li>
 </ul>
 </dd>
@@ -116,7 +116,7 @@ Returns the request's body as a string.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if at least one value for <code>key</code> was found, where <code>key</code> is a query-string or form variable.
+Returns <code>true</code> if at least one value for <code>key</code> was found, where <code>key</code> is a query-string or form parameter.
 </p>
 </dd>
 </div>
@@ -133,11 +133,21 @@ Returns an <code>err</code> if the body is not valid JSON.
 </div>
 <div>
 <dt>
+<code>:params() -&gt; map[string, vec[str]]</code>
+</dt>
+<dd>
+<p>
+Returns a map containing parsed parameter values.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:value(key) -&gt; str|err</code>
 </dt>
 <dd>
 <p>
-Returns the value for <code>key</code> where <code>key</code> is a query-string or form variable.
+Returns the value for <code>key</code> where <code>key</code> is a query-string or form parameter.
 </p>
 <ul>
 <li>
@@ -155,7 +165,7 @@ If multiple values were found for <code>key</code>, returns the final value to b
 </dt>
 <dd>
 <p>
-Returns the list of values for <code>key</code> where <code>key</code> is a query-string or form variable.
+Returns the list of values for <code>key</code> where <code>key</code> is a query-string or form parameter.
 </p>
 <p>
 Returns an empty vector if <code>key</code> was not found.
