@@ -25,7 +25,7 @@ The `Request` class has the following methods:
 
 [[ `:found(key) -> bool` ]]
 
-    Returns `true` if at least one value for `key` was found, where `key` is a query-string or form parameter.
+    Returns `true` if at least one parameter value for `key` was found, where `key` is a query-string or form parameter.
 
 [[ `:json() -> map|vec|str|i64|f64|bool|null|err` ]]
 
@@ -38,14 +38,14 @@ The `Request` class has the following methods:
 
 [[ `:value(key) -> str|err` ]]
 
-    Returns the value for `key` where `key` is a query-string or form parameter.
+    Returns the parameter value for `key` where `key` is a query-string or form parameter.
 
     * Returns an `err` if `key` was not found.
     * If multiple values were found for `key`, returns the final value to be parsed.
 
 [[ `:values(key) -> vec[str]` ]]
 
-    Returns the list of values for `key` where `key` is a query-string or form parameter.
+    Returns the list of parameter values for `key` where `key` is a query-string or form parameter.
 
     Returns an empty vector if `key` was not found.
 
