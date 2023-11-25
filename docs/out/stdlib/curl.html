@@ -85,7 +85,7 @@ Functions
 <dl>
 <div>
 <dt>
-<code>DELETE(url: str, body: str = &quot;&quot;) -&gt; Response|err</code>
+<code>DELETE(url: str, body: str|buf = &quot;&quot;) -&gt; Response|err</code>
 </dt>
 <dd>
 <p>
@@ -125,7 +125,7 @@ Convenience function for making a simple <code>OPTIONS</code> request.
 </div>
 <div>
 <dt>
-<code>PATCH(url: str, body: str) -&gt; Response|err</code>
+<code>PATCH(url: str, body: str|buf) -&gt; Response|err</code>
 </dt>
 <dd>
 <p>
@@ -135,7 +135,7 @@ Convenience function for making a simple <code>PATCH</code> request.
 </div>
 <div>
 <dt>
-<code>POST(url: str, body: str) -&gt; Response|err</code>
+<code>POST(url: str, body: str|buf) -&gt; Response|err</code>
 </dt>
 <dd>
 <p>
@@ -145,7 +145,7 @@ Convenience function for making a simple <code>POST</code> request.
 </div>
 <div>
 <dt>
-<code>PUT(url: str, body: str) -&gt; Response|err</code>
+<code>PUT(url: str, body: str|buf) -&gt; Response|err</code>
 </dt>
 <dd>
 <p>
@@ -175,7 +175,7 @@ Creates a new <code>Request</code> object.
 <dl>
 <div>
 <dt>
-<code>:body(value: str) -&gt; Request</code>
+<code>:body(value: str|buf) -&gt; Request</code>
 </dt>
 <dd>
 <p>
