@@ -15,7 +15,7 @@ You can find a set of examples [here][1].
 
 ### Functions
 
-[[ `DELETE(url: str, body: str = "") -> Response|err` ]]
+[[ `DELETE(url: str, body: str|buf = "") -> Response|err` ]]
 
     Convenience function for making a simple `DELETE` request.
 
@@ -31,15 +31,15 @@ You can find a set of examples [here][1].
 
     Convenience function for making a simple `OPTIONS` request.
 
-[[ `PATCH(url: str, body: str) -> Response|err` ]]
+[[ `PATCH(url: str, body: str|buf) -> Response|err` ]]
 
     Convenience function for making a simple `PATCH` request.
 
-[[ `POST(url: str, body: str) -> Response|err` ]]
+[[ `POST(url: str, body: str|buf) -> Response|err` ]]
 
     Convenience function for making a simple `POST` request.
 
-[[ `PUT(url: str, body: str) -> Response|err` ]]
+[[ `PUT(url: str, body: str|buf) -> Response|err` ]]
 
     Convenience function for making a simple `PUT` request.
 
@@ -52,7 +52,7 @@ You can find a set of examples [here][1].
 
 `Request` objects have the following public methods:
 
-[[ `:body(value: str) -> Request` ]]
+[[ `:body(value: str|buf) -> Request` ]]
 
     Sets the request's body to `value`.
 
@@ -155,4 +155,3 @@ You can find a set of examples [here][1].
     Returns the value of the header `key`, where `key` is a case-insensitive string.
 
     Returns an `err` if the header does not exist.
-

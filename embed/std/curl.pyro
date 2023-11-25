@@ -84,7 +84,7 @@ pub class Response {
 
 pub class Request {
     var url: str = "";
-    var body: str = "";
+    var body: str|buf = "";
     var debug: bool = false;
     var timeout_secs: f64 = 0.0;
     var params: map[str, vec[str]];
@@ -96,6 +96,9 @@ pub class Request {
     }
 
     pub def url(value: str) -> Request {
+        if !$is_str(value) {
+            $panic("url(): expected a string argument");
+        }
         self.url = value;
         return self;
     }
@@ -114,11 +117,17 @@ pub class Request {
     }
 
     pub def header(value: str) -> Request {
+        if !$is_str(value) {
+            $panic("header(): expected a string argument");
+        }
         self.headers:append(value);
         return self;
     }
 
-    pub def body(value: str) -> Request {
+    pub def body(value: str|buf) -> Request {
+        if !$is_str(value) && !$is_buf(value) {
+            $panic("body(): expected a string or buffer argument");
+        }
         self.body = value;
         return self;
     }
@@ -129,6 +138,9 @@ pub class Request {
     }
 
     pub def timeout(seconds: f64) -> Request {
+        if !$is_f64(seconds) {
+            $panic("timeout(): expected an f64 argument");
+        }
         self.timeout_secs = seconds;
         return self;
     }
@@ -166,32 +178,31 @@ pub class Request {
             return $err("${method}(): missing url");
         }
 
-        var command = "curl --verbose --silent --head";
+        var args = ["--verbose", "--silent", "--head"];
 
         if self.timeout_secs > 0.0 {
-            command += " --max-time ${self.timeout_secs}";
+            args:append("--max-time");
+            args:append($str(self.timeout_secs));
         }
 
         for header in self.headers {
-            var escaped_header = header:replace(`"`, `\"`);
-            command += " --header \"${escaped_header}\"";
+            args:append("--header");
+            args:append(header);
         }
 
         var url = self.url;
         if self.params:count() > 0 {
             url += "?" + self:make_query_string();
         }
-
-        var escaped_url = url:replace(`"`, `\"`);
-        command += " \"${escaped_url}\"";
+        args:append(url);
 
         if self.debug {
             echo "-" * 80;
-            echo "CALL:", command;
+            echo "ARGS:", args;
             echo "-" * 80;
         }
 
-        var result = try $shell(command);
+        var result = try $cmd("curl", args);
         if $is_err(result) {
             return $err("${method}(): ${result}");
         }
@@ -220,32 +231,31 @@ pub class Request {
             return $err("${method}(): missing url");
         }
 
-        var command = "curl --verbose --silent --request ${method}";
+        var args = ["--verbose", "--silent", "--request", method];
 
         if self.timeout_secs > 0.0 {
-            command += " --max-time ${self.timeout_secs}";
+            args:append("--max-time");
+            args:append($str(self.timeout_secs));
         }
 
         for header in self.headers {
-            var escaped_header = header:replace(`"`, `\"`);
-            command += " --header \"${escaped_header}\"";
+            args:append("--header");
+            args:append(header);
         }
 
         var url = self.url;
         if self.params:count() > 0 {
             url += "?" + self:make_query_string();
         }
-
-        var escaped_url = url:replace(`"`, `\"`);
-        command += " \"${escaped_url}\"";
+        args:append(url);
 
         if self.debug {
             echo "-" * 80;
-            echo "CALL:", command;
+            echo "ARGS:", args;
             echo "-" * 80;
         }
 
-        var result = try $shell(command);
+        var result = try $cmd("curl", args);
         if $is_err(result) {
             return $err("${method}(): ${result}");
         }
@@ -269,37 +279,36 @@ pub class Request {
             return $err("${method}(): missing url");
         }
 
-        var body = self.body;
-        var command = "curl --verbose --silent --request ${method}";
+        var args = ["--verbose", "--silent", "--request", method, "--data-binary", "@-"];
 
         if self.timeout_secs > 0.0 {
-            command += " --max-time ${self.timeout_secs}";
-        }
-
-        if self.params:count() > 0 {
-            body = self:make_query_string();
-            command += ` --header "Content-Type: application/x-www-form-urlencoded"`;
+            args:append("--max-time");
+            args:append($str(self.timeout_secs));
         }
 
         for header in self.headers {
-            var escaped_header = header:replace(`"`, `\"`);
-            command += " --header \"${escaped_header}\"";
+            args:append("--header");
+            args:append(header);
         }
 
-        command += " --data-binary @-";
+        var body = self.body;
+        if self.params:count() > 0 {
+            body = self:make_query_string();
+            args:append("--header");
+            args:append("Content-Type: application/x-www-form-urlencoded");
+        }
 
-        var escaped_url = self.url:replace(`"`, `\"`);
-        command += " \"${escaped_url}\"";
+        args:append(self.url);
 
         if self.debug {
             echo "-" * 80;
-            echo "CALL:", command;
+            echo "ARGS:", args;
             echo "-" * 80;
             echo "BODY:", body;
             echo "-" * 80;
         }
 
-        var result = try $shell(command, body);
+        var result = try $cmd("curl", args, body);
         if $is_err(result) {
             return $err("${method}(): ${result}");
         }
@@ -355,7 +364,7 @@ pub def OPTIONS(url: str) -> Response|err {
 }
 
 
-pub def POST(url: str, body: str) -> Response|err {
+pub def POST(url: str, body: str|buf) -> Response|err {
     return Request()
         :url(url)
         :body(body)
@@ -363,7 +372,7 @@ pub def POST(url: str, body: str) -> Response|err {
 }
 
 
-pub def PUT(url: str, body: str) -> Response|err {
+pub def PUT(url: str, body: str|buf) -> Response|err {
     return Request()
         :url(url)
         :body(body)
@@ -371,7 +380,7 @@ pub def PUT(url: str, body: str) -> Response|err {
 }
 
 
-pub def PATCH(url: str, body: str) -> Response|err {
+pub def PATCH(url: str, body: str|buf) -> Response|err {
     return Request()
         :url(url)
         :body(body)
@@ -379,7 +388,7 @@ pub def PATCH(url: str, body: str) -> Response|err {
 }
 
 
-pub def DELETE(url: str, body: str = "") -> Response|err {
+pub def DELETE(url: str, body: str|buf = "") -> Response|err {
     return Request()
         :url(url)
         :body(body)
