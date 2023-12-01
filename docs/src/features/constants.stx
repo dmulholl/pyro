@@ -76,12 +76,12 @@ A mutable object assigned to a constant remains mutable --- i.e. the constant ca
 
 
 
-### Constant in the REPL
+### Constants in the REPL
 
 You might notice that in the REPL, globally-scoped constansts aren't acually constant.
 They behave just like variables.
 
-This REPL-quirk happens because Pyro does its constant-checking at compiletime,
-not at runtime.
+This REPL-quirk happens because Pyro does its constant-checking at compile-time,
+not at run-time.
 
 In the REPL, each new statement is compiled individually in isolation, bypassing the compiler's constant-checking.
