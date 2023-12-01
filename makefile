@@ -31,6 +31,7 @@ CLI_OBJ_FILES = build/common/bestline.o \
 APP_SRC_FILES = cmd/app/*.c
 
 # Default name for the baked-application binary.
+# To override, run 'make app APPNAME=foobar'.
 APPNAME = app
 
 # The repository's last git tag.
