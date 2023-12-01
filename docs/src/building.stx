@@ -139,3 +139,4 @@ You can specify a custom name for the binary by setting the `APPNAME` variable, 
 ::: code
     $ make app APPNAME=foobar
 
+The application will be compiled as `build/release/foobar`.
