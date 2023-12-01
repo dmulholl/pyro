@@ -31,7 +31,7 @@ CLI_OBJ_FILES = build/common/bestline.o \
 APP_SRC_FILES = cmd/app/*.c
 
 # Default name for the baked-application binary.
-APPNAME ?= app
+APPNAME = app
 
 # The repository's last git tag.
 LAST_GIT_TAG = $(shell git describe --tags --abbrev=0)
