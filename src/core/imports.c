@@ -226,6 +226,13 @@ static bool try_load_filesystem_module(PyroVM* vm, uint8_t arg_count, PyroValue*
 
 
 void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod* module) {
+    #ifdef PYRO_DEBUG
+        assert(arg_count > 0);
+        for (uint8_t i = 0; i < arg_count; i++) {
+            assert(PYRO_IS_STR(args[i]));
+        }
+    #endif
+
     if (try_load_builtin_module(vm, arg_count, args, module)) {
         return;
     }
