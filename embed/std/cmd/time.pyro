@@ -19,7 +19,7 @@ def add_import_roots_from_path(filepath) {
 
     var real_path = try fs::realpath(filepath);
     if $is_err(real_path) {
-        $exit("error: failed to resolve path '${filepath}': ${code}");
+        $exit("error: failed to resolve path '${filepath}': ${real_path}");
     }
 
     var parent_path = fs::dirname(real_path);
@@ -97,4 +97,3 @@ for filepath in $args {
 
     restore_stashed_import_roots(stashed_roots);
 }
-
