@@ -1,3 +1,2 @@
-echo "The GET command is a stub -- it hasn't been implemented yet.";
+echo "get";
 echo $args;
-

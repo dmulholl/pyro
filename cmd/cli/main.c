@@ -28,6 +28,7 @@ static const char* HELPTEXT =
     "  -v, --version              Print the version number and exit.\n"
     "\n"
     "Commands:\n"
+    "  bake                       Compile a baked application binary.\n"
     "  check                      Compile files without executing.\n"
     "  test                       Run unit tests.\n"
     "  time                       Run timing functions.\n"
@@ -124,6 +125,37 @@ static const char* GET_HELPTEXT =
     ;
 
 
+static const char* BAKE_HELPTEXT =
+    "Usage: pyro bake <file>\n"
+    "\n"
+    "  This command compiles a Pyro script and (optionally) a collection of\n"
+    "  modules into a baked application binary. Modules required by the script\n"
+    "  should be placed in a 'modules' directory alongside the script file.\n"
+    "\n"
+    "  Requires make, git, and a C compiler.\n"
+    "\n"
+    "  The default Pyro repository is https://github.com/dmulholl/pyro.git.\n"
+    "\n"
+    "  If no Pyro version is specified, the master branch will be used.\n"
+    "\n"
+    "Examples:\n"
+    "  pyro bake ./script.pyro\n"
+    "  pyro bake ./script.pyro --output myapp --pyro-version v0.12.3\n"
+    "\n"
+    "Arguments:\n"
+    "  <file>                       Pyro script.\n"
+    "\n"
+    "Options:\n"
+    "  -o, --output <file>          Output file.\n"
+    "  -r, --pyro-repo <url>        Git repository containing Pyro source code.\n"
+    "  -v, --pyro-version <tag>     Git tag specifying the Pyro version to use.\n"
+    "\n"
+    "Flags:\n"
+    "  -h, --help                   Print this help text and exit.\n"
+    "      --no-cache               Don't use cached Pyro source code."
+    ;
+
+
 int main(int argc, char* argv[]) {
     // Initialize the root argument parser.
     ArgParser* parser = ap_new_parser();
@@ -201,6 +233,20 @@ int main(int argc, char* argv[]) {
     ap_set_helptext(cmd_get, GET_HELPTEXT);
     ap_set_cmd_callback(cmd_get, pyro_cli_cmd_get);
 
+    // Register the parser for the 'bake' command.
+    ArgParser* cmd_bake = ap_new_cmd(parser, "bake");
+    if (!cmd_bake) {
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
+    }
+
+    ap_set_helptext(cmd_bake, BAKE_HELPTEXT);
+    ap_set_cmd_callback(cmd_bake, pyro_cli_cmd_bake);
+    ap_add_str_opt(cmd_bake, "pyro-version v", "master");
+    ap_add_str_opt(cmd_bake, "pyro-repo r", "https://github.com/dmulholl/pyro.git");
+    ap_add_str_opt(cmd_bake, "output o", "");
+    ap_add_flag(cmd_bake, "no-cache");
+
     // Parse the command line arguments.
     if (!ap_parse(parser, argc, argv)) {
         ap_free(parser);
@@ -209,8 +255,9 @@ int main(int argc, char* argv[]) {
     }
 
     if (ap_found_cmd(parser)) {
+        int exit_code = ap_get_cmd_exit_code(parser);
         ap_free(parser);
-        return 0;
+        return exit_code;
     }
 
     if (ap_found(parser, "exec")) {

@@ -9,7 +9,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
         fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
-        exit(1);
+        return 1;
     }
 
     pyro_cli_add_import_roots_from_command_line(vm, cmd_parser);
@@ -19,7 +19,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     if (!pyro_define_superglobal(vm, "NUM_RUNS", pyro_i64(num_runs))) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
-        exit(1);
+        return 1;
     }
 
     char** args = ap_get_args(cmd_parser);
@@ -27,7 +27,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         free(args);
-        exit(1);
+        return 1;
     }
     free(args);
 
@@ -37,7 +37,7 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     if (!pyro_get_embedded("std/cmd/time.pyro", &code, &code_length)) {
         fprintf(stderr, "error: failed to load 'embed/std/cmd/time.pyro'\n");
         pyro_free_vm(vm);
-        exit(1);
+        return 1;
     }
 
     pyro_exec_code(vm, (const char*)code, code_length, "std::cmd::time", NULL);

@@ -1,0 +1,142 @@
+import std::fs;
+import std::shell;
+import std::log;
+
+if !fs::is_file(SCRIPT) {
+    log::fatal("'${SCRIPT}' is not a file");
+}
+
+let script_path = fs::abspath(SCRIPT);
+let modules_path = fs::join(fs::dirname(script_path), "modules");
+
+var output_path;
+if OUTPUT == "" {
+    let script_name = fs::basename(script_path):strip_suffix(".pyro");
+    output_path = fs::abspath(script_name);
+} else {
+    output_path = fs::abspath(OUTPUT);
+}
+
+log::info("baking binary: ${output_path}");
+
+let homedir_path = $env("HOME");
+if $is_err(homedir_path) {
+    log::fatal("failed to read the HOME environment variable");
+}
+
+let repodir_path = fs::join(homedir_path, ".cache", "pyro", "repo");
+let workdir_path = fs::join(homedir_path, ".cache", "pyro", "work");
+let embeddir_path = fs::join(workdir_path, "embed");
+
+if NO_CACHE {
+    if let result = try shell::rm(repodir_path); $is_err(result) {
+        log::fatal("failed to delete '${repodir_path}': ${result}");
+    }
+}
+
+if !fs::is_dir(repodir_path) {
+    log::info("cloning repository: ${PYRO_REPO}");
+
+    with result = try $cmd("git", ["clone", PYRO_REPO, repodir_path]) {
+        if $is_err(result) {
+            log::fatal("failed to clone repository: ${result}");
+        }
+
+        let (exit_code, _, stderr_output) = result;
+        if exit_code != 0 {
+            log::fatal("failed to clone repository: ${stderr_output:strip()}");
+        }
+    }
+}
+
+if let result = try fs::chdir(repodir_path); $is_err(result) {
+    log::fatal("failed to change working directory to: ${repodir_path}: ${result}");
+}
+
+log::info("updating repository: ${PYRO_REPO}");
+
+with result = try $cmd("git", ["checkout", "master"]) {
+    if $is_err(result) {
+        log::fatal("failed to checkout branch 'master': ${result}");
+    }
+
+    let (exit_code, _, stderr_output) = result;
+    if exit_code != 0 {
+        log::fatal("failed to checkout branch 'master': ${stderr_output:strip()}");
+    }
+}
+
+with result = try $cmd("git", ["pull"]) {
+    if $is_err(result) {
+        log::fatal("failed to run 'git pull' on branch 'master': ${result}");
+    }
+
+    let (exit_code, _, stderr_output) = result;
+    if exit_code != 0 {
+        log::fatal("failed to run 'git pull' on branch 'master': ${stderr_output:strip()}");
+    }
+}
+
+log::info("checking out version: ${PYRO_VERSION}");
+
+with result = try $cmd("git", ["checkout", PYRO_VERSION]) {
+    if $is_err(result) {
+        log::fatal("failed to checkout '${PYRO_VERSION}': ${result}");
+    }
+
+    let (exit_code, _, stderr_output) = result;
+    if exit_code != 0 {
+        log::fatal("failed to checkout '${PYRO_VERSION}': ${stderr_output:strip()}");
+    }
+}
+
+if let result = try shell::rm(workdir_path); $is_err(result) {
+    log::fatal("failed to delete '${workdir_path}': ${result}");
+}
+
+if let result = try shell::cp(repodir_path, workdir_path); $is_err(result) {
+    log::fatal("failed to copy '${repodir_path}' to '${workdir_path}': ${result}");
+}
+
+if let result = try fs::chdir(workdir_path); $is_err(result) {
+    log::fatal("failed to change working directory to: ${workdir_path}: ${result}");
+}
+
+log::info("copying script: ${script_path}");
+if let result = try shell::cp(script_path, fs::join(embeddir_path, "main.pyro")); $is_err(result) {
+    log::fatal("failed to copy script: ${result}");
+}
+
+if fs::is_dir(modules_path) {
+    log::info("copying modules: ${modules_path}");
+    if let result = try shell::cp(modules_path + "/", embeddir_path); $is_err(result) {
+        log::fatal("failed to copy modules: ${result}");
+    }
+}
+
+log::info("compiling binary");
+with result = try $cmd("make", ["app"]) {
+    if $is_err(result) {
+        log::fatal("failed to compile binary: ${result}");
+    }
+
+    let (exit_code, _, stderr_output) = result;
+    if exit_code != 0 {
+        log::fatal("failed to compile binary: ${stderr_output:strip()}");
+    }
+}
+
+log::info("moving binary to: ${output_path}");
+let output_dirpath = fs::dirname(output_path);
+
+if !fs::is_dir(output_dirpath) {
+    if let result = try shell::mkdir(output_dirpath); $is_err(result) {
+        log::fatal("failed to create directory '${output_dirpath}': ${result}");
+    }
+}
+
+if let result = try shell::mv(fs::join(workdir_path, "build", "release", "app"), output_path); $is_err(result) {
+    log::fatal("failed to move binary: ${result}");
+}
+
+log::info("okay");

@@ -9,7 +9,7 @@ int pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
         fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
-        exit(1);
+        return 1;
     }
 
     bool had_panic = false;
@@ -19,7 +19,7 @@ int pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
         if (!pyro_exists(path)) {
             pyro_free_vm(vm);
             fprintf(stderr, "error: invalid path '%s'\n", path);
-            exit(1);
+            return 1;
         }
 
         pyro_try_compile_file(vm, path, ap_found(cmd_parser, "disassemble"));
@@ -31,7 +31,7 @@ int pyro_cli_cmd_check(char* cmd_name, ArgParser* cmd_parser) {
 
     pyro_free_vm(vm);
     if (had_panic) {
-        exit(1);
+        return 1;
     }
 
     return 0;

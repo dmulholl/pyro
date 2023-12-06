@@ -82,7 +82,6 @@ sanitize: $(OBJ_FILES) $(CLI_OBJ_FILES)
 		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
-.PHONY: app
 app: ## Builds a baked-application binary.
 app: $(OBJ_FILES)
 	@mkdir -p build/release
