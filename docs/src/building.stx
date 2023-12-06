@@ -140,3 +140,6 @@ You can specify a custom name for the binary by setting the `APPNAME` variable, 
     $ make app APPNAME=foobar
 
 The application will be compiled as `build/release/foobar`.
+
+Note that you can only bake modules written in Pyro into a baked application binary.
+Compiled extension modules written in C are not supported.
