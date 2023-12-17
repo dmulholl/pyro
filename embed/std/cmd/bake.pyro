@@ -109,7 +109,7 @@ if let result = try shell::cp(script_path, fs::join(embeddir_path, "main.pyro"))
 
 if fs::is_dir(modules_path) {
     log::info("copying modules: ${modules_path}");
-    if let result = try shell::cp(modules_path + "/", embeddir_path); $is_err(result) {
+    if let result = try shell::cp(modules_path + "/.", embeddir_path); $is_err(result) {
         log::fatal("failed to copy modules: ${result}");
     }
 }
