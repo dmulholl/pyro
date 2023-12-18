@@ -34,13 +34,13 @@ int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
     const unsigned char* code;
     size_t code_length;
 
-    if (!pyro_get_embedded("std/cmd/test.pyro", &code, &code_length)) {
-        fprintf(stderr, "error: failed to load 'embed/std/cmd/test.pyro'\n");
+    if (!pyro_get_embedded("std/cli/test.pyro", &code, &code_length)) {
+        fprintf(stderr, "error: failed to load 'embed/std/cli/test.pyro'\n");
         pyro_free_vm(vm);
         return 1;
     }
 
-    pyro_exec_code(vm, (const char*)code, code_length, "std::cmd::test", NULL);
+    pyro_exec_code(vm, (const char*)code, code_length, "std::cli::test", NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);
