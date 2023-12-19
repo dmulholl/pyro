@@ -1,5 +1,3 @@
-# DEPRECATED: replaced by std::cmd.
-
 pub def mkdir(path: str) {
     let result = try $cmd("mkdir", ["-p", path]);
     if $is_err(result) {
