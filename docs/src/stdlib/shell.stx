@@ -1,6 +1,7 @@
 ---
 title: <code>std::shell</code>
 meta_title: Pyro Standard Library &mdash; std::shell
+subtitle: Deprecated.
 ---
 
 Pyro wrappers for common shell utilities.
