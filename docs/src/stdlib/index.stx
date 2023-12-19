@@ -17,6 +17,10 @@ All standard library modules are submodules of the root module `std`.
 
     A library for parsing command line arguments.
 
+[[ [cmd](@root/stdlib/cmd//) ]]
+
+    Convenience functions for running common system binaries.
+
 [[ [curl](@root/stdlib/curl//) ]]
 
     A library for making HTTP requests using `curl`.
@@ -64,10 +68,6 @@ All standard library modules are submodules of the root module `std`.
 [[ [sendmail](@root/stdlib/sendmail//) ]]
 
     A utility module for sending email.
-
-[[ [shell](@root/stdlib/shell//) ]]
-
-    Wrappers for common shell utilities.
 
 [[ [url](@root/stdlib/url//) ]]
 

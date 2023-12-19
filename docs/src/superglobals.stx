@@ -85,6 +85,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     * If `path` contains a `/` character, it will be treated as a filepath. Otherwise, the directories specified by the `PATH` environment variable will be searched for the named file.
     * If an `args` vector is specified, its entries will be appended to the program's argument list. (The program's argument list automatically gets `path` as its first entry.)
+    * Arguments are passed directly to the program and don't need to be shell-escaped.
     * If an `input` string is specified, its content will be written to the program's `stdin` stream.
 
     Returns a three-item tuple containing the program's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.

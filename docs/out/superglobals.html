@@ -207,6 +207,9 @@ If <code>path</code> contains a <code>/</code> character, it will be treated as 
 If an <code>args</code> vector is specified, its entries will be appended to the program's argument list. (The program's argument list automatically gets <code>path</code> as its first entry.)
 </li>
 <li>
+Arguments are passed directly to the program and don't need to be shell-escaped.
+</li>
+<li>
 If an <code>input</code> string is specified, its content will be written to the program's <code>stdin</code> stream.
 </li>
 </ul>

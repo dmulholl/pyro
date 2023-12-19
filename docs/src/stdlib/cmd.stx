@@ -1,0 +1,59 @@
+---
+title: <code>std::cmd</code>
+meta_title: Pyro Standard Library &mdash; std::cmd
+---
+
+Convenience functions for running common system binaries.
+
+* Searches the directories listed in the `PATH` environment variable for the named binaries.
+
+* Arguments are passed directly to the binary and don't need to be shell-escaped.
+
+* To run an arbitrary binary, use the superglobal `$cmd()` function.
+
+
+
+### Functions
+
+
+[[ `cp(src: str, dst: str)` ]]
+
+    Equivalent to running the shell command:
+
+    ::: code
+        cp -rf <src> <dst>
+
+    Panics if the `cp` binary cannot be found or if it exits with a non-zero status code.
+
+
+
+[[ `mkdir(path: str)` ]]
+
+    Equivalent to running the shell command:
+
+    ::: code
+        mkdir -p <path>
+
+    Panics if the `mkdir` binary cannot be found or if it exits with a non-zero status code.
+
+
+
+[[ `mv(src: str, dst: str)` ]]
+
+    Equivalent to running the shell command:
+
+    ::: code
+        mv -f <src> <dst>
+
+    Panics if the `mv` binary cannot be found or if it exits with a non-zero status code.
+
+
+
+[[ `rm(path: str)` ]]
+
+    Equivalent to running the shell command:
+
+    ::: code
+        rm -rf <path>
+
+    Panics if the `rm` binary cannot be found or if it exits with a non-zero status code.

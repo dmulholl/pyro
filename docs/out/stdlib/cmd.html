@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Standard Library &mdash; std::cmd</title>
+
+        
+
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+
+        
+            <script src="../assets/code.js"></script>
+        
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-stdlib-cmd node-stdlib node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+            
+            
+                <p class="version">Version 0.12.3</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+
+        <article class="main">
+            <header class="title">
+                <h1><code>std::cmd</code></h1>
+                
+                <hr>
+            </header>
+            <p>
+Convenience functions for running common system binaries.
+</p>
+<ul>
+<li>
+Searches the directories listed in the <code>PATH</code> environment variable for the named binaries.
+</li>
+<li>
+Arguments are passed directly to the binary and don't need to be shell-escaped.
+</li>
+<li>
+To run an arbitrary binary, use the superglobal <code>$cmd()</code> function.
+</li>
+</ul>
+<h3 id="functions">
+Functions
+</h3>
+<dl>
+<div>
+<dt>
+<code>cp(src: str, dst: str)</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command:
+</p>
+<pre>
+cp -rf &lt;src&gt; &lt;dst&gt;
+</pre>
+<p>
+Panics if the <code>cp</code> binary cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>mkdir(path: str)</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command:
+</p>
+<pre>
+mkdir -p &lt;path&gt;
+</pre>
+<p>
+Panics if the <code>mkdir</code> binary cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>mv(src: str, dst: str)</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command:
+</p>
+<pre>
+mv -f &lt;src&gt; &lt;dst&gt;
+</pre>
+<p>
+Panics if the <code>mv</code> binary cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>rm(path: str)</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command:
+</p>
+<pre>
+rm -rf &lt;path&gt;
+</pre>
+<p>
+Panics if the <code>rm</code> binary cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+
+        
+    </body>
+</html>
