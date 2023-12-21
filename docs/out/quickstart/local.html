@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Quickstart: Local</title>
+
+        
+
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+
+        
+            <script src="../assets/code.js"></script>
+        
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-quickstart-local node-quickstart node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+            
+            
+                <p class="version">Version 0.12.6</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+
+        <article class="main">
+            <header class="title">
+                <h1>Quickstart: Local</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#prerequisites">Prerequisites</a>
+</li>
+<li>
+<a href="#building-pyro">Building Pyro</a>
+</li>
+<li>
+<a href="#running-the-repl">Running the REPL</a>
+</li>
+<li>
+<a href="#running-a-script">Running a Script</a>
+</li>
+<li>
+<a href="#installing-pyro">Installing Pyro</a>
+</li>
+</ul>
+<h3 id="prerequisites">
+Prerequisites
+</h3>
+<p>
+You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
+(If you're on Windows, you can use the <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL</a> to try Pyro.)
+</p>
+<p>
+You'll also need to have <code>git</code> and <code>make</code> installed.
+</p>
+<h3 id="building-pyro">
+Building Pyro
+</h3>
+<p>
+First, download the Pyro repository from Github and <code>cd</code> into the <code>pyro</code> directory:
+</p>
+<pre>
+git clone https://github.com/dmulholl/pyro.git
+cd pyro
+</pre>
+<p>
+Build the release binary by running:
+</p>
+<pre>
+make release
+</pre>
+<p>
+The release binary will be created in a new <code>build/release</code> directory as <code>build/release/pyro</code>.
+</p>
+<p>
+Run the Pyro binary with the <code>--help</code> flag to view the command line helptext:
+</p>
+<pre>
+./build/release/pyro --help
+</pre>
+<p>
+You should see Pyro's helptext, i.e.
+</p>
+<pre>
+Usage: pyro [file]
+
+  The Pyro programming language.
+
+Arguments:
+  [file]             Script to run. Will open the REPL
+                     if omitted.
+
+Flags:
+  -h, --help         Print this help text and exit.
+  -v, --version      Print the version number and exit.
+
+Commands:
+  test               Run unit tests.
+  time               Run timing functions.
+
+Command Help:
+  help &lt;command&gt;     Print the command's help text.
+</pre>
+<h3 id="running-the-repl">
+Running the REPL
+</h3>
+<p>
+Running the Pyro binary without any arguments launches the REPL &mdash; an interactive environment where you can run Pyro commands directly.
+</p>
+<p>
+Try running the REPL:
+</p>
+<pre>
+./build/release/pyro
+</pre>
+<p>
+At the REPL prompt, type <code>echo &quot;hello world&quot;;</code> and hit return:
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world";
+hello world
+</pre>
+<p>
+Pyro statements normally end with a semicolon, <code>;</code>, but you can omit the semicolon after typing a single statement in the REPL:
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world"
+hello world
+</pre>
+<p>
+Hit <code>Ctrl-D</code> or type <code>exit</code> and hit return to end the REPL session.
+</p>
+<h3 id="running-a-script">
+Running a Script
+</h3>
+<p>
+Let's make a simple test script.
+Create a file called <code>hello.pyro</code> and add the following line to it:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Run the script by supplying its filepath to the binary:
+</p>
+<pre>
+./build/release/pyro hello.pyro
+hello world
+</pre>
+<p>
+That's it, you can officially add Pyro to the list of languages on your CV.
+Take the <a href="../tour.html">tour</a> if you'd like to learn more about the language.
+</p>
+<h3 id="installing-pyro">
+Installing Pyro
+</h3>
+<p>
+You can find instructions for installing the Pyro binary on your system <a href="../building.html">here</a>.
+</p>
+        </article>
+
+        
+    </body>
+</html>

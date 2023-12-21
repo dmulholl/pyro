@@ -62,123 +62,25 @@
                 
                 <hr>
             </header>
-            <ul class="stx-toc">
+            <ul>
 <li>
-<a href="#building-pyro">Building Pyro</a>
+<a href="quickstart/docker.html">Use Docker</a>
 </li>
 <li>
-<a href="#running-the-repl">Running the REPL</a>
-</li>
-<li>
-<a href="#running-a-script">Running a Script</a>
-</li>
-<li>
-<a href="#installing-pyro">Installing Pyro</a>
+<a href="quickstart/local.html">Run Locally</a>
 </li>
 </ul>
-<h3 id="building-pyro">
-Building Pyro
+<h3 id="option-1-docker">
+Option 1 &mdash; Docker
 </h3>
 <p>
-You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
-(If you're on Windows, you can use the <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL</a> to try Pyro.)
+You can try Pyro by <a href="quickstart/docker.html">running a pre-built Docker image</a>.
 </p>
-<p>
-First, download the Pyro repository from Github and <code>cd</code> into the <code>pyro</code> directory:
-</p>
-<pre>
-$ git clone https://github.com/dmulholl/pyro.git
-$ cd pyro
-</pre>
-<p>
-Build the release binary by running:
-</p>
-<pre>
-$ make release
-</pre>
-<p>
-The release binary will be created in a new <code>build/release</code> directory as <code>build/release/pyro</code>.
-</p>
-<p>
-<code>cd</code> into the <code>build/release</code> directory and try running the Pyro binary with the <code>--help</code> flag to view the command line help:
-</p>
-<pre>
-$ ./pyro --help
-
-Usage: pyro [file]
-
-  The Pyro programming language.
-
-Arguments:
-  [file]             Script to run. Will open the REPL
-                     if omitted.
-
-Flags:
-  -h, --help         Print this help text and exit.
-  -v, --version      Print the version number and exit.
-
-Commands:
-  test               Run unit tests.
-  time               Run timing functions.
-
-Command Help:
-  help &lt;command&gt;     Print the command's help text.
-</pre>
-<h3 id="running-the-repl">
-Running the REPL
+<h3 id="option-2-local">
+Option 2 &mdash; Local
 </h3>
 <p>
-Running the Pyro binary without any arguments launches the REPL &mdash; an interactive environment where you can run Pyro commands directly.
-</p>
-<p>
-Try running the REPL:
-</p>
-<pre>
-$ ./pyro
-</pre>
-<p>
-At the prompt, type <code>echo &quot;hello world&quot;;</code> and hit return:
-</p>
-<pre>
-&gt;&gt;&gt; echo "hello world";
-hello world
-</pre>
-<p>
-Pyro statements normally end with a semicolon, <code>;</code>, but you can omit the semicolon after typing a single statement in the REPL:
-</p>
-<pre>
-&gt;&gt;&gt; echo "hello world"
-hello world
-</pre>
-<p>
-Hit <code>Ctrl-D</code> or type <code>exit</code> and hit return to end the REPL session.
-</p>
-<h3 id="running-a-script">
-Running a Script
-</h3>
-<p>
-Let's make a simple test script.
-Create a file called <code>hello.pyro</code> and add the following line to it:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
-</pre>
-<p>
-Run the script by supplying its filename to the binary:
-</p>
-<pre>
-$ ./pyro hello.pyro
-hello world
-</pre>
-<p>
-That's it, you can officially add Pyro to the list of languages on your CV.
-Take the <a href="tour.html">tour</a> if you'd like to learn more about the language.
-</p>
-<h3 id="installing-pyro">
-Installing Pyro
-</h3>
-<p>
-You can find instructions for installing Pyro <a href="building.html">here</a>.
+You can try Pyro by <a href="quickstart/local.html">building and running the Pyro binary</a> on your local system.
 </p>
         </article>
 

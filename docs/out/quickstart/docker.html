@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Quickstart: Docker</title>
+
+        
+
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+
+        
+            <script src="../assets/code.js"></script>
+        
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-quickstart-docker node-quickstart node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+            
+            
+                <p class="version">Version 0.12.6</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../roadmap.html">Roadmap</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+
+        <article class="main">
+            <header class="title">
+                <h1>Quickstart: Docker</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#running-the-repl">Running the REPL</a>
+</li>
+<li>
+<a href="#running-a-script">Running a Script</a>
+</li>
+<li>
+<a href="#installing-pyro-locally">Installing Pyro Locally</a>
+</li>
+</ul>
+<h3 id="running-the-repl">
+Running the REPL
+</h3>
+<p>
+Run the pre-built Docker image:
+</p>
+<pre>
+docker run --rm -it dmulholl/pyro:latest
+</pre>
+<p>
+Running the Docker image automatically runs its installed Pyro binary.
+</p>
+<p>
+Running the Pyro binary without any arguments launches the REPL &mdash; an interactive environment where you can run Pyro commands directly.
+</p>
+<p>
+At the REPL prompt, type <code>echo &quot;hello world&quot;;</code> and hit return:
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world";
+hello world
+</pre>
+<p>
+Pyro statements normally end with a semicolon, <code>;</code>, but you can omit the semicolon after typing a single statement in the REPL:
+</p>
+<pre>
+&gt;&gt;&gt; echo "hello world"
+hello world
+</pre>
+<p>
+Hit <code>Ctrl-D</code> or type <code>exit</code> and hit return to end the REPL session.
+</p>
+<h3 id="running-a-script">
+Running a Script
+</h3>
+<p>
+Open a Bash shell in the pre-built Docker image:
+</p>
+<pre>
+docker run --rm -it dmulholl/pyro:latest bash
+</pre>
+<p>
+You'll find a ready-made test file in the home directory:
+</p>
+<pre>
+cat ./hello.pyro
+</pre>
+<p>
+It contains a simple Pyro script:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="s">&quot;hello world&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Run the script by supplying its filepath to the Pyro binary:
+</p>
+<pre>
+pyro ./hello.pyro
+hello world
+</pre>
+<p>
+That's it, you can officially add Pyro to the list of languages on your CV.
+Take the <a href="../tour.html">tour</a> if you'd like to learn more about the language.
+</p>
+<h3 id="installing-pyro-locally">
+Installing Pyro Locally
+</h3>
+<p>
+You can find instructions for building and installing Pyro on your local system <a href="../building.html">here</a>.
+</p>
+        </article>
+
+        
+    </body>
+</html>

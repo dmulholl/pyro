@@ -1,6 +1,6 @@
 ---
-title: Quickstart Tutorial
-meta_title: Pyro &mdash; Quickstart Tutorial
+title: "Quickstart: Local"
+meta_title: "Pyro &mdash; Quickstart: Local"
 ---
 
 [wsl]: https://docs.microsoft.com/en-us/windows/wsl/
@@ -8,29 +8,39 @@ meta_title: Pyro &mdash; Quickstart Tutorial
 ::: insert toc
 
 
-### Building Pyro
+
+### Prerequisites
 
 You'll need a C compiler and a POSIX compatible operating system (Mac, Linux, BSD, etc.) to build Pyro from source.
 (If you're on Windows, you can use the [WSL][] to try Pyro.)
 
+You'll also need to have `git` and `make` installed.
+
+
+
+### Building Pyro
+
 First, download the Pyro repository from Github and `cd` into the `pyro` directory:
 
 ::: code
-    $ git clone https://github.com/dmulholl/pyro.git
-    $ cd pyro
+    git clone https://github.com/dmulholl/pyro.git
+    cd pyro
 
 Build the release binary by running:
 
 ::: code
-    $ make release
+    make release
 
 The release binary will be created in a new `build/release` directory as `build/release/pyro`.
 
-`cd` into the `build/release` directory and try running the Pyro binary with the `--help` flag to view the command line help:
+Run the Pyro binary with the `--help` flag to view the command line helptext:
 
 ::: code
-    $ ./pyro --help
+    ./build/release/pyro --help
 
+You should see Pyro's helptext, i.e.
+
+::: code
     Usage: pyro [file]
 
       The Pyro programming language.
@@ -59,9 +69,9 @@ Running the Pyro binary without any arguments launches the REPL --- an interacti
 Try running the REPL:
 
 ::: code
-    $ ./pyro
+    ./build/release/pyro
 
-At the prompt, type `echo "hello world";` and hit return:
+At the REPL prompt, type `echo "hello world";` and hit return:
 
 ::: code
     >>> echo "hello world";
@@ -85,10 +95,10 @@ Create a file called `hello.pyro` and add the following line to it:
 ::: code pyro
     echo "hello world";
 
-Run the script by supplying its filename to the binary:
+Run the script by supplying its filepath to the binary:
 
 ::: code
-    $ ./pyro hello.pyro
+    ./build/release/pyro hello.pyro
     hello world
 
 That's it, you can officially add Pyro to the list of languages on your CV.
@@ -98,4 +108,4 @@ Take the [tour](@root/tour//) if you'd like to learn more about the language.
 
 ### Installing Pyro
 
-You can find instructions for installing Pyro [here](@root/building//).
+You can find instructions for installing the Pyro binary on your system [here](@root/building//).

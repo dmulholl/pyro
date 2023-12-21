@@ -1,0 +1,20 @@
+---
+title: Quickstart Tutorial
+meta_title: Pyro &mdash; Quickstart Tutorial
+---
+
+[1]: @root/quickstart/docker//
+[2]: @root/quickstart/local//
+
+* [Use Docker][1]
+* [Run Locally][2]
+
+
+### Option 1 --- Docker
+
+You can try Pyro by [running a pre-built Docker image][1].
+
+
+### Option 2 --- Local
+
+You can try Pyro by [building and running the Pyro binary][2] on your local system.

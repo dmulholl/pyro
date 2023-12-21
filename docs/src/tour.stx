@@ -589,7 +589,7 @@ Modules are a big enough topic to deserve a page of their own which you can find
 
 ### The Main Function
 
-When you run a script file Pyro first executes the script then looks for a function called `$main()`.
+When you run a script file, Pyro first executes the script then looks for a function called `$main()`.
 If it finds a `$main()` function it runs it automatically.
 
 ::: code pyro

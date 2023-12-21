@@ -1,0 +1,66 @@
+---
+title: "Quickstart: Docker"
+meta_title: "Pyro &mdash; Quickstart: Docker"
+---
+
+::: insert toc
+
+
+### Running the REPL
+
+Run the pre-built Docker image:
+
+::: code
+    docker run --rm -it dmulholl/pyro:latest
+
+Running the Docker image automatically runs its installed Pyro binary.
+
+Running the Pyro binary without any arguments launches the REPL --- an interactive environment where you can run Pyro commands directly.
+
+At the REPL prompt, type `echo "hello world";` and hit return:
+
+::: code
+    >>> echo "hello world";
+    hello world
+
+Pyro statements normally end with a semicolon, `;`, but you can omit the semicolon after typing a single statement in the REPL:
+
+::: code
+    >>> echo "hello world"
+    hello world
+
+Hit `Ctrl-D` or type `exit` and hit return to end the REPL session.
+
+
+
+### Running a Script
+
+Open a Bash shell in the pre-built Docker image:
+
+::: code
+    docker run --rm -it dmulholl/pyro:latest bash
+
+You'll find a ready-made test file in the home directory:
+
+::: code
+    cat ./hello.pyro
+
+It contains a simple Pyro script:
+
+::: code pyro
+    echo "hello world";
+
+Run the script by supplying its filepath to the Pyro binary:
+
+::: code
+    pyro ./hello.pyro
+    hello world
+
+That's it, you can officially add Pyro to the list of languages on your CV.
+Take the [tour](@root/tour//) if you'd like to learn more about the language.
+
+
+
+### Installing Pyro Locally
+
+You can find instructions for building and installing Pyro on your local system [here](@root/building//).
