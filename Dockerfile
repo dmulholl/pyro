@@ -1,7 +1,6 @@
 FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get --yes update
 RUN apt-get --yes install bash make clang vim nano emacs
 
@@ -14,8 +13,10 @@ COPY src ./src
 COPY tests ./tests
 COPY makefile ./makefile
 
-RUN make clean
 RUN make release
 RUN make install
+
+WORKDIR /root
+RUN echo 'echo "hello world";' > hello.pyro
 
 CMD ["pyro"]
