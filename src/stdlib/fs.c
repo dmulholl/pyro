@@ -436,7 +436,6 @@ void pyro_load_std_mod_fs(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "dirname", fn_dirname, 1);
     pyro_define_pub_member_fn(vm, module, "basename", fn_basename, 1);
     pyro_define_pub_member_fn(vm, module, "join", fn_join, -1);
-    pyro_define_pub_member_fn(vm, module, "remove", fn_remove, 1);
     pyro_define_pub_member_fn(vm, module, "listdir", fn_listdir, 1);
     pyro_define_pub_member_fn(vm, module, "realpath", fn_realpath, 1);
     pyro_define_pub_member_fn(vm, module, "chdir", fn_chdir, 1);
@@ -449,4 +448,5 @@ void pyro_load_std_mod_fs(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "cd", fn_chdir, 1);
     pyro_define_pub_member_fn(vm, module, "cwd", fn_getcwd, 0);
     pyro_define_pub_member_fn(vm, module, "rm", fn_remove, 1);
+    pyro_define_pub_member_fn(vm, module, "remove", fn_remove, 1);
 }

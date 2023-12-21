@@ -5,6 +5,10 @@ meta_title: Pyro Standard Library &mdash; std::fs
 
 This module contains file system utilities.
 
+* To copy a file or directory, use the `cp` command from the `std::cmd` library.
+* To rename a file or directory, use the `mv` command from the `std::cmd` library.
+* To delete a file or directory, use the `rm` command from the `std::cmd` library.
+
 
 ### Functions
 
@@ -134,11 +138,3 @@ This module contains file system utilities.
     Equivalent to POSIX `realpath()`.
 
     Panics if the path cannot be resolved.
-
-
-[[ `remove(path: str)` ]]
-
-    Deletes the file, symlink, or directory at `path`.
-
-    * If `path` is a symlink, the link itself will be deleted, not its target.
-    * If `path` is a directory, the directory and all its content will be deleted.

@@ -5,11 +5,11 @@ meta_title: Pyro Standard Library &mdash; std::cmd
 
 Convenience functions for running common system binaries.
 
-* Searches the directories listed in the `PATH` environment variable for the named binaries.
+* The directories listed in the `PATH` environment variable will be searched for the named binaries.
 
 * Arguments are passed directly to the binary and don't need to be shell-escaped.
 
-* To run an arbitrary binary, use the superglobal `$cmd()` function.
+* For more control, or to run an arbitrary binary, use the builtin `$cmd()` function.
 
 
 

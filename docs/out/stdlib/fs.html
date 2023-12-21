@@ -65,6 +65,17 @@
             <p>
 This module contains file system utilities.
 </p>
+<ul>
+<li>
+To copy a file or directory, use the <code>cp</code> command from the <code>std::cmd</code> library.
+</li>
+<li>
+To rename a file or directory, use the <code>mv</code> command from the <code>std::cmd</code> library.
+</li>
+<li>
+To delete a file or directory, use the <code>rm</code> command from the <code>std::cmd</code> library.
+</li>
+</ul>
 <h3 id="functions">
 Functions
 </h3>
@@ -267,24 +278,6 @@ Equivalent to POSIX <code>realpath()</code>.
 <p>
 Panics if the path cannot be resolved.
 </p>
-</dd>
-</div>
-<div>
-<dt>
-<code>remove(path: str)</code>
-</dt>
-<dd>
-<p>
-Deletes the file, symlink, or directory at <code>path</code>.
-</p>
-<ul>
-<li>
-If <code>path</code> is a symlink, the link itself will be deleted, not its target.
-</li>
-<li>
-If <code>path</code> is a directory, the directory and all its content will be deleted.
-</li>
-</ul>
 </dd>
 </div>
 </dl>
