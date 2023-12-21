@@ -67,6 +67,23 @@ pub def git(*args: str) -> str {
 }
 
 
+pub def make(*args: str) -> str {
+    let args_vec = args:iter():to_vec();
+
+    let result = try $cmd("make", args_vec);
+    if $is_err(result) {
+        $panic("make(): ${result}");
+    }
+
+    let (exit_code, std_out, std_err) = result;
+    if exit_code != 0 {
+        $panic("make(): ${std_err:strip()}");
+    }
+
+    return std_out;
+}
+
+
 pub def xyz() {
     let result = try $cmd("xyz");
     if $is_err(result) {

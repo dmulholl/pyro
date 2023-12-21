@@ -114,6 +114,22 @@ Panics if the <code>git</code> binary cannot be found or if it exits with a non-
 </div>
 <div>
 <dt>
+<code>make(*args: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command <code>make</code> with the specified arguments.
+</p>
+<p>
+Returns the <code>make</code> command's standard output as a string.
+</p>
+<p>
+Panics if the <code>make</code> binary cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>mkdir(path: str)</code>
 </dt>
 <dd>

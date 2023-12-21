@@ -37,6 +37,16 @@ Convenience functions for running common system binaries.
 
 
 
+[[ `make(*args: str) -> str` ]]
+
+    Equivalent to running the shell command `make` with the specified arguments.
+
+    Returns the `make` command's standard output as a string.
+
+    Panics if the `make` binary cannot be found or if it exits with a non-zero status code.
+
+
+
 [[ `mkdir(path: str)` ]]
 
     Equivalent to running the shell command:
