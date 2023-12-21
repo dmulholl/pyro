@@ -27,6 +27,16 @@ Convenience functions for running common system binaries.
 
 
 
+[[ `git(*args: str) -> str` ]]
+
+    Equivalent to running the shell command `git` with the specified arguments.
+
+    Returns the `git` command's standard output as a string.
+
+    Panics if the `git` binary cannot be found or if it exits with a non-zero status code.
+
+
+
 [[ `mkdir(path: str)` ]]
 
     Equivalent to running the shell command:

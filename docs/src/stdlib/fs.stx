@@ -8,6 +8,7 @@ This module contains file system utilities.
 * To copy a file or directory, use the `cp` command from the `std::cmd` library.
 * To rename a file or directory, use the `mv` command from the `std::cmd` library.
 * To delete a file or directory, use the `rm` command from the `std::cmd` library.
+* To create a new directory, use the `mkdir` command from the `std::cmd` library.
 
 
 ### Functions

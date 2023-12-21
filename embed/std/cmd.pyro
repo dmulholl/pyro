@@ -50,6 +50,23 @@ pub def cp(src: str, dst: str) {
 }
 
 
+pub def git(*args: str) -> str {
+    let args_vec = args:iter():to_vec();
+
+    let result = try $cmd("git", args_vec);
+    if $is_err(result) {
+        $panic("git(): ${result}");
+    }
+
+    let (exit_code, std_out, std_err) = result;
+    if exit_code != 0 {
+        $panic("git(): ${std_err:strip()}");
+    }
+
+    return std_out;
+}
+
+
 pub def xyz() {
     let result = try $cmd("xyz");
     if $is_err(result) {

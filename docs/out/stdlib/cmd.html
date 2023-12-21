@@ -98,6 +98,22 @@ Panics if the <code>cp</code> binary cannot be found or if it exits with a non-z
 </div>
 <div>
 <dt>
+<code>git(*args: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Equivalent to running the shell command <code>git</code> with the specified arguments.
+</p>
+<p>
+Returns the <code>git</code> command's standard output as a string.
+</p>
+<p>
+Panics if the <code>git</code> binary cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>mkdir(path: str)</code>
 </dt>
 <dd>
