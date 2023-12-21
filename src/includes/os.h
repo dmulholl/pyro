@@ -49,9 +49,6 @@ bool pyro_setenv(const char* name, const char* value);
 // Wrapper for POSIX chdir(). Returns true on success, false on failure.
 bool pyro_chdir(const char* path);
 
-// Wrapper for POSIX chroot(). Returns true on success, false on failure.
-bool pyro_chroot(const char* path);
-
 // Executes [cmd] via execvp().
 // - [cmd] is a null-terminated string specifying an executable file.
 // - If [cmd] contains a '/', it will be treated as a filepath.

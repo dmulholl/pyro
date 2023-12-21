@@ -10,7 +10,7 @@
 // POSIX: nftw()
 #include <ftw.h>
 
-// POSIX: getcwd(), chdir(), chroot(), fork(), exec(), dup2(), read(), write()
+// POSIX: getcwd(), chdir(), fork(), exec(), dup2(), read(), write()
 #include <unistd.h>
 
 // POSIX: waitpid()
@@ -173,12 +173,6 @@ bool pyro_setenv(const char* name, const char* value) {
 
 bool pyro_chdir(const char* path) {
     return chdir(path) == 0;
-}
-
-
-bool pyro_chroot(const char* path) {
-    /* return chroot(path) == 0; */
-    return false;
 }
 
 

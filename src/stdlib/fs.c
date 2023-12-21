@@ -219,22 +219,6 @@ static PyroValue fn_chdir(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue fn_chroot(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "chroot(): invalid argument [path], expected a string");
-        return pyro_null();
-    }
-
-    PyroStr* path = PYRO_AS_STR(args[0]);
-    if (!pyro_chroot(path->bytes)) {
-        pyro_panic(vm, "chroot(): failed to change root directory to '%s'", path->bytes);
-        return pyro_null();
-    }
-
-    return pyro_null();
-}
-
-
 static PyroValue fn_normpath(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "normpath(): invalid argument [path], expected a string");
@@ -439,7 +423,6 @@ void pyro_load_std_mod_fs(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "listdir", fn_listdir, 1);
     pyro_define_pub_member_fn(vm, module, "realpath", fn_realpath, 1);
     pyro_define_pub_member_fn(vm, module, "chdir", fn_chdir, 1);
-    pyro_define_pub_member_fn(vm, module, "chroot", fn_chroot, 1);
     pyro_define_pub_member_fn(vm, module, "getcwd", fn_getcwd, 0);
     pyro_define_pub_member_fn(vm, module, "normpath", fn_normpath, 1);
     pyro_define_pub_member_fn(vm, module, "abspath", fn_abspath, 1);
