@@ -194,16 +194,12 @@ check-compiled-module:
 #  Docker  #
 # -------- #
 
-docker-build: ## Builds a Docker image.
+docker-build: ## Builds the Pyro Docker image.
 	docker build -t pyro .
 
-docker-run: ## Runs the Pyro REPL in a newly-built Docker image.
+docker-run: ## Runs a Bash shell in the Pyro Docker image.
 docker-run: docker-build
-	docker run --rm -it pyro
-
-docker-bash: ## Runs a Bash shell in a newly-built Docker image.
-docker-bash: docker-build
-	docker run --rm -it pyro bash
+	docker run --rm -it -v .:/pyro pyro bash
 
 docker-push: ## Builds and pushes a new Docker image to the Docker Hub repository.
 docker-push: docker-build

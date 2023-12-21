@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get --yes update
-RUN apt-get --yes install bash make clang vim nano emacs
+RUN apt-get --yes install bash make clang vim tree
 
 WORKDIR /pyro
 COPY cmd ./cmd
