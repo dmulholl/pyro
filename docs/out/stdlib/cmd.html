@@ -73,7 +73,7 @@ The directories listed in the <code>PATH</code> environment variable will be sea
 Arguments are passed directly to the binary and don't need to be shell-escaped.
 </li>
 <li>
-For more control, or to run an arbitrary binary, use the builtin <code>$cmd()</code> function.
+To run an arbitrary binary, use the <code>cmd()</code> function.
 </li>
 </ul>
 <h3 id="functions">
@@ -82,11 +82,24 @@ Functions
 <dl>
 <div>
 <dt>
+<code>cmd(name: str, *args: str) -&gt; str</code>
+</dt>
+<dd>
+<p>
+Runs the named command with the specified arguments and returns its standard output as a string.
+</p>
+<p>
+Panics if the binary cannot be found or if it exits with a non-zero status code.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>cp(src: str, dst: str)</code>
 </dt>
 <dd>
 <p>
-Equivalent to running the shell command:
+Equivalent to running the <code>cp</code> command as:
 </p>
 <pre>
 cp -rf &lt;src&gt; &lt;dst&gt;
@@ -102,7 +115,7 @@ Panics if the <code>cp</code> binary cannot be found or if it exits with a non-z
 </dt>
 <dd>
 <p>
-Equivalent to running the shell command <code>git</code> with the specified arguments.
+Equivalent to running the <code>git</code> command with the specified arguments.
 </p>
 <p>
 Returns the <code>git</code> command's standard output as a string.
@@ -118,7 +131,7 @@ Panics if the <code>git</code> binary cannot be found or if it exits with a non-
 </dt>
 <dd>
 <p>
-Equivalent to running the shell command <code>make</code> with the specified arguments.
+Equivalent to running the <code>make</code> command with the specified arguments.
 </p>
 <p>
 Returns the <code>make</code> command's standard output as a string.
@@ -134,7 +147,7 @@ Panics if the <code>make</code> binary cannot be found or if it exits with a non
 </dt>
 <dd>
 <p>
-Equivalent to running the shell command:
+Equivalent to running the <code>mkdir</code> command as:
 </p>
 <pre>
 mkdir -p &lt;path&gt;
@@ -150,7 +163,7 @@ Panics if the <code>mkdir</code> binary cannot be found or if it exits with a no
 </dt>
 <dd>
 <p>
-Equivalent to running the shell command:
+Equivalent to running the <code>mv</code> command as:
 </p>
 <pre>
 mv -f &lt;src&gt; &lt;dst&gt;
@@ -166,7 +179,7 @@ Panics if the <code>mv</code> binary cannot be found or if it exits with a non-z
 </dt>
 <dd>
 <p>
-Equivalent to running the shell command:
+Equivalent to running the <code>rm</code> command as:
 </p>
 <pre>
 rm -rf &lt;path&gt;

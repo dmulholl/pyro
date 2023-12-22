@@ -9,16 +9,24 @@ Convenience functions for running common system binaries.
 
 * Arguments are passed directly to the binary and don't need to be shell-escaped.
 
-* For more control, or to run an arbitrary binary, use the builtin `$cmd()` function.
+* To run an arbitrary binary, use the `cmd()` function.
 
 
 
 ### Functions
 
 
+[[ `cmd(name: str, *args: str) -> str` ]]
+
+    Runs the named command with the specified arguments and returns its standard output as a string.
+
+    Panics if the binary cannot be found or if it exits with a non-zero status code.
+
+
+
 [[ `cp(src: str, dst: str)` ]]
 
-    Equivalent to running the shell command:
+    Equivalent to running the `cp` command as:
 
     ::: code
         cp -rf <src> <dst>
@@ -29,7 +37,7 @@ Convenience functions for running common system binaries.
 
 [[ `git(*args: str) -> str` ]]
 
-    Equivalent to running the shell command `git` with the specified arguments.
+    Equivalent to running the `git` command with the specified arguments.
 
     Returns the `git` command's standard output as a string.
 
@@ -39,7 +47,7 @@ Convenience functions for running common system binaries.
 
 [[ `make(*args: str) -> str` ]]
 
-    Equivalent to running the shell command `make` with the specified arguments.
+    Equivalent to running the `make` command with the specified arguments.
 
     Returns the `make` command's standard output as a string.
 
@@ -49,7 +57,7 @@ Convenience functions for running common system binaries.
 
 [[ `mkdir(path: str)` ]]
 
-    Equivalent to running the shell command:
+    Equivalent to running the `mkdir` command as:
 
     ::: code
         mkdir -p <path>
@@ -60,7 +68,7 @@ Convenience functions for running common system binaries.
 
 [[ `mv(src: str, dst: str)` ]]
 
-    Equivalent to running the shell command:
+    Equivalent to running the `mv` command as:
 
     ::: code
         mv -f <src> <dst>
@@ -71,7 +79,7 @@ Convenience functions for running common system binaries.
 
 [[ `rm(path: str)` ]]
 
-    Equivalent to running the shell command:
+    Equivalent to running the `rm` command as:
 
     ::: code
         rm -rf <path>

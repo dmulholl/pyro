@@ -1,97 +1,45 @@
-pub def mkdir(path: str) {
-    let result = try $cmd("mkdir", ["-p", path]);
+pub def cmd(name: str, *args: str) -> str {
+    let args_vec = args:iter():to_vec();
+
+    let result = try $cmd(name, args_vec);
     if $is_err(result) {
-        $panic("mkdir(): ${result}");
+        $panic("${name}(): ${result}");
     }
 
     let (exit_code, std_out, std_err) = result;
     if exit_code != 0 {
-        $panic("mkdir(): ${std_err:strip()}");
+        $panic("${name}(): ${std_err:strip()}");
     }
+
+    return std_out;
+}
+
+
+pub def mkdir(path: str) {
+    cmd("mkdir", "-p", path);
 }
 
 
 pub def rm(path: str) {
-    let result = try $cmd("rm", ["-rf", path]);
-    if $is_err(result) {
-        $panic("rm(): ${result}");
-    }
-
-    let (exit_code, std_out, std_err) = result;
-    if exit_code != 0 {
-        $panic("rm(): ${std_err:strip()}");
-    }
+    cmd("rm", "-rf", path);
 }
 
 
 pub def mv(src: str, dst: str) {
-    let result = try $cmd("mv", ["-f", src, dst]);
-    if $is_err(result) {
-        $panic("mv(): ${result}");
-    }
-
-    let (exit_code, std_out, std_err) = result;
-    if exit_code != 0 {
-        $panic("mv(): ${std_err:strip()}");
-    }
+    cmd("mv", "-f", src, dst);
 }
 
 
 pub def cp(src: str, dst: str) {
-    let result = try $cmd("cp", ["-rf", src, dst]);
-    if $is_err(result) {
-        $panic("cp(): ${result}");
-    }
-
-    let (exit_code, std_out, std_err) = result;
-    if exit_code != 0 {
-        $panic("cp(): ${std_err:strip()}");
-    }
+    cmd("cp", "-rf", src, dst);
 }
 
 
 pub def git(*args: str) -> str {
-    let args_vec = args:iter():to_vec();
-
-    let result = try $cmd("git", args_vec);
-    if $is_err(result) {
-        $panic("git(): ${result}");
-    }
-
-    let (exit_code, std_out, std_err) = result;
-    if exit_code != 0 {
-        $panic("git(): ${std_err:strip()}");
-    }
-
-    return std_out;
+    return cmd("git", *args);
 }
 
 
 pub def make(*args: str) -> str {
-    let args_vec = args:iter():to_vec();
-
-    let result = try $cmd("make", args_vec);
-    if $is_err(result) {
-        $panic("make(): ${result}");
-    }
-
-    let (exit_code, std_out, std_err) = result;
-    if exit_code != 0 {
-        $panic("make(): ${std_err:strip()}");
-    }
-
-    return std_out;
-}
-
-
-pub def xyz() {
-    let result = try $cmd("xyz");
-    if $is_err(result) {
-        $panic("xyz(): ${result}");
-    }
-
-    let (exit_code, std_out, std_err) = result;
-    if exit_code != 0 {
-        $panic("xyz(): ${std_err:strip()}");
-    }
+    return cmd("make", *args);
 }
