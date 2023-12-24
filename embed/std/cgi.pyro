@@ -48,11 +48,6 @@ pub class Request {
         return self.params[key] !! [];
     }
 
-    # Deprecated.
-    pub def data() -> map[str, vec[str]] {
-        return self.params;
-    }
-
     pub def params() -> map[str, vec[str]] {
         return self.params;
     }
