@@ -128,10 +128,15 @@ You can convert a rune to a string using the <code>$str()</code> function  &mdas
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;🔥&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;\xF0\x9F\x94\xA5&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can convert a rune to an integer using the <code>$i64()</code> function or an integer to a rune using the <code>$rune()</code> function, e.g.
+You can convert a rune to an integer using the <code>$i64()</code> function:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">97</span><span class="p">;</span>
+</pre>
+<p>
+You can convert an integer to a rune using the <code>$rune()</code> function:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$rune</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 </pre>
 <h3 id="concatenating">

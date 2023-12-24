@@ -46,10 +46,14 @@ You can convert a rune to a string using the `$str()` function  --- this returns
     assert $str('🔥') == "🔥";
     assert $str('🔥') == "\xF0\x9F\x94\xA5";
 
-You can convert a rune to an integer using the `$i64()` function or an integer to a rune using the `$rune()` function, e.g.
+You can convert a rune to an integer using the `$i64()` function:
 
 ::: code pyro
     assert $i64('a') == 97;
+
+You can convert an integer to a rune using the `$rune()` function:
+
+::: code pyro
     assert $rune(97) == 'a';
 
 
