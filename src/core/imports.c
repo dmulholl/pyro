@@ -64,15 +64,6 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
         return true;
     }
 
-    // Deprecated. Replaced by [std::fs].
-    if (strcmp(name->bytes, "path") == 0) {
-        pyro_load_std_mod_fs(vm, module);
-        if (vm->memory_allocation_failed) {
-            pyro_panic(vm, "out of memory");
-        }
-        return true;
-    }
-
     return false;
 }
 
