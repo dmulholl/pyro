@@ -3,7 +3,8 @@ assert $type(false) == "bool";
 assert $type(null) == "null";
 assert $type(123) == "i64";
 assert $type(123.0) == "f64";
-assert $type('a') == "char";
+assert $type('a') == "rune";
+assert $type('🔥') == "rune";
 
 
 assert $type($buf()) == "buf";

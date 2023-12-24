@@ -315,7 +315,7 @@ static PyroValue fn_f64(PyroVM* vm, size_t arg_count, PyroValue* args) {
         case PYRO_VALUE_F64:
             return args[0];
 
-        case PYRO_VALUE_CHAR:
+        case PYRO_VALUE_RUNE:
             return pyro_f64((double)args[0].as.u32);
 
         case PYRO_VALUE_OBJ: {
@@ -349,7 +349,7 @@ static PyroValue fn_i64(PyroVM* vm, size_t arg_count, PyroValue* args) {
         case PYRO_VALUE_I64:
             return args[0];
 
-        case PYRO_VALUE_CHAR:
+        case PYRO_VALUE_RUNE:
             return pyro_i64((int64_t)args[0].as.u32);
 
         case PYRO_VALUE_F64: {

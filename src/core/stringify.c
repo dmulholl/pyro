@@ -84,7 +84,7 @@ static PyroStr* make_debug_string_for_buf(PyroVM* vm, PyroBuf* buf) {
 
 
 // Returns a quoted, escaped string. Panics and returns NULL if memory allocation fails.
-static PyroStr* make_debug_string_for_char(PyroVM* vm, PyroValue value) {
+static PyroStr* make_debug_string_for_rune(PyroVM* vm, PyroValue value) {
     uint8_t utf8_buffer[4];
     size_t count = pyro_write_utf8_codepoint(value.as.u32, utf8_buffer);
 
@@ -712,7 +712,7 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
         case PYRO_VALUE_F64:
             return stringify_f64(vm, value.as.f64, 6);
 
-        case PYRO_VALUE_CHAR: {
+        case PYRO_VALUE_RUNE: {
             char buffer[4];
             size_t count = pyro_write_utf8_codepoint(value.as.u32, (uint8_t*)buffer);
             PyroStr* string = PyroStr_copy(buffer, count, false, vm);
@@ -830,8 +830,8 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
         return string;
     }
 
-    if (PYRO_IS_CHAR(value)) {
-        PyroStr* string = make_debug_string_for_char(vm, value);
+    if (PYRO_IS_RUNE(value)) {
+        PyroStr* string = make_debug_string_for_rune(vm, value);
         if (!string) {
             return NULL;
         }
@@ -1060,7 +1060,7 @@ PyroStr* pyro_format_value(PyroVM* vm, PyroValue value, const char* format_speci
         return format_f64(vm, value, format_specifier, err_prefix);
     }
 
-    if (PYRO_IS_CHAR(value)) {
+    if (PYRO_IS_RUNE(value)) {
         return format_char(vm, value, format_specifier, err_prefix);
     }
 

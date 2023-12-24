@@ -27,7 +27,7 @@ PyroVM* pyro_new_vm(void) {
     vm->class_tup = NULL;
     vm->class_vec = NULL;
     vm->class_module = NULL;
-    vm->class_char = NULL;
+    vm->class_rune = NULL;
     vm->error = NULL;
     vm->empty_string = NULL;
     vm->exit_code = 0;
@@ -55,7 +55,7 @@ PyroVM* pyro_new_vm(void) {
     vm->stdout_file = NULL;
     vm->str_bool = NULL;
     vm->str_buf = NULL;
-    vm->str_char = NULL;
+    vm->str_rune = NULL;
     vm->str_class = NULL;
     vm->str_dollar_call = NULL;
     vm->str_dollar_contains = NULL;
@@ -149,7 +149,7 @@ PyroVM* pyro_new_vm(void) {
     vm->class_tup = PyroClass_new(vm);
     vm->class_vec = PyroClass_new(vm);
     vm->class_module = PyroClass_new(vm);
-    vm->class_char = PyroClass_new(vm);
+    vm->class_rune = PyroClass_new(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
@@ -212,7 +212,7 @@ PyroVM* pyro_new_vm(void) {
     vm->str_bool = PyroStr_COPY("bool");
     vm->str_i64 = PyroStr_COPY("i64");
     vm->str_f64 = PyroStr_COPY("f64");
-    vm->str_char = PyroStr_COPY("char");
+    vm->str_rune = PyroStr_COPY("rune");
     vm->str_method = PyroStr_COPY("method");
     vm->str_buf = PyroStr_COPY("buf");
     vm->str_class = PyroStr_COPY("class");
@@ -270,7 +270,7 @@ PyroVM* pyro_new_vm(void) {
     pyro_load_std_builtins_queue(vm);
     pyro_load_std_builtins_err(vm);
     pyro_load_std_builtins_mod(vm);
-    pyro_load_std_builtins_char(vm);
+    pyro_load_std_builtins_rune(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

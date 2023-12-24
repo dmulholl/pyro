@@ -272,7 +272,7 @@ def $test_contains_substring() {
 }
 
 
-def $test_contains_char() {
+def $test_contains_rune() {
     assert !"":contains('a');
     assert !"foo":contains('a');
     assert "foo":contains('o');
@@ -396,24 +396,24 @@ def $test_strip_utf8_ws() {
 }
 
 
-def $test_strip_chars() {
-    assert "":strip_chars("a§b€c👍") == "";
-    assert "foobar":strip_chars("a§b€c👍") == "foobar";
-    assert "b§a€c👍foobar§b€c👍a":strip_chars("a§b€c👍") == "foobar";
+def $test_strip_runes() {
+    assert "":strip_runes("a§b€c👍") == "";
+    assert "foobar":strip_runes("a§b€c👍") == "foobar";
+    assert "b§a€c👍foobar§b€c👍a":strip_runes("a§b€c👍") == "foobar";
 }
 
 
-def $test_strip_prefix_chars() {
-    assert "":strip_prefix_chars("a§b€c👍") == "";
-    assert "foobar":strip_prefix_chars("a§b€c👍") == "foobar";
-    assert "b§a€c👍foobar§b€c👍a":strip_prefix_chars("a§b€c👍") == "foobar§b€c👍a";
+def $test_strip_prefix_runes() {
+    assert "":strip_prefix_runes("a§b€c👍") == "";
+    assert "foobar":strip_prefix_runes("a§b€c👍") == "foobar";
+    assert "b§a€c👍foobar§b€c👍a":strip_prefix_runes("a§b€c👍") == "foobar§b€c👍a";
 }
 
 
-def $test_strip_suffix_chars() {
-    assert "":strip_suffix_chars("a§b€c👍") == "";
-    assert "foobar":strip_suffix_chars("a§b€c👍") == "foobar";
-    assert "b§a€c👍foobar§b€c👍a":strip_suffix_chars("a§b€c👍") == "b§a€c👍foobar";
+def $test_strip_suffix_runes() {
+    assert "":strip_suffix_runes("a§b€c👍") == "";
+    assert "foobar":strip_suffix_runes("a§b€c👍") == "foobar";
+    assert "b§a€c👍foobar§b€c👍a":strip_suffix_runes("a§b€c👍") == "b§a€c👍foobar";
 }
 
 
@@ -450,14 +450,14 @@ def $test_iterating_over_bytes() {
 }
 
 
-def $test_iterating_over_chars() {
-    var chars = "abc🔥€":chars():to_vec();
-    assert chars:count() == 5;
-    assert chars[0] == 'a';
-    assert chars[1] == 'b';
-    assert chars[2] == 'c';
-    assert chars[3] == '🔥';
-    assert chars[4] == '€';
+def $test_iterating_over_runes() {
+    var runes = "abc🔥€":runes():to_vec();
+    assert runes:count() == 5;
+    assert runes[0] == 'a';
+    assert runes[1] == 'b';
+    assert runes[2] == 'c';
+    assert runes[3] == '🔥';
+    assert runes[4] == '€';
 }
 
 

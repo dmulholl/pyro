@@ -367,7 +367,7 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
 }
 
 
-static Token read_double_quoted_string(Lexer* lexer) {
+static Token read_double_quote_string(Lexer* lexer) {
     bool contains_escapes = false;
     size_t start_line = lexer->line;
 
@@ -423,7 +423,7 @@ static Token read_double_quoted_string(Lexer* lexer) {
 }
 
 
-static Token read_char_literal(Lexer* lexer) {
+static Token read_rune_literal(Lexer* lexer) {
     size_t start_line = lexer->line;
 
     while (!is_at_end(lexer)) {
@@ -446,7 +446,7 @@ static Token read_char_literal(Lexer* lexer) {
         }
 
         if (c == '\'') {
-            Token token = make_token(lexer, TOKEN_CHAR);
+            Token token = make_token(lexer, TOKEN_RUNE);
             token.start += 1;
             token.length -= 2;
             return token;
@@ -621,9 +621,9 @@ Token pyro_next_token(Lexer* lexer) {
         case '?': return make_token(lexer, match_char(lexer, '?') ? TOKEN_HOOK_HOOK: TOKEN_HOOK);
         case '&': return make_token(lexer, match_char(lexer, '&') ? TOKEN_AMP_AMP: TOKEN_AMP);
 
-        case '"': return read_double_quoted_string(lexer);
+        case '"': return read_double_quote_string(lexer);
         case '`': return read_backtick_string(lexer);
-        case '\'': return read_char_literal(lexer);
+        case '\'': return read_rune_literal(lexer);
 
         case ':':
             if (match_char(lexer, ':')) return make_token(lexer, TOKEN_COLON_COLON);

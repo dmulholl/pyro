@@ -1,12 +1,12 @@
-assert $is_iter("abc":chars());
+assert $is_iter("abc":runes());
 
-var chars1 = "abc":chars():to_vec();
+var chars1 = "abc":runes():to_vec();
 assert chars1:count() == 3;
 assert chars1[0] == 'a';
 assert chars1[1] == 'b';
 assert chars1[2] == 'c';
 
-var chars2 = "abc":chars():enumerate():to_vec();
+var chars2 = "abc":runes():enumerate():to_vec();
 assert chars2:count() == 3;
 assert chars2[0] == $tup(0, 'a');
 assert chars2[1] == $tup(1, 'b');
@@ -105,7 +105,7 @@ def $test_skip_last() {
 
 
 def $test_to_set() {
-    var set = "abcabcabc":chars():to_set();
+    var set = "abcabcabc":runes():to_set();
     assert $is_set(set);
     assert set:count() == 3;
     assert set:contains('a');

@@ -54,7 +54,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->class_queue);
     mark_object(vm, (PyroObject*)vm->class_err);
     mark_object(vm, (PyroObject*)vm->class_module);
-    mark_object(vm, (PyroObject*)vm->class_char);
+    mark_object(vm, (PyroObject*)vm->class_rune);
 
     // The VM's pool of canned objects.
     mark_object(vm, (PyroObject*)vm->error);
@@ -107,7 +107,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->str_bool);
     mark_object(vm, (PyroObject*)vm->str_i64);
     mark_object(vm, (PyroObject*)vm->str_f64);
-    mark_object(vm, (PyroObject*)vm->str_char);
+    mark_object(vm, (PyroObject*)vm->str_rune);
     mark_object(vm, (PyroObject*)vm->str_method);
     mark_object(vm, (PyroObject*)vm->str_buf);
     mark_object(vm, (PyroObject*)vm->str_class);

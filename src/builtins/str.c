@@ -142,38 +142,38 @@ static PyroValue str_is_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue str_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue str_runes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    PyroIter* iter = PyroIter_new((PyroObject*)str, PYRO_ITER_STR_CHARS, vm);
+    PyroIter* iter = PyroIter_new((PyroObject*)str, PYRO_ITER_STR_RUNES, vm);
     if (!iter) {
-        pyro_panic(vm, "chars(): out of memory");
+        pyro_panic(vm, "runes(): out of memory");
         return pyro_null();
     }
     return pyro_obj(iter);
 }
 
 
-static PyroValue str_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue str_rune(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
 
     if (!PYRO_IS_I64(args[0])) {
-        pyro_panic(vm, "char(): invalid argument [index], expected an integer");
+        pyro_panic(vm, "rune(): invalid argument [index], expected an integer");
         return pyro_null();
     }
 
     int64_t target_index = args[0].as.i64;
     if (target_index < 0 || str->count == 0) {
-        pyro_panic(vm, "char(): invalid argument [index], out of range");
+        pyro_panic(vm, "rune(): invalid argument [index], out of range");
         return pyro_null();
     }
 
     size_t byte_index = 0;
-    size_t char_count = 0;
+    size_t rune_count = 0;
     Utf8CodePoint cp;
 
-    while (char_count < (size_t)target_index + 1) {
+    while (rune_count < (size_t)target_index + 1) {
         if (byte_index == str->count) {
-            pyro_panic(vm, "char(): invalid argument [index], out of range");
+            pyro_panic(vm, "rune(): invalid argument [index], out of range");
             return pyro_null();
         }
 
@@ -181,23 +181,23 @@ static PyroValue str_char(PyroVM* vm, size_t arg_count, PyroValue* args) {
         size_t src_len = str->count - byte_index;
 
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
-            char_count++;
+            rune_count++;
             byte_index += cp.length;
         } else {
-            pyro_panic(vm, "$char(): string contains invalid utf-8 at byte index %zu", byte_index);
+            pyro_panic(vm, "$rune(): string contains invalid utf-8 at byte index %zu", byte_index);
             return pyro_null();
         }
     }
 
-    return pyro_char(cp.value);
+    return pyro_rune(cp.value);
 }
 
 
-static PyroValue str_char_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue str_rune_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
 
     size_t byte_index = 0;
-    size_t char_count = 0;
+    size_t rune_count = 0;
     Utf8CodePoint cp;
 
     while (byte_index < str->count) {
@@ -205,15 +205,15 @@ static PyroValue str_char_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
         size_t src_len = str->count - byte_index;
 
         if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
-            char_count++;
+            rune_count++;
             byte_index += cp.length;
         } else {
-            pyro_panic(vm, "char_count(): string contains invalid utf-8 at byte index %zu", byte_index);
+            pyro_panic(vm, "rune_count(): string contains invalid utf-8 at byte index %zu", byte_index);
             return pyro_null();
         }
     }
 
-    return pyro_i64(char_count);
+    return pyro_i64(rune_count);
 }
 
 
@@ -594,18 +594,18 @@ static PyroValue str_strip_utf8_ws(PyroVM* vm, size_t arg_count, PyroValue* args
 }
 
 
-static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue str_strip_runes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
 
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "strip_chars(): invalid argument [chars], expected a string");
+        pyro_panic(vm, "strip_runes(): invalid argument [runes], expected a string");
         return pyro_null();
     }
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
     if (!pyro_is_valid_utf8(target->bytes, target->count)) {
-        pyro_panic(vm, "strip_chars(): invalid argument [chars], not valid UTF-8");
+        pyro_panic(vm, "strip_runes(): invalid argument [runes], not valid UTF-8");
         return pyro_null();
     }
 
@@ -640,7 +640,7 @@ static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
     PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
-        pyro_panic(vm, "strip_chars(): out of memory");
+        pyro_panic(vm, "strip_runes(): out of memory");
         return pyro_null();
     }
 
@@ -648,18 +648,18 @@ static PyroValue str_strip_chars(PyroVM* vm, size_t arg_count, PyroValue* args) 
 }
 
 
-static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue str_strip_suffix_runes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
 
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "strip_suffix_chars(): invalid argument [chars], expected a string");
+        pyro_panic(vm, "strip_suffix_runes(): invalid argument [runes], expected a string");
         return pyro_null();
     }
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
     if (!pyro_is_valid_utf8(target->bytes, target->count)) {
-        pyro_panic(vm, "strip_suffix_chars(): invalid argument [chars], not valid UTF-8");
+        pyro_panic(vm, "strip_suffix_runes(): invalid argument [runes], not valid UTF-8");
         return pyro_null();
     }
 
@@ -684,7 +684,7 @@ static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue*
 
     PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
-        pyro_panic(vm, "strip_suffix_chars(): out of memory");
+        pyro_panic(vm, "strip_suffix_runes(): out of memory");
         return pyro_null();
     }
 
@@ -692,18 +692,18 @@ static PyroValue str_strip_suffix_chars(PyroVM* vm, size_t arg_count, PyroValue*
 }
 
 
-static PyroValue str_strip_prefix_chars(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue str_strip_prefix_runes(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
 
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "strip_prefix_chars(): invalid argument [prefix], expected a string");
+        pyro_panic(vm, "strip_prefix_runes(): invalid argument [runes], expected a string");
         return pyro_null();
     }
 
     PyroStr* target = PYRO_AS_STR(args[0]);
 
     if (!pyro_is_valid_utf8(target->bytes, target->count)) {
-        pyro_panic(vm, "strip_prefix_chars(): invalid argument [prefix], not valid UTF-8");
+        pyro_panic(vm, "strip_prefix_runes(): invalid argument [runes], not valid UTF-8");
         return pyro_null();
     }
 
@@ -728,7 +728,7 @@ static PyroValue str_strip_prefix_chars(PyroVM* vm, size_t arg_count, PyroValue*
 
     PyroStr* new_str = PyroStr_copy(start, end - start, false, vm);
     if (!new_str) {
-        pyro_panic(vm, "strip_prefix_chars(): out of memory");
+        pyro_panic(vm, "strip_prefix_runes(): out of memory");
         return pyro_null();
     }
 
@@ -896,7 +896,7 @@ static PyroValue str_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (PYRO_IS_STR(args[0])) {
         target = PYRO_AS_STR(args[0])->bytes;
         target_length = PYRO_AS_STR(args[0])->count;
-    } else if (PYRO_IS_CHAR(args[0])) {
+    } else if (PYRO_IS_RUNE(args[0])) {
         target = (char*)codepoint_buffer;
         target_length = pyro_write_utf8_codepoint(args[0].as.u32, codepoint_buffer);
     } else {
@@ -1290,9 +1290,9 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "byte_count", str_byte_count, 0);
     pyro_define_pub_method(vm, vm->class_str, "count", str_byte_count, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_empty", str_is_empty, 0);
-    pyro_define_pub_method(vm, vm->class_str, "char", str_char, 1);
-    pyro_define_pub_method(vm, vm->class_str, "chars", str_chars, 0);
-    pyro_define_pub_method(vm, vm->class_str, "char_count", str_char_count, 0);
+    pyro_define_pub_method(vm, vm->class_str, "rune", str_rune, 1);
+    pyro_define_pub_method(vm, vm->class_str, "runes", str_runes, 0);
+    pyro_define_pub_method(vm, vm->class_str, "rune_count", str_rune_count, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_ascii_upper", str_to_ascii_upper, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_upper", str_to_ascii_upper, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_ascii_lower", str_to_ascii_lower, 0);
@@ -1304,9 +1304,9 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "strip_prefix_bytes", str_strip_prefix_bytes, 1);
     pyro_define_pub_method(vm, vm->class_str, "strip_suffix_bytes", str_strip_suffix_bytes, 1);
     pyro_define_pub_method(vm, vm->class_str, "strip_bytes", str_strip_bytes, 1);
-    pyro_define_pub_method(vm, vm->class_str, "strip_chars", str_strip_chars, 1);
-    pyro_define_pub_method(vm, vm->class_str, "strip_prefix_chars", str_strip_prefix_chars, 1);
-    pyro_define_pub_method(vm, vm->class_str, "strip_suffix_chars", str_strip_suffix_chars, 1);
+    pyro_define_pub_method(vm, vm->class_str, "strip_runes", str_strip_runes, 1);
+    pyro_define_pub_method(vm, vm->class_str, "strip_prefix_runes", str_strip_prefix_runes, 1);
+    pyro_define_pub_method(vm, vm->class_str, "strip_suffix_runes", str_strip_suffix_runes, 1);
     pyro_define_pub_method(vm, vm->class_str, "strip", str_strip, -1);
     pyro_define_pub_method(vm, vm->class_str, "strip_ascii_ws", str_strip_ascii_ws, 0);
     pyro_define_pub_method(vm, vm->class_str, "strip_utf8_ws", str_strip_utf8_ws, 0);

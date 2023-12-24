@@ -3,8 +3,8 @@
 
 PyroClass* pyro_get_class(PyroVM* vm, PyroValue value) {
     switch (value.type) {
-        case PYRO_VALUE_CHAR:
-            return vm->class_char;
+        case PYRO_VALUE_RUNE:
+            return vm->class_rune;
         case PYRO_VALUE_OBJ:
             return PYRO_AS_OBJ(value)->class;
         default:
@@ -84,7 +84,7 @@ bool pyro_compare_eq_strict(PyroValue a, PyroValue b) {
                 return a.as.i64 == b.as.i64;
             case PYRO_VALUE_F64:
                 return a.as.f64 == b.as.f64;
-            case PYRO_VALUE_CHAR:
+            case PYRO_VALUE_RUNE:
                 return a.as.u32 == b.as.u32;
             case PYRO_VALUE_OBJ:
                 return a.as.obj == b.as.obj;
@@ -121,7 +121,7 @@ uint64_t pyro_hash_value(PyroVM* vm, PyroValue value) {
         case PYRO_VALUE_I64:
             return value.as.u64;
 
-        case PYRO_VALUE_CHAR:
+        case PYRO_VALUE_RUNE:
             return (uint64_t)value.as.u32;
 
         case PYRO_VALUE_F64: {
@@ -343,8 +343,8 @@ PyroStr* pyro_get_type_name(PyroVM* vm, PyroValue value) {
         case PYRO_VALUE_F64:
             return vm->str_f64;
 
-        case PYRO_VALUE_CHAR:
-            return vm->str_char;
+        case PYRO_VALUE_RUNE:
+            return vm->str_rune;
 
         case PYRO_VALUE_OBJ: {
             switch (PYRO_AS_OBJ(value)->type) {

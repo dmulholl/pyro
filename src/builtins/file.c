@@ -300,7 +300,7 @@ static PyroValue file_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) 
             return pyro_null();
         }
         byte = (uint8_t)args[0].as.i64;
-    } else if (PYRO_IS_CHAR(args[0])) {
+    } else if (PYRO_IS_RUNE(args[0])) {
         if (args[0].as.u32 > 255) {
             pyro_panic(vm, "write_byte(): invalid argument [byte], char (%d) is out of range", args[0].as.u32);
             return pyro_null();

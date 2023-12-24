@@ -1871,7 +1871,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             return pyro_obj(vm->error);
         }
 
-        case PYRO_ITER_STR_CHARS: {
+        case PYRO_ITER_STR_RUNES: {
             PyroStr* str = (PyroStr*)iter->source;
             if (iter->next_index < str->count) {
                 uint8_t* src = (uint8_t*)&str->bytes[iter->next_index];
@@ -1879,7 +1879,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 Utf8CodePoint cp;
                 if (pyro_read_utf8_codepoint(src, src_len, &cp)) {
                     iter->next_index += cp.length;
-                    return pyro_char(cp.value);
+                    return pyro_rune(cp.value);
                 }
                 pyro_panic(
                     vm,

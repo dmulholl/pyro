@@ -1,59 +1,59 @@
 # 1-byte utf8 literals.
-assert $is_char('A');
+assert $is_rune('A');
 assert $str('A') == "A";
 assert $i64('A') == 0x41;
-assert $char(0x41) == 'A';
+assert $rune(0x41) == 'A';
 
 # 2-byte utf8 literals.
-assert $is_char('§');
+assert $is_rune('§');
 assert $str('§') == "§";
 assert $i64('§') == 0xA7;
-assert $char(0xA7) == '§';
+assert $rune(0xA7) == '§';
 
 # 3-byte utf8 literals.
-assert $is_char('€');
+assert $is_rune('€');
 assert $str('€') == "€";
 assert $i64('€') == 0x20AC;
-assert $char(0x20AC) == '€';
+assert $rune(0x20AC) == '€';
 
 # 4-byte utf8 literals.
-assert $is_char('𐀀');
+assert $is_rune('𐀀');
 assert $str('𐀀') == "𐀀";
 assert $i64('𐀀') == 0x10000;
-assert $char(0x10000) == '𐀀';
-assert $is_char('👍');
+assert $rune(0x10000) == '𐀀';
+assert $is_rune('👍');
 assert $str('👍') == "👍";
 assert $i64('👍') == 0x1F44D;
-assert $char(0x1F44D) == '👍';
+assert $rune(0x1F44D) == '👍';
 
 var foo = "a§b€c👍d";
-assert foo:char(0) == 'a';
-assert foo:char(1) == '§';
-assert foo:char(2) == 'b';
-assert foo:char(3) == '€';
-assert foo:char(4) == 'c';
-assert foo:char(5) == '👍';
-assert foo:char(6) == 'd';
+assert foo:rune(0) == 'a';
+assert foo:rune(1) == '§';
+assert foo:rune(2) == 'b';
+assert foo:rune(3) == '€';
+assert foo:rune(4) == 'c';
+assert foo:rune(5) == '👍';
+assert foo:rune(6) == 'd';
 
-assert "":char_count() == 0;
-assert "a":char_count() == 1;
-assert "abc":char_count() == 3;
-assert "a§b€c👍d":char_count() == 7;
+assert "":rune_count() == 0;
+assert "a":rune_count() == 1;
+assert "abc":rune_count() == 3;
+assert "a§b€c👍d":rune_count() == 7;
 
 
-def $test_adding_chars() {
+def $test_adding_runes() {
     assert 'a' + 'b' == "ab";
     assert '€' + '🔥' == "€🔥";
 }
 
 
-def $test_appending_char_to_string() {
+def $test_appending_rune_to_string() {
     assert "foo" + 'x' == "foox";
     assert "foo" + '🔥' == "foo🔥";
 }
 
 
-def $test_prepending_char_to_string() {
+def $test_prepending_rune_to_string() {
     assert 'x' + "foo" == "xfoo";
     assert '🔥' + "foo" == "🔥foo";
 }

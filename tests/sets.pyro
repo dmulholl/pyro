@@ -65,7 +65,7 @@ def $test_make_set_from_iterable() {
     assert foo:count() == 3;
     assert foo:contains(1);
 
-    var bar = $set("abc":chars());
+    var bar = $set("abc":runes());
     assert $is_set(bar);
     assert bar:count() == 3;
     assert bar:contains('a');

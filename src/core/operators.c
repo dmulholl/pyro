@@ -34,8 +34,8 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
         }
 
-        case PYRO_VALUE_CHAR: {
-            if (PYRO_IS_CHAR(right)) {
+        case PYRO_VALUE_RUNE: {
+            if (PYRO_IS_RUNE(right)) {
                 PyroStr* result = PyroStr_concat_codepoints_as_utf8(left.as.u32, right.as.u32, vm);
                 if (!result) {
                     pyro_panic(vm, "out of memory");
@@ -64,7 +64,7 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
                     }
                     return pyro_obj(result);
                 }
-                if (PYRO_IS_CHAR(right)) {
+                if (PYRO_IS_RUNE(right)) {
                     PyroStr* result = PyroStr_append_codepoint_as_utf8(PYRO_AS_STR(left), right.as.u32, vm);
                     if (!result) {
                         pyro_panic(vm, "out of memory");
@@ -188,7 +188,7 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
         }
 
-        case PYRO_VALUE_CHAR: {
+        case PYRO_VALUE_RUNE: {
             if (PYRO_IS_I64(right) && right.as.i64 >= 0) {
                 PyroStr* result = PyroStr_concat_n_codepoints_as_utf8(left.as.u32, right.as.i64, vm);
                 if (!result) {
@@ -865,7 +865,7 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
                     return left.as.i64 == right.as.i64;
                 case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float(left.as.i64, right.as.f64) == 0;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.i64 == (int64_t)right.as.u32;
                 default:
                     break;
@@ -873,13 +873,13 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
         }
 
-        case PYRO_VALUE_CHAR: {
+        case PYRO_VALUE_RUNE: {
             switch (right.type) {
                 case PYRO_VALUE_I64:
                     return (int64_t)left.as.u32 == right.as.i64;
                 case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float((int64_t)left.as.u32, right.as.f64) == 0;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.u32 == right.as.u32;
                 default:
                     break;
@@ -893,7 +893,7 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
                     return pyro_compare_int_and_float(right.as.i64, left.as.f64) == 0;
                 case PYRO_VALUE_F64:
                     return left.as.f64 == right.as.f64;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return pyro_compare_int_and_float((int64_t)right.as.u32, left.as.f64) == 0;
                 default:
                     break;
@@ -975,7 +975,7 @@ bool pyro_op_compare_lt(PyroVM* vm, PyroValue left, PyroValue right) {
                     return left.as.i64 < right.as.i64;
                 case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float(left.as.i64, right.as.f64) == -1;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.i64 < (int64_t)right.as.u32;
                 default:
                     break;
@@ -983,13 +983,13 @@ bool pyro_op_compare_lt(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
         }
 
-        case PYRO_VALUE_CHAR: {
+        case PYRO_VALUE_RUNE: {
             switch (right.type) {
                 case PYRO_VALUE_I64:
                     return (int64_t)left.as.u32 < right.as.i64;
                 case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float((int64_t)left.as.u32, right.as.f64) == -1;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.u32 < right.as.u32;
                 default:
                     break;
@@ -1003,7 +1003,7 @@ bool pyro_op_compare_lt(PyroVM* vm, PyroValue left, PyroValue right) {
                     return pyro_compare_int_and_float(right.as.i64, left.as.f64) == 1;
                 case PYRO_VALUE_F64:
                     return left.as.f64 < right.as.f64;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return pyro_compare_int_and_float((int64_t)right.as.u32, left.as.f64) == 1;
                 default:
                     break;
@@ -1069,7 +1069,7 @@ bool pyro_op_compare_le(PyroVM* vm, PyroValue left, PyroValue right) {
                     int result = pyro_compare_int_and_float(left.as.i64, right.as.f64);
                     return result == -1 || result == 0;
                 }
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.i64 <= (int64_t)right.as.u32;
                 default:
                     break;
@@ -1077,7 +1077,7 @@ bool pyro_op_compare_le(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
         }
 
-        case PYRO_VALUE_CHAR: {
+        case PYRO_VALUE_RUNE: {
             switch (right.type) {
                 case PYRO_VALUE_I64:
                     return (int64_t)left.as.u32 <= right.as.i64;
@@ -1085,7 +1085,7 @@ bool pyro_op_compare_le(PyroVM* vm, PyroValue left, PyroValue right) {
                     int result = pyro_compare_int_and_float((int64_t)left.as.u32, right.as.f64);
                     return result == -1 || result == 0;
                 }
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.u32 <= right.as.u32;
                 default:
                     break;
@@ -1101,7 +1101,7 @@ bool pyro_op_compare_le(PyroVM* vm, PyroValue left, PyroValue right) {
                 }
                 case PYRO_VALUE_F64:
                     return left.as.f64 <= right.as.f64;
-                case PYRO_VALUE_CHAR: {
+                case PYRO_VALUE_RUNE: {
                     int result = pyro_compare_int_and_float((int64_t)right.as.u32, left.as.f64);
                     return result == 0 || result == 1;
                 }
@@ -1167,7 +1167,7 @@ bool pyro_op_compare_gt(PyroVM* vm, PyroValue left, PyroValue right) {
                     return left.as.i64 > right.as.i64;
                 case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float(left.as.i64, right.as.f64) == 1;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.i64 > (int64_t)right.as.u32;
                 default:
                     break;
@@ -1175,13 +1175,13 @@ bool pyro_op_compare_gt(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
         }
 
-        case PYRO_VALUE_CHAR: {
+        case PYRO_VALUE_RUNE: {
             switch (right.type) {
                 case PYRO_VALUE_I64:
                     return (int64_t)left.as.u32 > right.as.i64;
                 case PYRO_VALUE_F64:
                     return pyro_compare_int_and_float((int64_t)left.as.u32, right.as.f64) == 1;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.u32 > right.as.u32;
                 default:
                     break;
@@ -1195,7 +1195,7 @@ bool pyro_op_compare_gt(PyroVM* vm, PyroValue left, PyroValue right) {
                     return pyro_compare_int_and_float(right.as.i64, left.as.f64) == -1;
                 case PYRO_VALUE_F64:
                     return left.as.f64 > right.as.f64;
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return pyro_compare_int_and_float((int64_t)right.as.u32, left.as.f64) == -1;
                 default:
                     break;
@@ -1261,7 +1261,7 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
                     int result = pyro_compare_int_and_float(left.as.i64, right.as.f64);
                     return result == 1 || result == 0;
                 }
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.i64 >= (int64_t)right.as.u32;
                 default:
                     break;
@@ -1269,7 +1269,7 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
             break;
         }
 
-        case PYRO_VALUE_CHAR: {
+        case PYRO_VALUE_RUNE: {
             switch (right.type) {
                 case PYRO_VALUE_I64:
                     return (int64_t)left.as.u32 >= right.as.i64;
@@ -1277,7 +1277,7 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
                     int result = pyro_compare_int_and_float((int64_t)left.as.u32, right.as.f64);
                     return result == 1 || result == 0;
                 }
-                case PYRO_VALUE_CHAR:
+                case PYRO_VALUE_RUNE:
                     return left.as.u32 >= right.as.u32;
                 default:
                     break;
@@ -1293,7 +1293,7 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
                 }
                 case PYRO_VALUE_F64:
                     return left.as.f64 >= right.as.f64;
-                case PYRO_VALUE_CHAR: {
+                case PYRO_VALUE_RUNE: {
                     int result = pyro_compare_int_and_float((int64_t)right.as.u32, left.as.f64);
                     return result == 0 || result == -1;
                 }

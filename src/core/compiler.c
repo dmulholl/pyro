@@ -952,7 +952,7 @@ static double parse_float_literal(Parser* parser) {
 }
 
 
-static uint32_t parse_char_literal(Parser* parser) {
+static uint32_t parse_rune_literal(Parser* parser) {
     // The longest valid character literal is a unicode escape sequence of the form:
     // '\UXXXXXXXX'
     const size_t max_length = 10;
@@ -1118,9 +1118,9 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
         emit_load_value_from_constant_table(parser, pyro_obj(string));
     }
 
-    else if (match(parser, TOKEN_CHAR)) {
-        uint32_t codepoint = parse_char_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_char(codepoint));
+    else if (match(parser, TOKEN_RUNE)) {
+        uint32_t codepoint = parse_rune_literal(parser);
+        emit_load_value_from_constant_table(parser, pyro_rune(codepoint));
     }
 
     else {
@@ -1302,9 +1302,9 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
         emit_u8_u16be(parser, PYRO_OPCODE_CONCAT_STRINGS, string_count);
     }
 
-    else if (match(parser, TOKEN_CHAR)) {
-        uint32_t codepoint = parse_char_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_char(codepoint));
+    else if (match(parser, TOKEN_RUNE)) {
+        uint32_t codepoint = parse_rune_literal(parser);
+        emit_load_value_from_constant_table(parser, pyro_rune(codepoint));
     }
 
     else if (match(parser, TOKEN_IDENTIFIER)) {

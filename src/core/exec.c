@@ -351,7 +351,7 @@ static inline bool is_kinda_falsey(PyroValue value) {
             return true;
         case PYRO_VALUE_I64:
             return value.as.i64 == 0;
-        case PYRO_VALUE_CHAR:
+        case PYRO_VALUE_RUNE:
             return value.as.u32 == 0;
         case PYRO_VALUE_F64:
             return value.as.f64 == 0.0;

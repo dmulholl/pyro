@@ -5,7 +5,7 @@
 // with one of these enum values.
 typedef enum {
     PYRO_VALUE_BOOL,       // A Pyro boolean, true or false.
-    PYRO_VALUE_CHAR,       // A 32-bit unsigned integer representing a Unicode code point.
+    PYRO_VALUE_RUNE,       // A 32-bit unsigned integer representing a Unicode code point.
     PYRO_VALUE_F64,        // A 64-bit float.
     PYRO_VALUE_I64,        // A 64-bit signed integer.
     PYRO_VALUE_NULL,       // A Pyro null.
@@ -78,8 +78,8 @@ static inline PyroValue pyro_f64(double value) {
 }
 
 // Converts a C integer to a Pyro value.
-static inline PyroValue pyro_char(uint32_t value) {
-    return (PyroValue){PYRO_VALUE_CHAR, {.u32 = value}};
+static inline PyroValue pyro_rune(uint32_t value) {
+    return (PyroValue){PYRO_VALUE_RUNE, {.u32 = value}};
 }
 
 // Converts a C pointer to a Pyro value.
@@ -104,7 +104,7 @@ static inline PyroValue pyro_null(void) {
 #define PYRO_IS_F64(value)               ((value).type == PYRO_VALUE_F64)
 #define PYRO_IS_OBJ(value)               ((value).type == PYRO_VALUE_OBJ)
 #define PYRO_IS_TOMBSTONE(value)         ((value).type == PYRO_VALUE_TOMBSTONE)
-#define PYRO_IS_CHAR(value)              ((value).type == PYRO_VALUE_CHAR)
+#define PYRO_IS_RUNE(value)              ((value).type == PYRO_VALUE_RUNE)
 
 // Macros for checking if a PyroValue instance is an object of a specific type.
 #define PYRO_IS_STR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_STR)

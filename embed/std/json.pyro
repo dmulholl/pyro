@@ -600,8 +600,8 @@ class Parser {
                 } else {
                     var hex_digits_as_str = self.input:slice(index + 2, 4);
                     var int_value = $i64("0x" + hex_digits_as_str);
-                    var char = $char(int_value);
-                    buf:write($str(char));
+                    var rune = $rune(int_value);
+                    buf:write($str(rune));
                     index += 6;
                 }
                 continue;
