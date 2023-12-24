@@ -351,8 +351,8 @@ You can iterate over a string directly. This iterates over the individual byte v
 </li>
 </ol>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">byte</span> <span class="k">in</span> <span class="s">&quot;foo&quot;</span> <span class="p">{</span>
-<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">byte</span><span class="p">);</span>
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;foo&quot;</span> <span class="p">{</span>
+<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">char</span><span class="p">);</span>
 <span class="cp">...</span> <span class="p">}</span>
 <span class="s">&quot;f&quot;</span>
 <span class="s">&quot;o&quot;</span>
@@ -376,13 +376,13 @@ You can iterate over the string's byte values as integers using the <code>:bytes
 <ol start="3">
 <li>
 <p>
-You can iterate over the string's <code>char</code> values, i.e. UTF-8 encoded Unicode code points, using the <code>:chars()</code> method, e.g.
+You can iterate over the string's <code>rune</code> values, i.e. UTF-8 encoded Unicode code points, using the <code>:runes()</code> method, e.g.
 </p>
 </li>
 </ol>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">char</span> <span class="k">in</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">()</span> <span class="p">{</span>
-<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">char</span><span class="p">);</span>
+<span class="cp">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="nx">rune</span> <span class="k">in</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">runes</span><span class="p">()</span> <span class="p">{</span>
+<span class="cp">...</span>     <span class="k">echo</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">rune</span><span class="p">);</span>
 <span class="cp">...</span> <span class="p">}</span>
 <span class="sc">&#39;f&#39;</span>
 <span class="sc">&#39;o&#39;</span>
@@ -406,10 +406,10 @@ Use the <code>:byte()</code> method to access individual byte values as integers
 <span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">byte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
 </pre>
 <p>
-Use the <code>:char()</code> method to access individual UTF-8 encoded code points, e.g.
+Use the <code>:rune()</code> method to access individual UTF-8 encoded code points, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">char</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;f&#39;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">rune</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;f&#39;</span><span class="p">;</span>
 </pre>
 <h3 id="containment">
 Containment
@@ -421,7 +421,7 @@ You can check if a string contains a substring using the <code>in</code> operato
 <span class="k">assert</span> <span class="s">&quot;foo&quot;</span> <span class="k">in</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can also use the <code>in</code> operator to check if a string contains a <code>char</code>:
+You can also use the <code>in</code> operator to check if a string contains a <code>rune</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;b&#39;</span> <span class="k">in</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
@@ -465,52 +465,7 @@ Returns an iterator over the string's individual byte values, returning each val
 </div>
 <div>
 <dt>
-<code>:char(index: i64) -&gt; char</code>
-</dt>
-<dd>
-<p>
-Returns the <code>char</code> at <code>index</code>, where <code>index</code> is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
-</p>
-<p>
-This is a potentially expensive method as it needs to seek forward from the beginning of the string.
-</p>
-<p>
-This method will panic if it encounters invalid UTF-8.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:char_count() -&gt; i64</code>
-</dt>
-<dd>
-<p>
-Returns the number of UTF-8 encoded Unicode code points in the string.
-</p>
-<p>
-This is a potentially expensive method as it needs to traverse the entire string.
-</p>
-<p>
-This method will panic if the string contains invalid UTF-8.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:chars() -&gt; iter[char]</code>
-</dt>
-<dd>
-<p>
-Returns an iterator over the string's <code>char</code> values, i.e. UTF-8 encoded Unicode code points.
-</p>
-<p>
-This method will panic if the string contains invalid UTF-8.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:contains(target: str|char) -&gt; bool</code>
+<code>:contains(target: str|rune) -&gt; bool</code>
 </dt>
 <dd>
 <p>
@@ -717,6 +672,51 @@ Returns a new string with all instances of the string <code>old</code> replaced 
 </div>
 <div>
 <dt>
+<code>:rune(index: i64) -&gt; rune</code>
+</dt>
+<dd>
+<p>
+Returns the <code>rune</code> at <code>index</code>, where <code>index</code> is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
+</p>
+<p>
+This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+</p>
+<p>
+This method will panic if it encounters invalid UTF-8.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:rune_count() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the number of UTF-8 encoded Unicode code points in the string.
+</p>
+<p>
+This is a potentially expensive method as it needs to traverse the entire string.
+</p>
+<p>
+This method will panic if the string contains invalid UTF-8.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:runes() -&gt; iter[rune]</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the string's <code>rune</code> values, i.e. UTF-8 encoded Unicode code points.
+</p>
+<p>
+This method will panic if the string contains invalid UTF-8.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:slice(start_index: i64) -&gt; str</code> <br> <code>:slice(start_index: i64, length: i64) -&gt; str</code>
 </dt>
 <dd>
@@ -815,11 +815,11 @@ Returns the new string formed by stripping any leading or trailing bytes that oc
 </div>
 <div>
 <dt>
-<code>:strip_chars(chars: str) -&gt; str</code>
+<code>:strip_runes(runes: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in <code>chars</code>.
+Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in <code>runes</code>.
 </p>
 </dd>
 </div>
@@ -846,11 +846,11 @@ Returns the new string formed by stripping any leading bytes that occur in <code
 </div>
 <div>
 <dt>
-<code>:strip_prefix_chars(chars: str) -&gt; str</code>
+<code>:strip_prefix_runes(runes: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in <code>chars</code>.
+Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in <code>runes</code>.
 </p>
 </dd>
 </div>
@@ -877,11 +877,11 @@ Returns the new string formed by stripping any trailing bytes that occur in <cod
 </div>
 <div>
 <dt>
-<code>:strip_suffix_chars(chars: str) -&gt; str</code>
+<code>:strip_suffix_runes(runes: str) -&gt; str</code>
 </dt>
 <dd>
 <p>
-Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in <code>chars</code>.
+Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in <code>runes</code>.
 </p>
 </dd>
 </div>

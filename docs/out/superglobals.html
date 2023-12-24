@@ -162,21 +162,11 @@ All other values are truthy.
 </div>
 <div>
 <dt>
-<code>$buf() -&gt; buf</code> <br> <code>$buf(content: str) -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
+<code>$buf() -&gt; buf</code> <br> <code>$buf(content: str) -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|rune) -&gt; buf</code>
 </dt>
 <dd>
 <p>
 Creates a new <a href="builtins/buffers.html">byte buffer</a>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$char(arg: i64) -&gt; char</code>
-</dt>
-<dd>
-<p>
-Creates a new <a href="builtins/characters.html">character</a>.
 </p>
 </dd>
 </div>
@@ -361,7 +351,7 @@ Otherwise, stringifies the argument, prints the string to the standard error str
 </div>
 <div>
 <dt>
-<code>$f64(arg: i64|char|str) -&gt; f64</code>
+<code>$f64(arg: i64|rune|str) -&gt; f64</code>
 </dt>
 <dd>
 <p>
@@ -452,7 +442,7 @@ Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will c
 </div>
 <div>
 <dt>
-<code>$i64(arg: f64|char|str) -&gt; i64</code>
+<code>$i64(arg: f64|rune|str) -&gt; i64</code>
 </dt>
 <dd>
 <p>
@@ -525,16 +515,6 @@ Returns <code>true</code> if the argument is a <code>buf</code>.
 <dd>
 <p>
 Returns <code>true</code> if the argument is callable, i.e. is a function, method, class, or callable instance.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$is_char(arg: any) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if the argument is a <code>char</code>.
 </p>
 </dd>
 </div>
@@ -725,6 +705,16 @@ Returns <code>true</code> if the argument is a heap-allocated object.
 <dd>
 <p>
 Returns <code>true</code> if the argument a <code>queue</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_rune(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is a <code>rune</code>.
 </p>
 </dd>
 </div>
@@ -921,6 +911,16 @@ Reads the content of the file at <code>path</code> and returns it as a string.
 </p>
 <p>
 Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$rune(arg: i64) -&gt; rune</code>
+</dt>
+<dd>
+<p>
+Creates a new <a href="builtins/runes.html">rune</a>.
 </p>
 </dd>
 </div>

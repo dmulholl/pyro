@@ -125,18 +125,18 @@ You can find a full description of the string type [here](@root/builtins/strings
 
 
 
-### Characters
+### Runes
 
-A [character](@root/builtins/characters//), `char`, is an unsigned 32-bit integer representing a Unicode code point.
+A [rune](@root/builtins/runes//), `rune`, is an unsigned 32-bit integer representing a Unicode code point.
 
-Character literals use single quotes:
+Rune literals use single quotes:
 
 ::: code pyro
     var c1 = 'a';
     var c2 = '€';
     var c3 = '🔥';
 
-You can find a full description of the character type [here](@root/builtins/characters//).
+You can find a full description of the rune type [here](@root/builtins/runes//).
 
 
 

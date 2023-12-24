@@ -33,7 +33,6 @@ Annotations for builtin types are as follows:
 * `any`
 * `bool`
 * `buf`
-* `char`
 * `class`
 * `err`
 * `f64`
@@ -50,6 +49,7 @@ Annotations for builtin types are as follows:
 * `null`
 * `queue`
 * `queue[type]`
+* `rune`
 * `set`
 * `set[type]`
 * `stack`

@@ -73,7 +73,7 @@
 <a href="#formatting-floats">Formatting Floats</a>
 </li>
 <li>
-<a href="#formatting-characters">Formatting Characters</a>
+<a href="#formatting-runes">Formatting Runes</a>
 </li>
 <li>
 <a href="#formatting-strings">Formatting Strings</a>
@@ -232,11 +232,11 @@ The set of valid letters for <code>f64</code> values is:
 <code>G</code> &mdash; uses the shortest representation, <code>E</code> or <code>F</code>.
 </li>
 </ul>
-<h3 id="formatting-characters">
-Formatting Characters
+<h3 id="formatting-runes">
+Formatting Runes
 </h3>
 <p>
-You can use <code>printf</code>&ndash;style formatting specifiers to format <code>char</code> values as unsigned 32-bit integers, e.g.
+You can use <code>printf</code>&ndash;style formatting specifiers to format <code>rune</code> values as unsigned 32-bit integers, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{:d}&quot;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;97&quot;</span><span class="p">;</span>
@@ -245,7 +245,7 @@ You can use <code>printf</code>&ndash;style formatting specifiers to format <cod
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{:04x}&quot;</span><span class="p">,</span> <span class="sc">&#39;z&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;007a&quot;</span><span class="p">;</span>
 </pre>
 <p>
-The set of valid letters for <code>char</code> values is:
+The set of valid letters for <code>rune</code> values is:
 </p>
 <ul>
 <li>
@@ -262,7 +262,7 @@ The set of valid letters for <code>char</code> values is:
 </li>
 </ul>
 <p>
-Using an empty format specifier for a <code>char</code> is equivalent to calling <code>$str()</code> on the <code>char</code> &mdash; i.e. it converts the <code>char</code> value to a UTF-8 encoded string, e.g.
+Using an empty format specifier for a <code>rune</code> is equivalent to calling <code>$str()</code> on the <code>rune</code> &mdash; i.e. it converts the <code>rune</code> value to a UTF-8 encoded string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;a&quot;</span><span class="p">;</span>

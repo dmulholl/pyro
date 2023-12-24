@@ -98,9 +98,9 @@ The set of valid letters for `f64` values is:
 
 
 
-### Formatting Characters
+### Formatting Runes
 
-You can use `printf`--style formatting specifiers to format `char` values as unsigned 32-bit integers, e.g.
+You can use `printf`--style formatting specifiers to format `rune` values as unsigned 32-bit integers, e.g.
 
 ::: code pyro
     assert $fmt("{:d}", 'a') == "97";
@@ -108,14 +108,14 @@ You can use `printf`--style formatting specifiers to format `char` values as uns
     assert $fmt("{:x}", 'z') == "7a";
     assert $fmt("{:04x}", 'z') == "007a";
 
-The set of valid letters for `char` values is:
+The set of valid letters for `rune` values is:
 
 * `d` for decimal.
 * `o` for octal.
 * `x` for lowercase hexadecimal.
 * `X` for uppercase hexadecimal.
 
-Using an empty format specifier for a `char` is equivalent to calling `$str()` on the `char` --- i.e. it converts the `char` value to a UTF-8 encoded string, e.g.
+Using an empty format specifier for a `rune` is equivalent to calling `$str()` on the `rune` --- i.e. it converts the `rune` value to a UTF-8 encoded string, e.g.
 
 ::: code pyro
     assert $fmt("{}", 'a') == "a";

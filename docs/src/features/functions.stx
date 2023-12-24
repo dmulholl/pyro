@@ -101,7 +101,7 @@ You can specify default values for trailing arguments, e.g.
     assert func(1, 2) == $tup(1, 2, "bar");
     assert func(1, 2, 3) == $tup(1, 2, 3);
 
-A default argument value must be a simple literal --- one of `i64`, `f64`, `char`, `str`, `bool`, or `null`.
+A default argument value must be a simple literal --- one of `i64`, `f64`, `rune`, `str`, `bool`, or `null`.
 
 
 
@@ -188,6 +188,3 @@ You can unpack a tuple returned by a function in a `var` declaration using `()`,
     var (foo, bar) = get_values();
     assert foo == 123;
     assert bar == 456;
-
-
-

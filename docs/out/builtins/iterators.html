@@ -79,15 +79,15 @@ The argument can be an iterator or an instance of an iterable type.
 </div>
 </dl>
 <p>
-All the iterators returned by Pyro builtins come pre-wrapped in <code>iter</code> wrappers, e.g. the <code>char</code> iterator returned by a string's <code>:chars()</code> method:
+All the iterators returned by Pyro builtins come pre-wrapped in <code>iter</code> wrappers, e.g. the <code>rune</code> iterator returned by a string's <code>:runes()</code> method:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="s">&quot;abcd&quot;</span><span class="p">:</span><span class="nx">chars</span><span class="p">():</span><span class="nx">enumerate</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="s">&quot;abcd&quot;</span><span class="p">:</span><span class="nx">runes</span><span class="p">():</span><span class="nx">enumerate</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <p>
-Here, calling the <code>:chars()</code> method on the string returns an <code>iter[char]</code> &mdash; i.e. an iterator over the string's UTF-8 encoded Unicode codepoints.
+Here, calling the <code>:runes()</code> method on the string returns an <code>iter[rune]</code> &mdash; i.e. an iterator over the string's UTF-8 encoded Unicode codepoints.
 The <code>:enumerate()</code> method is provided by the <code>iter</code> wrapper.
 It adds an index to each element in the input, giving us the following output:
 </p>

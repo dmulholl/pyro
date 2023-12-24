@@ -60,15 +60,9 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
+[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|rune) -> buf` ]]
 
     Creates a new [byte buffer](@root/builtins/buffers//).
-
-
-
-[[ `$char(arg: i64) -> char` ]]
-
-    Creates a new [character](@root/builtins/characters//).
 
 
 
@@ -171,7 +165,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$f64(arg: i64|char|str) -> f64` ]]
+[[ `$f64(arg: i64|rune|str) -> f64` ]]
 
     Converts `arg` to a float.
     String arguments can contain underscores for readability.
@@ -228,7 +222,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$i64(arg: f64|char|str) -> i64` ]]
+[[ `$i64(arg: f64|rune|str) -> i64` ]]
 
     Converts `arg` to an `i64`.
     Panics if the argument is out-of-range for an `i64`.
@@ -274,12 +268,6 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 [[ `$is_callable(arg: any) -> bool` ]]
 
     Returns `true` if the argument is callable, i.e. is a function, method, class, or callable instance.
-
-
-
-[[ `$is_char(arg: any) -> bool` ]]
-
-    Returns `true` if the argument is a `char`.
 
 
 
@@ -394,6 +382,12 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 [[ `$is_queue(arg: any) -> bool` ]]
 
     Returns `true` if the argument a `queue`.
+
+
+
+[[ `$is_rune(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is a `rune`.
 
 
 
@@ -512,6 +506,12 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     Reads the content of the file at `path` and returns it as a string.
 
     Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+
+
+
+[[ `$rune(arg: i64) -> rune` ]]
+
+    Creates a new [rune](@root/builtins/runes//).
 
 
 

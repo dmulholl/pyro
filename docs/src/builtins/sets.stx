@@ -17,7 +17,7 @@ A set object, `set`, is an unordered collection of distinct values.
 Alternatively, you can create a set by draining an iterator, e.g.
 
 ::: code pyro
-    var set = "supercalifragilistic":chars():to_set();
+    var set = "supercalifragilistic":runes():to_set();
     assert set:count() == 12;
 
 

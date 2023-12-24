@@ -9,7 +9,7 @@ meta_title: Pyro &mdash; Byte Buffers
 
 A byte buffer, `buf`, is a dynamic array of bytes.
 
-[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|char) -> buf` ]]
+[[ `$buf() -> buf` <br> `$buf(content: str) -> buf` <br> `$buf(size: i64, fill_value: i64|rune) -> buf` ]]
 
     Creates a new byte buffer.
 
@@ -83,7 +83,7 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     Returns `true` if the buffer is empty.
 
-[[ `:set(index: i64, byte: i64|char)` ]]
+[[ `:set(index: i64, byte: i64|rune)` ]]
 
     Sets the byte value at `index` to `byte` where `byte` is an integer in the range `[0, 255]`.
     Will panic if `index` isn't an integer or is out of range.
@@ -110,8 +110,7 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     This method will panic if an error occurs while formatting the string or if memory allocation fails.
 
-[[ `:write_byte(byte: i64|char)` ]]
+[[ `:write_byte(byte: i64|rune)` ]]
 
     Appends `byte` to the buffer where `byte` is an integer in the range `[0, 255]`.
     Will panic if `byte` is not an integer or is out of range.
-

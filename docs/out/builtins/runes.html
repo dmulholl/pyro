@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro &mdash; Characters</title>
+        <title>Pyro &mdash; Runes</title>
 
         
 
@@ -18,7 +18,7 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-builtins-characters node-builtins node">
+    <body class="node-builtins-runes node-builtins node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
@@ -58,13 +58,13 @@
 
         <article class="main">
             <header class="title">
-                <h1>Characters</h1>
+                <h1>Runes</h1>
                 
                 <hr>
             </header>
             <ul class="stx-toc">
 <li>
-<a href="#character-literals">Character Literals</a>
+<a href="#rune-literals">Rune Literals</a>
 </li>
 <li>
 <a href="#conversions">Conversions</a>
@@ -78,26 +78,26 @@
 </ul>
 <hr>
 <p>
-A character, <code>char</code>, is an unsigned 32-bit integer representing a Unicode code point.
+A rune, <code>rune</code>, is an unsigned 32-bit integer representing a Unicode code point.
 </p>
 <dl>
 <div>
 <dt>
-<code>$char(arg: i64) -&gt; char</code>
+<code>$rune(arg: i64) -&gt; rune</code>
 </dt>
 <dd>
 <p>
-Converts <code>arg</code> to a <code>char</code>.
+Converts <code>arg</code> to a <code>rune</code>.
 Panics if the argument is out of range.
 </p>
 </dd>
 </div>
 </dl>
-<h3 id="character-literals">
-Character Literals
+<h3 id="rune-literals">
+Rune Literals
 </h3>
 <p>
-Character literals use single quotes, e.g.
+Rune literals use single quotes, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
@@ -105,20 +105,20 @@ Character literals use single quotes, e.g.
 <span class="kd">var</span> <span class="nx">c3</span> <span class="p">=</span> <span class="sc">&#39;🔥&#39;</span><span class="p">;</span>
 </pre>
 <p>
-A character literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point, e.g.
+A rune literal should contain either a single UTF-8 encoded code point or a backslashed escape sequence representing a code point, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;\x61&#39;</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="sc">&#39;\u20AC&#39;</span> <span class="o">==</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
 </pre>
 <p>
-Character literals support the same backslashed escape sequences as <a href="../builtins/strings.html">strings</a>.
+Rune literals support the same backslashed escape sequences as <a href="../builtins/strings.html">strings</a>.
 </p>
 <h3 id="conversions">
 Conversions
 </h3>
 <p>
-You can convert a character to a string using the <code>$str()</code> function  &mdash; this returns a string containing the UTF-8 encoded representation of the codepoint, e.g.
+You can convert a rune to a string using the <code>$str()</code> function  &mdash; this returns a string containing the UTF-8 encoded representation of the code point, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;a&quot;</span><span class="p">;</span>
@@ -128,30 +128,30 @@ You can convert a character to a string using the <code>$str()</code> function  
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="sc">&#39;🔥&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;\xF0\x9F\x94\xA5&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can convert a character to an integer using the <code>$i64()</code> function or an integer to a character using the <code>$char()</code> function, e.g.
+You can convert a rune to an integer using the <code>$i64()</code> function or an integer to a rune using the <code>$rune()</code> function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="nx">$i64</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">97</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">$char</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">$rune</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 </pre>
 <h3 id="concatenating">
 Concatenating
 </h3>
 <p>
-If you add two characters together using the <code>+</code> operator, the result will be a UTF-8 encoded string, e.g.
+If you add two runes together using the <code>+</code> operator, the result will be a UTF-8 encoded string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">+</span> <span class="sc">&#39;y&#39;</span> <span class="o">==</span> <span class="s">&quot;xy&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Similarly, you can prepend or append a character to a string using the <code>+</code> operator, e.g.
+Similarly, you can prepend or append a rune to a string using the <code>+</code> operator, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">+</span> <span class="s">&quot;yz&quot;</span> <span class="o">==</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;xy&quot;</span> <span class="o">+</span> <span class="sc">&#39;z&#39;</span> <span class="o">==</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 </pre>
 <p>
-You can multiply a character by an integer <code>n</code> to produce a string containing <code>n</code> UTF-8 encoded copies of the character, e.g.
+You can multiply a rune by an integer <code>n</code> to produce a string containing <code>n</code> UTF-8 encoded copies of the rune, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="sc">&#39;x&#39;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">==</span> <span class="s">&quot;xxx&quot;</span><span class="p">;</span>
@@ -167,7 +167,7 @@ Methods
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the character is in the ASCII range.
+Returns <code>true</code> if the rune is in the ASCII range.
 </p>
 </dd>
 </div>
@@ -177,7 +177,7 @@ Returns <code>true</code> if the character is in the ASCII range.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the character is an ASCII decimal digit.
+Returns <code>true</code> if the rune is an ASCII decimal digit.
 </p>
 </dd>
 </div>
@@ -187,7 +187,7 @@ Returns <code>true</code> if the character is an ASCII decimal digit.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the character is an ASCII hexadecimal digit.
+Returns <code>true</code> if the rune is an ASCII hexadecimal digit.
 </p>
 </dd>
 </div>
@@ -197,7 +197,7 @@ Returns <code>true</code> if the character is an ASCII hexadecimal digit.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the character is an ASCII octal digit.
+Returns <code>true</code> if the rune is an ASCII octal digit.
 </p>
 </dd>
 </div>
@@ -207,7 +207,7 @@ Returns <code>true</code> if the character is an ASCII octal digit.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the character is an ASCII whitespace character.
+Returns <code>true</code> if the rune is an ASCII whitespace rune.
 </p>
 </dd>
 </div>
@@ -217,7 +217,7 @@ Returns <code>true</code> if the character is an ASCII whitespace character.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the character is a Unicode whitespace character.
+Returns <code>true</code> if the rune is a Unicode whitespace rune.
 </p>
 </dd>
 </div>

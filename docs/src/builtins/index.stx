@@ -6,16 +6,15 @@ meta_title: Pyro &mdash; Builtin Types
 Builtin types are part of the language itself --- you don't need to import any libraries to use them.
 
 * [Byte Buffers](@root/builtins/buffers//)
-* [Characters](@root/builtins/characters//)
 * [Errors](@root/builtins/errors//)
 * [Hash Maps](@root/builtins/maps//)
 * [Files](@root/builtins/files//)
 * [Iterator Wrappers](@root/builtins/iterators//)
 * [Modules](@root/builtins/modules//)
 * [Queues](@root/builtins/queues//)
+* [Runes](@root/builtins/runes//)
 * [Sets](@root/builtins/sets//)
 * [Stacks](@root/builtins/stacks//)
 * [Strings](@root/builtins/strings//)
 * [Tuples](@root/builtins/tuples//)
 * [Vectors](@root/builtins/vectors//)
-

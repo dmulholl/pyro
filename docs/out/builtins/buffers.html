@@ -80,7 +80,7 @@ A byte buffer, <code>buf</code>, is a dynamic array of bytes.
 <dl>
 <div>
 <dt>
-<code>$buf() -&gt; buf</code> <br> <code>$buf(content: str) -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|char) -&gt; buf</code>
+<code>$buf() -&gt; buf</code> <br> <code>$buf(content: str) -&gt; buf</code> <br> <code>$buf(size: i64, fill_value: i64|rune) -&gt; buf</code>
 </dt>
 <dd>
 <p>
@@ -195,7 +195,7 @@ Returns <code>true</code> if the buffer is empty.
 </div>
 <div>
 <dt>
-<code>:set(index: i64, byte: i64|char)</code>
+<code>:set(index: i64, byte: i64|rune)</code>
 </dt>
 <dd>
 <p>
@@ -251,7 +251,7 @@ This method will panic if an error occurs while formatting the string or if memo
 </div>
 <div>
 <dt>
-<code>:write_byte(byte: i64|char)</code>
+<code>:write_byte(byte: i64|rune)</code>
 </dt>
 <dd>
 <p>

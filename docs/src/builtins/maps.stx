@@ -120,7 +120,7 @@ The only requirement is that key values which compare as equal using the `==` op
 This is true for all builtin types.
 
 Pyro checks for key equality using the `==` operator.
-Note that `i64`, `f64`, and `char` values which are numerically equal compare as equal using the `==` operator.
+Note that `i64`, `f64`, and `rune` values which are numerically equal compare as equal using the `==` operator.
 This means that these values work interchangeably as map keys, e.g.
 
 ::: code pyro

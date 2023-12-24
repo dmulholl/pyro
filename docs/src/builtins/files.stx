@@ -147,7 +147,7 @@ The file object's `close()` method will be called when the `with` block exits, e
 
     Panics if an I/O write error occurs or if an error occurs while formatting the output string.
 
-[[ `:write_byte(byte: i64|char)` ]]
+[[ `:write_byte(byte: i64|rune)` ]]
 
     Writes a single byte to the file, where `byte` is an integer in the range `[0, 255]`.
     Panics if an I/O write error occurs or if the argument is an invalid type or is out of range.

@@ -63,6 +63,7 @@ Raw string literals use backticks:
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
 
 
+
 ### String Interpolation
 
 You can interpolate the value of an expression into a double-quoted string using `${}`, e.g.
@@ -145,8 +146,8 @@ A string is an immutable sequence of bytes. You can iterate over this sequence i
 (1) You can iterate over a string directly. This iterates over the individual byte values, returning each value as a single-byte string, e.g.
 
 ::: code pyro
-    >>> for byte in "foo" {
-    ...     echo $debug(byte);
+    >>> for char in "foo" {
+    ...     echo $debug(char);
     ... }
     "f"
     "o"
@@ -162,11 +163,11 @@ A string is an immutable sequence of bytes. You can iterate over this sequence i
     111
     111
 
-(3) You can iterate over the string's `char` values, i.e. UTF-8 encoded Unicode code points, using the `:chars()` method, e.g.
+(3) You can iterate over the string's `rune` values, i.e. UTF-8 encoded Unicode code points, using the `:runes()` method, e.g.
 
 ::: code pyro
-    >>> for char in "foo":chars() {
-    ...     echo $debug(char);
+    >>> for rune in "foo":runes() {
+    ...     echo $debug(rune);
     ... }
     'f'
     'o'
@@ -189,10 +190,10 @@ Use the `:byte()` method to access individual byte values as integers, e.g.
 ::: code pyro
     assert "foo":byte(0) == 102;
 
-Use the `:char()` method to access individual UTF-8 encoded code points, e.g.
+Use the `:rune()` method to access individual UTF-8 encoded code points, e.g.
 
 ::: code pyro
-    assert "foo":char(0) == 'f';
+    assert "foo":rune(0) == 'f';
 
 
 
@@ -203,11 +204,10 @@ You can check if a string contains a substring using the `in` operator:
 ::: code pyro
     assert "foo" in "foobar";
 
-You can also use the `in` operator to check if a string contains a `char`:
+You can also use the `in` operator to check if a string contains a `rune`:
 
 ::: code pyro
     assert 'b' in "foobar";
-
 
 This is equivalent to calling the string's `:contains()` method.
 
@@ -227,29 +227,7 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns an iterator over the string's individual byte values, returning each value as an integer.
 
-[[ `:char(index: i64) -> char` ]]
-
-    Returns the `char` at `index`, where `index` is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
-
-    This is a potentially expensive method as it needs to seek forward from the beginning of the string.
-
-    This method will panic if it encounters invalid UTF-8.
-
-[[ `:char_count() -> i64` ]]
-
-    Returns the number of UTF-8 encoded Unicode code points in the string.
-
-    This is a potentially expensive method as it needs to traverse the entire string.
-
-    This method will panic if the string contains invalid UTF-8.
-
-[[ `:chars() -> iter[char]` ]]
-
-    Returns an iterator over the string's `char` values, i.e. UTF-8 encoded Unicode code points.
-
-    This method will panic if the string contains invalid UTF-8.
-
-[[ `:contains(target: str|char) -> bool` ]]
+[[ `:contains(target: str|rune) -> bool` ]]
 
     Returns `true` if the string contains the substring or character `target`.
 
@@ -344,6 +322,28 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns a new string with all instances of the string `old` replaced by the string `new`.
 
+[[ `:rune(index: i64) -> rune` ]]
+
+    Returns the `rune` at `index`, where `index` is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
+
+    This is a potentially expensive method as it needs to seek forward from the beginning of the string.
+
+    This method will panic if it encounters invalid UTF-8.
+
+[[ `:rune_count() -> i64` ]]
+
+    Returns the number of UTF-8 encoded Unicode code points in the string.
+
+    This is a potentially expensive method as it needs to traverse the entire string.
+
+    This method will panic if the string contains invalid UTF-8.
+
+[[ `:runes() -> iter[rune]` ]]
+
+    Returns an iterator over the string's `rune` values, i.e. UTF-8 encoded Unicode code points.
+
+    This method will panic if the string contains invalid UTF-8.
+
 [[ `:slice(start_index: i64) -> str` <br> `:slice(start_index: i64, length: i64) -> str` ]]
 
     Copies a slice of the source string and returns it as a new string.
@@ -393,9 +393,9 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns the new string formed by stripping any leading or trailing bytes that occur in `bytes`.
 
-[[ `:strip_chars(chars: str) -> str` ]]
+[[ `:strip_runes(runes: str) -> str` ]]
 
-    Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in `chars`.
+    Returns the new string formed by stripping any leading or trailing UTF-8 encoded codepoints that occur in `runes`.
 
 [[ `:strip_prefix(prefix: str) -> str` ]]
 
@@ -406,9 +406,9 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns the new string formed by stripping any leading bytes that occur in `bytes`.
 
-[[ `:strip_prefix_chars(chars: str) -> str` ]]
+[[ `:strip_prefix_runes(runes: str) -> str` ]]
 
-    Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in `chars`.
+    Returns the new string formed by stripping any leading UTF-8 encoded codepoints that occur in `runes`.
 
 [[ `:strip_suffix(suffix: str) -> str` ]]
 
@@ -419,9 +419,9 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns the new string formed by stripping any trailing bytes that occur in `bytes`.
 
-[[ `:strip_suffix_chars(chars: str) -> str` ]]
+[[ `:strip_suffix_runes(runes: str) -> str` ]]
 
-    Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in `chars`.
+    Returns the new string formed by stripping any trailing UTF-8 encoded codepoints that occur in `runes`.
 
 [[ `:strip_utf8_ws() -> str` ]]
 
