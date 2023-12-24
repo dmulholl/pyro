@@ -7,9 +7,6 @@
 // POSIX: stat(), lstat(), S_ISDIR(), S_ISREG, S_ISLNK()
 #include <sys/stat.h>
 
-// POSIX: nftw()
-#include <ftw.h>
-
 // POSIX: getcwd(), chdir(), fork(), exec(), dup2(), read(), write()
 #include <unistd.h>
 
@@ -69,23 +66,6 @@ bool pyro_is_symlink(const char* path) {
         }
     }
     return false;
-}
-
-
-// Returns 0 if successful, -1 if an error occurs.
-static int remove_callback(const char* path, const struct stat* s, int type, struct FTW* ftw_buf) {
-    return remove(path);
-}
-
-
-// Returns 0 if successful, -1 if an error occurs.
-int pyro_remove(const char* path) {
-    if (pyro_is_symlink(path) || pyro_is_file(path)) {
-        return remove(path);
-    } else if (pyro_is_dir(path)) {
-        return nftw(path, remove_callback, 64, FTW_DEPTH | FTW_PHYS);
-    }
-    return -1;
 }
 
 

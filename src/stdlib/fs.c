@@ -127,22 +127,6 @@ static PyroValue fn_join(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue fn_remove(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "remove(): invalid argument [path], expected a string");
-        return pyro_null();
-    }
-
-    PyroStr* path = PYRO_AS_STR(args[0]);
-
-    if (pyro_remove(path->bytes) != 0) {
-        pyro_panic(vm, "remove(): unable to delete '%s'", path->bytes);
-    }
-
-    return pyro_null();
-}
-
-
 static PyroValue fn_getcwd(PyroVM* vm, size_t arg_count, PyroValue* args) {
     char* cwd = pyro_getcwd();
     if (!cwd) {
@@ -426,10 +410,4 @@ void pyro_load_std_mod_fs(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "getcwd", fn_getcwd, 0);
     pyro_define_pub_member_fn(vm, module, "normpath", fn_normpath, 1);
     pyro_define_pub_member_fn(vm, module, "abspath", fn_abspath, 1);
-
-    // Deprecated.
-    pyro_define_pub_member_fn(vm, module, "cd", fn_chdir, 1);
-    pyro_define_pub_member_fn(vm, module, "cwd", fn_getcwd, 0);
-    pyro_define_pub_member_fn(vm, module, "rm", fn_remove, 1);
-    pyro_define_pub_member_fn(vm, module, "remove", fn_remove, 1);
 }

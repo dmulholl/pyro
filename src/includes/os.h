@@ -20,11 +20,6 @@ bool pyro_is_file(const char* path);
 // (This checks if the symlink itself exists, not its target.)
 bool pyro_is_symlink(const char* path);
 
-// Deletes the symlink or file or directory at [path]. If [path] is a symlink, the link itself
-// will be deleted, not its target. If [path] is a directory, its content will be recursively
-// deleted, then the directory itself.
-int pyro_remove(const char* path);
-
 // Suspends the calling thread for the requested duration.
 // Returns 0 if successful, -1 if an error occurs.
 int pyro_sleep(double time_in_seconds);

@@ -8,8 +8,8 @@ assert is_file($filepath);
 assert is_dir(dirname($filepath));
 assert is_file(join(dirname($filepath), basename($filepath)));
 
-assert exists(fs::cwd());
-assert is_dir(fs::cwd());
+assert exists(fs::getcwd());
+assert is_dir(fs::getcwd());
 
 # Test basename().
 assert basename("") == "";
