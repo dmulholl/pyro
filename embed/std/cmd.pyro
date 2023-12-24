@@ -1,4 +1,4 @@
-pub def cmd(name: str, *args: str) -> str {
+pub def run(name: str, *args: str) -> str {
     let args_vec = args:iter():to_vec();
 
     let result = try $cmd(name, args_vec);
@@ -16,30 +16,30 @@ pub def cmd(name: str, *args: str) -> str {
 
 
 pub def mkdir(path: str) {
-    cmd("mkdir", "-p", path);
+    run("mkdir", "-p", path);
 }
 
 
 pub def rm(path: str) {
-    cmd("rm", "-rf", path);
+    run("rm", "-rf", path);
 }
 
 
 pub def mv(src: str, dst: str) {
-    cmd("mv", "-f", src, dst);
+    run("mv", "-f", src, dst);
 }
 
 
 pub def cp(src: str, dst: str) {
-    cmd("cp", "-rf", src, dst);
+    run("cp", "-rf", src, dst);
 }
 
 
 pub def git(*args: str) -> str {
-    return cmd("git", *args);
+    return run("git", *args);
 }
 
 
 pub def make(*args: str) -> str {
-    return cmd("make", *args);
+    return run("make", *args);
 }
