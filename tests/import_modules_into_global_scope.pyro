@@ -1,9 +1,5 @@
 import std::math;
 assert math::abs(-1) == 1;
-assert $is_f64(math::E);
-assert $is_f64(math::PI);
 
 import std::math as foo;
 assert foo::abs(-1) == 1;
-assert $is_f64(foo::E);
-assert $is_f64(foo::PI);

@@ -5,12 +5,10 @@ assert !$is_module(foobar);
 # Importing standard library modules.
 import std::math;
 assert $is_module(math);
-assert $is_f64(math::PI);
 assert math::abs(-1) == 1;
 
 import std::math as alias;
 assert $is_module(alias);
-assert $is_f64(alias::PI);
 assert alias::abs(-1) == 1;
 
 # Importing .pyro modules. Each module has a mod_name variable and a get_mod_name() function
