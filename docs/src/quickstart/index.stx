@@ -7,14 +7,14 @@ meta_title: Pyro &mdash; Quickstart Tutorial
 [2]: @root/quickstart/local//
 
 * [Use Docker][1]
-* [Run Locally][2]
+* [Build Locally][2]
 
 
-### Option 1 --- Docker
+### Option 1 --- Use Docker
 
 You can try Pyro by [running a pre-built Docker image][1].
 
 
-### Option 2 --- Local
+### Option 2 --- Build Locally
 
 You can try Pyro by [building and running the Pyro binary][2] on your local system.

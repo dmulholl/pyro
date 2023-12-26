@@ -75,8 +75,8 @@ You can learn more about constants [here](@root/features/constants//).
 
 ### Numbers
 
-Pyro has two numeric types: `i64` for 64-bit signed two's-complement integers, and `f64` for 64-bit [IEEE 754 floats][1].
-Both behave as you'd expect and support the usual range of numeric operations.
+Pyro has two arithmetic number types: `i64` for 64-bit signed two's-complement integers, and `f64` for 64-bit [IEEE 754 floats][1].
+Both behave as you'd expect and support the usual range of arithmetic operations.
 
 ::: table
 
@@ -132,9 +132,9 @@ A [rune](@root/builtins/runes//), `rune`, is an unsigned 32-bit integer represen
 Rune literals use single quotes:
 
 ::: code pyro
-    var c1 = 'a';
-    var c2 = '€';
-    var c3 = '🔥';
+    var r1 = 'a';
+    var r2 = '€';
+    var r3 = '🔥';
 
 You can find a full description of the rune type [here](@root/builtins/runes//).
 
