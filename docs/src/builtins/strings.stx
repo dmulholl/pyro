@@ -229,7 +229,7 @@ This is equivalent to calling the string's `:contains()` method.
 
 [[ `:contains(target: str|rune) -> bool` ]]
 
-    Returns `true` if the string contains the substring or character `target`.
+    Returns `true` if the string contains the substring or (UTF-8 encoded) rune `target`.
 
     (Note that every string contains the empty string `""` as the empty string is a valid substring of every string.)
 
