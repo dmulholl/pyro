@@ -1356,7 +1356,10 @@ bool pyro_op_compare_ge(PyroVM* vm, PyroValue left, PyroValue right) {
 
 PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
     if (!PYRO_IS_OBJ(receiver)) {
-        pyro_panic(vm, "value does not support [] indexing");
+        pyro_panic(vm,
+            "invalid operand type: '%s' does not support [] indexing",
+            pyro_get_type_name(vm, receiver)->bytes
+        );
         return pyro_null();
     }
 
@@ -1371,22 +1374,33 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         }
 
         case PYRO_OBJECT_STR: {
-            PyroStr* str = PYRO_AS_STR(receiver);
-            if (PYRO_IS_I64(key)) {
-                int64_t index = key.as.i64;
-                if (index >= 0 && (size_t)index < str->count) {
-                    PyroStr* new_str = PyroStr_copy(&str->bytes[index], 1, false, vm);
-                    if (!new_str) {
-                        pyro_panic(vm, "out of memory");
-                        return pyro_null();
-                    }
-                    return pyro_obj(new_str);
-                }
-                pyro_panic(vm, "index is out of range");
+            if (!PYRO_IS_I64(key)) {
+                pyro_panic(vm,
+                    "invalid index type '%s', expected 'i64'",
+                    pyro_get_type_name(vm, key)->bytes
+                );
                 return pyro_null();
             }
-            pyro_panic(vm, "invalid index type, expected an integer");
-            return pyro_null();
+
+            PyroStr* str = PYRO_AS_STR(receiver);
+
+            int64_t index = key.as.i64;
+            if (index < 0) {
+                index += str->count;
+            }
+
+            if (index < 0 || (size_t)index >= str->count) {
+                pyro_panic(vm, "index %" PRId64 " is out of range", index);
+                return pyro_null();
+            }
+
+            PyroStr* new_str = PyroStr_copy(&str->bytes[index], 1, false, vm);
+            if (!new_str) {
+                pyro_panic(vm, "out of memory");
+                return pyro_null();
+            }
+
+            return pyro_obj(new_str);
         }
 
         case PYRO_OBJECT_VEC: {
@@ -1424,7 +1438,10 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
                 if (!pyro_push(vm, key)) return pyro_null();
                 return pyro_call_method(vm, method, 1);
             }
-            pyro_panic(vm, "object does not support [] indexing");
+            pyro_panic(vm,
+                "invalid operand type: '%s' does not support [] indexing",
+                pyro_get_type_name(vm, receiver)->bytes
+            );
             return pyro_null();
         }
     }

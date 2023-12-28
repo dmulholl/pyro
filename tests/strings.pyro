@@ -617,3 +617,10 @@ def $test_concatenating_strings() {
     assert $is_err(try ("foo" + 123));
     assert $is_err(try (123 + "foo"));
 }
+
+
+def $test_negative_indexing() {
+    assert "foobar"[-1] == "r";
+    assert "foobar"[-2] == "a";
+    assert $is_err(try "foobar"[-10]);
+}

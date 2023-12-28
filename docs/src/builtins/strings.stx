@@ -180,20 +180,26 @@ A string is an immutable sequence of bytes. You can iterate over this sequence i
 You can index into a string to get (but not set) individual byte values. Each byte value is returned as a single-byte string, e.g.
 
 ::: code pyro
+    assert "foobar"[0] == "f";
+    assert "foobar"[1] == "o";
 
-    assert "foo"[0] == "f";
-    assert "foo"[1] == "o";
-    assert "foo"[2] == "o";
+A negative index counts backwards from the end of the string, e.g.
+
+::: code pyro
+    assert "foobar"[-1] == "r";
+    assert "foobar"[-2] == "a";
 
 Use the `:byte()` method to access individual byte values as integers, e.g.
 
 ::: code pyro
-    assert "foo":byte(0) == 102;
+    assert "foobar":byte(0) == 102;
+    assert "foobar":byte(1) == 111;
 
 Use the `:rune()` method to access individual UTF-8 encoded code points, e.g.
 
 ::: code pyro
-    assert "foo":rune(0) == 'f';
+    assert "foobar":rune(0) == 'f';
+    assert "foobar":rune(1) == 'o';
 
 
 
