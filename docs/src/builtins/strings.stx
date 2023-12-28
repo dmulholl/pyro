@@ -183,7 +183,7 @@ You can index into a string to get (but not set) individual byte values. Each by
     assert "foobar"[0] == "f";
     assert "foobar"[1] == "o";
 
-A negative index counts backwards from the end of the string, e.g.
+Indices are zero-based. A negative index counts backwards from the end of the string, e.g.
 
 ::: code pyro
     assert "foobar"[-1] == "r";

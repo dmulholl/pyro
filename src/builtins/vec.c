@@ -118,35 +118,53 @@ static PyroValue vec_append(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue vec_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
-    if (PYRO_IS_I64(args[0])) {
-        int64_t index = args[0].as.i64;
-        if (index >= 0 && (size_t)index < vec->count) {
-            return vec->values[index];
-        }
-        pyro_panic(vm, "get(): invalid argument [index], out of range");
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm,
+            "get(): invalid argument [index], type '%s', expected 'i64'",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
-    pyro_panic(vm, "get(): invalid argument [index], expected an integer");
-    return pyro_null();
+
+    int64_t index = args[0].as.i64;
+    if (index < 0) {
+        index += vec->count;
+    }
+
+    if (index < 0 || (size_t)index >= vec->count) {
+        pyro_panic(vm, "get(): index %" PRId64 " is out of range", index);
+        return pyro_null();
+    }
+
+    return vec->values[index];
 }
 
 
 static PyroValue vec_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
-    vec->version++;
 
-    if (PYRO_IS_I64(args[0])) {
-        int64_t index = args[0].as.i64;
-        if (index >= 0 && (size_t)index < vec->count) {
-            vec->values[index] = args[1];
-            return args[1];
-        }
-        pyro_panic(vm, "set(): invalid argument [index], out of range");
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm,
+            "set(): invalid argument [index], type '%s', expected 'i64'",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
 
-    pyro_panic(vm, "set(): invalid argument [index], expected an integer");
-    return pyro_null();
+    int64_t index = args[0].as.i64;
+    if (index < 0) {
+        index += vec->count;
+    }
+
+    if (index < 0 || (size_t)index >= vec->count) {
+        pyro_panic(vm, "set(): index %" PRId64 " is out of range", index);
+        return pyro_null();
+    }
+
+    vec->version++;
+    vec->values[index] = args[1];
+    return args[1];
 }
 
 

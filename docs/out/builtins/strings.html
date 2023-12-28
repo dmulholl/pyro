@@ -395,21 +395,29 @@ Indexing
 You can index into a string to get (but not set) individual byte values. Each byte value is returned as a single-byte string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;f&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;o&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;o&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;f&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;o&quot;</span><span class="p">;</span>
+</pre>
+<p>
+Indices are zero-based. A negative index counts backwards from the end of the string, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;r&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;a&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Use the <code>:byte()</code> method to access individual byte values as integers, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">byte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">:</span><span class="nx">byte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">:</span><span class="nx">byte</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">111</span><span class="p">;</span>
 </pre>
 <p>
 Use the <code>:rune()</code> method to access individual UTF-8 encoded code points, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;foo&quot;</span><span class="p">:</span><span class="nx">rune</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;f&#39;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">:</span><span class="nx">rune</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;f&#39;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;foobar&quot;</span><span class="p">:</span><span class="nx">rune</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;o&#39;</span><span class="p">;</span>
 </pre>
 <h3 id="containment">
 Containment

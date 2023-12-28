@@ -408,3 +408,41 @@ def $test_clear() {
     assert vec[0] == "A";
     assert vec[1] == "B";
 }
+
+
+def $test_negative_indexing() {
+    var vec = ["foo", "bar", "baz"];
+
+    assert vec[-1] == "baz";
+    assert vec[-2] == "bar";
+    assert vec[-3] == "foo";
+    assert $is_err(try vec[-4]);
+
+    vec[-1] = "bam";
+    assert vec[-1] == "bam";
+    assert vec[2] == "bam";
+
+    assert $is_err(try (vec[-4] = "xyz"));
+}
+
+
+def $test_negative_indexing_with_get() {
+    var vec = ["foo", "bar", "baz"];
+
+    assert vec:get(-1) == "baz";
+    assert vec:get(-2) == "bar";
+    assert vec:get(-3) == "foo";
+
+    assert $is_err(try vec:get(-4));
+}
+
+
+def $test_negative_indexing_with_set() {
+    var vec = ["foo", "bar", "baz"];
+
+    vec:set(-1, "bam");
+    assert vec:get(-1) == "bam";
+    assert vec:get(2) == "bam";
+
+    assert $is_err(try vec:set(-4, "xyz"));
+}

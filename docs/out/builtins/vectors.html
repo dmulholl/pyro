@@ -135,23 +135,22 @@ Indexing
 You can index into a vector to get or set entries, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;foo&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;bar&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
 
-<span class="nx">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
+<span class="nx">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="s">&quot;bam&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;bam&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Indices are zero-based. Indexing is equivalent to using the vector's <code>:get()</code> and <code>:set()</code> methods, e.g.
+Indices are zero-based. A negative index counts backwards from the end of the vector, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">];</span>
-<span class="k">assert</span> <span class="nx">vec</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;foo&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">vec</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bar&quot;</span><span class="p">;</span>
-
-<span class="nx">vec</span><span class="p">:</span><span class="nx">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">vec</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+<span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;bar&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;foo&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="iterating">
 Iterating
@@ -262,6 +261,9 @@ Panics if the vector is empty.
 <dd>
 <p>
 Returns the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+<p>
+A negative index counts backwards from the end of the vector.
 </p>
 </dd>
 </div>
@@ -494,6 +496,9 @@ Reverses the vector in-place. Returns the vector to enable chaining.
 <dd>
 <p>
 Sets the value at <code>index</code>. Will panic if <code>index</code> is out of range or not an integer.
+</p>
+<p>
+A negative index counts backwards from the end of the vector.
 </p>
 </dd>
 </div>

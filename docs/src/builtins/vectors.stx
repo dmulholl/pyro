@@ -43,22 +43,21 @@ The empty literal `[]` will create an empty vector.
 You can index into a vector to get or set entries, e.g.
 
 ::: code pyro
-    var vec = ["foo", "bar"];
+    var vec = ["foo", "bar", "baz"];
     assert vec[0] == "foo";
     assert vec[1] == "bar";
+    assert vec[2] == "baz";
 
-    vec[1] = "baz";
-    assert vec[1] == "baz";
+    vec[2] = "bam";
+    assert vec[2] == "bam";
 
-Indices are zero-based. Indexing is equivalent to using the vector's `:get()` and `:set()` methods, e.g.
+Indices are zero-based. A negative index counts backwards from the end of the vector, e.g.
 
 ::: code pyro
-    var vec = ["foo", "bar"];
-    assert vec:get(0) == "foo";
-    assert vec:get(1) == "bar";
-
-    vec:set(1, "baz");
-    assert vec:get(1) == "baz";
+    var vec = ["foo", "bar", "baz"];
+    assert vec[-1] == "baz";
+    assert vec[-2] == "bar";
+    assert vec[-3] == "foo";
 
 
 
@@ -122,6 +121,8 @@ This is equivalent to calling the vector's `:contains()` method.
 [[ `:get(index: i64) -> any` ]]
 
     Returns the value at `index`. Will panic if `index` is out of range or not an integer.
+
+    A negative index counts backwards from the end of the vector.
 
 [[ `:index_of(value: any) -> i64|err` ]]
 
@@ -234,6 +235,8 @@ This is equivalent to calling the vector's `:contains()` method.
 [[ `:set(index: i64, value: any)` ]]
 
     Sets the value at `index`. Will panic if `index` is out of range or not an integer.
+
+    A negative index counts backwards from the end of the vector.
 
 [[ `:shuffle() -> vec` ]]
 

@@ -1404,17 +1404,27 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         }
 
         case PYRO_OBJECT_VEC: {
-            PyroVec* vec = PYRO_AS_VEC(receiver);
-            if (PYRO_IS_I64(key)) {
-                int64_t index = key.as.i64;
-                if (index >= 0 && (size_t)index < vec->count) {
-                    return vec->values[index];
-                }
-                pyro_panic(vm, "index is out of range");
+            if (!PYRO_IS_I64(key)) {
+                pyro_panic(vm,
+                    "invalid index type '%s', expected 'i64'",
+                    pyro_get_type_name(vm, key)->bytes
+                );
                 return pyro_null();
             }
-            pyro_panic(vm, "invalid index type, expected an integer");
-            return pyro_null();
+
+            PyroVec* vec = PYRO_AS_VEC(receiver);
+
+            int64_t index = key.as.i64;
+            if (index < 0) {
+                index += vec->count;
+            }
+
+            if (index < 0 || (size_t)index >= vec->count) {
+                pyro_panic(vm, "index %" PRId64 " is out of range", index);
+                return pyro_null();
+            }
+
+            return vec->values[index];
         }
 
         case PYRO_OBJECT_TUP: {
@@ -1433,16 +1443,17 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
 
         default: {
             PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_get);
-            if (!PYRO_IS_NULL(method)) {
-                if (!pyro_push(vm, receiver)) return pyro_null();
-                if (!pyro_push(vm, key)) return pyro_null();
-                return pyro_call_method(vm, method, 1);
+            if (PYRO_IS_NULL(method)) {
+                pyro_panic(vm,
+                    "invalid operand type: '%s' does not support [] indexing",
+                    pyro_get_type_name(vm, receiver)->bytes
+                );
+                return pyro_null();
             }
-            pyro_panic(vm,
-                "invalid operand type: '%s' does not support [] indexing",
-                pyro_get_type_name(vm, receiver)->bytes
-            );
-            return pyro_null();
+
+            if (!pyro_push(vm, receiver)) return pyro_null();
+            if (!pyro_push(vm, key)) return pyro_null();
+            return pyro_call_method(vm, method, 1);
         }
     }
 }
@@ -1450,7 +1461,10 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
 
 PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroValue value) {
     if (!PYRO_IS_OBJ(receiver)) {
-        pyro_panic(vm, "value does not support [] indexing");
+        pyro_panic(vm,
+            "invalid operand type: '%s' does not support [] indexing",
+            pyro_get_type_name(vm, receiver)->bytes
+        );
         return pyro_null();
     }
 
@@ -1465,31 +1479,45 @@ PyroValue pyro_op_set_index(PyroVM* vm, PyroValue receiver, PyroValue key, PyroV
         }
 
         case PYRO_OBJECT_VEC: {
-            PyroVec* vec = PYRO_AS_VEC(receiver);
-            if (PYRO_IS_I64(key)) {
-                int64_t index = key.as.i64;
-                if (index >= 0 && (size_t)index < vec->count) {
-                    vec->values[index] = value;
-                    vec->version++;
-                    return value;
-                }
-                pyro_panic(vm, "index is out of range");
+            if (!PYRO_IS_I64(key)) {
+                pyro_panic(vm,
+                    "invalid index type '%s', expected 'i64'",
+                    pyro_get_type_name(vm, key)->bytes
+                );
                 return pyro_null();
             }
-            pyro_panic(vm, "invalid index type, expected an integer");
-            return pyro_null();
+
+            PyroVec* vec = PYRO_AS_VEC(receiver);
+
+            int64_t index = key.as.i64;
+            if (index < 0) {
+                index += vec->count;
+            }
+
+            if (index < 0 || (size_t)index >= vec->count) {
+                pyro_panic(vm, "index %" PRId64 " is out of range", index);
+                return pyro_null();
+            }
+
+            vec->values[index] = value;
+            vec->version++;
+            return value;
         }
 
         default: {
             PyroValue method = pyro_get_method(vm, receiver, vm->str_dollar_set);
-            if (!PYRO_IS_NULL(method)) {
-                if (!pyro_push(vm, receiver)) return pyro_null();
-                if (!pyro_push(vm, key)) return pyro_null();
-                if (!pyro_push(vm, value)) return pyro_null();
-                return pyro_call_method(vm, method, 2);
+            if (PYRO_IS_NULL(method)) {
+                pyro_panic(vm,
+                    "invalid operand type: '%s' does not support [] index assignment",
+                    pyro_get_type_name(vm, receiver)->bytes
+                );
+                return pyro_null();
             }
-            pyro_panic(vm, "object does not support [] index assignment");
-            return pyro_null();
+
+            if (!pyro_push(vm, receiver)) return pyro_null();
+            if (!pyro_push(vm, key)) return pyro_null();
+            if (!pyro_push(vm, value)) return pyro_null();
+            return pyro_call_method(vm, method, 2);
         }
     }
 }
