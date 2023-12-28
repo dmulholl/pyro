@@ -176,3 +176,23 @@ def $test_compare_empty_tuples() {
     assert (1,) > ();
     assert (1, 2) > ();
 }
+
+def $test_negative_indexing() {
+    var tup = ("foo", "bar", "baz");
+
+    assert tup[-1] == "baz";
+    assert tup[-2] == "bar";
+    assert tup[-3] == "foo";
+
+    assert $is_err(try tup[-4]);
+}
+
+def $test_negative_indexing_with_get() {
+    var tup = ("foo", "bar", "baz");
+
+    assert tup:get(-1) == "baz";
+    assert tup:get(-2) == "bar";
+    assert tup:get(-3) == "foo";
+
+    assert $is_err(try tup:get(-4));
+}

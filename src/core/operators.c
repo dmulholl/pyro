@@ -1428,17 +1428,27 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
         }
 
         case PYRO_OBJECT_TUP: {
-            PyroTup* tup = PYRO_AS_TUP(receiver);
-            if (PYRO_IS_I64(key)) {
-                int64_t index = key.as.i64;
-                if (index >= 0 && (size_t)index < tup->count) {
-                    return tup->values[index];
-                }
-                pyro_panic(vm, "index is out of range");
+            if (!PYRO_IS_I64(key)) {
+                pyro_panic(vm,
+                    "invalid index type '%s', expected 'i64'",
+                    pyro_get_type_name(vm, key)->bytes
+                );
                 return pyro_null();
             }
-            pyro_panic(vm, "invalid index type, expected an integer");
-            return pyro_null();
+
+            PyroTup* tup = PYRO_AS_TUP(receiver);
+
+            int64_t index = key.as.i64;
+            if (index < 0) {
+                index += tup->count;
+            }
+
+            if (index < 0 || (size_t)index >= tup->count) {
+                pyro_panic(vm, "index %" PRId64 " is out of range", index);
+                return pyro_null();
+            }
+
+            return tup->values[index];
         }
 
         default: {

@@ -83,16 +83,18 @@ A comparison will panic if the elements are not comparable.
 You can index into a tuple to get (but not set) entries, e.g.
 
 ::: code pyro
-    var tup = $tup("foo", "bar");
+    var tup = ("foo", "bar", "baz");
     assert tup[0] == "foo";
     assert tup[1] == "bar";
+    assert tup[2] == "baz";
 
-Indices are zero-based. Indexing is equivalent to using the tuple's `:get()` method, e.g.
+Indices are zero-based. A negative index counts backwards from the end of the vector, e.g.
 
 ::: code pyro
-    var tup = $tup("foo", "bar");
-    assert tup:get(0) == "foo";
-    assert tup:get(1) == "bar";
+    var tup = ("foo", "bar", "baz");
+    assert tup[-1] == "baz";
+    assert tup[-2] == "bar";
+    assert tup[-3] == "foo";
 
 
 
@@ -133,6 +135,8 @@ This is equivalent to calling the tuple's `:contains()` method.
 [[ `:get(index: i64) -> any` ]]
 
     Returns the value at `index`. Will panic if `index` is out of range or not an integer.
+
+    A negative index counts backwards from the end of the tuple.
 
 [[ `:iter() -> iter` ]]
 
