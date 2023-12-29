@@ -449,6 +449,9 @@ Methods
 <p>
 Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
 </p>
+<p>
+A negative index counts backwards from the end of the string.
+</p>
 </dd>
 </div>
 <div>
@@ -685,6 +688,9 @@ Returns a new string with all instances of the string <code>old</code> replaced 
 <dd>
 <p>
 Returns the <code>rune</code> at <code>index</code>, where <code>index</code> is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
+</p>
+<p>
+Does not support negative indexing.
 </p>
 <p>
 This is a potentially expensive method as it needs to seek forward from the beginning of the string.

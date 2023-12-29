@@ -623,4 +623,8 @@ def $test_negative_indexing() {
     assert "foobar"[-1] == "r";
     assert "foobar"[-2] == "a";
     assert $is_err(try "foobar"[-10]);
+
+    assert "foobar":byte(-1) == 114;
+    assert "foobar":byte(-2) == 97;
+    assert $is_err(try "foobar":byte(-10));
 }

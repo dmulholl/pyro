@@ -40,16 +40,26 @@ static PyroValue str_byte_count(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue str_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
-    if (PYRO_IS_I64(args[0])) {
-        int64_t index = args[0].as.i64;
-        if (index >= 0 && (size_t)index < str->count) {
-            return pyro_i64((uint8_t)str->bytes[index]);
-        }
-        pyro_panic(vm, "byte(): invalid argument [index], integer is out of range");
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm,
+            "byte(): invalid argument [index], type '%s', expected 'i64'",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
-    pyro_panic(vm, "byte(): invalid argument [index], expected an integer");
-    return pyro_null();
+
+    int64_t index = args[0].as.i64;
+    if (index < 0) {
+        index += str->count;
+    }
+
+    if (index < 0 || (size_t)index >= str->count) {
+        pyro_panic(vm, "byte(): index %" PRId64 " is out of range", index);
+        return pyro_null();
+    }
+
+    return pyro_i64((uint8_t)str->bytes[index]);
 }
 
 
@@ -157,13 +167,16 @@ static PyroValue str_rune(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroStr* str = PYRO_AS_STR(args[-1]);
 
     if (!PYRO_IS_I64(args[0])) {
-        pyro_panic(vm, "rune(): invalid argument [index], expected an integer");
+        pyro_panic(vm,
+            "rune(): invalid argument [index], type '%s', expected 'i64'",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
 
     int64_t target_index = args[0].as.i64;
     if (target_index < 0 || str->count == 0) {
-        pyro_panic(vm, "rune(): invalid argument [index], out of range");
+        pyro_panic(vm, "rune(): index %" PRId64 " is out of range", target_index);
         return pyro_null();
     }
 
@@ -173,7 +186,7 @@ static PyroValue str_rune(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     while (rune_count < (size_t)target_index + 1) {
         if (byte_index == str->count) {
-            pyro_panic(vm, "rune(): invalid argument [index], out of range");
+            pyro_panic(vm, "rune(): index %" PRId64 " is out of range", target_index);
             return pyro_null();
         }
 
@@ -184,7 +197,7 @@ static PyroValue str_rune(PyroVM* vm, size_t arg_count, PyroValue* args) {
             rune_count++;
             byte_index += cp.length;
         } else {
-            pyro_panic(vm, "$rune(): string contains invalid utf-8 at byte index %zu", byte_index);
+            pyro_panic(vm, "rune(): string contains invalid utf-8 at byte index %zu", byte_index);
             return pyro_null();
         }
     }

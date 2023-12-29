@@ -225,6 +225,8 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns the byte value at `index` as an integer in the range `[0, 255]`.
 
+    A negative index counts backwards from the end of the string.
+
 [[ `:byte_count() -> i64` ]]
 
     Returns the number of bytes in the string.
@@ -331,6 +333,8 @@ This is equivalent to calling the string's `:contains()` method.
 [[ `:rune(index: i64) -> rune` ]]
 
     Returns the `rune` at `index`, where `index` is a zero-based offset into the sequence of UTF-8 encoded Unicode code points in the string.
+
+    Does not support negative indexing.
 
     This is a potentially expensive method as it needs to seek forward from the beginning of the string.
 
