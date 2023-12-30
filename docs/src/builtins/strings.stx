@@ -259,7 +259,6 @@ This is equivalent to calling the string's `:contains()` method.
 [[ `:is_ascii() -> bool` ]]
 
     Returns `true` if the string contains only byte values in the range `[0, 127]`.
-    (This is a potentially expensive method as it needs to traverse the string.)
 
     Returns `false` if the string is empty.
 
