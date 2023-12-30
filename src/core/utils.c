@@ -464,12 +464,7 @@ bool pyro_is_ascii_alpha(char c) {
 }
 
 
-bool pyro_is_ascii_digit(char c) {
-    return c >= '0' && c <= '9';
-}
-
-
-bool pyro_is_ascii_space(char c) {
+bool pyro_is_ascii_ws(char c) {
     switch (c) {
         case ' ':
         case '\f':
@@ -481,6 +476,11 @@ bool pyro_is_ascii_space(char c) {
         default:
             return false;
     }
+}
+
+
+bool pyro_is_ascii_decimal_digit(char c) {
+    return c >= '0' && c <= '9';
 }
 
 

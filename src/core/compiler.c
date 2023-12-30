@@ -2870,7 +2870,7 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we
     // report the correct line number for syntax errors at the end of the input, e.g. a
     // missing trailing semicolon.
-    while (src_len > 0 && pyro_is_ascii_space(src_code[src_len - 1])) {
+    while (src_len > 0 && pyro_is_ascii_ws(src_code[src_len - 1])) {
         src_len--;
     }
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
@@ -2935,7 +2935,7 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
 
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we
     // report the correct line number for syntax errors at the end of the input.
-    while (src_len > 0 && pyro_is_ascii_space(src_code[src_len - 1])) {
+    while (src_len > 0 && pyro_is_ascii_ws(src_code[src_len - 1])) {
         src_len--;
     }
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);

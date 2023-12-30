@@ -217,7 +217,7 @@ static Token read_number(Lexer* lexer) {
         return make_token(lexer, TOKEN_INT);
     }
 
-    if (peek(lexer) == '.' && pyro_is_ascii_digit(peek2(lexer))) {
+    if (peek(lexer) == '.' && pyro_is_ascii_decimal_digit(peek2(lexer))) {
         next_char(lexer);
         while (is_digit_or_underscore(peek(lexer))) {
             next_char(lexer);
@@ -595,7 +595,7 @@ Token pyro_next_token(Lexer* lexer) {
         return make_token(lexer, TOKEN_BINARY_INT);
     }
 
-    if (pyro_is_ascii_digit(c)) {
+    if (pyro_is_ascii_decimal_digit(c)) {
         return read_number(lexer);
     }
 

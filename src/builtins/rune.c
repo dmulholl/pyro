@@ -23,42 +23,54 @@ static PyroValue fn_is_rune(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue rune_is_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return args[-1].as.u32 > 127 ? pyro_bool(false) : pyro_bool(true);
+    return pyro_bool(args[-1].as.u32 < 128);
 }
 
 
 static PyroValue rune_is_ascii_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    switch (args[-1].as.u32) {
-        case ' ':
-        case '\t':
-        case '\r':
-        case '\n':
-        case '\v':
-        case '\f':
-            return pyro_bool(true);
-        default:
-            return pyro_bool(false);
-    }
+    return pyro_bool(
+        args[-1].as.u32 < 128 && pyro_is_ascii_ws((char)args[-1].as.u32)
+    );
+}
+
+
+static PyroValue rune_is_ascii_decimal(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    return pyro_bool(
+        args[-1].as.u32 < 128 && pyro_is_ascii_decimal_digit((char)args[-1].as.u32)
+    );
+}
+
+
+static PyroValue rune_is_ascii_octal(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    return pyro_bool(
+        args[-1].as.u32 < 128 && pyro_is_ascii_octal_digit((char)args[-1].as.u32)
+    );
+}
+
+
+static PyroValue rune_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    return pyro_bool(
+        args[-1].as.u32 < 128 && pyro_is_ascii_hex_digit((char)args[-1].as.u32)
+    );
+}
+
+
+static PyroValue rune_is_ascii_alpha(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    return pyro_bool(
+        args[-1].as.u32 < 128 && pyro_is_ascii_alpha((char)args[-1].as.u32)
+    );
+}
+
+
+static PyroValue rune_is_ascii_printable(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    return pyro_bool(
+        args[-1].as.u32 < 128 && pyro_is_ascii_printable((char)args[-1].as.u32)
+    );
 }
 
 
 static PyroValue rune_is_unicode_ws(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(pyro_is_unicode_whitespace(args[-1].as.u32));
-}
-
-
-static PyroValue rune_is_ascii_decimal(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return (args[-1].as.u32 < '0' || args[-1].as.u32 > '9') ? pyro_bool(false) : pyro_bool(true);
-}
-
-
-static PyroValue rune_is_ascii_octal(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return (args[-1].as.u32 < '0' || args[-1].as.u32 > '7') ? pyro_bool(false) : pyro_bool(true);
-}
-
-
-static PyroValue rune_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(pyro_is_ascii_hex_digit(args[-1].as.u32));
 }
 
 
@@ -74,4 +86,6 @@ void pyro_load_std_builtins_rune(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_rune, "is_ascii_decimal", rune_is_ascii_decimal, 0);
     pyro_define_pub_method(vm, vm->class_rune, "is_ascii_octal", rune_is_ascii_octal, 0);
     pyro_define_pub_method(vm, vm->class_rune, "is_ascii_hex", rune_is_ascii_hex, 0);
+    pyro_define_pub_method(vm, vm->class_rune, "is_ascii_alpha", rune_is_ascii_alpha, 0);
+    pyro_define_pub_method(vm, vm->class_rune, "is_ascii_printable", rune_is_ascii_printable, 0);
 }

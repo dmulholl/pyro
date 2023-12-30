@@ -92,6 +92,8 @@ static PyroValue str_is_ascii(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     for (size_t i = 0; i < str->count; i++) {
+        // If char is signed, this checks if [value < 0].
+        // If char is unsigned, this checks if [value > 127].
         if (str->bytes[i] & 0x80) {
             return pyro_bool(false);
         }

@@ -71,11 +71,11 @@ static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, 
 // Returns true if [c] is in the ASCII range [a-z] or [A-Z].
 bool pyro_is_ascii_alpha(char c);
 
-// Returns true if [c] is ASCII 0-9.
-bool pyro_is_ascii_digit(char c);
-
 // Returns true if [c] is an ASCII whitespace character.
-bool pyro_is_ascii_space(char c);
+bool pyro_is_ascii_ws(char c);
+
+// Returns true if [c] is an ASCII decimal digit.
+bool pyro_is_ascii_decimal_digit(char c);
 
 // Returns true if [c] is an ASCII hexadecimal digit.
 bool pyro_is_ascii_hex_digit(char c);

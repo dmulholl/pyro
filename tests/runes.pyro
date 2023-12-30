@@ -84,4 +84,10 @@ def $test_methods() {
 
     assert '1':is_ascii_hex();
     assert !'x':is_ascii_hex();
+
+    assert 'a':is_ascii_alpha();
+    assert !'1':is_ascii_alpha();
+
+    assert '.':is_ascii_printable();
+    assert !'\x00':is_ascii_printable();
 }

@@ -980,7 +980,7 @@ static PyroStr* format_str(PyroVM* vm, PyroStr* string, const char* format_speci
     }
 
     while (index < format_specifier_length) {
-        if (pyro_is_ascii_digit(format_specifier[index])) {
+        if (pyro_is_ascii_decimal_digit(format_specifier[index])) {
             buffer[buffer_count++] = format_specifier[index++];
         } else {
             pyro_panic(vm, "%s: invalid format specifier for type 'str': '%s'", err_prefix, format_specifier);
@@ -1154,7 +1154,7 @@ PyroStr* pyro_format(
             continue;
         }
 
-        while (fs_index < fs_count && pyro_is_ascii_digit(fs_bytes[fs_index])) {
+        while (fs_index < fs_count && pyro_is_ascii_decimal_digit(fs_bytes[fs_index])) {
             if (index_count == index_capacity - 1) {
                 pyro_panic(vm, "%s: index is too long (max: %zu bytes)", err_prefix, index_capacity - 1);
                 return NULL;
