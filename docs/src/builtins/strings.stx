@@ -263,21 +263,33 @@ This is equivalent to calling the string's `:contains()` method.
 
     Returns `false` if the string is empty.
 
+[[ `:is_ascii_alpha() -> bool` ]]
+
+    Returns `true` if the string contains only ASCII characters in the range `[a-z]` or `[A-Z]`.
+
+    Returns `false` if the string is empty.
+
 [[ `:is_ascii_decimal() -> bool` ]]
 
-    Returns `true` if the string contains only ASCII decimal digits, i.e. `"0"` to `"9"`.
+    Returns `true` if the string contains only ASCII decimal digits, i.e. characters in the range `[0-9]`.
 
     Returns `false` if the string is empty.
 
 [[ `:is_ascii_hex() -> bool` ]]
 
-    Returns `true` if the string contains only ASCII hexadecimal digits, i.e. `"0"` to `"9"`, `"a"` to `"f"`, or `"A"` to `"F"`.
+    Returns `true` if the string contains only ASCII hexadecimal digits, i.e. characters in the range `[0-9]`, `[a-f]`, or `[A-F]`.
 
     Returns `false` if the string is empty.
 
 [[ `:is_ascii_octal() -> bool` ]]
 
-    Returns `true` if the string contains only ASCII octal digits, i.e. `"0"` to `"7"`.
+    Returns `true` if the string contains only ASCII octal digits, i.e. characters in the range `[0-7]`.
+
+    Returns `false` if the string is empty.
+
+[[ `:is_ascii_printable() -> bool` ]]
+
+    Returns `true` if the string contains only printable ASCII characters, i.e. byte values in the range `[32, 126]`.
 
     Returns `false` if the string is empty.
 
@@ -450,11 +462,3 @@ This is equivalent to calling the string's `:contains()` method.
     Returns a new string containing the hex-escaped byte values from the orginal string ---
     e.g. ``<code>`foo`</code>`` becomes ``<code>`\x66\x6F\x6F`</code>``.
     Useful for inspecting and debugging Unicode.
-
-[[ `:to_lower() -> str` ]]
-
-    This method is an alias for `:to_ascii_lower()`.
-
-[[ `:to_upper() -> str` ]]
-
-    This method is an alias for `:to_ascii_upper()`.

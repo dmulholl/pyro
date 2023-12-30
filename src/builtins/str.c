@@ -1285,6 +1285,40 @@ static PyroValue str_is_ascii_hex(PyroVM* vm, size_t arg_count, PyroValue* args)
 }
 
 
+static PyroValue str_is_ascii_alpha(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroStr* str = PYRO_AS_STR(args[-1]);
+    if (str->count == 0) {
+        return pyro_bool(false);
+    }
+
+    for (size_t i = 0; i < str->count; i++) {
+        char c = str->bytes[i];
+        if (!pyro_is_ascii_alpha(c)) {
+            return pyro_bool(false);
+        }
+    }
+
+    return pyro_bool(true);
+}
+
+
+static PyroValue str_is_ascii_printable(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroStr* str = PYRO_AS_STR(args[-1]);
+    if (str->count == 0) {
+        return pyro_bool(false);
+    }
+
+    for (size_t i = 0; i < str->count; i++) {
+        char c = str->bytes[i];
+        if (!pyro_is_ascii_printable(c)) {
+            return pyro_bool(false);
+        }
+    }
+
+    return pyro_bool(true);
+}
+
+
 void pyro_load_std_builtins_str(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$str", fn_str, 1);
@@ -1307,7 +1341,6 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "runes", str_runes, 0);
     pyro_define_pub_method(vm, vm->class_str, "rune_count", str_rune_count, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_ascii_upper", str_to_ascii_upper, 0);
-    pyro_define_pub_method(vm, vm->class_str, "to_upper", str_to_ascii_upper, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_ascii_lower", str_to_ascii_lower, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_lower", str_to_ascii_lower, 0);
     pyro_define_pub_method(vm, vm->class_str, "starts_with", str_starts_with, 1);
@@ -1339,4 +1372,10 @@ void pyro_load_std_builtins_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_decimal", str_is_ascii_decimal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_octal", str_is_ascii_octal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_hex", str_is_ascii_hex, 0);
+    pyro_define_pub_method(vm, vm->class_str, "is_ascii_alpha", str_is_ascii_alpha, 0);
+    pyro_define_pub_method(vm, vm->class_str, "is_ascii_printable", str_is_ascii_printable, 0);
+
+    // Deprecated.
+    pyro_define_pub_method(vm, vm->class_str, "to_lower", str_to_ascii_lower, 0);
+    pyro_define_pub_method(vm, vm->class_str, "to_upper", str_to_ascii_upper, 0);
 }

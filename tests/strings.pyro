@@ -589,6 +589,33 @@ def $test_is_ascii_hex() {
 }
 
 
+def $test_is_ascii_alpha() {
+    assert "a":is_ascii_alpha();
+    assert "A":is_ascii_alpha();
+    assert "aa":is_ascii_alpha();
+    assert "AA":is_ascii_alpha();
+    assert "aBc":is_ascii_alpha();
+    assert "AbC":is_ascii_alpha();
+
+    assert !"":is_ascii_alpha();
+    assert !"_":is_ascii_alpha();
+    assert !".":is_ascii_alpha();
+    assert !"9":is_ascii_alpha();
+    assert !"123":is_ascii_alpha();
+    assert !"abc123":is_ascii_alpha();
+}
+
+
+def $test_is_ascii_printable() {
+    assert "a":is_ascii_printable();
+    assert "abc123[.,?]":is_ascii_printable();
+
+    assert !"":is_ascii_printable();
+    assert !"\x00":is_ascii_printable();
+    assert !"\x01\xff":is_ascii_printable();
+}
+
+
 def $test_is_ascii() {
     assert " ":is_ascii();
     assert "abc":is_ascii();

@@ -536,11 +536,24 @@ Returns <code>false</code> if the string is empty.
 </div>
 <div>
 <dt>
+<code>:is_ascii_alpha() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string contains only ASCII characters in the range <code>[a-z]</code> or <code>[A-Z]</code>.
+</p>
+<p>
+Returns <code>false</code> if the string is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:is_ascii_decimal() -&gt; bool</code>
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string contains only ASCII decimal digits, i.e. <code>&quot;0&quot;</code> to <code>&quot;9&quot;</code>.
+Returns <code>true</code> if the string contains only ASCII decimal digits, i.e. characters in the range <code>[0-9]</code>.
 </p>
 <p>
 Returns <code>false</code> if the string is empty.
@@ -553,7 +566,7 @@ Returns <code>false</code> if the string is empty.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string contains only ASCII hexadecimal digits, i.e. <code>&quot;0&quot;</code> to <code>&quot;9&quot;</code>, <code>&quot;a&quot;</code> to <code>&quot;f&quot;</code>, or <code>&quot;A&quot;</code> to <code>&quot;F&quot;</code>.
+Returns <code>true</code> if the string contains only ASCII hexadecimal digits, i.e. characters in the range <code>[0-9]</code>, <code>[a-f]</code>, or <code>[A-F]</code>.
 </p>
 <p>
 Returns <code>false</code> if the string is empty.
@@ -566,7 +579,20 @@ Returns <code>false</code> if the string is empty.
 </dt>
 <dd>
 <p>
-Returns <code>true</code> if the string contains only ASCII octal digits, i.e. <code>&quot;0&quot;</code> to <code>&quot;7&quot;</code>.
+Returns <code>true</code> if the string contains only ASCII octal digits, i.e. characters in the range <code>[0-7]</code>.
+</p>
+<p>
+Returns <code>false</code> if the string is empty.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_ascii_printable() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the string contains only printable ASCII characters, i.e. byte values in the range <code>[32, 126]</code>.
 </p>
 <p>
 Returns <code>false</code> if the string is empty.
@@ -938,26 +964,6 @@ Returns a new string with all ASCII lowercase characters converted to uppercase.
 Returns a new string containing the hex-escaped byte values from the orginal string &mdash;
 e.g. <code>`foo`</code> becomes <code>`\x66\x6F\x6F`</code>.
 Useful for inspecting and debugging Unicode.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:to_lower() -&gt; str</code>
-</dt>
-<dd>
-<p>
-This method is an alias for <code>:to_ascii_lower()</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:to_upper() -&gt; str</code>
-</dt>
-<dd>
-<p>
-This method is an alias for <code>:to_ascii_upper()</code>.
 </p>
 </dd>
 </div>

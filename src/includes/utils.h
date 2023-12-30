@@ -68,7 +68,7 @@ static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, 
     return false;
 }
 
-// Returns true if [c] is ASCII A-Z or a-z.
+// Returns true if [c] is in the ASCII range [a-z] or [A-Z].
 bool pyro_is_ascii_alpha(char c);
 
 // Returns true if [c] is ASCII 0-9.
@@ -89,10 +89,10 @@ bool pyro_is_ascii_binary_digit(char c);
 // Returns true if [c] is a printable ASCII character.
 bool pyro_is_ascii_printable(char c);
 
-// Returns true if [c] is a lowercase ASCII character.
+// Returns true if [c] is in the ASCII range [a-z].
 bool pyro_is_ascii_lower(char c);
 
-// Returns true if [c] is an uppercase ASCII character.
+// Returns true if [c] is in the ASCII range [A-Z].
 bool pyro_is_ascii_upper(char c);
 
 // Like C23's ckd_add(). Returns true if the result would overflow.
