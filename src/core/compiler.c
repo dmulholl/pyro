@@ -10,10 +10,9 @@
 // a printf-style format string along with any values to be interpolated.
 #define ERROR_AT_PREVIOUS_TOKEN(...) \
     do { \
-        if (!parser->had_syntax_error) { \
-            parser->had_syntax_error = true; \
+        if (!parser->vm->halt_flag) { \
             Token* token = &parser->previous_token; \
-            pyro_syntax_error(parser->vm, parser->src_id, token->line, __VA_ARGS__); \
+            pyro_panic_with_syntax_error(parser->vm, parser->src_id, token->line, __VA_ARGS__); \
         } \
     } while (false)
 
@@ -22,10 +21,9 @@
 // a printf-style format string along with any values to be interpolated.
 #define ERROR_AT_NEXT_TOKEN(...) \
     do { \
-        if (!parser->had_syntax_error) { \
-            parser->had_syntax_error = true; \
+        if (!parser->vm->halt_flag) { \
             Token* token = &parser->next_token; \
-            pyro_syntax_error(parser->vm, parser->src_id, token->line, __VA_ARGS__); \
+            pyro_panic_with_syntax_error(parser->vm, parser->src_id, token->line, __VA_ARGS__); \
         } \
     } while (false)
 
@@ -111,8 +109,6 @@ typedef struct {
     Lexer lexer;
     Token previous_token;
     Token next_token;
-    bool had_syntax_error;
-    bool had_memory_error;
     PyroVM* vm;
     FnCompiler* fn_compiler;
     ClassCompiler* class_compiler;
@@ -206,7 +202,7 @@ static bool lexemes_are_equal(Token* a, Token* b) {
 // through this function.
 static void emit_byte(Parser* parser, uint8_t byte) {
     if (!PyroFn_write(parser->fn_compiler->fn, byte, parser->previous_token.line, parser->vm)) {
-        parser->had_memory_error = true;
+        pyro_panic(parser->vm, "out of memory");
     }
 }
 
@@ -249,7 +245,7 @@ static void emit_naked_return(Parser* parser) {
 static uint16_t add_value_to_constant_table(Parser* parser, PyroValue value) {
     int64_t index = PyroFn_add_constant(parser->fn_compiler->fn, value, parser->vm);
     if (index < 0) {
-        parser->had_memory_error = true;
+        pyro_panic(parser->vm, "out of memory");
         return 0;
     } else if (index > UINT16_MAX) {
         ERROR_AT_PREVIOUS_TOKEN("the function's constant table is full (max: %d values)", UINT16_MAX);
@@ -264,7 +260,7 @@ static uint16_t add_value_to_constant_table(Parser* parser, PyroValue value) {
 static uint16_t make_string_constant_from_identifier(Parser* parser, Token* name) {
     PyroStr* string = PyroStr_copy(name->start, name->length, false, parser->vm);
     if (!string) {
-        parser->had_memory_error = true;
+        pyro_panic(parser->vm, "out of memory");
         return 0;
     }
     return add_value_to_constant_table(parser, pyro_obj(string));
@@ -317,9 +313,6 @@ static void emit_load_value_from_constant_table(Parser* parser, PyroValue value)
 static void advance(Parser* parser) {
     parser->previous_token = parser->next_token;
     parser->next_token = pyro_next_token(&parser->lexer);
-    if (parser->next_token.type == TOKEN_ERROR) {
-        parser->had_syntax_error = true;
-    }
 }
 
 
@@ -396,22 +389,22 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType typ
 
     fn_compiler->fn = PyroFn_new(parser->vm);
     if (!fn_compiler->fn) {
-        parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
+        pyro_panic(parser->vm, "out of memory");
         return false;
     }
 
     fn_compiler->fn->name = PyroStr_copy(name.start, name.length, false, parser->vm);
     if (!fn_compiler->fn->name) {
-        parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
+        pyro_panic(parser->vm, "out of memory");
         return false;
     }
 
     fn_compiler->fn->source_id = PyroStr_copy(parser->src_id, strlen(parser->src_id), false, parser->vm);
     if (!fn_compiler->fn->source_id) {
-        parser->had_memory_error = true;
         parser->fn_compiler = fn_compiler->enclosing;
+        pyro_panic(parser->vm, "out of memory");
         return false;
     }
 
@@ -437,7 +430,7 @@ static PyroFn* end_fn_compiler(Parser* parser) {
     PyroFn* fn = parser->fn_compiler->fn;
 
     if (parser->dump_bytecode) {
-        if (!parser->had_syntax_error) {
+        if (!parser->vm->halt_flag) {
             pyro_disassemble_function(parser->vm, fn, parser->src_id);
         }
     }
@@ -667,7 +660,7 @@ static size_t emit_jump(Parser* parser, PyroOpcode instruction) {
 
 // We call patch_jump() right before emitting the instruction we want the jump to land on.
 static void patch_jump(Parser* parser, size_t index) {
-    if (parser->had_memory_error) {
+    if (parser->vm->halt_flag) {
         return;
     }
 
@@ -1234,7 +1227,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
 
         while (true) {
             parse_expression(parser, false);
-            if (parser->had_syntax_error || parser->had_memory_error) {
+            if (parser->vm->halt_flag) {
                 return TOKEN_UNDEFINED;
             }
 
@@ -1976,7 +1969,7 @@ static void parse_import_stmt(Parser* parser) {
 static void parse_block(Parser* parser) {
     while (!check(parser, TOKEN_RIGHT_BRACE) && !check(parser, TOKEN_EOF)) {
         parse_statement(parser);
-        if (parser->had_syntax_error || parser->had_memory_error) {
+        if (parser->vm->halt_flag) {
             break;
         }
     }
@@ -2770,7 +2763,7 @@ static void parse_statement(Parser* parser) {
 static void log_global_constant(Parser* parser, Token name) {
     GlobalConstant* global_constant = pyro_realloc(parser->vm, NULL, 0, sizeof(GlobalConstant));
     if (!global_constant) {
-        parser->had_memory_error = true;
+        pyro_panic(parser->vm, "out of memory");
         return;
     }
 
@@ -2798,7 +2791,7 @@ static void free_global_constants(Parser* parser) {
 static void log_global_assignment(Parser* parser, Token name) {
     GlobalAssignment* global_asignment = pyro_realloc(parser->vm, NULL, 0, sizeof(GlobalAssignment));
     if (!global_asignment) {
-        parser->had_memory_error = true;
+        pyro_panic(parser->vm, "out of memory");
         return;
     }
 
@@ -2831,7 +2824,7 @@ static void check_global_constants(Parser* parser) {
 
         while (global_constant) {
             if (lexemes_are_equal(&global_assignment->name, &global_constant->name)) {
-                pyro_syntax_error(
+                pyro_panic_with_syntax_error(
                     parser->vm,
                     parser->src_id,
                     global_assignment->name.line,
@@ -2857,8 +2850,6 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     Parser parser;
     parser.fn_compiler = NULL;
     parser.class_compiler = NULL;
-    parser.had_syntax_error = false;
-    parser.had_memory_error = false;
     parser.src_id = src_id;
     parser.vm = vm;
     parser.num_statements = 0;
@@ -2868,8 +2859,7 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     parser.global_assignments = NULL;
 
     // Strip any trailing whitespace before initializing the lexer. This is to ensure we
-    // report the correct line number for syntax errors at the end of the input, e.g. a
-    // missing trailing semicolon.
+    // report the correct line number for syntax errors at the end of the input.
     while (src_len > 0 && pyro_is_ascii_ws(src_code[src_len - 1])) {
         src_len--;
     }
@@ -2877,28 +2867,17 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
 
     FnCompiler fn_compiler;
     if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, make_syntoken_from_basename(src_id))) {
-        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
     // Prime the token pump by reading the first token from the lexer.
     advance(&parser);
-    if (parser.had_syntax_error) {
-        return NULL;
-    }
 
-    // We can get a cascade of syntax errors while parsing a single statement but only the
-    // first will be reported. If the [had_syntax_error] flag is set, a panic has already been
-    // raised.
     while (!match(&parser, TOKEN_EOF)) {
+        if (vm->halt_flag) {
+            break;
+        }
         parse_statement(&parser);
-        if (parser.had_syntax_error) {
-            break;
-        }
-        if (parser.had_memory_error) {
-            pyro_panic(vm, "out of memory");
-            break;
-        }
     }
 
     PyroFn* fn = end_fn_compiler(&parser);
@@ -2923,8 +2902,6 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
     Parser parser;
     parser.fn_compiler = NULL;
     parser.class_compiler = NULL;
-    parser.had_syntax_error = false;
-    parser.had_memory_error = false;
     parser.src_id = src_id;
     parser.vm = vm;
     parser.num_statements = 0;
@@ -2942,22 +2919,14 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
 
     FnCompiler fn_compiler;
     if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, make_syntoken_from_basename(src_id))) {
-        pyro_panic(vm, "out of memory");
         return NULL;
     }
 
     // Prime the token pump by reading the first token from the lexer.
     advance(&parser);
-    if (parser.had_syntax_error) {
-        return NULL;
-    }
 
     parse_expression(&parser, false);
     emit_byte(&parser, PYRO_OPCODE_RETURN);
-
-    if (parser.had_memory_error) {
-        pyro_panic(vm, "out of memory");
-    }
 
     PyroFn* fn = end_fn_compiler(&parser);
 

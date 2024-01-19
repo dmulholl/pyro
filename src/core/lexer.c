@@ -255,7 +255,7 @@ static Token read_backtick_string(Lexer* lexer) {
         }
     }
 
-    pyro_syntax_error(
+    pyro_panic_with_syntax_error(
         lexer->vm,
         lexer->src_id,
         lexer->line,
@@ -294,7 +294,7 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
                 return true;
             }
 
-            pyro_syntax_error(
+            pyro_panic_with_syntax_error(
                 lexer->vm,
                 lexer->src_id,
                 lexer->line,
@@ -314,7 +314,7 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
                 return true;
             }
 
-            pyro_syntax_error(
+            pyro_panic_with_syntax_error(
                 lexer->vm,
                 lexer->src_id,
                 lexer->line,
@@ -338,7 +338,7 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
                 return true;
             }
 
-            pyro_syntax_error(
+            pyro_panic_with_syntax_error(
                 lexer->vm,
                 lexer->src_id,
                 lexer->line,
@@ -354,7 +354,7 @@ static bool is_valid_backslashed_escape(Lexer* lexer) {
                 error_message = "invalid escape sequence \\%c";
             }
 
-            pyro_syntax_error(
+            pyro_panic_with_syntax_error(
                 lexer->vm,
                 lexer->src_id,
                 lexer->line,
@@ -411,7 +411,7 @@ static Token read_double_quote_string(Lexer* lexer) {
         }
     }
 
-    pyro_syntax_error(
+    pyro_panic_with_syntax_error(
         lexer->vm,
         lexer->src_id,
         lexer->line,
@@ -453,7 +453,7 @@ static Token read_rune_literal(Lexer* lexer) {
         }
     }
 
-    pyro_syntax_error(
+    pyro_panic_with_syntax_error(
         lexer->vm,
         lexer->src_id,
         lexer->line,
@@ -508,7 +508,7 @@ static Token next_interpolated_string_token(Lexer* lexer) {
         }
     }
 
-    pyro_syntax_error(
+    pyro_panic_with_syntax_error(
         lexer->vm,
         lexer->src_id,
         lexer->line,
@@ -536,7 +536,7 @@ static Token next_format_specifier_token(Lexer* lexer) {
         next_char(lexer);
     }
 
-    pyro_syntax_error(
+    pyro_panic_with_syntax_error(
         lexer->vm,
         lexer->src_id,
         lexer->line,
@@ -656,7 +656,7 @@ Token pyro_next_token(Lexer* lexer) {
         error_message = "unexpected character '%c' in input";
     }
 
-    pyro_syntax_error(
+    pyro_panic_with_syntax_error(
         lexer->vm,
         lexer->src_id,
         lexer->line,

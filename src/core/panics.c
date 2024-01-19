@@ -20,7 +20,7 @@ static void print_stack_trace(PyroVM* vm) {
 }
 
 
-static void panic(
+static void handle_panic(
     PyroVM* vm,
     const char* format_string,
     va_list args,
@@ -100,14 +100,14 @@ static void panic(
 void pyro_panic(PyroVM* vm, const char* format_string, ...) {
     va_list args;
     va_start(args, format_string);
-    panic(vm, format_string, args, NULL, 0);
+    handle_panic(vm, format_string, args, NULL, 0);
     va_end(args);
 }
 
 
-void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t line_number, const char* format_string, ...) {
+void pyro_panic_with_syntax_error(PyroVM* vm, const char* source_id, size_t line_number, const char* format_string, ...) {
     va_list args;
     va_start(args, format_string);
-    panic(vm, format_string, args, source_id, line_number);
+    handle_panic(vm, format_string, args, source_id, line_number);
     va_end(args);
 }

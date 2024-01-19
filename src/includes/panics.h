@@ -21,6 +21,6 @@
 void pyro_panic(PyroVM* vm, const char* format, ...);
 
 // Triggers a custom panic for syntax errors. This is only used by the compiler.
-void pyro_syntax_error(PyroVM* vm, const char* source_id, size_t line_number, const char* format, ...);
+void pyro_panic_with_syntax_error(PyroVM* vm, const char* source_id, size_t line_number, const char* format, ...);
 
 #endif
