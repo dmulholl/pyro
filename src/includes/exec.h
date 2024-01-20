@@ -23,7 +23,8 @@ void pyro_exec_path(PyroVM* vm, const char* path, PyroMod* module);
 // Runs the $main() function if it is defined in the VM's main module.
 void pyro_run_main_func(PyroVM* vm);
 
-// Attempts to compile but not execute the file.
+// Attempts to compile but not execute the file. Panics if compilation fails, i.e. if the file
+// contains a syntax error or if memory allocation fails during compilation.
 void pyro_try_compile_file(PyroVM* vm, const char* path, bool dump_bytecode);
 
 // Calls a value as a method on a receiver, where [method] is a value returned by
