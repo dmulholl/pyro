@@ -214,11 +214,16 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 [[ `$hash(arg: any) -> i64` ]]
 
     Returns the argument's 64-bit hash value.
+    Hash values are used for looking up entries in the builtin `map` and `set` types.
 
-    (
+    All Pyro values have a default hash value.
+
+    * For all builtin types, if `A == B`, then `A` and `B` have the same hash value.
+    * By default, if `arg` is an instance of a class, its hash value is simply its memory address.
+    * If `arg` is an instance of a class with a `:$hash()` method, this function returns the output of that method.
+
     This function can return negative values.
-    Think of the hash as the 64-bit bit-pattern itself. 50% of these patterns will convert to negative signed integers.
-    )
+    Think of the hash as a 64-bit bit-pattern. 50% of these patterns will convert to negative signed two's-complement integers.
 
 
 
