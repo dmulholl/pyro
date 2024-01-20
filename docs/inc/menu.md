@@ -9,7 +9,6 @@
 * [Standard Library](@root/stdlib//)
 * [Examples](@root/examples//)
 * [Tutorials](@root/tutorials//)
-* [Roadmap](@root/roadmap//)
 * [FAQ](@root/faq//)
 * [Syntax Highlighting](@root/syntax-highlighting//)
 * [Acknowledgements](@root/acknowledgements//)
