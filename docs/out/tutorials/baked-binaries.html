@@ -65,6 +65,9 @@
             </header>
             <ul class="stx-toc">
 <li>
+<a href="#prerequisites">Prerequisites</a>
+</li>
+<li>
 <a href="#create-a-test-application">Create a test application</a>
 </li>
 <li>
@@ -82,7 +85,13 @@
 </ul>
 <hr>
 <p>
-Pyro has builtin support for creating <i>baked application binaries</i> &mdash; i.e. you can compile a Pyro script and a collection of modules into a single-file executable that doesn't require a Pyro interpreter.
+Pyro has builtin support for creating <i>baked application binaries</i> &mdash; i.e. you can compile a Pyro script and a collection of modules into a single-file stand-alone executable.
+</p>
+<h3 id="prerequisites">
+Prerequisites
+</h3>
+<p>
+You'll need to have <code>make</code>, <code>git</code>, and a C compiler installed on your system to follow this tutorial.
 </p>
 <h3 id="create-a-test-application">
 Create a test application
@@ -172,7 +181,7 @@ test-app/
 └── script.pyro
 </pre>
 <p>
-Next, add the following lines of code to the <code>script.pyro</code> file:
+Next, add the following code to the <code>script.pyro</code> file:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">adder</span><span class="p">;</span>
@@ -202,7 +211,7 @@ Try running the script:
 pyro ./script.pyro 123 456
 </pre>
 <p>
-You should see the output:
+You should see the following output:
 </p>
 <pre>
 579
@@ -240,13 +249,13 @@ Try running the binary:
 ./bin/adder 123 456
 </pre>
 <p>
-You should see the output:
+You should see the following output:
 </p>
 <pre>
 579
 </pre>
 <p>
-That's it &mdash; you've baked your Pyro script and its dependent modules into a compiled single-file executable.
+That's it &mdash; you've baked your Pyro script and its dependent modules into a single-file stand-alone executable.
 </p>
 <p>
 See the <code>bake</code> command's help text for further details:

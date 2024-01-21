@@ -7,7 +7,13 @@ meta_title: Pyro Tutorials &mdash; Baked Application Binaries
 ::: insert toc
 ::: hr
 
-Pyro has builtin support for creating *baked application binaries* --- i.e. you can compile a Pyro script and a collection of modules into a single-file executable that doesn't require a Pyro interpreter.
+Pyro has builtin support for creating *baked application binaries* --- i.e. you can compile a Pyro script and a collection of modules into a single-file stand-alone executable.
+
+
+
+### Prerequisites
+
+You'll need to have `make`, `git`, and a C compiler installed on your system to follow this tutorial.
 
 
 
@@ -90,7 +96,7 @@ Our test directory should look like this:
     │   └── adder.pyro
     └── script.pyro
 
-Next, add the following lines of code to the `script.pyro` file:
+Next, add the following code to the `script.pyro` file:
 
 ::: code pyro
     import adder;
@@ -113,12 +119,14 @@ Next, add the following lines of code to the `script.pyro` file:
         echo adder::add(a, b);
     }
 
+
+
 Try running the script:
 
 ::: code
     pyro ./script.pyro 123 456
 
-You should see the output:
+You should see the following output:
 
 ::: code
     579
@@ -151,12 +159,12 @@ Try running the binary:
 ::: code
     ./bin/adder 123 456
 
-You should see the output:
+You should see the following output:
 
 ::: code
     579
 
-That's it --- you've baked your Pyro script and its dependent modules into a compiled single-file executable.
+That's it --- you've baked your Pyro script and its dependent modules into a single-file stand-alone executable.
 
 See the `bake` command's help text for further details:
 
