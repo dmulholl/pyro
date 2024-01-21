@@ -22,9 +22,14 @@ void pyro_cli_run_path(ArgParser* parser) {
     pyro_cli_add_import_roots_from_environment(vm);
     pyro_cli_add_import_roots_from_path(vm, path);
 
-    // Add the command line args to the global $args variable.
+    // Add the command line arguments to the global $args variable.
     char** args = ap_get_args(parser);
-    pyro_set_args(vm, ap_count_args(parser), args);
+    if (!pyro_set_args(vm, ap_count_args(parser), args)) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        free(args);
+        exit(1);
+    }
     free(args);
 
     // Set the trace-execution flag.

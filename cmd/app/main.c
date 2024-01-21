@@ -7,7 +7,11 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
-    pyro_set_args(vm, (size_t)argc, argv);
+    if (!pyro_set_args(vm, (size_t)argc, argv)) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        exit(1);
+    }
 
     const unsigned char* code;
     size_t code_length;

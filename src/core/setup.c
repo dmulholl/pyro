@@ -550,8 +550,7 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
         tup->values[i] = pyro_obj(string);
     }
 
-    pyro_define_superglobal(vm, "$args", pyro_obj(tup));
-    return true;
+    return pyro_define_superglobal(vm, "$args", pyro_obj(tup));
 }
 
 

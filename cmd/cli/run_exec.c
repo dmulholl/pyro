@@ -15,9 +15,14 @@ void pyro_cli_run_exec(ArgParser* parser) {
     pyro_cli_add_import_roots_from_command_line(vm, parser);
     pyro_cli_add_import_roots_from_environment(vm);
 
-    // Add the command line args to the global $args variable.
+    // Add the command line arguments to the global $args variable.
     char** args = ap_get_args(parser);
-    pyro_set_args(vm, ap_count_args(parser), args);
+    if (!pyro_set_args(vm, ap_count_args(parser), args)) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        free(args);
+        exit(1);
+    }
     free(args);
 
     const char* code = ap_get_str_value(parser, "exec");

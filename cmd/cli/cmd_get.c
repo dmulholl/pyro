@@ -9,7 +9,12 @@ int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     }
 
     char** args = ap_get_args(cmd_parser);
-    pyro_set_args(vm, ap_count_args(cmd_parser), args);
+    if (!pyro_set_args(vm, ap_count_args(cmd_parser), args)) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        free(args);
+        return 1;
+    }
     free(args);
 
     const unsigned char* code;
