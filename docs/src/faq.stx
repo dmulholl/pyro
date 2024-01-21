@@ -20,12 +20,14 @@ I built the first prototype version in Python and it burned through CPU cycles. 
 
 No. Right now, Pyro is approximately as fast as Python, which is generally considered to be a slow language.
 
-Pyro is designed to be highly *optimizable* so, in theory, future versions could run at least an order of magnitude faster, but for now this is a distant theoretical possibility.
+Execution speed isn't a priority for Pyro --- if you need fast code, you should use a compiled language.
+
+That said, Pyro is highly *optimizable* so, in theory, future versions could run at least an order of magnitude faster, but for now this is a theoretical possibility.
 
 
 ### Is Pyro embeddable?
 
 Potentially.
-There's no fundamental problem here --- the code just isn't organised right now in a way that would make it easy to embed.
+Right now, Pyro's code isn't organised in a way that makes it easy to embed, but this isn't a fundamental problem.
 
 Once the core language is mature, I'll work on making it easily embeddable so it can be used, like Lua, as a scripting language inside a larger application.
