@@ -13,7 +13,7 @@ As an example, let's build a simple `ListMap` type that maps keys to lists of va
 If we try to look up a key that isn't in the map, we'll get back an empty list.
 
 
-### The Code
+### The ListMap type
 
 Here's the full code for our `ListMap`:
 
@@ -47,7 +47,7 @@ Here's the full code for our `ListMap`:
 
 
 
-### Usage
+### Indexing into instances
 
 We can now read from and write to instances of our custom `ListMap` type using `[]`, just like the builtin `map` and `vec` types.
 
@@ -77,4 +77,3 @@ If we write more values to the map using the same key, the values are appended t
     assert map["foo"]:count() == 2;
     assert map["foo"][0] == 123;
     assert map["foo"][1] == 456;
-

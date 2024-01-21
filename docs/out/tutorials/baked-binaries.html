@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Tutorials &mdash; Baked Application Binaries</title>
+
+        
+
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+
+        
+            <script src="../assets/code.js"></script>
+        
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-tutorials-baked-binaries node-tutorials node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+            
+            
+                <p class="version">Version 0.13.4</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+
+        <article class="main">
+            <header class="title">
+                <h1>Baked Application Binaries</h1>
+                
+                    <p class="subtitle">Compile a Pyro script and a collection of modules into a single-file executable.</p>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#create-a-test-application">Create a test application</a>
+</li>
+<li>
+<a href="#create-a-test-library">Create a test library</a>
+</li>
+<li>
+<a href="#add-tests-for-the-library">Add tests for the library</a>
+</li>
+<li>
+<a href="#create-a-script-file">Create a script file</a>
+</li>
+<li>
+<a href="#bake-a-binary">Bake a binary</a>
+</li>
+</ul>
+<hr>
+<p>
+Pyro has builtin support for creating <i>baked application binaries</i> &mdash; i.e. you can compile a Pyro script and a collection of modules into a single-file executable that doesn't require a Pyro interpreter.
+</p>
+<h3 id="create-a-test-application">
+Create a test application
+</h3>
+<p>
+First, create a directory for our test application:
+</p>
+<pre>
+mkdir test-app
+cd test-app
+</pre>
+<h3 id="create-a-test-library">
+Create a test library
+</h3>
+<p>
+Next, create a library module for our test application:
+</p>
+<pre>
+mkdir modules
+touch modules/adder.pyro
+</pre>
+<p>
+Our test directory should look like this:
+</p>
+<pre>
+test-app/
+└── modules/
+    └── adder.pyro
+</pre>
+<p>
+In the <code>modules/adder.pyro</code> file, add the following code:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">pub</span> <span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<h3 id="add-tests-for-the-library">
+Add tests for the library
+</h3>
+<p>
+Let's add some tests for our library module.
+In the <code>modules/adder.pyro</code> file, add the following code:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$test_add_integers</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">def</span> <span class="nx">$test_add_floats</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.5</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">def</span> <span class="nx">$test_add_strings</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;abcdef&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Now let's run those tests:
+</p>
+<pre>
+pyro test modules/adder.pyro
+</pre>
+<p>
+You should see output confirming that all the tests have passed.
+</p>
+<h3 id="create-a-script-file">
+Create a script file
+</h3>
+<p>
+Now let's create a Pyro script that uses our library module to add two integers.
+We'll read the input values from the command line.
+</p>
+<p>
+First, create the script file:
+</p>
+<pre>
+touch script.pyro
+</pre>
+<p>
+Our test directory should look like this:
+</p>
+<pre>
+test-app/
+├── modules/
+│   └── adder.pyro
+└── script.pyro
+</pre>
+<p>
+Next, add the following lines of code to the <code>script.pyro</code> file:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kn">import</span> <span class="nx">adder</span><span class="p">;</span>
+
+<span class="kd">def</span> <span class="nx">$main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">$args</span><span class="p">:</span><span class="nx">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">3</span> <span class="p">{</span>
+        <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: expected 2 arguments&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">let</span> <span class="nx">a</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">$i64</span><span class="p">(</span><span class="nx">$args</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: invalid argument: ${$args[1]}&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">let</span> <span class="nx">b</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">$i64</span><span class="p">(</span><span class="nx">$args</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+    <span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: invalid argument: ${$args[2]}&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">echo</span> <span class="nx">adder</span><span class="p">::</span><span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>
+Try running the script:
+</p>
+<pre>
+pyro ./script.pyro 123 456
+</pre>
+<p>
+You should see the output:
+</p>
+<pre>
+579
+</pre>
+<p>
+Try running the script with invalid input values and you should see an error message.
+</p>
+<h3 id="bake-a-binary">
+Bake a binary
+</h3>
+<p>
+Run the following command to bake the Pyro script and the <code>modules</code> directory into a baked application binary:
+</p>
+<pre>
+pyro bake ./script.pyro --output ./bin/adder
+</pre>
+<p>
+The test directory should look like this:
+</p>
+<pre>
+test-app/
+├── bin/
+│   └── adder
+├── modules/
+│   └── adder.pyro
+└── script.pyro
+</pre>
+<p>
+The binary has been compiled in a new <code>bin</code> directory as <code>bin/adder</code>.
+</p>
+<p>
+Try running the binary:
+</p>
+<pre>
+./bin/adder 123 456
+</pre>
+<p>
+You should see the output:
+</p>
+<pre>
+579
+</pre>
+<p>
+That's it &mdash; you've baked your Pyro script and its dependent modules into a compiled single-file executable.
+</p>
+<p>
+See the <code>bake</code> command's help text for further details:
+</p>
+<pre>
+pyro bake --help
+</pre>
+        </article>
+
+        
+    </body>
+</html>

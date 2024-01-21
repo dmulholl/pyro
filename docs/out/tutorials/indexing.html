@@ -65,10 +65,10 @@
             </header>
             <ul class="stx-toc">
 <li>
-<a href="#the-code">The Code</a>
+<a href="#the-listmap-type">The ListMap type</a>
 </li>
 <li>
-<a href="#usage">Usage</a>
+<a href="#indexing-into-instances">Indexing into instances</a>
 </li>
 </ul>
 <hr>
@@ -79,8 +79,8 @@ You can add indexing support to a user-defined type by implementing <code>$get()
 As an example, let's build a simple <code>ListMap</code> type that maps keys to lists of values.
 If we try to look up a key that isn't in the map, we'll get back an empty list.
 </p>
-<h3 id="the-code">
-The Code
+<h3 id="the-listmap-type">
+The ListMap type
 </h3>
 <p>
 Here's the full code for our <code>ListMap</code>:
@@ -121,8 +121,8 @@ Implementing the <code>$set(key, value)</code> method adds support for index-sty
 </p>
 </li>
 </ul>
-<h3 id="usage">
-Usage
+<h3 id="indexing-into-instances">
+Indexing into instances
 </h3>
 <p>
 We can now read from and write to instances of our custom <code>ListMap</code> type using <code>[]</code>, just like the builtin <code>map</code> and <code>vec</code> types.

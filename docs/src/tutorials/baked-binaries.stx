@@ -1,0 +1,164 @@
+---
+title: Baked Application Binaries
+subtitle: Compile a Pyro script and a collection of modules into a single-file executable.
+meta_title: Pyro Tutorials &mdash; Baked Application Binaries
+---
+
+::: insert toc
+::: hr
+
+Pyro has builtin support for creating *baked application binaries* --- i.e. you can compile a Pyro script and a collection of modules into a single-file executable that doesn't require a Pyro interpreter.
+
+
+
+### Create a test application
+
+First, create a directory for our test application:
+
+::: code
+    mkdir test-app
+    cd test-app
+
+
+
+### Create a test library
+
+Next, create a library module for our test application:
+
+::: code
+    mkdir modules
+    touch modules/adder.pyro
+
+Our test directory should look like this:
+
+::: code
+    test-app/
+    └── modules/
+        └── adder.pyro
+
+In the `modules/adder.pyro` file, add the following code:
+
+::: code pyro
+    pub def add(a, b) {
+        return a + b;
+    }
+
+
+
+### Add tests for the library
+
+Let's add some tests for our library module.
+In the `modules/adder.pyro` file, add the following code:
+
+::: code pyro
+    def $test_add_integers() {
+        assert add(1, 2) == 3;
+    }
+
+    def $test_add_floats() {
+        assert add(1.2, 2.3) == 3.5;
+    }
+
+    def $test_add_strings() {
+        assert add("abc", "def") == "abcdef";
+    }
+
+Now let's run those tests:
+
+::: code
+    pyro test modules/adder.pyro
+
+You should see output confirming that all the tests have passed.
+
+
+
+### Create a script file
+
+Now let's create a Pyro script that uses our library module to add two integers.
+We'll read the input values from the command line.
+
+First, create the script file:
+
+::: code
+    touch script.pyro
+
+Our test directory should look like this:
+
+::: code
+    test-app/
+    ├── modules/
+    │   └── adder.pyro
+    └── script.pyro
+
+Next, add the following lines of code to the `script.pyro` file:
+
+::: code pyro
+    import adder;
+
+    def $main() {
+        if $args:count() != 3 {
+            $exit("error: expected 2 arguments");
+        }
+
+        let a = try $i64($args[1]);
+        if $is_err(a) {
+            $exit("error: invalid argument: ${$args[1]}");
+        }
+
+        let b = try $i64($args[2]);
+        if $is_err(b) {
+            $exit("error: invalid argument: ${$args[2]}");
+        }
+
+        echo adder::add(a, b);
+    }
+
+Try running the script:
+
+::: code
+    pyro ./script.pyro 123 456
+
+You should see the output:
+
+::: code
+    579
+
+Try running the script with invalid input values and you should see an error message.
+
+
+
+### Bake a binary
+
+Run the following command to bake the Pyro script and the `modules` directory into a baked application binary:
+
+::: code
+    pyro bake ./script.pyro --output ./bin/adder
+
+The test directory should look like this:
+
+::: code
+    test-app/
+    ├── bin/
+    │   └── adder
+    ├── modules/
+    │   └── adder.pyro
+    └── script.pyro
+
+The binary has been compiled in a new `bin` directory as `bin/adder`.
+
+Try running the binary:
+
+::: code
+    ./bin/adder 123 456
+
+You should see the output:
+
+::: code
+    579
+
+That's it --- you've baked your Pyro script and its dependent modules into a compiled single-file executable.
+
+See the `bake` command's help text for further details:
+
+::: code
+    pyro bake --help

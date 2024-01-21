@@ -13,4 +13,8 @@ meta_title: Pyro Tutorials
 
 [[ [Indexing](@root/tutorials/indexing//) ]]
 
-    This tutorial demonstrates adding indexing support to a user-defined type by building a custom `ListMap` type that maps keys to lists of values.
+    Add indexing support to a user-defined type so we can index into instances using `[]` syntax.
+
+[[ [Baked Application Binaries](@root/tutorials/baked-binaries//) ]]
+
+    Compile a Pyro script and a collection of modules into a single-file executable.
