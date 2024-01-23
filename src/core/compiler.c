@@ -8,7 +8,7 @@
 
 // Signals a syntax error at the previous token. The argument is the error message specified as
 // a printf-style format string along with any values to be interpolated.
-#define ERROR_AT_PREVIOUS_TOKEN(...) \
+#define SYNTAX_ERROR_AT_PREVIOUS_TOKEN(...) \
     do { \
         if (!parser->vm->halt_flag) { \
             Token* token = &parser->previous_token; \
@@ -19,7 +19,7 @@
 
 // Signals a syntax error at the next token. The argument is the error message specified as
 // a printf-style format string along with any values to be interpolated.
-#define ERROR_AT_NEXT_TOKEN(...) \
+#define SYNTAX_ERROR_AT_NEXT_TOKEN(...) \
     do { \
         if (!parser->vm->halt_flag) { \
             Token* token = &parser->next_token; \
@@ -248,7 +248,7 @@ static uint16_t add_value_to_constant_table(Parser* parser, PyroValue value) {
         pyro_panic(parser->vm, "out of memory");
         return 0;
     } else if (index > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("the function's constant table is full (max: %d values)", UINT16_MAX);
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("the function's constant table is full (max: %d values)", UINT16_MAX);
         return 0;
     }
     return (uint16_t)index;
@@ -322,7 +322,7 @@ static bool consume(Parser* parser, TokenType type, const char* error_message) {
         advance(parser);
         return true;
     }
-    ERROR_AT_NEXT_TOKEN(error_message);
+    SYNTAX_ERROR_AT_NEXT_TOKEN(error_message);
     return false;
 }
 
@@ -449,7 +449,7 @@ static bool resolve_local(Parser* parser, FnCompiler* fn_compiler, Token* name, 
                 *is_constant = local->is_constant;
                 return true;
             }
-            ERROR_AT_PREVIOUS_TOKEN("can't access local '%.*s' in initializing expression", name->length, name->start);
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("can't access local '%.*s' in initializing expression", name->length, name->start);
             return true;
         }
     }
@@ -474,7 +474,7 @@ static int add_upvalue(Parser* parser, FnCompiler* fn_compiler, uint8_t index, b
 
     // TODO: investigate whether this low limit is really necessary.
     if (upvalue_count == 256) {
-        ERROR_AT_PREVIOUS_TOKEN("too many closure variables in function (max: 256)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many closure variables in function (max: 256)");
         return 0;
     }
 
@@ -519,7 +519,7 @@ static bool resolve_upvalue(Parser* parser, FnCompiler* fn_compiler, Token* name
 
 static void add_local(Parser* parser, Token name) {
     if (parser->fn_compiler->local_count == 256) {
-        ERROR_AT_PREVIOUS_TOKEN("too many local variables in scope (max: 256)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many local variables in scope (max: 256)");
         return;
     }
     Local* local = &parser->fn_compiler->locals[parser->fn_compiler->local_count++];
@@ -593,7 +593,7 @@ static void declare_variable(Parser* parser, Token name, bool is_constant) {
             break;
         }
         if (lexemes_are_equal(&name, &local->name)) {
-            ERROR_AT_PREVIOUS_TOKEN("'%.*s' has already been declared in this scope", name.length, name.start);
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("'%.*s' has already been declared in this scope", name.length, name.start);
         }
     }
 
@@ -666,7 +666,7 @@ static void patch_jump(Parser* parser, size_t index) {
 
     size_t jump = parser->fn_compiler->fn->code_count - index - 2;
     if (jump > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("jump length exceeds maximum limit (max: %d bytes of bytecode)", UINT16_MAX);
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("jump length exceeds maximum limit (max: %d bytes of bytecode)", UINT16_MAX);
         return;
     }
 
@@ -689,14 +689,14 @@ static uint8_t parse_argument_list(Parser* parser, bool* unpack_last_argument) {
             break;
         }
         if (unpack) {
-            ERROR_AT_NEXT_TOKEN("unpacked argument must be last argument");
+            SYNTAX_ERROR_AT_NEXT_TOKEN("unpacked argument must be last argument");
         }
         if (match(parser, TOKEN_STAR)) {
             unpack = true;
         }
         parse_expression(parser, false);
         if (arg_count == 255) {
-            ERROR_AT_PREVIOUS_TOKEN("too many arguments (max: 255)");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many arguments (max: 255)");
         }
         arg_count++;
     } while (match(parser, TOKEN_COMMA));
@@ -754,7 +754,7 @@ static void emit_store_named_variable(Parser* parser, Token name) {
     int local_index = 0;
     if (resolve_local(parser, parser->fn_compiler, &name, &local_index, &is_constant)) {
         if (is_constant) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid assignment to constant '%.*s'", name.length, name.start);
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid assignment to constant '%.*s'", name.length, name.start);
             return;
         }
 
@@ -781,7 +781,7 @@ static void emit_store_named_variable(Parser* parser, Token name) {
     int upvalue_index;
     if (resolve_upvalue(parser, parser->fn_compiler, &name, &upvalue_index, &is_constant)) {
         if (is_constant) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid assignment to constant '%.*s'", name.length, name.start);
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid assignment to constant '%.*s'", name.length, name.start);
             return;
         }
 
@@ -806,21 +806,21 @@ static int64_t parse_hex_literal(Parser* parser) {
             continue;
         }
         if (count == 16) {
-            ERROR_AT_PREVIOUS_TOKEN("too many digits in hex literal (max: 16)");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many digits in hex literal (max: 16)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid hex literal (zero digits)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid hex literal (zero digits)");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 16);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid hex literal (out of range)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid hex literal (out of range)");
     }
 
     return value;
@@ -836,21 +836,21 @@ static int64_t parse_binary_literal(Parser* parser) {
             continue;
         }
         if (count == 64) {
-            ERROR_AT_PREVIOUS_TOKEN("too many digits in binary literal (max: 64)");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many digits in binary literal (max: 64)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid binary literal (zero digits)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid binary literal (zero digits)");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 2);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid binary literal (out of range)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid binary literal (out of range)");
     }
 
     return value;
@@ -866,21 +866,21 @@ static int64_t parse_octal_literal(Parser* parser) {
             continue;
         }
         if (count == 22) {
-            ERROR_AT_PREVIOUS_TOKEN("too many digits in octal literal (max: 22)");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many digits in octal literal (max: 22)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
     }
 
     if (count == 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid octal literal (zero digits)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid octal literal (zero digits)");
     }
 
     buffer[count] = '\0';
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 8);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid octal literal (out of range)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid octal literal (out of range)");
     }
 
     return value;
@@ -896,7 +896,7 @@ static int64_t parse_int_literal(Parser* parser) {
             continue;
         }
         if (count == 20) {
-            ERROR_AT_PREVIOUS_TOKEN("too many digits in integer literal (max: 20)");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many digits in integer literal (max: 20)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
@@ -906,7 +906,7 @@ static int64_t parse_int_literal(Parser* parser) {
     errno = 0;
     int64_t value = strtoll(buffer, NULL, 10);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid integer literal (out of range)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid integer literal (out of range)");
     }
 
     return value;
@@ -928,7 +928,7 @@ static double parse_float_literal(Parser* parser) {
             continue;
         }
         if (count == 64) {
-            ERROR_AT_PREVIOUS_TOKEN("too many digits in floating-point literal (max: 64)");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many digits in floating-point literal (max: 64)");
             return 0;
         }
         buffer[count++] = parser->previous_token.start[i];
@@ -938,7 +938,7 @@ static double parse_float_literal(Parser* parser) {
     errno = 0;
     double value = strtod(buffer, NULL);
     if (errno != 0) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid floating-point literal (out of range)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid floating-point literal (out of range)");
     }
 
     return value;
@@ -954,7 +954,7 @@ static uint32_t parse_rune_literal(Parser* parser) {
     size_t length = parser->previous_token.length;
 
     if (length == 0 || length > max_length) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid character literal");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid character literal");
         return 0;
     }
 
@@ -963,12 +963,12 @@ static uint32_t parse_rune_literal(Parser* parser) {
 
     Utf8CodePoint cp;
     if (!pyro_read_utf8_codepoint((uint8_t*)buffer, count, &cp)) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid character literal (not utf-8)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid character literal (not utf-8)");
         return 0;
     }
 
     if (cp.length != count) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid character literal (too many bytes)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid character literal (too many bytes)");
         return 0;
     }
 
@@ -1117,7 +1117,7 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
     }
 
     else {
-        ERROR_AT_NEXT_TOKEN(
+        SYNTAX_ERROR_AT_NEXT_TOKEN(
             "unexpected token '%.*s', a default %s value must be a simple literal",
             parser->next_token.length,
             parser->next_token.start,
@@ -1306,20 +1306,20 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
 
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a method declaration");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a method declaration");
         } else if (parser->fn_compiler->type == TYPE_STATIC_METHOD) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' in a static method");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' in a static method");
         }
         emit_load_named_variable(parser, parser->previous_token);
     }
 
     else if (match(parser, TOKEN_SUPER)) {
         if (parser->class_compiler == NULL) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' outside a class");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' outside a class");
         } else if (parser->fn_compiler->type == TYPE_STATIC_METHOD) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a static method");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a static method");
         } else if (!parser->class_compiler->has_superclass) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a class with no superclass");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a class with no superclass");
         }
 
         consume(parser, TOKEN_COLON, "expected ':' after 'super'");
@@ -1359,11 +1359,11 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     }
 
     else if (match(parser, TOKEN_EOF)) {
-        ERROR_AT_NEXT_TOKEN("unexpected end of input, expected an expression");
+        SYNTAX_ERROR_AT_NEXT_TOKEN("unexpected end of input, expected an expression");
     }
 
     else {
-        ERROR_AT_NEXT_TOKEN(
+        SYNTAX_ERROR_AT_NEXT_TOKEN(
             "unexpected token '%.*s', expected an expression",
             parser->next_token.length,
             parser->next_token.start
@@ -1479,7 +1479,7 @@ static void parse_call_expr(Parser* parser, bool can_assign) {
             uint16_t index = make_string_constant_from_identifier(parser, &name);
             emit_u8_u16be(parser, PYRO_OPCODE_GET_MEMBER, index);
             if (match_assignment_token(parser)) {
-                ERROR_AT_PREVIOUS_TOKEN("invalid assignment to '%.*s', cannot assign to module members", name.length, name.start);
+                SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid assignment to '%.*s', cannot assign to module members", name.length, name.start);
             }
         }
 
@@ -1706,7 +1706,7 @@ static void parse_assignment_expr(Parser* parser, bool can_assign) {
     parse_conditional_expr(parser, can_assign);
 
     if (can_assign && match_assignment_token(parser)) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid assignment target");
     }
 }
 
@@ -1789,7 +1789,7 @@ static void parse_echo_stmt(Parser* parser) {
 
     while (match(parser, TOKEN_COMMA)) {
         if (count == 255) {
-            ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'echo' (max: 255)");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'echo' (max: 255)");
             return;
         }
         parse_expression(parser, true);
@@ -1804,7 +1804,7 @@ static void parse_echo_stmt(Parser* parser) {
 static void parse_assert_stmt(Parser* parser) {
     parse_expression(parser, false);
     if (match_assignment_token(parser)) {
-        ERROR_AT_PREVIOUS_TOKEN(
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
             "assignment is not allowed in 'assert' statements, wrap in '()' to enable"
         );
         return;
@@ -1837,7 +1837,7 @@ static void parse_unpacking_declaration(Parser* parser, Access access, bool is_c
 
     do {
         if (var_name_count == var_name_capacity) {
-            ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %d)", var_name_capacity);
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %d)", var_name_capacity);
             return;
         }
         var_name_indexes[var_name_count++] = consume_variable_name(parser, "expected variable name", is_constant);
@@ -1900,7 +1900,7 @@ static void parse_import_stmt(Parser* parser) {
                 member_names[member_name_count] = parser->previous_token;
                 member_name_count++;
                 if (member_name_count > 64) {
-                    ERROR_AT_PREVIOUS_TOKEN("too many member names in import statement (max: 64)");
+                    SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many member names in import statement (max: 64)");
                     return;
                 }
             } while (match(parser, TOKEN_COMMA));
@@ -1915,7 +1915,7 @@ static void parse_import_stmt(Parser* parser) {
     }
 
     if (module_count > 255) {
-        ERROR_AT_PREVIOUS_TOKEN("too many module names in import statement (max: 255)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many module names in import statement (max: 255)");
         return;
     }
 
@@ -1938,7 +1938,7 @@ static void parse_import_stmt(Parser* parser) {
             member_name_indexes[alias_count] = module_name_index;
             alias_count++;
             if (alias_count > 16) {
-                ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement (max: 16)");
+                SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement (max: 16)");
                 return;
             }
         } while (match(parser, TOKEN_COMMA));
@@ -1946,7 +1946,7 @@ static void parse_import_stmt(Parser* parser) {
 
     if (member_name_count > 0) {
         if (alias_count > 0 && alias_count != member_name_count) {
-            ERROR_AT_PREVIOUS_TOKEN("alias and member numbers do not match in import statement");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("alias and member numbers do not match in import statement");
             return;
         }
         for (int i = 0; i < member_name_count; i++) {
@@ -1955,7 +1955,7 @@ static void parse_import_stmt(Parser* parser) {
         define_variables(parser, member_name_indexes, member_name_count, PRIVATE, false);
     } else {
         if (alias_count > 1) {
-            ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many alias names in import statement");
             return;
         }
         declare_variable(parser, module_name, false);
@@ -1991,7 +1991,7 @@ static void parse_if_stmt(Parser* parser) {
     // Parse the condition.
     parse_expression(parser, false);
     if (match_assignment_token(parser)) {
-        ERROR_AT_PREVIOUS_TOKEN(
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
             "assignment is not allowed in 'if' conditions, wrap in '()' to enable"
         );
         return;
@@ -2039,7 +2039,7 @@ static void emit_loop(Parser* parser, size_t start_bytecode_count) {
 
     size_t offset = parser->fn_compiler->fn->code_count - start_bytecode_count + 2;
     if (offset > UINT16_MAX) {
-        ERROR_AT_PREVIOUS_TOKEN("loop body is too large (max: %d bytes of bytecode)", UINT16_MAX);
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("loop body is too large (max: %d bytes of bytecode)", UINT16_MAX);
     }
 
     emit_byte(parser, (offset >> 8) & 0xff);
@@ -2061,7 +2061,7 @@ static void parse_for_in_stmt(Parser* parser) {
         unpack_vars = true;
         do {
             if (loop_vars_count == loop_vars_capacity) {
-                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", loop_vars_capacity);
+                SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", loop_vars_capacity);
                 return;
             }
             consume(parser, TOKEN_IDENTIFIER, "expected loop variable name");
@@ -2168,7 +2168,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         loop_has_condition = true;
         parse_expression(parser, false);
         if (match_assignment_token(parser)) {
-            ERROR_AT_PREVIOUS_TOKEN(
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
                 "assignment is not allowed in loop conditions, wrap in '()' to enable"
             );
             return;
@@ -2272,7 +2272,7 @@ static void parse_while_stmt(Parser* parser) {
     // Parse the condition.
     parse_expression(parser, false);
     if (match_assignment_token(parser)) {
-        ERROR_AT_PREVIOUS_TOKEN(
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
             "assignment is not allowed in while conditions, wrap in '()' to enable"
         );
         return;
@@ -2320,7 +2320,7 @@ static void parse_with_stmt(Parser* parser) {
         unpack_vars = true;
         do {
             if (var_names_count == var_names_capacity) {
-                ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", var_names_capacity);
+                SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many variable names to unpack (max: %zu)", var_names_capacity);
                 return;
             }
             consume(parser, TOKEN_IDENTIFIER, "expected a variable name");
@@ -2375,10 +2375,10 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
             break;
         }
         if (fn_compiler.fn->arity == 255) {
-            ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
+            SYNTAX_ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
         }
         if (fn_compiler.fn->is_variadic) {
-            ERROR_AT_NEXT_TOKEN("variadic parameter must be final parameter");
+            SYNTAX_ERROR_AT_NEXT_TOKEN("variadic parameter must be final parameter");
         }
         if (match(parser, TOKEN_STAR)) {
             fn_compiler.fn->is_variadic = true;
@@ -2390,12 +2390,12 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
             parse_type(parser);
         }
         if (default_value_count > 0 && !check(parser, TOKEN_EQUAL)) {
-            ERROR_AT_NEXT_TOKEN("missing default value for parameter");
+            SYNTAX_ERROR_AT_NEXT_TOKEN("missing default value for parameter");
             return;
         }
         if (match(parser, TOKEN_EQUAL)) {
             if (fn_compiler.fn->is_variadic) {
-                ERROR_AT_PREVIOUS_TOKEN("a variadic function cannot have default argument values");
+                SYNTAX_ERROR_AT_PREVIOUS_TOKEN("a variadic function cannot have default argument values");
             }
             parser->fn_compiler = fn_compiler.enclosing;
             parse_default_value_expression(parser, "argument");
@@ -2541,7 +2541,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
             } else if (match(parser, TOKEN_VAR)) {
                 parse_field_declaration(parser, PUBLIC);
             } else {
-                ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'pub'");
+                SYNTAX_ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'pub'");
                 return;
             }
         } else if (match(parser, TOKEN_PRI)) {
@@ -2550,7 +2550,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
             } else if (match(parser, TOKEN_VAR)) {
                 parse_field_declaration(parser, PRIVATE);
             } else {
-                ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'pri'");
+                SYNTAX_ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'pri'");
                 return;
             }
         } else if (match(parser, TOKEN_STATIC)) {
@@ -2559,7 +2559,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
             } else if (match(parser, TOKEN_VAR)) {
                 parse_field_declaration(parser, STATIC);
             } else {
-                ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'static'");
+                SYNTAX_ERROR_AT_NEXT_TOKEN("expected field or method declaration after 'static'");
                 return;
             }
         } else {
@@ -2586,7 +2586,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
 
 static void parse_return_stmt(Parser* parser) {
     if (parser->fn_compiler->type == TYPE_MODULE) {
-        ERROR_AT_PREVIOUS_TOKEN("can't return from module-level code");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("can't return from module-level code");
         return;
     }
 
@@ -2596,7 +2596,7 @@ static void parse_return_stmt(Parser* parser) {
     }
 
     if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
-        ERROR_AT_PREVIOUS_TOKEN("can't return a value from an initializer");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("can't return a value from an initializer");
         return;
     }
 
@@ -2609,7 +2609,7 @@ static void parse_return_stmt(Parser* parser) {
     }
 
     if (count > 255) {
-        ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'return' (max: 255)");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("too many arguments for 'return' (max: 255)");
     }
 
     consume(parser, TOKEN_SEMICOLON, "expected ';' after return statement");
@@ -2624,7 +2624,7 @@ static void parse_return_stmt(Parser* parser) {
 
 static void parse_break_stmt(Parser* parser) {
     if (parser->fn_compiler->loop_compiler == NULL) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid use of 'break' outside a loop");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'break' outside a loop");
         return;
     }
     parser->fn_compiler->loop_compiler->had_break = true;
@@ -2644,7 +2644,7 @@ static void parse_break_stmt(Parser* parser) {
 
 static void parse_continue_stmt(Parser* parser) {
     if (parser->fn_compiler->loop_compiler == NULL) {
-        ERROR_AT_PREVIOUS_TOKEN("invalid use of 'continue' outside a loop");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'continue' outside a loop");
         return;
     }
 
@@ -2668,7 +2668,7 @@ static void parse_statement(Parser* parser) {
 
     if (match(parser, TOKEN_PUB)) {
         if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pub', only valid at global scope");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pub', only valid at global scope");
             return;
         }
         if (match(parser, TOKEN_VAR)) {
@@ -2680,14 +2680,14 @@ static void parse_statement(Parser* parser) {
         } else if (match(parser, TOKEN_CLASS)) {
             parse_class_declaration(parser, PUBLIC);
         } else {
-            ERROR_AT_NEXT_TOKEN("unexpected token after 'pub'");
+            SYNTAX_ERROR_AT_NEXT_TOKEN("unexpected token after 'pub'");
             return;
         }
     }
 
     else if (match(parser, TOKEN_PRI)) {
         if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
-            ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pri', only valid at global scope");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pri', only valid at global scope");
             return;
         }
         if (match(parser, TOKEN_VAR)) {
@@ -2699,7 +2699,7 @@ static void parse_statement(Parser* parser) {
         } else if (match(parser, TOKEN_CLASS)) {
             parse_class_declaration(parser, PRIVATE);
         } else {
-            ERROR_AT_NEXT_TOKEN("unexpected token after 'pri'");
+            SYNTAX_ERROR_AT_NEXT_TOKEN("unexpected token after 'pri'");
             return;
         }
     }
