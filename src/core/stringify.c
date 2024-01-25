@@ -57,7 +57,13 @@ static PyroStr* make_debug_string_for_string(PyroVM* vm, PyroStr* input_string) 
         return NULL;
     }
 
-    return PyroBuf_to_str(buf, vm);
+    PyroStr* string = PyroBuf_to_str(buf, vm);
+    if (!string) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    return string;
 }
 
 
@@ -733,12 +739,13 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
 
 
 // With the '%g' format specifier, the precision sets the maximum number of significant digits.
+// Panics and returns NULL if an error occurs.
 // Ref: https://stackoverflow.com/a/26702084
 // Ref: https://stackoverflow.com/a/4742599
 // Ref: https://www.exploringbinary.com/the-shortest-decimal-string-that-round-trips-may-not-be-the-nearest/
 static char* get_round_tripable_string_for_f64(PyroVM* vm, double value) {
     char* sig_fig_15 = pyro_sprintf(vm, "%.15g", value);
-    if (!sig_fig_15) {
+    if (vm->panic_flag) {
         return NULL;
     }
     if (strtod(sig_fig_15, NULL) == value) {
@@ -747,7 +754,7 @@ static char* get_round_tripable_string_for_f64(PyroVM* vm, double value) {
     PYRO_FREE_ARRAY(vm, char, sig_fig_15, strlen(sig_fig_15) + 1);
 
     char* sig_fig_16 = pyro_sprintf(vm, "%.16g", value);
-    if (!sig_fig_16) {
+    if (vm->panic_flag) {
         return NULL;
     }
     if (strtod(sig_fig_16, NULL) == value) {
@@ -760,9 +767,11 @@ static char* get_round_tripable_string_for_f64(PyroVM* vm, double value) {
 }
 
 
+// Panics and returns NULL if an error occurs.
 static PyroStr* make_debug_string_for_f64(PyroVM* vm, double value) {
     char* array = get_round_tripable_string_for_f64(vm, value);
     if (!array) {
+        // We've already panicked.
         return NULL;
     }
 
@@ -800,6 +809,37 @@ static PyroStr* make_debug_string_for_f64(PyroVM* vm, double value) {
 
 
 PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
+    if (PYRO_IS_F64(value)) {
+        return make_debug_string_for_f64(vm, value.as.f64);
+    }
+
+    if (PYRO_IS_STR(value)) {
+        return make_debug_string_for_string(vm, PYRO_AS_STR(value));
+    }
+
+    if (PYRO_IS_BUF(value)) {
+        return make_debug_string_for_buf(vm, PYRO_AS_BUF(value));
+    }
+
+    if (PYRO_IS_RUNE(value)) {
+        return make_debug_string_for_rune(vm, value);
+    }
+
+    if (PYRO_IS_ERR(value)) {
+        PyroErr* err = PYRO_AS_ERR(value);
+        if (err->message == NULL || err->message->count == 0) {
+            return pyro_sprintf_to_obj(vm, "<err \"\">");
+        }
+
+        PyroStr* debug_message = make_debug_string_for_string(vm, err->message);
+        if (!debug_message) {
+            // We've already panicked.
+            return NULL;
+        }
+
+        return pyro_sprintf_to_obj(vm, "<err %s>", debug_message->bytes);
+    }
+
     PyroValue method = pyro_get_method(vm, value, vm->str_dollar_debug);
     if (!PYRO_IS_NULL(method)) {
         if (!pyro_push(vm, value)) return NULL;
@@ -812,46 +852,6 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
             return NULL;
         }
         return PYRO_AS_STR(result);
-    }
-
-    if (PYRO_IS_STR(value)) {
-        PyroStr* string = make_debug_string_for_string(vm, PYRO_AS_STR(value));
-        if (!string) {
-            return NULL;
-        }
-        return string;
-    }
-
-    if (PYRO_IS_BUF(value)) {
-        PyroStr* string = make_debug_string_for_buf(vm, PYRO_AS_BUF(value));
-        if (!string) {
-            return NULL;
-        }
-        return string;
-    }
-
-    if (PYRO_IS_RUNE(value)) {
-        PyroStr* string = make_debug_string_for_rune(vm, value);
-        if (!string) {
-            return NULL;
-        }
-        return string;
-    }
-
-    if (PYRO_IS_ERR(value)) {
-        PyroErr* err = PYRO_AS_ERR(value);
-        if (err->message == NULL || err->message->count == 0) {
-            return pyro_sprintf_to_obj(vm, "<err \"\">");
-        }
-        PyroStr* debug_message = make_debug_string_for_string(vm, err->message);
-        if (!debug_message) {
-            return NULL;
-        }
-        return pyro_sprintf_to_obj(vm, "<err %s>", debug_message->bytes);
-    }
-
-    if (PYRO_IS_F64(value)) {
-        return make_debug_string_for_f64(vm, value.as.f64);
     }
 
     return pyro_stringify_value(vm, value);

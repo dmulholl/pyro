@@ -225,7 +225,7 @@ bool pyro_reallocate_stack(PyroVM* vm);
     bool pyro_move_stack(PyroVM* vm);
 #endif
 
-// Pushes a value onto the stack.
+// Pushes a value onto the stack. Panics if memory allocation fails.
 static inline bool pyro_push(PyroVM* vm, PyroValue value) {
     if (vm->stack_top == vm->stack_max) {
         if (!pyro_reallocate_stack(vm)) {
