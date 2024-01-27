@@ -92,6 +92,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     Returns a string representing `arg` suitable for use in debugging.
 
+    * If `arg` is an `f64`, this function returns the shortest decimal representation that round-trips to the same `f64` value.
     * If `arg` has a `:$debug()` method, the output of this method will be returned.
     * Otherwise, if `arg` has a `:$str()` method, the output of this method will be returned.
     * Otherwise, the default string for `arg` will be returned.

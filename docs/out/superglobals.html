@@ -220,6 +220,9 @@ Returns a string representing <code>arg</code> suitable for use in debugging.
 </p>
 <ul>
 <li>
+If <code>arg</code> is an <code>f64</code>, this function returns the shortest decimal representation that round-trips to the same <code>f64</code> value.
+</li>
+<li>
 If <code>arg</code> has a <code>:$debug()</code> method, the output of this method will be returned.
 </li>
 <li>

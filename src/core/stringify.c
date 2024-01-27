@@ -738,6 +738,7 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
 }
 
 
+// Returns the shortest decimal representation of the value that reliably round-trips.
 // With the '%g' format specifier, the precision sets the maximum number of significant digits.
 // Panics and returns NULL if an error occurs.
 // Ref: https://stackoverflow.com/a/26702084
@@ -767,6 +768,7 @@ static char* get_round_tripable_string_for_f64(PyroVM* vm, double value) {
 }
 
 
+// Returns the shortest decimal representation of the value that reliably round-trips.
 // Panics and returns NULL if an error occurs.
 static PyroStr* make_debug_string_for_f64(PyroVM* vm, double value) {
     char* array = get_round_tripable_string_for_f64(vm, value);
