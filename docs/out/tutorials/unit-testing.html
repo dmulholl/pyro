@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro Tutorials &mdash; Unit Testing</title>
+
+        
+
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+
+        
+            <script src="../assets/code.js"></script>
+        
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-tutorials-unit-testing node-tutorials node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+            
+            
+                <p class="version">Version 0.13.4</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+
+        <article class="main">
+            <header class="title">
+                <h1>Unit Testing</h1>
+                
+                    <p class="subtitle">This tutorial demonstrates Pyro's support for unit testing.</p>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#setup">Setup</a>
+</li>
+<li>
+<a href="#testing-valid-input">Testing valid input</a>
+</li>
+<li>
+<a href="#testing-invalid-input">Testing invalid input</a>
+</li>
+<li>
+<a href="#the-test-command">The test command</a>
+</li>
+</ul>
+<hr>
+<p>
+Pyro makes it easy to add unit tests to your code.
+You run unit tests using the <code>test</code> command.
+</p>
+<h3 id="setup">
+Setup
+</h3>
+<p>
+Create a Pyro script to experiment with unit testing:
+</p>
+<pre>
+touch script.pyro
+</pre>
+<p>
+Add the following function that adds two values and returns the result:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+Add a <code>$main()</code> function that calls the <code>add()</code> function:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nx">add</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>
+Try running the script:
+</p>
+<pre>
+pyro ./script.pyro
+</pre>
+<p>
+You should see the following output:
+</p>
+<pre>
+579
+</pre>
+<h3 id="testing-valid-input">
+Testing valid input
+</h3>
+<p>
+Now let's add some tests for the <code>add()</code> function:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$test_add_integers</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">def</span> <span class="nx">$test_add_floats</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.5</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">def</span> <span class="nx">$test_add_strings</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">add</span><span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;abcdef&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<ul>
+<li>
+A test function is a function whose name begins with <code>$test_</code>.
+</li>
+<li>
+A test function passes if it executes without panicking.
+</li>
+<li>
+You can use an <code>assert</code> statement to make a test function panic if the test fails.
+</li>
+</ul>
+<p>
+Run the tests using the <code>test</code> command:
+</p>
+<pre>
+pyro test ./script.pyro
+</pre>
+<p>
+You should see output confirming that all the tests have passed.
+</p>
+<h3 id="testing-invalid-input">
+Testing invalid input
+</h3>
+<p>
+If you try adding incompatible types using the <code>+</code> operator &mdash; e.g. an integer and a string &mdash; the result will be a panic.
+</p>
+<p>
+Assume we want our <code>add()</code> function to behave the same way. Let's add a test for this expected behaviour.
+</p>
+<p>
+First, add a test that we expect to fail:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$test_add_incompatible_types</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">add</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>
+Run the tests again using the <code>test</code> command:
+</p>
+<pre>
+pyro test ./script.pyro
+</pre>
+<p>
+You should see output stating that the test failed.
+</p>
+<p>
+We can test for an expected panic using a <code>try</code> expression.
+Replace the test function above with the following version:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$test_add_incompatible_types</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">add</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">));</span>
+<span class="p">}</span>
+</pre>
+<ul>
+<li>
+A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>err</code> if it panics.
+</li>
+<li>
+Here we use the <code>$is_err()</code> builtin to test for the expected <code>err</code> returned by the <code>try</code> expression.
+</li>
+</ul>
+<p>
+Run the tests again using the <code>test</code> command:
+</p>
+<pre>
+pyro test ./script.pyro
+</pre>
+<p>
+You should see output confirming that all the tests have passed.
+</p>
+<h3 id="the-test-command">
+The <code>test</code> command
+</h3>
+<p>
+You can learn more about the <code>test</code> command <a href="../features/testing.html">here</a>.
+</p>
+        </article>
+
+        
+    </body>
+</html>

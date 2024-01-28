@@ -3,6 +3,10 @@ title: Tutorials
 meta_title: Pyro Tutorials
 ---
 
+[[ [Unit Testing](@root/tutorials/unit-testing//) ]]
+
+    This tutorial demonstrates Pyro's builtin support for unit-testing.
+
 [[ [Operator Overloading](@root/tutorials/operator-overloading//) ]]
 
     This tutorial demonstrates Pyro's support for operator overloading by building a custom complex-number type.
@@ -12,8 +16,7 @@ meta_title: Pyro Tutorials
     This tutorial demonstrates Pyro's iterator protocol by building an iterator for a custom linked-list type.
 
 [[ [Indexing](@root/tutorials/indexing//) ]]
-
-    Add indexing support to a user-defined type so we can index into instances using `[]` syntax.
+    This tutorial demonstrates Pyro's support for indexing by adding indexing support to a user-defined type.
 
 [[ [Baked Application Binaries](@root/tutorials/baked-binaries//) ]]
 

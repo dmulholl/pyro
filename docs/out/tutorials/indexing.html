@@ -73,7 +73,8 @@
 </ul>
 <hr>
 <p>
-You can add indexing support to a user-defined type by implementing <code>$get()</code> and/or <code>$set()</code> methods &mdash; these methods let us index into instances of the type using <code>[]</code> syntax.
+You can add indexing support to a user-defined type by implementing <code>$get()</code> and/or <code>$set()</code> methods.
+These methods let you index into instances of the type using <code>instance[index]</code> syntax, just like the builtin <code>map</code> and <code>vec</code> types.
 </p>
 <p>
 As an example, let's build a simple <code>ListMap</code> type that maps keys to lists of values.

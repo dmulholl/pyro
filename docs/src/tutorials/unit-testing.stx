@@ -1,0 +1,118 @@
+---
+title: Unit Testing
+subtitle: This tutorial demonstrates Pyro's support for unit testing.
+meta_title: Pyro Tutorials &mdash; Unit Testing
+---
+
+::: insert toc
+::: hr
+
+Pyro makes it easy to add unit tests to your code.
+You run unit tests using the `test` command.
+
+### Setup
+
+Create a Pyro script to experiment with unit testing:
+
+::: code
+    touch script.pyro
+
+Add the following function that adds two values and returns the result:
+
+::: code pyro
+    def add(a, b) {
+        return a + b;
+    }
+
+Add a `$main()` function that calls the `add()` function:
+
+::: code pyro
+    def $main() {
+        echo add(123, 456);
+    }
+
+Try running the script:
+
+::: code
+    pyro ./script.pyro
+
+You should see the following output:
+
+::: code
+    579
+
+
+
+### Testing valid input
+
+Now let's add some tests for the `add()` function:
+
+::: code pyro
+    def $test_add_integers() {
+        assert add(1, 2) == 3;
+    }
+
+    def $test_add_floats() {
+        assert add(1.2, 2.3) == 3.5;
+    }
+
+    def $test_add_strings() {
+        assert add("abc", "def") == "abcdef";
+    }
+
+* A test function is a function whose name begins with `$test_`.
+* A test function passes if it executes without panicking.
+* You can use an `assert` statement to make a test function panic if the test fails.
+
+Run the tests using the `test` command:
+
+::: code
+    pyro test ./script.pyro
+
+You should see output confirming that all the tests have passed.
+
+
+
+### Testing invalid input
+
+If you try adding incompatible types using the `+` operator --- e.g. an integer and a string --- the result will be a panic.
+
+Assume we want our `add()` function to behave the same way. Let's add a test for this expected behaviour.
+
+First, add a test that we expect to fail:
+
+::: code pyro
+    def $test_add_incompatible_types() {
+        add(123, "foo");
+    }
+
+Run the tests again using the `test` command:
+
+::: code
+    pyro test ./script.pyro
+
+You should see output stating that the test failed.
+
+We can test for an expected panic using a `try` expression.
+Replace the test function above with the following version:
+
+::: code pyro
+    def $test_add_incompatible_types() {
+        assert $is_err(try add(123, "foo"));
+    }
+
+* A `try` expression returns the value of its operand if it evaluates without panicking or an `err` if it panics.
+* Here we use the `$is_err()` builtin to test for the expected `err` returned by the `try` expression.
+
+Run the tests again using the `test` command:
+
+::: code
+    pyro test ./script.pyro
+
+You should see output confirming that all the tests have passed.
+
+
+
+### The `test` command
+
+You can learn more about the `test` command [here](@root/features/testing//).
