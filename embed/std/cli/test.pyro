@@ -39,7 +39,7 @@ def restore_stashed_import_roots(stashed_roots) {
     }
 }
 
-def run_tests_with_errors() {
+def run_strict_tests() {
     for filepath in $args {
         if !fs::is_file(filepath) {
             $exit("error: invalid path '${filepath}'");
@@ -91,6 +91,9 @@ def run_tests() {
         var result = try $exec(code, filepath, module);
         if $is_err(result) {
             $print("\r[  \x1B[1;31mFAIL\x1B[0m  ]\n");
+            if VERBOSE {
+                $print("          \x1B[1;90m  line ${result["line"]}: ${result}\x1B[0m\n");
+            }
             files_failed += 1;
             restore_stashed_import_roots(stashed_roots);
             continue;
@@ -108,6 +111,9 @@ def run_tests() {
                     had_failed_test_func = true;
                     funcs_failed += 1;
                     $print("            \x1B[1;31m× ${name}()\x1B[0m\n");
+                    if VERBOSE {
+                        $print("            \x1B[1;90m  line ${result["line"]}: ${result}\x1B[0m\n");
+                    }
                 } else {
                     funcs_passed += 1;
                 }
@@ -141,8 +147,8 @@ def run_tests() {
     }
 }
 
-if ERRORS {
-    run_tests_with_errors();
+if STRICT {
+    run_strict_tests();
 } else {
     run_tests();
 }
