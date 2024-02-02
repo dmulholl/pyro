@@ -8,6 +8,41 @@ pub def set_filepath(filepath) {
 }
 ";
 
+def red(arg: any) -> str {
+    if NO_COLOR {
+        return $str(arg);
+    }
+    return "\x1B[1;31m${arg}\x1B[0m";
+}
+
+def green(arg: any) -> str {
+    if NO_COLOR {
+        return $str(arg);
+    }
+    return "\x1B[1;32m${arg}\x1B[0m";
+}
+
+def grey(arg: any) -> str {
+    if NO_COLOR {
+        return $str(arg);
+    }
+    return "\x1B[1;90m${arg}\x1B[0m";
+}
+
+def red_bg(arg: any) -> str {
+    if NO_COLOR {
+        return $str(arg);
+    }
+    return "\x1B[1;41;30m${arg}\x1B[0m";
+}
+
+def green_bg(arg: any) -> str {
+    if NO_COLOR {
+        return $str(arg);
+    }
+    return "\x1B[1;42;30m${arg}\x1B[0m";
+}
+
 def make_module(filepath) {
     var module = $exec(init_script);
     module::set_filepath(filepath);
@@ -39,7 +74,7 @@ def restore_stashed_import_roots(stashed_roots) {
     }
 }
 
-def run_strict_tests() {
+def run_tests_debug_mode() {
     for filepath in $args {
         if !fs::is_file(filepath) {
             $exit("error: invalid path '${filepath}'");
@@ -82,7 +117,7 @@ def run_tests() {
             $exit("error: failed to read file '${filepath}': ${code}");
         }
 
-        $print("[  ····  ]  ${filepath}");
+        $print("{}  {}", grey("[  ····  ]"), filepath);
         $stdout():flush();
 
         var stashed_roots = add_import_roots_from_path(filepath);
@@ -90,9 +125,9 @@ def run_tests() {
 
         var result = try $exec(code, filepath, module);
         if $is_err(result) {
-            $print("\r[  \x1B[1;31mFAIL\x1B[0m  ]\n");
+            $print("\r{}  {}  {}\n", grey("["), red("FAIL"), grey("]"));
             if VERBOSE {
-                $print("          \x1B[1;90m  line ${result["line"]}: ${result}\x1B[0m\n");
+                $print(grey("            line ${result["line"]}: ${result}\n"));
             }
             files_failed += 1;
             restore_stashed_import_roots(stashed_roots);
@@ -106,13 +141,13 @@ def run_tests() {
                 var result = try module:member(name)();
                 if $is_err(result) {
                     if !had_failed_test_func {
-                        $print("\r[  \x1B[1;31mFAIL\x1B[0m  ]\n");
+                        $print("\r{}  {}  {}\n", grey("["), red("FAIL"), grey("]"));
                     }
                     had_failed_test_func = true;
                     funcs_failed += 1;
-                    $print("            \x1B[1;31m× ${name}()\x1B[0m\n");
+                    $print("            {}\n", red("× ${name}()"));
                     if VERBOSE {
-                        $print("            \x1B[1;90m  line ${result["line"]}: ${result}\x1B[0m\n");
+                        $print(grey("              line ${result["line"]}: ${result}\n"));
                     }
                 } else {
                     funcs_passed += 1;
@@ -124,7 +159,7 @@ def run_tests() {
             files_failed += 1;
         } else {
             files_passed += 1;
-            $print("\r[  \x1B[1;32mPASS\x1B[0m  ]\n");
+            $print("\r{}  {}  {}\n", grey("["), green("PASS"), grey("]"));
         }
 
         restore_stashed_import_roots(stashed_roots);
@@ -133,9 +168,9 @@ def run_tests() {
     var runtime = $clock() - start_time;
 
     if files_failed > 0 {
-        $print("\n  \x1B[1;41;30m FAIL \x1B[0m  ");
+        $print("\n  {}  ", red_bg(" FAIL "));
     } else {
-        $print("\n  \x1B[1;42;30m PASS \x1B[0m  ");
+        $print("\n  {}  ", green_bg(" PASS "));
     }
 
     $print("  Files: {}/{}", files_passed, files_passed + files_failed);
@@ -147,8 +182,8 @@ def run_tests() {
     }
 }
 
-if STRICT {
-    run_strict_tests();
+if DEBUG {
+    run_tests_debug_mode();
 } else {
     run_tests();
 }

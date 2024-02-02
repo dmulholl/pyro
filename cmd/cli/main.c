@@ -42,7 +42,7 @@ static const char* TEST_HELPTEXT =
     "Usage: pyro test [files]\n"
     "\n"
     "  This command runs unit tests. It exits with a non-zero status code if\n"
-    "  one or more tests fail.\n"
+    "  any of the tests fail.\n"
     "\n"
     "  For each input file, Pyro first executes the file, then runs any test\n"
     "  functions it contains, i.e. functions whose names begin with '$test_'.\n"
@@ -51,7 +51,7 @@ static const char* TEST_HELPTEXT =
     "    - A test function passes if it executes without panicking.\n"
     "\n"
     "  You can use an 'assert' statement to make a test file or function panic\n"
-    "  if the test fails, e.g.\n"
+    "  if a test fails, e.g.\n"
     "\n"
     "      def $test_addition() {\n"
     "          assert 1 + 2 == 3;\n"
@@ -61,21 +61,22 @@ static const char* TEST_HELPTEXT =
     "\n"
     "  Use the -v/--verbose flag to show error messages.\n"
     "\n"
-    "  Use the -s/--strict flag to isolate individual test failures. With this\n"
-    "  flag, execution will halt at the first panic and the full stack trace\n"
-    "  will be printed.\n"
+    "  Use the -d/--debug flag to isolate individual test failures. With this\n"
+    "  flag, only error output will be shown. Execution will halt at the first\n"
+    "  panic and the full stack trace will be printed.\n"
     "\n"
     "Arguments:\n"
     "  [files]                    Files to test.\n"
     "\n"
     "Options:\n"
     "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
+    "                             (This option can be specified multiple times.)\n"
     "\n"
     "Flags:\n"
-    "  -h, --help                 Print this help text and exit.\n"
-    "      --no-color             Plain text output, no terminal colors.\n"
-    "  -s, --strict               Halt execution at the first panic.\n"
+    "  -d, --debug                Halts execution at the first panic.\n"
     "                             Prints the full stack trace for the panic.\n"
+    "  -h, --help                 Print this help text and exit.\n"
+    "  -n, --no-color             Plain text output, no terminal colors.\n"
     "  -v, --verbose              Show error messages."
     ;
 
@@ -210,9 +211,9 @@ int main(int argc, char* argv[]) {
     ap_set_helptext(cmd_test, TEST_HELPTEXT);
     ap_set_cmd_callback(cmd_test, pyro_cli_cmd_test);
     ap_add_str_opt(cmd_test, "import-root i", NULL);
-    ap_add_flag(cmd_test, "strict s");
+    ap_add_flag(cmd_test, "debug d");
     ap_add_flag(cmd_test, "verbose v");
-    ap_add_flag(cmd_test, "no-colour no-color");
+    ap_add_flag(cmd_test, "no-color no-colour n");
 
     // Register the parser for the 'time' comand.
     ArgParser* cmd_time = ap_new_cmd(parser, "time");

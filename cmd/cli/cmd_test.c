@@ -15,8 +15,8 @@ int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
     pyro_cli_add_import_roots_from_command_line(vm, cmd_parser);
     pyro_cli_add_import_roots_from_environment(vm);
 
-    bool set_strict = ap_found(cmd_parser, "strict");
-    if (!pyro_define_superglobal(vm, "STRICT", pyro_bool(set_strict))) {
+    bool set_debug = ap_found(cmd_parser, "debug");
+    if (!pyro_define_superglobal(vm, "DEBUG", pyro_bool(set_debug))) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         return 1;
@@ -29,8 +29,8 @@ int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
         return 1;
     }
 
-    bool set_no_colour = ap_found(cmd_parser, "no-colour");
-    if (!pyro_define_superglobal(vm, "NO_COLOUR", pyro_bool(set_no_colour))) {
+    bool set_no_color = ap_found(cmd_parser, "no-color");
+    if (!pyro_define_superglobal(vm, "NO_COLOR", pyro_bool(set_no_color))) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         return 1;
