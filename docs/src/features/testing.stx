@@ -15,8 +15,10 @@ Pyro has builtin support for unit tests using the `test` command:
       [files]              Files to test.
 
     Flags:
-      -e, --errors         Show (only) standard error output.
+      -d, --debug          Halt execution at the first panic.
       -h, --help           Print this help text and exit.
+      -n, --no-color       Plain text output.
+      -v, --verbose        Show error messages.
 
 Specify a single file to test:
 
@@ -27,11 +29,15 @@ Specify multiple files to test:
     $ pyro test *.pyro
 
 
+
 ### Test Functions
 
-For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with `$test_`. A test function passes if it executes without panicking.
+For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with `$test_`.
 
-You can use an `assert` statement to make a test function panic if the test fails, e.g.
+* A test file passes if it executes without panicking.
+* A test function passes if it executes without panicking.
+
+You can use an `assert` statement to make a test file or function panic if a test fails, e.g.
 
 ::: code pyro
       def $test_addition() {
@@ -48,8 +54,8 @@ An `assert` statement passes if its operand expression evaluates as *truthy* or 
 
 Note that test functions take no arguments.
 
-Use the `-e/--errors` flag to isolate individual test failures.
-With this flag, (only) standard error output is printed, and execution will halt at the first panic.
+Use the `-v/--verbose` flag to show error messages.
+
 
 
 ### Module-Level Tests

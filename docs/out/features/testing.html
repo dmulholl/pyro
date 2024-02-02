@@ -25,7 +25,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.13.4</p>
+                <p class="version">Version 0.13.6</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -75,8 +75,10 @@ Arguments:
   [files]              Files to test.
 
 Flags:
-  -e, --errors         Show (only) standard error output.
+  -d, --debug          Halt execution at the first panic.
   -h, --help           Print this help text and exit.
+  -n, --no-color       Plain text output.
+  -v, --verbose        Show error messages.
 </pre>
 <p>
 Specify a single file to test:
@@ -94,10 +96,18 @@ $ pyro test *.pyro
 Test Functions
 </h3>
 <p>
-For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with <code>$test_</code>. A test function passes if it executes without panicking.
+For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with <code>$test_</code>.
 </p>
+<ul>
+<li>
+A test file passes if it executes without panicking.
+</li>
+<li>
+A test function passes if it executes without panicking.
+</li>
+</ul>
 <p>
-You can use an <code>assert</code> statement to make a test function panic if the test fails, e.g.
+You can use an <code>assert</code> statement to make a test file or function panic if a test fails, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">$test_addition</span><span class="p">()</span> <span class="p">{</span>
@@ -120,8 +130,7 @@ An <code>assert</code> statement passes if its operand expression evaluates as <
 Note that test functions take no arguments.
 </p>
 <p>
-Use the <code>-e/--errors</code> flag to isolate individual test failures.
-With this flag, (only) standard error output is printed, and execution will halt at the first panic.
+Use the <code>-v/--verbose</code> flag to show error messages.
 </p>
 <h3 id="module-level-tests">
 Module-Level Tests
