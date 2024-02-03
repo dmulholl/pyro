@@ -1,6 +1,6 @@
 ---
 title: Unit Testing
-subtitle: This tutorial demonstrates Pyro's support for unit testing.
+subtitle: This tutorial demonstrates Pyro's builtin support for unit testing.
 meta_title: Pyro Tutorials &mdash; Unit Testing
 ---
 
@@ -45,7 +45,7 @@ You should see the following output:
 
 ### Testing valid input
 
-Now let's add some tests for the `add()` function:
+Now let's add some tests for the `add()` function. Add the following test functions to `script.pyro`:
 
 ::: code pyro
     def $test_add_integers() {
@@ -62,7 +62,7 @@ Now let's add some tests for the `add()` function:
 
 * A test function is a function whose name begins with `$test_`.
 * A test function passes if it executes without panicking.
-* You can use an `assert` statement to make a test function panic if the test fails.
+* You can use an `assert` statement to make a test function panic if a test fails.
 
 Run the tests using the `test` command:
 
@@ -86,12 +86,19 @@ First, add a test that we expect to fail:
         add(123, "foo");
     }
 
-Run the tests again using the `test` command:
+Run the tests using the `test` command:
 
 ::: code
     pyro test ./script.pyro
 
-You should see output stating that the test failed.
+You should see output stating that the new test failed.
+
+Try running the tests again, this time adding a `-v/--verbose` flag:
+
+::: code
+    pyro test ./script.pyro -v
+
+You should see similar output stating that the new test failed, but this time the output will include the error message for the panic.
 
 We can test for an expected panic using a `try` expression.
 Replace the test function above with the following version:
@@ -115,4 +122,9 @@ You should see output confirming that all the tests have passed.
 
 ### The `test` command
 
-You can learn more about the `test` command [here](@root/features/testing//).
+You can view the helptext for the `test` command by running:
+
+::: code
+    pyro test --help
+
+You can find more detailed documentation for the `test` command [here](@root/features/testing//).

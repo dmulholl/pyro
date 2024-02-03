@@ -3,39 +3,34 @@ title: Unit Tests
 meta_title: Pyro &mdash; Unit Tests
 ---
 
-Pyro has builtin support for unit tests using the `test` command:
+::: insert toc
+::: hr
 
-    $ pyro test --help
+Pyro has builtin support for running unit tests using the `test` command.
+You can view the helptext for the `test` command by running:
 
-    Usage: pyro test [files]
-
-      This command runs unit tests.
-
-    Arguments:
-      [files]              Files to test.
-
-    Flags:
-      -d, --debug          Halt execution at the first panic.
-      -h, --help           Print this help text and exit.
-      -n, --no-color       Plain text output.
-      -v, --verbose        Show error messages.
+::: code
+    pyro test --help
 
 Specify a single file to test:
 
-    $ pyro test script.pyro
+::: code
+    pyro test script.pyro
 
 Specify multiple files to test:
 
-    $ pyro test *.pyro
+::: code
+    pyro test *.pyro
 
 
 
 ### Test Functions
 
-For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with `$test_`.
+For each input file specified on the command line, Pyro first executes the file, then runs any test functions it contains --- i.e. functions whose name begins with `$test_`.
 
 * A test file passes if it executes without panicking.
 * A test function passes if it executes without panicking.
+* Test functions take no arguments.
 
 You can use an `assert` statement to make a test file or function panic if a test fails, e.g.
 
@@ -44,17 +39,23 @@ You can use an `assert` statement to make a test file or function panic if a tes
           assert 1 + 2 == 3;
       }
 
-The syntax is:
+The syntax for an `assert` statement is:
 
     assert <expression>;
 
-An `assert` statement passes if its operand expression evaluates as *truthy* or fails if it evaluates as *falsey*.
+An `assert` statement passes if its operand expression evaluates as *truthy* or fails (i.e. panics) if it evaluates as *falsey*.
 
 (In Pyro, the values `false`, `null`, and `err` are *falsey*; all other values are *truthy*.)
 
-Note that test functions take no arguments.
+Alternatively, you can make a test fail by calling the builtin `$panic()` function directly, e.g.
 
-Use the `-v/--verbose` flag to show error messages.
+::: code pyro
+    def $test_result_type() {
+        let result = foo(123, 456);
+        if !$is_i64(result) {
+            $panic("expected i64, got {}", $type(result));
+        }
+    }
 
 
 
@@ -66,3 +67,28 @@ You don't need to use test functions for simple tests --- you can put `assert` s
     assert "foo" + "bar" == "foobar";
 
 The `test` command will register the file as passing if it executes without panicking, or as failing if any of the `assert` statements at global-scope fail.
+
+
+
+### Import Roots
+
+When you run a script file using the `test` command, Pyro uses the same default list of import roots it would use if you'd run the script directly ---
+i.e. the directory containing the script file will be added to the list of import roots, along with a `modules` directory alongside the script file.
+
+Use the `-i/--import-root` option to add custom directories to the list of import roots.
+
+
+
+### Command Flags
+
+* Use the `-d/--debug` flag to isolate individual test failures. With this flag, execution will halt at the first panic and a full stack trace will be printed.
+
+* Use the `-n/--no-color` flag for plaintext output without terminal colors.
+
+* Use the `-v/--verbose` flag to show error messages.
+
+
+
+### Tutorial
+
+You can find a unit-testing tutorial [here](@root/tutorials/unit-testing//).

@@ -61,42 +61,48 @@
                 
                 <hr>
             </header>
-            <p>
-Pyro has builtin support for unit tests using the <code>test</code> command:
+            <ul class="stx-toc">
+<li>
+<a href="#test-functions">Test Functions</a>
+</li>
+<li>
+<a href="#module-level-tests">Module-Level Tests</a>
+</li>
+<li>
+<a href="#import-roots">Import Roots</a>
+</li>
+<li>
+<a href="#command-flags">Command Flags</a>
+</li>
+<li>
+<a href="#tutorial">Tutorial</a>
+</li>
+</ul>
+<hr>
+<p>
+Pyro has builtin support for running unit tests using the <code>test</code> command.
+You can view the helptext for the <code>test</code> command by running:
 </p>
 <pre>
-$ pyro test --help
-
-Usage: pyro test [files]
-
-  This command runs unit tests.
-
-Arguments:
-  [files]              Files to test.
-
-Flags:
-  -d, --debug          Halt execution at the first panic.
-  -h, --help           Print this help text and exit.
-  -n, --no-color       Plain text output.
-  -v, --verbose        Show error messages.
+pyro test --help
 </pre>
 <p>
 Specify a single file to test:
 </p>
 <pre>
-$ pyro test script.pyro
+pyro test script.pyro
 </pre>
 <p>
 Specify multiple files to test:
 </p>
 <pre>
-$ pyro test *.pyro
+pyro test *.pyro
 </pre>
 <h3 id="test-functions">
 Test Functions
 </h3>
 <p>
-For each input file specified, Pyro first executes the file, then runs any test functions it contains, i.e. functions whose name begins with <code>$test_</code>.
+For each input file specified on the command line, Pyro first executes the file, then runs any test functions it contains &mdash; i.e. functions whose name begins with <code>$test_</code>.
 </p>
 <ul>
 <li>
@@ -104,6 +110,9 @@ A test file passes if it executes without panicking.
 </li>
 <li>
 A test function passes if it executes without panicking.
+</li>
+<li>
+Test functions take no arguments.
 </li>
 </ul>
 <p>
@@ -115,23 +124,28 @@ You can use an <code>assert</code> statement to make a test file or function pan
 <span class="p">}</span>
 </pre>
 <p>
-The syntax is:
+The syntax for an <code>assert</code> statement is:
 </p>
 <pre>
 assert &lt;expression&gt;;
 </pre>
 <p>
-An <code>assert</code> statement passes if its operand expression evaluates as <i>truthy</i> or fails if it evaluates as <i>falsey</i>.
+An <code>assert</code> statement passes if its operand expression evaluates as <i>truthy</i> or fails (i.e. panics) if it evaluates as <i>falsey</i>.
 </p>
 <p>
 (In Pyro, the values <code>false</code>, <code>null</code>, and <code>err</code> are <i>falsey</i>; all other values are <i>truthy</i>.)
 </p>
 <p>
-Note that test functions take no arguments.
+Alternatively, you can make a test fail by calling the builtin <code>$panic()</code> function directly, e.g.
 </p>
-<p>
-Use the <code>-v/--verbose</code> flag to show error messages.
-</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">$test_result_type</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">foo</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">!</span><span class="nx">$is_i64</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;expected i64, got {}&quot;</span><span class="p">,</span> <span class="nx">$type</span><span class="p">(</span><span class="nx">result</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
 <h3 id="module-level-tests">
 Module-Level Tests
 </h3>
@@ -143,6 +157,36 @@ You don't need to use test functions for simple tests &mdash; you can put <code>
 </pre>
 <p>
 The <code>test</code> command will register the file as passing if it executes without panicking, or as failing if any of the <code>assert</code> statements at global-scope fail.
+</p>
+<h3 id="import-roots">
+Import Roots
+</h3>
+<p>
+When you run a script file using the <code>test</code> command, Pyro uses the same default list of import roots it would use if you'd run the script directly &mdash;
+i.e. the directory containing the script file will be added to the list of import roots, along with a <code>modules</code> directory alongside the script file.
+</p>
+<p>
+Use the <code>-i/--import-root</code> option to add custom directories to the list of import roots.
+</p>
+<h3 id="command-flags">
+Command Flags
+</h3>
+<ul>
+<li>
+Use the <code>-d/--debug</code> flag to isolate individual test failures. With this flag, execution will halt at the first panic and a full stack trace will be printed.
+</li>
+<li>
+Use the <code>-n/--no-color</code> flag for plaintext output without terminal colors.
+</li>
+<li>
+Use the <code>-v/--verbose</code> flag to show error messages.
+</li>
+</ul>
+<h3 id="tutorial">
+Tutorial
+</h3>
+<p>
+You can find a unit-testing tutorial <a href="../tutorials/unit-testing.html">here</a>.
 </p>
         </article>
 

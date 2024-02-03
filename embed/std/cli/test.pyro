@@ -50,17 +50,17 @@ def make_module(filepath) {
 }
 
 def add_import_roots_from_path(filepath) {
-    var stashed_roots = $roots:copy();
+    let stashed_roots = $roots:copy();
 
-    var real_path = try fs::realpath(filepath);
+    let real_path = try fs::realpath(filepath);
     if $is_err(real_path) {
         $exit("error: failed to resolve path '${filepath}': ${real_path}");
     }
 
-    var parent_path = fs::dirname(real_path);
-    var modules_path = fs::join(parent_path, "modules");
-
+    let parent_path = fs::dirname(real_path);
     $roots:append(parent_path);
+
+    let modules_path = fs::join(parent_path, "modules");
     $roots:append(modules_path);
 
     return stashed_roots;

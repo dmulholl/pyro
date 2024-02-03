@@ -59,7 +59,7 @@
             <header class="title">
                 <h1>Unit Testing</h1>
                 
-                    <p class="subtitle">This tutorial demonstrates Pyro's support for unit testing.</p>
+                    <p class="subtitle">This tutorial demonstrates Pyro's builtin support for unit testing.</p>
                 
                 <hr>
             </header>
@@ -123,7 +123,7 @@ You should see the following output:
 Testing valid input
 </h3>
 <p>
-Now let's add some tests for the <code>add()</code> function:
+Now let's add some tests for the <code>add()</code> function. Add the following test functions to <code>script.pyro</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">$test_add_integers</span><span class="p">()</span> <span class="p">{</span>
@@ -146,7 +146,7 @@ A test function is a function whose name begins with <code>$test_</code>.
 A test function passes if it executes without panicking.
 </li>
 <li>
-You can use an <code>assert</code> statement to make a test function panic if the test fails.
+You can use an <code>assert</code> statement to make a test function panic if a test fails.
 </li>
 </ul>
 <p>
@@ -176,13 +176,22 @@ First, add a test that we expect to fail:
 <span class="p">}</span>
 </pre>
 <p>
-Run the tests again using the <code>test</code> command:
+Run the tests using the <code>test</code> command:
 </p>
 <pre>
 pyro test ./script.pyro
 </pre>
 <p>
-You should see output stating that the test failed.
+You should see output stating that the new test failed.
+</p>
+<p>
+Try running the tests again, this time adding a <code>-v/--verbose</code> flag:
+</p>
+<pre>
+pyro test ./script.pyro -v
+</pre>
+<p>
+You should see similar output stating that the new test failed, but this time the output will include the error message for the panic.
 </p>
 <p>
 We can test for an expected panic using a <code>try</code> expression.
@@ -214,7 +223,13 @@ You should see output confirming that all the tests have passed.
 The <code>test</code> command
 </h3>
 <p>
-You can learn more about the <code>test</code> command <a href="../features/testing.html">here</a>.
+You can view the helptext for the <code>test</code> command by running:
+</p>
+<pre>
+pyro test --help
+</pre>
+<p>
+You can find more detailed documentation for the <code>test</code> command <a href="../features/testing.html">here</a>.
 </p>
         </article>
 
