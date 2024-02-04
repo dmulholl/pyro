@@ -542,6 +542,14 @@ static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) 
 }
 
 
+static PyroValue set_equals_equals(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_SET(args[0])) {
+        return pyro_bool(false);
+    }
+    return set_is_equal_to(vm, arg_count, args);
+}
+
+
 void pyro_load_std_builtins_map(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$map", fn_map, 0);
@@ -577,7 +585,7 @@ void pyro_load_std_builtins_map(PyroVM* vm) {
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_minus", set_difference, 1);
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_greater_equals", set_is_superset_of, 1);
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_greater", set_is_proper_superset_of, 1);
-    pyro_define_pri_method(vm, vm->class_set, "$op_binary_equals_equals", set_is_equal_to, 1);
+    pyro_define_pri_method(vm, vm->class_set, "$op_binary_equals_equals", set_equals_equals, 1);
 
     // Set methods -- public.
     pyro_define_pub_method(vm, vm->class_set, "is_empty", map_is_empty, 0);

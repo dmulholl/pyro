@@ -50,3 +50,18 @@ assert map[s2] == "foo";
 assert map[s3] == "foo";
 assert $is_err(map[s4]);
 assert map[s5] == "bar";
+
+# Test set-inequality for different types.
+assert {123} == {123};
+
+assert {123} != 123;
+assert 123 != {123};
+
+assert {123} != "123";
+assert "123" != {123};
+
+class Object {}
+assert {123} != Object;
+assert Object != {123};
+assert {123} != Object();
+assert Object() != {123};

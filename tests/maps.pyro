@@ -347,3 +347,53 @@ def $test_numerically_equivalent_keys() {
     assert map[69.0] == "bop";
     assert map['E'] == "bop";
 }
+
+
+def $test_map_with_set_keys() {
+    class Object {}
+    var obj = Object();
+
+    var map = {
+        123 = "abc",
+        {1, 2} = "def",
+        456 = "ghi",
+        {3, 4} = "jkl",
+        Object = "mno",
+        obj = "pqr",
+    };
+
+    assert 123 in map;
+    assert {1, 2} in map;
+    assert 456 in map;
+    assert {3, 4} in map;
+    assert Object in map;
+    assert obj in map;
+
+    assert !(789 in map);
+    assert !({2, 3} in map);
+}
+
+
+def $test_map_with_tuple_keys() {
+    class Object {}
+    var obj = Object();
+
+    var map = {
+        123 = "abc",
+        (1, 2) = "def",
+        456 = "ghi",
+        (3, 4) = "jkl",
+        Object = "mno",
+        obj = "pqr",
+    };
+
+    assert 123 in map;
+    assert (1, 2) in map;
+    assert 456 in map;
+    assert (3, 4) in map;
+    assert Object in map;
+    assert obj in map;
+
+    assert !(789 in map);
+    assert !((2, 3) in map);
+}
