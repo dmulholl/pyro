@@ -24,24 +24,26 @@ You can use the `$is_err(arg)` function to check if a value is an `err`.
 Alternatively, you can use the error-coalescing operator `!!` to supply a default value for an operation that might return an error, e.g.
 
 ::: code pyro
-    var foo = might_fail() !! "default";
+    var result = might_fail() !! "default";
 
 
 
-### Error Message
+### Error Messages
 
 Stringifying an `err` returns its `message` string, e.g.
 
-
 ::: code pyro
     var err = $err("oh no!");
+
     assert $str(err) == "oh no!";
+    assert $fmt("{}", err) == "oh no!";
+    assert "${err}" == "oh no!";
 
 
 
 ### Error Details
 
-Every `err` object contains a `details` map which you can use to store arbitrary data about the error.
+An `err` object contains a `details` map which you can use to store arbitrary data about the error.
 You can index into this `details` map directly on the `err` object itself, e.g.
 
 ::: code pyro
@@ -51,7 +53,16 @@ You can index into this `details` map directly on the `err` object itself, e.g.
     assert $str(err) == "disaster strikes!";
     assert err["code"] == 123;
 
-The `details` map of an `err` object returned by a `try` expression contains `"source"` and `"line"` entries specifying the source ID and line number of the panic.
+The `details` map of an `err` object returned by a panicking `try` expression contains `"source"` and `"line"` entries specifying the source ID and line number of the panic, e.g.
+
+::: code pyro
+    var result = try might_panic();
+
+    if $is_err(result) {
+        echo "source:", result["source"];
+        echo "line:", result["line"];
+        echo "message:", result;
+    }
 
 
 
