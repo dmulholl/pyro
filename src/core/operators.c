@@ -963,7 +963,7 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
         }
     }
 
-    if (PYRO_IS_OBJ(right)) {
+    if (PYRO_IS_INSTANCE(right)) {
         // Equality is transitive so we don't need to support a separate $rop_ method.
         PyroValue method = pyro_get_method(vm, right, vm->str_op_binary_equals_equals);
 
@@ -976,10 +976,10 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
             }
             return pyro_is_truthy(result);
         }
+    }
 
-        if (PYRO_IS_OBJ(left)) {
-            return left.as.obj == right.as.obj;
-        }
+    if (PYRO_IS_OBJ(left) && PYRO_IS_OBJ(right)) {
+        return left.as.obj == right.as.obj;
     }
 
     return false;
