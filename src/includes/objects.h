@@ -141,6 +141,9 @@ void PyroMap_clear(PyroMap* map, PyroVM* vm);
 bool PyroMap_fast_remove(PyroMap* map, PyroStr* key, PyroVM* vm);
 bool PyroMap_fast_get(PyroMap* map, PyroStr* key, PyroValue* value, PyroVM* vm);
 
+// Treats the keys as sets and returns true if the sets are equal.
+bool PyroMap_compare_keys_for_set_equality(PyroMap* map1, PyroMap* map2, PyroVM* vm);
+
 /* ------- */
 /* Vectors */
 /* ------- */

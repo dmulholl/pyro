@@ -21,3 +21,77 @@ assert Object(1) != Object(0);
 assert $hash(Object(0)) == $hash(Object(0));
 assert $hash(Object(1)) == $hash(Object(1));
 assert $hash(Object(1)) != $hash(Object(0));
+
+
+class CaselessString {
+    var data: str = "";
+
+    def $init(data: str) {
+        self.data = data:to_ascii_lower();
+    }
+
+    def $str() -> str {
+        return self.data;
+    }
+
+    def $op_binary_equals_equals(other: any) -> bool {
+        if $is_str(other) {
+            return other:to_ascii_lower() == self.data;
+        }
+        return false;
+    }
+}
+
+assert CaselessString("foo") == "foo";
+assert CaselessString("Foo") == "foo";
+assert CaselessString("FOO") == "foo";
+
+assert CaselessString("foo") == "foo";
+assert CaselessString("foo") == "Foo";
+assert CaselessString("foo") == "FOO";
+
+assert "foo" == CaselessString("foo");
+assert "foo" == CaselessString("Foo");
+assert "foo" == CaselessString("FOO");
+
+assert "foo" == CaselessString("foo");
+assert "Foo" == CaselessString("foo");
+assert "FOO" == CaselessString("foo");
+
+assert CaselessString("foo") != "abc";
+assert "abc" != CaselessString("foo");
+
+
+class CustomSet {
+    var data: set?;
+
+    def $init(*items: any) {
+        self.data = items:iter():to_set();
+    }
+
+    def $str() -> str {
+        return $str(self.data);
+    }
+
+    pub def count() -> i64 {
+        return self.data:count();
+    }
+
+    def $op_binary_equals_equals(other: any) -> bool {
+        if $is_instance_of(other, CustomSet) {
+            return other:count() == self:count();
+        }
+        if $is_set(other) {
+            return other:count() == self:count();
+        }
+        return false;
+    }
+}
+
+assert CustomSet(1, 2, 3) == CustomSet('a', 'b', 'c');
+assert CustomSet(1, 2, 3) == {'a', 'b', 'c'};
+assert {'a', 'b', 'c'} == CustomSet(1, 2, 3);
+
+assert CustomSet(1, 2, 3) != CustomSet('a', 'b');
+assert CustomSet(1, 2, 3) != {'a', 'b'};
+assert {'a', 'b'} != CustomSet(1, 2, 3);

@@ -520,33 +520,7 @@ static PyroValue set_is_equal_to(PyroVM* vm, size_t arg_count, PyroValue* args) 
     }
     PyroMap* map2 = PYRO_AS_MAP(args[0]);
 
-    if (map1->live_entry_count != map2->live_entry_count) {
-        return pyro_bool(false);
-    }
-
-    for (size_t i = 0; i < map1->entry_array_count; i++) {
-        PyroMapEntry* entry = &map1->entry_array[i];
-        if (PYRO_IS_TOMBSTONE(entry->key)) {
-            continue;
-        }
-        bool found = PyroMap_contains(map2, entry->key, vm);
-        if (vm->halt_flag) {
-            return pyro_null();
-        }
-        if (!found) {
-            return pyro_bool(false);
-        }
-    }
-
-    return pyro_bool(true);
-}
-
-
-static PyroValue set_equals_equals(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!PYRO_IS_SET(args[0])) {
-        return pyro_bool(false);
-    }
-    return set_is_equal_to(vm, arg_count, args);
+    return pyro_bool(PyroMap_compare_keys_for_set_equality(map1, map2, vm));
 }
 
 
@@ -585,7 +559,6 @@ void pyro_load_std_builtins_map(PyroVM* vm) {
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_minus", set_difference, 1);
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_greater_equals", set_is_superset_of, 1);
     pyro_define_pri_method(vm, vm->class_set, "$op_binary_greater", set_is_proper_superset_of, 1);
-    pyro_define_pri_method(vm, vm->class_set, "$op_binary_equals_equals", set_equals_equals, 1);
 
     // Set methods -- public.
     pyro_define_pub_method(vm, vm->class_set, "is_empty", map_is_empty, 0);

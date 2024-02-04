@@ -188,10 +188,10 @@ PyroInstance* PyroInstance_new(PyroVM* vm, PyroClass* class) {
 
 
 // Sentinel value: indicates that a slot in [index_array] is empty.
-#define EMPTY -1
+#define PYRO_MAP_EMPTY -1
 
 // Sentinel value: indicates that a slot in [index_array] is a tombstone.
-#define TOMBSTONE -2
+#define PYRO_MAP_TOMBSTONE -2
 
 
 // This function returns a pointer to a slot in [index_array]. This slot can (1) be empty,
@@ -225,9 +225,9 @@ static int64_t* find_entry_slot(
     for (;;) {
         int64_t* slot = &index_array[i];
 
-        if (*slot == EMPTY) {
+        if (*slot == PYRO_MAP_EMPTY) {
             return first_tombstone == NULL ? slot : first_tombstone;
-        } else if (*slot == TOMBSTONE) {
+        } else if (*slot == PYRO_MAP_TOMBSTONE) {
             if (first_tombstone == NULL) first_tombstone = slot;
         } else {
             bool result = pyro_op_compare_eq(vm, key, entry_array[*slot].key);
@@ -260,7 +260,7 @@ static bool resize_index_array(PyroMap* map, PyroVM* vm) {
     }
 
     for (size_t i = 0; i < new_index_array_capacity; i++) {
-        new_index_array[i] = EMPTY;
+        new_index_array[i] = PYRO_MAP_EMPTY;
     }
 
     PyroMapEntry* new_entry_array = map->entry_array;
@@ -441,7 +441,7 @@ int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     }
 
     // 1. The slot is empty.
-    if (*slot == EMPTY) {
+    if (*slot == PYRO_MAP_EMPTY) {
         if (map->index_array_count == map->max_load_threshold) {
             if (!resize_index_array(map, vm)) {
                 return 0;
@@ -462,7 +462,7 @@ int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     }
 
     // 2. The slot contains a tombstone.
-    if (*slot == TOMBSTONE) {
+    if (*slot == PYRO_MAP_TOMBSTONE) {
         int64_t entry_index = append_entry(map, key, value, vm);
         if (entry_index < 0) {
             return 0;
@@ -485,7 +485,7 @@ bool PyroMap_update_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* 
     }
 
     int64_t* slot = find_entry_slot(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == PYRO_MAP_EMPTY || *slot == PYRO_MAP_TOMBSTONE) {
         return false;
     }
 
@@ -501,7 +501,7 @@ bool PyroMap_get(PyroMap* map, PyroValue key, PyroValue* value, PyroVM* vm) {
     }
 
     int64_t* slot = find_entry_slot(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == PYRO_MAP_EMPTY || *slot == PYRO_MAP_TOMBSTONE) {
         return false;
     }
 
@@ -516,7 +516,7 @@ bool PyroMap_contains(PyroMap* map, PyroValue key, PyroVM* vm) {
     }
 
     int64_t* slot = find_entry_slot(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == PYRO_MAP_EMPTY || *slot == PYRO_MAP_TOMBSTONE) {
         return false;
     }
 
@@ -530,12 +530,12 @@ bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm) {
     }
 
     int64_t* slot = find_entry_slot(vm, map->entry_array, map->index_array, map->index_array_capacity, key);
-    if (vm->halt_flag || *slot == EMPTY || *slot == TOMBSTONE) {
+    if (vm->halt_flag || *slot == PYRO_MAP_EMPTY || *slot == PYRO_MAP_TOMBSTONE) {
         return false;
     }
 
     map->entry_array[*slot].key = pyro_tombstone();
-    *slot = TOMBSTONE;
+    *slot = PYRO_MAP_TOMBSTONE;
     map->live_entry_count--;
     return true;
 }
@@ -551,13 +551,13 @@ bool PyroMap_fast_remove(PyroMap* map, PyroStr* key, PyroVM* vm) {
     for (;;) {
         int64_t* slot = &map->index_array[i];
 
-        if (*slot == EMPTY) {
+        if (*slot == PYRO_MAP_EMPTY) {
             return false;
-        } else if (*slot == TOMBSTONE) {
+        } else if (*slot == PYRO_MAP_TOMBSTONE) {
             // Skip over the tombstone and keep looking for a matching entry.
         } else if (PYRO_AS_STR(map->entry_array[*slot].key) == key) {
             map->entry_array[*slot].key = pyro_tombstone();
-            *slot = TOMBSTONE;
+            *slot = PYRO_MAP_TOMBSTONE;
             map->live_entry_count--;
             return true;
         }
@@ -577,9 +577,9 @@ bool PyroMap_fast_get(PyroMap* map, PyroStr* key, PyroValue* value, PyroVM* vm) 
     for (;;) {
         int64_t* slot = &map->index_array[i];
 
-        if (*slot == EMPTY) {
+        if (*slot == PYRO_MAP_EMPTY) {
             return false;
-        } else if (*slot == TOMBSTONE) {
+        } else if (*slot == PYRO_MAP_TOMBSTONE) {
             // Skip over the tombstone and keep looking for a matching entry.
         } else if (PYRO_AS_STR(map->entry_array[*slot].key) == key) {
             *value = map->entry_array[*slot].value;
@@ -601,6 +601,29 @@ bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm) {
             return false;
         }
     }
+    return true;
+}
+
+
+bool PyroMap_compare_keys_for_set_equality(PyroMap* map1, PyroMap* map2, PyroVM* vm) {
+    if (map1->live_entry_count != map2->live_entry_count) {
+        return false;
+    }
+
+    for (size_t i = 0; i < map1->entry_array_count; i++) {
+        PyroMapEntry* entry = &map1->entry_array[i];
+        if (PYRO_IS_TOMBSTONE(entry->key)) {
+            continue;
+        }
+        bool found = PyroMap_contains(map2, entry->key, vm);
+        if (vm->halt_flag) {
+            return false;
+        }
+        if (!found) {
+            return false;
+        }
+    }
+
     return true;
 }
 

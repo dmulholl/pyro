@@ -920,30 +920,51 @@ bool pyro_op_compare_eq(PyroVM* vm, PyroValue left, PyroValue right) {
         }
 
         case PYRO_VALUE_OBJ: {
-            if (PYRO_IS_STR(left) && PYRO_IS_STR(right)) {
-                return left.as.obj == right.as.obj;
-            }
-
-            if (PYRO_IS_TUP(left) && PYRO_IS_TUP(right)) {
-                return PyroTup_check_equal(PYRO_AS_TUP(left), PYRO_AS_TUP(right), vm);
-            }
-
-            PyroValue method = pyro_get_method(vm, left, vm->str_op_binary_equals_equals);
-            if (!PYRO_IS_NULL(method)) {
-                if (!pyro_push(vm, left)) return false;
-                if (!pyro_push(vm, right)) return false;
-                PyroValue result = pyro_call_method(vm, method, 1);
-                if (vm->halt_flag) {
-                    return false;
+            switch (left.as.obj->type) {
+                case PYRO_OBJECT_STR: {
+                    if (PYRO_IS_STR(right)) {
+                        return left.as.obj == right.as.obj;
+                    }
+                    break;
                 }
-                return pyro_is_truthy(result);
-            }
 
+                case PYRO_OBJECT_TUP: {
+                    if (PYRO_IS_TUP(right)) {
+                        return PyroTup_check_equal(PYRO_AS_TUP(left), PYRO_AS_TUP(right), vm);
+                    }
+                    break;
+                }
+
+                case PYRO_OBJECT_MAP_AS_SET: {
+                    if (PYRO_IS_SET(right)) {
+                        return PyroMap_compare_keys_for_set_equality(PYRO_AS_MAP(left), PYRO_AS_MAP(right), vm);
+                    }
+                    break;
+                }
+
+                case PYRO_OBJECT_INSTANCE: {
+                    PyroValue method = pyro_get_method(vm, left, vm->str_op_binary_equals_equals);
+                    if (!PYRO_IS_NULL(method)) {
+                        if (!pyro_push(vm, left)) return false;
+                        if (!pyro_push(vm, right)) return false;
+                        PyroValue result = pyro_call_method(vm, method, 1);
+                        if (vm->halt_flag) {
+                            return false;
+                        }
+                        return pyro_is_truthy(result);
+                    }
+                    break;
+                }
+
+                default:
+                    break;
+            }
             break;
         }
     }
 
     if (PYRO_IS_OBJ(right)) {
+        // Equality is transitive so we don't need to support a separate $rop_ method.
         PyroValue method = pyro_get_method(vm, right, vm->str_op_binary_equals_equals);
 
         if (!PYRO_IS_NULL(method)) {
