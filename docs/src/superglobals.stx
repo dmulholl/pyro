@@ -75,7 +75,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$cmd(path: str) -> tup[i64, str, str]` <br> `$cmd(path: str, args: vec[str]) -> tup[i64, str, str]` <br> `$cmd(path: str, args: vec[str], input: str|buf) -> tup[i64, str, str]` ]]
 
-    Executes a file.
+    Runs an executable file.
 
     * If `path` contains a `/` character, it will be treated as a filepath. Otherwise, the directories specified by the `PATH` environment variable will be searched for the named file.
     * If an `args` vector is specified, its entries will be appended to the program's argument list. (The program's argument list automatically gets `path` as its first entry.)
@@ -84,7 +84,9 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     Returns a three-item tuple containing the program's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
 
-    Returns a non-zero exit code if the program was not found.
+    Returns a non-zero exit code and `stderr` error message if the program was not found.
+
+    This function will panic if an OS error occurs while forking the process.
 
 
 
@@ -531,11 +533,20 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     Runs a shell command.
 
-    If an `input` string is specified, its content will be written to the command's `stdin` stream.
+    * If an `input` string is specified, its content will be written to the command's `stdin` stream.
+    * Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
 
-    Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
+    * This function will panic if an OS error occurs while forking the process.
 
-    Returns a non-zero exit code if the command was not found.
+
+
+    This function is equivalent to running:
+
+    ::: code
+        /bin/sh -c <command>
+
+    Use the `$cmd()` function to run an executable file directly, bypassing the shell.
+
 
 
 

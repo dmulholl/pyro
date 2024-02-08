@@ -186,7 +186,7 @@ This function is a wrapper around the C standard library's <code>clock()</code> 
 </dt>
 <dd>
 <p>
-Executes a file.
+Runs an executable file.
 </p>
 <ul>
 <li>
@@ -206,7 +206,10 @@ If an <code>input</code> string is specified, its content will be written to the
 Returns a three-item tuple containing the program's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
 </p>
 <p>
-Returns a non-zero exit code if the program was not found.
+Returns a non-zero exit code and <code>stderr</code> error message if the program was not found.
+</p>
+<p>
+This function will panic if an OS error occurs while forking the process.
 </p>
 </dd>
 </div>
@@ -957,14 +960,25 @@ Creates a new <a href="builtins/sets.html">set</a>.
 <p>
 Runs a shell command.
 </p>
-<p>
+<ul>
+<li>
 If an <code>input</code> string is specified, its content will be written to the command's <code>stdin</code> stream.
-</p>
-<p>
+</li>
+<li>
 Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
-</p>
+</li>
+<li>
+This function will panic if an OS error occurs while forking the process.
+</li>
+</ul>
 <p>
-Returns a non-zero exit code if the command was not found.
+This function is equivalent to running:
+</p>
+<pre>
+/bin/sh -c &lt;command&gt;
+</pre>
+<p>
+Use the <code>$cmd()</code> function to run an executable file directly, bypassing the shell.
 </p>
 </dd>
 </div>
