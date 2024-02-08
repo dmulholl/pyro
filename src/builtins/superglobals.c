@@ -468,6 +468,7 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
     char* argv[] = {"/bin/sh", "-c", command, (char*)NULL};
 
     if (!pyro_exec_cmd(vm, "/bin/sh", argv, NULL, 0, &stdout_output, &stderr_output, &exit_code)) {
+        // We've already panicked.
         return pyro_null();
     }
 
@@ -478,7 +479,7 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
             count--;
         }
 
-        pyro_panic(vm, "$(): exit code: %i: %.*s", exit_code, count, stderr_output->bytes);
+        pyro_panic(vm, "$(): %.*s", count, stderr_output->bytes);
         return pyro_null();
     }
 
@@ -524,6 +525,7 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
     char* argv[] = {"/bin/sh", "-c", command, (char*)NULL};
 
     if (!pyro_exec_cmd(vm, "/bin/sh", argv, stdin_input, stdin_input_length, &stdout_output, &stderr_output, &exit_code)) {
+        // We've already panicked.
         return pyro_null();
     }
 
@@ -619,14 +621,16 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    if (!pyro_exec_cmd(vm, cmd, argv, stdin_input, stdin_input_length, &stdout_output, &stderr_output, &exit_code)) {
-        free(argv);
+    bool ok = pyro_exec_cmd(vm, cmd, argv, stdin_input, stdin_input_length, &stdout_output, &stderr_output, &exit_code);
+    free(argv);
+
+    if (!ok) {
+        // We've already panicked.
         return pyro_null();
     }
 
     PyroTup* tup = PyroTup_new(3, vm);
     if (!tup) {
-        free(argv);
         pyro_panic(vm, "out of memory");
         return pyro_null();
     }
@@ -635,7 +639,6 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
     tup->values[1] = pyro_obj(stdout_output);
     tup->values[2] = pyro_obj(stderr_output);
 
-    free(argv);
     return pyro_obj(tup);
 }
 

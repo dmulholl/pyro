@@ -3,12 +3,12 @@ pub def run(name: str, *args: str) -> str {
 
     let result = try $cmd(name, args_vec);
     if $is_err(result) {
-        $panic("${name}(): ${result}");
+        $panic("cmd::run(): ${name}: ${result}");
     }
 
     let (exit_code, std_out, std_err) = result;
     if exit_code != 0 {
-        $panic("${name}(): ${std_err:strip()}");
+        $panic("cmd::run(): ${name}: ${std_err:strip()}");
     }
 
     return std_out;
