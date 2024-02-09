@@ -39,33 +39,33 @@ static void write_msg(
         }
     }
 
+    char* timestamp = "0000-00-00 00:00:00";
     char timestamp_buffer[128];
-    timestamp_buffer[0] = '\0';
 
     if (strlen(timestamp_format) > 0) {
         time_t now = time(NULL);
         struct tm* tm = localtime(&now);
-        size_t dt_count = strftime(timestamp_buffer, 128, timestamp_format, tm);
-        if (dt_count == 0) {
-            pyro_panic(vm, "%s: timestamp string is too long", err_prefix);
-            return;
+        size_t timestamp_buffer_count = strftime(timestamp_buffer, 128, timestamp_format, tm);
+        if (timestamp_buffer_count > 0) {
+            timestamp = timestamp_buffer;
         }
     }
 
     if (file) {
-        if (file->stream) {
-            int result = fprintf(file->stream, "[%5s]  [%s]  %s\n", log_level, timestamp_buffer, message->bytes);
-            if (result < 0) {
-                pyro_panic(vm, "%s: failed to write log message to file", err_prefix);
-            }
-        } else {
-            pyro_panic(vm, "%s: failed to write to log file, file has been closed", err_prefix);
+        if (!file->stream) {
+            pyro_panic(vm, "%s: failed to write log message, file has been closed", err_prefix);
+            return;
         }
-    } else {
-        int64_t result = pyro_stderr_write_f(vm, "[%5s]  [%s]  %s\n", log_level, timestamp_buffer, message->bytes);
+        int result = fprintf(file->stream, "[%5s]  %s  %s\n", log_level, timestamp, message->bytes);
         if (result < 0) {
-            pyro_panic(vm, "%s: failed to write log message to the standard error stream", err_prefix);
+            pyro_panic(vm, "%s: failed to write log message", err_prefix);
         }
+        return;
+    }
+
+    int64_t result = pyro_stdout_write_f(vm, "[%5s]  %s  %s\n", log_level, timestamp, message->bytes);
+    if (result < 0) {
+        pyro_panic(vm, "%s: failed to write log message to the standard output stream", err_prefix);
     }
 }
 
@@ -252,4 +252,7 @@ void pyro_load_std_mod_log(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_method(vm, logger_class, "warn", logger_warn, -1);
     pyro_define_pub_method(vm, logger_class, "error", logger_error, -1);
     pyro_define_pub_method(vm, logger_class, "fatal", logger_fatal, -1);
+
+    // Deprecated.
+    pyro_define_pub_method(vm, logger_class, "timestamp", logger_timestamp, 1);
 }
