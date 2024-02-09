@@ -535,10 +535,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
     * If an `input` string is specified, its content will be written to the command's `stdin` stream.
     * Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
-
     * This function will panic if an OS error occurs while forking the process.
-
-
 
     This function is equivalent to running:
 
@@ -546,7 +543,6 @@ All superglobals live in the `$` namespace so they won't interfere with your own
         /bin/sh -c <command>
 
     Use the `$cmd()` function to run an executable file directly, bypassing the shell.
-
 
 
 

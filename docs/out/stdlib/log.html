@@ -74,7 +74,10 @@
 </ul>
 <hr>
 <p>
-A simple logging library. Logging levels, in increasing order of severity, are:
+This library provides basic logging functionality.
+</p>
+<p>
+Logging levels, in increasing order of severity, are:
 </p>
 <ul>
 <li>
@@ -94,8 +97,8 @@ A simple logging library. Logging levels, in increasing order of severity, are:
 </li>
 </ul>
 <p>
-A set of convenience functions are provided for logging to the standard error stream.
-Use a <code>Logger</code> instance to customize the timestamp format and destination file.
+The library provides a set of convenience functions for unconditional logging to the standard output stream.
+Use a <code>Logger</code> instance to customize the logging-level and destination file.
 </p>
 <h3 id="constants">
 Constants
@@ -162,7 +165,7 @@ Functions
 </dt>
 <dd>
 <p>
-A convenience function for writing a <code>DEBUG</code> log message to the standard error stream.
+A convenience function for writing a <code>DEBUG</code> log message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -180,7 +183,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing an <code>ERROR</code> log message to the standard error stream.
+A convenience function for writing an <code>ERROR</code> log message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -198,7 +201,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing a <code>FATAL</code> log message to the standard error stream.
+A convenience function for writing a <code>FATAL</code> log message to the standard output stream.
 </p>
 <p>
 This will cause the program to exit with a non-zero status code.
@@ -219,7 +222,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing an <code>INFO</code> log message to the standard error stream.
+A convenience function for writing an <code>INFO</code> log message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -237,7 +240,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing a <code>WARN</code> log message to the standard error stream.
+A convenience function for writing a <code>WARN</code> log message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -264,13 +267,10 @@ Initializes a new <code>Logger</code> instance.
 </p>
 <ul>
 <li>
-By default, a <code>Logger</code> logs to the standard error stream.
+By default, a <code>Logger</code> logs to the standard output stream.
 </li>
 <li>
 The default logging level is <code>INFO</code>.
-</li>
-<li>
-The default timestamp format is <code>&quot;[%Y-%m-%d %H:%M:%S]&quot;</code>.
 </li>
 </ul>
 </dd>
@@ -286,7 +286,7 @@ The default timestamp format is <code>&quot;[%Y-%m-%d %H:%M:%S]&quot;</code>.
 </dt>
 <dd>
 <p>
-Writes a <code>DEBUG</code> level log message to the logger's output file.
+Writes a <code>DEBUG</code> log message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -304,7 +304,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </dt>
 <dd>
 <p>
-Writes an <code>ERROR</code> level log message to the logger's output file.
+Writes an <code>ERROR</code> log message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -322,7 +322,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </dt>
 <dd>
 <p>
-Writes a <code>FATAL</code> level log message to the logger's output file.
+Writes a <code>FATAL</code> log message to the logger's output file.
 </p>
 <p>
 This will cause the program to exit with a non-zero status code.
@@ -344,7 +344,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 <dd>
 <p>
 Sets the logger's output file.
-The default output file is the standard error stream.
+The default output file is the standard output stream.
 </p>
 </dd>
 </div>
@@ -354,7 +354,7 @@ The default output file is the standard error stream.
 </dt>
 <dd>
 <p>
-Writes an <code>INFO</code> level log message to the logger's output file.
+Writes an <code>INFO</code> log message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -382,25 +382,11 @@ The default logging level is <code>INFO</code>.
 </div>
 <div>
 <dt>
-<code>:timestamp(format_string: str)</code>
-</dt>
-<dd>
-<p>
-Sets the timestamp format for the logger.
-The default format string is <code>&quot;%Y-%m-%d %H:%M:%S&quot;</code>.
-</p>
-<p>
-The format string can include any format specifiers supported by the C standard library's <code>strftime()</code> function.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:warn(arg: any)</code> <br> <code>:warn(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
-Writes a <code>WARN</code> level log message to the logger's output file.
+Writes a <code>WARN</code> log message to the logger's output file.
 </p>
 <ul>
 <li>

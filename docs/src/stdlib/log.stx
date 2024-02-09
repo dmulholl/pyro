@@ -6,8 +6,9 @@ meta_title: Pyro Standard Library &mdash; std::log
 ::: insert toc
 ::: hr
 
+This library provides basic logging functionality.
 
-A simple logging library. Logging levels, in increasing order of severity, are:
+Logging levels, in increasing order of severity, are:
 
 * `DEBUG`
 * `INFO`
@@ -15,8 +16,8 @@ A simple logging library. Logging levels, in increasing order of severity, are:
 * `ERROR`
 * `FATAL`
 
-A set of convenience functions are provided for logging to the standard error stream.
-Use a `Logger` instance to customize the timestamp format and destination file.
+The library provides a set of convenience functions for unconditional logging to the standard output stream.
+Use a `Logger` instance to customize the logging-level and destination file.
 
 
 
@@ -50,7 +51,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
 [[ `debug(arg: any)` <br> `debug(format_string: str, *args: any)` ]]
 
-    A convenience function for writing a `DEBUG` log message to the standard error stream.
+    A convenience function for writing a `DEBUG` log message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -59,7 +60,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
 [[ `error(arg: any)` <br> `error(format_string: str, *args: any)` ]]
 
-    A convenience function for writing an `ERROR` log message to the standard error stream.
+    A convenience function for writing an `ERROR` log message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -68,7 +69,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
 [[ `fatal(arg: any)` <br> `fatal(format_string: str, *args: any)` ]]
 
-    A convenience function for writing a `FATAL` log message to the standard error stream.
+    A convenience function for writing a `FATAL` log message to the standard output stream.
 
     This will cause the program to exit with a non-zero status code.
 
@@ -79,7 +80,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
 [[ `info(arg: any)` <br> `info(format_string: str, *args: any)` ]]
 
-    A convenience function for writing an `INFO` log message to the standard error stream.
+    A convenience function for writing an `INFO` log message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -88,7 +89,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
 [[ `warn(arg: any)` <br> `warn(format_string: str, *args: any)` ]]
 
-    A convenience function for writing a `WARN` log message to the standard error stream.
+    A convenience function for writing a `WARN` log message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -102,16 +103,15 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
     Initializes a new `Logger` instance.
 
-    * By default, a `Logger` logs to the standard error stream.
+    * By default, a `Logger` logs to the standard output stream.
     * The default logging level is `INFO`.
-    * The default timestamp format is `"\[%Y-%m-%d %H:%M:%S]"`.
 
 `Logger` instances support the following methods:
 
 
 [[ `:debug(arg: any)` <br> `:debug(format_string: str, *args: any)` ]]
 
-    Writes a `DEBUG` level log message to the logger's output file.
+    Writes a `DEBUG` log message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -120,7 +120,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
 [[ `:error(arg: any)` <br> `:error(format_string: str, *args: any)` ]]
 
-    Writes an `ERROR` level log message to the logger's output file.
+    Writes an `ERROR` log message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -129,7 +129,7 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 
 [[ `:fatal(arg: any)` <br> `:fatal(format_string: str, *args: any)` ]]
 
-    Writes a `FATAL` level log message to the logger's output file.
+    Writes a `FATAL` log message to the logger's output file.
 
     This will cause the program to exit with a non-zero status code.
 
@@ -141,12 +141,12 @@ Use a `Logger` instance to customize the timestamp format and destination file.
 [[ `:file(output_file: file)` ]]
 
     Sets the logger's output file.
-    The default output file is the standard error stream.
+    The default output file is the standard output stream.
 
 
 [[ `:info(arg: any)` <br> `:info(format_string: str, *args: any)` ]]
 
-    Writes an `INFO` level log message to the logger's output file.
+    Writes an `INFO` log message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -161,17 +161,9 @@ Use a `Logger` instance to customize the timestamp format and destination file.
     The default logging level is `INFO`.
 
 
-[[ `:timestamp(format_string: str)` ]]
-
-    Sets the timestamp format for the logger.
-    The default format string is `"%Y-%m-%d %H:%M:%S"`.
-
-    The format string can include any format specifiers supported by the C standard library's `strftime()` function.
-
-
 [[ `:warn(arg: any)` <br> `:warn(format_string: str, *args: any)` ]]
 
-    Writes a `WARN` level log message to the logger's output file.
+    Writes a `WARN` log message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
