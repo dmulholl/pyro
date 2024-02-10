@@ -11,7 +11,7 @@
 static void write_msg(
     PyroVM* vm,
     const char* err_prefix,
-    const char* timestamp_format,
+    const char* timestamp_format, // ignore
     const char* log_level,
     PyroFile* file,
     size_t arg_count,
@@ -39,16 +39,31 @@ static void write_msg(
         }
     }
 
-    char* timestamp = "0000-00-00 00:00:00";
-    char timestamp_buffer[128];
+    time_t now_sec = 0;
+    int64_t now_nsec = 0;
 
-    if (strlen(timestamp_format) > 0) {
-        time_t now = time(NULL);
-        struct tm* tm = localtime(&now);
-        size_t timestamp_buffer_count = strftime(timestamp_buffer, 128, timestamp_format, tm);
-        if (timestamp_buffer_count > 0) {
-            timestamp = timestamp_buffer;
+    #ifdef CLOCK_REALTIME
+        struct timespec now;
+        if (clock_gettime(CLOCK_REALTIME, &now) < 0) {
+            pyro_panic(vm, "%s: failed to get time", err_prefix);
+            return;
         }
+        now_sec = now.tv_sec;
+        now_nsec = now.tv_nsec;
+    #else
+        now_sec = time(NULL);
+    #endif
+
+    int64_t now_usec = now_nsec / 1000; // micro_secs = nano_secs / 1000
+    int64_t now_msec = now_usec / 1000; // milli_secs = micro_secs / 1000
+
+    char* timestamp_sec = "0000-00-00 00:00:00";
+    char timestamp_sec_buffer[128];
+
+    struct tm* tm = localtime(&now_sec);
+    size_t timestamp_sec_buffer_count = strftime(timestamp_sec_buffer, 128, "%Y-%m-%d %H:%M:%S", tm);
+    if (timestamp_sec_buffer_count > 0) {
+        timestamp_sec = timestamp_sec_buffer;
     }
 
     if (file) {
@@ -56,14 +71,14 @@ static void write_msg(
             pyro_panic(vm, "%s: failed to write log message, file has been closed", err_prefix);
             return;
         }
-        int result = fprintf(file->stream, "[%5s]  %s  %s\n", log_level, timestamp, message->bytes);
+        int result = fprintf(file->stream, "[%5s]  %s.%03d  %s\n", log_level, timestamp_sec, (int)now_msec, message->bytes);
         if (result < 0) {
             pyro_panic(vm, "%s: failed to write log message", err_prefix);
         }
         return;
     }
 
-    int64_t result = pyro_stdout_write_f(vm, "[%5s]  %s  %s\n", log_level, timestamp, message->bytes);
+    int64_t result = pyro_stdout_write_f(vm, "[%5s]  %s.%03d  %s\n", log_level, timestamp_sec, (int)now_msec, message->bytes);
     if (result < 0) {
         pyro_panic(vm, "%s: failed to write log message to the standard output stream", err_prefix);
     }
