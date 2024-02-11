@@ -7,7 +7,6 @@ meta_title: Pyro Standard Library &mdash; std::log
 ::: hr
 
 This library provides basic logging functionality.
-
 Logging levels, in increasing order of severity, are:
 
 * `DEBUG`
@@ -16,7 +15,7 @@ Logging levels, in increasing order of severity, are:
 * `ERROR`
 * `FATAL`
 
-This library provides a set of convenience functions for unconditional logging to the standard output stream.
+Convenience functions are provided for unconditional logging to the standard output stream.
 Use a `Logger` instance to customize the logging-level and destination file.
 
 
