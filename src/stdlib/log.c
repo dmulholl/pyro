@@ -14,7 +14,8 @@ static void write_msg(
     const char* log_level,
     PyroFile* file,
     size_t arg_count,
-    PyroValue* args
+    PyroValue* args,
+    bool use_utc
 ) {
     if (arg_count == 0) {
         pyro_panic(vm, "%s: expected 1 or more arguments, found 0", err_prefix);
@@ -53,14 +54,20 @@ static void write_msg(
         now_sec = time(NULL);
     #endif
 
-    int64_t now_usec = now_nsec / 1000; // micro_secs = nano_secs / 1000
-    int64_t now_msec = now_usec / 1000; // milli_secs = micro_secs / 1000
+    int64_t now_usec = now_nsec / 1000; // microseconds
+    int64_t now_msec = now_usec / 1000; // milliseconds
 
     char* timestamp_sec = "0000-00-00 00:00:00";
     char timestamp_sec_buffer[128];
 
-    struct tm* tm = localtime(&now_sec);
-    size_t timestamp_sec_buffer_count = strftime(timestamp_sec_buffer, 128, "%Y-%m-%d %H:%M:%S", tm);
+    struct tm tm;
+    if (use_utc) {
+        gmtime_r(&now_sec, &tm);
+    } else {
+        localtime_r(&now_sec, &tm);
+    }
+
+    size_t timestamp_sec_buffer_count = strftime(timestamp_sec_buffer, 128, "%Y-%m-%d %H:%M:%S", &tm);
     if (timestamp_sec_buffer_count > 0) {
         timestamp_sec = timestamp_sec_buffer;
     }
@@ -85,31 +92,31 @@ static void write_msg(
 
 
 static PyroValue fn_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "debug()", "DEBUG", NULL, arg_count, args);
+    write_msg(vm, "debug()", "DEBUG", NULL, arg_count, args, false);
     return pyro_null();
 }
 
 
 static PyroValue fn_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "info()", "INFO", NULL, arg_count, args);
+    write_msg(vm, "info()", "INFO", NULL, arg_count, args, false);
     return pyro_null();
 }
 
 
 static PyroValue fn_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "warn()", "WARN", NULL, arg_count, args);
+    write_msg(vm, "warn()", "WARN", NULL, arg_count, args, false);
     return pyro_null();
 }
 
 
 static PyroValue fn_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "error()", "ERROR", NULL, arg_count, args);
+    write_msg(vm, "error()", "ERROR", NULL, arg_count, args, false);
     return pyro_null();
 }
 
 
 static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "fatal()", "FATAL", NULL, arg_count, args);
+    write_msg(vm, "fatal()", "FATAL", NULL, arg_count, args, false);
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = 1;
@@ -120,11 +127,12 @@ static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    int64_t log_level = instance->fields[0].as.i64;
-    PyroFile* file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    int64_t logging_level = instance->fields[0].as.i64;
+    PyroFile* output_file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    bool use_utc = instance->fields[2].as.boolean;
 
-    if (PYRO_STD_LOG_LEVEL_DEBUG >= log_level) {
-        write_msg(vm, "debug()", "DEBUG", file, arg_count, args);
+    if (PYRO_STD_LOG_LEVEL_DEBUG >= logging_level) {
+        write_msg(vm, "debug()", "DEBUG", output_file, arg_count, args, use_utc);
     }
 
     return pyro_null();
@@ -134,11 +142,12 @@ static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    int64_t log_level = instance->fields[0].as.i64;
-    PyroFile* file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    int64_t logging_level = instance->fields[0].as.i64;
+    PyroFile* output_file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    bool use_utc = instance->fields[2].as.boolean;
 
-    if (PYRO_STD_LOG_LEVEL_INFO >= log_level) {
-        write_msg(vm, "info()", "INFO", file, arg_count, args);
+    if (PYRO_STD_LOG_LEVEL_INFO >= logging_level) {
+        write_msg(vm, "info()", "INFO", output_file, arg_count, args, use_utc);
     }
 
     return pyro_null();
@@ -148,11 +157,12 @@ static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    int64_t log_level = instance->fields[0].as.i64;
-    PyroFile* file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    int64_t logging_level = instance->fields[0].as.i64;
+    PyroFile* output_file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    bool use_utc = instance->fields[2].as.boolean;
 
-    if (PYRO_STD_LOG_LEVEL_WARN >= log_level) {
-        write_msg(vm, "warn()", "WARN", file, arg_count, args);
+    if (PYRO_STD_LOG_LEVEL_WARN >= logging_level) {
+        write_msg(vm, "warn()", "WARN", output_file, arg_count, args, use_utc);
     }
 
     return pyro_null();
@@ -162,11 +172,12 @@ static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    int64_t log_level = instance->fields[0].as.i64;
-    PyroFile* file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    int64_t logging_level = instance->fields[0].as.i64;
+    PyroFile* output_file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    bool use_utc = instance->fields[2].as.boolean;
 
-    if (PYRO_STD_LOG_LEVEL_ERROR >= log_level) {
-        write_msg(vm, "error()", "ERROR", file, arg_count, args);
+    if (PYRO_STD_LOG_LEVEL_ERROR >= logging_level) {
+        write_msg(vm, "error()", "ERROR", output_file, arg_count, args, use_utc);
     }
 
     return pyro_null();
@@ -176,11 +187,12 @@ static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    int64_t log_level = instance->fields[0].as.i64;
-    PyroFile* file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    int64_t logging_level = instance->fields[0].as.i64;
+    PyroFile* output_file = PYRO_IS_NULL(instance->fields[1]) ? NULL : PYRO_AS_FILE(instance->fields[1]);
+    bool use_utc = instance->fields[2].as.boolean;
 
-    if (PYRO_STD_LOG_LEVEL_FATAL >= log_level) {
-        write_msg(vm, "fatal()", "FATAL", file, arg_count, args);
+    if (PYRO_STD_LOG_LEVEL_FATAL >= logging_level) {
+        write_msg(vm, "fatal()", "FATAL", output_file, arg_count, args, use_utc);
     }
 
     vm->halt_flag = true;
@@ -190,6 +202,7 @@ static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+// Deprecated.
 static PyroValue logger_level(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
@@ -203,6 +216,7 @@ static PyroValue logger_level(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+// Deprecated.
 static PyroValue logger_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
@@ -236,14 +250,17 @@ void pyro_load_std_mod_log(PyroVM* vm, PyroMod* module) {
     logger_class->name = PyroStr_COPY("Logger");
     pyro_define_pub_member(vm, module, "Logger", pyro_obj(logger_class));
 
-    pyro_define_pub_field(vm, logger_class, "level", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_pub_field(vm, logger_class, "file", pyro_null());
+    pyro_define_pub_field(vm, logger_class, "logging_level", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
+    pyro_define_pub_field(vm, logger_class, "output_file", pyro_null());
+    pyro_define_pub_field(vm, logger_class, "use_utc", pyro_bool(false));
 
-    pyro_define_pub_method(vm, logger_class, "level", logger_level, 1);
-    pyro_define_pub_method(vm, logger_class, "file", logger_file, 1);
     pyro_define_pub_method(vm, logger_class, "debug", logger_debug, -1);
     pyro_define_pub_method(vm, logger_class, "info", logger_info, -1);
     pyro_define_pub_method(vm, logger_class, "warn", logger_warn, -1);
     pyro_define_pub_method(vm, logger_class, "error", logger_error, -1);
     pyro_define_pub_method(vm, logger_class, "fatal", logger_fatal, -1);
+
+    // Deprecated.
+    pyro_define_pub_method(vm, logger_class, "level", logger_level, 1);
+    pyro_define_pub_method(vm, logger_class, "file", logger_file, 1);
 }

@@ -97,7 +97,7 @@ Logging levels, in increasing order of severity, are:
 </li>
 </ul>
 <p>
-The library provides a set of convenience functions for unconditional logging to the standard output stream.
+This library provides a set of convenience functions for unconditional logging to the standard output stream.
 Use a <code>Logger</code> instance to customize the logging-level and destination file.
 </p>
 <h3 id="constants">
@@ -165,7 +165,7 @@ Functions
 </dt>
 <dd>
 <p>
-A convenience function for writing a <code>DEBUG</code> log message to the standard output stream.
+A convenience function for writing a <code>DEBUG</code> message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -183,7 +183,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing an <code>ERROR</code> log message to the standard output stream.
+A convenience function for writing an <code>ERROR</code> message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -201,7 +201,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing a <code>FATAL</code> log message to the standard output stream.
+A convenience function for writing a <code>FATAL</code> message to the standard output stream.
 </p>
 <p>
 Calling this function will cause the program to exit with a non-zero status code.
@@ -222,7 +222,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing an <code>INFO</code> log message to the standard output stream.
+A convenience function for writing an <code>INFO</code> message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -240,7 +240,7 @@ Calling this function with more than one argument is equivalent to calling <code
 </dt>
 <dd>
 <p>
-A convenience function for writing a <code>WARN</code> log message to the standard output stream.
+A convenience function for writing a <code>WARN</code> message to the standard output stream.
 </p>
 <ul>
 <li>
@@ -263,21 +263,41 @@ Classes
 </dt>
 <dd>
 <p>
-Initializes a new <code>Logger</code> instance.
+Returns a new <code>Logger</code> instance.
 </p>
 <ul>
 <li>
-By default, a <code>Logger</code> logs to the standard output stream.
+A <code>Logger</code> instance defaults to logging to the standard output stream.
 </li>
 <li>
-The default logging level is <code>INFO</code>.
+Messages will only be logged if their logging-level is greater than or equal to the logger's logging-level.
+</li>
+<li>
+The logger's default logging-level is <code>INFO</code>.
 </li>
 </ul>
 </dd>
 </div>
 </dl>
 <p>
-<code>Logger</code> instances support the following methods:
+<code>Logger</code> instances have the following public fields:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Logger</span> <span class="p">{</span>
+    <span class="c1"># Defaults to the standard output stream.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">output_file</span><span class="p">:</span> <span class="nx">file</span><span class="p">;</span>
+
+    <span class="c1"># One of DEBUG, INFO, WARN, ERROR, FATAL.</span>
+    <span class="c1"># Defaults to INFO.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">logging_level</span><span class="p">:</span> <span class="nx">i64</span><span class="p">;</span>
+
+    <span class="c1"># Set to true to use UTC timestamps.</span>
+    <span class="c1"># Defaults to false (i.e. local time).</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">use_utc</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+<span class="p">}</span>
+</pre>
+<p>
+<code>Logger</code> instances have the following methods:
 </p>
 <dl>
 <div>
@@ -286,7 +306,7 @@ The default logging level is <code>INFO</code>.
 </dt>
 <dd>
 <p>
-Writes a <code>DEBUG</code> log message to the logger's output file.
+Writes a <code>DEBUG</code> message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -304,7 +324,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </dt>
 <dd>
 <p>
-Writes an <code>ERROR</code> log message to the logger's output file.
+Writes an <code>ERROR</code> message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -322,7 +342,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </dt>
 <dd>
 <p>
-Writes a <code>FATAL</code> log message to the logger's output file.
+Writes a <code>FATAL</code> message to the logger's output file.
 </p>
 <p>
 Calling this method will cause the program to exit with a non-zero status code.
@@ -339,22 +359,11 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </div>
 <div>
 <dt>
-<code>:file(output_file: file)</code>
-</dt>
-<dd>
-<p>
-Sets the logger's output file.
-The default output file is the standard output stream.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:info(arg: any)</code> <br> <code>:info(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
-Writes an <code>INFO</code> log message to the logger's output file.
+Writes an <code>INFO</code> message to the logger's output file.
 </p>
 <ul>
 <li>
@@ -368,25 +377,11 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </div>
 <div>
 <dt>
-<code>:level(log_level: i64)</code>
-</dt>
-<dd>
-<p>
-Sets the logging level.
-Messages will only be logged if their level is greater than or equal to this logging level.
-</p>
-<p>
-The default logging level is <code>INFO</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:warn(arg: any)</code> <br> <code>:warn(format_string: str, *args: any)</code>
 </dt>
 <dd>
 <p>
-Writes a <code>WARN</code> log message to the logger's output file.
+Writes a <code>WARN</code> message to the logger's output file.
 </p>
 <ul>
 <li>

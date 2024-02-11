@@ -16,7 +16,7 @@ Logging levels, in increasing order of severity, are:
 * `ERROR`
 * `FATAL`
 
-The library provides a set of convenience functions for unconditional logging to the standard output stream.
+This library provides a set of convenience functions for unconditional logging to the standard output stream.
 Use a `Logger` instance to customize the logging-level and destination file.
 
 
@@ -51,7 +51,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `debug(arg: any)` <br> `debug(format_string: str, *args: any)` ]]
 
-    A convenience function for writing a `DEBUG` log message to the standard output stream.
+    A convenience function for writing a `DEBUG` message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -60,7 +60,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `error(arg: any)` <br> `error(format_string: str, *args: any)` ]]
 
-    A convenience function for writing an `ERROR` log message to the standard output stream.
+    A convenience function for writing an `ERROR` message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -69,7 +69,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `fatal(arg: any)` <br> `fatal(format_string: str, *args: any)` ]]
 
-    A convenience function for writing a `FATAL` log message to the standard output stream.
+    A convenience function for writing a `FATAL` message to the standard output stream.
 
     Calling this function will cause the program to exit with a non-zero status code.
 
@@ -80,7 +80,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `info(arg: any)` <br> `info(format_string: str, *args: any)` ]]
 
-    A convenience function for writing an `INFO` log message to the standard output stream.
+    A convenience function for writing an `INFO` message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -89,7 +89,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `warn(arg: any)` <br> `warn(format_string: str, *args: any)` ]]
 
-    A convenience function for writing a `WARN` log message to the standard output stream.
+    A convenience function for writing a `WARN` message to the standard output stream.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -101,17 +101,34 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `Logger() -> Logger` ]]
 
-    Initializes a new `Logger` instance.
+    Returns a new `Logger` instance.
 
-    * By default, a `Logger` logs to the standard output stream.
-    * The default logging level is `INFO`.
+    * A `Logger` instance defaults to logging to the standard output stream.
+    * Messages will only be logged if their logging-level is greater than or equal to the logger's logging-level.
+    * The logger's default logging-level is `INFO`.
 
-`Logger` instances support the following methods:
+`Logger` instances have the following public fields:
+
+::: code pyro
+    class Logger {
+        # Defaults to the standard output stream.
+        pub var output_file: file;
+
+        # One of DEBUG, INFO, WARN, ERROR, FATAL.
+        # Defaults to INFO.
+        pub var logging_level: i64;
+
+        # Set to true to use UTC timestamps.
+        # Defaults to false (i.e. local time).
+        pub var use_utc: bool;
+    }
+
+`Logger` instances have the following methods:
 
 
 [[ `:debug(arg: any)` <br> `:debug(format_string: str, *args: any)` ]]
 
-    Writes a `DEBUG` log message to the logger's output file.
+    Writes a `DEBUG` message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -120,7 +137,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `:error(arg: any)` <br> `:error(format_string: str, *args: any)` ]]
 
-    Writes an `ERROR` log message to the logger's output file.
+    Writes an `ERROR` message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -129,7 +146,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 [[ `:fatal(arg: any)` <br> `:fatal(format_string: str, *args: any)` ]]
 
-    Writes a `FATAL` log message to the logger's output file.
+    Writes a `FATAL` message to the logger's output file.
 
     Calling this method will cause the program to exit with a non-zero status code.
 
@@ -138,32 +155,18 @@ Use a `Logger` instance to customize the logging-level and destination file.
     * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `:file(output_file: file)` ]]
-
-    Sets the logger's output file.
-    The default output file is the standard output stream.
-
-
 [[ `:info(arg: any)` <br> `:info(format_string: str, *args: any)` ]]
 
-    Writes an `INFO` log message to the logger's output file.
+    Writes an `INFO` message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
     * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and logging the resulting string.
 
 
-[[ `:level(log_level: i64)` ]]
-
-    Sets the logging level.
-    Messages will only be logged if their level is greater than or equal to this logging level.
-
-    The default logging level is `INFO`.
-
-
 [[ `:warn(arg: any)` <br> `:warn(format_string: str, *args: any)` ]]
 
-    Writes a `WARN` log message to the logger's output file.
+    Writes a `WARN` message to the logger's output file.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
