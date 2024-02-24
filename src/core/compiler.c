@@ -1154,17 +1154,22 @@ static void parse_if_expr(Parser* parser, bool can_assign) {
         return;
     }
 
-    if (!consume(parser, TOKEN_LEFT_BRACE, "expected '{' after 'else' in 'if' expression")) {
-        return;
-    }
-
     patch_jump(parser, jump_to_false_branch);
     emit_byte(parser, PYRO_OPCODE_POP);
 
-    parse_expression(parser, true);
-    patch_jump(parser, jump_to_end);
+    if (match(parser, TOKEN_IF)) {
+        parse_if_expr(parser, false);
+    } else {
+        if (!consume(parser, TOKEN_LEFT_BRACE, "expected '{' after 'else' in 'if' expression")) {
+            return;
+        }
+        parse_expression(parser, true);
+        if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after 'else' clause in 'if' expression")) {
+            return;
+        }
+    }
 
-    consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after 'else' clause in 'if' expression");
+    patch_jump(parser, jump_to_end);
 }
 
 
@@ -1845,7 +1850,7 @@ static void parse_assert_stmt(Parser* parser) {
     parse_expression(parser, false);
     if (match_assignment_token(parser)) {
         SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
-            "assignment is not allowed in 'assert' statements, wrap in '()' to enable"
+            "invalid assignment in 'assert' statement, wrap the assignment in '()' to allow"
         );
         return;
     }

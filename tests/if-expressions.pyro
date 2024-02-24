@@ -1,0 +1,62 @@
+assert "foo" == if true { "foo" } else { "bar" };
+assert "foo" == if "" { "foo" } else { "bar" };
+assert "foo" == if "abc" { "foo" } else { "bar" };
+assert "foo" == if 0 { "foo" } else { "bar" };
+assert "foo" == if 0.0 { "foo" } else { "bar" };
+
+assert "bar" == if false { "foo" } else { "bar" };
+assert "bar" == if null { "foo" } else { "bar" };
+assert "bar" == if $err() { "foo" } else { "bar" };
+
+assert "foo" == if null ?? "abc" { "foo" } else { "bar" };
+assert "foo" == if null ?? "" { "foo" } else { "bar" };
+assert "foo" == if null ?? 0 { "foo" } else { "bar" };
+assert "foo" == if null ?? 0.0 { "foo" } else { "bar" };
+assert "bar" == if null ?? null { "foo" } else { "bar" };
+
+assert "foo" == if true { "foo" ?? "bar" } else { "baz" ?? "bam" };
+assert "bar" == if true { null ?? "bar" } else { "baz" ?? "bam" };
+assert "baz" == if false { "foo" ?? "bar" } else { "baz" ?? "bam" };
+assert "bam" == if false { "foo" ?? "bar" } else { null ?? "bam" };
+
+assert if true { "foo" } else { "bar" } == "foo";
+assert if false { "foo" } else { "bar" } == "bar";
+assert if false { "foo" } else if false { "bar" } else { "baz" } == "baz";
+
+assert "foo" == if if true { true } else { false } { "foo" } else { "bar" };
+assert "bar" == if if false { true } else { false } { "foo" } else { "bar" };
+
+assert "foo" == if true { if true { "foo" } else { "bar" } } else { if true { "baz" } else { "bam" } };
+assert "bar" == if true { if false { "foo" } else { "bar" } } else { if true { "baz" } else { "bam" } };
+assert "baz" == if false { if true { "foo" } else { "bar" } } else { if true { "baz" } else { "bam" } };
+assert "bam" == if false { if true { "foo" } else { "bar" } } else { if false { "baz" } else { "bam" } };
+
+assert "foo" == if true { "foo" } else if true { "bar" } else { "baz" };
+assert "bar" == if false { "foo" } else if true { "bar" } else { "baz" };
+assert "baz" == if false { "foo" } else if false { "bar" } else { "baz" };
+assert "baz" == if false { "foo" } else if false { "bar" } else if true { "baz" } else { "bam" };
+assert "bam" == if false { "foo" } else if false { "bar" } else if false { "baz" } else { "bam" };
+
+with value = if try (0/1) { 111 } else { 222 } {
+    assert value == 111;
+}
+
+with value = if try (0/0) { 111 } else { 222 } {
+    assert value == 222;
+}
+
+with value = if true { try (0/1) !! 111 } else { 222 } {
+    assert value == 0;
+}
+
+with value = if true { try (0/0) !! 111 } else { 222 } {
+    assert value == 111;
+}
+
+with value = if false { 111 } else { try (0/1) !! 222 } {
+    assert value == 0;
+}
+
+with value = if false { 111 } else { try (0/0) !! 222 } {
+    assert value == 222;
+}
