@@ -84,9 +84,6 @@
 <a href="#the-error-coalescing-operator">The Error-coalescing Operator</a>
 </li>
 <li>
-<a href="#the-else-coalescing-operator">The Else-coalescing Operator</a>
-</li>
-<li>
 <a href="#assignment-operators">Assignment Operators</a>
 </li>
 <li>
@@ -430,24 +427,6 @@ You can chain multiple <code>!!</code> expressions, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_error</span><span class="p">()</span> <span class="o">!!</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
-</pre>
-<h3 id="the-else-coalescing-operator">
-The Else-coalescing Operator
-</h3>
-<p>
-The else-coalescing operator <code>else</code> lets you swap in a default value in place of a broadly-defined <i>falsey-ish</i> value:
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_value</span><span class="p">()</span> <span class="k">else</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
-</pre>
-<p>
-The value of the expression <code>a else b</code> is the value of the first operand if that value is not one of (<code>false</code>, <code>null</code>, <code>err</code>, <code>0</code>, <code>0.0</code>, or <code>&quot;&quot;</code>), otherwise the value of the second operand.
-</p>
-<p>
-You can chain multiple <code>else</code> expressions, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_value</span><span class="p">()</span> <span class="k">else</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="k">else</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="assignment-operators">
 Assignment Operators

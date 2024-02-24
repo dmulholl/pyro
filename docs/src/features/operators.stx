@@ -145,23 +145,6 @@ You can chain multiple `!!` expressions, e.g.
 
 
 
-### The Else-coalescing Operator
-
-The else-coalescing operator `else` lets you swap in a default value in place of a broadly-defined *falsey-ish* value:
-
-::: code pyro
-    var value = get_value() else "default";
-
-
-The value of the expression `a else b` is the value of the first operand if that value is not one of (`false`, `null`, `err`, `0`, `0.0`, or `""`), otherwise the value of the second operand.
-
-You can chain multiple `else` expressions, e.g.
-
-::: code pyro
-    var value = get_value() else get_fallback() else "default";
-
-
-
 ### Assignment Operators
 
 An assignment expression, `a = b`, returns the value assigned, e.g.
