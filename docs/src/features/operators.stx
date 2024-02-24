@@ -23,7 +23,7 @@ Operator precedence in the table below goes from high at the top to low at the b
     Addition         |   `+` `-`                                         |   Left
     Comparison       |   `>` `>=` `<` `<=` `in`                          |   Left
     Equality         |   `==` `!=`                                       |   Left
-    Logical          |   `&&` <code>&#124;&#124;</code> `??` `!!` `else` |   Left
+    Logical          |   `&&` <code>&#124;&#124;</code> `??` `!!`        |   Left
     Conditional      |   <code>? :&#124;</code>                          |   None
     Assignment       |   `=` `+=` `-=`                                   |   Right
 
