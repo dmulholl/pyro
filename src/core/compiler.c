@@ -1127,6 +1127,47 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
 }
 
 
+static void parse_if_expr(Parser* parser, bool can_assign) {
+    parse_expression(parser, false);
+    if (match_assignment_token(parser)) {
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
+            "invalid assignment in 'if' condition, wrap the assignment in '()' to allow"
+        );
+        return;
+    }
+
+    if (!consume(parser, TOKEN_LEFT_BRACE, "expected '{' after condition in 'if' expression")) {
+        return;
+    }
+
+    size_t jump_to_false_branch = emit_jump(parser, PYRO_OPCODE_JUMP_IF_FALSE);
+    emit_byte(parser, PYRO_OPCODE_POP);
+
+    parse_expression(parser, true);
+    size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP);
+
+    if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after then-clause in 'if' expression")) {
+        return;
+    }
+
+    if (!consume(parser, TOKEN_ELSE, "expected 'else' in 'if' expression")) {
+        return;
+    }
+
+    if (!consume(parser, TOKEN_LEFT_BRACE, "expected '{' after 'else' in 'if' expression")) {
+        return;
+    }
+
+    patch_jump(parser, jump_to_false_branch);
+    emit_byte(parser, PYRO_OPCODE_POP);
+
+    parse_expression(parser, true);
+    patch_jump(parser, jump_to_end);
+
+    consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after 'else' clause in 'if' expression");
+}
+
+
 static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     TokenType token_type = parser->next_token.type;
 
@@ -1356,6 +1397,10 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
 
     else if (match(parser, TOKEN_LEFT_BRACE)) {
         parse_map_or_set_literal(parser);
+    }
+
+    else if (match(parser, TOKEN_IF)) {
+        parse_if_expr(parser, can_assign);
     }
 
     else if (match(parser, TOKEN_EOF)) {
@@ -1996,7 +2041,10 @@ static void parse_if_stmt(Parser* parser) {
     size_t jump_over_then = emit_jump(parser, PYRO_OPCODE_POP_JUMP_IF_FALSE);
 
     // Emit the bytecode for the 'then' block.
-    consume(parser, TOKEN_LEFT_BRACE, "expected '{' after condition in 'if' statement");
+    if (!consume(parser, TOKEN_LEFT_BRACE, "expected '{' after condition in 'if' statement")) {
+        return;
+    }
+
     begin_scope(parser);
     parse_block(parser);
     end_scope(parser);
