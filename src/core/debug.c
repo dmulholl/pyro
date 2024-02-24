@@ -294,9 +294,6 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_JUMP_IF_NOT_ERR:
             return jump_instruction(vm, "JUMP_IF_NOT_ERR", 1, fn, ip);
 
-        case PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY:
-            return jump_instruction(vm, "JUMP_IF_NOT_KINDA_FALSEY", 1, fn, ip);
-
         case PYRO_OPCODE_JUMP_IF_NOT_NULL:
             return jump_instruction(vm, "JUMP_IF_NOT_NULL", 1, fn, ip);
 

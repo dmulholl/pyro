@@ -1122,7 +1122,6 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_JUMP_IF_ERR:
         case PYRO_OPCODE_JUMP_IF_FALSE:
         case PYRO_OPCODE_JUMP_IF_NOT_ERR:
-        case PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY:
         case PYRO_OPCODE_JUMP_IF_NOT_NULL:
         case PYRO_OPCODE_JUMP_IF_TRUE:
         case PYRO_OPCODE_LOAD_CONSTANT:

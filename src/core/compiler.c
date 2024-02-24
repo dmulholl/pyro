@@ -1674,11 +1674,6 @@ static void parse_logical_expr(Parser* parser, bool can_assign) {
             emit_byte(parser, PYRO_OPCODE_POP);
             parse_equality_expr(parser, false);
             patch_jump(parser, jump_to_end);
-        } else if (match(parser, TOKEN_ELSE)) {
-            size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY);
-            emit_byte(parser, PYRO_OPCODE_POP);
-            parse_equality_expr(parser, false);
-            patch_jump(parser, jump_to_end);
         } else {
             break;
         }

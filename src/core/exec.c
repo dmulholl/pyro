@@ -342,26 +342,6 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
 }
 
 
-// Returns true if the value is 'kinda-falsey', i.e. one of: [false, null, err, 0, 0.0, ""].
-static inline bool is_kinda_falsey(PyroValue value) {
-    switch (value.type) {
-        case PYRO_VALUE_BOOL:
-            return value.as.boolean == false;
-        case PYRO_VALUE_NULL:
-            return true;
-        case PYRO_VALUE_I64:
-            return value.as.i64 == 0;
-        case PYRO_VALUE_RUNE:
-            return value.as.u32 == 0;
-        case PYRO_VALUE_F64:
-            return value.as.f64 == 0.0;
-        case PYRO_VALUE_OBJ:
-            return PYRO_IS_ERR(value) || (PYRO_IS_STR(value) && PYRO_AS_STR(value)->count == 0);
-        default:
-            return false;
-    }
-}
-
 void call_end_with_method(PyroVM* vm, PyroValue receiver) {
     PyroValue end_with_method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
     if (PYRO_IS_NULL(end_with_method)) {
@@ -1951,15 +1931,6 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_JUMP_IF_NOT_NULL: {
                 uint16_t offset = READ_BE_U16();
                 if (!PYRO_IS_NULL(vm->stack_top[-1])) {
-                    frame->ip += offset;
-                }
-                break;
-            }
-
-            // Jumps the instruction pointer to the specified offset in the bytecode.
-            case PYRO_OPCODE_JUMP_IF_NOT_KINDA_FALSEY: {
-                uint16_t offset = READ_BE_U16();
-                if (!is_kinda_falsey(vm->stack_top[-1])) {
                     frame->ip += offset;
                 }
                 break;
