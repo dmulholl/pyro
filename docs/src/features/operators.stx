@@ -141,7 +141,7 @@ The value of the expression `a !! b` is the value of the first operand if that o
 You can chain multiple `!!` expressions, e.g.
 
 ::: code pyro
-    var value = maybe_error() ?? get_fallback() ?? "default";
+    var value = maybe_error() !! get_fallback() !! "default";
 
 
 
