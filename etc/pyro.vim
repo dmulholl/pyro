@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.4.11
+" v0.5.0
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -38,6 +38,12 @@ syn match pyroNumber "\<\d\(\d\|_\)*\.\(\d\|_\)\+\(e[-+]\=\(\d\|_\)\+\)\=\>"
 syn match pyroNumber "\<\d\(\d\|_\)*e[-+]\=\(\d\|_\)\+\>"
 syn case match
 
+" Operators.
+syn match pyroOperator "||"
+syn match pyroOperator "&&"
+syn match pyroOperator "??"
+syn match pyroOperator "!!"
+
 " Default highlighting styles.
 hi def link pyroComment Comment
 hi def link pyroDoubleQuotedString String
@@ -51,5 +57,6 @@ hi def link pyroNumber Constant
 hi def link pyroSpecial PreProc
 hi def link pyroEscape Constant
 hi def link pyroInterpolation Constant
+hi def link pyroOperator Statement
 
 let b:current_syntax = "pyro"
