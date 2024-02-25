@@ -364,12 +364,7 @@ As you'd expect, `if` statements support optional `else if` and `else` clauses:
         echo "we're poor";
     }
 
-Note that `if` statements support [conditional-scoped variables](@root/features/conditional-scoped-variables//).
-
-Pyro also has support for conditional expressions using the ternary operator `? :|`:
-
-::: code pyro
-    var status = money > 100 ? "rich" :| "poor";
+Pyro also supports [conditional-scoped variables](@root/features/conditional-scoped-variables//) and [conditional expressions](@root/features/conditional-expressions//).
 
 
 

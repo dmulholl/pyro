@@ -3,7 +3,7 @@ title: Conditional Expressions
 meta_title: Pyro &mdash; Conditional Expressions
 ---
 
-Pyro supports conditional `if` expressions, e.g.
+Pyro supports conditional expressions using `if`, e.g.
 
 ::: code pyro
     var size = if value < 100 {
@@ -23,7 +23,7 @@ The syntax of an `if` expression is:
 
 An `if` *expression* is different from an `if` *statement* --- an `if` expression requires an `else` clause and the `{}` blocks must each contain a single expression.
 
-Conditional `if` expressions support chained `else if` clauses, e.g.
+As you'd expect, `if` expressions support chained `else if` clauses, e.g.
 
 ::: code pyro
     var size = if value < 100 {
