@@ -45,8 +45,6 @@ You can use variable-unpacking syntax inside an `if` statement, e.g.
 ::: code pyro
     if var (x, y) = get_location(); x == 1 && y == 2 {
         echo "correct location";
-    } else {
-        echo "incorrect location";
     }
 
 Here, `x` and `y` are new local variables valid inside the scope of the `if` statement, including any `else if` or `else` clauses.

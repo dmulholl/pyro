@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pyro Standard Library &mdash; std::shell</title>
+        <title>Pyro &mdash; Conditional Expressions</title>
 
         
 
@@ -18,14 +18,14 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
     </head>
-    <body class="node-stdlib-shell node-stdlib node">
+    <body class="node-features-conditional-expressions node-features node">
         <header class="masthead">
             <h1><a href="../index.html">Pyro</a></h1>
             
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.13.0-dev</p>
+                <p class="version">Version 0.14.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -46,7 +46,6 @@
 <li><a href="../stdlib.html">Standard Library</a></li>
 <li><a href="../examples.html">Examples</a></li>
 <li><a href="../tutorials.html">Tutorials</a></li>
-<li><a href="../roadmap.html">Roadmap</a></li>
 <li><a href="../faq.html">FAQ</a></li>
 <li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
 <li><a href="../acknowledgements.html">Acknowledgements</a></li>
@@ -58,84 +57,45 @@
 
         <article class="main">
             <header class="title">
-                <h1><code>std::shell</code></h1>
-                
-                    <p class="subtitle">Deprecated.</p>
+                <h1>Conditional Expressions</h1>
                 
                 <hr>
             </header>
             <p>
-Pyro wrappers for common shell utilities.
+Pyro supports conditional <code>if</code> expressions, e.g.
 </p>
-<h3 id="functions">
-Functions
-</h3>
-<dl>
-<div>
-<dt>
-<code>cp(src: str, dst: str)</code>
-</dt>
-<dd>
-<p>
-Equivalent to running the shell command:
-</p>
-<pre>
-cp -rf &lt;src&gt; &lt;dst&gt;
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">size</span> <span class="p">=</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&lt;</span> <span class="mi">100</span> <span class="p">{</span>
+    <span class="s">&quot;small&quot;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="s">&quot;large&quot;</span>
+<span class="p">};</span>
 </pre>
 <p>
-Panics if the <code>cp</code> command cannot be found or if it exits with a non-zero status code.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>mkdir(path: str)</code>
-</dt>
-<dd>
-<p>
-Equivalent to running the shell command:
+The syntax of an <code>if</code> expression is:
 </p>
 <pre>
-mkdir -p &lt;path&gt;
+if &lt;condition-expression&gt; {
+    &lt;if-true-expression&gt;
+} else {
+    &lt;if-false-expression&gt;
+}
 </pre>
 <p>
-Panics if the <code>mkdir</code> command cannot be found or if it exits with a non-zero status code.
+An <code>if</code> <i>expression</i> is different from an <code>if</code> <i>statement</i> &mdash; an <code>if</code> expression requires an <code>else</code> clause and the <code>{}</code> blocks must each contain a single expression.
 </p>
-</dd>
-</div>
-<div>
-<dt>
-<code>mv(src: str, dst: str)</code>
-</dt>
-<dd>
 <p>
-Equivalent to running the shell command:
+Conditional <code>if</code> expressions support chained <code>else if</code> clauses, e.g.
 </p>
-<pre>
-mv -f &lt;src&gt; &lt;dst&gt;
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">size</span> <span class="p">=</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&lt;</span> <span class="mi">100</span> <span class="p">{</span>
+    <span class="s">&quot;small&quot;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&lt;</span> <span class="mi">1000</span> <span class="p">{</span>
+    <span class="s">&quot;medium&quot;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="s">&quot;large&quot;</span>
+<span class="p">};</span>
 </pre>
-<p>
-Panics if the <code>mv</code> command cannot be found or if it exits with a non-zero status code.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>rm(path: str)</code>
-</dt>
-<dd>
-<p>
-Equivalent to running the shell command:
-</p>
-<pre>
-rm -rf &lt;path&gt;
-</pre>
-<p>
-Panics if the <code>rm</code> command cannot be found or if it exits with a non-zero status code.
-</p>
-</dd>
-</div>
-</dl>
         </article>
 
         
