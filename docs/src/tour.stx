@@ -346,14 +346,14 @@ Conditional statements in Pyro look like this:
         echo "we have lots of money";
     }
 
-A conditional statement evaluates the *truthiness* of an expression. The syntax is:
+An `if` statement evaluates the [truthiness](#booleans) of an expression. The syntax is:
 
 ::: code
     if <expression> {
         ...
     }
 
-As you'd expect, conditional statements support optional `else if` and `else` clauses:
+As you'd expect, `if` statements support optional `else if` and `else` clauses:
 
 ::: code pyro
     if money > 100 {
