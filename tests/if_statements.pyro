@@ -1,34 +1,139 @@
-# Test the 'if' clause.
-var foo = 1;
+with flag = false {
+    if true {
+        flag = true;
+    }
 
-if foo == 1 {
-    assert true;
-} else if foo == 2 {
-    assert false;
-} else {
-    assert false;
+    assert flag;
 }
 
+with flag = false {
+    if false {
+        $panic("in then block");
+    }
 
-# Test the 'else if' clause.
-var bar = 2;
-
-if bar == 1 {
-    assert false;
-} else if bar == 2 {
-    assert true;
-} else {
-    assert false;
+    assert !flag;
 }
 
+with flag = false {
+    if true {
+        flag = true;
+    } else {
+        $panic("in else block");
+    }
 
-# Test the 'else' clause.
-var baz = 3;
+    assert flag;
+}
 
-if baz == 1 {
-    assert false;
-} else if baz == 2 {
-    assert false;
-} else {
-    assert true;
+with flag = false {
+    if false {
+        $panic("in then block");
+    } else {
+        flag = true;
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if true {
+        flag = true;
+    } else if true {
+        $panic("in else-if block");
+    } else {
+        $panic("in else block");
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if true {
+        flag = true;
+    } else if false {
+        $panic("in else-if block");
+    } else {
+        $panic("in else block");
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if false {
+        $panic("in then block");
+    } else if true {
+        flag = true;
+    } else {
+        $panic("in else block");
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if false {
+        $panic("in then block");
+    } else if false {
+        $panic("in else-if block");
+    } else {
+        flag = true;
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if true {
+        flag = true;
+    } else if true {
+        $panic("in first else-if block");
+    } else if true {
+        $panic("in second else-if block");
+    } else {
+        $panic("in else block");
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if false {
+        $panic("in then block");
+    } else if true {
+        flag = true;
+    } else if true {
+        $panic("in second else-if block");
+    } else {
+        $panic("in else block");
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if false {
+        $panic("in then block");
+    } else if false {
+        $panic("in first else-if block");
+    } else if true {
+        flag = true;
+    } else {
+        $panic("in else block");
+    }
+
+    assert flag;
+}
+
+with flag = false {
+    if false {
+        $panic("in then block");
+    } else if false {
+        $panic("in first else-if block");
+    } else if false {
+        $panic("in second else-if block");
+    } else {
+        flag = true;
+    }
+
+    assert flag;
 }
