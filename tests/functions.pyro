@@ -48,3 +48,29 @@ assert variadic_func_2("foo", "bar", "baz") == 1;
 assert variadic_func_2("foo", "bar", "baz", "bam") == 2;
 assert variadic_func_2("foo", "bar", "baz", "bam", "bop") == 3;
 assert variadic_func_2(*["foo", "bar", "baz", "bam", "bop"]) == 3;
+
+
+with vec = $range(100):to_vec() {
+    def func(*args) {
+        assert args:count() == 100;
+        assert args:iter():sum() == $range(100):sum();
+    }
+    func(*vec);
+}
+
+
+with vec = $range(255):to_vec() {
+    def func(*args) {
+        assert args:count() == 255;
+        assert args:iter():sum() == $range(255):sum();
+    }
+    func(*vec);
+}
+
+
+with vec = $range(1000):to_vec() {
+    def func(*args) {
+        assert args:count() == 1000;
+    }
+    assert $is_err(try func(*vec));
+}
