@@ -108,8 +108,10 @@ static PyroValue vec_append(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
     vec->version++;
 
-    if (!PyroVec_append(vec, args[0], vm)) {
-        pyro_panic(vm, "append(): out of memory");
+    for (size_t i = 0; i < arg_count; i++) {
+        if (!PyroVec_append(vec, args[i], vm)) {
+            pyro_panic(vm, "append(): out of memory");
+        }
     }
 
     return pyro_null();
@@ -650,7 +652,7 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
     // Vector methods -- public.
     pyro_define_pub_method(vm, vm->class_vec, "count", vec_count, 0);
     pyro_define_pub_method(vm, vm->class_vec, "capacity", vec_capacity, 0);
-    pyro_define_pub_method(vm, vm->class_vec, "append", vec_append, 1);
+    pyro_define_pub_method(vm, vm->class_vec, "append", vec_append, -1);
     pyro_define_pub_method(vm, vm->class_vec, "get", vec_get, 1);
     pyro_define_pub_method(vm, vm->class_vec, "set", vec_set, 2);
     pyro_define_pub_method(vm, vm->class_vec, "reverse", vec_reverse, 0);

@@ -446,3 +446,28 @@ def $test_negative_indexing_with_set() {
 
     assert $is_err(try vec:set(-4, "xyz"));
 }
+
+
+def $test_append_multiple_values() {
+    var vec = [];
+    assert vec:count() == 0;
+
+    vec:append("foo");
+    assert vec:count() == 1;
+    assert vec[0] == "foo";
+
+    vec:append("bar", "baz");
+    assert vec:count() == 3;
+    assert vec[0] == "foo";
+    assert vec[1] == "bar";
+    assert vec[2] == "baz";
+
+    var tup = ("abc", "def");
+    vec:append(*tup);
+    assert vec:count() == 5;
+    assert vec[3] == "abc";
+    assert vec[4] == "def";
+
+    var big_vec = $range(1000):to_vec();
+    assert $is_err(try vec:append(*big_vec));
+}

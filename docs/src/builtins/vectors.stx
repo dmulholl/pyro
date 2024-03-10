@@ -87,9 +87,9 @@ This is equivalent to calling the vector's `:contains()` method.
 
 ### Methods
 
-[[ `:append(value: any)` ]]
+[[ `:append(*values: any)` ]]
 
-    Appends a value to the vector.
+    Appends the arguments to the vector.
 
 [[ `:clear()` ]]
 
