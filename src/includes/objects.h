@@ -161,8 +161,11 @@ PyroVec* PyroVec_new_with_capacity(size_t capacity, PyroVM* vm);
 PyroVec* PyroVec_new_as_stack(PyroVM* vm);
 void PyroVec_clear(PyroVec* vec, PyroVM* vm);
 
-// Returns true if the value was successfully appended, false if memory allocation failed.
+// Appends a value to the vector. Returns false if memory allocation fails.
 bool PyroVec_append(PyroVec* vec, PyroValue value, PyroVM* vm);
+
+// Appends multiple values to the vector. Returns false if memory allocation fails.
+bool PyroVec_append_values(PyroVec* vec, PyroValue* values, size_t count, PyroVM* vm);
 
 // Returns a copy of the [src] vector. Returns NULL if memory allocation fails.
 PyroVec* PyroVec_copy(PyroVec* src, PyroVM* vm);

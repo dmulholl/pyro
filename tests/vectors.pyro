@@ -518,3 +518,68 @@ def $test_concatenation() {
     assert v7[1] == "def";
     assert v7 != v5;
 }
+
+
+def $test_append() {
+    with vec = [] {
+        assert $is_vec(vec);
+        assert vec:count() == 0;
+
+        vec:append();
+        assert vec:count() == 0;
+
+        vec:append("abc");
+        assert vec:count() == 1;
+        assert vec[0] == "abc";
+        assert vec[-1] == "abc";
+
+        vec:append();
+        assert vec:count() == 1;
+    }
+
+    with vec = [] {
+        assert $is_vec(vec);
+        assert vec:count() == 0;
+
+        vec:append();
+        assert vec:count() == 0;
+
+        vec:append("abc", "def");
+        assert vec:count() == 2;
+        assert vec[0] == "abc";
+        assert vec[-1] == "def";
+
+        vec:append("ghi", "jkl");
+        assert vec:count() == 4;
+        assert vec[0] == "abc";
+        assert vec[-1] == "jkl";
+
+        vec:append();
+        assert vec:count() == 4;
+    }
+
+    with vec = [] {
+        assert $is_vec(vec);
+        assert vec:count() == 0;
+
+        vec:append();
+        assert vec:count() == 0;
+
+        vec:append("abc");
+        assert vec:count() == 1;
+        assert vec[0] == "abc";
+        assert vec[-1] == "abc";
+
+        vec:append("def", "ghi");
+        assert vec:count() == 3;
+        assert vec[0] == "abc";
+        assert vec[-1] == "ghi";
+
+        vec:append("jkl");
+        assert vec:count() == 4;
+        assert vec[-1] == "jkl";
+
+        vec:append();
+        assert vec:count() == 4;
+    }
+}

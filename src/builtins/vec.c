@@ -108,10 +108,16 @@ static PyroValue vec_append(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
     vec->version++;
 
-    for (size_t i = 0; i < arg_count; i++) {
-        if (!PyroVec_append(vec, args[i], vm)) {
+    // Experimentally, if we're appending a single value, PyroVec_append() is faster.
+    if (arg_count == 1) {
+        if (!PyroVec_append(vec, args[0], vm)) {
             pyro_panic(vm, "append(): out of memory");
         }
+        return pyro_null();
+    }
+
+    if (!PyroVec_append_values(vec, args, arg_count, vm)) {
+        pyro_panic(vm, "append(): out of memory");
     }
 
     return pyro_null();
