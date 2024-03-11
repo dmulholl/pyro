@@ -471,3 +471,50 @@ def $test_append_multiple_values() {
     var big_vec = $range(1000):to_vec();
     assert $is_err(try vec:append(*big_vec));
 }
+
+
+def $test_concatenation() {
+    with vec = [] + [] {
+        assert $is_vec(vec);
+        assert vec:count() == 0;
+    }
+
+    with vec = ["abc", "def"] + [] {
+        assert $is_vec(vec);
+        assert vec:count() == 2;
+        assert vec[0] == "abc";
+    }
+
+    with vec = [] + ["ghi", "jkl"] {
+        assert $is_vec(vec);
+        assert vec:count() == 2;
+        assert vec[0] == "ghi";
+    }
+
+    with vec = ["abc", "def"] + ["ghi", "jkl"] {
+        assert $is_vec(vec);
+        assert vec:count() == 4;
+        assert vec[0] == "abc";
+        assert vec[2] == "ghi";
+    }
+
+    var v1 = ["abc", "def"];
+    var v2 = ["ghi", "jkl"];
+    var v3 = v1 + v2;
+    assert $is_vec(v3);
+    assert v3 != v1;
+    assert v3 != v2;
+    assert v3:count() == 4;
+    assert v3[0] == "abc";
+    assert v3[2] == "ghi";
+
+    var v4 = [];
+    var v5 = ["abc", "def"];
+    var v6 = [];
+    var v7 = v4 + v5 + v6;
+    assert $is_vec(v7);
+    assert v7:count() == 2;
+    assert v7[0] == "abc";
+    assert v7[1] == "def";
+    assert v7 != v5;
+}

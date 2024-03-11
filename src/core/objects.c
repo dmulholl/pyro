@@ -1335,6 +1335,7 @@ bool PyroVec_append(PyroVec* vec, PyroValue value, PyroVM* vm) {
 }
 
 
+// TODO: optimize by memcpying the entries directly.
 bool PyroVec_copy_entries(PyroVec* src, PyroVec* dst, PyroVM* vm) {
     for (size_t i = 0; i < src->count; i++) {
         if (!PyroVec_append(dst, src->values[i], vm)) {
@@ -1431,6 +1432,42 @@ void PyroVec_insert_at_index(PyroVec* vec, size_t index, PyroValue value, PyroVM
 
     vec->values[index] = value;
     vec->count++;
+}
+
+
+bool PyroVec_resize(PyroVec* vec, size_t new_capacity, PyroVM* vm) {
+    if (new_capacity == 0) {
+        PyroVec_clear(vec, vm);
+        return true;
+    }
+
+    PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
+    if (!new_array) {
+        return false;
+    }
+
+    vec->capacity = new_capacity;
+    vec->values = new_array;
+
+    if (new_capacity < vec->count) {
+        vec->count = new_capacity;
+    }
+
+    return true;
+}
+
+
+PyroVec* PyroVec_concat(PyroVec* vec1, PyroVec* vec2, PyroVM* vm) {
+    PyroVec* new_vec = PyroVec_new_with_capacity(vec1->count + vec2->count, vm);
+    if (!new_vec) {
+        return NULL;
+    }
+
+    memcpy(new_vec->values, vec1->values, sizeof(PyroValue) * vec1->count);
+    memcpy(new_vec->values + vec1->count, vec2->values, sizeof(PyroValue) * vec2->count);
+
+    new_vec->count = vec1->count + vec2->count;
+    return new_vec;
 }
 
 

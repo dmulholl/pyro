@@ -187,6 +187,14 @@ PyroValue PyroVec_remove_at_index(PyroVec* vec, size_t index, PyroVM* vm);
 // Panics if [index] is out of range or if memory allocation fails.
 void PyroVec_insert_at_index(PyroVec* vec, size_t index, PyroValue value, PyroVM* vm);
 
+// Resizes the vector's capacity to the specified value. Returns false if memory allocation fails.
+// If the new capacity is less than the vector's entry count, trailing entries will be discarded.
+// If the new capacity is zero, this is equivalent to calling PyroVec_clear().
+bool PyroVec_resize(PyroVec* vec, size_t new_capacity, PyroVM* vm);
+
+// Creates a new vector by concatenating two input vectors. Returns NULL if memory allocation fails.
+PyroVec* PyroVec_concat(PyroVec* vec1, PyroVec* vec2, PyroVM* vm);
+
 /* ------- */
 /* Modules */
 /* ------- */

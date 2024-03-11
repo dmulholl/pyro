@@ -55,23 +55,41 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
         }
 
         case PYRO_VALUE_OBJ: {
-            if (PYRO_IS_STR(left)) {
-                if (PYRO_IS_STR(right)) {
-                    PyroStr* result = PyroStr_concat(PYRO_AS_STR(left), PYRO_AS_STR(right), vm);
-                    if (!result) {
-                        pyro_panic(vm, "out of memory");
-                        return pyro_null();
+            switch (PYRO_AS_OBJ(left)->type) {
+                case PYRO_OBJECT_STR: {
+                    if (PYRO_IS_STR(right)) {
+                        PyroStr* result = PyroStr_concat(PYRO_AS_STR(left), PYRO_AS_STR(right), vm);
+                        if (!result) {
+                            pyro_panic(vm, "out of memory");
+                            return pyro_null();
+                        }
+                        return pyro_obj(result);
                     }
-                    return pyro_obj(result);
-                }
-                if (PYRO_IS_RUNE(right)) {
-                    PyroStr* result = PyroStr_append_codepoint_as_utf8(PYRO_AS_STR(left), right.as.u32, vm);
-                    if (!result) {
-                        pyro_panic(vm, "out of memory");
-                        return pyro_null();
+                    if (PYRO_IS_RUNE(right)) {
+                        PyroStr* result = PyroStr_append_codepoint_as_utf8(PYRO_AS_STR(left), right.as.u32, vm);
+                        if (!result) {
+                            pyro_panic(vm, "out of memory");
+                            return pyro_null();
+                        }
+                        return pyro_obj(result);
                     }
-                    return pyro_obj(result);
+                    break;
                 }
+
+                case PYRO_OBJECT_VEC: {
+                    if (PYRO_IS_VEC(right)) {
+                        PyroVec* result = PyroVec_concat(PYRO_AS_VEC(left), PYRO_AS_VEC(right), vm);
+                        if (!result) {
+                            pyro_panic(vm, "out of memory");
+                            return pyro_null();
+                        }
+                        return pyro_obj(result);
+                    }
+                    break;
+                }
+
+                default:
+                    break;
             }
             break;
         }
