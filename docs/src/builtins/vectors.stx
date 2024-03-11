@@ -85,6 +85,17 @@ This is equivalent to calling the vector's `:contains()` method.
 
 
 
+### Concatenation
+
+You can concatenate vectors using the `+` operator, e.g.
+
+::: code pyro
+    var vec = ["abc", "def"] + ["ghi", "jkl"];
+
+This creates a new vector containing the combined entries from the input vectors.
+
+
+
 ### Methods
 
 [[ `:append(*values: any)` ]]

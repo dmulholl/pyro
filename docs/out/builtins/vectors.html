@@ -75,6 +75,9 @@
 <a href="#containment">Containment</a>
 </li>
 <li>
+<a href="#concatenation">Concatenation</a>
+</li>
+<li>
 <a href="#methods">Methods</a>
 </li>
 </ul>
@@ -175,6 +178,18 @@ You can check if a vector contains an item using the <code>in</code> operator, e
 </pre>
 <p>
 This is equivalent to calling the vector's <code>:contains()</code> method.
+</p>
+<h3 id="concatenation">
+Concatenation
+</h3>
+<p>
+You can concatenate vectors using the <code>+</code> operator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;ghi&quot;</span><span class="p">,</span> <span class="s">&quot;jkl&quot;</span><span class="p">];</span>
+</pre>
+<p>
+This creates a new vector containing the combined entries from the input vectors.
 </p>
 <h3 id="methods">
 Methods
