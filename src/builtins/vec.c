@@ -5,7 +5,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (arg_count == 0) {
         PyroVec* vec = PyroVec_new(vm);
         if (!vec) {
-            pyro_panic(vm, "$vec(): out of memory");
+            pyro_panic(vm, "out of memory");
             return pyro_null();
         }
         return pyro_obj(vec);
@@ -30,13 +30,13 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
         // Get the iterator's :$next() method.
         PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
         if (PYRO_IS_NULL(next_method)) {
-            pyro_panic(vm, "$vec(): invalid argument [arg], iterator has no :$next() method");
+            pyro_panic(vm, "$vec(): invalid argument [arg], $iter() method does not return an iterator");
             return pyro_null();
         }
 
         PyroVec* vec = PyroVec_new(vm);
         if (!vec) {
-            pyro_panic(vm, "$vec(): out of memory");
+            pyro_panic(vm, "out of memory");
             return pyro_null();
         }
         if (!pyro_push(vm, pyro_obj(vec))) return pyro_null(); // protect from GC
@@ -51,7 +51,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 break;
             }
             if (!PyroVec_append(vec, next_value, vm)) {
-                pyro_panic(vm, "$vec(): out of memory");
+                pyro_panic(vm, "out of memory");
                 return pyro_null();
             }
         }
@@ -66,7 +66,7 @@ static PyroValue fn_vec(PyroVM* vm, size_t arg_count, PyroValue* args) {
             size_t size = args[0].as.i64;
             PyroVec* vec = PyroVec_new_with_capacity(size, vm);
             if (!vec) {
-                pyro_panic(vm, "$vec(): out of memory");
+                pyro_panic(vm, "out of memory");
                 return pyro_null();
             }
 
@@ -111,18 +111,74 @@ static PyroValue vec_append(PyroVM* vm, size_t arg_count, PyroValue* args) {
     // Experimentally, if we're appending a single value, PyroVec_append() is faster.
     if (arg_count == 1) {
         if (!PyroVec_append(vec, args[0], vm)) {
-            pyro_panic(vm, "append(): out of memory");
+            pyro_panic(vm, "out of memory");
         }
         return pyro_null();
     }
 
     if (!PyroVec_append_values(vec, args, arg_count, vm)) {
-        pyro_panic(vm, "append(): out of memory");
+        pyro_panic(vm, "out of memory");
     }
 
     return pyro_null();
 }
 
+
+static PyroValue vec_append_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroVec* vec = PYRO_AS_VEC(args[-1]);
+    vec->version++;
+
+    if (PYRO_IS_VEC(args[0])) {
+        if (!PyroVec_append_values(vec, PYRO_AS_VEC(args[0])->values, PYRO_AS_VEC(args[0])->count, vm)) {
+            pyro_panic(vm, "out of memory");
+        }
+        return pyro_null();
+    }
+
+    if (PYRO_IS_TUP(args[0])) {
+        if (!PyroVec_append_values(vec, PYRO_AS_TUP(args[0])->values, PYRO_AS_TUP(args[0])->count, vm)) {
+            pyro_panic(vm, "out of memory");
+        }
+        return pyro_null();
+    }
+
+    PyroValue iter_method = pyro_get_method(vm, args[0], vm->str_dollar_iter);
+    if (PYRO_IS_NULL(iter_method)) {
+        pyro_panic(vm, "append_values(): argument must be iterable");
+        return pyro_null();
+    }
+
+    if (!pyro_push(vm, args[0])) return pyro_null();
+    PyroValue iterator = pyro_call_method(vm, iter_method, 0);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+    if (!pyro_push(vm, iterator)) return pyro_null(); // protect from GC
+
+    PyroValue next_method = pyro_get_method(vm, iterator, vm->str_dollar_next);
+    if (PYRO_IS_NULL(next_method)) {
+        pyro_panic(vm, "append_values(): invalid argument, $iter() method does not return an iterator");
+        return pyro_null();
+    }
+
+    while (true) {
+        if (!pyro_push(vm, iterator)) return pyro_null();
+        PyroValue next_value = pyro_call_method(vm, next_method, 0);
+        if (vm->halt_flag) {
+            return pyro_null();
+        }
+        if (PYRO_IS_ERR(next_value)) {
+            break;
+        }
+        if (!PyroVec_append(vec, next_value, vm)) {
+            pyro_panic(vm, "out of memory");
+            return pyro_null();
+        }
+    }
+
+    pyro_pop(vm); // iterator
+    return pyro_null();
+}
 
 static PyroValue vec_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
@@ -659,6 +715,7 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_vec, "count", vec_count, 0);
     pyro_define_pub_method(vm, vm->class_vec, "capacity", vec_capacity, 0);
     pyro_define_pub_method(vm, vm->class_vec, "append", vec_append, -1);
+    pyro_define_pub_method(vm, vm->class_vec, "append_values", vec_append_values, 1);
     pyro_define_pub_method(vm, vm->class_vec, "get", vec_get, 1);
     pyro_define_pub_method(vm, vm->class_vec, "set", vec_set, 2);
     pyro_define_pub_method(vm, vm->class_vec, "reverse", vec_reverse, 0);

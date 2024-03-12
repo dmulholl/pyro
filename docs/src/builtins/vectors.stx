@@ -102,6 +102,10 @@ This creates a new vector containing the combined entries from the input vectors
 
     Appends the arguments to the vector.
 
+[[ `:append_values(arg: iterable)` ]]
+
+    Appends values from an iterable container.
+
 [[ `:clear()` ]]
 
     Removes all items from the vector.

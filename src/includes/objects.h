@@ -170,10 +170,6 @@ bool PyroVec_append_values(PyroVec* vec, PyroValue* values, size_t count, PyroVM
 // Returns a copy of the [src] vector. Returns NULL if memory allocation fails.
 PyroVec* PyroVec_copy(PyroVec* src, PyroVM* vm);
 
-// Appends all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false]
-// if the operation failed because enough memory could not be allocated for the extra entries.
-bool PyroVec_copy_entries(PyroVec* src, PyroVec* dst, PyroVM* vm);
-
 // Removes and returns the last item from the vector. Panics and returns NULL_VAL if the
 // vector is emtpy.
 PyroValue PyroVec_remove_last(PyroVec* vec, PyroVM* vm);

@@ -961,7 +961,7 @@ static void run(PyroVM* vm) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }
-                if (!PyroVec_copy_entries(superclass->default_field_values, subclass->default_field_values, vm)) {
+                if (!PyroVec_append_values(subclass->default_field_values, superclass->default_field_values->values, superclass->default_field_values->count, vm)) {
                     pyro_panic(vm, "out of memory");
                     break;
                 }

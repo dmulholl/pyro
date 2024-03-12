@@ -1364,11 +1364,6 @@ bool PyroVec_append_values(PyroVec* vec, PyroValue* values, size_t count, PyroVM
 }
 
 
-bool PyroVec_copy_entries(PyroVec* src, PyroVec* dst, PyroVM* vm) {
-    return PyroVec_append_values(dst, src->values, src->count, vm);
-}
-
-
 PyroValue PyroVec_remove_last(PyroVec* vec, PyroVM* vm) {
     if (vec->count == 0) {
         pyro_panic(vm, "cannot remove last item from empty vector");

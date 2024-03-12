@@ -583,3 +583,47 @@ def $test_append() {
         assert vec:count() == 4;
     }
 }
+
+
+def $test_append_values() {
+    with vec = [] {
+        vec:append_values(["abc"]);
+        assert vec:count() == 1;
+        assert vec[0] == "abc";
+
+        vec:append_values(["def", "ghi"]);
+        assert vec:count() == 3;
+        assert vec[0] == "abc";
+        assert vec[1] == "def";
+        assert vec[2] == "ghi";
+    }
+
+    with vec = [] {
+        vec:append_values(("abc",));
+        assert vec:count() == 1;
+        assert vec[0] == "abc";
+
+        vec:append_values(("def", "ghi"));
+        assert vec:count() == 3;
+        assert vec[0] == "abc";
+        assert vec[1] == "def";
+        assert vec[2] == "ghi";
+    }
+
+    with vec = [] {
+        vec:append_values($range(100));
+        assert vec:count() == 100;
+
+        loop var i = 0; i < 100; i += 1 {
+            assert vec[i] == i;
+        }
+    }
+
+    with vec = [] {
+        vec:append_values({"abc", "def", "ghi"});
+        assert vec:count() == 3;
+        assert "abc" in vec;
+        assert "def" in vec;
+        assert "ghi" in vec;
+    }
+}
