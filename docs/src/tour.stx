@@ -177,7 +177,7 @@ Functions which don't explicitly specify a return value have the default return 
 
 The equality operator is `==`. Its inverse is `!=`.
 
-Numbers compare as equal using `==` if their values are numerically equal, e.g.
+Numerical types (i.e. `i64`, `f64`, and `rune`) compare as equal using `==` if their values are numerically equal, e.g.
 
 ::: code pyro
     assert 1 == 1.0;
@@ -205,7 +205,7 @@ Numbers compare as equal using `==` if their values are numerically equal, e.g.
     var bar = {3, 2, 1};
     assert foo == bar;
 
-By default, other objects are equal only if they are the same object, e.g.
+By default, all other objects compare as equal only if they are the same object, e.g.
 
 ::: code pyro
     class Object {}

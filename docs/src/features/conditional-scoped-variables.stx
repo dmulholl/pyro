@@ -10,18 +10,18 @@ Pyro supports conditional-scoped variable declarations inside `if` statements, e
 
 ::: code pyro
     if var value = get_value(); value != null {
-        $println("value = {}", value);
+        echo "value: ${value}";
     }
 
 Here, `value` is a new local variable valid inside the scope of the `if` statement, including any `else if` or `else` clauses, e.g.
 
 ::: code pyro
-    if var number = get_number(); number > 1000 {
-        $println("very big number: {}", number);
-    } else if number > 100 {
-        $println("big number: {}", number);
+    if var value = get_number(); value > 1000 {
+        echo "very big number: ${value}";
+    } else if value > 100 {
+        echo "big number: ${value}";
     } else {
-        $println("small number: {}", number);
+        echo "small number: ${value}";
     }
 
 

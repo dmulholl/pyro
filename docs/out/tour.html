@@ -382,7 +382,7 @@ Equality
 The equality operator is <code>==</code>. Its inverse is <code>!=</code>.
 </p>
 <p>
-Numbers compare as equal using <code>==</code> if their values are numerically equal, e.g.
+Numerical types (i.e. <code>i64</code>, <code>f64</code>, and <code>rune</code>) compare as equal using <code>==</code> if their values are numerically equal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">;</span>
@@ -414,7 +414,7 @@ Numbers compare as equal using <code>==</code> if their values are numerically e
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
-By default, other objects are equal only if they are the same object, e.g.
+By default, all other objects compare as equal only if they are the same object, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Object</span> <span class="p">{}</span>
