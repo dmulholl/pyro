@@ -63,6 +63,20 @@ bool PyroTup_check_equal(PyroTup* a, PyroTup* b, PyroVM* vm) {
 }
 
 
+PyroTup* PyroTup_concat(PyroTup* tup1, PyroTup* tup2, PyroVM* vm) {
+    PyroTup* new_tup = PyroTup_new(tup1->count + tup2->count, vm);
+    if (!new_tup) {
+        return NULL;
+    }
+
+    memcpy(new_tup->values, tup1->values, sizeof(PyroValue) * tup1->count);
+    memcpy(new_tup->values + tup1->count, tup2->values, sizeof(PyroValue) * tup2->count);
+
+    new_tup->count = tup1->count + tup2->count;
+    return new_tup;
+}
+
+
 /* -------- */
 /* Closures */
 /* -------- */

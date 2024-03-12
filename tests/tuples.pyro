@@ -196,3 +196,39 @@ def $test_negative_indexing_with_get() {
 
     assert $is_err(try tup:get(-4));
 }
+
+def $test_concatenation() {
+    with tup = () + () {
+        assert $is_tup(tup);
+        assert tup:count() == 0;
+    }
+
+    with tup = ("abc", "def") + () {
+        assert $is_tup(tup);
+        assert tup:count() == 2;
+        assert tup[0] == "abc";
+    }
+
+    with tup = () + ("ghi", "jkl") {
+        assert $is_tup(tup);
+        assert tup:count() == 2;
+        assert tup[0] == "ghi";
+    }
+
+    with tup = ("abc", "def") + ("ghi", "jkl") {
+        assert $is_tup(tup);
+        assert tup:count() == 4;
+        assert tup[0] == "abc";
+        assert tup[2] == "ghi";
+    }
+
+    var t1 = ("abc", "def");
+    var t2 = ("ghi", "jkl");
+    var t3 = t1 + t2;
+    assert $is_tup(t3);
+    assert t3 != t1;
+    assert t3 != t2;
+    assert t3:count() == 4;
+    assert t3[0] == "abc";
+    assert t3[2] == "ghi";
+}

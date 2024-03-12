@@ -88,6 +88,18 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
                     break;
                 }
 
+                case PYRO_OBJECT_TUP: {
+                    if (PYRO_IS_TUP(right)) {
+                        PyroTup* result = PyroTup_concat(PYRO_AS_TUP(left), PYRO_AS_TUP(right), vm);
+                        if (!result) {
+                            pyro_panic(vm, "out of memory");
+                            return pyro_null();
+                        }
+                        return pyro_obj(result);
+                    }
+                    break;
+                }
+
                 default:
                     break;
             }

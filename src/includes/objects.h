@@ -395,6 +395,7 @@ typedef struct {
 
 PyroTup* PyroTup_new(size_t count, PyroVM* vm);
 bool PyroTup_check_equal(PyroTup* a, PyroTup* b, PyroVM* vm);
+PyroTup* PyroTup_concat(PyroTup* tup1, PyroTup* tup2, PyroVM* vm);
 
 /* ------- */
 /* Buffers */
