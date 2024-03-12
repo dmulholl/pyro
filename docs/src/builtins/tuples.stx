@@ -122,6 +122,17 @@ This is equivalent to calling the tuple's `:contains()` method.
 
 
 
+### Concatenation
+
+You can concatenate tuples using the `+` operator, e.g.
+
+::: code pyro
+    var tup = ("abc", "def") + ("ghi", "jkl");
+
+The result is a new tuple containing the combined entries from the input tuples.
+
+
+
 ### Methods
 
 [[ `:contains(value: any) -> bool` ]]

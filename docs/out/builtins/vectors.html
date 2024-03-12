@@ -189,7 +189,7 @@ You can concatenate vectors using the <code>+</code> operator, e.g.
 <span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;ghi&quot;</span><span class="p">,</span> <span class="s">&quot;jkl&quot;</span><span class="p">];</span>
 </pre>
 <p>
-This creates a new vector containing the combined entries from the input vectors.
+The result is a new vector containing the combined entries from the input vectors.
 </p>
 <h3 id="methods">
 Methods
@@ -202,6 +202,16 @@ Methods
 <dd>
 <p>
 Appends the arguments to the vector.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:append_values(container: iterable)</code>
+</dt>
+<dd>
+<p>
+Appends values from an iterable container.
 </p>
 </dd>
 </div>

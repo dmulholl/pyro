@@ -92,7 +92,7 @@ You can concatenate vectors using the `+` operator, e.g.
 ::: code pyro
     var vec = ["abc", "def"] + ["ghi", "jkl"];
 
-This creates a new vector containing the combined entries from the input vectors.
+The result is a new vector containing the combined entries from the input vectors.
 
 
 
@@ -102,7 +102,7 @@ This creates a new vector containing the combined entries from the input vectors
 
     Appends the arguments to the vector.
 
-[[ `:append_values(arg: iterable)` ]]
+[[ `:append_values(container: iterable)` ]]
 
     Appends values from an iterable container.
 

@@ -81,6 +81,9 @@
 <a href="#containment">Containment</a>
 </li>
 <li>
+<a href="#concatenation">Concatenation</a>
+</li>
+<li>
 <a href="#methods">Methods</a>
 </li>
 </ul>
@@ -213,6 +216,18 @@ You can check if a tuple contains an item using the <code>in</code> operator, e.
 </pre>
 <p>
 This is equivalent to calling the tuple's <code>:contains()</code> method.
+</p>
+<h3 id="concatenation">
+Concatenation
+</h3>
+<p>
+You can concatenate tuples using the <code>+</code> operator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">tup</span> <span class="p">=</span> <span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="s">&quot;ghi&quot;</span><span class="p">,</span> <span class="s">&quot;jkl&quot;</span><span class="p">);</span>
+</pre>
+<p>
+The result is a new tuple containing the combined entries from the input tuples.
 </p>
 <h3 id="methods">
 Methods
