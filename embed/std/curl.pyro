@@ -89,10 +89,22 @@ pub class Request {
     var timeout_secs: f64 = 0.0;
     var params: map[str, vec[str]];
     var headers: vec[str];
+    var custom_args: vec[str];
 
     def $init() {
         self.params = {};
         self.headers = [];
+        self.custom_args = [];
+    }
+
+    pub def append_args(*args: str) -> Request {
+        self.custom_args:append_values(args);
+        return self;
+    }
+
+    pub def http_auth(username: str, password: str) {
+        self.custom_args:append("--user", "${username}:${password}");
+        return self;
     }
 
     pub def url(value: str) -> Request {
@@ -190,6 +202,8 @@ pub class Request {
             args:append(header);
         }
 
+        args += self.custom_args;
+
         var url = self.url;
         if self.params:count() > 0 {
             url += "?" + self:make_query_string();
@@ -242,6 +256,8 @@ pub class Request {
             args:append("--header");
             args:append(header);
         }
+
+        args += self.custom_args;
 
         var url = self.url;
         if self.params:count() > 0 {
@@ -298,6 +314,7 @@ pub class Request {
             args:append("Content-Type: application/x-www-form-urlencoded");
         }
 
+        args += self.custom_args;
         args:append(self.url);
 
         if self.debug {

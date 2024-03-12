@@ -52,15 +52,33 @@ You can find a set of examples [here][1].
 
 `Request` objects have the following public methods:
 
+[[ `:append_args(*args: str) -> Request` ]]
+
+    Appends custom arguments for the `curl` binary.
+
+    Returns the request object to enable chaining.
+
 [[ `:body(value: str|buf) -> Request` ]]
 
     Sets the request's body to `value`.
 
     Returns the request object to enable chaining.
 
+[[ `:debug() -> Request` ]]
+
+    Turns on debug mode. Debug output is printed to the standard error stream.
+
+    Returns the request object to enable chaining.
+
 [[ `:header(value: str) -> Request` ]]
 
     Adds a header to the request.
+
+    Returns the request object to enable chaining.
+
+[[ `:http_auth(username: str, password: str) -> Request` ]]
+
+    Adds authentication credentials in [Basic HTTP Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) format.
 
     Returns the request object to enable chaining.
 
@@ -77,7 +95,7 @@ You can find a set of examples [here][1].
     If the request is one of (`GET`, `HEAD`, `OPTIONS`), the parameter pair will be URL-encoded and appended to the URL's query string.
 
     If the request is one of (`POST`, `PUT`, `PATCH`, `DELETE`), the parameter pair will be URL-encoded and appended to the request's body in `application/x-www-form-urlencoded` format.
-    A `Content-Type` header will be automatically added to the request.
+    The appropriate `Content-Type` header will be automatically added to the request.
 
     Returns the request object to enable chaining.
 

@@ -174,6 +174,19 @@ Creates a new <code>Request</code> object.
 <dl>
 <div>
 <dt>
+<code>:append_args(*args: str) -&gt; Request</code>
+</dt>
+<dd>
+<p>
+Appends custom arguments for the <code>curl</code> binary.
+</p>
+<p>
+Returns the request object to enable chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:body(value: str|buf) -&gt; Request</code>
 </dt>
 <dd>
@@ -187,11 +200,37 @@ Returns the request object to enable chaining.
 </div>
 <div>
 <dt>
+<code>:debug() -&gt; Request</code>
+</dt>
+<dd>
+<p>
+Turns on debug mode. Debug output is printed to the standard error stream.
+</p>
+<p>
+Returns the request object to enable chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:header(value: str) -&gt; Request</code>
 </dt>
 <dd>
 <p>
 Adds a header to the request.
+</p>
+<p>
+Returns the request object to enable chaining.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:http_auth(username: str, password: str) -&gt; Request</code>
+</dt>
+<dd>
+<p>
+Adds authentication credentials in <a href="https://en.wikipedia.org/wiki/Basic_access_authentication">Basic HTTP Authentication</a> format.
 </p>
 <p>
 Returns the request object to enable chaining.
@@ -224,7 +263,7 @@ If the request is one of (<code>GET</code>, <code>HEAD</code>, <code>OPTIONS</co
 </p>
 <p>
 If the request is one of (<code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>), the parameter pair will be URL-encoded and appended to the request's body in <code>application/x-www-form-urlencoded</code> format.
-A <code>Content-Type</code> header will be automatically added to the request.
+The appropriate <code>Content-Type</code> header will be automatically added to the request.
 </p>
 <p>
 Returns the request object to enable chaining.
