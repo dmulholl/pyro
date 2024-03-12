@@ -69,8 +69,13 @@ PyroTup* PyroTup_concat(PyroTup* tup1, PyroTup* tup2, PyroVM* vm) {
         return NULL;
     }
 
-    memcpy(new_tup->values, tup1->values, sizeof(PyroValue) * tup1->count);
-    memcpy(new_tup->values + tup1->count, tup2->values, sizeof(PyroValue) * tup2->count);
+    if (tup1->count > 0) {
+        memcpy(new_tup->values, tup1->values, sizeof(PyroValue) * tup1->count);
+    }
+
+    if (tup2->count > 0) {
+        memcpy(new_tup->values + tup1->count, tup2->values, sizeof(PyroValue) * tup2->count);
+    }
 
     new_tup->count = tup1->count + tup2->count;
     return new_tup;
@@ -1495,8 +1500,13 @@ PyroVec* PyroVec_concat(PyroVec* vec1, PyroVec* vec2, PyroVM* vm) {
         return NULL;
     }
 
-    memcpy(new_vec->values, vec1->values, sizeof(PyroValue) * vec1->count);
-    memcpy(new_vec->values + vec1->count, vec2->values, sizeof(PyroValue) * vec2->count);
+    if (vec1->count > 0) {
+        memcpy(new_vec->values, vec1->values, sizeof(PyroValue) * vec1->count);
+    }
+
+    if (vec2->count > 0) {
+        memcpy(new_vec->values + vec1->count, vec2->values, sizeof(PyroValue) * vec2->count);
+    }
 
     new_vec->count = vec1->count + vec2->count;
     return new_vec;
