@@ -1245,11 +1245,11 @@ static void run(PyroVM* vm) {
                 }
 
                 if (PyroMap_contains(vm->superglobals, pyro_obj(name), vm)) {
-                    pyro_panic(vm, "cannot assign to superglobal '%s'", name->bytes);
+                    pyro_panic(vm, "invalid assignment to superglobal '%s', superglobals cannot be reassigned", name->bytes);
                     break;
                 }
 
-                pyro_panic(vm, "undefined variable '%s'", name->bytes);
+                pyro_panic(vm, "invalid assignment to undefined variable '%s'", name->bytes);
                 break;
             }
 

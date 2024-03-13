@@ -118,7 +118,7 @@ def run_tests() {
         }
 
         $print("{}  {}", grey("[  ····  ]"), filepath);
-        $stdout():flush();
+        $stdout:flush();
 
         var stashed_roots = add_import_roots_from_path(filepath);
         var module = make_module(filepath);

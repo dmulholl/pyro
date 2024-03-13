@@ -243,15 +243,30 @@ PyroVM* pyro_new_vm(void) {
         return NULL;
     }
 
-    // All other object fields.
+    // Object fields.
     vm->superglobals = PyroMap_new(vm);
     vm->module_cache = PyroMap_new(vm);
     vm->main_module = PyroMod_new(vm);
     vm->import_roots = PyroVec_new(vm);
-    vm->stdout_file = PyroFile_new(vm, stdout);
-    vm->stderr_file = PyroFile_new(vm, stderr);
-    vm->stdin_file = PyroFile_new(vm, stdin);
     vm->panic_buffer = PyroBuf_new_with_capacity(256, vm);
+
+    if (vm->memory_allocation_failed) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
+    // Standard IO streams.
+    vm->stdout_file = PyroFile_new(vm, stdout);
+    pyro_define_superglobal(vm, "$stdout", pyro_obj(vm->stdout_file));
+    pyro_define_superglobal(vm, "$o", pyro_obj(vm->stdout_file));
+
+    vm->stderr_file = PyroFile_new(vm, stderr);
+    pyro_define_superglobal(vm, "$stderr", pyro_obj(vm->stderr_file));
+    pyro_define_superglobal(vm, "$e", pyro_obj(vm->stderr_file));
+
+    vm->stdin_file = PyroFile_new(vm, stdin);
+    pyro_define_superglobal(vm, "$stdin", pyro_obj(vm->stdin_file));
+    pyro_define_superglobal(vm, "$i", pyro_obj(vm->stdin_file));
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

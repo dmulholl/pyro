@@ -1012,72 +1012,6 @@ static PyroValue fn_is_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue fn_stdout(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (arg_count == 0) {
-        if (vm->stdout_file) {
-            return pyro_obj(vm->stdout_file);
-        }
-        return pyro_null();
-    }
-
-    if (arg_count == 1) {
-        if (!PYRO_IS_FILE(args[0])) {
-            pyro_panic(vm, "$stdout(): invalid argument, expected a file");
-            return pyro_null();
-        }
-        vm->stdout_file = PYRO_AS_FILE(args[0]);
-        return pyro_null();
-    }
-
-    pyro_panic(vm, "$stdout(): expected 0 or 1 arguments, found %zu", arg_count);
-    return pyro_null();
-}
-
-
-static PyroValue fn_stderr(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (arg_count == 0) {
-        if (vm->stderr_file) {
-            return pyro_obj(vm->stderr_file);
-        }
-        return pyro_null();
-    }
-
-    if (arg_count == 1) {
-        if (!PYRO_IS_FILE(args[0])) {
-            pyro_panic(vm, "$stderr(): invalid argument, expected a file");
-            return pyro_null();
-        }
-        vm->stderr_file = PYRO_AS_FILE(args[0]);
-        return pyro_null();
-    }
-
-    pyro_panic(vm, "$stderr(): expected 0 or 1 arguments, found %zu", arg_count);
-    return pyro_null();
-}
-
-
-static PyroValue fn_stdin(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (arg_count == 0) {
-        if (vm->stdin_file) {
-            return pyro_obj(vm->stdin_file);
-        }
-        return pyro_null();
-    }
-
-    if (arg_count == 1) {
-        if (!PYRO_IS_FILE(args[0])) {
-            pyro_panic(vm, "$stdin(): invalid argument, expected a file");
-            return pyro_null();
-        }
-        vm->stdin_file = PYRO_AS_FILE(args[0]);
-        return pyro_null();
-    }
-
-    pyro_panic(vm, "$stdin(): expected 0 or 1 arguments, found %zu", arg_count);
-    return pyro_null();
-}
-
-
 static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_STR(args[0])) {
         pyro_panic(vm, "$import(): invalid argument [path], expected a string");
@@ -1244,9 +1178,6 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$write_file", fn_write_file, 2);
     pyro_define_superglobal_fn(vm, "$is_func", fn_is_func, 1);
     pyro_define_superglobal_fn(vm, "$is_method", fn_is_method, 1);
-    pyro_define_superglobal_fn(vm, "$stdin", fn_stdin, -1);
-    pyro_define_superglobal_fn(vm, "$stdout", fn_stdout, -1);
-    pyro_define_superglobal_fn(vm, "$stderr", fn_stderr, -1);
     pyro_define_superglobal_fn(vm, "$import", fn_import, 1);
     pyro_define_superglobal_fn(vm, "$add", fn_add, 2);
     pyro_define_superglobal_fn(vm, "$sub", fn_sub, 2);
