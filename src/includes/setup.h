@@ -7,14 +7,6 @@ PyroVM* pyro_new_vm(void);
 // Frees a VM instance and all heap-allocated memory owned by that VM.
 void pyro_free_vm(PyroVM* vm);
 
-// Sets the file to use for the VM's standard error stream. Returns false if a PyroFile cannot
-// be allocated to wrap the stream.
-bool pyro_set_stderr(PyroVM* vm, FILE* stream);
-
-// Sets the file to use for the VM's standard output stream. Returns false if a PyroFile
-// cannot be allocated to wrap the stream.
-bool pyro_set_stdout(PyroVM* vm, FILE* stream);
-
 // Sets the maximum memory allocation for the VM in bytes.
 void pyro_set_max_memory(PyroVM* vm, size_t bytes);
 

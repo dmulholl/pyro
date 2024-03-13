@@ -504,38 +504,6 @@ bool pyro_get_panic_flag(PyroVM* vm) {
 }
 
 
-bool pyro_set_stderr(PyroVM* vm, FILE* stream) {
-    if (stream == NULL) {
-        vm->stderr_file = NULL;
-        return true;
-    }
-
-    PyroFile* file = PyroFile_new(vm, stream);
-    if (!file) {
-        return false;
-    }
-
-    vm->stderr_file = file;
-    return true;
-}
-
-
-bool pyro_set_stdout(PyroVM* vm, FILE* stream) {
-    if (stream == NULL) {
-        vm->stdout_file = NULL;
-        return true;
-    }
-
-    PyroFile* file = PyroFile_new(vm, stream);
-    if (!file) {
-        return false;
-    }
-
-    vm->stdout_file = file;
-    return true;
-}
-
-
 bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
     PyroTup* tup = PyroTup_new(arg_count, vm);
     if (!tup) {
