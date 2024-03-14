@@ -5,3 +5,15 @@ assert $is_tup(pyro::version_tuple);
 
 assert $is_err(pyro::address(123));
 assert $is_str(pyro::address(pyro));
+
+var bytes_allocated = pyro::memory();
+assert $is_i64(bytes_allocated);
+
+{
+    var vec = $range(1000):to_vec();
+    pyro::gc();
+    bytes_allocated = pyro::memory();
+}
+
+pyro::gc();
+assert pyro::memory() < bytes_allocated;
