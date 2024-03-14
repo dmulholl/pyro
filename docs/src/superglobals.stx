@@ -26,7 +26,29 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$roots: vec[str]` ]]
 
-    A vector of strings containing the root directory paths that Pyro checks when attempting to import a module. Directory paths can end with an optional trailing slash. A single dot `.` indicates the current working directory, a single slash `/` indicates the system root directory.
+    A vector of strings containing the root directory paths that Pyro checks when attempting to import a module.
+
+    * Directory paths can end with an optional trailing slash.
+    * A single dot `.` indicates the current working directory.
+    * A single slash `/` indicates the system root directory.
+
+
+
+[[ `$stderr: file` ]]
+
+    The program's standard error stream as a write-only [file](@root/builtins/files//).
+
+
+
+[[ `$stdin: file` ]]
+
+    The program's standard input stream as a read-only [file](@root/builtins/files//).
+
+
+
+[[ `$stdout: file` ]]
+
+    The program's standard output stream as a write-only [file](@root/builtins/files//).
 
 
 
@@ -562,39 +584,6 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 [[ `$stack() -> stack` ]]
 
     Creates a new [stack](@root/builtins/stacks//).
-
-
-
-[[ `$stderr() -> file` <br> `$stderr(arg: file)`  ]]
-
-    Gets or sets the standard error stream.
-
-    * If called with no arguments, returns the `file` object representing the standard error stream.
-      By default, this is a `file` object wrapping `STDERR`.
-
-    * If called with one argument, sets the standard error stream to `arg`.
-
-
-
-[[ `$stdin() -> file` <br> `$stdin(arg: file)`  ]]
-
-    Gets or sets the standard input stream.
-
-    * If called with no arguments, returns the `file` object representing the standard input stream.
-      By default, this is a `file` object wrapping `STDIN`.
-
-    * If called with one argument, sets the standard input stream to `arg`.
-
-
-
-[[ `$stdout() -> file` <br> `$stdout(arg: file)`  ]]
-
-    Gets or sets the standard output stream.
-
-    * If called with no arguments, returns the `file` object representing the standard output stream.
-      By default, this is a `file` object wrapping `STDOUT`.
-
-    * If called with one argument, sets the standard output stream to `arg`.
 
 
 

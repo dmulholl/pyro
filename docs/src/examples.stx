@@ -106,10 +106,10 @@ Read a sequence of lines in a loop from the standard input stream:
         echo line;
     }
 
-The `$input()` function is provided for simple use-cases. You can also access the standard input stream as a `file` using the `$stdin()` function, e.g.
+The `$input()` function is provided for simple use-cases. You can also access the standard input stream as a [file](@root/builtins/files//) using the `$stdin` [superglobal](@root/superglobals//), e.g.
 
 ::: code pyro
-    var input = $stdin():read_string();
+    var input = $stdin:read_string();
 
 
 

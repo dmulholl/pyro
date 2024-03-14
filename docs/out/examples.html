@@ -206,10 +206,10 @@ Read a sequence of lines in a loop from the standard input stream:
 <span class="p">}</span>
 </pre>
 <p>
-The <code>$input()</code> function is provided for simple use-cases. You can also access the standard input stream as a <code>file</code> using the <code>$stdin()</code> function, e.g.
+The <code>$input()</code> function is provided for simple use-cases. You can also access the standard input stream as a <a href="builtins/files.html">file</a> using the <code>$stdin</code> <a href="superglobals.html">superglobal</a>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">input</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">():</span><span class="nx">read_string</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">input</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
 </pre>
 <h3 id="reading-from-a-file">
 Reading from a file

@@ -103,7 +103,48 @@ A string containing the filepath of the script or module file.
 </dt>
 <dd>
 <p>
-A vector of strings containing the root directory paths that Pyro checks when attempting to import a module. Directory paths can end with an optional trailing slash. A single dot <code>.</code> indicates the current working directory, a single slash <code>/</code> indicates the system root directory.
+A vector of strings containing the root directory paths that Pyro checks when attempting to import a module.
+</p>
+<ul>
+<li>
+Directory paths can end with an optional trailing slash.
+</li>
+<li>
+A single dot <code>.</code> indicates the current working directory.
+</li>
+<li>
+A single slash <code>/</code> indicates the system root directory.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>$stderr: file</code>
+</dt>
+<dd>
+<p>
+The program's standard error stream as a write-only <a href="builtins/files.html">file</a>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$stdin: file</code>
+</dt>
+<dd>
+<p>
+The program's standard input stream as a read-only <a href="builtins/files.html">file</a>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$stdout: file</code>
+</dt>
+<dd>
+<p>
+The program's standard output stream as a write-only <a href="builtins/files.html">file</a>.
 </p>
 </dd>
 </div>
@@ -1008,63 +1049,6 @@ The actual time slept may be longer than the requested duration due to system la
 <p>
 Creates a new <a href="builtins/stacks.html">stack</a>.
 </p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$stderr() -&gt; file</code> <br> <code>$stderr(arg: file)</code>
-</dt>
-<dd>
-<p>
-Gets or sets the standard error stream.
-</p>
-<ul>
-<li>
-If called with no arguments, returns the <code>file</code> object representing the standard error stream.
-By default, this is a <code>file</code> object wrapping <code>STDERR</code>.
-</li>
-<li>
-If called with one argument, sets the standard error stream to <code>arg</code>.
-</li>
-</ul>
-</dd>
-</div>
-<div>
-<dt>
-<code>$stdin() -&gt; file</code> <br> <code>$stdin(arg: file)</code>
-</dt>
-<dd>
-<p>
-Gets or sets the standard input stream.
-</p>
-<ul>
-<li>
-If called with no arguments, returns the <code>file</code> object representing the standard input stream.
-By default, this is a <code>file</code> object wrapping <code>STDIN</code>.
-</li>
-<li>
-If called with one argument, sets the standard input stream to <code>arg</code>.
-</li>
-</ul>
-</dd>
-</div>
-<div>
-<dt>
-<code>$stdout() -&gt; file</code> <br> <code>$stdout(arg: file)</code>
-</dt>
-<dd>
-<p>
-Gets or sets the standard output stream.
-</p>
-<ul>
-<li>
-If called with no arguments, returns the <code>file</code> object representing the standard output stream.
-By default, this is a <code>file</code> object wrapping <code>STDOUT</code>.
-</li>
-<li>
-If called with one argument, sets the standard output stream to <code>arg</code>.
-</li>
-</ul>
 </dd>
 </div>
 <div>
