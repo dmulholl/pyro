@@ -13,40 +13,46 @@ static PyroValue fn_gc(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (PYRO_IS_OBJ(args[0])) {
-        switch (PYRO_AS_OBJ(args[0])->type) {
-            case PYRO_OBJECT_VEC:
-            case PYRO_OBJECT_VEC_AS_STACK: {
-                PyroVec* vec = PYRO_AS_VEC(args[0]);
-                return pyro_i64(sizeof(PyroVec) + sizeof(PyroValue) * vec->capacity);
-            }
-            case PYRO_OBJECT_TUP: {
-                PyroTup* tup = PYRO_AS_TUP(args[0]);
-                return pyro_i64(sizeof(PyroTup) + sizeof(PyroValue) * tup->count);
-            }
-            case PYRO_OBJECT_MAP:
-            case PYRO_OBJECT_MAP_AS_SET: {
-                PyroMap* map = PYRO_AS_MAP(args[0]);
-                return pyro_i64(
-                    sizeof(PyroMap) +
+    if (!PYRO_IS_OBJ(args[0])) {
+        return pyro_i64(sizeof(PyroValue));
+    }
+
+    switch (PYRO_AS_OBJ(args[0])->type) {
+        case PYRO_OBJECT_VEC:
+        case PYRO_OBJECT_VEC_AS_STACK: {
+            PyroVec* vec = PYRO_AS_VEC(args[0]);
+            return pyro_i64(sizeof(PyroVec) + sizeof(PyroValue) * vec->capacity);
+        }
+
+        case PYRO_OBJECT_TUP: {
+            PyroTup* tup = PYRO_AS_TUP(args[0]);
+            return pyro_i64(sizeof(PyroTup) + sizeof(PyroValue) * tup->count);
+        }
+
+        case PYRO_OBJECT_MAP:
+        case PYRO_OBJECT_MAP_AS_SET: {
+            PyroMap* map = PYRO_AS_MAP(args[0]);
+            return pyro_i64(
+                sizeof(PyroMap) +
                     sizeof(PyroMapEntry) * map->entry_array_capacity +
                     sizeof(int64_t) * map->index_array_capacity
-                );
-            }
-            case PYRO_OBJECT_QUEUE: {
-                PyroQueue* queue = PYRO_AS_QUEUE(args[0]);
-                return pyro_i64(sizeof(PyroQueue) + sizeof(PyroQueueItem) * queue->count);
-            }
-            case PYRO_OBJECT_BUF: {
-                PyroBuf* buf = PYRO_AS_BUF(args[0]);
-                return pyro_i64(sizeof(PyroBuf) + sizeof(uint8_t) * buf->capacity);
-            }
-            default: {
-                return pyro_i64(-1);
-            }
+            );
         }
-    } else {
-        return pyro_i64(sizeof(PyroValue));
+
+        case PYRO_OBJECT_QUEUE: {
+            PyroQueue* queue = PYRO_AS_QUEUE(args[0]);
+            return pyro_i64(sizeof(PyroQueue) + sizeof(PyroQueueItem) * queue->count);
+        }
+
+        case PYRO_OBJECT_BUF: {
+            PyroBuf* buf = PYRO_AS_BUF(args[0]);
+            return pyro_i64(sizeof(PyroBuf) + sizeof(uint8_t) * buf->capacity);
+        }
+
+        default: {
+            pyro_panic(vm, "sizeof(): not implemented for type: %s", pyro_get_type_name(vm, args[0])->bytes);
+            return pyro_i64(-1);
+        }
     }
 }
 

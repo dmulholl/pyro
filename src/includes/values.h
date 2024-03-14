@@ -187,7 +187,7 @@ static inline bool pyro_is_obj_of_type(PyroValue value, PyroObjectType type) {
     return PYRO_IS_OBJ(value) && PYRO_AS_OBJ(value)->type == type;
 }
 
-// Returns the value's type as a string.
+// Returns the value's type as a string. This function always returns a valid Pyro string.
 PyroStr* pyro_get_type_name(PyroVM* vm, PyroValue value);
 
 #endif
