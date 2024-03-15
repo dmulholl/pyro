@@ -74,3 +74,16 @@ with vec = $range(1000):to_vec() {
     }
     assert $is_err(try func(*vec));
 }
+
+
+def outer() {
+    def middle() {
+        def inner() {
+            return "foobar";
+        }
+        return inner;
+    }
+    return middle;
+}
+
+assert outer()()() == "foobar";
