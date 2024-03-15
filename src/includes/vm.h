@@ -52,16 +52,16 @@ struct PyroVM {
     // Counts the number of nested 'try' expressions.
     size_t try_depth;
 
-    // The VM's standard output stream. This defaults to an PyroFile wrapping stdout.
+    // The VM's standard output stream. This defaults to a PyroFile wrapping STDOUT.
     // This is the stream that the echo statement and $print() functions write to.
     PyroFile* stdout_file;
 
-    // The VM's standard error stream. This defaults to an PyroFile wrapping stderr.
+    // The VM's standard error stream. This defaults to a PyroFile wrapping STDERR.
     // - This is the stream that panic messages are written to.
-    // - It's also the stream that the $eprint() functions write to.
+    // - It's also the stream that the $eprint()/$eprintln() functions write to.
     PyroFile* stderr_file;
 
-    // The VM's standard input stream. This defaults to an PyroFile wrapping stdin.
+    // The VM's standard input stream. This defaults to a PyroFile wrapping STDIN.
     PyroFile* stdin_file;
 
     // The call stack.
