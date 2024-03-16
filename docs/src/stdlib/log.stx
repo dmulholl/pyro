@@ -102,7 +102,6 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
     Returns a new `Logger` instance.
 
-    * A `Logger` instance defaults to logging to the standard output stream.
     * Messages will only be logged if their logging-level is greater than or equal to the logger's logging-level.
     * The logger's default logging-level is `INFO`.
 
@@ -110,16 +109,25 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
 ::: code pyro
     class Logger {
-        # Defaults to the standard output stream.
-        pub var output_file: file;
-
         # One of DEBUG, INFO, WARN, ERROR, FATAL.
         # Defaults to INFO.
         pub var logging_level: i64;
 
-        # Set to true to use UTC timestamps.
-        # Defaults to false (i.e. local time).
-        pub var use_utc: bool;
+        # The logger's output file.
+        # Defaults to the standard output stream.
+        pub var output_file: file;
+
+        # Set to true to show microseconds in timestamps.
+        # Defaults to false.
+        pub var show_microseconds: bool;
+
+        # Set to true to show milliseconds in timestamps.
+        # Defaults to false.
+        pub var show_milliseconds: bool;
+
+        # Set to true to show UTC timestamps.
+        # Defaults to false (i.e. shows local time).
+        pub var show_utc: bool;
     }
 
 `Logger` instances have the following methods:

@@ -265,9 +265,6 @@ Returns a new <code>Logger</code> instance.
 </p>
 <ul>
 <li>
-A <code>Logger</code> instance defaults to logging to the standard output stream.
-</li>
-<li>
 Messages will only be logged if their logging-level is greater than or equal to the logger's logging-level.
 </li>
 <li>
@@ -282,16 +279,25 @@ The logger's default logging-level is <code>INFO</code>.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Logger</span> <span class="p">{</span>
-    <span class="c1"># Defaults to the standard output stream.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">output_file</span><span class="p">:</span> <span class="nx">file</span><span class="p">;</span>
-
     <span class="c1"># One of DEBUG, INFO, WARN, ERROR, FATAL.</span>
     <span class="c1"># Defaults to INFO.</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">logging_level</span><span class="p">:</span> <span class="nx">i64</span><span class="p">;</span>
 
-    <span class="c1"># Set to true to use UTC timestamps.</span>
-    <span class="c1"># Defaults to false (i.e. local time).</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">use_utc</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+    <span class="c1"># The logger&#39;s output file.</span>
+    <span class="c1"># Defaults to the standard output stream.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">output_file</span><span class="p">:</span> <span class="nx">file</span><span class="p">;</span>
+
+    <span class="c1"># Set to true to show microseconds in timestamps.</span>
+    <span class="c1"># Defaults to false.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_microseconds</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+
+    <span class="c1"># Set to true to show milliseconds in timestamps.</span>
+    <span class="c1"># Defaults to false.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_milliseconds</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+
+    <span class="c1"># Set to true to show UTC timestamps.</span>
+    <span class="c1"># Defaults to false (i.e. shows local time).</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_utc</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <p>

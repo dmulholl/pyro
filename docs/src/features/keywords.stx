@@ -42,7 +42,10 @@ The following keywords are reserved for future use:
 * `catch`
 * `defer`
 * `enum`
+* `extends`
 * `guard`
+* `implements`
+* `interface`
 * `match`
 * `reimport`
 * `run`
