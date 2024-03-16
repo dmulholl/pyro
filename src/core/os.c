@@ -1,13 +1,13 @@
 // Local imports.
 #include "../includes/pyro.h"
 
-// POSIX: popen(), pclose()
+// POSIX: popen(), pclose(), fileno()
 #include <stdio.h>
 
 // POSIX: stat(), lstat(), S_ISDIR(), S_ISREG, S_ISLNK()
 #include <sys/stat.h>
 
-// POSIX: getcwd(), chdir(), fork(), exec(), dup2(), read(), write()
+// POSIX: getcwd(), chdir(), fork(), exec(), dup2(), read(), write(), isatty(),
 #include <unistd.h>
 
 // POSIX: waitpid()
@@ -385,4 +385,13 @@ void pyro_dlopen_as_module(PyroVM* vm, const char* path, const char* mod_name, P
         pyro_panic(vm, "failed to initialize module: %s", path);
         return;
     }
+}
+
+
+bool pyro_file_is_terminal(FILE* file) {
+    if (file) {
+        return isatty(fileno(file));
+    }
+
+    return false;
 }

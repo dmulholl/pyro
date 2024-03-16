@@ -398,6 +398,16 @@ static PyroValue file_seek_from_current(PyroVM* vm, size_t arg_count, PyroValue*
 }
 
 
+static PyroValue file_is_terminal(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
+    if (file->stream) {
+        return pyro_bool(pyro_file_is_terminal(file->stream));
+    }
+
+    return pyro_bool(false);
+}
+
+
 void pyro_load_std_builtins_file(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$file", fn_file, -1);
@@ -421,4 +431,5 @@ void pyro_load_std_builtins_file(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_file, "seek_from_start", file_seek_from_start, 1);
     pyro_define_pub_method(vm, vm->class_file, "seek_from_end", file_seek_from_end, 1);
     pyro_define_pub_method(vm, vm->class_file, "seek_from_current", file_seek_from_current, 1);
+    pyro_define_pub_method(vm, vm->class_file, "is_terminal", file_is_terminal, 0);
 }

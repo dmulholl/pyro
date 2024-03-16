@@ -73,4 +73,7 @@ bool pyro_exec_cmd(
 // Caller should check [vm->halt_flag] immediately on return.
 void pyro_dlopen_as_module(PyroVM* vm, const char* path, const char* mod_name, PyroMod* module);
 
+// Returns true if the file is connected to a terminal.
+bool pyro_file_is_terminal(FILE* file);
+
 #endif
