@@ -79,7 +79,7 @@ A file object, <code>file</code>, is a wrapper around a readable or writable byt
 <dl>
 <div>
 <dt>
-<code>$file(path: str) -&gt; file</code> <br> <code>$file(path: str, mode: str) -&gt; file</code>
+<code>$file(path: str, mode: str = &quot;r&quot;) -&gt; file</code>
 </dt>
 <dd>
 <p>
@@ -190,6 +190,16 @@ If the file hasn't been explicitly closed by calling this method, it will be aut
 <dd>
 <p>
 Flushes the file stream.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:is_terminal() -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns true if the file is connected to a terminal.
 </p>
 </dd>
 </div>

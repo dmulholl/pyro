@@ -8,7 +8,7 @@ meta_title: Pyro &mdash; Files
 
 A file object, `file`, is a wrapper around a readable or writable byte stream.
 
-[[ `$file(path: str) -> file` <br> `$file(path: str, mode: str) -> file` ]]
+[[ `$file(path: str, mode: str = "r") -> file` ]]
 
     Creates a new `file` object.
     Opens the underlying file stream using the C function `fopen()`.
@@ -58,6 +58,10 @@ The file object's `close()` method will be called when the `with` block exits, e
 [[ `:flush()` ]]
 
     Flushes the file stream.
+
+[[ `:is_terminal() -> bool` ]]
+
+    Returns true if the file is connected to a terminal.
 
 [[ `:lines() -> iter[str]` ]]
 
