@@ -13,8 +13,9 @@ static void write_msg(
     const char* err_prefix,
     const char* log_level_name,
     PyroValue file,
-    PyroValue use_utc,
+    PyroValue show_utc,
     PyroValue show_milliseconds,
+    PyroValue show_microseconds,
     size_t arg_count,
     PyroValue* args
 ) {
@@ -28,13 +29,18 @@ static void write_msg(
         return;
     }
 
-    if (!PYRO_IS_BOOL(use_utc)) {
-        pyro_panic(vm, "%s: invalid type for use_utc field: expected a boolean, found %s", err_prefix, pyro_get_type_name(vm, use_utc)->bytes);
+    if (!PYRO_IS_BOOL(show_utc)) {
+        pyro_panic(vm, "%s: invalid type for show_utc field: expected a boolean, found %s", err_prefix, pyro_get_type_name(vm, show_utc)->bytes);
         return;
     }
 
     if (!PYRO_IS_BOOL(show_milliseconds)) {
         pyro_panic(vm, "%s: invalid type for show_milliseconds field: expected a boolean, found %s", err_prefix, pyro_get_type_name(vm, show_milliseconds)->bytes);
+        return;
+    }
+
+    if (!PYRO_IS_BOOL(show_microseconds)) {
+        pyro_panic(vm, "%s: invalid type for show_microseconds field: expected a boolean, found %s", err_prefix, pyro_get_type_name(vm, show_microseconds)->bytes);
         return;
     }
 
@@ -79,7 +85,7 @@ static void write_msg(
     int64_t milliseconds = microseconds / 1000;
 
     struct tm tm;
-    if (use_utc.as.boolean) {
+    if (show_utc.as.boolean) {
         gmtime_r(&timestamp_now_seconds, &tm);
     } else {
         localtime_r(&timestamp_now_seconds, &tm);
@@ -93,6 +99,24 @@ static void write_msg(
         timestamp_str = timestamp_str_buffer;
     }
 
+    if (show_microseconds.as.boolean) {
+        int result = fprintf(
+            PYRO_AS_FILE(file)->stream,
+            "[%5s]  %s.%06d%s  %s\n",
+            log_level_name,
+            timestamp_str,
+            (int)microseconds,
+            show_utc.as.boolean ? "Z" : "",
+            message->bytes
+        );
+
+        if (result < 0) {
+            pyro_panic(vm, "%s: failed to write log message", err_prefix);
+        }
+
+        return;
+    }
+
     if (show_milliseconds.as.boolean) {
         int result = fprintf(
             PYRO_AS_FILE(file)->stream,
@@ -100,7 +124,7 @@ static void write_msg(
             log_level_name,
             timestamp_str,
             (int)milliseconds,
-            use_utc.as.boolean ? "Z" : "",
+            show_utc.as.boolean ? "Z" : "",
             message->bytes
         );
 
@@ -113,10 +137,10 @@ static void write_msg(
 
     int result = fprintf(
         PYRO_AS_FILE(file)->stream,
-        "[%5s]  %sd%s  %s\n",
+        "[%5s]  %s%s  %s\n",
         log_level_name,
         timestamp_str,
-        use_utc.as.boolean ? "Z" : "",
+        show_utc.as.boolean ? "Z" : "",
         message->bytes
     );
 
@@ -127,31 +151,31 @@ static void write_msg(
 
 
 static PyroValue fn_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "debug()", "DEBUG", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), arg_count, args);
+    write_msg(vm, "debug()", "DEBUG", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), pyro_bool(false), arg_count, args);
     return pyro_null();
 }
 
 
 static PyroValue fn_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "info()", "INFO", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), arg_count, args);
+    write_msg(vm, "info()", "INFO", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), pyro_bool(false), arg_count, args);
     return pyro_null();
 }
 
 
 static PyroValue fn_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "warn()", "WARN", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), arg_count, args);
+    write_msg(vm, "warn()", "WARN", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), pyro_bool(false), arg_count, args);
     return pyro_null();
 }
 
 
 static PyroValue fn_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "error()", "ERROR", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), arg_count, args);
+    write_msg(vm, "error()", "ERROR", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), pyro_bool(false), arg_count, args);
     return pyro_null();
 }
 
 
 static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    write_msg(vm, "fatal()", "FATAL", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), arg_count, args);
+    write_msg(vm, "fatal()", "FATAL", pyro_obj(vm->stdout_file), pyro_bool(false), pyro_bool(false), pyro_bool(false), arg_count, args);
     vm->halt_flag = true;
     vm->exit_flag = true;
     vm->exit_code = 1;
@@ -162,10 +186,15 @@ static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
+    if (!PYRO_IS_I64(instance->fields[0])) {
+        pyro_panic(vm, "debug(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+        return pyro_null();
+    }
+
     int64_t logging_level = instance->fields[0].as.i64;
 
     if (PYRO_STD_LOG_LEVEL_DEBUG >= logging_level) {
-        write_msg(vm, "debug()", "DEBUG", instance->fields[1], instance->fields[2], instance->fields[3], arg_count, args);
+        write_msg(vm, "debug()", "DEBUG", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
     }
 
     return pyro_null();
@@ -175,10 +204,15 @@ static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
+    if (!PYRO_IS_I64(instance->fields[0])) {
+        pyro_panic(vm, "info(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+        return pyro_null();
+    }
+
     int64_t logging_level = instance->fields[0].as.i64;
 
     if (PYRO_STD_LOG_LEVEL_INFO >= logging_level) {
-        write_msg(vm, "info()", "INFO", instance->fields[1], instance->fields[2], instance->fields[3], arg_count, args);
+        write_msg(vm, "info()", "INFO", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
     }
 
     return pyro_null();
@@ -188,10 +222,15 @@ static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
+    if (!PYRO_IS_I64(instance->fields[0])) {
+        pyro_panic(vm, "warn(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+        return pyro_null();
+    }
+
     int64_t logging_level = instance->fields[0].as.i64;
 
     if (PYRO_STD_LOG_LEVEL_WARN >= logging_level) {
-        write_msg(vm, "warn()", "WARN", instance->fields[1], instance->fields[2], instance->fields[3], arg_count, args);
+        write_msg(vm, "warn()", "WARN", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
     }
 
     return pyro_null();
@@ -201,10 +240,15 @@ static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
+    if (!PYRO_IS_I64(instance->fields[0])) {
+        pyro_panic(vm, "error(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+        return pyro_null();
+    }
+
     int64_t logging_level = instance->fields[0].as.i64;
 
     if (PYRO_STD_LOG_LEVEL_ERROR >= logging_level) {
-        write_msg(vm, "error()", "ERROR", instance->fields[1], instance->fields[2], instance->fields[3], arg_count, args);
+        write_msg(vm, "error()", "ERROR", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
     }
 
     return pyro_null();
@@ -214,10 +258,15 @@ static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
+    if (!PYRO_IS_I64(instance->fields[0])) {
+        pyro_panic(vm, "fatal(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+        return pyro_null();
+    }
+
     int64_t logging_level = instance->fields[0].as.i64;
 
     if (PYRO_STD_LOG_LEVEL_FATAL >= logging_level) {
-        write_msg(vm, "fatal()", "FATAL", instance->fields[1], instance->fields[2], instance->fields[3], arg_count, args);
+        write_msg(vm, "fatal()", "FATAL", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
     }
 
     vm->halt_flag = true;
@@ -249,7 +298,7 @@ void pyro_load_std_mod_log(PyroVM* vm, PyroMod* module) {
 
     pyro_define_pub_field(vm, logger_class, "logging_level", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
     pyro_define_pub_field(vm, logger_class, "output_file", pyro_obj(vm->stdout_file));
-    pyro_define_pub_field(vm, logger_class, "use_utc", pyro_bool(false));
+    pyro_define_pub_field(vm, logger_class, "show_utc", pyro_bool(false));
     pyro_define_pub_field(vm, logger_class, "show_milliseconds", pyro_bool(false));
     pyro_define_pub_field(vm, logger_class, "show_microseconds", pyro_bool(false));
 
