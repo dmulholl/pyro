@@ -70,7 +70,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
     A convenience function for writing a `FATAL` message to the standard output stream.
 
-    Calling this function will cause the program to exit with a non-zero status code.
+    Calling this function will write the log message, then cause the program to exit with a non-zero status code.
 
     * Calling this function with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
@@ -155,7 +155,7 @@ Use a `Logger` instance to customize the logging-level and destination file.
 
     Writes a `FATAL` message to the logger's output file.
 
-    Calling this method will cause the program to exit with a non-zero status code.
+    Calling this method will write the log message, then cause the program to exit with a non-zero status code.
 
     * Calling this method with a single argument is equivalent to calling `$str()` on that argument first and logging the resulting string.
 
