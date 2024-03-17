@@ -188,7 +188,7 @@ A class can inherit from a superclass.
         }
     }
 
-    class Circle < Shape {
+    class Circle extends Shape {
         var radius;
 
         def $init(color, radius) {

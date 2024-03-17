@@ -2566,7 +2566,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
     class_compiler.enclosing = parser->class_compiler;
     parser->class_compiler = &class_compiler;
 
-    if (match(parser, TOKEN_LESS)) {
+    if (match(parser, TOKEN_EXTENDS) || match(parser, TOKEN_LESS)) {
         consume(parser, TOKEN_IDENTIFIER, "expected superclass name");
         emit_load_named_variable(parser, parser->previous_token);
 

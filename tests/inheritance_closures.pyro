@@ -5,7 +5,7 @@ class A {
 }
 
 
-class B < A {
+class B extends A {
     pub def foo() {
         return "b-foo";
     }
@@ -16,7 +16,7 @@ class B < A {
 }
 
 
-class C < B {
+class C extends B {
 }
 
 

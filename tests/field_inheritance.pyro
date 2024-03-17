@@ -8,7 +8,7 @@ class ParentPoint {
     }
 }
 
-class ChildPoint < ParentPoint {
+class ChildPoint extends ParentPoint {
     pub var z;
 
     def $init(x, y, z) {

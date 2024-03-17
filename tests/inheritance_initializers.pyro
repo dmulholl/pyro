@@ -15,7 +15,7 @@ class Shape {
 }
 
 
-class Square < Shape {
+class Square extends Shape {
     pub var side;
 
     def $init(colour, side) {
@@ -29,7 +29,7 @@ class Square < Shape {
 }
 
 
-class RedSquare < Square {
+class RedSquare extends Square {
     def $init(side) {
         super:$init("red", side);
     }
