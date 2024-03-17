@@ -95,13 +95,15 @@ bool pyro_is_ascii_lower(char c);
 // Returns true if [c] is in the ASCII range [A-Z].
 bool pyro_is_ascii_upper(char c);
 
-// Simple hash combiner. Returns h1 * 3 + h2. This is safer than simply using XOR to combine
-// the hashes as XOR maps pairwise identical values to zero.
-uint64_t pyro_hash_combine(uint64_t h1, uint64_t h2);
-
 // Generates a randomish value suitable for seeding a PRNG. Uses locally available sources of
 // entropy. Not suitable for cryptographic use.
 uint64_t pyro_random_seed(void);
+
+// Simple hash combiner. Returns h1 * 3 + h2. This is safer than simply using XOR to combine
+// the hashes as XOR maps pairwise identical values to zero.
+static inline uint64_t pyro_hash_combine(uint64_t h1, uint64_t h2) {
+    return (h1 << 1) + h1 + h2;
+}
 
 // Like C23's ckd_add(). Returns true if the result would overflow.
 static inline bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b) {
