@@ -195,6 +195,19 @@ Flushes the file stream.
 </div>
 <div>
 <dt>
+<code>:get_terminal_size() -&gt; tup[i64, i64]|err</code>
+</dt>
+<dd>
+<p>
+If the file is connected to a terminal, returns the terminal size as a <code>(width, height)</code> tuple.
+</p>
+<p>
+Returns an <code>err</code> if the file is not connected to a terminal.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:is_terminal() -&gt; bool</code>
 </dt>
 <dd>

@@ -408,6 +408,29 @@ static PyroValue file_is_terminal(PyroVM* vm, size_t arg_count, PyroValue* args)
 }
 
 
+static PyroValue file_get_terminal_size(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroFile* file = PYRO_AS_FILE(args[-1]);
+
+    int64_t width;
+    int64_t height;
+
+    if (pyro_get_terminal_size(file->stream, &width, &height)) {
+        PyroTup* tup = PyroTup_new(2, vm);
+        if (!tup) {
+            pyro_panic(vm, "out of memory");
+            return pyro_null();
+        }
+
+        tup->values[0] = pyro_i64(width);
+        tup->values[1] = pyro_i64(height);
+
+        return pyro_obj(tup);
+    }
+
+    return pyro_obj(vm->error);
+}
+
+
 void pyro_load_std_builtins_file(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$file", fn_file, -1);
@@ -432,4 +455,5 @@ void pyro_load_std_builtins_file(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_file, "seek_from_end", file_seek_from_end, 1);
     pyro_define_pub_method(vm, vm->class_file, "seek_from_current", file_seek_from_current, 1);
     pyro_define_pub_method(vm, vm->class_file, "is_terminal", file_is_terminal, 0);
+    pyro_define_pub_method(vm, vm->class_file, "get_terminal_size", file_get_terminal_size, 0);
 }

@@ -22,6 +22,8 @@
 // POSIX: dlopen(), dlsym()
 #include <dlfcn.h>
 
+// POSIX: ioctl()
+#include <sys/ioctl.h>
 
 // If [path] is a symlink, stat() returns info about the target of the link.
 bool pyro_exists(const char* path) {
@@ -391,6 +393,23 @@ void pyro_dlopen_as_module(PyroVM* vm, const char* path, const char* mod_name, P
 bool pyro_file_is_terminal(FILE* file) {
     if (file) {
         return isatty(fileno(file));
+    }
+
+    return false;
+}
+
+
+bool pyro_get_terminal_size(FILE* file, int64_t* width, int64_t* height) {
+    if (file && isatty(fileno(file))) {
+        struct winsize w;
+
+        if (ioctl(fileno(file), TIOCGWINSZ, &w) == 0) {
+            *width = (int64_t)w.ws_col;
+            *height = (int64_t)w.ws_row;
+            return true;
+        }
+
+        return false;
     }
 
     return false;

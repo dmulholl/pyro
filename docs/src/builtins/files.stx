@@ -59,6 +59,12 @@ The file object's `close()` method will be called when the `with` block exits, e
 
     Flushes the file stream.
 
+[[ `:get_terminal_size() -> tup[i64, i64]|err` ]]
+
+    If the file is connected to a terminal, returns the terminal size as a `(width, height)` tuple.
+
+    Returns an `err` if the file is not connected to a terminal.
+
 [[ `:is_terminal() -> bool` ]]
 
     Returns true if the file is connected to a terminal.

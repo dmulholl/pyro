@@ -76,4 +76,8 @@ void pyro_dlopen_as_module(PyroVM* vm, const char* path, const char* mod_name, P
 // Returns true if the file is connected to a terminal.
 bool pyro_file_is_terminal(FILE* file);
 
+// Returns the terminal size if the file is connected to a terminal. Returns false if the file is
+// not connected to a terminal.
+bool pyro_get_terminal_size(FILE* file, int64_t* width, int64_t* height);
+
 #endif
