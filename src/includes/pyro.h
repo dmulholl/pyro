@@ -83,6 +83,18 @@
     #define _XOPEN_SOURCE 700
 #endif
 
+#ifdef __has_include
+    #define __pyro_has_include(x) __has_include(x)
+#else
+    #define __pyro_has_include(x) 0
+#endif
+
+#ifdef __has_builtin
+    #define __pyro_has_builtin(x) __has_builtin(x)
+#else
+    #define __pyro_has_builtin(x) 0
+#endif
+
 // C standard library headers -- no OS-dependent headers.
 #include <assert.h>
 #include <stdbool.h>
@@ -98,6 +110,10 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stddef.h>
+
+#if __pyro_has_include(<stdckdint.h>)
+    #include <stdckdint.h>
+#endif
 
 // Forward declarations.
 typedef struct PyroVM PyroVM;

@@ -105,90 +105,90 @@ uint64_t pyro_random_seed(void);
 
 // Like C23's ckd_add(). Returns true if the result would overflow.
 static inline bool pyro_ckd_add(int64_t* result, int64_t a, int64_t b) {
-    #if defined __has_builtin
-        #if __has_builtin(__builtin_add_overflow)
-            return __builtin_add_overflow(a, b, result);
-        #endif
+    #if __pyro_has_include(<stdckdint.h>)
+        return ckd_add(result, a, b);
+    #elif __pyro_has_builtin(__builtin_add_overflow)
+        return __builtin_add_overflow(a, b, result);
+    #else
+        if (b > 0 && a > INT64_MAX - b) {
+            return true;
+        }
+
+        if (b < 0 && a < INT64_MIN - b) {
+            return true;
+        }
+
+        *result = a + b;
+        return false;
     #endif
-
-    if (b > 0 && a > INT64_MAX - b) {
-        return true;
-    }
-
-    if (b < 0 && a < INT64_MIN - b) {
-        return true;
-    }
-
-    *result = a + b;
-    return false;
 }
 
 // Like C23's ckd_sub(). Returns true if the result would overflow.
 static inline bool pyro_ckd_sub(int64_t* result, int64_t a, int64_t b) {
-    #if defined __has_builtin
-        #if __has_builtin(__builtin_sub_overflow)
-            return __builtin_sub_overflow(a, b, result);
-        #endif
+    #if __pyro_has_include(<stdckdint.h>)
+        return ckd_sub(result, a, b);
+    #elif __pyro_has_builtin(__builtin_sub_overflow)
+        return __builtin_sub_overflow(a, b, result);
+    #else
+        if (b < 0 && a > INT64_MAX + b) {
+            return true;
+        }
+
+        if (b > 0 && a < INT64_MIN + b) {
+            return true;
+        }
+
+        *result = a - b;
+        return false;
     #endif
-
-    if (b < 0 && a > INT64_MAX + b) {
-        return true;
-    }
-
-    if (b > 0 && a < INT64_MIN + b) {
-        return true;
-    }
-
-    *result = a - b;
-    return false;
 }
 
 // Like C23's ckd_mul(). Returns true if the result would overflow.
 static inline bool pyro_ckd_mul(int64_t* result, int64_t a, int64_t b) {
-    #if defined __has_builtin
-        #if __has_builtin(__builtin_mul_overflow)
-            return __builtin_mul_overflow(a, b, result);
-        #endif
-    #endif
+    #if __pyro_has_include(<stdckdint.h>)
+        return ckd_mul(result, a, b);
+    #elif __pyro_has_builtin(__builtin_mul_overflow)
+        return __builtin_mul_overflow(a, b, result);
+    #else
+        if (a == 0 || b == 0) {
+            *result = 0;
+            return false;
+        }
 
-    if (a == 0 || b == 0) {
-        *result = 0;
-        return false;
-    }
+        if (a > 0) {
+            // a > 0, b > 0
+            if (b > 0) {
+                if (a > INT64_MAX / b) {
+                    return true;
+                }
+                *result = a * b;
+                return false;
+            }
 
-    if (a > 0) {
-        // a > 0, b > 0
-        if (b > 0) {
-            if (a > INT64_MAX / b) {
+            // a > 0, b < 0
+            if (b != -1 && a > INT64_MIN / b) {
                 return true;
             }
             *result = a * b;
             return false;
         }
 
-        // a > 0, b < 0
-        if (b != -1 && a > INT64_MIN / b) {
+        // a < 0, b > 0
+        if (b > 0) {
+            if (a < INT64_MIN / b) {
+                return true;
+            }
+            *result = a * b;
+            return false;
+        }
+
+        // a < 0, b < 0
+        if (a < INT64_MAX / b) {
             return true;
         }
         *result = a * b;
         return false;
-    }
-
-    // a < 0, b > 0
-    if (b > 0) {
-        if (a < INT64_MIN / b) {
-            return true;
-        }
-        *result = a * b;
-        return false;
-    }
-
-    // a < 0, b < 0
-    if (a < INT64_MAX / b) {
-        return true;
-    }
-    *result = a * b;
-    return false;
+    #endif
 }
 
 #endif
