@@ -12,8 +12,14 @@ PyroValue pyro_op_binary_plus(PyroVM* vm, PyroValue left, PyroValue right) {
     switch (left.type) {
         case PYRO_VALUE_I64: {
             switch (right.type) {
-                case PYRO_VALUE_I64:
-                    return pyro_i64(left.as.i64 + right.as.i64);
+                case PYRO_VALUE_I64: {
+                    int64_t result;
+                    if (pyro_ckd_add(&result, left.as.i64, right.as.i64)) {
+                        pyro_panic(vm, "signed integer overflow: %" PRId64 " + %" PRId64, left.as.i64, right.as.i64);
+                        return pyro_null();
+                    }
+                    return pyro_i64(result);
+                }
                 case PYRO_VALUE_F64:
                     return pyro_f64((double)left.as.i64 + right.as.f64);
                 default:
@@ -140,8 +146,14 @@ PyroValue pyro_op_binary_minus(PyroVM* vm, PyroValue left, PyroValue right) {
     switch (left.type) {
         case PYRO_VALUE_I64: {
             switch (right.type) {
-                case PYRO_VALUE_I64:
-                    return pyro_i64(left.as.i64 - right.as.i64);
+                case PYRO_VALUE_I64: {
+                    int64_t result;
+                    if (pyro_ckd_sub(&result, left.as.i64, right.as.i64)) {
+                        pyro_panic(vm, "signed integer overflow: %" PRId64 " - %" PRId64, left.as.i64, right.as.i64);
+                        return pyro_null();
+                    }
+                    return pyro_i64(result);
+                }
                 case PYRO_VALUE_F64:
                     return pyro_f64((double)left.as.i64 - right.as.f64);
                 default:
@@ -196,8 +208,14 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
     switch (left.type) {
         case PYRO_VALUE_I64: {
             switch (right.type) {
-                case PYRO_VALUE_I64:
-                    return pyro_i64(left.as.i64 * right.as.i64);
+                case PYRO_VALUE_I64: {
+                    int64_t result;
+                    if (pyro_ckd_mul(&result, left.as.i64, right.as.i64)) {
+                        pyro_panic(vm, "signed integer overflow: %" PRId64 " * %" PRId64, left.as.i64, right.as.i64);
+                        return pyro_null();
+                    }
+                    return pyro_i64(result);
+                }
                 case PYRO_VALUE_F64:
                     return pyro_f64((double)left.as.i64 * right.as.f64);
                 default:
@@ -354,7 +372,7 @@ PyroValue pyro_op_binary_slash_slash(PyroVM* vm, PyroValue left, PyroValue right
                         return pyro_null();
                     }
                     if (left.as.i64 == INT64_MIN && right.as.i64 == -1) {
-                        pyro_panic(vm, "division [i64_min // -1] would result in integer overflow");
+                        pyro_panic(vm, "signed integer overflow: %" PRId64 " // %" PRId64, left.as.i64, right.as.i64);
                         return pyro_null();
                     }
                     return pyro_i64(left.as.i64 / right.as.i64);

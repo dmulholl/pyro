@@ -1179,9 +1179,11 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$is_func", fn_is_func, 1);
     pyro_define_superglobal_fn(vm, "$is_method", fn_is_method, 1);
     pyro_define_superglobal_fn(vm, "$import", fn_import, 1);
+    pyro_define_superglobal_fn(vm, "$eval", fn_eval, 1);
+    pyro_define_superglobal_fn(vm, "$cmd", fn_cmd, -1);
+
+    // Deprecated.
     pyro_define_superglobal_fn(vm, "$add", fn_add, 2);
     pyro_define_superglobal_fn(vm, "$sub", fn_sub, 2);
     pyro_define_superglobal_fn(vm, "$mul", fn_mul, 2);
-    pyro_define_superglobal_fn(vm, "$eval", fn_eval, 1);
-    pyro_define_superglobal_fn(vm, "$cmd", fn_cmd, -1);
 }

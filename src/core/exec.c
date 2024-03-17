@@ -2790,6 +2790,15 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements the expression: [left_operand i64_add right_operand].
+            // Before: [ ... ][ left_operand ][ right_operand ]
+            // After:  [ ... ][ result ]
+            case PYRO_OPCODE_I64_ADD: {
+                vm->stack_top[-2] = pyro_i64(vm->stack_top[-2].as.i64 + vm->stack_top[-1].as.i64);
+                vm->stack_top--;
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;

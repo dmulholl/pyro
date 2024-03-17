@@ -1651,6 +1651,9 @@ static void parse_additive_expr(Parser* parser, bool can_assign) {
         } else if (match(parser, TOKEN_MINUS)) {
             parse_multiplicative_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_MINUS);
+        } else if (match(parser, TOKEN_I64_ADD)) {
+            parse_multiplicative_expr(parser, false);
+            emit_byte(parser, PYRO_OPCODE_I64_ADD);
         } else {
             break;
         }

@@ -151,6 +151,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
             break;
 
         case 'i':
+            if (check_keyword(lexer, "i64_add")) return TOKEN_I64_ADD;
             if (check_keyword(lexer, "if")) return TOKEN_IF;
             if (check_keyword(lexer, "import")) return TOKEN_IMPORT;
             if (check_keyword(lexer, "in")) return TOKEN_IN;

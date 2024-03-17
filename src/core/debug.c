@@ -573,6 +573,9 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_CONCAT_STRINGS:
             return u16_instruction(vm, "CONCAT_STRINGS", fn, ip);
 
+        case PYRO_OPCODE_I64_ADD:
+            return atomic_instruction(vm, "I64_ADD", ip);
+
         default:
             pyro_stdout_write_f(vm, "INVALID OPCODE [%d]\n", instruction);
             return ip + 1;
