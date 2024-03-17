@@ -25,7 +25,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.15.2</p>
+                <p class="version">Version 0.16.0</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -166,19 +166,6 @@ Panics if the command cannot be found or if the command exits with a non-zero st
 </p>
 <p>
 This is a convenience shortcut for the <code>$shell()</code> function which provides more control over input and output.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$add(a: any, b: any) -&gt; any</code>
-</dt>
-<dd>
-<p>
-Checked addition. Returns <code>a + b</code>.
-</p>
-<p>
-If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
 </p>
 </dd>
 </div>
@@ -873,19 +860,6 @@ Returns an iterator over the object's public method names as strings.
 </div>
 <div>
 <dt>
-<code>$mul(a: any, b: any) -&gt; any</code>
-</dt>
-<dd>
-<p>
-Checked multiplication. Returns <code>a * b</code>.
-</p>
-<p>
-If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>$panic(error_message: any)</code> <br> <code>$panic(format_string: str, *args: any)</code>
 </dt>
 <dd>
@@ -1058,19 +1032,6 @@ Creates a new <a href="builtins/stacks.html">stack</a>.
 <dd>
 <p>
 Creates a new <a href="builtins/strings.html">string</a> by stringifying the argument.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$sub(a: any, b: any) -&gt; any</code>
-</dt>
-<dd>
-<p>
-Checked subtraction. Returns <code>a - b</code>.
-</p>
-<p>
-If <code>a</code> and <code>b</code> are both <code>i64</code> values, this function will panic if the result of the operation would overflow.
 </p>
 </dd>
 </div>
