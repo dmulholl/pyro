@@ -98,6 +98,7 @@ static const char* TIME_HELPTEXT =
     "\n"
     "Options:\n"
     "  -i, --import-root <dir>    Adds a directory to the list of import roots.\n"
+    "                             (This option can be specified multiple times.)\n"
     "  -n, --num-runs <int>       Number of times to run each function.\n"
     "\n"
     "Flags:\n"
