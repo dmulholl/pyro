@@ -2,6 +2,16 @@ import std::url;
 import std::json;
 
 
+def term_width() -> i64 {
+    var result = $stderr:get_terminal_size();
+    if $is_err(result) {
+        return 80;
+    }
+
+    return result[0];
+}
+
+
 def extract_response_headers(curl_stderr_output: str) -> vec[str] {
     return curl_stderr_output
         :lines()
@@ -211,9 +221,9 @@ pub class Request {
         args:append(url);
 
         if self.debug {
-            echo "-" * 80;
-            echo "ARGS:", args;
-            echo "-" * 80;
+            $eprintln("-" * term_width());
+            $eprintln("ARGS: ${args}");
+            $eprintln("-" * term_width());
         }
 
         var result = try $cmd("curl", args);
@@ -227,8 +237,8 @@ pub class Request {
         }
 
         if self.debug {
-            echo stderr_output:strip();
-            echo "-" * 80;
+            $eprintln(stderr_output:strip());
+            $eprintln("-" * term_width());
         }
 
         var headers = stdout_output
@@ -266,9 +276,9 @@ pub class Request {
         args:append(url);
 
         if self.debug {
-            echo "-" * 80;
-            echo "ARGS:", args;
-            echo "-" * 80;
+            $eprintln("-" * term_width());
+            $eprintln("ARGS: ${args}");
+            $eprintln("-" * term_width());
         }
 
         var result = try $cmd("curl", args);
@@ -282,8 +292,8 @@ pub class Request {
         }
 
         if self.debug {
-            echo stderr_output:strip();
-            echo "-" * 80;
+            $eprintln(stderr_output:strip());
+            $eprintln("-" * term_width());
         }
 
         var headers = extract_response_headers(stderr_output);
@@ -318,11 +328,11 @@ pub class Request {
         args:append(self.url);
 
         if self.debug {
-            echo "-" * 80;
-            echo "ARGS:", args;
-            echo "-" * 80;
-            echo "BODY:", body;
-            echo "-" * 80;
+            $eprintln("-" * term_width());
+            $eprintln("ARGS: ${args}");
+            $eprintln("-" * term_width());
+            $eprintln("BODY: ${body}");
+            $eprintln("-" * term_width());
         }
 
         var result = try $cmd("curl", args, body);
@@ -336,8 +346,8 @@ pub class Request {
         }
 
         if self.debug {
-            echo stderr_output:strip();
-            echo "-" * 80;
+            $eprintln(stderr_output:strip());
+            $eprintln("-" * term_width());
         }
 
         var headers = extract_response_headers(stderr_output);
