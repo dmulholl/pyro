@@ -173,7 +173,7 @@ A default field value must be a simple literal --- one of `i64`, `f64`, `rune`, 
 
 ### Inheritance
 
-A class can inherit from a superclass.
+A class can inherit from a superclass using the `extends` keyword, e.g.
 
 ::: code pyro
     class Shape {
