@@ -2799,6 +2799,29 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Pushes a new enum object onto the stack.
+            // Before: [ ... ][ name1 ][ value1 ][ name2 ][ value2 ]
+            // After:  [ ... ][ enum ]
+            case PYRO_OPCODE_MAKE_ENUM: {
+                uint16_t value_count = READ_BE_U16();
+                printf("---\n");
+                printf("num values: %d\n", value_count);
+
+                for (uint16_t i = 0; i < value_count; i++) {
+                    int index = -(int)(value_count * 2) + (int)(i * 2);
+
+                    PyroStr* name = pyro_stringify_value(vm, vm->stack_top[index]);
+                    printf("name: %s\n", name->bytes);
+
+                    PyroStr* value = pyro_stringify_value(vm, vm->stack_top[index + 1]);
+                    printf("value: %s\n", value->bytes);
+                }
+
+                vm->stack_top -= value_count * 2;
+                pyro_push(vm, pyro_null());
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;

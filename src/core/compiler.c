@@ -309,6 +309,11 @@ static void emit_load_value_from_constant_table(Parser* parser, PyroValue value)
 }
 
 
+static void emit_load_value_from_constant_table_at_index(Parser* parser, uint16_t index) {
+    emit_u8_u16be(parser, PYRO_OPCODE_LOAD_CONSTANT, index);
+}
+
+
 // Reads the next token from the lexer.
 static void advance(Parser* parser) {
     parser->previous_token = parser->next_token;
@@ -2549,6 +2554,65 @@ static void parse_field_declaration(Parser* parser, Access access) {
 }
 
 
+static void parse_enum_declaration(Parser* parser, Access access) {
+    if (!consume(parser, TOKEN_IDENTIFIER, "expected enum name")) {
+        return;
+    }
+
+    // Token enum_name = parser->previous_token;
+
+    uint16_t enum_name_index = make_string_constant_from_identifier(parser, &parser->previous_token);
+    declare_variable(parser, parser->previous_token, false);
+
+    if (!consume(parser, TOKEN_LEFT_BRACE, "expected '{' before enum body")) {
+        return;
+    }
+
+    uint16_t value_count = 0;
+
+    while (true) {
+        if (match(parser, TOKEN_RIGHT_BRACE)) {
+            break;
+        }
+
+        if (!consume(parser, TOKEN_IDENTIFIER, "expected enum value name")) {
+            return;
+        }
+
+        uint16_t value_name_index = make_string_constant_from_identifier(parser, &parser->previous_token);
+        if (parser->vm->panic_flag) {
+            return;
+        }
+
+        emit_load_value_from_constant_table_at_index(parser, value_name_index);
+
+        if (match(parser, TOKEN_EQUAL)) {
+            parse_expression(parser, false);
+        } else {
+            emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
+        }
+
+        value_count++;
+
+        if (match(parser, TOKEN_RIGHT_BRACE)) {
+            break;
+        }
+
+        if (!consume(parser, TOKEN_COMMA, "expected ',' after enum value")) {
+            return;
+        }
+    }
+
+    if (value_count == 0) {
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid enum: zero values");
+        return;
+    }
+
+    emit_u8_u16be(parser, PYRO_OPCODE_MAKE_ENUM, value_count);
+    define_variable(parser, enum_name_index, access, false);
+}
+
+
 static void parse_class_declaration(Parser* parser, Access access) {
     consume(parser, TOKEN_IDENTIFIER, "expected class name");
     Token class_name = parser->previous_token;
@@ -2730,6 +2794,8 @@ static void parse_statement(Parser* parser) {
             parse_function_declaration(parser, PUBLIC);
         } else if (match(parser, TOKEN_CLASS)) {
             parse_class_declaration(parser, PUBLIC);
+        } else if (match(parser, TOKEN_ENUM)) {
+            parse_enum_declaration(parser, PUBLIC);
         } else {
             SYNTAX_ERROR_AT_NEXT_TOKEN("unexpected token after 'pub'");
             return;
@@ -2749,6 +2815,8 @@ static void parse_statement(Parser* parser) {
             parse_function_declaration(parser, PRIVATE);
         } else if (match(parser, TOKEN_CLASS)) {
             parse_class_declaration(parser, PRIVATE);
+        } else if (match(parser, TOKEN_ENUM)) {
+            parse_enum_declaration(parser, PRIVATE);
         } else {
             SYNTAX_ERROR_AT_NEXT_TOKEN("unexpected token after 'pri'");
             return;
@@ -2768,6 +2836,8 @@ static void parse_statement(Parser* parser) {
             parse_function_declaration(parser, PRIVATE);
         } else if (match(parser, TOKEN_CLASS)) {
             parse_class_declaration(parser, PRIVATE);
+        } else if (match(parser, TOKEN_ENUM)) {
+            parse_enum_declaration(parser, PRIVATE);
         } else if (match(parser, TOKEN_ECHO)) {
             parse_echo_stmt(parser);
         } else if (match(parser, TOKEN_ASSERT)) {

@@ -143,6 +143,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
         case 'e':
             if (check_keyword(lexer, "echo")) return TOKEN_ECHO;
             if (check_keyword(lexer, "else")) return TOKEN_ELSE;
+            if (check_keyword(lexer, "enum")) return TOKEN_ENUM;
             if (check_keyword(lexer, "extends")) return TOKEN_EXTENDS;
             break;
 

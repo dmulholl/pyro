@@ -576,6 +576,9 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_I64_ADD:
             return atomic_instruction(vm, "I64_ADD", ip);
 
+        case PYRO_OPCODE_MAKE_ENUM:
+            return u16_instruction(vm, "MAKE_ENUM", fn, ip);
+
         default:
             pyro_stdout_write_f(vm, "INVALID OPCODE [%d]\n", instruction);
             return ip + 1;
