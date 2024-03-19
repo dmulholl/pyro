@@ -2558,7 +2558,6 @@ static void parse_enum_declaration(Parser* parser, Access access) {
     if (!consume(parser, TOKEN_IDENTIFIER, "expected enum name")) {
         return;
     }
-
     // Token enum_name = parser->previous_token;
 
     uint16_t enum_name_index = make_string_constant_from_identifier(parser, &parser->previous_token);

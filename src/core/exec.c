@@ -2805,17 +2805,15 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_MAKE_ENUM: {
                 uint16_t value_count = READ_BE_U16();
                 printf("---\n");
-                printf("num values: %d\n", value_count);
+                printf("%d: ", value_count);
 
-                for (uint16_t i = 0; i < value_count; i++) {
-                    int index = -(int)(value_count * 2) + (int)(i * 2);
-
-                    PyroStr* name = pyro_stringify_value(vm, vm->stack_top[index]);
-                    printf("name: %s\n", name->bytes);
-
-                    PyroStr* value = pyro_stringify_value(vm, vm->stack_top[index + 1]);
-                    printf("value: %s\n", value->bytes);
+                for (int i = (int)value_count * -2; i < 0; i += 2) {
+                    PyroStr* name = pyro_stringify_value(vm, vm->stack_top[i]);
+                    PyroStr* value = pyro_debugify_value(vm, vm->stack_top[i + 1]);
+                    printf("(%s, %s) ", name->bytes, value->bytes);
                 }
+
+                printf("\n");
 
                 vm->stack_top -= value_count * 2;
                 pyro_push(vm, pyro_null());
