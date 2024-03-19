@@ -55,6 +55,8 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->class_err);
     mark_object(vm, (PyroObject*)vm->class_module);
     mark_object(vm, (PyroObject*)vm->class_rune);
+    mark_object(vm, (PyroObject*)vm->class_enum_type);
+    mark_object(vm, (PyroObject*)vm->class_enum_value);
 
     // The VM's pool of canned objects.
     mark_object(vm, (PyroObject*)vm->error);
@@ -317,6 +319,21 @@ static void blacken_object(PyroVM* vm, PyroObject* object) {
 
         case PYRO_OBJECT_RESOURCE_POINTER:
             break;
+
+        case PYRO_OBJECT_ENUM_TYPE: {
+            PyroEnumType* enum_type = (PyroEnumType*)object;
+            mark_object(vm, (PyroObject*)enum_type->name);
+            mark_object(vm, (PyroObject*)enum_type->values);
+            break;
+        }
+
+        case PYRO_OBJECT_ENUM_VALUE: {
+            PyroEnumValue* enum_value = (PyroEnumValue*)object;
+            mark_object(vm, (PyroObject*)enum_value->enum_type);
+            mark_object(vm, (PyroObject*)enum_value->name);
+            mark_value(vm, enum_value->value);
+            break;
+        }
     }
 }
 

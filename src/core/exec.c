@@ -1453,41 +1453,59 @@ static void run(PyroVM* vm) {
                 PyroStr* member_name = READ_STRING();
                 PyroValue receiver = vm->stack_top[-1];
 
-                if (!PYRO_IS_MOD(receiver)) {
-                    if (PYRO_IS_INSTANCE(receiver)) {
-                        pyro_panic(vm,
-                            "invalid member access '%s': receiver is an object instance, did you mean to use ':'?",
-                            member_name->bytes
-                        );
+                if (PYRO_IS_MOD(receiver)) {
+                    PyroMod* module = PYRO_AS_MOD(receiver);
+                    PyroValue member_index;
+
+                    if (PyroMap_fast_get(module->pub_member_indexes, member_name, &member_index, vm)) {
+                        vm->stack_top[-1] = module->members->values[member_index.as.i64];
                         break;
                     }
-                    if (PYRO_IS_CLASS(receiver)) {
-                        pyro_panic(vm,
-                            "invalid member access '%s': receiver is a class, did you mean to use ':'?",
-                            member_name->bytes
-                        );
+
+                    if (PyroMap_fast_get(module->all_member_indexes, member_name, &member_index, vm)) {
+                        pyro_panic(vm, "module member '%s' is private", member_name->bytes);
                         break;
                     }
+
+                    pyro_panic(vm, "module has no member '%s'", member_name->bytes);
+                    break;
+                }
+
+                if (PYRO_IS_ENUM_TYPE(receiver)) {
+                    PyroEnumType* enum_type = PYRO_AS_ENUM_TYPE(receiver);
+                    PyroValue enum_value;
+
+                    if (PyroMap_fast_get(enum_type->values, member_name, &enum_value, vm)) {
+                        vm->stack_top[-1] = enum_value;
+                        break;
+                    }
+
+                    pyro_panic(vm, "enum has no member '%s'", member_name->bytes);
+                    break;
+                }
+
+                if (PYRO_IS_INSTANCE(receiver)) {
                     pyro_panic(vm,
-                        "invalid member access '%s': receiver is not a module",
+                        "invalid member access '%s': receiver is an object instance, did you mean to use ':'?",
                         member_name->bytes
                     );
                     break;
                 }
 
-                PyroMod* module = PYRO_AS_MOD(receiver);
-                PyroValue member_index;
-                if (PyroMap_fast_get(module->pub_member_indexes, member_name, &member_index, vm)) {
-                    vm->stack_top[-1] = module->members->values[member_index.as.i64];
+                if (PYRO_IS_CLASS(receiver)) {
+                    pyro_panic(vm,
+                        "invalid member access '%s': receiver is a class, did you mean to use ':'?",
+                        member_name->bytes
+                    );
                     break;
                 }
 
-                if (PyroMap_fast_get(module->all_member_indexes, member_name, &member_index, vm)) {
-                    pyro_panic(vm, "module member '%s' is private", member_name->bytes);
-                    break;
-                }
+                pyro_panic(vm,
+                    "invalid member access '%s': invalid receiver type: %s",
+                    member_name->bytes,
+                    pyro_get_type_name(vm, receiver)->bytes
+                );
 
-                pyro_panic(vm, "module has no member '%s'", member_name->bytes);
                 break;
             }
 
@@ -2014,6 +2032,9 @@ static void run(PyroVM* vm) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
+                    if (vm->halt_flag) {
+                        break;
+                    }
                 }
 
                 vm->stack_top -= entry_count * 2 + 1;
@@ -2039,6 +2060,9 @@ static void run(PyroVM* vm) {
                     PyroValue* value = vm->stack_top - 1 - (entry_count - i);
                     if (!PyroMap_set(map, *value, pyro_null(), vm)) {
                         pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                    if (vm->halt_flag) {
                         break;
                     }
                 }
@@ -2804,21 +2828,40 @@ static void run(PyroVM* vm) {
             // After:  [ ... ][ enum ]
             case PYRO_OPCODE_MAKE_ENUM: {
                 uint16_t value_count = READ_BE_U16();
-                PyroStr* enum_name = READ_STRING();
+                PyroStr* enum_type_name = READ_STRING();
 
-                printf("---\n");
-                printf("%s (%d): ", enum_name->bytes, value_count);
+                PyroEnumType* enum_type = PyroEnumType_new(enum_type_name, vm);
+                if (!enum_type) {
+                    pyro_panic(vm, "out of memory");
+                    break;
+                }
+                if (!pyro_push(vm, pyro_obj(enum_type))) break; // protect from gc
 
-                for (int i = (int)value_count * -2; i < 0; i += 2) {
-                    PyroStr* name = pyro_stringify_value(vm, vm->stack_top[i]);
-                    PyroStr* value = pyro_debugify_value(vm, vm->stack_top[i + 1]);
-                    printf("(%s, %s) ", name->bytes, value->bytes);
+                for (int i = (int)value_count * -2 - 1; i < -1; i += 2) {
+                    PyroValue name = vm->stack_top[i];
+                    PyroValue value = vm->stack_top[i + 1];
+
+                    PyroEnumValue* enum_value = PyroEnumValue_new(enum_type, PYRO_AS_STR(name), value, vm);
+                    if (!enum_value) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                    if (!pyro_push(vm, pyro_obj(enum_value))) break; // protect from gc
+
+                    if (!PyroMap_set(enum_type->values, name, pyro_obj(enum_value), vm)) {
+                        pyro_panic(vm, "out of memory");
+                        break;
+                    }
+                    if (vm->halt_flag) {
+                        break;
+                    }
+
+                    pyro_pop(vm); // enum_value
                 }
 
-                printf("\n");
-
+                pyro_pop(vm); // enum_type
                 vm->stack_top -= value_count * 2;
-                pyro_push(vm, pyro_null());
+                pyro_push(vm, pyro_obj(enum_type));
                 break;
             }
 

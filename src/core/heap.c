@@ -163,6 +163,16 @@ void pyro_free_object(PyroVM* vm, PyroObject* object) {
             FREE_OBJECT(vm, PyroErr, object);
             break;
         }
+
+        case PYRO_OBJECT_ENUM_TYPE: {
+            FREE_OBJECT(vm, PyroEnumType, object);
+            break;
+        }
+
+        case PYRO_OBJECT_ENUM_VALUE: {
+            FREE_OBJECT(vm, PyroEnumValue, object);
+            break;
+        }
     }
 
     #undef FREE_OBJECT

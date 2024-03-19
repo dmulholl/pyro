@@ -28,6 +28,8 @@ PyroVM* pyro_new_vm(void) {
     vm->class_vec = NULL;
     vm->class_module = NULL;
     vm->class_rune = NULL;
+    vm->class_enum_type = NULL;
+    vm->class_enum_value = NULL;
     vm->error = NULL;
     vm->empty_string = NULL;
     vm->exit_code = 0;
@@ -150,6 +152,8 @@ PyroVM* pyro_new_vm(void) {
     vm->class_vec = PyroClass_new(vm);
     vm->class_module = PyroClass_new(vm);
     vm->class_rune = PyroClass_new(vm);
+    vm->class_enum_type = PyroClass_new(vm);
+    vm->class_enum_value = PyroClass_new(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

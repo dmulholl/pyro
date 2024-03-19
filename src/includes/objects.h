@@ -101,32 +101,40 @@ PyroMap* PyroMap_new_as_set(PyroVM* vm);
 // and so can set the panic and/or exit flags.
 bool PyroMap_get(PyroMap* map, PyroValue key, PyroValue* value, PyroVM* vm);
 
-// Adds a new entry to the map or updates an existing entry. This function can call into Pyro
-// code via pyro_op_compare_eq() and so can set the panic and/or exit flags.
+// Adds a new entry to the map or updates an existing entry.
+// - This function can call into Pyro code via pyro_op_compare_eq().
+// - Can set the panic and/or exit flags. Caller should check [vm->halt_flag] on return.
+// - Can trigger the garbage collector.
 // - Returns 0 if the entry was not added because additional memory could not be allocated.
 // - Returns 1 if a new entry was successfully added to the map.
 // - Returns 2 if an existing entry was successfully updated.
 int PyroMap_set(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm);
 
 // Removes an entry from the map. Returns true if the map contained an entry for [key].
-// This function can call into Pyro code via pyro_op_compare_eq() and so can set the panic
-// and/or exit flags.
+// - This function can call into Pyro code via pyro_op_compare_eq().
+// - Can set the panic and/or exit flags. Caller should check [vm->halt_flag] on return.
+// - Can trigger the garbage collector.
 bool PyroMap_remove(PyroMap* map, PyroValue key, PyroVM* vm);
 
-// Returns true if the map contains [key].  This function can call into Pyro code via
-// pyro_op_compare_eq() and so can set the panic and/or exit flags.
+// Returns true if the map contains [key].
+// - This function can call into Pyro code via pyro_op_compare_eq().
+// - Can set the panic and/or exit flags. Caller should check [vm->halt_flag] on return.
+// - Can trigger the garbage collector.
 bool PyroMap_contains(PyroMap* map, PyroValue key, PyroVM* vm);
 
-// Attempts to update an existing entry. Returns [true] if successful, [false] if no
-// corresponding entry was found.  This function can call into Pyro code via
-// pyro_op_compare_eq() and so can set the panic and/or exit flags.
+// Attempts to update an existing entry. Returns [true] if successful, [false] if no corresponding
+// entry was found.
+// - This function can call into Pyro code via pyro_op_compare_eq().
+// - Can set the panic and/or exit flags. Caller should check [vm->halt_flag] on return.
+// - Can trigger the garbage collector.
 bool PyroMap_update_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm);
 
-// Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false]
-// if the operation failed because memory could not be allocated for the new entries. The
-// operation may fail after some of the entries have successfully been copied.  This function
-// can call into Pyro code via pyro_op_compare_eq() and so can set the panic and/or exit
-// flags.
+// Copies all entries from [src] to [dst]. Returns [true] if the operation succeeded, [false] if the
+// operation failed because memory could not be allocated for the new entries. The operation may
+// fail after some of the entries have successfully been copied.
+// - This function can call into Pyro code via pyro_op_compare_eq().
+// - Can set the panic and/or exit flags. Caller should check [vm->halt_flag] on return.
+// - Can trigger the garbage collector.
 bool PyroMap_copy_entries(PyroMap* src, PyroMap* dst, PyroVM* vm);
 
 // Creates a new map object by copying [src]. Returns NULL if sufficient memory cannot be
@@ -136,12 +144,16 @@ PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm);
 // Clears all entries from the map.
 void PyroMap_clear(PyroMap* map, PyroVM* vm);
 
-// Optimized methods for maps where all keys are guaranteed to be PyroStr values. These
-// functions cannot panic and are safe to call while the VM is in a panicking state.
+// Optimized methods for maps where all keys are guaranteed to be PyroStr values. These functions
+// cannot exit/panic/trigger-garbage-collection and are safe to call while the VM is in a panicking
+// state.
 bool PyroMap_fast_remove(PyroMap* map, PyroStr* key, PyroVM* vm);
 bool PyroMap_fast_get(PyroMap* map, PyroStr* key, PyroValue* value, PyroVM* vm);
 
 // Treats the keys as sets and returns true if the sets are equal.
+// - This function can call into Pyro code via pyro_op_compare_eq().
+// - Can set the panic and/or exit flags. Caller should check [vm->halt_flag] on return.
+// - Can trigger the garbage collector.
 bool PyroMap_compare_keys_for_set_equality(PyroMap* map1, PyroMap* map2, PyroVM* vm);
 
 /* ------- */
@@ -577,5 +589,26 @@ typedef struct {
 } PyroErr;
 
 PyroErr* PyroErr_new(PyroVM* vm);
+
+/* ------- */
+/*  Enums  */
+/* ------- */
+
+typedef struct {
+    PyroObject obj;
+    PyroStr* name;
+    PyroMap* values;
+} PyroEnumType;
+
+PyroEnumType* PyroEnumType_new(PyroStr* name, PyroVM* vm);
+
+typedef struct {
+    PyroObject obj;
+    PyroEnumType* enum_type;
+    PyroStr* name;
+    PyroValue value;
+} PyroEnumValue;
+
+PyroEnumValue* PyroEnumValue_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm);
 
 #endif

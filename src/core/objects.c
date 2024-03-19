@@ -2401,3 +2401,41 @@ PyroErr* PyroErr_new(PyroVM* vm) {
 
     return err;
 }
+
+
+/* ------- */
+/*  Enums  */
+/* ------- */
+
+
+PyroEnumType* PyroEnumType_new(PyroStr* name, PyroVM* vm) {
+    PyroEnumType* enum_type = ALLOCATE_OBJECT(vm, PyroEnumType, PYRO_OBJECT_ENUM_TYPE);
+    if (!enum_type) {
+        return NULL;
+    }
+
+    enum_type->obj.class = vm->class_enum_type;
+    enum_type->name = name;
+
+    enum_type->values = PyroMap_new(vm);
+    if (!enum_type->values) {
+        return NULL;
+    }
+
+    return enum_type;
+}
+
+
+PyroEnumValue* PyroEnumValue_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm) {
+    PyroEnumValue* enum_value = ALLOCATE_OBJECT(vm, PyroEnumValue, PYRO_OBJECT_ENUM_VALUE);
+    if (!enum_value) {
+        return NULL;
+    }
+
+    enum_value->obj.class = vm->class_enum_value;
+    enum_value->enum_type = enum_type;
+    enum_value->name = name;
+    enum_value->value = value;
+
+    return enum_value;
+}

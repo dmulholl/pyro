@@ -599,6 +599,28 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
             return err->message;
         }
 
+        case PYRO_OBJECT_ENUM_TYPE: {
+            PyroEnumType* enum_type = (PyroEnumType*)object;
+            return pyro_sprintf_to_obj(vm, "<enum %s count=%zu>", enum_type->name->bytes, enum_type->values->live_entry_count);
+        }
+
+        case PYRO_OBJECT_ENUM_VALUE: {
+            PyroEnumValue* enum_value = (PyroEnumValue*)object;
+
+            PyroStr* debug_value = pyro_debugify_value(vm, enum_value->value);
+            if (!debug_value) {
+                return NULL;
+            }
+
+            return pyro_sprintf_to_obj(
+                vm,
+                "<enum %s::%s value=%s>",
+                enum_value->enum_type->name->bytes,
+                enum_value->name->bytes,
+                debug_value->bytes
+            );
+        }
+
         default:
             return pyro_sprintf_to_obj(vm, "<object>");
     }
