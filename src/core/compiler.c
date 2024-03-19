@@ -2558,7 +2558,6 @@ static void parse_enum_declaration(Parser* parser, Access access) {
     if (!consume(parser, TOKEN_IDENTIFIER, "expected enum name")) {
         return;
     }
-    // Token enum_name = parser->previous_token;
 
     uint16_t enum_name_index = make_string_constant_from_identifier(parser, &parser->previous_token);
     declare_variable(parser, parser->previous_token, false);
@@ -2607,7 +2606,10 @@ static void parse_enum_declaration(Parser* parser, Access access) {
         return;
     }
 
-    emit_u8_u16be(parser, PYRO_OPCODE_MAKE_ENUM, value_count);
+    emit_byte(parser, PYRO_OPCODE_MAKE_ENUM);
+    emit_u16be(parser, value_count);
+    emit_u16be(parser, enum_name_index);
+
     define_variable(parser, enum_name_index, access, false);
 }
 

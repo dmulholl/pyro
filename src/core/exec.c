@@ -2804,8 +2804,10 @@ static void run(PyroVM* vm) {
             // After:  [ ... ][ enum ]
             case PYRO_OPCODE_MAKE_ENUM: {
                 uint16_t value_count = READ_BE_U16();
+                PyroStr* enum_name = READ_STRING();
+
                 printf("---\n");
-                printf("%d: ", value_count);
+                printf("%s (%d): ", enum_name->bytes, value_count);
 
                 for (int i = (int)value_count * -2; i < 0; i += 2) {
                     PyroStr* name = pyro_stringify_value(vm, vm->stack_top[i]);

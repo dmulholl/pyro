@@ -43,6 +43,15 @@ static size_t u16_instruction(PyroVM* vm, const char* name, PyroFn* fn, size_t i
 }
 
 
+// An instruction with two two-byte arguments representing uint16_t values in big-endian format.
+static size_t u16_x2_instruction(PyroVM* vm, const char* name, PyroFn* fn, size_t ip) {
+    uint16_t arg1 = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
+    uint16_t arg2 = (fn->code[ip + 3] << 8) | fn->code[ip + 4];
+    pyro_stdout_write_f(vm, "%-32s %4d %4d\n", name, arg1, arg2);
+    return ip + 5;
+}
+
+
 // A jump instruction with a 2-byte argument.
 static size_t jump_instruction(PyroVM* vm, const char* name, int sign, PyroFn* fn, size_t ip) {
     uint16_t offset = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
@@ -577,7 +586,7 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
             return atomic_instruction(vm, "I64_ADD", ip);
 
         case PYRO_OPCODE_MAKE_ENUM:
-            return u16_instruction(vm, "MAKE_ENUM", fn, ip);
+            return u16_x2_instruction(vm, "MAKE_ENUM", fn, ip);
 
         default:
             pyro_stdout_write_f(vm, "INVALID OPCODE [%d]\n", instruction);
