@@ -1,0 +1,70 @@
+enum Number {
+    Undefined,
+    One = 1,
+    Two = 2,
+    OtherTwo = 2,
+}
+
+with instance = Number::Undefined {
+    assert instance == Number::Undefined;
+    assert instance != Number::One;
+    assert instance != Number::Two;
+    assert instance != Number::OtherTwo;
+    assert instance != null;
+    assert instance != 0;
+
+    assert Number::Undefined == Number::Undefined;
+    assert Number::Undefined != Number::One;
+    assert Number::Undefined != Number::Two;
+    assert Number::Undefined != Number::OtherTwo;
+    assert Number::Undefined != null;
+    assert Number::Undefined != 0;
+}
+
+with instance = Number::One {
+    assert instance != Number::Undefined;
+    assert instance == Number::One;
+    assert instance != Number::Two;
+    assert instance != Number::OtherTwo;
+    assert instance != "One";
+    assert instance != 1;
+
+    assert Number::One != Number::Undefined;
+    assert Number::One == Number::One;
+    assert Number::One != Number::Two;
+    assert Number::One != Number::OtherTwo;
+    assert Number::One != "One";
+    assert Number::One != 1;
+}
+
+with instance = Number::Two {
+    assert instance != Number::Undefined;
+    assert instance != Number::One;
+    assert instance == Number::Two;
+    assert instance != Number::OtherTwo;
+    assert instance != "Two";
+    assert instance != 2;
+
+    assert Number::Two != Number::Undefined;
+    assert Number::Two != Number::One;
+    assert Number::Two == Number::Two;
+    assert Number::Two != Number::OtherTwo;
+    assert Number::Two != "Two";
+    assert Number::Two != 2;
+}
+
+with instance = Number::OtherTwo {
+    assert instance != Number::Undefined;
+    assert instance != Number::One;
+    assert instance != Number::Two;
+    assert instance == Number::OtherTwo;
+    assert instance != "OtherTwo";
+    assert instance != 2;
+
+    assert Number::OtherTwo != Number::Undefined;
+    assert Number::OtherTwo != Number::One;
+    assert Number::OtherTwo != Number::Two;
+    assert Number::OtherTwo == Number::OtherTwo;
+    assert Number::OtherTwo != "OtherTwo";
+    assert Number::OtherTwo != 2;
+}
