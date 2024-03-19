@@ -2602,7 +2602,7 @@ static void parse_enum_declaration(Parser* parser, Access access) {
     }
 
     if (value_count == 0) {
-        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid enum: zero values");
+        SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid enum declaration: zero values");
         return;
     }
 
