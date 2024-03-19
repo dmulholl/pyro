@@ -34,6 +34,7 @@ Annotations for builtin types are as follows:
 * `bool`
 * `buf`
 * `class`
+* `enum`
 * `err`
 * `f64`
 * `file`

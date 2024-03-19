@@ -13,6 +13,7 @@ The following keywords are reserved by the language and cannot be used as identi
 * `def`
 * `echo`
 * `else`
+* `enum`
 * `extends`
 * `false`
 * `for`
@@ -42,7 +43,6 @@ The following keywords are reserved for future use:
 * `case`
 * `catch`
 * `defer`
-* `enum`
 * `guard`
 * `implements`
 * `interface`
