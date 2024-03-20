@@ -576,8 +576,9 @@ void pyro_load_std_builtins_map(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_set, "is_proper_superset_of", set_is_proper_superset_of, 1);
     pyro_define_pub_method(vm, vm->class_set, "clear", map_clear, 0);
     pyro_define_pub_method(vm, vm->class_set, "is_equal_to", set_is_equal_to, 1);
-    pyro_define_pub_method(vm, vm->class_set, "iter", map_keys, 0);
+    pyro_define_pub_method(vm, vm->class_set, "values", map_keys, 0);
 
     // Deprecated.
     pyro_define_pub_method(vm, vm->class_map, "iter", map_entries, 0);
+    pyro_define_pub_method(vm, vm->class_set, "iter", map_keys, 0);
 }

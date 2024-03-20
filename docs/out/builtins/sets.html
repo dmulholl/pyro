@@ -339,16 +339,6 @@ Equivalent to <code>receiver &gt;= other</code>.
 </div>
 <div>
 <dt>
-<code>:iter() -&gt; iter</code>
-</dt>
-<dd>
-<p>
-Returns an <code>iter</code> object wrapping the set.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:remove(item: any)</code>
 </dt>
 <dd>
@@ -381,6 +371,16 @@ Returns a new set containing the union of the two sets &mdash; i.e. the set of a
 </p>
 <p>
 Equivalent to <code>receiver | other</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:values() -&gt; iter</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the set's values.
 </p>
 </dd>
 </div>
