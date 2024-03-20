@@ -48,7 +48,7 @@ static PyroValue tup_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue tup_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue tup_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroTup* tup = PYRO_AS_TUP(args[-1]);
     PyroIter* iter = PyroIter_new((PyroObject*)tup, PYRO_ITER_TUP, vm);
     if (!iter) {
@@ -137,12 +137,15 @@ void pyro_load_std_builtins_tup(PyroVM* vm) {
 
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_tup, "$contains", tup_contains, 1);
-    pyro_define_pri_method(vm, vm->class_tup, "$iter", tup_iter, 0);
+    pyro_define_pri_method(vm, vm->class_tup, "$iter", tup_values, 0);
 
     // Methods -- public.
     pyro_define_pub_method(vm, vm->class_tup, "count", tup_count, 0);
     pyro_define_pub_method(vm, vm->class_tup, "slice", tup_slice, -1);
     pyro_define_pub_method(vm, vm->class_tup, "get", tup_get, 1);
-    pyro_define_pub_method(vm, vm->class_tup, "iter", tup_iter, 0);
+    pyro_define_pub_method(vm, vm->class_tup, "values", tup_values, 0);
     pyro_define_pub_method(vm, vm->class_tup, "contains", tup_contains, 1);
+
+    // Deprecated.
+    pyro_define_pub_method(vm, vm->class_tup, "iter", tup_values, 0);
 }

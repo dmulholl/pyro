@@ -149,10 +149,6 @@ The result is a new tuple containing the combined entries from the input tuples.
 
     A negative index counts backwards from the end of the tuple.
 
-[[ `:iter() -> iter` ]]
-
-    Returns an `iter` object wrapping the tuple.
-
 [[ `:slice(start_index: i64) -> tup` <br> `:slice(start_index: i64, length: i64) -> tup` ]]
 
     Copies a slice of the source tuple and returns it as a new tuple.
@@ -162,3 +158,7 @@ The result is a new tuple containing the combined entries from the input tuples.
     If `length` is omitted, copies to the end of the source tuple.
 
     Panics if either argument is out of range.
+
+[[ `:values() -> iter` ]]
+
+    Returns an iterator over the tuple's values.

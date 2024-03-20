@@ -268,16 +268,6 @@ A negative index counts backwards from the end of the tuple.
 </div>
 <div>
 <dt>
-<code>:iter() -&gt; iter</code>
-</dt>
-<dd>
-<p>
-Returns an <code>iter</code> object wrapping the tuple.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:slice(start_index: i64) -&gt; tup</code> <br> <code>:slice(start_index: i64, length: i64) -&gt; tup</code>
 </dt>
 <dd>
@@ -292,6 +282,16 @@ If <code>length</code> is omitted, copies to the end of the source tuple.
 </p>
 <p>
 Panics if either argument is out of range.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:values() -&gt; iter</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the tuple's values.
 </p>
 </dd>
 </div>
