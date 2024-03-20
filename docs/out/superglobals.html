@@ -1083,9 +1083,14 @@ Creates a new <a href="builtins/tuples.html">tuple</a>.
 <p>
 Returns the type of <code>arg</code> as a string, e.g. <code>&quot;i64&quot;</code>, <code>&quot;f64&quot;</code>, <code>&quot;vec&quot;</code>, <code>&quot;map&quot;</code>, <code>&quot;bool&quot;</code>, etc.
 </p>
-<p>
+<ul>
+<li>
 If <code>arg</code> is an instance of a class, this function returns the class name.
-</p>
+</li>
+<li>
+If <code>arg</code> is an enum value, this function returns the enum name.
+</li>
+</ul>
 </dd>
 </div>
 <div>
