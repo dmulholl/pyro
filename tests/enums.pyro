@@ -125,3 +125,42 @@ with instance = Number::OtherTwo {
     assert Number::OtherTwo != 2;
     assert Number::OtherTwo:value() == 2;
 }
+
+enum Color1 {
+    Red = "red",
+    Green = "green",
+    Blue = "blue",
+}
+
+enum Color2 {
+    Red = "red",
+    Green = "green",
+    Blue = "blue",
+}
+
+var red1 = Color1::Red;
+assert red1 == Color1::Red;
+assert red1:value() == "red";
+
+var red2 = Color2::Red;
+assert red2 == Color2::Red;
+assert red2:value() == "red";
+
+assert red1 != red2;
+
+{
+    enum Color3 {
+        Red = "red",
+        Green = "green",
+        Blue = "blue",
+    }
+
+    var red3 = Color3::Red;
+    assert red3 == Color3::Red;
+    assert red3:value() == "red";
+
+    assert red3 != red1;
+    assert red3 != red2;
+}
+
+assert $is_err(try Color3::Red);
