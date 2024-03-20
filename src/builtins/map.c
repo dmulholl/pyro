@@ -96,7 +96,7 @@ static PyroValue map_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue map_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue map_entries(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroMap* map = PYRO_AS_MAP(args[-1]);
     PyroIter* iter = PyroIter_new((PyroObject*)map, PYRO_ITER_MAP_ENTRIES, vm);
     if (!iter) {
@@ -532,7 +532,7 @@ void pyro_load_std_builtins_map(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$is_set", fn_is_set, 1);
 
     // Map methods -- private.
-    pyro_define_pri_method(vm, vm->class_map, "$iter", map_iter, 0);
+    pyro_define_pri_method(vm, vm->class_map, "$iter", map_entries, 0);
     pyro_define_pri_method(vm, vm->class_map, "$contains", map_contains, 1);
 
     // Map methods -- public.
@@ -544,7 +544,7 @@ void pyro_load_std_builtins_map(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_map, "copy", map_copy, 0);
     pyro_define_pub_method(vm, vm->class_map, "keys", map_keys, 0);
     pyro_define_pub_method(vm, vm->class_map, "values", map_values, 0);
-    pyro_define_pub_method(vm, vm->class_map, "iter", map_iter, 0);
+    pyro_define_pub_method(vm, vm->class_map, "entries", map_entries, 0);
     pyro_define_pub_method(vm, vm->class_map, "is_empty", map_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_map, "clear", map_clear, 0);
 
@@ -577,4 +577,7 @@ void pyro_load_std_builtins_map(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_set, "clear", map_clear, 0);
     pyro_define_pub_method(vm, vm->class_set, "is_equal_to", set_is_equal_to, 1);
     pyro_define_pub_method(vm, vm->class_set, "iter", map_keys, 0);
+
+    // Deprecated.
+    pyro_define_pub_method(vm, vm->class_map, "iter", map_entries, 0);
 }

@@ -69,29 +69,39 @@ If the map doesn't contain an entry corresponding to `key`, the expression `map[
 
 ### Iterating
 
-You can iterate over a map in three different ways.
+You can iterate over a map in four different ways.
 
-1. Iterating over a map directly returns key-value tuples which you can unpack in a for-loop, e.g.
+(1) Iterating over a map directly returns `(key, value)` tuples which you can unpack in a for-loop, e.g.
 
-::: code pyro
-    for (key, value) in map {
-        echo key;
-        echo value;
-    }
+    ::: code pyro
+        for (key, value) in map {
+            echo key;
+            echo value;
+        }
 
-2. The `:keys()` method returns an iterator over the map's keys, e.g.
+(2) The `:keys()` method returns an iterator over the map's keys, e.g.
 
-::: code pyro
-    for key in map:keys() {
-        echo key;
-    }
+    ::: code pyro
+        for key in map:keys() {
+            echo key;
+        }
 
 (3) The `:values()` method returns an iterator over the map's values, e.g.
 
-::: code pyro
-    for value in map:values() {
-        echo value;
-    }
+    ::: code pyro
+        for value in map:values() {
+            echo value;
+        }
+
+(4) The `:entries()` method returns an iterator over the map's entries as `(key, value)` tuples, e.g.
+
+    ::: code pyro
+        for (key, value) in map:entries() {
+            echo key;
+            echo value;
+        }
+
+    This is equivalent to iterating over the map directly.
 
 
 
@@ -158,6 +168,10 @@ You can use any Pyro value as a value in a `map`.
 
     Returns the number of entries in the map.
 
+[[ `:entries() -> iter[tup]` ]]
+
+    Returns an iterator over the map's entries as `(key, value)` tuples.
+
 [[ `:get(key: any) -> any` ]]
 
     Returns the value associated with `key` or an `err` if `key` was not found.
@@ -165,10 +179,6 @@ You can use any Pyro value as a value in a `map`.
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the map is empty.
-
-[[ `:iter() -> iter[tup]` ]]
-
-    Returns an iterator over `(key, value)` tuples.
 
 [[ `:keys() -> iter` ]]
 
