@@ -16,15 +16,15 @@ assert $is_enum_type(Number);
 assert !$is_enum_type(Number::One);
 assert !$is_enum_type("foo");
 
-assert $is_enum_value(Number::One);
-assert !$is_enum_value(Number);
-assert !$is_enum_value("foo");
+assert $is_enum_member(Number::One);
+assert !$is_enum_member(Number);
+assert !$is_enum_member("foo");
 
-assert $is_enum_value_of_type(Number::One, Number);
-assert !$is_enum_value_of_type(1, Number);
-assert !$is_enum_value_of_type("foo", Number);
-assert $is_err(try $is_enum_value_of_type(Number::One, Number::Two));
-assert $is_err(try $is_enum_value_of_type(Number::One, "foo"));
+assert $is_enum_member_of_type(Number::One, Number);
+assert !$is_enum_member_of_type(1, Number);
+assert !$is_enum_member_of_type("foo", Number);
+assert $is_err(try $is_enum_member_of_type(Number::One, Number::Two));
+assert $is_err(try $is_enum_member_of_type(Number::One, "foo"));
 
 assert Number::Undefined:value() == null;
 assert Number::One:value() == 1;
@@ -36,12 +36,12 @@ assert Number::One:type() == Number;
 assert Number::Two:type() == Number;
 assert Number::OtherTwo:type() == Number;
 
-with values = Number:iter():to_vec() {
-    assert values:count() == 4;
-    assert Number::Undefined in values;
-    assert Number::One in values;
-    assert Number::Two in values;
-    assert Number::OtherTwo in values;
+with members = Number:members():to_vec() {
+    assert members:count() == 4;
+    assert Number::Undefined in members;
+    assert Number::One in members;
+    assert Number::Two in members;
+    assert Number::OtherTwo in members;
 }
 
 var number_values = [];

@@ -299,21 +299,21 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$is_enum_member(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an `enum` member.
+
+
+
+[[ `$is_enum_member_of_type(arg: any, type: enum) -> bool` ]]
+
+    Returns `true` if `arg` is a member of the specified `enum`.
+
+
+
 [[ `$is_enum_type(arg: any) -> bool` ]]
 
     Returns `true` if the argument is an `enum`.
-
-
-
-[[ `$is_enum_value(arg: any) -> bool` ]]
-
-    Returns `true` if the argument is an `enum` value.
-
-
-
-[[ `$is_enum_value_of_type(arg: any, type: enum) -> bool` ]]
-
-    Returns `true` if `arg` is a value of the specified `enum`.
 
 
 
@@ -606,7 +606,7 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     Returns the type of `arg` as a string, e.g. `"i64"`, `"f64"`, `"vec"`, `"map"`, `"bool"`, etc.
 
     * If `arg` is an instance of a class, this function returns the class name.
-    * If `arg` is an enum value, this function returns the enum name.
+    * If `arg` is an enum member, this function returns the enum name.
 
 
 

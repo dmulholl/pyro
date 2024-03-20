@@ -576,31 +576,31 @@ Returns <code>true</code> if the argument is a class.
 </div>
 <div>
 <dt>
+<code>$is_enum_member(arg: any) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if the argument is an <code>enum</code> member.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>$is_enum_member_of_type(arg: any, type: enum) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>arg</code> is a member of the specified <code>enum</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>$is_enum_type(arg: any) -&gt; bool</code>
 </dt>
 <dd>
 <p>
 Returns <code>true</code> if the argument is an <code>enum</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$is_enum_value(arg: any) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if the argument is an <code>enum</code> value.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>$is_enum_value_of_type(arg: any, type: enum) -&gt; bool</code>
-</dt>
-<dd>
-<p>
-Returns <code>true</code> if <code>arg</code> is a value of the specified <code>enum</code>.
 </p>
 </dd>
 </div>
@@ -1088,7 +1088,7 @@ Returns the type of <code>arg</code> as a string, e.g. <code>&quot;i64&quot;</co
 If <code>arg</code> is an instance of a class, this function returns the class name.
 </li>
 <li>
-If <code>arg</code> is an enum value, this function returns the enum name.
+If <code>arg</code> is an enum member, this function returns the enum name.
 </li>
 </ul>
 </dd>

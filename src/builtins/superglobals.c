@@ -1124,16 +1124,16 @@ static PyroValue fn_is_enum_type(PyroVM* vm, size_t arg_count, PyroValue* args) 
 }
 
 
-static PyroValue fn_is_enum_value(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue fn_is_enum_member(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_bool(PYRO_IS_ENUM_VALUE(args[0]));
 }
 
 
-static PyroValue fn_is_enum_value_of_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue fn_is_enum_member_of_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_ENUM_TYPE(args[1])) {
         pyro_panic(
             vm,
-            "$is_enum_value_of_type(): invalid argument [type]: expected an enum type, found %s",
+            "$is_enum_member_of_type(): invalid argument [type]: expected an enum type, found %s",
             pyro_get_type_name(vm, args[1])->bytes
         );
         return pyro_null();
@@ -1214,8 +1214,8 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$eval", fn_eval, 1);
     pyro_define_superglobal_fn(vm, "$cmd", fn_cmd, -1);
     pyro_define_superglobal_fn(vm, "$is_enum_type", fn_is_enum_type, 1);
-    pyro_define_superglobal_fn(vm, "$is_enum_value", fn_is_enum_value, 1);
-    pyro_define_superglobal_fn(vm, "$is_enum_value_of_type", fn_is_enum_value_of_type, 2);
+    pyro_define_superglobal_fn(vm, "$is_enum_member", fn_is_enum_member, 1);
+    pyro_define_superglobal_fn(vm, "$is_enum_member_of_type", fn_is_enum_member_of_type, 2);
 
     // Deprecated.
     pyro_define_superglobal_fn(vm, "$add", fn_add, 2);
