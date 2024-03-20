@@ -366,11 +366,11 @@ def $test_is_sorted() {
 
 def $test_iter_method() {
     var v1 = [];
-    assert $is_iter(v1:iter());
+    assert $is_iter(v1:values());
 
     var v2 = [123, 456, 789];
-    assert $is_iter(v2:iter());
-    assert v2:iter():to_vec():count() == 3;
+    assert $is_iter(v2:values());
+    assert v2:values():to_vec():count() == 3;
 
     var sum1 = 0;
     for value in [1, 2, 3] {
@@ -379,7 +379,7 @@ def $test_iter_method() {
     assert sum1 == 6;
 
     var sum2 = 0;
-    for value in [1, 2, 3]:iter() {
+    for value in [1, 2, 3]:values() {
         sum2 += value;
     }
     assert sum2 == 6;

@@ -425,7 +425,7 @@ static PyroValue vec_filter(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue vec_iter(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue vec_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
 
     PyroIter* iter = PyroIter_new((PyroObject*)vec, PYRO_ITER_VEC, vm);
@@ -708,7 +708,7 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$is_stack", fn_is_stack, 1);
 
     // Vector methods -- private.
-    pyro_define_pri_method(vm, vm->class_vec, "$iter", vec_iter, 0);
+    pyro_define_pri_method(vm, vm->class_vec, "$iter", vec_values, 0);
     pyro_define_pri_method(vm, vm->class_vec, "$contains", vec_contains, 1);
 
     // Vector methods -- public.
@@ -738,13 +738,13 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_vec, "slice", vec_slice, -1);
     pyro_define_pub_method(vm, vm->class_vec, "is_sorted", vec_is_sorted, -1);
     pyro_define_pub_method(vm, vm->class_vec, "join", vec_join, -1);
-    pyro_define_pub_method(vm, vm->class_vec, "iter", vec_iter, 0);
+    pyro_define_pub_method(vm, vm->class_vec, "values", vec_values, 0);
     pyro_define_pub_method(vm, vm->class_vec, "remove_random", vec_remove_random, 0);
     pyro_define_pub_method(vm, vm->class_vec, "random", vec_random, 0);
     pyro_define_pub_method(vm, vm->class_vec, "clear", vec_clear, 0);
 
     // Stack methods -- private.
-    pyro_define_pri_method(vm, vm->class_stack, "$iter", vec_iter, 0);
+    pyro_define_pri_method(vm, vm->class_stack, "$iter", vec_values, 0);
     pyro_define_pri_method(vm, vm->class_stack, "$contains", vec_contains, 1);
 
     // Stack methods -- public.
@@ -755,5 +755,8 @@ void pyro_load_std_builtins_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_stack, "peek", stack_peek, 0);
     pyro_define_pub_method(vm, vm->class_stack, "clear", vec_clear, 0);
     pyro_define_pub_method(vm, vm->class_stack, "contains", vec_contains, 1);
-    pyro_define_pub_method(vm, vm->class_stack, "iter", vec_iter, 0);
+    pyro_define_pub_method(vm, vm->class_stack, "iter", vec_values, 0);
+
+    // Deprecated.
+    pyro_define_pub_method(vm, vm->class_vec, "iter", vec_values, 0);
 }

@@ -71,7 +71,7 @@ If the map doesn't contain an entry corresponding to `key`, the expression `map[
 
 You can iterate over a map in four different ways.
 
-(1) Iterating over a map directly returns `(key, value)` tuples which you can unpack in a for-loop, e.g.
+(1) Iterating over a map directly returns the map's entries as `(key, value)` tuples which you can unpack in a for-loop, e.g.
 
     ::: code pyro
         for (key, value) in map {

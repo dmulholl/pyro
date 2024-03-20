@@ -346,16 +346,6 @@ The method will panic if the values are not comparable.
 </div>
 <div>
 <dt>
-<code>:iter() -&gt; iter</code>
-</dt>
-<dd>
-<p>
-Returns an <code>iter</code> object wrapping the vector.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>:join() -&gt; str</code> <br> <code>:join(sep: str) -&gt; str</code>
 </dt>
 <dd>
@@ -577,6 +567,16 @@ If no <code>callback</code> function is supplied, values will be compared using 
 The method will panic if the values are not comparable.
 </li>
 </ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>:values() -&gt; iter</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the vector's values.
+</p>
 </dd>
 </div>
 </dl>

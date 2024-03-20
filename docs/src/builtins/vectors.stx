@@ -164,10 +164,6 @@ The result is a new vector containing the combined entries from the input vector
     * If no `callback` function is supplied, values will be compared using the `<` operator.
       The method will panic if the values are not comparable.
 
-[[ `:iter() -> iter` ]]
-
-    Returns an `iter` object wrapping the vector.
-
 [[ `:join() -> str` <br> `:join(sep: str) -> str` ]]
 
     Joins the vector's elements into a string, with each pair of elements separated by `sep`.
@@ -280,3 +276,7 @@ The result is a new vector containing the combined entries from the input vector
 
     * If no `callback` function is supplied, values will be compared using the `<` operator.
       The method will panic if the values are not comparable.
+
+[[ `:values() -> iter` ]]
+
+    Returns an iterator over the vector's values.
