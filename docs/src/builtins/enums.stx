@@ -1,0 +1,83 @@
+---
+title: Enums
+meta_title: Pyro &mdash; Enums
+---
+
+::: insert toc
+::: hr
+
+
+An `enum` is an *enumerated type* --- i.e. a type defined with a set of unique, distinct members, e.g.
+
+::: code pyro
+    enum Color {
+        Red,
+        Green,
+        Blue,
+    }
+
+    var color = Color::Red;
+    assert color == Color::Red;
+    assert color != Color::Blue;
+
+Optionally, each `enum` member can have an associated value, e.g.
+
+::: code pyro
+    enum Color {
+        Red = "red",
+        Green = "green",
+        Blue = "blue",
+    }
+
+    var color = Color::Red;
+    assert color:value() == "red";
+
+A member's value is arbitrary and members with the same value remain unique and distinct, e.g.
+
+::: code pyro
+    enum Color {
+        Red = "red",
+        Crimson = "red",
+    }
+
+    var color = Color::Red;
+    assert color == Color::Red;
+    assert color != Color::Crimson;
+
+If a member doesn't have an explicitly assigned value, its associated value is `null`, e.g.
+
+::: code pyro
+    enum Number {
+        Unknown,
+        One = 1,
+        Two = 2,
+    }
+
+    var foo = Number::One;
+    assert foo:value() == 1;
+
+    var bar = Number::Unknown;
+    assert bar:value() == null;
+
+
+
+### Enum Type Methods
+
+
+[[ `:members() -> iter` ]]
+
+    Returns an iterator over the enum's members.
+
+
+
+### Enum Member Methods
+
+[[ `:type() -> enum` ]]
+
+    Returns the member's `enum` type.
+
+[[ `:value() -> any` ]]
+
+    Returns the member's associated value.
+
+    Returns `null` if the member does not have an explicitly assigned value.

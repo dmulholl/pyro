@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Enums</title>
+
+        
+
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+
+        
+            <script src="../assets/code.js"></script>
+        
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-builtins-enums node-builtins node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+            
+            
+                <p class="version">Version 0.16.0</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+
+        <article class="main">
+            <header class="title">
+                <h1>Enums</h1>
+                
+                <hr>
+            </header>
+            <ul class="stx-toc">
+<li>
+<a href="#enum-type-methods">Enum Type Methods</a>
+</li>
+<li>
+<a href="#enum-member-methods">Enum Member Methods</a>
+</li>
+</ul>
+<hr>
+<p>
+An <code>enum</code> is an <i>enumerated type</i> &mdash; i.e. a type defined with a set of unique, distinct members, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span>
+    <span class="nx">Red</span><span class="p">,</span>
+    <span class="nx">Green</span><span class="p">,</span>
+    <span class="nx">Blue</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">color</span> <span class="p">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span> <span class="o">==</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span> <span class="o">!=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Blue</span><span class="p">;</span>
+</pre>
+<p>
+Optionally, each <code>enum</code> member can have an associated value, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span>
+    <span class="nx">Red</span> <span class="p">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
+    <span class="nx">Green</span> <span class="p">=</span> <span class="s">&quot;green&quot;</span><span class="p">,</span>
+    <span class="nx">Blue</span> <span class="p">=</span> <span class="s">&quot;blue&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">color</span> <span class="p">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span><span class="p">:</span><span class="nx">value</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;red&quot;</span><span class="p">;</span>
+</pre>
+<p>
+A member's value is arbitrary and members with the same value remain unique and distinct, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span>
+    <span class="nx">Red</span> <span class="p">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
+    <span class="nx">Crimson</span> <span class="p">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">color</span> <span class="p">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span> <span class="o">==</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span> <span class="o">!=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Crimson</span><span class="p">;</span>
+</pre>
+<p>
+If a member doesn't have an explicitly assigned value, its associated value is <code>null</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Number</span> <span class="p">{</span>
+    <span class="nx">Unknown</span><span class="p">,</span>
+    <span class="nx">One</span> <span class="p">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">Two</span> <span class="p">=</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">Number</span><span class="p">::</span><span class="nx">One</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">foo</span><span class="p">:</span><span class="nx">value</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="nx">Number</span><span class="p">::</span><span class="nx">Unknown</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">bar</span><span class="p">:</span><span class="nx">value</span><span class="p">()</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
+</pre>
+<h3 id="enum-type-methods">
+Enum Type Methods
+</h3>
+<dl>
+<div>
+<dt>
+<code>:members() -&gt; iter</code>
+</dt>
+<dd>
+<p>
+Returns an iterator over the enum's members.
+</p>
+</dd>
+</div>
+</dl>
+<h3 id="enum-member-methods">
+Enum Member Methods
+</h3>
+<dl>
+<div>
+<dt>
+<code>:type() -&gt; enum</code>
+</dt>
+<dd>
+<p>
+Returns the member's <code>enum</code> type.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:value() -&gt; any</code>
+</dt>
+<dd>
+<p>
+Returns the member's associated value.
+</p>
+<p>
+Returns <code>null</code> if the member does not have an explicitly assigned value.
+</p>
+</dd>
+</div>
+</dl>
+        </article>
+
+        
+    </body>
+</html>
