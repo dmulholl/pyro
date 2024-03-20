@@ -403,6 +403,12 @@ PyroStr* pyro_get_type_name(PyroVM* vm, PyroValue value) {
                 case PYRO_OBJECT_ERR:
                     return vm->str_err;
 
+                case PYRO_OBJECT_ENUM_TYPE:
+                    return vm->str_enum;
+
+                case PYRO_OBJECT_ENUM_VALUE:
+                    return PYRO_AS_ENUM_VALUE(value)->enum_type->name;
+
                 default:
                     return vm->empty_string;
             }

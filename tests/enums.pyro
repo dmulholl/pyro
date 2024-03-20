@@ -5,10 +5,22 @@ enum Number {
     OtherTwo = 2,
 }
 
+assert $type(Number) == "enum";
+
+assert $type(Number::Undefined) == "Number";
+assert $type(Number::One) == "Number";
+assert $type(Number::Two) == "Number";
+assert $type(Number::OtherTwo) == "Number";
+
 assert Number::Undefined:value() == null;
 assert Number::One:value() == 1;
 assert Number::Two:value() == 2;
 assert Number::OtherTwo:value() == 2;
+
+assert Number::Undefined:type() == Number;
+assert Number::One:type() == Number;
+assert Number::Two:type() == Number;
+assert Number::OtherTwo:type() == Number;
 
 with values = Number:iter():to_vec() {
     assert values:count() == 4;

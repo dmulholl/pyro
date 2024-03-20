@@ -134,6 +134,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->str_op_binary_greater_greater);
     mark_object(vm, (PyroObject*)vm->str_rop_binary_greater_greater);
     mark_object(vm, (PyroObject*)vm->str_op_unary_tilde);
+    mark_object(vm, (PyroObject*)vm->str_enum);
 
     // Other object fields.
     mark_object(vm, (PyroObject*)vm->superglobals);

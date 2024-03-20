@@ -181,6 +181,7 @@ struct PyroVM {
     PyroStr* str_op_binary_greater_greater;
     PyroStr* str_rop_binary_greater_greater;
     PyroStr* str_op_unary_tilde;
+    PyroStr* str_enum;
 
     // The grey stack used by the garbage collector.
     PyroObject** grey_stack;
