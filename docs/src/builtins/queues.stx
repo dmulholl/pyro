@@ -71,11 +71,11 @@ This is equivalent to calling the queue's `:contains()` method.
 
     Returns `true` if the queue is empty.
 
-[[ `:iter() -> iter` ]]
-
-    Returns an `iter` object wrapping the queue.
-
 [[ `:peek() -> any` ]]
 
     Returns the next item from the queue without removing it.
     Returns an `err` if the queue is empty.
+
+[[ `:values() -> iter` ]]
+
+    Returns an iterator over the queue's values.
