@@ -299,6 +299,24 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
+[[ `$is_enum_type(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an `enum`.
+
+
+
+[[ `$is_enum_value(arg: any) -> bool` ]]
+
+    Returns `true` if the argument is an `enum` value.
+
+
+
+[[ `$is_enum_value_of_type(arg: any, type: enum) -> bool` ]]
+
+    Returns `true` if `arg` is a value of the specified `enum`.
+
+
+
 [[ `$is_err(arg: any) -> bool` ]]
 
     Returns `true` if the argument is an `err`.
