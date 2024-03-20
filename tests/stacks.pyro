@@ -43,7 +43,7 @@ for item in bar {
     assert item == index;
     index += 1;
 }
-assert $is_iter(bar:iter());
+assert $is_iter(bar:values());
 
 def $test_clear() {
     var stack = $stack();

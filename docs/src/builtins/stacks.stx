@@ -79,3 +79,7 @@ This is equivalent to calling the stack's `:contains()` method.
 [[ `:push(item: any)` ]]
 
     Pushes an item onto the stack.
+
+[[ `:values() -> iter` ]]
+
+    Returns an iterator over the stack's values.
