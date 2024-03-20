@@ -29,7 +29,7 @@ struct PyroVM {
     PyroClass* class_module;
     PyroClass* class_rune;
     PyroClass* class_enum_type;
-    PyroClass* class_enum_value;
+    PyroClass* class_enum_member;
 
     // Halt signal, true if [exit_flag] or [panic_flag] is set.
     bool halt_flag;

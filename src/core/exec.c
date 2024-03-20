@@ -1473,10 +1473,10 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_ENUM_TYPE(receiver)) {
                     PyroEnumType* enum_type = PYRO_AS_ENUM_TYPE(receiver);
-                    PyroValue enum_value;
+                    PyroValue enum_member;
 
-                    if (PyroMap_fast_get(enum_type->values, member_name, &enum_value, vm)) {
-                        vm->stack_top[-1] = enum_value;
+                    if (PyroMap_fast_get(enum_type->values, member_name, &enum_member, vm)) {
+                        vm->stack_top[-1] = enum_member;
                         break;
                     }
 
@@ -2841,14 +2841,14 @@ static void run(PyroVM* vm) {
                     PyroValue name = vm->stack_top[i];
                     PyroValue value = vm->stack_top[i + 1];
 
-                    PyroEnumValue* enum_value = PyroEnumValue_new(enum_type, PYRO_AS_STR(name), value, vm);
-                    if (!enum_value) {
+                    PyroEnumMember* enum_member = PyroEnumMember_new(enum_type, PYRO_AS_STR(name), value, vm);
+                    if (!enum_member) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
-                    if (!pyro_push(vm, pyro_obj(enum_value))) break; // protect from gc
+                    if (!pyro_push(vm, pyro_obj(enum_member))) break; // protect from gc
 
-                    if (!PyroMap_set(enum_type->values, name, pyro_obj(enum_value), vm)) {
+                    if (!PyroMap_set(enum_type->values, name, pyro_obj(enum_member), vm)) {
                         pyro_panic(vm, "out of memory");
                         break;
                     }
@@ -2856,7 +2856,7 @@ static void run(PyroVM* vm) {
                         break;
                     }
 
-                    pyro_pop(vm); // enum_value
+                    pyro_pop(vm); // enum_member
                 }
 
                 pyro_pop(vm); // enum_type

@@ -2426,16 +2426,16 @@ PyroEnumType* PyroEnumType_new(PyroStr* name, PyroVM* vm) {
 }
 
 
-PyroEnumValue* PyroEnumValue_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm) {
-    PyroEnumValue* enum_value = ALLOCATE_OBJECT(vm, PyroEnumValue, PYRO_OBJECT_ENUM_VALUE);
-    if (!enum_value) {
+PyroEnumMember* PyroEnumMember_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm) {
+    PyroEnumMember* enum_member = ALLOCATE_OBJECT(vm, PyroEnumMember, PYRO_OBJECT_ENUM_MEMBER);
+    if (!enum_member) {
         return NULL;
     }
 
-    enum_value->obj.class = vm->class_enum_value;
-    enum_value->enum_type = enum_type;
-    enum_value->name = name;
-    enum_value->value = value;
+    enum_member->obj.class = vm->class_enum_member;
+    enum_member->enum_type = enum_type;
+    enum_member->name = name;
+    enum_member->value = value;
 
-    return enum_value;
+    return enum_member;
 }

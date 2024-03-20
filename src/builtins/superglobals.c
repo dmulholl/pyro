@@ -1125,7 +1125,7 @@ static PyroValue fn_is_enum_type(PyroVM* vm, size_t arg_count, PyroValue* args) 
 
 
 static PyroValue fn_is_enum_member(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    return pyro_bool(PYRO_IS_ENUM_VALUE(args[0]));
+    return pyro_bool(PYRO_IS_ENUM_MEMBER(args[0]));
 }
 
 
@@ -1139,11 +1139,11 @@ static PyroValue fn_is_enum_member_of_type(PyroVM* vm, size_t arg_count, PyroVal
         return pyro_null();
     }
 
-    if (!PYRO_IS_ENUM_VALUE(args[0])) {
+    if (!PYRO_IS_ENUM_MEMBER(args[0])) {
         return pyro_bool(false);
     }
 
-    if (PYRO_AS_ENUM_VALUE(args[0])->enum_type == PYRO_AS_ENUM_TYPE(args[1])) {
+    if (PYRO_AS_ENUM_MEMBER(args[0])->enum_type == PYRO_AS_ENUM_TYPE(args[1])) {
         return pyro_bool(true);
     }
 

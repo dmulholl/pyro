@@ -35,7 +35,7 @@ typedef enum {
     PYRO_OBJECT_CLASS,
     PYRO_OBJECT_CLOSURE,
     PYRO_OBJECT_ENUM_TYPE,
-    PYRO_OBJECT_ENUM_VALUE,
+    PYRO_OBJECT_ENUM_MEMBER,
     PYRO_OBJECT_ERR,
     PYRO_OBJECT_FILE,
     PYRO_OBJECT_INSTANCE,
@@ -129,7 +129,7 @@ static inline PyroValue pyro_null(void) {
 #define PYRO_IS_RESOURSE_POINTER(value)  pyro_is_obj_of_type(value, PYRO_OBJECT_RESOURCE_POINTER)
 #define PYRO_IS_ERR(value)               pyro_is_obj_of_type(value, PYRO_OBJECT_ERR)
 #define PYRO_IS_ENUM_TYPE(value)         pyro_is_obj_of_type(value, PYRO_OBJECT_ENUM_TYPE)
-#define PYRO_IS_ENUM_VALUE(value)        pyro_is_obj_of_type(value, PYRO_OBJECT_ENUM_VALUE)
+#define PYRO_IS_ENUM_MEMBER(value)       pyro_is_obj_of_type(value, PYRO_OBJECT_ENUM_MEMBER)
 
 // Macros for extracting object pointers from PyroValue instances.
 #define PYRO_AS_OBJ(value)               ((value).as.obj)
@@ -151,7 +151,7 @@ static inline PyroValue pyro_null(void) {
 #define PYRO_AS_RESOURCE_POINTER(value)  ((PyroResourcePointer*)PYRO_AS_OBJ(value))
 #define PYRO_AS_ERR(value)               ((PyroErr*)PYRO_AS_OBJ(value))
 #define PYRO_AS_ENUM_TYPE(value)         ((PyroEnumType*)PYRO_AS_OBJ(value))
-#define PYRO_AS_ENUM_VALUE(value)        ((PyroEnumValue*)PYRO_AS_OBJ(value))
+#define PYRO_AS_ENUM_MEMBER(value)       ((PyroEnumMember*)PYRO_AS_OBJ(value))
 
 // Returns a pointer to the value's class, if the value has a class, otherwise NULL.
 PyroClass* pyro_get_class(PyroVM* vm, PyroValue value);

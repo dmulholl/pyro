@@ -169,8 +169,8 @@ void pyro_free_object(PyroVM* vm, PyroObject* object) {
             break;
         }
 
-        case PYRO_OBJECT_ENUM_VALUE: {
-            FREE_OBJECT(vm, PyroEnumValue, object);
+        case PYRO_OBJECT_ENUM_MEMBER: {
+            FREE_OBJECT(vm, PyroEnumMember, object);
             break;
         }
     }

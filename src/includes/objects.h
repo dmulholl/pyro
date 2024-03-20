@@ -607,8 +607,8 @@ typedef struct {
     PyroEnumType* enum_type;
     PyroStr* name;
     PyroValue value;
-} PyroEnumValue;
+} PyroEnumMember;
 
-PyroEnumValue* PyroEnumValue_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm);
+PyroEnumMember* PyroEnumMember_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm);
 
 #endif
