@@ -12,6 +12,20 @@ assert $type(Number::One) == "Number";
 assert $type(Number::Two) == "Number";
 assert $type(Number::OtherTwo) == "Number";
 
+assert $is_enum_type(Number);
+assert !$is_enum_type(Number::One);
+assert !$is_enum_type("foo");
+
+assert $is_enum_value(Number::One);
+assert !$is_enum_value(Number);
+assert !$is_enum_value("foo");
+
+assert $is_enum_value_of_type(Number::One, Number);
+assert !$is_enum_value_of_type(1, Number);
+assert !$is_enum_value_of_type("foo", Number);
+assert $is_err(try $is_enum_value_of_type(Number::One, Number::Two));
+assert $is_err(try $is_enum_value_of_type(Number::One, "foo"));
+
 assert Number::Undefined:value() == null;
 assert Number::One:value() == 1;
 assert Number::Two:value() == 2;
