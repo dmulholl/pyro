@@ -601,11 +601,20 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 
         case PYRO_OBJECT_ENUM_TYPE: {
             PyroEnumType* enum_type = (PyroEnumType*)object;
-            return pyro_sprintf_to_obj(vm, "<enum %s count=%zu>", enum_type->name->bytes, enum_type->values->live_entry_count);
+            return pyro_sprintf_to_obj(vm, "<enum %s>", enum_type->name->bytes);
         }
 
         case PYRO_OBJECT_ENUM_VALUE: {
             PyroEnumValue* enum_value = (PyroEnumValue*)object;
+
+            if (PYRO_IS_NULL(enum_value->value)) {
+                return pyro_sprintf_to_obj(
+                    vm,
+                    "<enum %s::%s>",
+                    enum_value->enum_type->name->bytes,
+                    enum_value->name->bytes
+                );
+            }
 
             PyroStr* debug_value = pyro_debugify_value(vm, enum_value->value);
             if (!debug_value) {
@@ -614,7 +623,7 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 
             return pyro_sprintf_to_obj(
                 vm,
-                "<enum %s::%s value=%s>",
+                "<enum %s::%s %s>",
                 enum_value->enum_type->name->bytes,
                 enum_value->name->bytes,
                 debug_value->bytes
