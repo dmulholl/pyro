@@ -290,6 +290,7 @@ PyroVM* pyro_new_vm(void) {
     pyro_load_std_builtins_err(vm);
     pyro_load_std_builtins_mod(vm);
     pyro_load_std_builtins_rune(vm);
+    pyro_load_std_builtins_enum(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

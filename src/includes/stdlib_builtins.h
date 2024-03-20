@@ -17,5 +17,6 @@ void pyro_load_std_builtins_queue(PyroVM* vm);
 void pyro_load_std_builtins_err(PyroVM* vm);
 void pyro_load_std_builtins_mod(PyroVM* vm);
 void pyro_load_std_builtins_rune(PyroVM* vm);
+void pyro_load_std_builtins_enum(PyroVM* vm);
 
 #endif

@@ -5,6 +5,29 @@ enum Number {
     OtherTwo = 2,
 }
 
+assert Number::Undefined:value() == null;
+assert Number::One:value() == 1;
+assert Number::Two:value() == 2;
+assert Number::OtherTwo:value() == 2;
+
+with values = Number:iter():to_vec() {
+    assert values:count() == 4;
+    assert Number::Undefined in values;
+    assert Number::One in values;
+    assert Number::Two in values;
+    assert Number::OtherTwo in values;
+}
+
+var number_values = [];
+for value in Number {
+    number_values:append(value);
+}
+assert number_values:count() == 4;
+assert Number::Undefined in number_values;
+assert Number::One in number_values;
+assert Number::Two in number_values;
+assert Number::OtherTwo in number_values;
+
 with instance = Number::Undefined {
     assert instance == Number::Undefined;
     assert instance != Number::One;
@@ -12,6 +35,7 @@ with instance = Number::Undefined {
     assert instance != Number::OtherTwo;
     assert instance != null;
     assert instance != 0;
+    assert instance:value() == null;
 
     assert Number::Undefined == Number::Undefined;
     assert Number::Undefined != Number::One;
@@ -19,6 +43,7 @@ with instance = Number::Undefined {
     assert Number::Undefined != Number::OtherTwo;
     assert Number::Undefined != null;
     assert Number::Undefined != 0;
+    assert Number::Undefined:value() == null;
 }
 
 with instance = Number::One {
@@ -28,6 +53,7 @@ with instance = Number::One {
     assert instance != Number::OtherTwo;
     assert instance != "One";
     assert instance != 1;
+    assert instance:value() == 1;
 
     assert Number::One != Number::Undefined;
     assert Number::One == Number::One;
@@ -35,6 +61,7 @@ with instance = Number::One {
     assert Number::One != Number::OtherTwo;
     assert Number::One != "One";
     assert Number::One != 1;
+    assert Number::One:value() == 1;
 }
 
 with instance = Number::Two {
@@ -44,6 +71,7 @@ with instance = Number::Two {
     assert instance != Number::OtherTwo;
     assert instance != "Two";
     assert instance != 2;
+    assert instance:value() == 2;
 
     assert Number::Two != Number::Undefined;
     assert Number::Two != Number::One;
@@ -51,6 +79,7 @@ with instance = Number::Two {
     assert Number::Two != Number::OtherTwo;
     assert Number::Two != "Two";
     assert Number::Two != 2;
+    assert Number::Two:value() == 2;
 }
 
 with instance = Number::OtherTwo {
@@ -60,6 +89,7 @@ with instance = Number::OtherTwo {
     assert instance == Number::OtherTwo;
     assert instance != "OtherTwo";
     assert instance != 2;
+    assert instance:value() == 2;
 
     assert Number::OtherTwo != Number::Undefined;
     assert Number::OtherTwo != Number::One;
@@ -67,4 +97,5 @@ with instance = Number::OtherTwo {
     assert Number::OtherTwo == Number::OtherTwo;
     assert Number::OtherTwo != "OtherTwo";
     assert Number::OtherTwo != 2;
+    assert Number::OtherTwo:value() == 2;
 }
