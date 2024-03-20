@@ -307,13 +307,13 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$is_enum_member_of_type(arg: any, type: enum) -> bool` ]]
 
-    Returns `true` if `arg` is a member of the specified `enum`.
+    Returns `true` if `arg` is a member of the specified `enum` type.
 
 
 
 [[ `$is_enum_type(arg: any) -> bool` ]]
 
-    Returns `true` if the argument is an `enum`.
+    Returns `true` if the argument is an `enum` type.
 
 
 
