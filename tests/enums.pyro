@@ -152,7 +152,7 @@ assert red1 != red2;
     enum Color3 {
         Red = "red",
         Green = "green",
-        Blue = "blue",
+        Blue = "blue"
     }
 
     var red3 = Color3::Red;
