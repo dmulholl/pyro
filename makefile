@@ -70,8 +70,8 @@ debug: $(OBJ_FILES) $(CLI_OBJ_FILES)
 		-lm -ldl -pthread
 	@printf "\e[1;32m Version\e[0m " && ./build/debug/pyro --version
 
-sanitize: ## Builds a debug binary with sanitizer checks.
-sanitize: $(OBJ_FILES) $(CLI_OBJ_FILES)
+debug-sanitized: ## Builds a debug binary with sanitizer checks.
+debug-sanitized: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
 	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) \
@@ -108,14 +108,11 @@ check-debug: tests/compiled_module.so
 	@printf "\e[1;32m Running\e[0m build/debug/pyro test tests/*.pyro\n\n"
 	@./build/debug/pyro test ./tests/*.pyro
 
-check-sanitize: ## Builds the debug binary with sanitizer checks, then runs the test suite.
-check-sanitize: tests/compiled_module.so
-	@make sanitize
+check-debug-sanitized: ## Builds the debug binary with sanitizer checks, then runs the test suite.
+check-debug-sanitized: tests/compiled_module.so
+	@make debug-sanitized
 	@printf "\e[1;32m Running\e[0m build/debug/pyro test tests/*.pyro\n\n"
 	@./build/debug/pyro test ./tests/*.pyro
-
-check: ## Alias for check-debug.
-	@make check-debug
 
 install: ## Installs the release binary.
 	@if [ -f ./build/release/pyro ]; then \
@@ -133,7 +130,7 @@ clean: ## Deletes all build artifacts.
 
 help: ## Prints available commands.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
-	{printf "\033[1;36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	{printf "\033[1;36m%-24s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # ----------------------- #
 #  Third-Party Libraries  #
