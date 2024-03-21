@@ -418,6 +418,7 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType typ
     local->depth = 0;
     local->is_initialized = true;
     local->is_captured = false;
+    local->is_constant = false;
     if (type == TYPE_METHOD || type == TYPE_INIT_METHOD) {
         local->name.start = "self";
         local->name.length = 4;
