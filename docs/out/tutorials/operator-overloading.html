@@ -142,7 +142,7 @@ We can overload the <code>==</code> operator for our custom <code>Complex</code>
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$op_binary_equals_equals</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of_class</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">&amp;&amp;</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -177,7 +177,7 @@ We can overload the binary addition operator, <code>+</code>, for our <code>Comp
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$op_binary_plus</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of_class</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">,</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;invalid operation&quot;</span><span class="p">);</span>
@@ -235,7 +235,7 @@ We can overload the binary multiplication operator, <code>*</code>, for our <cod
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of_class</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
@@ -263,7 +263,7 @@ No problem &mdash; we can make our <code>$op_binary_star()</code> method a littl
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">$is_instance_of</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">$is_instance_of_class</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
