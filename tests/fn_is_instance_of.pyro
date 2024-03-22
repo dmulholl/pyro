@@ -1,29 +1,31 @@
 class Foo {}
 
-assert !$is_instance_of(123, Foo);
-assert !$is_instance_of("foo", Foo);
+assert !$is_instance_of_class(123, Foo);
+assert !$is_instance_of_class("foo", Foo);
+assert $is_err(try $is_instance_of_class(123, 456));
 
 var foo = Foo();
-assert $is_instance_of(foo, Foo);
+assert $is_instance_of_class(foo, Foo);
+assert $is_err(try $is_instance_of_class(foo, 123));
 
 
-class Bar < Foo {}
+class Bar extends Foo {}
 
 var bar = Bar();
-assert $is_instance_of(bar, Bar);
-assert $is_instance_of(bar, Foo);
+assert $is_instance_of_class(bar, Bar);
+assert $is_instance_of_class(bar, Foo);
 
 
-class Baz < Bar {}
+class Baz extends Bar {}
 
 var baz = Baz();
-assert $is_instance_of(baz, Baz);
-assert $is_instance_of(baz, Bar);
-assert $is_instance_of(baz, Foo);
+assert $is_instance_of_class(baz, Baz);
+assert $is_instance_of_class(baz, Bar);
+assert $is_instance_of_class(baz, Foo);
 
 
 class Bam {}
 
-assert !$is_instance_of(foo, Bam);
-assert !$is_instance_of(bar, Bam);
-assert !$is_instance_of(baz, Bam);
+assert !$is_instance_of_class(foo, Bam);
+assert !$is_instance_of_class(bar, Bam);
+assert !$is_instance_of_class(baz, Bam);

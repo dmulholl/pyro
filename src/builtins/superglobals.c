@@ -431,16 +431,22 @@ static PyroValue fn_is_instance(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue fn_is_instance_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue fn_is_instance_of_class(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_CLASS(args[1])) {
-        pyro_panic(vm, "$is_instance_of(): invalid argument [class], expected a class object");
+        pyro_panic(
+            vm,
+            "$is_instance_of_class(): invalid argument [class]: expected a class object, found %s",
+            pyro_get_type_name(vm, args[1])->bytes
+        );
         return pyro_null();
     }
+
     PyroClass* target_class = PYRO_AS_CLASS(args[1]);
 
     if (!PYRO_IS_INSTANCE(args[0])) {
         return pyro_bool(false);
     }
+
     PyroClass* instance_class = PYRO_AS_INSTANCE(args[0])->obj.class;
 
     while (instance_class != NULL) {
@@ -1189,7 +1195,7 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$is_i64", fn_is_i64, 1);
     pyro_define_superglobal_fn(vm, "$is_inf", fn_is_inf, 1);
     pyro_define_superglobal_fn(vm, "$is_instance", fn_is_instance, 1);
-    pyro_define_superglobal_fn(vm, "$is_instance_of", fn_is_instance_of, 2);
+    pyro_define_superglobal_fn(vm, "$is_instance_of_class", fn_is_instance_of_class, 2);
     pyro_define_superglobal_fn(vm, "$is_iterable", fn_is_iterable, 1);
     pyro_define_superglobal_fn(vm, "$is_iterator", fn_is_iterator, 1);
     pyro_define_superglobal_fn(vm, "$is_module", fn_is_module, 1);
@@ -1221,4 +1227,5 @@ void pyro_load_std_builtins(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$add", fn_add, 2);
     pyro_define_superglobal_fn(vm, "$sub", fn_sub, 2);
     pyro_define_superglobal_fn(vm, "$mul", fn_mul, 2);
+    pyro_define_superglobal_fn(vm, "$is_instance_of", fn_is_instance_of_class, 2);
 }

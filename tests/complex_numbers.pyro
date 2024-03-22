@@ -8,21 +8,21 @@ class Complex {
     }
 
     def $op_binary_equals_equals(other) {
-        if $is_instance_of(other, Complex) {
+        if $is_instance_of_class(other, Complex) {
             return self.re == other.re && self.im == other.im;
         }
         return false;
     }
 
     def $op_binary_plus(other) {
-        if $is_instance_of(other, Complex) {
+        if $is_instance_of_class(other, Complex) {
             return Complex(self.re + other.re, self.im + other.im);
         }
         $panic("invalid operation");
     }
 
     def $op_binary_star(other) {
-        if $is_instance_of(other, Complex) {
+        if $is_instance_of_class(other, Complex) {
             var re = self.re * other.re - self.im * other.im;
             var im = self.re * other.im + self.im * other.re;
             return Complex(re, im);
