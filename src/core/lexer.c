@@ -664,7 +664,7 @@ Token pyro_next_token(Lexer* lexer) {
         lexer->src_id,
         lexer->line,
         error_message,
-        c
+        (unsigned char)c
     );
 
     return make_error_token(lexer);
