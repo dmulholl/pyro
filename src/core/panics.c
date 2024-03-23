@@ -40,6 +40,7 @@ static void handle_panic(
     // number of the last instruction.
     PyroStr* last_opcode_source_id = NULL;
     size_t last_opcode_line_number = 0;
+
     if (vm->call_stack_count > 0) {
         PyroCallFrame* current_frame = &vm->call_stack[vm->call_stack_count - 1];
         PyroFn* current_fn = current_frame->closure->fn;
@@ -60,6 +61,20 @@ static void handle_panic(
     // If we're inside a try expression, write the error message to the panic buffer.
     if (vm->try_depth > 0) {
         PyroBuf_try_write_fv(vm->panic_buffer, vm, format_string, args);
+
+        if (syntax_error_source_id) {
+            vm->panic_line_number = syntax_error_line_number;
+
+            PyroStr* source_id = PyroStr_COPY(syntax_error_source_id);
+            if (!source_id) {
+                vm->panic_source_id = vm->empty_string;
+                return;
+            }
+
+            vm->panic_source_id = source_id;
+            return;
+        }
+
         vm->panic_source_id = last_opcode_source_id;
         vm->panic_line_number = last_opcode_line_number;
         return;
@@ -70,6 +85,7 @@ static void handle_panic(
         pyro_stderr_write_f(vm, "%s:%zu\n  syntax error: ", syntax_error_source_id, syntax_error_line_number);
         pyro_stderr_write_fv(vm, format_string, args);
         pyro_stderr_write(vm, "\n");
+
         if (vm->call_stack_count > 0) {
             pyro_stderr_write_f(vm,
                 "\n%s:%zu\n  panic: invalid source code\n",
@@ -77,9 +93,11 @@ static void handle_panic(
                 last_opcode_line_number
             );
         }
+
         if (vm->call_stack_count > 1) {
             print_stack_trace(vm);
         }
+
         return;
     }
 
