@@ -346,7 +346,7 @@ static PyroValue file_seek_from_start(PyroVM* vm, size_t arg_count, PyroValue* a
 
     int result = fseek(file->stream, args[0].as.i64, SEEK_SET);
     if (result == -1) {
-        pyro_panic(vm, "seek_from_start(): file is not seekable");
+        pyro_panic(vm, "seek_from_start(): file is not seekable to offset %" PRId64, args[0].as.i64);
         return pyro_null();
     }
 
@@ -368,7 +368,7 @@ static PyroValue file_seek_from_end(PyroVM* vm, size_t arg_count, PyroValue* arg
 
     int result = fseek(file->stream, args[0].as.i64, SEEK_END);
     if (result == -1) {
-        pyro_panic(vm, "seek_from_end(): file is not seekable");
+        pyro_panic(vm, "seek_from_end(): file is not seekable to offset %" PRId64, args[0].as.i64);
         return pyro_null();
     }
 
@@ -390,7 +390,7 @@ static PyroValue file_seek_from_current(PyroVM* vm, size_t arg_count, PyroValue*
 
     int result = fseek(file->stream, args[0].as.i64, SEEK_CUR);
     if (result == -1) {
-        pyro_panic(vm, "seek_from_current(): file is not seekable");
+        pyro_panic(vm, "seek_from_current(): file is not seekable to offset %" PRId64, args[0].as.i64);
         return pyro_null();
     }
 
