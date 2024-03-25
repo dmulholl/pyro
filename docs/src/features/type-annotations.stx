@@ -22,7 +22,7 @@ Pyro supports optional type annotations for variable, function, and method decla
 
 Pyro doesn't (currently) do anything with these type annotations, apart from verifying their syntax, but they're useful for documenting your code.
 
-Future versions of Pyro may support optional type-checking or automatic documentation generation using type annotations.
+Future versions of Pyro may support optional type-checking or automatic documentation-generation using type annotations.
 
 
 
@@ -80,38 +80,62 @@ Type annotations beginning with a lowercase letter are reserved for language bui
 
 ### Syntax
 
-Specify a variable's type by following its name with a colon and a type declaration:
+Specify a variable's type by following its name with a colon and a type declaration, e.g.
 
 ::: code pyro
-    var name: type;
-    var name: type = value;
+    var foo: i64;
+    var bar: f64 = 1.0;
 
-The same syntax works for function and method parameters:
+If you don't specify a variable's type, its implicit type is `any`.
+
+The same syntax works for function and method parameters, e.g.
 
 ::: code pyro
-    def func_name(arg1: type, arg2: type) {
+    def func(arg1: i64, arg2: f64 = 1.0) {
         ...
     }
 
-Functions and methods can declare their return type by following their parameter list with an arrow, `->`, and a type declaration:
+If you don't specify a parameter's type, its implicit type is `any`.
+
+Functions and methods can declare their return type by following their parameter list with an arrow, `->`, and a type declaration, e.g.
 
 ::: code pyro
-    def func_name() -> type {
+    def func() -> str {
         ...
     }
 
-Container types can optionally specify their content types in square brackets, e.g.
+If you don't specify a return type, the implicit return type is `any`.
+
+Builtin container types can optionally specify their content types in square brackets, e.g.
 
 ::: code pyro
     var foo: vec[str];
     var bar: map[str, i64];
     var baz: tup[i64, bool, str];
 
+* `foo` is a vector containing `str` values.
+* `bar` is a map containing `str` keys and `i64` values.
+* `baz` is a tuple containing three entries --- in order, an `i64`, a `bool`, and a `str`.
+
+If you don't specify a container's content types, their implicit type is `any`, e.g.
+
+::: code pyro
+    var foo: vec;
+    var bar: map;
+    var baz: tup;
+
+* `foo` is a vector containing `any` values.
+* `bar` is a map containing `any` keys and `any` values.
+* `baz` is a tuple containing an unspecified number of `any` values.
+
 Where a type can be one of a discrete set of options, separate the options with a `|`, e.g.
 
 ::: code pyro
     var foo: i64|f64;
     var bar: map[str, i64|f64];
+
+* `foo` is either an `i64` or an `f64`.
+* `bar` is a map containing `str` keys and values which, individually, may be either `i64` or `f64`.
 
 Type declarations can be nested as required, e.g.
 
@@ -133,6 +157,8 @@ You can indicate that a type is nullable --- i.e. can be either the specified ty
 * `bar` is a `vec` whose entries are either `null` or `str`.
 * `baz` is either `null` or a `map` with `str` keys and `i64` values.
 
+This is simply a shortcut for declaring the type as `type|null`.
+
 
 
 ### Callable Values
@@ -146,6 +172,8 @@ You can optionally specify the callable's return type, e.g.
 
 ::: code pyro
     var foo: callable -> bool;
+
+If you don't specify a return type, the implicit return type is `any`.
 
 You can optionally specify the callable's parameter types, e.g.
 
@@ -171,19 +199,19 @@ The `callable` type is nullable, e.g.
 
 
 
-### Type Names
+### User-Defined Types
 
 A type name should specify either one of the builtin types or a user-defined type, possibly imported from a module, e.g.
 
 ::: code pyro
     var foo: UserType;
 
-Here, `foo` is an instance of the class `UserType`. Type names can include a module path, e.g.
+Here, `foo` is an instance of the class or member of the enum `UserType`. Type names can include a module path, e.g.
 
 ::: code pyro
     var bar: mod1::mod2::UserType;
 
-Here, `bar` is an instance of the class `UserType` defined in the module `mod1::mod2`.
+Here, `bar` is an instance of the class or member of the enum `UserType` defined in the module `mod1::mod2`.
 
 
 

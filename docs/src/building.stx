@@ -96,11 +96,6 @@ To build a new debug binary and run the test suite run:
 
 The debug binary is (much) slower than the release binary. It enables `assert` statements and stresses the garbage collector by running the garbage collection routine before executing each bytecode instruction.
 
-If you'd like to try hacking on Pyro's source code, you should run the test suite with the debug binary after every change.
-You can do this by running the shortcut command:
-
-    $ make check
-
 You can also run Pyro's test suite directly using the `test` command, e.g.
 
     $ pyro test ./tests/*.pyro

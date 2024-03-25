@@ -75,7 +75,7 @@
 <a href="#callable-values">Callable Values</a>
 </li>
 <li>
-<a href="#type-names">Type Names</a>
+<a href="#user-defined-types">User-Defined Types</a>
 </li>
 <li>
 <a href="#type-aliases">Type Aliases</a>
@@ -104,7 +104,7 @@ Pyro supports optional type annotations for variable, function, and method decla
 Pyro doesn't (currently) do anything with these type annotations, apart from verifying their syntax, but they're useful for documenting your code.
 </p>
 <p>
-Future versions of Pyro may support optional type-checking or automatic documentation generation using type annotations.
+Future versions of Pyro may support optional type-checking or automatic documentation-generation using type annotations.
 </p>
 <h3 id="builtin-types">
 Builtin Types
@@ -239,36 +239,75 @@ Type annotations beginning with a lowercase letter are reserved for language bui
 Syntax
 </h3>
 <p>
-Specify a variable's type by following its name with a colon and a type declaration:
+Specify a variable's type by following its name with a colon and a type declaration, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">type</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">name</span><span class="p">:</span> <span class="nx">type</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">f64</span> <span class="p">=</span> <span class="mf">1.0</span><span class="p">;</span>
 </pre>
 <p>
-The same syntax works for function and method parameters:
+If you don't specify a variable's type, its implicit type is <code>any</code>.
+</p>
+<p>
+The same syntax works for function and method parameters, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">func_name</span><span class="p">(</span><span class="nx">arg1</span><span class="p">:</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">:</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">def</span> <span class="nx">func</span><span class="p">(</span><span class="nx">arg1</span><span class="p">:</span> <span class="nx">i64</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">:</span> <span class="nx">f64</span> <span class="p">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">{</span>
     <span class="cp">...</span>
 <span class="p">}</span>
 </pre>
 <p>
-Functions and methods can declare their return type by following their parameter list with an arrow, <code>-&gt;</code>, and a type declaration:
+If you don't specify a parameter's type, its implicit type is <code>any</code>.
+</p>
+<p>
+Functions and methods can declare their return type by following their parameter list with an arrow, <code>-&gt;</code>, and a type declaration, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">func_name</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">type</span> <span class="p">{</span>
+<span class="kd">def</span> <span class="nx">func</span><span class="p">()</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">str</span> <span class="p">{</span>
     <span class="cp">...</span>
 <span class="p">}</span>
 </pre>
 <p>
-Container types can optionally specify their content types in square brackets, e.g.
+If you don't specify a return type, the implicit return type is <code>any</code>.
+</p>
+<p>
+Builtin container types can optionally specify their content types in square brackets, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">str</span><span class="p">];</span>
 <span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">];</span>
 <span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">tup</span><span class="p">[</span><span class="nx">i64</span><span class="p">,</span> <span class="nx">bool</span><span class="p">,</span> <span class="nx">str</span><span class="p">];</span>
 </pre>
+<ul>
+<li>
+<code>foo</code> is a vector containing <code>str</code> values.
+</li>
+<li>
+<code>bar</code> is a map containing <code>str</code> keys and <code>i64</code> values.
+</li>
+<li>
+<code>baz</code> is a tuple containing three entries &mdash; in order, an <code>i64</code>, a <code>bool</code>, and a <code>str</code>.
+</li>
+</ul>
+<p>
+If you don't specify a container's content types, their implicit type is <code>any</code>, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">vec</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">map</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">tup</span><span class="p">;</span>
+</pre>
+<ul>
+<li>
+<code>foo</code> is a vector containing <code>any</code> values.
+</li>
+<li>
+<code>bar</code> is a map containing <code>any</code> keys and <code>any</code> values.
+</li>
+<li>
+<code>baz</code> is a tuple containing an unspecified number of <code>any</code> values.
+</li>
+</ul>
 <p>
 Where a type can be one of a discrete set of options, separate the options with a <code>|</code>, e.g.
 </p>
@@ -276,6 +315,14 @@ Where a type can be one of a discrete set of options, separate the options with 
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">f64</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">map</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">f64</span><span class="p">];</span>
 </pre>
+<ul>
+<li>
+<code>foo</code> is either an <code>i64</code> or an <code>f64</code>.
+</li>
+<li>
+<code>bar</code> is a map containing <code>str</code> keys and values which, individually, may be either <code>i64</code> or <code>f64</code>.
+</li>
+</ul>
 <p>
 Type declarations can be nested as required, e.g.
 </p>
@@ -304,6 +351,9 @@ You can indicate that a type is nullable &mdash; i.e. can be either the specifie
 <code>baz</code> is either <code>null</code> or a <code>map</code> with <code>str</code> keys and <code>i64</code> values.
 </li>
 </ul>
+<p>
+This is simply a shortcut for declaring the type as <code>type|null</code>.
+</p>
 <h3 id="callable-values">
 Callable Values
 </h3>
@@ -319,6 +369,9 @@ You can optionally specify the callable's return type, e.g.
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">callable</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">bool</span><span class="p">;</span>
 </pre>
+<p>
+If you don't specify a return type, the implicit return type is <code>any</code>.
+</p>
 <p>
 You can optionally specify the callable's parameter types, e.g.
 </p>
@@ -357,8 +410,8 @@ The <code>callable</code> type is nullable, e.g.
 <code>bar</code> is either <code>null</code> or a callable that takes takes an <code>i64</code> parameter and returns a <code>bool</code>.
 </li>
 </ul>
-<h3 id="type-names">
-Type Names
+<h3 id="user-defined-types">
+User-Defined Types
 </h3>
 <p>
 A type name should specify either one of the builtin types or a user-defined type, possibly imported from a module, e.g.
@@ -367,13 +420,13 @@ A type name should specify either one of the builtin types or a user-defined typ
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">UserType</span><span class="p">;</span>
 </pre>
 <p>
-Here, <code>foo</code> is an instance of the class <code>UserType</code>. Type names can include a module path, e.g.
+Here, <code>foo</code> is an instance of the class or member of the enum <code>UserType</code>. Type names can include a module path, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">mod1</span><span class="p">::</span><span class="nx">mod2</span><span class="p">::</span><span class="nx">UserType</span><span class="p">;</span>
 </pre>
 <p>
-Here, <code>bar</code> is an instance of the class <code>UserType</code> defined in the module <code>mod1::mod2</code>.
+Here, <code>bar</code> is an instance of the class or member of the enum <code>UserType</code> defined in the module <code>mod1::mod2</code>.
 </p>
 <h3 id="type-aliases">
 Type Aliases
