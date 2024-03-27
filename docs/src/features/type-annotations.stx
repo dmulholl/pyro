@@ -185,8 +185,8 @@ You can optionally specify the callable's parameter types, e.g.
 
 * `foo` is a callable that takes no parameters and returns `any`.
 * `bar` is a callable that takes no parameters and returns a `bool`.
-* `baz` is a callable that takes `i64` and `str` parameters and returns `any`.
-* `bam` is a callable that takes `i64` and `str` parameters and returns a `bool`.
+* `baz` is a callable that takes two paramters, an `i64` and a `str`, and returns `any`.
+* `bam` is a callable that takes two paramters, an `i64` and a `str`, and returns a `bool`.
 
 The `callable` type is nullable, e.g.
 
