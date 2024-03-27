@@ -511,7 +511,7 @@ You can find a full description of Pyro's map type [here](@root/builtins/maps//)
 Pyro has a dedicated [error](@root/builtins/errors//) type, `err`, which a function can return to indicate failure, e.g.
 
 ::: code pyro
-    def str_len(arg: str) -> i64|err {
+    def str_len(arg) {
         if $is_str(arg) {
             return arg:byte_count();
         }
@@ -521,7 +521,7 @@ Pyro has a dedicated [error](@root/builtins/errors//) type, `err`, which a funct
 You can check if a value is an `err` using the `$is_err()` function, e.g.
 
 ::: code pyro
-    var result = str_len(123);
+    var result = str_len("foo");
 
     if $is_err(result) {
         $exit("error: ${result}");
@@ -532,7 +532,7 @@ You can check if a value is an `err` using the `$is_err()` function, e.g.
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`, e.g.
 
 ::: code pyro
-    var result = str_len(123) !! 0;
+    var result = str_len("foo") !! 0;
 
 You can find a full description of the `err` type [here](@root/builtins/errors//).
 
