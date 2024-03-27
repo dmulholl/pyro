@@ -425,29 +425,28 @@ Class definitions look like this:
         }
 
         pub def info() {
-            echo "${self.name} is a ${self.role}.";
+            return "${self.name} is a ${self.role}.";
         }
     }
 
-Create an instance of a class by calling its name:
+Create an instance of a class by calling its name, e.g.
 
 ::: code pyro
-    >>> var dave = Person("Dave");
+    var person = Person("Dave");
+    assert person.name == "Dave";
 
-Arguments are passed to the optional initializer method, `$init()`.
+Arguments are passed to the (optional) initializer method, `$init()`.
 
-Call a method on an instance using the method access operator, `:`:
-
-::: code pyro
-    >>> dave:info();
-    Dave is a programmer.
-
-Get or set an instance's fields using the field access operator, `.`:
+Call a method on an instance using the method access operator, `:`, e.g.
 
 ::: code pyro
-    >>> dave.role = "pointy headed manager";
-    >>> dave:info();
-    Dave is a pointy headed manager.
+    assert person:info() == "Dave is a programmer."
+
+Get or set an instance's fields using the field access operator, `.`, e.g.
+
+::: code pyro
+    person.role = "pointy headed manager";
+    assert person:info() == "Dave is a pointy headed manager.";
 
 Boo Dave.
 
@@ -512,13 +511,28 @@ You can find a full description of Pyro's map type [here](@root/builtins/maps//)
 Pyro has a dedicated [error](@root/builtins/errors//) type, `err`, which a function can return to indicate failure, e.g.
 
 ::: code pyro
-    var err = $err("oops!");
+    def str_len(arg: str) -> i64|err {
+        if $is_str(arg) {
+            return arg:byte_count();
+        }
+        return $err("argument is not a string");
+    }
 
-You can check if a value is an `err` using the `$is_err(arg)` function.
+You can check if a value is an `err` using the `$is_err()` function, e.g.
+
+::: code pyro
+    var result = str_len(123);
+
+    if $is_err(result) {
+        $exit("error: ${result}");
+    }
+
+    echo result;
+
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator `!!`, e.g.
 
 ::: code pyro
-    var result = might_fail() !! "default";
+    var result = str_len(123) !! 0;
 
 You can find a full description of the `err` type [here](@root/builtins/errors//).
 
@@ -528,7 +542,7 @@ You can find a full description of the `err` type [here](@root/builtins/errors//
 
 A panic in Pyro is similar to an exception in other languages --- it indicates that the program has attempted to do something impossible like divide by zero or read from a file that doesn't exist.
 
-An unhandled panic will result in the program exiting with an error message and a non-zero status code.
+An untrapped panic will cause the program to exit with an error message and a non-zero status code.
 
 You can trap a panic using a `try` expression, e.g.
 
@@ -554,7 +568,7 @@ You can raise a panic from your own code by calling the `$panic()` function with
 ::: code pyro
     $panic("oh no!");
 
-If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
+If the panic is not trapped, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
 
 
 

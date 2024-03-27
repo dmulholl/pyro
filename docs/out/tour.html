@@ -665,33 +665,32 @@ Class definitions look like this:
     <span class="p">}</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">echo</span> <span class="s">&quot;${self.name} is a ${self.role}.&quot;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="s">&quot;${self.name} is a ${self.role}.&quot;</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre>
 <p>
-Create an instance of a class by calling its name:
+Create an instance of a class by calling its name, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="kd">var</span> <span class="nx">dave</span> <span class="p">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">person</span> <span class="p">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">person</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="s">&quot;Dave&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Arguments are passed to the optional initializer method, <code>$init()</code>.
+Arguments are passed to the (optional) initializer method, <code>$init()</code>.
 </p>
 <p>
-Call a method on an instance using the method access operator, <code>:</code>:
+Call a method on an instance using the method access operator, <code>:</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
-<span class="nx">Dave</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">programmer</span><span class="p">.</span>
+<span class="k">assert</span> <span class="nx">person</span><span class="p">:</span><span class="nx">info</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Dave is a programmer.&quot;</span>
 </pre>
 <p>
-Get or set an instance's fields using the field access operator, <code>.</code>:
+Get or set an instance's fields using the field access operator, <code>.</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="cp">&gt;&gt;&gt;</span> <span class="nx">dave</span><span class="p">.</span><span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;pointy headed manager&quot;</span><span class="p">;</span>
-<span class="cp">&gt;&gt;&gt;</span> <span class="nx">dave</span><span class="p">:</span><span class="nx">info</span><span class="p">();</span>
-<span class="nx">Dave</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">pointy</span> <span class="nx">headed</span> <span class="nx">manager</span><span class="p">.</span>
+<span class="nx">person</span><span class="p">.</span><span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;pointy headed manager&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">person</span><span class="p">:</span><span class="nx">info</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Dave is a pointy headed manager.&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Boo Dave.
@@ -764,14 +763,30 @@ Errors
 Pyro has a dedicated <a href="builtins/errors.html">error</a> type, <code>err</code>, which a function can return to indicate failure, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oops!&quot;</span><span class="p">);</span>
+<span class="kd">def</span> <span class="nx">str_len</span><span class="p">(</span><span class="nx">arg</span><span class="p">:</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">err</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">$is_str</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">arg</span><span class="p">:</span><span class="nx">byte_count</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;argument is not a string&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 </pre>
 <p>
-You can check if a value is an <code>err</code> using the <code>$is_err(arg)</code> function.
+You can check if a value is an <code>err</code> using the <code>$is_err()</code> function, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">str_len</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: ${result}&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">echo</span> <span class="nx">result</span><span class="p">;</span>
+</pre>
+<p>
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator <code>!!</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">str_len</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>
 </pre>
 <p>
 You can find a full description of the <code>err</code> type <a href="builtins/errors.html">here</a>.
@@ -783,7 +798,7 @@ Panics
 A panic in Pyro is similar to an exception in other languages &mdash; it indicates that the program has attempted to do something impossible like divide by zero or read from a file that doesn't exist.
 </p>
 <p>
-An unhandled panic will result in the program exiting with an error message and a non-zero status code.
+An untrapped panic will cause the program to exit with an error message and a non-zero status code.
 </p>
 <p>
 You can trap a panic using a <code>try</code> expression, e.g.
@@ -815,7 +830,7 @@ You can raise a panic from your own code by calling the <code>$panic()</code> fu
 <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
 </pre>
 <p>
-If the panic is unhandled, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
+If the panic is not trapped, the error message will be printed to the standard error stream and the program will exit with a non-zero status code.
 </p>
 <h3 id="modules">
 Modules
