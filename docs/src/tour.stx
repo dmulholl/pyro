@@ -511,7 +511,7 @@ You can find a full description of Pyro's map type [here](@root/builtins/maps//)
 Pyro has a dedicated [error](@root/builtins/errors//) type, `err`, which a function can return to indicate failure, e.g.
 
 ::: code pyro
-    def str_len(arg) {
+    def str_len(arg: str) -> i64|err {
         if $is_str(arg) {
             return arg:byte_count();
         }
@@ -542,7 +542,7 @@ You can find a full description of the `err` type [here](@root/builtins/errors//
 
 A panic in Pyro is similar to an exception in other languages --- it indicates that the program has attempted to do something impossible like divide by zero or read from a file that doesn't exist.
 
-An untrapped panic will cause the program to exit with an error message and a non-zero status code.
+An untrapped panic will cause the program to exit with an error message, a stack trace, and a non-zero status code.
 
 You can trap a panic using a `try` expression, e.g.
 
