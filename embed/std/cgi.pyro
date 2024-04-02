@@ -28,7 +28,7 @@ pub class Request {
         if $is_str(self.body) {
             return self.body;
         }
-        self.body = $stdin():read_string();
+        self.body = $stdin:read_string();
         return self.body;
     }
 
