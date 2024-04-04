@@ -62,7 +62,7 @@
                 <hr>
             </header>
             <p>
-A utility module for sending email. Uses the system's <code>sendmail</code> command.
+A library for sending email using the system's <code>sendmail</code> binary.
 </p>
 <h3 id="example">
 Example
@@ -74,7 +74,7 @@ Example
 <span class="kd">var</span> <span class="nx">email</span> <span class="p">=</span> <span class="nx">sendmail</span><span class="p">::</span><span class="nx">Email</span><span class="p">();</span>
 
 <span class="c1"># Set the email&#39;s recipient, sender, and subject.</span>
-<span class="nx">email</span><span class="p">:</span><span class="nx">to</span><span class="p">(</span><span class="s">&quot;johndoe@example.com&quot;</span><span class="p">);</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">to</span><span class="p">(</span><span class="s">&quot;receiver@example.com&quot;</span><span class="p">);</span>
 <span class="nx">email</span><span class="p">:</span><span class="nx">from</span><span class="p">(</span><span class="s">&quot;sender@example.com&quot;</span><span class="p">);</span>
 <span class="nx">email</span><span class="p">:</span><span class="nx">subject</span><span class="p">(</span><span class="s">&quot;Important Subject&quot;</span><span class="p">);</span>
 
@@ -130,7 +130,7 @@ Returns <code>self</code> to allow chaining.
 </div>
 <div>
 <dt>
-<code>:from(email_addr: str) -&gt; Email</code>
+<code>:from(address: str) -&gt; Email</code>
 </dt>
 <dd>
 <p>
@@ -181,7 +181,7 @@ Returns <code>self</code> to allow chaining.
 </div>
 <div>
 <dt>
-<code>:to(email_addr: str) -&gt; Email</code>
+<code>:to(address: str) -&gt; Email</code>
 </dt>
 <dd>
 <p>

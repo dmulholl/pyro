@@ -3,8 +3,7 @@ title: <code>std::sendmail</code>
 meta_title: Pyro Standard Library &mdash; std::sendmail
 ---
 
-A utility module for sending email. Uses the system's `sendmail` command.
-
+A library for sending email using the system's `sendmail` binary.
 
 
 ### Example
