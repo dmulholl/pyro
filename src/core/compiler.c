@@ -2046,7 +2046,7 @@ static void parse_if_stmt(Parser* parser) {
     parse_expression(parser, false);
     if (match_assignment_token(parser)) {
         SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
-            "assignment is not allowed in 'if' conditions, wrap in '()' to enable"
+            "invalid assignment in 'if' condition, wrap the assignment in '()' to allow"
         );
         return;
     }
@@ -2226,7 +2226,7 @@ static void parse_c_style_loop_stmt(Parser* parser) {
         parse_expression(parser, false);
         if (match_assignment_token(parser)) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
-                "assignment is not allowed in loop conditions, wrap in '()' to enable"
+                "invalid assignment in 'loop' condition, wrap the assignment in '()' to allow"
             );
             return;
         }
@@ -2330,7 +2330,7 @@ static void parse_while_stmt(Parser* parser) {
     parse_expression(parser, false);
     if (match_assignment_token(parser)) {
         SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
-            "assignment is not allowed in while conditions, wrap in '()' to enable"
+            "invalid assignment in 'while' condition, wrap the assignment in '()' to allow"
         );
         return;
     }
