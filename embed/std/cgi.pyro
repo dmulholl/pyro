@@ -82,7 +82,6 @@ pub class Request {
     }
 }
 
-
 pub class Response {
     var headers: vec[str];
     var body: buf;
