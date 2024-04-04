@@ -1,8 +1,8 @@
 pub class Email {
+    var to_address: str = "";
+    var from_address: str = "";
+    var subject: str = "";
     var headers: vec[str];
-    var to_addr: str;
-    var from_addr: str;
-    var subject: str;
     var body: buf;
 
     def $init() {
@@ -18,27 +18,39 @@ pub class Email {
         return msg:to_str();
     }
 
-    pub def to(email_addr: str) -> Email {
-        self.to_addr = email_addr;
+    pub def to(address: str) -> Email {
+        if !$is_str(address) {
+            $panic("to(): invalid argument, expected a string, found ${address;??}");
+        }
+        self.to_address = address;
         return self;
     }
 
-    pub def from(email_addr: str) -> Email {
-        self.from_addr = email_addr;
+    pub def from(address: str) -> Email {
+        if !$is_str(address) {
+            $panic("from(): invalid argument, expected a string, found ${address;??}");
+        }
+        self.from_address = address;
         return self;
     }
 
     pub def subject(value: str) -> Email {
+        if !$is_str(value) {
+            $panic("subject(): invalid argument, expected a string, found ${value;??}");
+        }
         self.subject = value;
         return self;
     }
 
     pub def add_header(header: str) -> Email {
+        if !$is_str(header) {
+            $panic("add_header(): invalid argument, expected a string, found ${header;??}");
+        }
         self.headers:append(header);
         return self;
     }
 
-    pub def write(*args) -> Email {
+    pub def write(*args: any) -> Email {
         self.body:write(*args);
         return self;
     }
@@ -49,43 +61,40 @@ pub class Email {
             return msg;
         }
 
-        var result = try $shell("sendmail -i -t", msg);
+        var result = $cmd("sendmail", ["-i", "-t"], msg);
         if $is_err(result) {
             return result;
         }
 
-        var (exit_code, _, error_output) = result;
+        var (exit_code, _, stderr_output) = result;
         if exit_code != 0 {
-            return $err(error_output);
+            return $err(stderr_output:strip());
         }
     }
 
     def make_message() -> buf|err {
-        var msg = $buf();
-
-        if $is_str(self.to_addr) && !self.to_addr:is_empty() {
-            var value = self.to_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
-            msg:write("To: {}\r\n", value);
-        } else {
+        if self.to_address == "" {
             return $err("invalid email: missing 'to' address");
         }
 
-        if $is_str(self.from_addr) && !self.from_addr:is_empty() {
-            var value = self.from_addr:strip():replace("\r", "\\r"):replace("\n", "\\n");
-            msg:write("From: {}\r\n", value);
-        } else {
+        if self.from_address == "" {
             return $err("invalid email: missing 'from' address");
         }
 
-        if $is_str(self.subject) && !self.subject:is_empty() {
-            var value = self.subject:strip():replace("\r", "\\r"):replace("\n", "\\n");
-            msg:write("Subject: {}\r\n", value);
-        } else {
+        if self.subject == "" {
             return $err("invalid email: missing 'subject' field");
         }
 
+        var msg = $buf();
+
+        msg:write("To: {}\r\n", self.to_address:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+        msg:write("From: {}\r\n", self.from_address:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+        msg:write("Subject: {}\r\n", self.subject:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+
         for header in self.headers {
-            msg:write("{}\r\n", header:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+            if header != "" {
+                msg:write("{}\r\n", header:strip():replace("\r", "\\r"):replace("\n", "\\n"));
+            }
         }
 
         msg:write("\r\n");

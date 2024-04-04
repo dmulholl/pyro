@@ -1,0 +1,14 @@
+import std::sendmail;
+
+var email = sendmail::Email();
+
+email:to("receiver@example.com");
+email:from("sender@example.com");
+email:subject("The Subject");
+email:add_header("Content-Type: text/plain; charset=utf-8");
+email:write("Content line 1.\n");
+email:write("Content line 2.");
+
+var text = "To: receiver@example.com\r\nFrom: sender@example.com\r\nSubject: The Subject\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nContent line 1.\nContent line 2.";
+
+assert $str(email) == text;
