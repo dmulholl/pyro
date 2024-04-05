@@ -4,12 +4,6 @@
 // Reads the file into the buffer. Panics and returns NULL if an error occurs.
 PyroBuf* pyro_read_file_into_buf(PyroVM* vm, const char* path, const char* err_prefix);
 
-// String hash functions, 64-bit versions.
-uint64_t pyro_fnv1a_64(const char* string, size_t length);
-uint64_t pyro_fnv1a_64_opt(const char* string, size_t length);
-uint64_t pyro_djb2_64(const char* string, size_t length);
-uint64_t pyro_sdbm_64(const char* string, size_t length);
-
 // Parse a string as an integer. The string can contain underscores and can begin with 0b, 0o,
 // or 0x to specify the base. Returns true if successful, false if the string was invalid.
 bool pyro_parse_string_as_int(const char* string, size_t length, int64_t* value);
@@ -60,14 +54,6 @@ PyroStr* pyro_double_escape_percents(PyroVM* vm, const char* src, size_t src_len
 // - Ignores unrecognised escape sequences - i.e. copies them verbatim to [dst].
 size_t pyro_process_backslashed_escapes(const char* src, size_t src_count, char* dst);
 
-// Returns true if the string [s1] is equal to the string [s2].
-static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, size_t s2_count) {
-    if (s1_count == s2_count) {
-        return memcmp(s1, s2, s1_count) == 0;
-    }
-    return false;
-}
-
 // Returns true if [c] is in the ASCII range [a-z] or [A-Z].
 bool pyro_is_ascii_alpha(char c);
 
@@ -98,6 +84,64 @@ bool pyro_is_ascii_upper(char c);
 // Generates a randomish value suitable for seeding a PRNG. Uses locally available sources of
 // entropy. Not suitable for cryptographic use.
 uint64_t pyro_random_seed(void);
+
+// String hash: FNV-1a, 64-bit version.
+static inline uint64_t pyro_fnv1a_64(const char* string, size_t length) {
+    uint64_t hash = UINT64_C(14695981039346656037);
+
+    // Function: hash(i) = (hash(i - 1) XOR string[i]) * 1099511628211
+    for (size_t i = 0; i < length; i++) {
+        hash ^= (uint8_t)string[i];
+        hash *= UINT64_C(1099511628211);
+    }
+
+    return hash;
+}
+
+// String hash: FNV-1a, 64-bit version with optimized multiplication.
+static inline uint64_t pyro_fnv1a_64_opt(const char* string, size_t length) {
+    uint64_t hash = UINT64_C(14695981039346656037);
+
+    // Function: hash(i) = (hash(i - 1) XOR string[i]) * 1099511628211
+    for (size_t i = 0; i < length; i++) {
+        hash ^= (uint8_t)string[i];
+        hash += (hash<<1) + (hash<<4) + (hash<<5) + (hash<<7) + (hash<<8) + (hash<<40);
+    }
+
+    return hash;
+}
+
+// String hash: DJB2, 64-bit version.
+static inline uint64_t pyro_djb2_64(const char* string, size_t length) {
+    uint64_t hash = UINT64_C(5381);
+
+    // Function: hash(i) = hash(i - 1) * 33 + string[i]
+    for (size_t i = 0; i < length; i++) {
+        hash = ((hash << 5) + hash) + (uint8_t)string[i];
+    }
+
+    return hash;
+}
+
+// String hash: SDBM, 64-bit version.
+static inline uint64_t pyro_sdbm_64(const char* string, size_t length) {
+    uint64_t hash = 0;
+
+    // Function: hash(i) = hash(i - 1) * 65599 + string[i]
+    for (size_t i = 0; i < length; i++) {
+        hash = (uint8_t)string[i] + (hash << 6) + (hash << 16) - hash;
+    }
+
+    return hash;
+}
+
+// Returns true if the string [s1] is equal to the string [s2].
+static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, size_t s2_count) {
+    if (s1_count == s2_count) {
+        return memcmp(s1, s2, s1_count) == 0;
+    }
+    return false;
+}
 
 // Simple hash combiner. Returns h1 * 3 + h2. This is safer than simply using XOR to combine
 // the hashes as XOR maps pairwise identical values to zero.

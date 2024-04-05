@@ -37,60 +37,6 @@ PyroBuf* pyro_read_file_into_buf(PyroVM* vm, const char* path, const char* err_p
 }
 
 
-// String hash: FNV-1a, 64-bit version.
-uint64_t pyro_fnv1a_64(const char* string, size_t length) {
-    uint64_t hash = UINT64_C(14695981039346656037);
-
-    // Function: hash(i) = (hash(i - 1) XOR string[i]) * 1099511628211
-    for (size_t i = 0; i < length; i++) {
-        hash ^= (uint8_t)string[i];
-        hash *= UINT64_C(1099511628211);
-    }
-
-    return hash;
-}
-
-
-// String hash: FNV-1a, 64-bit version with optimized multiplication.
-uint64_t pyro_fnv1a_64_opt(const char* string, size_t length) {
-    uint64_t hash = UINT64_C(14695981039346656037);
-
-    // Function: hash(i) = (hash(i - 1) XOR string[i]) * 1099511628211
-    for (size_t i = 0; i < length; i++) {
-        hash ^= (uint8_t)string[i];
-        hash += (hash<<1) + (hash<<4) + (hash<<5) + (hash<<7) + (hash<<8) + (hash<<40);
-    }
-
-    return hash;
-}
-
-
-// String hash: DJB2, 64-bit version.
-uint64_t pyro_djb2_64(const char* string, size_t length) {
-    uint64_t hash = UINT64_C(5381);
-
-    // Function: hash(i) = hash(i - 1) * 33 + string[i]
-    for (size_t i = 0; i < length; i++) {
-        hash = ((hash << 5) + hash) + (uint8_t)string[i];
-    }
-
-    return hash;
-}
-
-
-// String hash: SDBM, 64-bit version.
-uint64_t pyro_sdbm_64(const char* string, size_t length) {
-    uint64_t hash = 0;
-
-    // Function: hash(i) = hash(i - 1) * 65599 + string[i]
-    for (size_t i = 0; i < length; i++) {
-        hash = (uint8_t)string[i] + (hash << 6) + (hash << 16) - hash;
-    }
-
-    return hash;
-}
-
-
 // Converts an ASCII hex digit to its corresponding integer value.
 static inline uint8_t hex_to_int(char c) {
    return (c > '9') ? (c &~ 0x20) - 'A' + 10 : (c - '0');
