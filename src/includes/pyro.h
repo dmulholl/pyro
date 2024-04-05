@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 16
-#define PYRO_VERSION_PATCH 7
+#define PYRO_VERSION_PATCH 8
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -18,7 +18,7 @@
 
 // Selects the hash function for strings.
 #ifndef PYRO_STRING_HASH
-    #define PYRO_STRING_HASH pyro_fnv1a_64_opt
+    #define PYRO_STRING_HASH pyro_djb2_64
 #endif
 
 // Sets the (count/capacity) threshold for map resizing.
