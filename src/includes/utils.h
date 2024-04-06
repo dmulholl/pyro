@@ -85,51 +85,26 @@ bool pyro_is_ascii_upper(char c);
 // entropy. Not suitable for cryptographic use.
 uint64_t pyro_random_seed(void);
 
-// String hash: FNV-1a, 64-bit version.
-static inline uint64_t pyro_fnv1a_64(const char* string, size_t length) {
-    uint64_t hash = UINT64_C(14695981039346656037);
-
-    // Function: hash(i) = (hash(i - 1) XOR string[i]) * 1099511628211
-    for (size_t i = 0; i < length; i++) {
-        hash ^= (uint8_t)string[i];
-        hash *= UINT64_C(1099511628211);
-    }
-
-    return hash;
-}
-
-// String hash: FNV-1a, 64-bit version with optimized multiplication.
-static inline uint64_t pyro_fnv1a_64_opt(const char* string, size_t length) {
-    uint64_t hash = UINT64_C(14695981039346656037);
-
-    // Function: hash(i) = (hash(i - 1) XOR string[i]) * 1099511628211
-    for (size_t i = 0; i < length; i++) {
-        hash ^= (uint8_t)string[i];
-        hash += (hash<<1) + (hash<<4) + (hash<<5) + (hash<<7) + (hash<<8) + (hash<<40);
-    }
-
-    return hash;
-}
-
 // String hash: DJB2, 64-bit version.
-static inline uint64_t pyro_djb2_64(const char* string, size_t length) {
+static inline uint64_t pyro_djb2_64(const uint8_t* string, size_t length) {
     uint64_t hash = UINT64_C(5381);
 
     // Function: hash(i) = hash(i - 1) * 33 + string[i]
     for (size_t i = 0; i < length; i++) {
-        hash = ((hash << 5) + hash) + (uint8_t)string[i];
+        hash = ((hash << 5) + hash) + string[i];
     }
 
     return hash;
 }
 
-// String hash: SDBM, 64-bit version.
-static inline uint64_t pyro_sdbm_64(const char* string, size_t length) {
-    uint64_t hash = 0;
+// String hash: FNV-1a, 64-bit version.
+static inline uint64_t pyro_fnv1a_64(const uint8_t* string, size_t length) {
+    uint64_t hash = UINT64_C(14695981039346656037);
 
-    // Function: hash(i) = hash(i - 1) * 65599 + string[i]
+    // Function: hash(i) = (hash(i - 1) XOR string[i]) * 1099511628211
     for (size_t i = 0; i < length; i++) {
-        hash = (uint8_t)string[i] + (hash << 6) + (hash << 16) - hash;
+        hash ^= string[i];
+        hash *= UINT64_C(1099511628211);
     }
 
     return hash;
