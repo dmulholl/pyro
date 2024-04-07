@@ -118,9 +118,11 @@ static inline bool pyro_str_eq(const char* s1, size_t s1_count, const char* s2, 
     return false;
 }
 
-// Simple hash combiner. Returns h1 * 3 + h2. This is safer than simply using XOR to combine
-// the hashes as XOR maps pairwise identical values to zero.
+// Simple hash combiner. This is safer than simply using XOR to combine the hashes.
+// - XOR maps pairwise identical values to zero.
+// - XOR is symmetric so the order of the values is lost.
 static inline uint64_t pyro_hash_combine(uint64_t h1, uint64_t h2) {
+    // Equivalent to h1 * 3 + h2.
     return (h1 << 1) + h1 + h2;
 }
 
