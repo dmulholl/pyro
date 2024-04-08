@@ -623,7 +623,7 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
 
             return pyro_sprintf_to_obj(
                 vm,
-                "<enum %s::%s %s>",
+                "<enum %s::%s value=%s>",
                 enum_member->enum_type->name->bytes,
                 enum_member->name->bytes,
                 debug_value->bytes
