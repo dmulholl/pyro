@@ -9,44 +9,21 @@ meta_title: Pyro Standard Library &mdash; std::log
 This library provides basic logging functionality.
 Logging levels, in increasing order of severity, are:
 
-* `DEBUG`
-* `INFO`
-* `WARN`
-* `ERROR`
-* `FATAL`
+::: code pyro
+    pub enum Level {
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Fatal,
+    }
 
 Convenience functions are provided for unconditional logging to the standard output stream.
 Use a `Logger` instance to customize the logging-level and destination file.
 
 
 
-### Constants
-
-
-[[ `DEBUG: i64` ]]
-
-    Log-level `DEBUG`.
-
-[[ `ERROR: i64` ]]
-
-    Log-level `ERROR`.
-
-[[ `FATAL: i64` ]]
-
-    Log-level `FATAL`.
-
-[[ `INFO: i64` ]]
-
-    Log-level `INFO`.
-
-[[ `WARN: i64` ]]
-
-    Log-level `WARN`.
-
-
-
 ### Functions
-
 
 [[ `debug(arg: any)` <br> `debug(format_string: str, *args: any)` ]]
 
@@ -103,15 +80,15 @@ Use a `Logger` instance to customize the logging-level and destination file.
     Returns a new `Logger` instance.
 
     * Messages will only be logged if their logging-level is greater than or equal to the logger's logging-level.
-    * The logger's default logging-level is `INFO`.
+    * The logger's default logging-level is `Level::Info`.
 
 `Logger` instances have the following public fields:
 
 ::: code pyro
     class Logger {
-        # One of DEBUG, INFO, WARN, ERROR, FATAL.
-        # Defaults to INFO.
-        pub var logging_level: i64;
+        # The logger's logging-level.
+        # Defaults to Level::Info.
+        pub var logging_level: Level;
 
         # The logger's output file.
         # Defaults to the standard output stream.

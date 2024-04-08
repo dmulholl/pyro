@@ -63,9 +63,6 @@
             </header>
             <ul class="stx-toc">
 <li>
-<a href="#constants">Constants</a>
-</li>
-<li>
 <a href="#functions">Functions</a>
 </li>
 <li>
@@ -77,82 +74,19 @@
 This library provides basic logging functionality.
 Logging levels, in increasing order of severity, are:
 </p>
-<ul>
-<li>
-<code>DEBUG</code>
-</li>
-<li>
-<code>INFO</code>
-</li>
-<li>
-<code>WARN</code>
-</li>
-<li>
-<code>ERROR</code>
-</li>
-<li>
-<code>FATAL</code>
-</li>
-</ul>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">pub</span> <span class="kd">enum</span> <span class="nx">Level</span> <span class="p">{</span>
+    <span class="nx">Debug</span><span class="p">,</span>
+    <span class="nx">Info</span><span class="p">,</span>
+    <span class="nx">Warn</span><span class="p">,</span>
+    <span class="nx">Error</span><span class="p">,</span>
+    <span class="nx">Fatal</span><span class="p">,</span>
+<span class="p">}</span>
+</pre>
 <p>
 Convenience functions are provided for unconditional logging to the standard output stream.
 Use a <code>Logger</code> instance to customize the logging-level and destination file.
 </p>
-<h3 id="constants">
-Constants
-</h3>
-<dl>
-<div>
-<dt>
-<code>DEBUG: i64</code>
-</dt>
-<dd>
-<p>
-Log-level <code>DEBUG</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>ERROR: i64</code>
-</dt>
-<dd>
-<p>
-Log-level <code>ERROR</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>FATAL: i64</code>
-</dt>
-<dd>
-<p>
-Log-level <code>FATAL</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>INFO: i64</code>
-</dt>
-<dd>
-<p>
-Log-level <code>INFO</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>WARN: i64</code>
-</dt>
-<dd>
-<p>
-Log-level <code>WARN</code>.
-</p>
-</dd>
-</div>
-</dl>
 <h3 id="functions">
 Functions
 </h3>
@@ -268,7 +202,7 @@ Returns a new <code>Logger</code> instance.
 Messages will only be logged if their logging-level is greater than or equal to the logger's logging-level.
 </li>
 <li>
-The logger's default logging-level is <code>INFO</code>.
+The logger's default logging-level is <code>Level::Info</code>.
 </li>
 </ul>
 </dd>
@@ -279,9 +213,9 @@ The logger's default logging-level is <code>INFO</code>.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Logger</span> <span class="p">{</span>
-    <span class="c1"># One of DEBUG, INFO, WARN, ERROR, FATAL.</span>
-    <span class="c1"># Defaults to INFO.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">logging_level</span><span class="p">:</span> <span class="nx">i64</span><span class="p">;</span>
+    <span class="c1"># The logger&#39;s logging-level.</span>
+    <span class="c1"># Defaults to Level::Info.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">logging_level</span><span class="p">:</span> <span class="nx">Level</span><span class="p">;</span>
 
     <span class="c1"># The logger&#39;s output file.</span>
     <span class="c1"># Defaults to the standard output stream.</span>
