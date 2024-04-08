@@ -600,8 +600,6 @@ typedef struct {
     PyroMap* values;
 } PyroEnumType;
 
-PyroEnumType* PyroEnumType_new(PyroStr* name, PyroVM* vm);
-
 typedef struct {
     PyroObject obj;
     PyroEnumType* enum_type;
@@ -609,6 +607,12 @@ typedef struct {
     PyroValue value;
 } PyroEnumMember;
 
+PyroEnumType* PyroEnumType_new(PyroStr* name, PyroVM* vm);
 PyroEnumMember* PyroEnumMember_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm);
+
+// Adds a new member to the enum. Panics and returns NULL on failure.
+// - Caller should check [vm->halt_flag] before proceeding.
+// - [member_name] should be a NULL-terminated C string.
+PyroEnumMember* PyroEnumType_add_member(PyroEnumType* enum_type, const char* member_name, PyroValue member_value, PyroVM* vm);
 
 #endif

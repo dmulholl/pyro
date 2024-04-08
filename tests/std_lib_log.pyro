@@ -1,0 +1,31 @@
+import std::log;
+
+assert $is_module(log);
+assert $is_class(log::Logger);
+assert $is_enum_type(log::Level);
+
+assert $is_enum_member(log::Level::Debug);
+assert $is_enum_member(log::Level::Info);
+assert $is_enum_member(log::Level::Warn);
+assert $is_enum_member(log::Level::Error);
+assert $is_enum_member(log::Level::Fatal);
+
+assert $is_enum_member_of_type(log::Level::Debug, log::Level);
+assert $is_enum_member_of_type(log::Level::Info, log::Level);
+assert $is_enum_member_of_type(log::Level::Warn, log::Level);
+assert $is_enum_member_of_type(log::Level::Error, log::Level);
+assert $is_enum_member_of_type(log::Level::Fatal, log::Level);
+
+assert $is_enum_member(log::Logger().logging_level);
+assert $is_enum_member_of_type(log::Logger().logging_level, log::Level);
+
+assert log::Logger().logging_level == log::Level::Info;
+assert log::Logger().output_file == $stdout;
+assert log::Logger().show_utc == false;
+assert log::Logger().show_milliseconds == false;
+assert log::Logger().show_microseconds == false;
+
+assert log::Level::Debug:value() < log::Level::Info:value();
+assert log::Level::Info:value() < log::Level::Warn:value();
+assert log::Level::Warn:value() < log::Level::Error:value();
+assert log::Level::Error:value() < log::Level::Fatal:value();

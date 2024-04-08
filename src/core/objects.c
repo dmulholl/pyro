@@ -2430,6 +2430,36 @@ PyroEnumType* PyroEnumType_new(PyroStr* name, PyroVM* vm) {
 }
 
 
+PyroEnumMember* PyroEnumType_add_member(PyroEnumType* enum_type, const char* member_name, PyroValue member_value, PyroVM* vm) {
+    PyroStr* member_name_string = PyroStr_COPY(member_name);
+    if (!member_name_string) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    PyroEnumMember* enum_member = PyroEnumMember_new(enum_type, member_name_string, member_value, vm);
+    if (!enum_member) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    if (!pyro_push(vm, pyro_obj(enum_member))) return NULL; // protect from gc
+
+    int result = PyroMap_set(enum_type->values, pyro_obj(member_name_string), pyro_obj(enum_member), vm);
+    if (vm->halt_flag) {
+        return NULL;
+    }
+
+    if (result == 0) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    pyro_pop(vm); // enum_member
+    return enum_member;
+}
+
+
 PyroEnumMember* PyroEnumMember_new(PyroEnumType* enum_type, PyroStr* name, PyroValue value, PyroVM* vm) {
     PyroEnumMember* enum_member = ALLOCATE_OBJECT(vm, PyroEnumMember, PYRO_OBJECT_ENUM_MEMBER);
     if (!enum_member) {

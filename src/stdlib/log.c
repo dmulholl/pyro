@@ -186,17 +186,29 @@ static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (!PYRO_IS_I64(instance->fields[0])) {
-        pyro_panic(vm, "debug(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+    if (PYRO_IS_I64(instance->fields[0])) {
+        int64_t logging_level = instance->fields[0].as.i64;
+
+        if (PYRO_STD_LOG_LEVEL_DEBUG >= logging_level) {
+            write_msg(vm, "debug()", "DEBUG", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+        }
+
         return pyro_null();
     }
 
-    int64_t logging_level = instance->fields[0].as.i64;
+    if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
+        if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[5])) {
+            int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
 
-    if (PYRO_STD_LOG_LEVEL_DEBUG >= logging_level) {
-        write_msg(vm, "debug()", "DEBUG", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            if (PYRO_STD_LOG_LEVEL_DEBUG >= logging_level) {
+                write_msg(vm, "debug()", "DEBUG", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            }
+
+            return pyro_null();
+        }
     }
 
+    pyro_panic(vm, "debug(): invalid type for logging_level field: expected Level, found %s", pyro_get_type_name(vm, instance->fields[0])->bytes);
     return pyro_null();
 }
 
@@ -204,17 +216,29 @@ static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (!PYRO_IS_I64(instance->fields[0])) {
-        pyro_panic(vm, "info(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+    if (PYRO_IS_I64(instance->fields[0])) {
+        int64_t logging_level = instance->fields[0].as.i64;
+
+        if (PYRO_STD_LOG_LEVEL_INFO >= logging_level) {
+            write_msg(vm, "info()", "INFO", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+        }
+
         return pyro_null();
     }
 
-    int64_t logging_level = instance->fields[0].as.i64;
+    if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
+        if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[5])) {
+            int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
 
-    if (PYRO_STD_LOG_LEVEL_INFO >= logging_level) {
-        write_msg(vm, "info()", "INFO", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            if (PYRO_STD_LOG_LEVEL_INFO >= logging_level) {
+                write_msg(vm, "info()", "INFO", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            }
+
+            return pyro_null();
+        }
     }
 
+    pyro_panic(vm, "info(): invalid type for logging_level field: expected Level, found %s", pyro_get_type_name(vm, instance->fields[0])->bytes);
     return pyro_null();
 }
 
@@ -222,17 +246,29 @@ static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (!PYRO_IS_I64(instance->fields[0])) {
-        pyro_panic(vm, "warn(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+    if (PYRO_IS_I64(instance->fields[0])) {
+        int64_t logging_level = instance->fields[0].as.i64;
+
+        if (PYRO_STD_LOG_LEVEL_WARN >= logging_level) {
+            write_msg(vm, "warn()", "WARN", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+        }
+
         return pyro_null();
     }
 
-    int64_t logging_level = instance->fields[0].as.i64;
+    if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
+        if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[5])) {
+            int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
 
-    if (PYRO_STD_LOG_LEVEL_WARN >= logging_level) {
-        write_msg(vm, "warn()", "WARN", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            if (PYRO_STD_LOG_LEVEL_WARN >= logging_level) {
+                write_msg(vm, "warn()", "WARN", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            }
+
+            return pyro_null();
+        }
     }
 
+    pyro_panic(vm, "warn(): invalid type for logging_level field: expected Level, found %s", pyro_get_type_name(vm, instance->fields[0])->bytes);
     return pyro_null();
 }
 
@@ -240,17 +276,29 @@ static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (!PYRO_IS_I64(instance->fields[0])) {
-        pyro_panic(vm, "error(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+    if (PYRO_IS_I64(instance->fields[0])) {
+        int64_t logging_level = instance->fields[0].as.i64;
+
+        if (PYRO_STD_LOG_LEVEL_ERROR >= logging_level) {
+            write_msg(vm, "error()", "ERROR", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+        }
+
         return pyro_null();
     }
 
-    int64_t logging_level = instance->fields[0].as.i64;
+    if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
+        if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[5])) {
+            int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
 
-    if (PYRO_STD_LOG_LEVEL_ERROR >= logging_level) {
-        write_msg(vm, "error()", "ERROR", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            if (PYRO_STD_LOG_LEVEL_ERROR >= logging_level) {
+                write_msg(vm, "error()", "ERROR", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            }
+
+            return pyro_null();
+        }
     }
 
+    pyro_panic(vm, "error(): invalid type for logging_level field: expected Level, found %s", pyro_get_type_name(vm, instance->fields[0])->bytes);
     return pyro_null();
 }
 
@@ -258,20 +306,35 @@ static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (!PYRO_IS_I64(instance->fields[0])) {
-        pyro_panic(vm, "fatal(): invalid type for logging_level field: expected an i64, found %s", pyro_get_type_name(vm, args[0])->bytes);
+    if (PYRO_IS_I64(instance->fields[0])) {
+        int64_t logging_level = instance->fields[0].as.i64;
+
+        if (PYRO_STD_LOG_LEVEL_FATAL >= logging_level) {
+            write_msg(vm, "fatal()", "FATAL", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            vm->halt_flag = true;
+            vm->exit_flag = true;
+            vm->exit_code = 1;
+        }
+
         return pyro_null();
     }
 
-    int64_t logging_level = instance->fields[0].as.i64;
+    if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
+        if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[5])) {
+            int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
 
-    if (PYRO_STD_LOG_LEVEL_FATAL >= logging_level) {
-        write_msg(vm, "fatal()", "FATAL", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+            if (PYRO_STD_LOG_LEVEL_FATAL >= logging_level) {
+                write_msg(vm, "fatal()", "FATAL", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], arg_count, args);
+                vm->halt_flag = true;
+                vm->exit_flag = true;
+                vm->exit_code = 1;
+            }
+
+            return pyro_null();
+        }
     }
 
-    vm->halt_flag = true;
-    vm->exit_flag = true;
-    vm->exit_code = 1;
+    pyro_panic(vm, "fatal(): invalid type for logging_level field: expected Level, found %s", pyro_get_type_name(vm, instance->fields[0])->bytes);
     return pyro_null();
 }
 
@@ -283,28 +346,62 @@ void pyro_load_std_mod_log(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "error", fn_error, -1);
     pyro_define_pub_member_fn(vm, module, "fatal", fn_fatal, -1);
 
-    pyro_define_pub_member(vm, module, "DEBUG", pyro_i64(PYRO_STD_LOG_LEVEL_DEBUG));
-    pyro_define_pub_member(vm, module, "INFO", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_pub_member(vm, module, "WARN", pyro_i64(PYRO_STD_LOG_LEVEL_WARN));
-    pyro_define_pub_member(vm, module, "ERROR", pyro_i64(PYRO_STD_LOG_LEVEL_ERROR));
-    pyro_define_pub_member(vm, module, "FATAL", pyro_i64(PYRO_STD_LOG_LEVEL_FATAL));
+    PyroStr* log_level_name = PyroStr_COPY("Level");
+    if (!log_level_name) {
+        pyro_panic(vm, "out of memory");
+        return;
+    }
+
+    PyroEnumType* log_level_enum = PyroEnumType_new(log_level_name, vm);
+    if (!log_level_enum) {
+        pyro_panic(vm, "out of memory");
+        return;
+    }
+
+    pyro_define_pub_member(vm, module, "Level", pyro_obj(log_level_enum));
+
+    PyroEnumType_add_member(log_level_enum, "Debug", pyro_i64(PYRO_STD_LOG_LEVEL_DEBUG), vm);
+    PyroEnumType_add_member(log_level_enum, "Warn", pyro_i64(PYRO_STD_LOG_LEVEL_WARN), vm);
+    PyroEnumType_add_member(log_level_enum, "Error", pyro_i64(PYRO_STD_LOG_LEVEL_ERROR), vm);
+    PyroEnumType_add_member(log_level_enum, "Fatal", pyro_i64(PYRO_STD_LOG_LEVEL_FATAL), vm);
+
+    PyroEnumMember* log_level_info = PyroEnumType_add_member(log_level_enum, "Info", pyro_i64(PYRO_STD_LOG_LEVEL_INFO), vm);
+    if (vm->halt_flag) {
+        return;
+    }
 
     PyroClass* logger_class = PyroClass_new(vm);
     if (!logger_class) {
+        pyro_panic(vm, "out of memory");
         return;
     }
-    logger_class->name = PyroStr_COPY("Logger");
+
+    PyroStr* logger_class_name = PyroStr_COPY("Logger");
+    if (!logger_class_name) {
+        pyro_panic(vm, "out of memory");
+        return;
+    }
+
+    logger_class->name = logger_class_name;
     pyro_define_pub_member(vm, module, "Logger", pyro_obj(logger_class));
 
-    pyro_define_pub_field(vm, logger_class, "logging_level", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
+    pyro_define_pub_field(vm, logger_class, "logging_level", pyro_obj(log_level_info));
     pyro_define_pub_field(vm, logger_class, "output_file", pyro_obj(vm->stdout_file));
     pyro_define_pub_field(vm, logger_class, "show_utc", pyro_bool(false));
     pyro_define_pub_field(vm, logger_class, "show_milliseconds", pyro_bool(false));
     pyro_define_pub_field(vm, logger_class, "show_microseconds", pyro_bool(false));
+    pyro_define_pri_field(vm, logger_class, "log_level_enum", pyro_obj(log_level_enum));
 
     pyro_define_pub_method(vm, logger_class, "debug", logger_debug, -1);
     pyro_define_pub_method(vm, logger_class, "info", logger_info, -1);
     pyro_define_pub_method(vm, logger_class, "warn", logger_warn, -1);
     pyro_define_pub_method(vm, logger_class, "error", logger_error, -1);
     pyro_define_pub_method(vm, logger_class, "fatal", logger_fatal, -1);
+
+    // Deprecated.
+    pyro_define_pub_member(vm, module, "DEBUG", pyro_i64(PYRO_STD_LOG_LEVEL_DEBUG));
+    pyro_define_pub_member(vm, module, "INFO", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
+    pyro_define_pub_member(vm, module, "WARN", pyro_i64(PYRO_STD_LOG_LEVEL_WARN));
+    pyro_define_pub_member(vm, module, "ERROR", pyro_i64(PYRO_STD_LOG_LEVEL_ERROR));
+    pyro_define_pub_member(vm, module, "FATAL", pyro_i64(PYRO_STD_LOG_LEVEL_FATAL));
 }
