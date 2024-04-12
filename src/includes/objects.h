@@ -73,15 +73,17 @@ struct PyroMap {
     size_t live_entry_count;
 
     // This array is the map's data store -- new entries are appended to this array so
-    // iterating over it preserves insertion order. [entry_array_count] includes both live
-    // entries and tombstones.
+    // iterating over it preserves insertion order.
+    // - [entry_array_capacity] IS NOT guaranteed to be a power of 2.
+    // - [entry_array_count] includes both live entries and tombstones.
     PyroMapEntry* entry_array;
     size_t entry_array_capacity;
     size_t entry_array_count;
 
     // This is the array that gets linearly-probed using key hashes. It stores the indexes of
     // entries in [entry_array]. Negative values indicate that a slot is empty or a tombstone.
-    // [index_array_count] includes both live entries and tombstones.
+    // - [index_array_capacity] IS guaranteed to be either 0 or a power of 2.
+    // - [index_array_count] includes both live entries and tombstones.
     int64_t* index_array;
     size_t index_array_capacity;
     size_t index_array_count;

@@ -424,7 +424,7 @@ PyroMap* PyroMap_copy(PyroMap* src, PyroVM* vm) {
 // returns the index of the new entry.
 static int64_t append_entry(PyroMap* map, PyroValue key, PyroValue value, PyroVM* vm) {
     if (map->entry_array_count == map->entry_array_capacity) {
-        size_t new_entry_array_capacity = PYRO_GROW_CAPACITY(map->entry_array_capacity);
+        size_t new_entry_array_capacity = pyro_grow_capacity(map->entry_array_capacity);
         PyroMapEntry* new_entry_array = PYRO_REALLOCATE_ARRAY(
             vm,
             PyroMapEntry,
@@ -937,7 +937,7 @@ PyroFn* PyroFn_new(PyroVM* vm) {
 
 bool PyroFn_write(PyroFn* fn, uint8_t byte, size_t line_number, PyroVM* vm) {
     if (fn->code_count == fn->code_capacity) {
-        size_t new_capacity = PYRO_GROW_CAPACITY(fn->code_capacity);
+        size_t new_capacity = pyro_grow_capacity(fn->code_capacity);
         uint8_t* new_array = PYRO_REALLOCATE_ARRAY(vm, uint8_t, fn->code, fn->code_capacity, new_capacity);
         if (!new_array) {
             return false;
@@ -996,7 +996,7 @@ int64_t PyroFn_add_constant(PyroFn* fn, PyroValue value, PyroVM* vm) {
     }
 
     if (fn->constants_count == fn->constants_capacity) {
-        size_t new_capacity = PYRO_GROW_CAPACITY(fn->constants_capacity);
+        size_t new_capacity = pyro_grow_capacity(fn->constants_capacity);
         PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, fn->constants, fn->constants_capacity, new_capacity);
         if (!new_array) {
             return -1;
@@ -1348,7 +1348,7 @@ PyroVec* PyroVec_copy(PyroVec* src_vec, PyroVM* vm) {
 
 bool PyroVec_append(PyroVec* vec, PyroValue value, PyroVM* vm) {
     if (vec->count == vec->capacity) {
-        size_t new_capacity = (vec->capacity < 8) ? 8 : (size_t)(vec->capacity * PYRO_VEC_MEMORY_MULTIPLIER);
+        size_t new_capacity = pyro_grow_capacity(vec->capacity);
         assert(new_capacity > vec->count);
         PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
@@ -1370,11 +1370,7 @@ bool PyroVec_append_values(PyroVec* vec, PyroValue* values, size_t count, PyroVM
     size_t required_capacity = vec->count + count;
 
     if (required_capacity > vec->capacity) {
-        size_t new_capacity = (vec->capacity < 8) ? 8 : vec->capacity;
-
-        while (new_capacity < required_capacity) {
-            new_capacity *= PYRO_VEC_MEMORY_MULTIPLIER;
-        }
+        size_t new_capacity = pyro_grow_capacity(required_capacity);
 
         PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
@@ -1461,7 +1457,7 @@ void PyroVec_insert_at_index(PyroVec* vec, size_t index, PyroValue value, PyroVM
     }
 
     if (vec->count == vec->capacity) {
-        size_t new_capacity = (vec->capacity < 8) ? 8 : (size_t)(vec->capacity * PYRO_VEC_MEMORY_MULTIPLIER);
+        size_t new_capacity = pyro_grow_capacity(vec->capacity);
         assert(new_capacity > vec->count);
         PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vec->values, vec->capacity, new_capacity);
         if (!new_array) {
@@ -1628,11 +1624,7 @@ bool PyroBuf_append_bytes(PyroBuf* buf, size_t count, uint8_t* bytes, PyroVM* vm
     size_t required_capacity = buf->count + count + 1;
 
     if (required_capacity > buf->capacity) {
-        size_t new_capacity = 8;
-        if (required_capacity > 8) {
-            new_capacity = (size_t)(required_capacity * PYRO_BUF_MEMORY_MULTIPLIER);
-            assert(new_capacity >= required_capacity);
-        }
+        size_t new_capacity = pyro_grow_capacity(required_capacity);
         if (!PyroBuf_resize_capacity(buf, new_capacity, vm)) {
             return false;
         }

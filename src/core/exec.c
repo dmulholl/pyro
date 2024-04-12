@@ -2790,7 +2790,7 @@ static void run(PyroVM* vm) {
             // After:  [ ... ][ with_block_local ]
             case PYRO_OPCODE_START_WITH: {
                 if (vm->with_stack_count == vm->with_stack_capacity) {
-                    size_t new_capacity = PYRO_GROW_CAPACITY(vm->with_stack_capacity);
+                    size_t new_capacity = pyro_grow_capacity(vm->with_stack_capacity);
                     PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity, new_capacity);
                     if (!new_array) {
                         pyro_panic(vm, "out of memory: failed to allocate memory for the 'with' stack");

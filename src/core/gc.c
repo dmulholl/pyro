@@ -10,7 +10,7 @@ static void mark_object(PyroVM* vm, PyroObject* object) {
     }
 
     if (vm->grey_stack_count == vm->grey_stack_capacity) {
-        size_t new_capacity = PYRO_GROW_CAPACITY(vm->grey_stack_capacity);
+        size_t new_capacity = pyro_grow_capacity(vm->grey_stack_capacity);
         PyroObject** new_array = PYRO_REALLOCATE_ARRAY(vm, PyroObject*, vm->grey_stack, vm->grey_stack_capacity, new_capacity);
         if (!new_array) {
             vm->panic_flag = true;

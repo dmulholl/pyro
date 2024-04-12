@@ -4,7 +4,7 @@
 // Language version.
 #define PYRO_VERSION_MAJOR 0
 #define PYRO_VERSION_MINOR 16
-#define PYRO_VERSION_PATCH 10
+#define PYRO_VERSION_PATCH 11
 
 // Pre-release label, e.g. "alpha1", "beta2", "rc3".
 #ifndef PYRO_VERSION_LABEL
@@ -54,16 +54,6 @@
 // [vm->bytes_allocated *  PYRO_GC_HEAP_GROW_FACTOR]
 #ifndef PYRO_GC_HEAP_GROW_FACTOR
     #define PYRO_GC_HEAP_GROW_FACTOR 2
-#endif
-
-// The multiplier to use when increasing a buffer's memory allocation.
-#ifndef PYRO_BUF_MEMORY_MULTIPLIER
-    #define PYRO_BUF_MEMORY_MULTIPLIER 2
-#endif
-
-// The multiplier to use when increasing a vector's memory allocation.
-#ifndef PYRO_VEC_MEMORY_MULTIPLIER
-    #define PYRO_VEC_MEMORY_MULTIPLIER 2
 #endif
 
 // Pi to the maximum accuracy limit of 64-bit IEEE 754 floats.
