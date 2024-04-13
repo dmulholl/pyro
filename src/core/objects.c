@@ -51,15 +51,17 @@ PyroTup* PyroTup_new(size_t count, PyroVM* vm) {
 
 
 bool PyroTup_check_equal(PyroTup* a, PyroTup* b, PyroVM* vm) {
-    if (a->count == b->count) {
-        for (size_t i = 0; i < a->count; i++) {
-            if (!pyro_op_compare_eq(vm, a->values[i], b->values[i])) {
-                return false;
-            }
-        }
-        return true;
+    if (a->count != b->count) {
+        return false;
     }
-    return false;
+
+    for (size_t i = 0; i < a->count; i++) {
+        if (!pyro_op_compare_eq(vm, a->values[i], b->values[i])) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 
@@ -233,7 +235,9 @@ static int64_t* find_entry_slot(
     size_t index_array_capacity,
     PyroValue key
 ) {
+    // Verify that capacity is a power of two.
     assert(index_array_capacity > 0);
+    assert((index_array_capacity & (index_array_capacity - 1)) == 0);
 
     // Capacity is always a power of 2 so we can use bitwise-AND as a fast modulo operator,
     // i.e. this is equivalent to: i = key_hash % index_array_capacity.
