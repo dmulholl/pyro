@@ -2865,6 +2865,15 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements the expression: [is_err operand].
+            // Before: [ ... ][ operand ]
+            // After:  [ ... ][ bool ]
+            case PYRO_OPCODE_IS_ERR: {
+                PyroValue result = pyro_bool(PYRO_IS_ERR(vm->stack_top[-1]));
+                vm->stack_top[-1] = result;
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;

@@ -37,3 +37,14 @@ assert bam["detail2"] == "789";
 assert bam:message() == "error message: 123";
 assert bam:details()["detail1"] == 456;
 assert bam:details()["detail2"] == "789";
+
+with err = $err("foobar") {
+    assert ! is_err 123;
+    assert is_err 123 == false;
+
+    assert is_err err;
+    assert is_err err == true;
+
+    assert is_err is_err 123 == false;
+    assert is_err is_err err == false;
+}
