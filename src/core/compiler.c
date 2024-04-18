@@ -1179,6 +1179,31 @@ static void parse_if_expr(Parser* parser, bool can_assign) {
 }
 
 
+// Try to optimize calls to superglobals like $is_err(). If this function is called, we know that
+// the prevous token starts with '$' and the next token is '('.
+static bool try_parse_optimized_superglobal_call(Parser* parser) {
+    assert(parser->next_token.type == TOKEN_LEFT_PAREN);
+    Token name = parser->previous_token;
+
+    if (name.length == 7 && memcmp(name.start, "$is_err", 7) == 0) {
+        if (!consume(parser, TOKEN_LEFT_PAREN, "internal compiler error: expected left paren after $is_err")) {
+            return false;
+        }
+
+        parse_expression(parser, false);
+
+        if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $is_err()")) {
+            return false;
+        }
+
+        emit_byte(parser, PYRO_OPCODE_IS_ERR);
+        return true;
+    }
+
+    return false;
+}
+
+
 static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     TokenType token_type = parser->next_token.type;
 
@@ -1353,6 +1378,12 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     }
 
     else if (match(parser, TOKEN_IDENTIFIER)) {
+        Token name = parser->previous_token;
+
+        if (*name.start == '$' && check(parser, TOKEN_LEFT_PAREN) && try_parse_optimized_superglobal_call(parser)) {
+            return  TOKEN_UNDEFINED;
+        }
+
         parse_variable_expression(parser, can_assign);
     }
 
