@@ -1111,6 +1111,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_CALL_VALUE_9:
         case PYRO_OPCODE_I64_ADD:
         case PYRO_OPCODE_IS_ERR:
+        case PYRO_OPCODE_IS_STR:
             return 0;
 
         case PYRO_OPCODE_CALL_VALUE:

@@ -2865,11 +2865,20 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Implements the expression: [is_err operand].
-            // Before: [ ... ][ operand ]
+            // Checks if the value on top of the stack is an error.
+            // Before: [ ... ][ value ]
             // After:  [ ... ][ bool ]
             case PYRO_OPCODE_IS_ERR: {
                 PyroValue result = pyro_bool(PYRO_IS_ERR(vm->stack_top[-1]));
+                vm->stack_top[-1] = result;
+                break;
+            }
+
+            // Checks if the value on top of the stack is a string.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ][ bool ]
+            case PYRO_OPCODE_IS_STR: {
+                PyroValue result = pyro_bool(PYRO_IS_STR(vm->stack_top[-1]));
                 vm->stack_top[-1] = result;
                 break;
             }

@@ -1200,6 +1200,21 @@ static bool try_parse_optimized_superglobal_call(Parser* parser) {
         return true;
     }
 
+    if (name.length == 7 && memcmp(name.start, "$is_str", 7) == 0) {
+        if (!consume(parser, TOKEN_LEFT_PAREN, "internal compiler error: expected left paren after $is_str")) {
+            return false;
+        }
+
+        parse_expression(parser, false);
+
+        if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $is_str()")) {
+            return false;
+        }
+
+        emit_byte(parser, PYRO_OPCODE_IS_STR);
+        return true;
+    }
+
     return false;
 }
 
