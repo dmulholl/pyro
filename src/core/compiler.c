@@ -1641,9 +1641,6 @@ static void parse_unary_expr(Parser* parser, bool can_assign) {
     } else if (match(parser, TOKEN_TILDE)) {
         parse_unary_expr(parser, false);
         emit_byte(parser, PYRO_OPCODE_UNARY_TILDE);
-    } else if (match(parser, TOKEN_IS_ERR)) {
-        parse_unary_expr(parser, false);
-        emit_byte(parser, PYRO_OPCODE_IS_ERR);
     } else {
         parse_power_expr(parser, can_assign);
     }

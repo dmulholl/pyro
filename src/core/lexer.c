@@ -157,7 +157,6 @@ static TokenType get_identifier_type(Lexer* lexer) {
             if (check_keyword(lexer, "if")) return TOKEN_IF;
             if (check_keyword(lexer, "import")) return TOKEN_IMPORT;
             if (check_keyword(lexer, "in")) return TOKEN_IN;
-            if (check_keyword(lexer, "is_err")) return TOKEN_IS_ERR;
             break;
 
         case 'l':
