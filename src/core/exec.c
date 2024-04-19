@@ -2883,6 +2883,15 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Checks if the value on top of the stack is a rune.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ][ bool ]
+            case PYRO_OPCODE_IS_RUNE: {
+                PyroValue result = pyro_bool(PYRO_IS_RUNE(vm->stack_top[-1]));
+                vm->stack_top[-1] = result;
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;
