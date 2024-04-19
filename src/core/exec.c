@@ -2892,6 +2892,24 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Checks if the value on top of the stack is an i64.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ][ bool ]
+            case PYRO_OPCODE_IS_I64: {
+                PyroValue result = pyro_bool(PYRO_IS_I64(vm->stack_top[-1]));
+                vm->stack_top[-1] = result;
+                break;
+            }
+
+            // Checks if the value on top of the stack is an f64.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ][ bool ]
+            case PYRO_OPCODE_IS_F64: {
+                PyroValue result = pyro_bool(PYRO_IS_F64(vm->stack_top[-1]));
+                vm->stack_top[-1] = result;
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;

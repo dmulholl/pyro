@@ -1223,6 +1223,30 @@ static bool try_parse_optimized_superglobal_call(Parser* parser) {
         return true;
     }
 
+    if (name.length == 7 && memcmp(name.start, "$is_i64", 7) == 0) {
+        advance(parser);
+        parse_expression(parser, false);
+
+        if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $is_i64()")) {
+            return false;
+        }
+
+        emit_byte(parser, PYRO_OPCODE_IS_I64);
+        return true;
+    }
+
+    if (name.length == 7 && memcmp(name.start, "$is_f64", 7) == 0) {
+        advance(parser);
+        parse_expression(parser, false);
+
+        if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $is_f64()")) {
+            return false;
+        }
+
+        emit_byte(parser, PYRO_OPCODE_IS_F64);
+        return true;
+    }
+
     return false;
 }
 
