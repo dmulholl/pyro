@@ -1179,17 +1179,16 @@ static void parse_if_expr(Parser* parser, bool can_assign) {
 }
 
 
-// Try to optimize calls to superglobals like $is_err(). If this function is called, we know that
-// the prevous token starts with '$' and the next token is '('.
+// Try to optimize calls to superglobals like $is_err(), $is_str(), etc.
 static bool try_parse_optimized_superglobal_call(Parser* parser) {
-    assert(parser->next_token.type == TOKEN_LEFT_PAREN);
+    if (!check(parser, TOKEN_LEFT_PAREN)) {
+        return false;
+    }
+
     Token name = parser->previous_token;
 
     if (name.length == 7 && memcmp(name.start, "$is_err", 7) == 0) {
-        if (!consume(parser, TOKEN_LEFT_PAREN, "internal compiler error: expected left paren after $is_err")) {
-            return false;
-        }
-
+        advance(parser);
         parse_expression(parser, false);
 
         if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $is_err()")) {
@@ -1201,10 +1200,7 @@ static bool try_parse_optimized_superglobal_call(Parser* parser) {
     }
 
     if (name.length == 7 && memcmp(name.start, "$is_str", 7) == 0) {
-        if (!consume(parser, TOKEN_LEFT_PAREN, "internal compiler error: expected left paren after $is_str")) {
-            return false;
-        }
-
+        advance(parser);
         parse_expression(parser, false);
 
         if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $is_str()")) {
@@ -1216,10 +1212,7 @@ static bool try_parse_optimized_superglobal_call(Parser* parser) {
     }
 
     if (name.length == 8 && memcmp(name.start, "$is_rune", 8) == 0) {
-        if (!consume(parser, TOKEN_LEFT_PAREN, "internal compiler error: expected left paren after $is_rune")) {
-            return false;
-        }
-
+        advance(parser);
         parse_expression(parser, false);
 
         if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $is_rune()")) {
@@ -1410,7 +1403,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     else if (match(parser, TOKEN_IDENTIFIER)) {
         Token name = parser->previous_token;
 
-        if (*name.start == '$' && check(parser, TOKEN_LEFT_PAREN) && try_parse_optimized_superglobal_call(parser)) {
+        if (*name.start == '$' && try_parse_optimized_superglobal_call(parser)) {
             return  TOKEN_UNDEFINED;
         }
 
