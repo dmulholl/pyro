@@ -560,7 +560,7 @@ bool pyro_add_import_root(PyroVM* vm, const char* path) {
 }
 
 
-bool pyro_add_import_root_n(PyroVM* vm, const char* path, size_t length)  {
+bool pyro_add_import_root_with_length(PyroVM* vm, const char* path, size_t length)  {
     if (!path) {
         return false;
     }

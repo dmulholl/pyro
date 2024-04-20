@@ -29,7 +29,7 @@ bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args);
 // - Use "/" for the root directory.
 // - Returns true on success, false if memory could not be allocated for the entry.
 bool pyro_add_import_root(PyroVM* vm, const char* path);
-bool pyro_add_import_root_n(PyroVM* vm, const char* path, size_t length);
+bool pyro_add_import_root_with_length(PyroVM* vm, const char* path, size_t length);
 
 // Creates a new VM-level global variable. Returns true on success, false if memory could not
 // be allocated.

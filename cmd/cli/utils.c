@@ -17,7 +17,7 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
 
     // Add the directory containing [real_path].
     size_t dirname_length = pyro_dirname(real_path);
-    pyro_add_import_root_n(vm, real_path, dirname_length);
+    pyro_add_import_root_with_length(vm, real_path, dirname_length);
 
     // Add the modules directory.
     char* buffer = malloc(dirname_length + strlen("/modules") + 1);
