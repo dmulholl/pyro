@@ -105,6 +105,7 @@ struct PyroVM {
 
     // Canned objects.
     PyroStr* empty_string;
+    PyroStr* binary_path;
     PyroErr* error;
 
     // String constants.
