@@ -46,3 +46,7 @@ A utility module for interacting with the Pyro VM.
 [[ `memory() -> i64` ]]
 
     Returns the VM's current memory allocation in bytes.
+
+[[ `path() -> str` ]]
+
+    Returns the filepath of the Pyro binary.
