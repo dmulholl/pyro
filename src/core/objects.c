@@ -687,6 +687,8 @@ static PyroStr* create_new_string(PyroVM* vm, char* bytes, size_t count, size_t 
 
 PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
     assert(bytes != NULL);
+    assert(capacity >= count + 1);
+    assert(bytes[count] == '\0');
 
     uint64_t hash = PYRO_STRING_HASH_FUNC((uint8_t*)bytes, count);
 

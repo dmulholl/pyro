@@ -1,10 +1,16 @@
 import std::pyro;
+import std::fs;
 
 assert $is_str(pyro::version_string);
+
 assert $is_tup(pyro::version_tuple);
+assert pyro::version_tuple > (0, 0, 0);
 
 assert $is_err(pyro::address(123));
 assert $is_str(pyro::address(pyro));
+assert $is_str(pyro::address("foobar"));
+
+assert fs::is_file(pyro::path());
 
 var bytes_allocated = pyro::memory();
 assert $is_i64(bytes_allocated);

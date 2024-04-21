@@ -1,4 +1,5 @@
 #include "../includes/pyro.h"
+#include "../../lib/whereami/whereami.h"
 
 
 static PyroValue fn_memory(PyroVM* vm, size_t arg_count, PyroValue* args) {
@@ -72,6 +73,39 @@ static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_path(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    int length = wai_getExecutablePath(NULL, 0, NULL);
+    if (length < 0) {
+        pyro_panic(vm, "path(): failed to resolve executable path");
+        return pyro_null();
+    }
+
+    char* buffer = PYRO_ALLOCATE_ARRAY(vm, char, length + 1);
+    if (!buffer) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    int result = wai_getExecutablePath(buffer, length, NULL);
+    if (result != length) {
+        PYRO_FREE_ARRAY(vm, char, buffer, length + 1);
+        pyro_panic(vm, "path(): failed to resolve executable path");
+        return pyro_null();
+    }
+
+    buffer[length] = '\0';
+
+    PyroStr* path = PyroStr_take(buffer, length, length + 1, vm);
+    if (!path) {
+        PYRO_FREE_ARRAY(vm, char, buffer, length + 1);
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    return pyro_obj(path);
+}
+
+
 void pyro_load_std_mod_pyro(PyroVM* vm, PyroMod* module) {
     PyroTup* version_tuple = PyroTup_new(5, vm);
     if (!version_tuple) {
@@ -99,4 +133,5 @@ void pyro_load_std_mod_pyro(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "gc", fn_gc, 0);
     pyro_define_pub_member_fn(vm, module, "sizeof", fn_sizeof, 1);
     pyro_define_pub_member_fn(vm, module, "address", fn_address, 1);
+    pyro_define_pub_member_fn(vm, module, "path", fn_path, 0);
 }
