@@ -135,7 +135,6 @@ PyroVM* pyro_new_vm(void) {
     vm->str_op_unary_tilde = NULL;
     vm->trace_execution = false;
     vm->str_enum = NULL;
-    vm->binary_path = NULL;
 
     // Initialize the PRNG.
     pyro_xoshiro256ss_init(&vm->prng_state, pyro_random_seed());
@@ -167,7 +166,6 @@ PyroVM* pyro_new_vm(void) {
 
     // Canned objects.
     vm->empty_string = PyroStr_COPY("");
-    vm->binary_path = vm->empty_string;
     vm->error = PyroErr_new(vm);
 
     // Static strings.

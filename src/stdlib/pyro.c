@@ -94,7 +94,6 @@ void pyro_load_std_mod_pyro(PyroVM* vm, PyroMod* module) {
     }
 
     pyro_define_pub_member(vm, module, "module_cache", pyro_obj(vm->module_cache));
-    pyro_define_pub_member(vm, module, "path", pyro_obj(vm->binary_path));
 
     pyro_define_pub_member_fn(vm, module, "memory", fn_memory, 0);
     pyro_define_pub_member_fn(vm, module, "gc", fn_gc, 0);
