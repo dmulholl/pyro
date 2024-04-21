@@ -19,7 +19,8 @@ DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG \
 # Core files for the Pyro VM.
 HDR_FILES = src/includes/*.h
 SRC_FILES = src/core/*.c src/builtins/*.c src/stdlib/*.c
-OBJ_FILES = build/common/embeds.o
+OBJ_FILES = build/common/embeds.o \
+			build/common/whereami.o
 
 # Files for the CLI binary.
 CLI_HDR_FILES = cmd/cli/*.h
@@ -150,6 +151,11 @@ build/common/args.o: lib/args/args.c lib/args/args.h
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/args.o\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/args/args.c -o build/common/args.o
+
+build/common/whereami.o: lib/whereami/whereami.c lib/whereami/whereami.h
+	@mkdir -p build/common
+	@printf "\e[1;32mBuilding\e[0m build/common/whereami.o\n"
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c -I lib/whereami lib/whereami/whereami.c -o build/common/whereami.o
 
 # ---------------- #
 #  Embedded Files  #
