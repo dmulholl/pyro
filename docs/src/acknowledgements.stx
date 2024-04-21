@@ -7,6 +7,7 @@ meta_title: Pyro &mdash; Acknowledgements
 [1]: http://craftinginterpreters.com
 [2]: https://github.com/jart/bestline
 [3]: https://prng.di.unimi.it
+[4]: https://github.com/gpakosz/whereami
 
 I was inspired to build Pyro by reading Bob Nystrom's wonderful book [Crafting Interpreters][1], so many of the cleverest ideas in the implementation build on his work.
 
@@ -21,3 +22,5 @@ Code incorporated from external libraries and projects will be listed below.
 (*) Pyro's pseudo-random number generator uses the `xoshiro256**` algorithm by David Blackman and Sebastiano Vigna.
     The implementation is based on [code by the original authors][3] released into the public domain.
 
+(*) The `std::pyro::path()` lookup uses the [whereami][4] library by Grégory Pakosz.
+    This code is dual-licensed under the MIT and WTFPLv2 licenses.
