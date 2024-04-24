@@ -806,7 +806,7 @@ static PyroValue fn_env(PyroVM* vm, size_t arg_count, PyroValue* args) {
         PyroStr* name = PYRO_AS_STR(args[0]);
         char* value = getenv(name->bytes);
         if (!value) {
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         PyroStr* string = PyroStr_COPY(value);
@@ -934,7 +934,7 @@ static PyroValue fn_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     PyroValue method = pyro_get_method(vm, obj, method_name);
     if (PYRO_IS_NULL(method)) {
-        return pyro_obj(vm->error);
+        return pyro_obj(vm->empty_error);
     }
 
     PyroBoundMethod* bound_method = PyroBoundMethod_new(vm, obj, PYRO_AS_OBJ(method));
@@ -983,7 +983,7 @@ static PyroValue fn_field(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    return pyro_obj(vm->error);
+    return pyro_obj(vm->empty_error);
 }
 
 

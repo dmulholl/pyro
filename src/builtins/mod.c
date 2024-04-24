@@ -6,7 +6,7 @@ static PyroValue mod_member(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     PyroValue member_index;
     if (!PyroMap_get(mod->all_member_indexes, args[0], &member_index, vm)) {
-        return pyro_obj(vm->error);
+        return pyro_obj(vm->empty_error);
     }
 
     return mod->members->values[member_index.as.i64];

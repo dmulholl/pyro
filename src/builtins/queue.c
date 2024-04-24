@@ -37,7 +37,7 @@ static PyroValue queue_dequeue(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (PyroQueue_dequeue(queue, &value, vm)) {
         return value;
     }
-    return pyro_obj(vm->error);
+    return pyro_obj(vm->empty_error);
 }
 
 
@@ -47,7 +47,7 @@ static PyroValue queue_peek(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (PyroQueue_peek(queue, &value, vm)) {
         return value;
     }
-    return pyro_obj(vm->error);
+    return pyro_obj(vm->empty_error);
 }
 
 

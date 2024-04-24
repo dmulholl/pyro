@@ -46,7 +46,7 @@ static PyroValue map_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (PyroMap_get(map, args[0], &value, vm)) {
         return value;
     }
-    return pyro_obj(vm->error);
+    return pyro_obj(vm->empty_error);
 }
 
 

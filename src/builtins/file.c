@@ -427,7 +427,7 @@ static PyroValue file_get_terminal_size(PyroVM* vm, size_t arg_count, PyroValue*
         return pyro_obj(tup);
     }
 
-    return pyro_obj(vm->error);
+    return pyro_obj(vm->empty_error);
 }
 
 

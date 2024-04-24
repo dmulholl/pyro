@@ -1439,7 +1439,7 @@ PyroValue pyro_op_get_index(PyroVM* vm, PyroValue receiver, PyroValue key) {
             if (PyroMap_get(map, key, &value, vm)) {
                 return value;
             }
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_OBJECT_STR: {

@@ -60,7 +60,7 @@ static PyroValue fn_sizeof(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_OBJ(args[0])) {
-        return pyro_obj(vm->error);
+        return pyro_obj(vm->empty_error);
     }
 
     PyroObject* object = PYRO_AS_OBJ(args[0]);

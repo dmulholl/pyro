@@ -356,14 +356,14 @@ static PyroValue vec_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     for (size_t i = 0; i < vec->count; i++) {
         bool found = pyro_op_compare_eq(vm, vec->values[i], target);
         if (vm->halt_flag) {
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
         if (found) {
             return pyro_i64((int64_t)i);
         }
     }
 
-    return pyro_obj(vm->error);
+    return pyro_obj(vm->empty_error);
 }
 
 
@@ -561,7 +561,7 @@ static PyroValue stack_pop(PyroVM* vm, size_t arg_count, PyroValue* args) {
     vec->version++;
 
     if (vec->count == 0) {
-        return pyro_obj(vm->error);
+        return pyro_obj(vm->empty_error);
     }
 
     vec->count--;
@@ -572,7 +572,7 @@ static PyroValue stack_pop(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue stack_peek(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroVec* vec = PYRO_AS_VEC(args[-1]);
     if (vec->count == 0) {
-        return pyro_obj(vm->error);
+        return pyro_obj(vm->empty_error);
     }
     return vec->values[vec->count - 1];
 }

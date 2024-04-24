@@ -1917,7 +1917,7 @@ PyroIter* PyroIter_empty(PyroVM* vm) {
 PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
     switch (iter->iter_type) {
         case PYRO_ITER_EMPTY: {
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_VEC: {
@@ -1926,10 +1926,10 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             if (vec->version != iter->container_version) {
                 if (vec->obj.type == PYRO_OBJECT_VEC_AS_STACK) {
                     pyro_panic(vm, "stack was modified while iterating");
-                    return pyro_obj(vm->error);
+                    return pyro_obj(vm->empty_error);
                 }
                 pyro_panic(vm, "vector was modified while iterating");
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             if (iter->next_index < vec->count) {
@@ -1938,7 +1938,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 return result;
             }
 
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_TUP: {
@@ -1947,7 +1947,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 iter->next_index++;
                 return tup->values[iter->next_index - 1];
             }
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_QUEUE: {
@@ -1956,7 +1956,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 iter->next_queue_item = iter->next_queue_item->next;
                 return next_value;
             }
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_STR: {
@@ -1965,12 +1965,12 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 PyroStr* new_str = PyroStr_copy(&str->bytes[iter->next_index], 1, false, vm);
                 if (!new_str) {
                     pyro_panic(vm, "out of memory");
-                    return pyro_obj(vm->error);
+                    return pyro_obj(vm->empty_error);
                 }
                 iter->next_index++;
                 return pyro_obj(new_str);
             }
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_STR_BYTES: {
@@ -1980,7 +1980,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 iter->next_index++;
                 return pyro_i64(byte_value);
             }
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_STR_RUNES: {
@@ -1999,7 +1999,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                     iter->next_index
                 );
             }
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_MAP_KEYS: {
@@ -2008,10 +2008,10 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             if (map->version != iter->container_version) {
                 if (map->obj.type == PYRO_OBJECT_MAP_AS_SET) {
                     pyro_panic(vm, "set was modified while iterating");
-                    return pyro_obj(vm->error);
+                    return pyro_obj(vm->empty_error);
                 }
                 pyro_panic(vm, "map was modified while iterating");
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             while (iter->next_index < map->entry_array_count) {
@@ -2023,7 +2023,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 return entry->key;
             }
 
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_MAP_VALUES: {
@@ -2031,7 +2031,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
             if (map->version != iter->container_version) {
                 pyro_panic(vm, "map was modified while iterating");
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             while (iter->next_index < map->entry_array_count) {
@@ -2043,7 +2043,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 return entry->value;
             }
 
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_MAP_ENTRIES: {
@@ -2051,7 +2051,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
             if (map->version != iter->container_version) {
                 pyro_panic(vm, "map was modified while iterating");
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             while (iter->next_index < map->entry_array_count) {
@@ -2064,7 +2064,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 PyroTup* tup = PyroTup_new(2, vm);
                 if (!tup) {
                     pyro_panic(vm, "out of memory");
-                    return pyro_obj(vm->error);
+                    return pyro_obj(vm->empty_error);
                 }
 
                 tup->values[0] = entry->key;
@@ -2072,7 +2072,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 return pyro_obj(tup);
             }
 
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_FUNC_MAP: {
@@ -2082,12 +2082,12 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                 return next_value;
             }
 
-            if (!pyro_push(vm, pyro_obj(iter->callback))) return pyro_obj(vm->error);
-            if (!pyro_push(vm, next_value)) return pyro_obj(vm->error);
+            if (!pyro_push(vm, pyro_obj(iter->callback))) return pyro_obj(vm->empty_error);
+            if (!pyro_push(vm, next_value)) return pyro_obj(vm->empty_error);
 
             PyroValue result = pyro_call_function(vm, 1);
             if (vm->halt_flag) {
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             return result;
@@ -2102,12 +2102,12 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                     return next_value;
                 }
 
-                if (!pyro_push(vm, pyro_obj(iter->callback))) return pyro_obj(vm->error);
-                if (!pyro_push(vm, next_value)) return pyro_obj(vm->error);
+                if (!pyro_push(vm, pyro_obj(iter->callback))) return pyro_obj(vm->empty_error);
+                if (!pyro_push(vm, next_value)) return pyro_obj(vm->empty_error);
 
                 PyroValue result = pyro_call_function(vm, 1);
                 if (vm->halt_flag) {
-                    return pyro_obj(vm->error);
+                    return pyro_obj(vm->empty_error);
                 }
 
                 if (pyro_is_truthy(result)) {
@@ -2126,7 +2126,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             PyroTup* tup = PyroTup_new(2, vm);
             if (!tup) {
                 pyro_panic(vm, "out of memory");
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             tup->values[0] = pyro_i64(iter->next_enum);
@@ -2138,10 +2138,10 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         case PYRO_ITER_GENERIC: {
             PyroValue next_method = pyro_get_method(vm, pyro_obj(iter->source), vm->str_dollar_next);
-            if (!pyro_push(vm, pyro_obj(iter->source))) return pyro_obj(vm->error);
+            if (!pyro_push(vm, pyro_obj(iter->source))) return pyro_obj(vm->empty_error);
             PyroValue result = pyro_call_method(vm, next_method, 0);
             if (vm->halt_flag) {
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
             return result;
         }
@@ -2153,7 +2153,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                     iter->range_next += iter->range_step;
                     return pyro_i64(range_next);
                 }
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             if (iter->range_step < 0) {
@@ -2162,16 +2162,16 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
                     iter->range_next += iter->range_step;
                     return pyro_i64(range_next);
                 }
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
         }
 
         case PYRO_ITER_STR_LINES: {
             PyroStr* str = (PyroStr*)iter->source;
             if (iter->next_index == str->count) {
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             const char* const line_start = str->bytes + iter->next_index;
@@ -2195,7 +2195,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             PyroStr* next_line = PyroStr_copy(line_start, count, false, vm);
             if (!next_line) {
                 pyro_panic(vm, "out of memory");
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             return pyro_obj(next_line);
@@ -2204,19 +2204,19 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
         case PYRO_ITER_FILE_LINES: {
             // If the source is NULL, the iterator has been exhausted.
             if (iter->source == NULL) {
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             PyroFile* file = (PyroFile*)iter->source;
             PyroStr* next_line = PyroFile_read_line(file, vm);
             if (vm->halt_flag) {
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             // A NULL return value means the file has been exhausted.
             if (!next_line) {
                 iter->source = NULL;
-                return pyro_obj(vm->error);
+                return pyro_obj(vm->empty_error);
             }
 
             return pyro_obj(next_line);
@@ -2224,7 +2224,7 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
 
         default:
             assert(false);
-            return pyro_obj(vm->error);
+            return pyro_obj(vm->empty_error);
     }
 }
 

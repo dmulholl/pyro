@@ -885,7 +885,7 @@ static PyroValue str_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     if (index + target->count > str->count) {
-        return pyro_obj(vm->error);
+        return pyro_obj(vm->empty_error);
     }
 
     size_t last_possible_match_index = str->count - target->count;
@@ -897,7 +897,7 @@ static PyroValue str_index_of(PyroVM* vm, size_t arg_count, PyroValue* args) {
         index++;
     }
 
-    return pyro_obj(vm->error);
+    return pyro_obj(vm->empty_error);
 }
 
 

@@ -59,7 +59,7 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->class_enum_member);
 
     // The VM's pool of canned objects.
-    mark_object(vm, (PyroObject*)vm->error);
+    mark_object(vm, (PyroObject*)vm->empty_error);
     mark_object(vm, (PyroObject*)vm->empty_string);
     mark_object(vm, (PyroObject*)vm->str_dollar_init);
     mark_object(vm, (PyroObject*)vm->str_dollar_str);
