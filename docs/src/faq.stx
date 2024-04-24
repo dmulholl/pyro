@@ -22,7 +22,7 @@ No. Right now, Pyro is approximately as fast as Python, which is generally consi
 
 Execution speed isn't a priority for Pyro --- if you need fast code, you should use a compiled language.
 
-That said, Pyro is highly *optimizable* so, in theory, future versions could run at least an order of magnitude faster, but for now this is a theoretical possibility.
+That said, Pyro is designed to be highly *optimizable* so, in theory, future versions could run at least an order of magnitude faster, but for now this is a theoretical possibility.
 
 
 ### Is Pyro embeddable?
@@ -32,3 +32,10 @@ Potentially, in the future.
 Right now, Pyro's code isn't organised in a way that would make it easy to embed, but that isn't a fundamental problem.
 
 Once the core language is mature, I'll work on making it easily embeddable so it can be used, like Lua, as a scripting language inside a larger application.
+
+
+### Does Pyro support compiled modules?
+
+Yes. You can write a Pyro module in C, compile it as a dynamic library, then `import` the resulting `.so` file just like a regular Pyro module.
+
+I haven't gotten around to documenting this feature yet as the internal interface is still very unstable.
