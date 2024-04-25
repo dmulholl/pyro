@@ -74,7 +74,7 @@ You can provide an input string to `$shell()` which will be written to the comma
 
 ### Fibonacci numbers
 
-Calculate the n-th Fibonacci number:
+Here's a Pyro implementation of the classic recursive algorithm for returning the n-th Fibonacci number:
 
 ::: code pyro
     def fib(n) {
