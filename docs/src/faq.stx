@@ -39,3 +39,4 @@ Once the core language is mature, I'll work on making it easily embeddable so it
 Yes. You can write a Pyro module in C, compile it as a dynamic library, then `import` the resulting `.so` file just like a regular Pyro module.
 
 I haven't gotten around to documenting this feature yet as the internal interface is still very unstable.
+In the meantime, you can find a sample compiled module [here](https://github.com/dmulholl/pyro/blob/master/etc/compiled_module.c).
