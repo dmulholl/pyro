@@ -2,7 +2,7 @@
 #include "../../lib/sqlite/sqlite3.h"
 
 
-void pyro_load_std_mod_sqlite(PyroVM* vm, PyroMod* module) {
+void pyro_load_stdlib_module_sqlite(PyroVM* vm, PyroMod* module) {
     /* PyroStr* version = PyroStr_COPY(SQLITE_VERSION); */
     /* if (!version) { */
     /*     return; */

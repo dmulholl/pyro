@@ -9,7 +9,7 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
     PyroStr* name = PYRO_AS_STR(args[1]);
 
     if (strcmp(name->bytes, "constants") == 0) {
-        pyro_load_std_mod_constants(vm, module);
+        pyro_load_stdlib_module_constants(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
@@ -17,7 +17,7 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
     }
 
     if (strcmp(name->bytes, "math") == 0) {
-        pyro_load_std_mod_math(vm, module);
+        pyro_load_stdlib_module_math(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
@@ -25,7 +25,7 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
     }
 
     if (strcmp(name->bytes, "prng") == 0) {
-        pyro_load_std_mod_prng(vm, module);
+        pyro_load_stdlib_module_prng(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
@@ -33,7 +33,7 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
     }
 
     if (strcmp(name->bytes, "pyro") == 0) {
-        pyro_load_std_mod_pyro(vm, module);
+        pyro_load_stdlib_module_pyro(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
@@ -41,7 +41,7 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
     }
 
     if (strcmp(name->bytes, "sqlite") == 0) {
-        pyro_load_std_mod_sqlite(vm, module);
+        pyro_load_stdlib_module_sqlite(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
@@ -49,7 +49,7 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
     }
 
     if (strcmp(name->bytes, "fs") == 0) {
-        pyro_load_std_mod_fs(vm, module);
+        pyro_load_stdlib_module_fs(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }
@@ -57,7 +57,7 @@ static bool try_load_builtin_module(PyroVM* vm, uint8_t arg_count, PyroValue* ar
     }
 
     if (strcmp(name->bytes, "log") == 0) {
-        pyro_load_std_mod_log(vm, module);
+        pyro_load_stdlib_module_log(vm, module);
         if (vm->memory_allocation_failed) {
             pyro_panic(vm, "out of memory");
         }

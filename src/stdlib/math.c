@@ -225,7 +225,7 @@ static PyroValue fn_floor(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_math(PyroVM* vm, PyroMod* module) {
+void pyro_load_stdlib_module_math(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "abs", fn_abs, 1);
     pyro_define_pub_member_fn(vm, module, "acos", fn_acos, 1);
     pyro_define_pub_member_fn(vm, module, "asin", fn_asin, 1);

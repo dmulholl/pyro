@@ -1,7 +1,7 @@
 #include "../includes/pyro.h"
 
 
-void pyro_load_std_mod_constants(PyroVM* vm, PyroMod* module) {
+void pyro_load_stdlib_module_constants(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member(vm, module, "pi", pyro_f64(PYRO_PI));
     pyro_define_pub_member(vm, module, "tau", pyro_f64(PYRO_PI * 2.0));
     pyro_define_pub_member(vm, module, "e", pyro_f64(PYRO_E));
@@ -23,4 +23,3 @@ void pyro_load_std_mod_constants(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member(vm, module, "u16_max", pyro_i64(UINT16_MAX));
     pyro_define_pub_member(vm, module, "u32_max", pyro_i64(UINT32_MAX));
 }
-

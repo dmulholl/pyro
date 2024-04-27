@@ -106,7 +106,7 @@ static PyroValue fn_path(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_pyro(PyroVM* vm, PyroMod* module) {
+void pyro_load_stdlib_module_pyro(PyroVM* vm, PyroMod* module) {
     PyroTup* version_tuple = PyroTup_new(5, vm);
     if (!version_tuple) {
         return;

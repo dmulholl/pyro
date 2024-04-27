@@ -97,7 +97,7 @@ static PyroValue generator_seed(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_prng(PyroVM* vm, PyroMod* module) {
+void pyro_load_stdlib_module_prng(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "rand_int", fn_rand_int, 1);
     pyro_define_pub_member_fn(vm, module, "rand_float", fn_rand_float, 0);
 

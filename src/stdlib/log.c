@@ -339,7 +339,7 @@ static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_log(PyroVM* vm, PyroMod* module) {
+void pyro_load_stdlib_module_log(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "debug", fn_debug, -1);
     pyro_define_pub_member_fn(vm, module, "info", fn_info, -1);
     pyro_define_pub_member_fn(vm, module, "warn", fn_warn, -1);

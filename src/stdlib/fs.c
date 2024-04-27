@@ -396,7 +396,7 @@ static PyroValue fn_abspath(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_mod_fs(PyroVM* vm, PyroMod* module) {
+void pyro_load_stdlib_module_fs(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "exists", fn_exists, 1);
     pyro_define_pub_member_fn(vm, module, "is_file", fn_is_file, 1);
     pyro_define_pub_member_fn(vm, module, "is_dir", fn_is_dir, 1);
