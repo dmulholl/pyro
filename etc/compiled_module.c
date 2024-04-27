@@ -1,24 +1,21 @@
-// This is a sample compiled module. After this file has been compiled as a dynamic library, you
-// can import the resulting 'compiled_module.so' file just like a regular Pyro module, e.g.
-//
-//  import compiled_module;
-//  echo compiled_module::add_values(1.23, 4.56);
-//  echo compiled_module::add_values("foo", "bar");
-//  echo compiled_module::add_i64s(123, 456);
-//
-// You can build this sample compiled module by running:
+// This is a sample compiled module. You can compile it as a dynamic library by running:
 //
 //  make compiled-module
 //
-// You can find the resulting 'compiled_module.so' file in the 'build/release' directory.
+// You can find the resulting 'compiled_module.so' file in the 'build/release' directory. You can
+// import this file just like a regular Pyro module, e.g.
 //
-// For more examples, see the implementation of Pyro's builtin standard library modules in the
-// Pyro repository's 'src/stdlib' directory.
+//  import compiled_module;
+//  assert compiled_module::add_values("foo", "bar") == "foobar";
+//  assert compiled_module::add_i64s(123, 456) == 579;
+//
+// For more examples, see the implementation of Pyro's standard library modules in the 'src/stdlib'
+// directory.
 
 #include "../src/includes/pyro.h"
 
 // All Pyro functions and methods implemented in C have the same function signature.
-// - [args] is a pointer to the function-call's arguments.
+// - [args] is a pointer to the function's arguments.
 // - [arg_count] is the number of arguments in [args].
 // - If the function has been registered as a method on a Pyro class, the object instance that the
 //   method is being called on will be located at [args[-1]].
@@ -28,8 +25,7 @@ static PyroValue fn_add_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
     return pyro_op_binary_plus(vm, args[0], args[1]);
 }
 
-// This function adds [i64] values -- it will panic and return null if either argument (or both) are
-// not of type [i64].
+// This function will panic and return [null] if both arguments are not [i64] values.
 static PyroValue fn_add_i64s(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_I64(args[0])) {
         pyro_panic(
