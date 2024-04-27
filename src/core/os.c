@@ -363,7 +363,7 @@ void pyro_dlopen_as_module(PyroVM* vm, const char* path, const char* mod_name, P
     typedef bool (*init_func_t)(PyroVM* vm, PyroMod* module);
     init_func_t init_func;
 
-    char* init_func_name = pyro_sprintf(vm, "pyro_init_mod_%s", mod_name);
+    char* init_func_name = pyro_sprintf(vm, "pyro_init_module_%s", mod_name);
     if (vm->halt_flag) {
         return;
     }
