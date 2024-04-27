@@ -93,6 +93,11 @@ app: $(OBJ_FILES)
 		$(APP_SRC_FILES) \
 		-lm -ldl -pthread
 
+compiled-module: ## Builds the sample compiled module.
+	@mkdir -p build/release
+	@printf "\e[1;32mBuilding\e[0m build/release/compiled_module.so\n"
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -shared -fPIC -Wl,-undefined,dynamic_lookup -o build/release/compiled_module.so etc/compiled_module.c
+
 # ------------------ #
 #  Utility Commands  #
 # ------------------ #
