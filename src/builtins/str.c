@@ -1321,7 +1321,7 @@ static PyroValue str_is_ascii_printable(PyroVM* vm, size_t arg_count, PyroValue*
 }
 
 
-void pyro_load_std_builtins_str(PyroVM* vm) {
+void pyro_load_builtin_type_str(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$str", fn_str, 1);
     pyro_define_superglobal_fn(vm, "$is_str", fn_is_str, 1);

@@ -74,7 +74,7 @@ static PyroValue rune_is_unicode_ws(PyroVM* vm, size_t arg_count, PyroValue* arg
 }
 
 
-void pyro_load_std_builtins_rune(PyroVM* vm) {
+void pyro_load_builtin_type_rune(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$rune", fn_rune, 1);
     pyro_define_superglobal_fn(vm, "$is_rune", fn_is_rune, 1);

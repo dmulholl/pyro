@@ -1130,7 +1130,7 @@ static PyroValue fn_eval(PyroVM* vm, size_t arg_count, PyroValue* args) {
 /* -------- */
 
 
-void pyro_load_std_builtins(PyroVM* vm) {
+void pyro_load_superglobals(PyroVM* vm) {
     pyro_define_superglobal(vm, "$roots", pyro_obj(vm->import_roots));
 
     PyroTup* args = PyroTup_new(0, vm);

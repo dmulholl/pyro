@@ -58,7 +58,7 @@ static PyroValue fn_is_enum_member_of_type(PyroVM* vm, size_t arg_count, PyroVal
 }
 
 
-void pyro_load_std_builtins_enum(PyroVM* vm) {
+void pyro_load_builtin_type_enum(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$is_enum_type", fn_is_enum_type, 1);
     pyro_define_superglobal_fn(vm, "$is_enum_member", fn_is_enum_member, 1);

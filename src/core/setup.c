@@ -280,19 +280,19 @@ PyroVM* pyro_new_vm(void) {
     }
 
     // Load builtins.
-    pyro_load_std_builtins(vm);
-    pyro_load_std_builtins_map(vm);
-    pyro_load_std_builtins_vec(vm);
-    pyro_load_std_builtins_tup(vm);
-    pyro_load_std_builtins_str(vm);
-    pyro_load_std_builtins_buf(vm);
-    pyro_load_std_builtins_file(vm);
-    pyro_load_std_builtins_iter(vm);
-    pyro_load_std_builtins_queue(vm);
-    pyro_load_std_builtins_err(vm);
-    pyro_load_std_builtins_mod(vm);
-    pyro_load_std_builtins_rune(vm);
-    pyro_load_std_builtins_enum(vm);
+    pyro_load_superglobals(vm);
+    pyro_load_builtin_type_map(vm);
+    pyro_load_builtin_type_vec(vm);
+    pyro_load_builtin_type_tup(vm);
+    pyro_load_builtin_type_str(vm);
+    pyro_load_builtin_type_buf(vm);
+    pyro_load_builtin_type_file(vm);
+    pyro_load_builtin_type_iter(vm);
+    pyro_load_builtin_type_queue(vm);
+    pyro_load_builtin_type_err(vm);
+    pyro_load_builtin_type_mod(vm);
+    pyro_load_builtin_type_rune(vm);
+    pyro_load_builtin_type_enum(vm);
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);

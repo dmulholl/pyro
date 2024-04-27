@@ -478,7 +478,7 @@ static PyroValue iter_reduce(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_std_builtins_iter(PyroVM* vm) {
+void pyro_load_builtin_type_iter(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$iter", fn_iter, 1);
     pyro_define_superglobal_fn(vm, "$is_iter", fn_is_iter, 1);

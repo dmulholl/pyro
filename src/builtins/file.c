@@ -431,7 +431,7 @@ static PyroValue file_get_terminal_size(PyroVM* vm, size_t arg_count, PyroValue*
 }
 
 
-void pyro_load_std_builtins_file(PyroVM* vm) {
+void pyro_load_builtin_type_file(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$file", fn_file, -1);
     pyro_define_superglobal_fn(vm, "$is_file", fn_is_file, 1);
