@@ -1,5 +1,5 @@
-#ifndef pyro_stdlib_modules_h
-#define pyro_stdlib_modules_h
+#ifndef pyro_stdlib_h
+#define pyro_stdlib_h
 
 // Standard library modules.
 void pyro_load_stdlib_module_constants(PyroVM* vm, PyroMod* module);

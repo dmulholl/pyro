@@ -1,5 +1,5 @@
-#ifndef pyro_stdlib_builtins_h
-#define pyro_stdlib_builtins_h
+#ifndef pyro_builtins_h
+#define pyro_builtins_h
 
 // Superglobal functions and variables.
 void pyro_load_superglobals(PyroVM* vm);
