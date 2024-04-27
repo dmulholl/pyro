@@ -15,7 +15,7 @@ void pyro_load_builtin_type_range(PyroVM* vm);
 void pyro_load_builtin_type_iter(PyroVM* vm);
 void pyro_load_builtin_type_queue(PyroVM* vm);
 void pyro_load_builtin_type_err(PyroVM* vm);
-void pyro_load_builtin_type_mod(PyroVM* vm);
+void pyro_load_builtin_type_module(PyroVM* vm);
 void pyro_load_builtin_type_rune(PyroVM* vm);
 void pyro_load_builtin_type_enum(PyroVM* vm);
 

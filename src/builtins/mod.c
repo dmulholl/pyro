@@ -78,7 +78,7 @@ static PyroValue mod_globals(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-void pyro_load_builtin_type_mod(PyroVM* vm) {
+void pyro_load_builtin_type_module(PyroVM* vm) {
     // Methods -- public.
     pyro_define_pub_method(vm, vm->class_module, "has_member", mod_has_member, 1);
     pyro_define_pub_method(vm, vm->class_module, "member", mod_member, 1);

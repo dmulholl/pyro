@@ -290,7 +290,7 @@ PyroVM* pyro_new_vm(void) {
     pyro_load_builtin_type_iter(vm);
     pyro_load_builtin_type_queue(vm);
     pyro_load_builtin_type_err(vm);
-    pyro_load_builtin_type_mod(vm);
+    pyro_load_builtin_type_module(vm);
     pyro_load_builtin_type_rune(vm);
     pyro_load_builtin_type_enum(vm);
 
