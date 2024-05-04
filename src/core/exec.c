@@ -2910,6 +2910,18 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Converts the value on top of the stack into a string.
+            // Before: [ ... ][ value ]
+            // After:  [ ... ][ str ]
+            case PYRO_OPCODE_MAKE_STR: {
+                PyroStr* string = pyro_stringify_value(vm, vm->stack_top[-1]);
+                if (vm->halt_flag) {
+                    break;
+                }
+                vm->stack_top[-1] = pyro_obj(string);
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;

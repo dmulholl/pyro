@@ -603,6 +603,9 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_IS_F64:
             return atomic_instruction(vm, "IS_F64", ip);
 
+        case PYRO_OPCODE_MAKE_STR:
+            return atomic_instruction(vm, "MAKE_STR", ip);
+
         default:
             pyro_stdout_write_f(vm, "INVALID OPCODE [%d]\n", instruction);
             return ip + 1;

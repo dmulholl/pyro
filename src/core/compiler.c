@@ -1247,6 +1247,18 @@ static bool try_parse_optimized_superglobal_call(Parser* parser) {
         return true;
     }
 
+    if (name.length == 4 && memcmp(name.start, "$str", 4) == 0) {
+        advance(parser);
+        parse_expression(parser, false);
+
+        if (!consume(parser, TOKEN_RIGHT_PAREN, "expected ')' after argument in call to $str()")) {
+            return false;
+        }
+
+        emit_byte(parser, PYRO_OPCODE_MAKE_STR);
+        return true;
+    }
+
     return false;
 }
 
