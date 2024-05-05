@@ -74,7 +74,7 @@ debug: $(OBJ_FILES) $(CLI_OBJ_FILES)
 debug-sanitized: ## Builds a debug binary with sanitizer checks.
 debug-sanitized: $(OBJ_FILES) $(CLI_OBJ_FILES)
 	@mkdir -p build/debug
-	@printf "\e[1;32mBuilding\e[0m build/debug/pyro\n"
+	@printf "\e[1;32mBuilding\e[0m build/debug/pyro (sanitizer checks enabled)\n"
 	@$(CC) $(CFLAGS) $(DEBUG_FLAGS) \
 		-fsanitize=address,undefined \
 		-o build/debug/pyro \

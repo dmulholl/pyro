@@ -36,6 +36,10 @@ static PyroObject* allocate_object(PyroVM* vm, size_t size, PyroObjectType type)
 
 
 PyroTup* PyroTup_new(size_t count, PyroVM* vm) {
+    if (count == 0 && vm->empty_tuple) {
+        return vm->empty_tuple;
+    }
+
     PyroTup* tup = ALLOCATE_FLEX_OBJECT(vm, PyroTup, PYRO_OBJECT_TUP, count, PyroValue);
     if (!tup) {
         return NULL;

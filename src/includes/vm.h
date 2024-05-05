@@ -106,6 +106,7 @@ struct PyroVM {
     // Canned objects.
     PyroStr* empty_string;
     PyroErr* empty_error;
+    PyroTup* empty_tuple;
 
     // String constants.
     PyroStr* str_dollar_init;

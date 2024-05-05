@@ -32,6 +32,7 @@ PyroVM* pyro_new_vm(void) {
     vm->class_enum_member = NULL;
     vm->empty_error = NULL;
     vm->empty_string = NULL;
+    vm->empty_tuple = NULL;
     vm->exit_code = 0;
     vm->exit_flag = false;
     vm->gc_disallows = 0;
@@ -167,6 +168,7 @@ PyroVM* pyro_new_vm(void) {
     // Canned objects.
     vm->empty_string = PyroStr_COPY("");
     vm->empty_error = PyroErr_new(vm);
+    vm->empty_tuple = PyroTup_new(0, vm);
 
     // Static strings.
     vm->str_dollar_init = PyroStr_COPY("$init");
