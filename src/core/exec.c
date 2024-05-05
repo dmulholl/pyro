@@ -2078,14 +2078,14 @@ static void run(PyroVM* vm) {
             case PYRO_OPCODE_MAKE_TUP: {
                 uint16_t item_count = READ_BE_U16();
 
-                PyroTup* tup = PyroTup_new(item_count, vm);
-                if (!tup) {
-                    pyro_panic(vm, "out of memory");
+                if (item_count == 0) {
+                    pyro_push(vm, pyro_obj(vm->empty_tuple));
                     break;
                 }
 
-                if (item_count == 0) {
-                    pyro_push(vm, pyro_obj(tup));
+                PyroTup* tup = PyroTup_new(item_count, vm);
+                if (!tup) {
+                    pyro_panic(vm, "out of memory");
                     break;
                 }
 
