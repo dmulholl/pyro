@@ -694,6 +694,11 @@ PyroStr* PyroStr_take(char* bytes, size_t count, size_t capacity, PyroVM* vm) {
     assert(capacity >= count + 1);
     assert(bytes[count] == '\0');
 
+    if (count == 0 && vm->empty_string) {
+        PYRO_FREE_ARRAY(vm, char, bytes, capacity);
+        return vm->empty_string;
+    }
+
     uint64_t hash = PYRO_STRING_HASH_FUNC((uint8_t*)bytes, count);
 
     PyroStr* interned_string = PyroStrPool_contains(&vm->string_pool, bytes, count, hash);
