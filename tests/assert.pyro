@@ -1,0 +1,45 @@
+def passes() {
+    assert 1 + 1 == 2;
+}
+
+with result = try passes() {
+    if $is_err(result) {
+        $panic("unexpected error from passes() function: ${result}");
+    }
+}
+
+def passes_with_error_message() {
+    assert 1 + 1 == 2, "test assert failed";
+}
+
+with result = try passes_with_error_message() {
+    if $is_err(result) {
+        $panic("unexpected error from passes_with_error_message() function: ${result}");
+    }
+}
+
+def fails() {
+    assert 1 + 1 == 3;
+}
+
+with result = try fails() {
+    if !$is_err(result) {
+        $panic("expected error from fails() function, got: ${result}");
+    }
+}
+
+def fails_with_error_message() {
+    assert 1 + 1 == 3, "test assert failed";
+}
+
+with result = try fails_with_error_message() {
+    if !$is_err(result) {
+        $panic("expected error from fails_with_error_message() function, got: ${result}");
+    }
+
+    let expected_error_message = "assertion failed: test assert failed";
+
+    if result:message() != expected_error_message {
+        $panic("expected error message '${expected_error_message}' from fails_with_error_message() function, got: ${result}");
+    }
+}

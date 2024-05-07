@@ -322,6 +322,8 @@ static void advance(Parser* parser) {
 
 
 // Reads the next token from the lexer and validates that it has the expected type.
+// - Returns true if the token has the expected type.
+// - Returns false and raises a syntax-error if the token does not have the expected type.
 static bool consume(Parser* parser, TokenType type, const char* error_message) {
     if (parser->next_token.type == type) {
         advance(parser);
@@ -1940,7 +1942,7 @@ static void parse_echo_stmt(Parser* parser) {
         count++;
     }
 
-    consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
+    consume(parser, TOKEN_SEMICOLON, "expected ';' after echo statement");
     emit_u8_u8(parser, PYRO_OPCODE_ECHO, count);
 }
 
@@ -1953,7 +1955,17 @@ static void parse_assert_stmt(Parser* parser) {
         );
         return;
     }
-    consume(parser, TOKEN_SEMICOLON, "expected ';' after expression");
+
+    if (match(parser, TOKEN_COMMA)) {
+        parse_expression(parser, false);
+    } else {
+        emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
+    }
+
+    if (!consume(parser, TOKEN_SEMICOLON, "expected ';' after assert statement")) {
+        return;
+    }
+
     emit_byte(parser, PYRO_OPCODE_ASSERT);
 }
 

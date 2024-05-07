@@ -788,26 +788,26 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Implements the statement: [assert <expression>].
-            // Before: [ ... ][ value ]
+            // Implements the statement: [assert <expression>, <error-message>].
+            // Before: [ ... ][ value ][ error_message ]
             // After:  [ ... ]
             case PYRO_OPCODE_ASSERT: {
-                PyroValue value = pyro_pop(vm);
-                if (pyro_is_truthy(value)) {
+                if (pyro_is_truthy(vm->stack_top[-2])) {
+                    vm->stack_top -= 2;
                     break;
                 }
 
-                if (PYRO_IS_BOOL(value)) {
-                    pyro_panic(vm, "assertion failed: expected truthy value, got false");
-                } else if (PYRO_IS_NULL(value)) {
-                    pyro_panic(vm, "assertion failed: expected truthy value, got null");
-                } else if (PYRO_IS_ERR(value)) {
-                    pyro_panic(vm, "assertion failed: expected truthy value, got error");
-                } else {
-                    assert(false);
+                if (PYRO_IS_NULL(vm->stack_top[-1])) {
                     pyro_panic(vm, "assertion failed");
+                    break;
                 }
 
+                PyroStr* error_message = pyro_stringify_value(vm, vm->stack_top[-1]);
+                if (vm->halt_flag) {
+                    break;
+                }
+
+                pyro_panic(vm, "assertion failed: %s", error_message->bytes);
                 break;
             }
 

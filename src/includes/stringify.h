@@ -19,14 +19,14 @@ PyroStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...);
 
 // Returns the default string representation of [value].
 // - Panics and returns NULL if an error occurs.
-// - This function can call into Pyro code and can therefore set the exit flag.
+// - This function can call into Pyro code and can therefore set the panic and/or exit flags.
 // - The caller should check [vm->halt_flag] immediately on return before using the result.
 // - If [vm->halt_flag] is false the return value is safe to use.
 PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value);
 
 // Returns the debug string representation of [value].
 // - Panics and returns NULL if an error occurs.
-// - This function can call into Pyro code and can therefore set the exit flag.
+// - This function can call into Pyro code and can therefore set the panic and/or exit flags.
 // - The caller should check [vm->halt_flag] immediately on return before using the result.
 // - If [vm->halt_flag] is false the return value is safe to use.
 PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value);
