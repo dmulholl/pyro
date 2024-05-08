@@ -29,7 +29,7 @@ with result = try fails() {
 }
 
 def fails_with_error_message() {
-    assert 1 + 1 == 3, "test assert failed";
+    assert 1 + 1 == 3, "foo bar baz";
 }
 
 with result = try fails_with_error_message() {
@@ -37,7 +37,7 @@ with result = try fails_with_error_message() {
         $panic("expected error from fails_with_error_message() function, got: ${result}");
     }
 
-    let expected_error_message = "assertion failed: test assert failed";
+    let expected_error_message = "assertion failed: foo bar baz";
 
     if result:message() != expected_error_message {
         $panic("expected error message '${expected_error_message}' from fails_with_error_message() function, got: ${result}");
