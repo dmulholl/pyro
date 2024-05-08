@@ -35,23 +35,35 @@ For each input file specified on the command line, Pyro first executes the file,
 You can use an `assert` statement to make a test file or function panic if a test fails, e.g.
 
 ::: code pyro
-      def $test_addition() {
-          assert 1 + 2 == 3;
-      }
+    def add(a, b) {
+        return a + b;
+    }
 
-The syntax for an `assert` statement is:
-
-    assert <expression>;
+    def $test_addition() {
+        assert add(1, 2) == 3; # okay
+        assert add(1, 2) == 4; # panics
+    }
 
 An `assert` statement passes if its operand expression evaluates as *truthy* or fails (i.e. panics) if it evaluates as *falsey*.
 
 (In Pyro, the values `false`, `null`, and `err` are *falsey*; all other values are *truthy*.)
 
+The syntax for an `assert` statement is:
+
+::: code
+    assert <expression> [, <error-message>] ;
+
+Optionally, you can specify an error message in case the assertion fails, e.g.
+
+::: code Pyro
+    let result = get_result();
+    assert result == 123, "unexpected result: ${result}";
+
 Alternatively, you can make a test fail by calling the builtin `$panic()` function directly, e.g.
 
 ::: code pyro
     def $test_result_type() {
-        let result = foo(123, 456);
+        let result = get_result(123, 456);
         if !$is_i64(result) {
             $panic("expected i64, got {}", $type(result));
         }

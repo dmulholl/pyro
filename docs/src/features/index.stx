@@ -17,6 +17,7 @@ meta_title: Pyro &mdash; Language Features
 * [Loop Closures](@root/features/loop-closures//)
 * [Constants](@root/features/constants//)
 * [Conditional Expressions](@root/features/conditional-expressions//)
+* [Assertions](@root/features/assertions//)
 
 
 ### Testing & Benchmarking

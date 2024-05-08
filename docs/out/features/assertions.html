@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pyro &mdash; Assertions</title>
+
+        
+
+        <link rel="stylesheet" href="../assets/fonts.css">
+        <link rel="stylesheet" href="../assets/graphite.css">
+        <link rel="stylesheet" href="../assets/pygments.css">
+
+        
+            <script src="../assets/code.js"></script>
+        
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+
+    </head>
+    <body class="node-features-assertions node-features node">
+        <header class="masthead">
+            <h1><a href="../index.html">Pyro</a></h1>
+            
+                <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
+            
+            
+                <p class="version">Version 0.16.14</p>
+            
+            <nav class="menu">
+                <input id="menu-check" type="checkbox"/>
+                <label id="menu-label" for="menu-check" class="unselectable">
+                    <span class="icon close-icon">✕</span>
+                    <span class="icon open-icon">☰</span>
+                    <span class="text">Menu</span>
+                </label>
+                <ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../quickstart.html">Quickstart</a></li>
+<li><a href="../tour.html">Language Tour</a></li>
+<li><a href="../building.html">Building &amp; Installing</a></li>
+<li><a href="../repl.html">The REPL</a></li>
+<li><a href="../features.html">Language Features</a></li>
+<li><a href="../builtins.html">Builtin Types</a></li>
+<li><a href="../superglobals.html">Superglobals</a></li>
+<li><a href="../stdlib.html">Standard Library</a></li>
+<li><a href="../examples.html">Examples</a></li>
+<li><a href="../tutorials.html">Tutorials</a></li>
+<li><a href="../faq.html">FAQ</a></li>
+<li><a href="../syntax-highlighting.html">Syntax Highlighting</a></li>
+<li><a href="../acknowledgements.html">Acknowledgements</a></li>
+<li><a href="../license.html">License</a></li>
+<li><a href="https://github.com/dmulholl/pyro">Github</a></li>
+</ul>
+            </nav>
+        </header>
+
+        <article class="main">
+            <header class="title">
+                <h1>Assertions</h1>
+                
+                <hr>
+            </header>
+            <p>
+An <code>assert</code> statement panics if its operand expression evaluates as falsey, e.g.
+</p>
+<pre class="lang-Pyro pygments" data-lang="Pyro">
+<span class="k">assert</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span> <span class="c1"># okay</span>
+<span class="k">assert</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span> <span class="c1"># panics</span>
+</pre>
+<p>
+(In Pyro, the values <code>false</code>, <code>null</code>, and <code>err</code> are falsey; all other values are truthy.)
+</p>
+<p>
+The syntax of an <code>assert</code> statement is:
+</p>
+<pre>
+assert &lt;expression&gt; [, &lt;error-message&gt;] ;
+</pre>
+<p>
+Optionally, you can specify an error message in case the assertion fails, e.g.
+</p>
+<pre class="lang-Pyro pygments" data-lang="Pyro">
+<span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">get_result</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">result</span> <span class="o">==</span> <span class="mi">123</span><span class="p">,</span> <span class="s">&quot;unexpected result: ${result}&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The error message can be an arbitrary expression &mdash; if its value isn't a string, it will be automatically stringified.
+</p>
+        </article>
+
+        
+    </body>
+</html>
