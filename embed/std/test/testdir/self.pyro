@@ -1,4 +1,4 @@
-pub var path = "embed/std/testfile.pyro";
+pub var path = "embed/std/test/testdir/self.pyro";
 
 def $main() {
     echo "path: ${path}";

@@ -1,11 +1,11 @@
-import std::testfile;
-assert $is_module(testfile);
-assert $is_str(testfile::path);
+import std::test::testmod;
+assert $is_module(testmod);
+assert $is_str(testmod::path);
 
-import std::testdir;
+import std::test::testdir;
 assert $is_module(testdir);
 assert $is_str(testdir::path);
 
-import std::testdir::testfile as testdir_testfile;
-assert $is_module(testdir_testfile);
-assert $is_str(testdir_testfile::path);
+import std::test::testdir::testmod as testdir_testmod;
+assert $is_module(testdir_testmod);
+assert $is_str(testdir_testmod::path);
