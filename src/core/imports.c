@@ -98,7 +98,7 @@ static bool try_load_embedded_module(PyroVM* vm, uint8_t arg_count, PyroValue* a
 
     // 1. Try: foo/bar/baz.pyro
     memcpy(path + path_count - 1, ".pyro", strlen(".pyro") + 1);
-    if (pyro_get_embedded(path, &data, &count)) {
+    if (pyro_find_embedded_file(path, &data, &count)) {
         pyro_exec_code(vm, (const char*)data, count, path, module);
         PYRO_FREE_ARRAY(vm, char, path, path_capacity);
         return true;
@@ -106,7 +106,7 @@ static bool try_load_embedded_module(PyroVM* vm, uint8_t arg_count, PyroValue* a
 
     // 2. Try: foo/bar/baz/self.pyro
     memcpy(path + path_count - 1, "/self.pyro", strlen("/self.pyro") + 1);
-    if (pyro_get_embedded(path, &data, &count)) {
+    if (pyro_find_embedded_file(path, &data, &count)) {
         pyro_exec_code(vm, (const char*)data, count, path, module);
         PYRO_FREE_ARRAY(vm, char, path, path_capacity);
         return true;

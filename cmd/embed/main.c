@@ -30,7 +30,7 @@ const char* FOOTER =
     "\n"
     "static const size_t entry_count = sizeof(entries) / sizeof(Entry);\n"
     "\n"
-    "bool pyro_get_embedded(const char* path, const unsigned char** data, size_t* count) {\n"
+    "bool pyro_find_embedded_file(const char* path, const unsigned char** data, size_t* count) {\n"
     "    for (size_t i = 0; i < entry_count; i++) {\n"
     "        Entry entry = entries[i];\n"
     "        if (strcmp(path, entry.path) == 0) {\n"

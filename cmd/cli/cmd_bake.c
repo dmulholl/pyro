@@ -80,7 +80,7 @@ int pyro_cli_cmd_bake(char* cmd_name, ArgParser* cmd_parser) {
     const unsigned char* code;
     size_t code_length;
 
-    if (!pyro_get_embedded("std/cli/bake.pyro", &code, &code_length)) {
+    if (!pyro_find_embedded_file("std/cli/bake.pyro", &code, &code_length)) {
         fprintf(stderr, "error: failed to load 'embed/std/cli/bake.pyro'\n");
         pyro_free_vm(vm);
         return 1;

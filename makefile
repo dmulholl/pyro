@@ -180,10 +180,10 @@ build/common/embeds.c: build/bin/embed $(shell find ./embed -type f)
 #  Utility Binaries  #
 # ------------------ #
 
-build/bin/embed: etc/embed.c
+build/bin/embed: cmd/embed/main.c
 	@mkdir -p build/bin
 	@printf "\e[1;32mBuilding\e[0m build/bin/embed\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG etc/embed.c -o build/bin/embed
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG cmd/embed/main.c -o build/bin/embed
 
 # ---------------------- #
 #  Test Compiled Module  #
