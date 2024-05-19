@@ -62,10 +62,21 @@ def $test_write_with_buffer_arg() {
 
 def $test_stringification() {
     var buf = $buf();
+    assert $str(buf) == "";
+    assert buf:to_str() == "";
+
     buf:write("foo");
     assert buf:count() == 3;
+
     assert $str(buf) == "foo";
     assert buf:count() == 3;
+
+    assert $str(buf) == "foo";
+    assert buf:count() == 3;
+
+    assert buf:to_str() == "foo";
+    assert buf:count() == 0;
+    assert $str(buf) == "";
 }
 
 
@@ -105,4 +116,16 @@ def $test_clear() {
     assert buf[0] == 'a';
     assert buf[1] == 'b';
     assert buf[2] == 'c';
+}
+
+
+def $test_out_of_bounds_indexing() {
+    var buf = $buf("foobar");
+    assert buf:count() == 6;
+
+    assert $is_err(try buf[123]);
+    assert $is_err(try (buf[123] = 0));
+
+    assert $is_err(try buf:get(123));
+    assert $is_err(try buf:set(123, 0));
 }
