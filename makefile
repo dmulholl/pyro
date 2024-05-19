@@ -18,9 +18,12 @@ DEBUG_FLAGS = -rdynamic -D PYRO_VERSION_BUILD='"debug"' -D PYRO_DEBUG \
 
 # Core files for the Pyro VM.
 HDR_FILES = src/includes/*.h
-SRC_FILES = src/core/*.c src/builtins/*.c src/stdlib/*.c
+SRC_FILES = src/core/*.c \
+			src/builtins/*.c \
+			src/stdlib/*.c
 OBJ_FILES = build/common/embeds.o \
-			build/common/whereami.o
+			build/common/whereami.o \
+			build/common/lz4.o
 
 # Files for the CLI binary.
 CLI_HDR_FILES = cmd/cli/*.h
@@ -162,6 +165,11 @@ build/common/whereami.o: lib/whereami/whereami.c lib/whereami/whereami.h
 	@printf "\e[1;32mBuilding\e[0m build/common/whereami.o\n"
 	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c -I lib/whereami lib/whereami/whereami.c -o build/common/whereami.o
 
+build/common/lz4.o: lib/lz4/lz4.c lib/lz4/lz4.h
+	@mkdir -p build/common
+	@printf "\e[1;32mBuilding\e[0m build/common/lz4.o\n"
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/lz4/lz4.c -o build/common/lz4.o
+
 # ---------------- #
 #  Embedded Files  #
 # ---------------- #
@@ -180,10 +188,10 @@ build/common/embeds.c: build/bin/embed $(shell find ./embed -type f)
 #  Utility Binaries  #
 # ------------------ #
 
-build/bin/embed: cmd/embed/main.c
+build/bin/embed: cmd/embed/main.c build/common/lz4.o
 	@mkdir -p build/bin
 	@printf "\e[1;32mBuilding\e[0m build/bin/embed\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG cmd/embed/main.c -o build/bin/embed
+	@$(CC) $(CFLAGS) -O3 -D NDEBUG cmd/embed/main.c build/common/lz4.o -o build/bin/embed
 
 # ---------------------- #
 #  Test Compiled Module  #

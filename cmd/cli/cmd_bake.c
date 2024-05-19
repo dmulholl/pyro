@@ -77,16 +77,19 @@ int pyro_cli_cmd_bake(char* cmd_name, ArgParser* cmd_parser) {
         return 1;
     }
 
-    const unsigned char* code;
-    size_t code_length;
-
-    if (!pyro_find_embedded_file("std/cli/bake.pyro", &code, &code_length)) {
+    PyroBuf* code = pyro_load_embedded_file(vm, "std/cli/bake.pyro");
+    if (!code) {
         fprintf(stderr, "error: failed to load 'embed/std/cli/bake.pyro'\n");
         pyro_free_vm(vm);
         return 1;
     }
 
-    pyro_exec_code(vm, (const char*)code, code_length, "std::cli::bake", NULL);
+    if (!pyro_push(vm, pyro_obj(code))) {
+        pyro_free_vm(vm);
+        return 1;
+    }
+
+    pyro_exec_code(vm, (const char*)code->bytes, code->count, "std::cli::bake", NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);

@@ -93,21 +93,33 @@ static bool try_load_embedded_module(PyroVM* vm, uint8_t arg_count, PyroValue* a
         path[path_count++] = '/';
     }
 
-    const unsigned char* data;
-    size_t count;
+    PyroBuf* code;
 
     // 1. Try: foo/bar/baz.pyro
     memcpy(path + path_count - 1, ".pyro", strlen(".pyro") + 1);
-    if (pyro_find_embedded_file(path, &data, &count)) {
-        pyro_exec_code(vm, (const char*)data, count, path, module);
+    code = pyro_load_embedded_file(vm, path);
+    if (code) {
+        if (!pyro_push(vm, pyro_obj(code))) {
+            PYRO_FREE_ARRAY(vm, char, path, path_capacity);
+            return true;
+        }
+        pyro_exec_code(vm, (const char*)code->bytes, code->count, path, module);
+        pyro_pop(vm);
         PYRO_FREE_ARRAY(vm, char, path, path_capacity);
         return true;
     }
 
+
     // 2. Try: foo/bar/baz/self.pyro
     memcpy(path + path_count - 1, "/self.pyro", strlen("/self.pyro") + 1);
-    if (pyro_find_embedded_file(path, &data, &count)) {
-        pyro_exec_code(vm, (const char*)data, count, path, module);
+    code = pyro_load_embedded_file(vm, path);
+    if (code) {
+        if (!pyro_push(vm, pyro_obj(code))) {
+            PYRO_FREE_ARRAY(vm, char, path, path_capacity);
+            return true;
+        }
+        pyro_exec_code(vm, (const char*)code->bytes, code->count, path, module);
+        pyro_pop(vm);
         PYRO_FREE_ARRAY(vm, char, path, path_capacity);
         return true;
     }
