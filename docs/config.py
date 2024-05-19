@@ -5,4 +5,4 @@
 theme = "graphite"
 title = "Pyro"
 tagline = "A dynamically-typed, garbage-collected scripting language."
-version = "Version 0.16.18"
+version = "Version 0.17.0"
