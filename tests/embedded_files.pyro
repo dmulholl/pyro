@@ -1,0 +1,9 @@
+import std::pyro;
+
+assert $is_err(try pyro::load_embedded_file());
+assert $is_err(try pyro::load_embedded_file(123));
+assert $is_err(try pyro::load_embedded_file("foo"));
+
+var buf = pyro::load_embedded_file("std/test/data.txt");
+assert $is_buf(buf);
+assert buf:to_str():strip() == "foo bar baz";

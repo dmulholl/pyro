@@ -43,6 +43,23 @@ A utility module for interacting with the Pyro VM.
 
     Runs the garbage collector.
 
+[[ `load_embedded_file(path: str) -> buf` ]]
+
+    Loads a file embedded in the Pyro binary.
+
+    The `path` argument is the relative path of the file within the `embed` directory --- e.g. for
+    the source file located at
+
+    ::: code
+        embed/foo/bar.txt
+
+    the `path` argument should be
+
+    ::: code
+        foo/bar.txt
+
+    Panics if the file cannot be located.
+
 [[ `memory() -> i64` ]]
 
     Returns the VM's current memory allocation in bytes.

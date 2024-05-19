@@ -147,6 +147,32 @@ Runs the garbage collector.
 </div>
 <div>
 <dt>
+<code>load_embedded_file(path: str) -&gt; buf</code>
+</dt>
+<dd>
+<p>
+Loads a file embedded in the Pyro binary.
+</p>
+<p>
+The <code>path</code> argument is the relative path of the file within the <code>embed</code> directory &mdash; e.g. for
+the source file located at
+</p>
+<pre>
+embed/foo/bar.txt
+</pre>
+<p>
+the <code>path</code> argument should be
+</p>
+<pre>
+foo/bar.txt
+</pre>
+<p>
+Panics if the file cannot be located.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>memory() -&gt; i64</code>
 </dt>
 <dd>

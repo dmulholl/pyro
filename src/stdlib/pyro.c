@@ -106,6 +106,28 @@ static PyroValue fn_path(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_load_embedded_file(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_STR(args[0])) {
+        pyro_panic(vm,
+            "load_embedded_file(): expected string argument, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
+        return pyro_null();
+    }
+
+    PyroBuf* buf = pyro_load_embedded_file(vm, PYRO_AS_STR(args[0])->bytes);
+    if (!buf) {
+        pyro_panic(vm,
+            "load_embedded_file(): failed to load file: %s",
+            PYRO_AS_STR(args[0])->bytes
+        );
+        return pyro_null();
+    }
+
+    return pyro_obj(buf);
+}
+
+
 void pyro_load_stdlib_module_pyro(PyroVM* vm, PyroMod* module) {
     PyroTup* version_tuple = PyroTup_new(5, vm);
     if (!version_tuple) {
@@ -134,4 +156,5 @@ void pyro_load_stdlib_module_pyro(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "sizeof", fn_sizeof, 1);
     pyro_define_pub_member_fn(vm, module, "address", fn_address, 1);
     pyro_define_pub_member_fn(vm, module, "path", fn_path, 0);
+    pyro_define_pub_member_fn(vm, module, "load_embedded_file", fn_load_embedded_file, 1);
 }

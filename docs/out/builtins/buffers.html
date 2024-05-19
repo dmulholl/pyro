@@ -126,6 +126,13 @@ Indices are zero-based. Indexing is equivalent to using the buffer's <code>:get(
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">99</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;coobar&quot;</span><span class="p">;</span>
 </pre>
+<p>
+Indexing into a buffer will panic if the index is out-of-range, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">123</span><span class="p">]);</span>
+</pre>
 <h3 id="string-building">
 String Building
 </h3>

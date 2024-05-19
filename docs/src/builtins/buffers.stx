@@ -43,6 +43,12 @@ Indices are zero-based. Indexing is equivalent to using the buffer's `:get()` an
     assert buf:get(0) == 99;
     assert $str(buf) == "coobar";
 
+Indexing into a buffer will panic if the index is out-of-range, e.g.
+
+::: code pyro
+    var buf = $buf("foobar");
+    assert $is_err(try buf[123]);
+
 
 
 ### String Building
