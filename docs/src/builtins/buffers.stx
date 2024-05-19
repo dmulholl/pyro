@@ -83,17 +83,19 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 [[ `:get(index: i64) -> i64` ]]
 
     Returns the byte value at `index` as an integer in the range `[0, 255]`.
-    Will panic if `index` isn't an integer or is out of range.
+
+    * Panics if `index` isn't an integer or is out of range.
 
 [[ `:is_empty() -> bool` ]]
 
     Returns `true` if the buffer is empty.
 
-[[ `:set(index: i64, byte: i64|rune)` ]]
+[[ `:set(index: i64, value: i64|rune)` ]]
 
-    Sets the byte value at `index` to `byte` where `byte` is an integer in the range `[0, 255]`.
-    Will panic if `index` isn't an integer or is out of range.
-    Will panic if `byte` isn't an integer or is out of range.
+    Sets the byte value at `index` to `value` where `value` is an integer in the range `[0, 255]`.
+
+    * Panics if `index` isn't an integer or is out of range.
+    * Panics if `value` isn't an integer or is out of range.
 
 [[ `:to_str() -> str` ]]
 

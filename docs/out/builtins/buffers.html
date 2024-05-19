@@ -185,8 +185,12 @@ Returns the number of bytes in the buffer.
 <dd>
 <p>
 Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
-Will panic if <code>index</code> isn't an integer or is out of range.
 </p>
+<ul>
+<li>
+Panics if <code>index</code> isn't an integer or is out of range.
+</li>
+</ul>
 </dd>
 </div>
 <div>
@@ -201,14 +205,20 @@ Returns <code>true</code> if the buffer is empty.
 </div>
 <div>
 <dt>
-<code>:set(index: i64, byte: i64|rune)</code>
+<code>:set(index: i64, value: i64|rune)</code>
 </dt>
 <dd>
 <p>
-Sets the byte value at <code>index</code> to <code>byte</code> where <code>byte</code> is an integer in the range <code>[0, 255]</code>.
-Will panic if <code>index</code> isn't an integer or is out of range.
-Will panic if <code>byte</code> isn't an integer or is out of range.
+Sets the byte value at <code>index</code> to <code>value</code> where <code>value</code> is an integer in the range <code>[0, 255]</code>.
 </p>
+<ul>
+<li>
+Panics if <code>index</code> isn't an integer or is out of range.
+</li>
+<li>
+Panics if <code>value</code> isn't an integer or is out of range.
+</li>
+</ul>
 </dd>
 </div>
 <div>

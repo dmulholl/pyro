@@ -147,18 +147,18 @@ static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
             byte_value = (uint8_t)args[1].as.i64;
         } else {
-            pyro_panic(vm, "set(): invalid argument [byte], integer (%d) is out of range", args[1].as.i64);
+            pyro_panic(vm, "set(): invalid argument [value], integer (%d) is out of range", args[1].as.i64);
             return pyro_null();
         }
     } else if (PYRO_IS_RUNE(args[1])) {
         if (args[1].as.u32 <= 255) {
             byte_value = (uint8_t)args[1].as.u32;
         } else {
-            pyro_panic(vm, "set(): invalid argument [byte], char (%d) is out of range", args[1].as.u32);
+            pyro_panic(vm, "set(): invalid argument [value], char (%d) is out of range", args[1].as.u32);
             return pyro_null();
         }
     } else {
-        pyro_panic(vm, "set(): invalid argument [byte], expected an integer");
+        pyro_panic(vm, "set(): invalid argument [value], expected an integer");
         return pyro_null();
     }
 
