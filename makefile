@@ -145,11 +145,6 @@ help: ## Prints available commands.
 #  Third-Party Libraries  #
 # ----------------------- #
 
-build/common/sqlite.o: lib/sqlite/sqlite3.c lib/sqlite/sqlite3.h
-	@mkdir -p build/common
-	@printf "\e[1;32mBuilding\e[0m build/common/sqlite.o\n"
-	@$(CC) $(CFLAGS) -O3 -D NDEBUG -c lib/sqlite/sqlite3.c -o build/common/sqlite.o
-
 build/common/bestline.o: lib/bestline/bestline.c lib/bestline/bestline.h
 	@mkdir -p build/common
 	@printf "\e[1;32mBuilding\e[0m build/common/bestline.o\n"
