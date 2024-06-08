@@ -13,7 +13,7 @@ let output_path = if OUTPUT == "" {
     fs::abspath(fs::basename(script_path):strip_suffix(".pyro"))
 } else {
     fs::abspath(OUTPUT)
-}
+};
 
 log::info("baking binary: ${output_path}");
 
@@ -109,5 +109,3 @@ if !fs::is_dir(output_dirpath) {
 if let result = try cmd::mv(fs::join(workdir_path, "build", "release", "app"), output_path); $is_err(result) {
     log::fatal("failed to move binary: ${result}");
 }
-
-log::info("okay");
