@@ -8,6 +8,7 @@ if !fs::is_file(SCRIPT) {
 
 let script_path = fs::abspath(SCRIPT);
 let modules_path = fs::join(fs::dirname(script_path), "modules");
+let embed_path = if EMBED == "" { "" } else { fs::abspath(EMBED) };
 
 let output_path = if OUTPUT == "" {
     fs::abspath(fs::basename(script_path):strip_suffix(".pyro"))
@@ -79,15 +80,14 @@ if fs::is_dir(modules_path) {
     }
 }
 
-if EMBED != "" {
-    let src_path = fs::abspath(EMBED);
-    log::info("copying embedded files: ${src_path}");
+if embed_path != "" {
+    log::info("copying files: ${embed_path}");
 
-    if !fs::is_dir(src_path) {
-        log::fatal("invalid embed path, not a directory: ${src_path}");
+    if !fs::is_dir(embed_path) {
+        log::fatal("invalid path, expected a directory: ${embed_path}");
     }
 
-    if let result = try cmd::cp(src_path + "/.", fs::join(workdir_path, "embed")); $is_err(result) {
+    if let result = try cmd::cp(embed_path + "/.", fs::join(workdir_path, "embed")); $is_err(result) {
         log::fatal("failed to copy embedded files: ${result}");
     }
 }
