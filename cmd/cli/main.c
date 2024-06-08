@@ -160,9 +160,10 @@ static const char* BAKE_HELPTEXT =
     "  <file>                       Pyro script.\n"
     "\n"
     "Options:\n"
-    "  -o, --output <file>          Output file.\n"
+    "  -e, --embed <path>           Directory of files to embed in the binary.\n"
+    "  -o, --output <path>          Output filepath.\n"
     "  -r, --pyro-repo <url>        Git repository containing Pyro source code.\n"
-    "  -v, --pyro-version <tag>     Git tag specifying the Pyro version to use.\n"
+    "  -v, --pyro-version <str>     Git tag specifying the Pyro version to use.\n"
     "\n"
     "Flags:\n"
     "  -h, --help                   Print this help text and exit.\n"
@@ -261,6 +262,7 @@ int main(int argc, char* argv[]) {
     ap_add_str_opt(cmd_bake, "pyro-version v", "master");
     ap_add_str_opt(cmd_bake, "pyro-repo r", "https://github.com/dmulholl/pyro.git");
     ap_add_str_opt(cmd_bake, "output o", "");
+    ap_add_str_opt(cmd_bake, "embed e", "");
     ap_add_flag(cmd_bake, "no-cache");
 
     // Parse the command line arguments.

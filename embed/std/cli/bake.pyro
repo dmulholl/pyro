@@ -9,12 +9,10 @@ if !fs::is_file(SCRIPT) {
 let script_path = fs::abspath(SCRIPT);
 let modules_path = fs::join(fs::dirname(script_path), "modules");
 
-var output_path;
-if OUTPUT == "" {
-    let script_name = fs::basename(script_path):strip_suffix(".pyro");
-    output_path = fs::abspath(script_name);
+let output_path = if OUTPUT == "" {
+    fs::abspath(fs::basename(script_path):strip_suffix(".pyro"))
 } else {
-    output_path = fs::abspath(OUTPUT);
+    fs::abspath(OUTPUT)
 }
 
 log::info("baking binary: ${output_path}");
@@ -26,7 +24,6 @@ if $is_err(homedir_path) {
 
 let repodir_path = fs::join(homedir_path, ".cache", "pyro", "repo");
 let workdir_path = fs::join(homedir_path, ".cache", "pyro", "work");
-let embeddir_path = fs::join(workdir_path, "embed");
 
 if NO_CACHE {
     if let result = try cmd::rm(repodir_path); $is_err(result) {
@@ -71,14 +68,27 @@ if let result = try fs::chdir(workdir_path); $is_err(result) {
 }
 
 log::info("copying script: ${script_path}");
-if let result = try cmd::cp(script_path, fs::join(embeddir_path, "main.pyro")); $is_err(result) {
+if let result = try cmd::cp(script_path, fs::join(workdir_path, "embed", "main.pyro")); $is_err(result) {
     log::fatal("failed to copy script: ${result}");
 }
 
 if fs::is_dir(modules_path) {
     log::info("copying modules: ${modules_path}");
-    if let result = try cmd::cp(modules_path + "/.", embeddir_path); $is_err(result) {
+    if let result = try cmd::cp(modules_path + "/.", fs::join(workdir_path, "embed")); $is_err(result) {
         log::fatal("failed to copy modules: ${result}");
+    }
+}
+
+if EMBED != "" {
+    let src_path = fs::abspath(EMBED);
+    log::info("copying embedded files: ${src_path}");
+
+    if !fs::is_dir(src_path) {
+        log::fatal("invalid embed path, not a directory: ${src_path}");
+    }
+
+    if let result = try cmd::cp(src_path + "/.", fs::join(workdir_path, "embed")); $is_err(result) {
+        log::fatal("failed to copy embedded files: ${result}");
     }
 }
 

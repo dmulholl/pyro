@@ -70,6 +70,20 @@ int pyro_cli_cmd_bake(char* cmd_name, ArgParser* cmd_parser) {
         return 1;
     }
 
+    char* embed_arg = ap_get_str_value(cmd_parser, "embed");
+    PyroStr* embed_string = PyroStr_COPY(embed_arg);
+    if (!embed_string) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        return 1;
+    }
+
+    if (!pyro_define_superglobal(vm, "EMBED", pyro_obj(embed_string))) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        return 1;
+    }
+
     bool no_cache_arg = ap_found(cmd_parser, "no-cache");
     if (!pyro_define_superglobal(vm, "NO_CACHE", pyro_bool(no_cache_arg))) {
         fprintf(stderr, "error: out of memory\n");
