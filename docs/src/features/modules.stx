@@ -118,8 +118,8 @@ A child module can import its sibling -- e.g. in `root/math/calc.pyro`:
 
 ### Module Caching
 
-A module file is only executed the first time it's imported.
-The imported module is cached and any subsequent imports simply load the module object from the cache.
+A module is only executed the first time it's imported.
+The imported module is cached and any subsequent imports simply load the module from the cache.
 
 
 
@@ -203,43 +203,6 @@ You can execute a module directory as a script if it contains a `self.pyro` file
     $ pyro path/to/module/directory
 
 Pyro executes the `self.pyro` file, then the `$main()` function if it finds one.
-
-
-
-### Importing using $exec()
-
-You can import a file as a module using the `$exec()` function, which executes a string of Pyro source code as a new module, e.g.
-
-::: code pyro
-    var code = $read_file("path/to/file.pyro");
-    var mod = $exec(code);
-
-You can also use the `$exec()` function to create a new module directly from a string, e.g.
-
-::: code pyro
-    var mod = $exec(`pub def func() { return "foobar"; }`);
-    assert mod::func() == "foobar";
-
-
-
-### Importing using $import()
-
-You can import a module using the `$import()` function, which takes the module's import path as a string, e.g.
-
-::: code pyro
-    var mod = $import("std::math");
-    assert mod::abs(-1) == 1;
-
-You can wrap the `$import()` function in a `try` expression to check if a module exists, e.g.
-
-::: code pyro
-    var mod = try $import("foo::bar::baz");
-
-    if $is_err(mod) {
-        echo "not found";
-    }
-
-Note that the `$import()` function ignores the module cache --- unlike an `import` statement, it will always reload and execute the latest version of the module's code.
 
 
 

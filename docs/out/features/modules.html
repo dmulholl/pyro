@@ -90,12 +90,6 @@
 <a href="#executing-module-directories">Executing Module Directories</a>
 </li>
 <li>
-<a href="#importing-using-exec">Importing using $exec()</a>
-</li>
-<li>
-<a href="#importing-using-import">Importing using $import()</a>
-</li>
-<li>
 <a href="#assigning-to-members">Assigning to members</a>
 </li>
 </ul>
@@ -228,8 +222,8 @@ A child module can import its sibling &ndash; e.g. in <code>root/math/calc.pyro<
 Module Caching
 </h3>
 <p>
-A module file is only executed the first time it's imported.
-The imported module is cached and any subsequent imports simply load the module object from the cache.
+A module is only executed the first time it's imported.
+The imported module is cached and any subsequent imports simply load the module from the cache.
 </p>
 <h3 id="circular-imports">
 Circular Imports
@@ -340,46 +334,6 @@ $ pyro path/to/module/directory
 </pre>
 <p>
 Pyro executes the <code>self.pyro</code> file, then the <code>$main()</code> function if it finds one.
-</p>
-<h3 id="importing-using-exec">
-Importing using $exec()
-</h3>
-<p>
-You can import a file as a module using the <code>$exec()</code> function, which executes a string of Pyro source code as a new module, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">code</span> <span class="p">=</span> <span class="nx">$read_file</span><span class="p">(</span><span class="s">&quot;path/to/file.pyro&quot;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="nx">code</span><span class="p">);</span>
-</pre>
-<p>
-You can also use the <code>$exec()</code> function to create a new module directly from a string, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">`pub def func() { return &quot;foobar&quot;; }`</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">func</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
-</pre>
-<h3 id="importing-using-import">
-Importing using $import()
-</h3>
-<p>
-You can import a module using the <code>$import()</code> function, which takes the module's import path as a string, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$import</span><span class="p">(</span><span class="s">&quot;std::math&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
-</pre>
-<p>
-You can wrap the <code>$import()</code> function in a <code>try</code> expression to check if a module exists, e.g.
-</p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">$import</span><span class="p">(</span><span class="s">&quot;foo::bar::baz&quot;</span><span class="p">);</span>
-
-<span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s">&quot;not found&quot;</span><span class="p">;</span>
-<span class="p">}</span>
-</pre>
-<p>
-Note that the <code>$import()</code> function ignores the module cache &mdash; unlike an <code>import</code> statement, it will always reload and execute the latest version of the module's code.
 </p>
 <h3 id="assigning-to-members">
 Assigning to members
