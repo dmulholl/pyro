@@ -1,3 +1,5 @@
+import std::fs;
+
 var lib1 = $import("lib1");
 assert $is_module(lib1);
 assert lib1::mod_name == "lib1";
@@ -74,4 +76,9 @@ with mod = try $import("foo") {
 
 with mod = try $import("foo::bar") {
     assert $is_err(mod);
+}
+
+with dirpath = fs::dirname($filepath) {
+    let mod = $import(fs::join(dirpath, "lib_add.pyro"));
+    assert mod::add(1, 2) == 3;
 }

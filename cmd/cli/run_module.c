@@ -29,7 +29,7 @@ void pyro_cli_run_module(ArgParser* parser) {
     pyro_set_trace_execution_flag(vm, ap_found(parser, "trace-execution"));
 
     // Compile and execute the script.
-    pyro_import_module_from_string(vm, ap_get_str_value_at_index(parser, "module", 0), vm->main_module);
+    pyro_import_module_from_path(vm, ap_get_str_value_at_index(parser, "module", 0), vm->main_module);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);

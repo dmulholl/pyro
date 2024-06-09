@@ -272,7 +272,12 @@ void pyro_import_module(PyroVM* vm, uint8_t arg_count, PyroValue* args, PyroMod*
 }
 
 
-void pyro_import_module_from_string(PyroVM* vm, const char* path, PyroMod* module) {
+void pyro_import_module_from_path(PyroVM* vm, const char* path, PyroMod* module) {
+    if (strlen(path) > 5 && memcmp(path + strlen(path) - 5, ".pyro", 5) == 0) {
+        pyro_exec_file(vm, path, module);
+        return;
+    }
+
     char* path_copy = pyro_strdup(path);
     if (!path_copy) {
         pyro_panic(vm, "out of memory");

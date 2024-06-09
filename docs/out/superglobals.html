@@ -506,14 +506,14 @@ String arguments can contain underscores and can begin with <code>0b</code>, <co
 </dt>
 <dd>
 <p>
-Imports <code>path</code> as a module, where <code>path</code> is an import path, e.g. <code>&quot;foo&quot;</code> or <code>&quot;foo::bar::baz&quot;</code>.
+Imports <code>path</code> as a module, where <code>path</code> is a standard import path, e.g. <code>&quot;foo::bar::baz&quot;</code>, or an arbitrary filepath ending in <code>&quot;.pyro&quot;</code>.
 </p>
 <p>
 Returns the imported module.
 Panics if <code>path</code> is invalid or if the attempt to load and execute the module fails.
 </p>
 <p>
-Note that this function ignores the module cache &mdash; i.e. the <code>$import()</code> function will always reload and execute the latest version of the module's code.
+Note that this function ignores the <code>import</code> statement's module cache &mdash; i.e. the <code>$import()</code> function will always load and execute the latest version of the specified module's code.
 </p>
 </dd>
 </div>

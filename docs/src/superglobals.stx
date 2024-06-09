@@ -255,12 +255,12 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 [[ `$import(path: str) -> module` ]]
 
-    Imports `path` as a module, where `path` is an import path, e.g. `"foo"` or `"foo::bar::baz"`.
+    Imports `path` as a module, where `path` is a standard import path, e.g. `"foo::bar::baz"`, or an arbitrary filepath ending in `".pyro"`.
 
     Returns the imported module.
     Panics if `path` is invalid or if the attempt to load and execute the module fails.
 
-    Note that this function ignores the module cache --- i.e. the `$import()` function will always reload and execute the latest version of the module's code.
+    Note that this function ignores the `import` statement's module cache --- i.e. the `$import()` function will always load and execute the latest version of the specified module's code.
 
 
 

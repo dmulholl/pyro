@@ -1,0 +1,15 @@
+pub def add(a, b) {
+    return a + b;
+}
+
+def $test_add_integers() {
+    assert add(1, 2) == 3;
+}
+
+def $test_add_floats() {
+    assert add(1.2, 3.4) == 4.6;
+}
+
+def $test_add_strings() {
+    assert add("foo", "bar") == "foobar";
+}

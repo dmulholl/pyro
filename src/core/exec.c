@@ -3029,7 +3029,7 @@ void pyro_exec_file(PyroVM* vm, const char* path, PyroMod* module) {
         return;
     }
 
-    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "pyro_exec_file()");
+    PyroBuf* buf = pyro_read_file_into_buf(vm, path, "exec file");
     if (vm->halt_flag) {
         return;
     }
