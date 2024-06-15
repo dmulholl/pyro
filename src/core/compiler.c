@@ -1949,6 +1949,7 @@ static void parse_echo_stmt(Parser* parser) {
 
 static void parse_assert_stmt(Parser* parser) {
     parse_expression(parser, false);
+
     if (match_assignment_token(parser)) {
         SYNTAX_ERROR_AT_PREVIOUS_TOKEN(
             "invalid assignment in 'assert' statement, wrap the assignment in '()' to allow"
@@ -1956,6 +1957,10 @@ static void parse_assert_stmt(Parser* parser) {
         return;
     }
 
+    // Jump over the error message if the test expression is truthy.
+    size_t jump_over_error = emit_jump(parser, PYRO_OPCODE_JUMP_IF_TRUE);
+
+    // Parse the error message.
     if (match(parser, TOKEN_COMMA)) {
         parse_expression(parser, false);
     } else {
@@ -1966,7 +1971,13 @@ static void parse_assert_stmt(Parser* parser) {
         return;
     }
 
-    emit_byte(parser, PYRO_OPCODE_ASSERT);
+    emit_byte(parser, PYRO_OPCODE_ASSERT_FAILED);
+
+    // Backpatch the destination for the jump-over-error-message code.
+    patch_jump(parser, jump_over_error);
+
+    // Pop the value of the test expression.
+    emit_byte(parser, PYRO_OPCODE_POP);
 }
 
 

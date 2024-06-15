@@ -1027,7 +1027,7 @@ int64_t PyroFn_add_constant(PyroFn* fn, PyroValue value, PyroVM* vm) {
 
 size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
     switch (fn->code[ip]) {
-        case PYRO_OPCODE_ASSERT:
+        case PYRO_OPCODE_ASSERT_FAILED:
         case PYRO_OPCODE_BINARY_AMP:
         case PYRO_OPCODE_BINARY_BANG_EQUAL:
         case PYRO_OPCODE_BINARY_BAR:

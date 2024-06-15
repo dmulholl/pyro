@@ -29,7 +29,7 @@ with result = try fails() {
 }
 
 def fails_with_error_message() {
-    assert 1 + 1 == 3, "foo bar baz";
+    assert 1 + 1 == 3, "error message";
 }
 
 with result = try fails_with_error_message() {
@@ -37,9 +37,80 @@ with result = try fails_with_error_message() {
         $panic("expected error from fails_with_error_message() function, got: ${result}");
     }
 
-    let expected_error_message = "assertion failed: foo bar baz";
+    let expected_error_message = "error message";
 
     if result:message() != expected_error_message {
         $panic("expected error message '${expected_error_message}' from fails_with_error_message() function, got: ${result}");
     }
+}
+
+let global = "foo";
+
+def fails_with_error_message_with_global() {
+    assert 1 + 1 == 3, "${global}: error-message";
+}
+
+with result = try fails_with_error_message_with_global() {
+    if !$is_err(result) {
+        $panic("expected error from fails_with_error_message_with_global() function, got: ${result}");
+    }
+
+    let expected_error_message = "foo: error-message";
+
+    if result:message() != expected_error_message {
+        $panic("expected error message '${expected_error_message}' from fails_with_error_message_with_global() function, got: ${result}");
+    }
+}
+
+def fails_with_error_message_with_global_and_local(local) {
+    assert 1 + 1 == 3, "${global}: ${local}: error-message";
+}
+
+with result = try fails_with_error_message_with_global_and_local("bar") {
+    if !$is_err(result) {
+        $panic("expected error from fails_with_error_message_with_global_and_local() function, got: ${result}");
+    }
+
+    let expected_error_message = "foo: bar: error-message";
+
+    if result:message() != expected_error_message {
+        $panic("expected error message '${expected_error_message}' from fails_with_error_message_with_global_and_local() function, got: ${result}");
+    }
+}
+
+def add_integers(a: i64, b: i64) -> i64 {
+    assert $is_i64(a), "add_integers(): expected a as i64, found ${$type(a)}";
+    assert $is_i64(b), "add_integers(): expected b as i64, found ${$type(b)}";
+
+    return a + b;
+}
+
+assert add_integers(1, 2) == 3;
+assert add_integers(1, 2) == 3, "foo bar baz";
+
+assert add_integers(3, 4) == 7;
+assert add_integers(3, 4) == 7, "foo bar baz";
+
+with result = try add_integers(1, 2) {
+    assert result == 3;
+}
+
+with result = try add_integers("foo", 2) {
+    assert $is_err(result);
+    assert result:message() == "add_integers(): expected a as i64, found str";
+}
+
+with result = try add_integers(1, "bar") {
+    assert $is_err(result);
+    assert result:message() == "add_integers(): expected b as i64, found str";
+}
+
+with result = try add_integers(1.23, 2) {
+    assert $is_err(result);
+    assert result:message() == "add_integers(): expected a as i64, found f64";
+}
+
+with result = try add_integers(1, 2.34) {
+    assert $is_err(result);
+    assert result:message() == "add_integers(): expected b as i64, found f64";
 }

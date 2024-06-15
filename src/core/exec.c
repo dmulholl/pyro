@@ -788,15 +788,10 @@ static void run(PyroVM* vm) {
                 break;
             }
 
-            // Implements the statement: [assert <expression>, <error-message>].
-            // Before: [ ... ][ value ][ error_message ]
-            // After:  [ ... ]
-            case PYRO_OPCODE_ASSERT: {
-                if (pyro_is_truthy(vm->stack_top[-2])) {
-                    vm->stack_top -= 2;
-                    break;
-                }
-
+            // Implements the failure branch for the statement: [assert <expression>, <error-message>].
+            // Before: [ ... ][ test-expression-value ][ error-message-expression-value ]
+            // After:  [ ... ][ test-expression-value ][ error-message-expression-value ]
+            case PYRO_OPCODE_ASSERT_FAILED: {
                 if (PYRO_IS_NULL(vm->stack_top[-1])) {
                     pyro_panic(vm, "assertion failed");
                     break;
@@ -807,9 +802,10 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "assertion failed: %s", error_message->bytes);
+                pyro_panic(vm, "%s", error_message->bytes);
                 break;
             }
+
 
             // Implements the expression: [callee(arg1, arg2, arg3, ...)].
             // Before: [ ... ][ callee ][ arg1 ][ arg2 ][ arg3 ]

@@ -83,8 +83,8 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
     uint8_t instruction = fn->code[ip];
 
     switch (instruction) {
-        case PYRO_OPCODE_ASSERT:
-            return atomic_instruction(vm, "ASSERT", ip);
+        case PYRO_OPCODE_ASSERT_FAILED:
+            return atomic_instruction(vm, "ASSERT_FAILED", ip);
 
         case PYRO_OPCODE_BINARY_PLUS:
             return atomic_instruction(vm, "BINARY_PLUS", ip);
