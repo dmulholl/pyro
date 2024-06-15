@@ -454,20 +454,6 @@ static PyroStr* stringify_queue(PyroVM* vm, PyroQueue* queue) {
 
 // Panics and returns NULL if an error occurs. May call into Pyro code and set the exit flag.
 static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
-    PyroValue method = pyro_get_method(vm, pyro_obj(object), vm->str_dollar_str);
-    if (!PYRO_IS_NULL(method)) {
-        if (!pyro_push(vm, pyro_obj(object))) return NULL;
-        PyroValue result = pyro_call_method(vm, method, 0);
-        if (vm->halt_flag) {
-            return NULL;
-        }
-        if (!PYRO_IS_STR(result)) {
-            pyro_panic(vm, "invalid return type for :$str(), expected a string");
-            return NULL;
-        }
-        return PYRO_AS_STR(result);
-    }
-
     switch (object->type) {
         case PYRO_OBJECT_STR:
             return (PyroStr*)object;
@@ -584,10 +570,25 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
         }
 
         case PYRO_OBJECT_INSTANCE: {
+            PyroValue method = pyro_get_method(vm, pyro_obj(object), vm->str_dollar_str);
+            if (!PYRO_IS_NULL(method)) {
+                if (!pyro_push(vm, pyro_obj(object))) return NULL;
+                PyroValue result = pyro_call_method(vm, method, 0);
+                if (vm->halt_flag) {
+                    return NULL;
+                }
+                if (!PYRO_IS_STR(result)) {
+                    pyro_panic(vm, "invalid return type for :$str() method, expected a string");
+                    return NULL;
+                }
+                return PYRO_AS_STR(result);
+            }
+
             PyroInstance* instance = (PyroInstance*)object;
             if (instance->obj.class->name) {
                 return pyro_sprintf_to_obj(vm, "<instance %s>", instance->obj.class->name->bytes);
             }
+
             return pyro_sprintf_to_obj(vm, "<instance>");
         }
 
@@ -760,8 +761,12 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
             return string;
         }
 
-        case PYRO_VALUE_OBJ:
+        case PYRO_VALUE_OBJ: {
+            if (PYRO_AS_OBJ(value)->type == PYRO_OBJECT_STR) {
+                return PYRO_AS_STR(value);
+            }
             return stringify_object(vm, PYRO_AS_OBJ(value));
+        }
 
         default:
             return pyro_sprintf_to_obj(vm, "<value>");
