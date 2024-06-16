@@ -42,6 +42,7 @@ PyroVM* pyro_new_vm(void) {
     vm->grey_stack = NULL;
     vm->halt_flag = false;
     vm->import_roots = NULL;
+    vm->args = NULL;
     vm->in_repl = false;
     vm->main_module = NULL;
     vm->max_bytes = SIZE_MAX;
@@ -256,6 +257,7 @@ PyroVM* pyro_new_vm(void) {
     vm->module_cache = PyroMap_new(vm);
     vm->main_module = PyroMod_new(vm);
     vm->import_roots = PyroVec_new(vm);
+    vm->args = PyroVec_new(vm);
     vm->panic_buffer = PyroBuf_new_with_capacity(256, vm);
 
     if (vm->memory_allocation_failed) {
@@ -528,21 +530,29 @@ bool pyro_get_panic_flag(PyroVM* vm) {
 }
 
 
-bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args) {
-    PyroTup* tup = PyroTup_new(arg_count, vm);
-    if (!tup) {
+bool pyro_append_arg(PyroVM* vm, char* arg) {
+    PyroStr* string = PyroStr_COPY(arg);
+    if (!string) {
         return false;
     }
 
+    return PyroVec_append(vm->args, pyro_obj(string), vm);
+}
+
+
+bool pyro_append_args(PyroVM* vm, char** args, size_t arg_count) {
     for (size_t i = 0; i < arg_count; i++) {
         PyroStr* string = PyroStr_COPY(args[i]);
         if (!string) {
             return false;
         }
-        tup->values[i] = pyro_obj(string);
+
+        if (!PyroVec_append(vm->args, pyro_obj(string), vm)) {
+            return false;
+        }
     }
 
-    return pyro_define_superglobal(vm, "$args", pyro_obj(tup));
+    return true;
 }
 
 

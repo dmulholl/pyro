@@ -1132,12 +1132,8 @@ static PyroValue fn_eval(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 void pyro_load_superglobals(PyroVM* vm) {
+    pyro_define_superglobal(vm, "$args", pyro_obj(vm->args));
     pyro_define_superglobal(vm, "$roots", pyro_obj(vm->import_roots));
-
-    PyroTup* args = PyroTup_new(0, vm);
-    if (args) {
-        pyro_define_superglobal(vm, "$args", pyro_obj(args));
-    }
 
     pyro_define_superglobal_fn(vm, "$", fn_shell_shortcut, 1);
     pyro_define_superglobal_fn(vm, "$bool", fn_bool, 1);

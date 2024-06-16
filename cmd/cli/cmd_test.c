@@ -8,7 +8,7 @@ int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
 
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
-        fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
+        fprintf(stderr, "error: out of memory, failed to initialize the Pyro VM\n");
         return 1;
     }
 
@@ -37,12 +37,19 @@ int pyro_cli_cmd_test(char* cmd_name, ArgParser* cmd_parser) {
     }
 
     char** args = ap_get_args(cmd_parser);
-    if (!pyro_set_args(vm, ap_count_args(cmd_parser), args)) {
+    if (!args) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        return 1;
+    }
+
+    if (!pyro_append_args(vm, args, ap_count_args(cmd_parser))) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         free(args);
         return 1;
     }
+
     free(args);
 
     PyroBuf* code = pyro_load_embedded_file(vm, "std/cli/test.pyro");

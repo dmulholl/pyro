@@ -19,9 +19,10 @@ bool pyro_get_exit_flag(PyroVM* vm);
 // Returns the VM's panic flag.
 bool pyro_get_panic_flag(PyroVM* vm);
 
-// This function sets the content of the global $args variable, a tuple of strings. Returns
-// true on success, false if memory could not be allocated for the tuple.
-bool pyro_set_args(PyroVM* vm, size_t arg_count, char** args);
+// Appends entries to the superglobal $args vector. Arguments should be null-terminated C strings.
+// Returns false if memory allocation fails.
+bool pyro_append_arg(PyroVM* vm, char* arg);
+bool pyro_append_args(PyroVM* vm, char** args, size_t arg_count);
 
 // Appends an entry to the list of directories checked when attempting to import a module.
 // - [path] should be a directory path, optionally ending in '/'.

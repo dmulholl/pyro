@@ -4,7 +4,7 @@
 void pyro_cli_run_module(ArgParser* parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
-        fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
+        fprintf(stderr, "error: out of memory, failed to initialize the Pyro VM\n");
         exit(1);
     }
 
@@ -15,14 +15,21 @@ void pyro_cli_run_module(ArgParser* parser) {
     pyro_cli_add_import_roots_from_command_line(vm, parser);
     pyro_cli_add_import_roots_from_environment(vm);
 
-    // Add the command line arguments to the global $args variable.
+    // Add the command line arguments to the superglobal $args vector.
     char** args = ap_get_str_values(parser, "module");
-    if (!pyro_set_args(vm, ap_count(parser, "module"), args)) {
+    if (!args) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        exit(1);
+    }
+
+    if (!pyro_append_args(vm, args, ap_count(parser, "module"))) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         free(args);
         exit(1);
     }
+
     free(args);
 
     // Set the trace-execution flag.

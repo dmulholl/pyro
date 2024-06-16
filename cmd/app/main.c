@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
-    if (!pyro_set_args(vm, (size_t)argc, argv)) {
+    if (!pyro_append_args(vm, argv, (size_t)argc)) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         exit(1);
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     pyro_exec_code(vm, (const char*)code->bytes, code->count, "main.pyro", NULL);
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
-        int64_t exit_code = pyro_get_exit_code(vm);
+        int exit_code = (int)pyro_get_exit_code(vm);
         pyro_free_vm(vm);
         exit(exit_code);
     }

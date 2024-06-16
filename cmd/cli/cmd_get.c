@@ -9,12 +9,19 @@ int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     }
 
     char** args = ap_get_args(cmd_parser);
-    if (!pyro_set_args(vm, ap_count_args(cmd_parser), args)) {
+    if (!args) {
+        fprintf(stderr, "error: out of memory\n");
+        pyro_free_vm(vm);
+        return 1;
+    }
+
+    if (!pyro_append_args(vm, args, ap_count_args(cmd_parser))) {
         fprintf(stderr, "error: out of memory\n");
         pyro_free_vm(vm);
         free(args);
         return 1;
     }
+
     free(args);
 
     PyroBuf* code = pyro_load_embedded_file(vm, "std/cli/get.pyro");
@@ -33,7 +40,7 @@ int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
         int64_t exit_code = pyro_get_exit_code(vm);
         pyro_free_vm(vm);
-        exit(exit_code);
+        return (int)exit_code;
     }
 
     pyro_free_vm(vm);

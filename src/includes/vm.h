@@ -91,6 +91,9 @@ struct PyroVM {
     // Root directories to check when attempting to import modules.
     PyroVec* import_roots;
 
+    // Command line arguments.
+    PyroVec* args;
+
     // Buffer for recording panic messages inside 'try' expressions.
     PyroBuf* panic_buffer;
 
