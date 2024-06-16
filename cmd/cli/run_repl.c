@@ -113,7 +113,7 @@ void pyro_cli_run_repl(ArgParser* parser) {
     // Add import roots.
     pyro_cli_add_import_roots_from_command_line(vm, parser);
     pyro_cli_add_import_roots_from_environment(vm);
-    pyro_add_import_root(vm, ".");
+    pyro_append_import_root(vm, ".", 1);
 
     char* version = pyro_get_version_string();
     printf("%s -- Type 'exit' to quit.\n", version);

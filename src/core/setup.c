@@ -556,26 +556,12 @@ bool pyro_append_args(PyroVM* vm, char** args, size_t arg_count) {
 }
 
 
-bool pyro_add_import_root(PyroVM* vm, const char* path) {
+bool pyro_append_import_root(PyroVM* vm, const char* path, size_t path_length)  {
     if (!path) {
         return false;
     }
 
-    PyroStr* string = PyroStr_COPY(path);
-    if (!string) {
-        return false;
-    }
-
-    return PyroVec_append(vm->import_roots, pyro_obj(string), vm);
-}
-
-
-bool pyro_add_import_root_with_length(PyroVM* vm, const char* path, size_t length)  {
-    if (!path) {
-        return false;
-    }
-
-    PyroStr* string = PyroStr_copy(path, length, false, vm);
+    PyroStr* string = PyroStr_copy(path, path_length, false, vm);
     if (!string) {
         return false;
     }

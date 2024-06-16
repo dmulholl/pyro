@@ -17,10 +17,10 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
 
     // Add the directory containing [real_path].
     size_t dirname_length = pyro_dirname(real_path);
-    pyro_add_import_root_with_length(vm, real_path, dirname_length);
+    pyro_append_import_root(vm, real_path, dirname_length);
 
     // Add the modules directory.
-    char* buffer = malloc(dirname_length + strlen("/modules") + 1);
+    char* buffer = malloc(dirname_length + strlen("/modules"));
     if (!buffer) {
         free(real_path);
         fprintf(stderr, "error: out of memory\n");
@@ -29,8 +29,7 @@ void pyro_cli_add_import_roots_from_path(PyroVM* vm, const char* path) {
 
     memcpy(buffer, real_path, dirname_length);
     memcpy(&buffer[dirname_length], "/modules", strlen("/modules"));
-    buffer[dirname_length + strlen("/modules")] = '\0';
-    pyro_add_import_root(vm, buffer);
+    pyro_append_import_root(vm, buffer, dirname_length + strlen("/modules"));
 
     free(buffer);
     free(real_path);
@@ -46,7 +45,7 @@ void pyro_cli_add_import_roots_from_command_line(PyroVM* vm, ArgParser* parser) 
 
     for (int i = 0; i < arg_count; i++) {
         char* root = ap_get_str_value_at_index(parser, "import-root", i);
-        pyro_add_import_root(vm, root);
+        pyro_append_import_root(vm, root, strlen(root));
     }
 }
 
@@ -65,7 +64,7 @@ void pyro_cli_add_import_roots_from_environment(PyroVM* vm) {
 
     char* token = strtok(array, ":");
     while (token != NULL) {
-        pyro_add_import_root(vm, token);
+        pyro_append_import_root(vm, token, strlen(token));
         token = strtok(NULL, ":");
     }
 
