@@ -84,7 +84,7 @@ static inline PyroValue pyro_rune(uint32_t value) {
     return (PyroValue){PYRO_VALUE_RUNE, {.u32 = value}};
 }
 
-// Converts a C pointer to a Pyro value.
+// Converts a C pointer (which must be a pointer to a PyroObject) to a Pyro value.
 static inline PyroValue pyro_obj(void* value) {
     return (PyroValue){PYRO_VALUE_OBJ, {.obj = (PyroObject*)value}};
 }

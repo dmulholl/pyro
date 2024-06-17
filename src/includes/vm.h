@@ -236,7 +236,7 @@ bool pyro_reallocate_stack(PyroVM* vm);
 static inline bool pyro_push(PyroVM* vm, PyroValue value) {
     if (vm->stack_top == vm->stack_max) {
         if (!pyro_reallocate_stack(vm)) {
-            pyro_panic(vm, "out of memory: unable to reallocate stack");
+            pyro_panic(vm, "out of memory: failed to reallocate stack");
             return false;
         }
     }
@@ -246,7 +246,7 @@ static inline bool pyro_push(PyroVM* vm, PyroValue value) {
 
     #ifdef PYRO_DEBUG_STRESS_STACK_REALLOCATION
         if (!pyro_move_stack(vm)) {
-            pyro_panic(vm, "out of memory: unable to move stack");
+            pyro_panic(vm, "out of memory: failed to move stack");
             return false;
         }
     #endif

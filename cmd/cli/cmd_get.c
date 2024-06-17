@@ -4,7 +4,7 @@
 int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
-        fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
+        fprintf(stderr, "error: out of memory, failed to initialize the Pyro VM\n");
         return 1;
     }
 
@@ -37,12 +37,9 @@ int pyro_cli_cmd_get(char* cmd_name, ArgParser* cmd_parser) {
     }
 
     pyro_exec_code(vm, (const char*)code->bytes, code->count, "std::cli::get", NULL);
-    if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
-        int64_t exit_code = pyro_get_exit_code(vm);
-        pyro_free_vm(vm);
-        return (int)exit_code;
-    }
 
+    int exit_code = (int)pyro_get_exit_code(vm);
     pyro_free_vm(vm);
-    return 0;
+
+    return exit_code;
 }

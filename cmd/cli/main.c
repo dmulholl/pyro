@@ -279,24 +279,24 @@ int main(int argc, char* argv[]) {
     }
 
     if (ap_found(parser, "exec")) {
-        pyro_cli_run_exec(parser);
+        int exit_code = pyro_cli_run_exec(parser);
         ap_free(parser);
-        return 0;
+        return exit_code;
     }
 
     if (ap_found(parser, "module")) {
-        pyro_cli_run_module(parser);
+        int exit_code = pyro_cli_run_module(parser);
         ap_free(parser);
-        return 0;
+        return exit_code;
     }
 
     if (ap_count_args(parser) > 0) {
-        pyro_cli_run_path(parser);
+        int exit_code = pyro_cli_run_path(parser);
         ap_free(parser);
-        return 0;
+        return exit_code;
     }
 
-    pyro_cli_run_repl(parser);
+    int exit_code = pyro_cli_run_repl(parser);
     ap_free(parser);
-    return 0;
+    return exit_code;
 }

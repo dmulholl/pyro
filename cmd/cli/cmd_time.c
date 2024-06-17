@@ -51,12 +51,9 @@ int pyro_cli_cmd_time(char* cmd_name, ArgParser* cmd_parser) {
     }
 
     pyro_exec_code(vm, (const char*)code->bytes, code->count, "std::cli::time", NULL);
-    if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
-        int64_t exit_code = pyro_get_exit_code(vm);
-        pyro_free_vm(vm);
-        exit(exit_code);
-    }
 
+    int exit_code = (int)pyro_get_exit_code(vm);
     pyro_free_vm(vm);
-    return 0;
+
+    return exit_code;
 }

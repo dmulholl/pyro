@@ -97,11 +97,11 @@ static int count_open_brackets(const char* code, size_t code_count) {
 }
 
 
-void pyro_cli_run_repl(ArgParser* parser) {
+int pyro_cli_run_repl(ArgParser* parser) {
     PyroVM* vm = pyro_new_vm();
     if (!vm) {
-        fprintf(stderr, "error: out of memory, unable to initialize the Pyro VM\n");
-        exit(1);
+        fprintf(stderr, "error: out of memory, failed to initialize the Pyro VM\n");
+        return 1;
     }
 
     // Turn on automatic printing of expression statement values.
@@ -119,12 +119,12 @@ void pyro_cli_run_repl(ArgParser* parser) {
     printf("%s -- Type 'exit' to quit.\n", version);
     free(version);
 
-    char* code = NULL;
-    size_t code_count = 0;
+    char* buffer = NULL;
+    size_t buffer_count = 0;
 
     for (;;) {
         char* line;
-        if (code) {
+        if (buffer) {
             line = bestline("\x1B[90m···\x1B[0m ");
         } else {
             line = bestline("\x1B[90m>>>\x1B[0m ");
@@ -132,52 +132,60 @@ void pyro_cli_run_repl(ArgParser* parser) {
 
         if (!line) {
             printf("\n");
-            break;
+            free(buffer);
+            pyro_free_vm(vm);
+            return 0;
         }
 
         if (strcmp(line, "exit") == 0) {
             free(line);
-            break;
+            free(buffer);
+            pyro_free_vm(vm);
+            return 0;
         }
 
         bestlineHistoryAdd(line);
 
-        code = realloc(code, code_count + strlen(line) + 1);
-        if (!code) {
-            fprintf(stderr, "error: failed to allocate memory for input\n");
-            exit(1);
+        char* new_buffer = realloc(buffer, buffer_count + strlen(line) + 1);
+        if (!new_buffer) {
+            fprintf(stderr, "error: out of memory\n");
+            free(line);
+            free(buffer);
+            pyro_free_vm(vm);
+            return 1;
         }
-        memcpy(&code[code_count], line, strlen(line));
-        code_count += strlen(line) + 1;
-        code[code_count - 1] = '\n';
+
+        buffer = new_buffer;
+
+        memcpy(&buffer[buffer_count], line, strlen(line));
+        buffer_count += strlen(line) + 1;
+        buffer[buffer_count - 1] = '\n';
         free(line);
 
-        // If the code contains unclosed quotes or more opening brackets than closing brackets,
+        // If the buffer contains unclosed quotes or more opening brackets than closing brackets,
         // read and append another line of input.
-        if (has_open_quote(code, code_count) || count_open_brackets(code, code_count) > 0) {
+        if (has_open_quote(buffer, buffer_count) || count_open_brackets(buffer, buffer_count) > 0) {
             continue;
         }
 
         // Tack a semicolon onto the end. Multiple semicolons are simply ignored.
         // This will replace the trailing newline character.
-        code[code_count - 1] = ';';
+        buffer[buffer_count - 1] = ';';
 
-        pyro_exec_code(vm, code, code_count, "<repl>", NULL);
+        pyro_exec_code(vm, buffer, buffer_count, "<repl>", NULL);
+
+        free(buffer);
+        buffer = NULL;
+        buffer_count = 0;
 
         if (pyro_get_exit_flag(vm)) {
-            int64_t exit_code = pyro_get_exit_code(vm);
+            int exit_code = (int)pyro_get_exit_code(vm);
             pyro_free_vm(vm);
-            exit(exit_code);
+            return exit_code;
         }
 
         if (pyro_get_panic_flag(vm)) {
             pyro_reset_vm(vm);
         }
-
-        free(code);
-        code = NULL;
-        code_count = 0;
     }
-
-    pyro_free_vm(vm);
 }
