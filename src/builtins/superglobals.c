@@ -1024,6 +1024,8 @@ static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
+    PyroStr* import_path = PYRO_AS_STR(args[0]);
+
     PyroMod* module = PyroMod_new(vm);
     if (!module) {
         pyro_panic(vm, "$import(): out of memory");
@@ -1034,7 +1036,6 @@ static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    PyroStr* import_path = PYRO_AS_STR(args[0]);
     pyro_import_module_from_path(vm, import_path->bytes, module);
 
     pyro_pop(vm);
