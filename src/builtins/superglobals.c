@@ -1020,7 +1020,10 @@ static PyroValue fn_is_method(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "$import(): invalid argument [path], expected a string");
+        pyro_panic(vm,
+            "$import(): invalid argument: expected a string, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
 
@@ -1032,13 +1035,10 @@ static PyroValue fn_import(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    if (!pyro_push(vm, pyro_obj(module))) {
-        return pyro_null();
-    }
-
+    if (!pyro_push(vm, pyro_obj(module))) return pyro_null();
     pyro_import_module_from_path(vm, import_path->bytes, module);
-
     pyro_pop(vm);
+
     return pyro_obj(module);
 }
 
