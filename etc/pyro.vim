@@ -1,11 +1,11 @@
 " Syntax definition file for the Pyro programming language.
-" v0.7.2
+" v0.7.3
 
 " Comments.
 syn match pyroComment "#.*$"
 
 " Identifiers with a '$' prefix.
-syn match pyroSpecial "$\w\+\>"
+syn match pyroDollar "[$]\w*"
 
 " Strings and characters.
 syn region pyroBacktickedString start=+`+ end=+`+
@@ -56,7 +56,7 @@ hi def link pyroAssert PreProc
 hi def link pyroImport PreProc
 hi def link pyroConstant Special
 hi def link pyroNumber Constant
-hi def link pyroSpecial PreProc
+hi def link pyroDollar PreProc
 hi def link pyroEscape Constant
 hi def link pyroInterpolation Constant
 hi def link pyroOperator Statement
