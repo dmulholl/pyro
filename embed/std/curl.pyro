@@ -232,8 +232,14 @@ pub class Request {
         }
 
         var (exit_code, stdout_output, stderr_output) = result;
+
         if exit_code != 0 {
-            return $err("${method}(): ${stderr_output:strip()}");
+            let error_message = stderr_output
+                :replace("\n* Closing connection", "")
+                :replace("\n* ", ": ")
+                :replace("* ", "")
+                :strip();
+            return $err("${method}(): ${error_message}");
         }
 
         if self.debug {
@@ -287,8 +293,14 @@ pub class Request {
         }
 
         var (exit_code, stdout_output, stderr_output) = result;
+
         if exit_code != 0 {
-            return $err("${method}(): ${stderr_output:strip()}");
+            let error_message = stderr_output
+                :replace("\n* Closing connection", "")
+                :replace("\n* ", ": ")
+                :replace("* ", "")
+                :strip();
+            return $err("${method}(): ${error_message}");
         }
 
         if self.debug {
@@ -341,8 +353,14 @@ pub class Request {
         }
 
         var (exit_code, stdout_output, stderr_output) = result;
+
         if exit_code != 0 {
-            return $err("${method}(): ${stderr_output:strip()}");
+            let error_message = stderr_output
+                :replace("\n* Closing connection", "")
+                :replace("\n* ", ": ")
+                :replace("* ", "")
+                :strip();
+            return $err("${method}(): ${error_message}");
         }
 
         if self.debug {
