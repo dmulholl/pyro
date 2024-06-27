@@ -569,9 +569,13 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     // Setup [cmd].
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "$cmd(): invalid argument [path], expected a string");
+        pyro_panic(vm,
+            "$cmd(): invalid argument [path], expected a string, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
+
     cmd = PYRO_AS_STR(args[0])->bytes;
 
     // Setup [argv].
@@ -584,13 +588,22 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
         argv[0] = cmd;
         argv[1] = NULL;
     } else {
-        if (!PYRO_IS_VEC(args[1])) {
-            pyro_panic(vm, "$cmd(): invalid argument [args], expected a vector");
+        PyroValue* values;
+        size_t count;
+
+        if (PYRO_IS_VEC(args[1])) {
+            values = PYRO_AS_VEC(args[1])->values;
+            count = PYRO_AS_VEC(args[1])->count;
+        } else if (PYRO_IS_TUP(args[1])) {
+            values = PYRO_AS_TUP(args[1])->values;
+            count = PYRO_AS_TUP(args[1])->count;
+        } else {
+            pyro_panic(vm,
+                "$cmd(): invalid argument [args], expected a vector or tuple, found %s",
+                pyro_get_type_name(vm, args[1])->bytes
+            );
             return pyro_null();
         }
-
-        PyroValue* values = PYRO_AS_VEC(args[1])->values;
-        size_t count = PYRO_AS_VEC(args[1])->count;
 
         argv = malloc(sizeof(char**) * (count + 2));
         if (!argv) {
@@ -602,7 +615,11 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
             PyroValue value = values[i];
             if (!PYRO_IS_STR(value)) {
                 free(argv);
-                pyro_panic(vm, "$cmd(): invalid argument [args], expected a vector of strings");
+                pyro_panic(vm,
+                    "$cmd(): invalid argument [args], expected a vector or tuple of strings, found element at index %zu of type %s",
+                    i,
+                    pyro_get_type_name(vm, value)->bytes
+                );
                 return pyro_null();
             }
             argv[i+1] = PYRO_AS_STR(value)->bytes;
@@ -622,7 +639,10 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
             stdin_input_length = PYRO_AS_BUF(args[2])->count;
         } else {
             free(argv);
-            pyro_panic(vm, "$cmd(): invalid argument [input], expected a string or buffer");
+            pyro_panic(vm,
+                "$cmd(): invalid argument [input], expected a string or buffer, found %s",
+                pyro_get_type_name(vm, args[2])->bytes
+            );
             return pyro_null();
         }
     }
