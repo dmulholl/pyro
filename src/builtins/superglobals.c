@@ -599,7 +599,7 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
             count = PYRO_AS_TUP(args[1])->count;
         } else {
             pyro_panic(vm,
-                "$cmd(): invalid argument [args], expected a vector or tuple, found %s",
+                "$cmd(): invalid argument [args], expected a vec or tup, found %s",
                 pyro_get_type_name(vm, args[1])->bytes
             );
             return pyro_null();
