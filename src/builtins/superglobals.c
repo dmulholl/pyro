@@ -500,26 +500,23 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
 
 
 static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    char* command;
-    uint8_t* stdin_input = NULL;
-    size_t stdin_input_length = 0;
-    PyroBuf* stdout_output;
-    PyroBuf* stderr_output;
-    int exit_code;
-
     if (arg_count == 0 || arg_count > 2) {
         pyro_panic(vm, "$shell(): expected 1 or 2 arguments, found %zu", arg_count);
         return pyro_null();
     }
 
-    // Setup [command].
     if (!PYRO_IS_STR(args[0])) {
-        pyro_panic(vm, "$shell(): invalid argument [command], expected a string");
+        pyro_panic(vm,
+            "$shell(): invalid argument [command], expected a string, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
-    command = PYRO_AS_STR(args[0])->bytes;
 
-    // Setup [stdin_input] and [stdin_input_length].
+    char* command = PYRO_AS_STR(args[0])->bytes;
+    uint8_t* stdin_input = NULL;
+    size_t stdin_input_length = 0;
+
     if (arg_count == 2) {
         if (PYRO_IS_STR(args[1])) {
             stdin_input = (uint8_t*)PYRO_AS_STR(args[1])->bytes;
@@ -533,23 +530,14 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    // Setup [argv].
     char* argv[] = {"/bin/sh", "-c", command, (char*)NULL};
+
+    PyroBuf* stdout_output;
+    PyroBuf* stderr_output;
+    int exit_code;
 
     if (!pyro_run_executable(vm, "/bin/sh", argv, stdin_input, stdin_input_length, &stdout_output, &stderr_output, &exit_code)) {
         // We've already panicked.
-        return pyro_null();
-    }
-
-    PyroStr* stdout_string = PyroBuf_to_str(stdout_output, vm);
-    if (!stdout_string) {
-        pyro_panic(vm, "out of memory");
-        return pyro_null();
-    }
-
-    PyroStr* stderr_string = PyroBuf_to_str(stderr_output, vm);
-    if (!stderr_string) {
-        pyro_panic(vm, "out of memory");
         return pyro_null();
     }
 
@@ -560,8 +548,8 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     tup->values[0] = pyro_i64(exit_code);
-    tup->values[1] = pyro_obj(stdout_string);
-    tup->values[2] = pyro_obj(stderr_string);
+    tup->values[1] = pyro_obj(stdout_output);
+    tup->values[2] = pyro_obj(stderr_output);
 
     return pyro_obj(tup);
 }

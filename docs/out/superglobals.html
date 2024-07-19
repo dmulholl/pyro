@@ -997,7 +997,7 @@ Creates a new <a href="builtins/sets.html">set</a>.
 </div>
 <div>
 <dt>
-<code>$shell(command: str) -&gt; tup[i64, str, str]</code> <br> <code>$shell(command: str, input: str|buf) -&gt; tup[i64, str, str]</code>
+<code>$shell(command: str) -&gt; tup[i64, buf, buf]</code> <br> <code>$shell(command: str, input: str|buf) -&gt; tup[i64, buf, buf]</code>
 </dt>
 <dd>
 <p>
@@ -1008,12 +1008,15 @@ Runs a shell command.
 If an <code>input</code> string or buffer is specified, its content will be written to the command's <code>stdin</code> stream.
 </li>
 <li>
-Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string.
+Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a buffer, and its <code>stderr</code> output as a buffer.
 </li>
 <li>
 This function will panic if an OS error occurs while forking the process.
 </li>
 </ul>
+<p>
+Note that you can efficiently convert an output buffer to a string using the buffer's <code>:to_str()</code> method.
+</p>
 <p>
 This function is equivalent to running:
 </p>
@@ -1021,7 +1024,7 @@ This function is equivalent to running:
 /bin/sh -c &lt;command&gt;
 </pre>
 <p>
-Use the <code>$cmd()</code> function to run an executable file directly, bypassing the shell.
+Use the <code>$run()</code> function to run an executable file directly, bypassing the shell.
 </p>
 </dd>
 </div>

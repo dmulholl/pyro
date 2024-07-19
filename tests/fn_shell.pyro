@@ -1,0 +1,30 @@
+assert $("echo foobar") == "foobar\n";
+assert $("FOO=bar bash -c 'echo $FOO'") == "bar\n";
+
+with result = $shell("echo foobar") {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str() == "foobar\n";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
+
+with result = $shell("FOO=bar bash -c 'echo $FOO'") {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str() == "bar\n";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
+
+with result = $shell("cat", "foobar") {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str() == "foobar";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
+
+with result = $shell("cat", $buf("foobar")) {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str() == "foobar";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}

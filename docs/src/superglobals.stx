@@ -553,20 +553,22 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$shell(command: str) -> tup[i64, str, str]` <br> `$shell(command: str, input: str|buf) -> tup[i64, str, str]` ]]
+[[ `$shell(command: str) -> tup[i64, buf, buf]` <br> `$shell(command: str, input: str|buf) -> tup[i64, buf, buf]` ]]
 
     Runs a shell command.
 
     * If an `input` string or buffer is specified, its content will be written to the command's `stdin` stream.
-    * Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
+    * Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a buffer, and its `stderr` output as a buffer.
     * This function will panic if an OS error occurs while forking the process.
+
+    Note that you can efficiently convert an output buffer to a string using the buffer's `:to_str()` method.
 
     This function is equivalent to running:
 
     ::: code
         /bin/sh -c <command>
 
-    Use the `$cmd()` function to run an executable file directly, bypassing the shell.
+    Use the `$run()` function to run an executable file directly, bypassing the shell.
 
 
 
