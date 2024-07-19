@@ -142,10 +142,10 @@ You can find a set of examples [here][1].
 ::: code pyro
     class Response {
         # The response's HTTP status code.
-        pub var status: i64;
+        pub var code: i64;
 
         # The response's body.
-        pub var body: str;
+        pub var body: buf;
 
         # The response's headers, including the status line.
         pub var raw_headers: str;

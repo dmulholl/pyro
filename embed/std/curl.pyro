@@ -12,17 +12,7 @@ def term_width() -> i64 {
 }
 
 
-def extract_response_headers(curl_stderr_output: str) -> vec[str] {
-    return curl_stderr_output
-        :lines()
-        :filter(def(line) { return line:starts_with("< "); })
-        :map(def(line) { return line:slice(2):strip(); })
-        :filter(def(line) { return !line:is_empty(); })
-        :to_vec();
-}
-
-
-def extract_response_status(status_line: str) -> i64|err {
+def extract_response_status_code(status_line: str) -> i64|err {
     if !status_line:starts_with("HTTP") {
         return $err("invalid response");
     }
@@ -32,36 +22,40 @@ def extract_response_status(status_line: str) -> i64|err {
         return $err("invalid response");
     }
 
-    var status = try $i64(tokens[1]);
-    if $is_err(status) {
+    var code = try $i64(tokens[1]);
+    if $is_err(code) {
         return $err("invalid response");
     }
 
-    return status;
+    return code;
 }
 
 
-def make_response(headers: vec[str], body: str) -> Response|err {
+def make_response(headers: vec[str], body: buf) -> Response|err {
     if headers:is_empty() {
         return $err("invalid response");
     }
 
-    var status = extract_response_status(headers[0]);
-    if $is_err(status) {
-        return status;
+    var code = extract_response_status_code(headers[0]);
+    if $is_err(code) {
+        return code;
     }
 
     var response = Response();
-    response.status = status;
+    response.code = code;
     response.body = body;
     response.raw_headers = headers:join("\n");
 
     for header in headers:iter():skip_first(1) {
-        var tokens = header:split(":");
-        if tokens:count() < 2 {
+        let index = header:index_of(":");
+        if $is_err(index) {
             return $err("invalid response");
         }
-        response.headers[tokens[0]:strip():to_ascii_lower()] = tokens[1]:strip();
+
+        let key = header:slice(0, index);
+        let value = header:slice(index + 1);
+
+        response.headers[key:strip():to_ascii_lower()] = value:strip();
     }
 
     return response;
@@ -69,13 +63,14 @@ def make_response(headers: vec[str], body: str) -> Response|err {
 
 
 pub class Response {
-    pub var status: i64 = 0;
-    pub var body: str = "";
+    pub var code: i64 = 0;
     pub var raw_headers: str = "";
     pub var headers: map[str, str];
+    pub var body: buf;
 
     def $init() {
         self.headers = {};
+        self.body = $buf();
     }
 
     pub def has_header(key: str) -> bool {
@@ -87,7 +82,7 @@ pub class Response {
     }
 
     pub def from_json() -> map|vec|str|i64|f64|bool|null|err {
-        return json::from_json(self.body);
+        return json::from_json(self.body:to_str());
     }
 }
 
@@ -118,9 +113,7 @@ pub class Request {
     }
 
     pub def url(value: str) -> Request {
-        if !$is_str(value) {
-            $panic("url(): expected a string argument");
-        }
+        assert $is_str(value), "url(): invalid argument, expected a string";
         self.url = value;
         return self;
     }
@@ -139,17 +132,13 @@ pub class Request {
     }
 
     pub def header(value: str) -> Request {
-        if !$is_str(value) {
-            $panic("header(): expected a string argument");
-        }
+        assert $is_str(value), "header(): invalid argument, expected a string";
         self.headers:append(value);
         return self;
     }
 
     pub def body(value: str|buf) -> Request {
-        if !$is_str(value) && !$is_buf(value) {
-            $panic("body(): expected a string or buffer argument");
-        }
+        assert $is_str(value) || $is_buf(value), "body(): invalid argument, expected a string or buffer";
         self.body = value;
         return self;
     }
@@ -160,9 +149,7 @@ pub class Request {
     }
 
     pub def timeout(seconds: f64) -> Request {
-        if !$is_f64(seconds) {
-            $panic("timeout(): expected an f64 argument");
-        }
+        assert $is_f64(seconds), "timeout(): invalid argument, expected an f64";
         self.timeout_secs = seconds;
         return self;
     }
@@ -226,34 +213,31 @@ pub class Request {
             $eprintln("-" * term_width());
         }
 
-        var result = try $cmd("curl", args);
+        var result = try $run("curl", args);
         if $is_err(result) {
             return $err("${method}(): ${result}");
         }
 
-        var (exit_code, stdout_output, stderr_output) = result;
+        var (exit_code, out_buf, err_buf) = result;
 
         if exit_code != 0 {
-            let error_message = stderr_output
+            let err_msg = err_buf
+                :to_str()
                 :replace("\n* Closing connection", "")
                 :replace("\n* ", ": ")
                 :replace("* ", "")
                 :strip();
-            return $err("${method}(): ${error_message}");
+            return $err("${method}(): ${err_msg}");
         }
 
-        if self.debug {
-            $eprintln(stderr_output:strip());
-            $eprintln("-" * term_width());
-        }
-
-        var headers = stdout_output
+        var headers = out_buf
+            :to_str()
             :lines()
             :map(def(line) { return line:strip(); })
             :filter(def(line) { return !line:is_empty(); })
             :to_vec();
 
-        return make_response(headers, "");
+        return make_response(headers, out_buf);
     }
 
     def make_request_without_body(method: str) -> Response|err {
@@ -287,29 +271,37 @@ pub class Request {
             $eprintln("-" * term_width());
         }
 
-        var result = try $cmd("curl", args);
+        var result = try $run("curl", args);
         if $is_err(result) {
             return $err("${method}(): ${result}");
         }
 
-        var (exit_code, stdout_output, stderr_output) = result;
+        var (exit_code, out_buf, err_buf) = result;
 
         if exit_code != 0 {
-            let error_message = stderr_output
+            let err_msg = err_buf
+                :to_str()
                 :replace("\n* Closing connection", "")
                 :replace("\n* ", ": ")
                 :replace("* ", "")
                 :strip();
-            return $err("${method}(): ${error_message}");
+            return $err("${method}(): ${err_msg}");
         }
 
         if self.debug {
-            $eprintln(stderr_output:strip());
+            $eprintln($str(err_buf):strip());
             $eprintln("-" * term_width());
         }
 
-        var headers = extract_response_headers(stderr_output);
-        return make_response(headers, stdout_output);
+        var headers = err_buf
+            :to_str()
+            :lines()
+            :filter(def(line) { return line:starts_with("< "); })
+            :map(def(line) { return line:slice(2):strip(); })
+            :filter(def(line) { return !line:is_empty(); })
+            :to_vec();
+
+        return make_response(headers, out_buf);
     }
 
     def make_request_with_body(method: str) -> Response|err {
@@ -347,29 +339,37 @@ pub class Request {
             $eprintln("-" * term_width());
         }
 
-        var result = try $cmd("curl", args, body);
+        var result = try $run("curl", args, body);
         if $is_err(result) {
             return $err("${method}(): ${result}");
         }
 
-        var (exit_code, stdout_output, stderr_output) = result;
+        var (exit_code, out_buf, err_buf) = result;
 
         if exit_code != 0 {
-            let error_message = stderr_output
+            let err_msg = err_buf
+                :to_str()
                 :replace("\n* Closing connection", "")
                 :replace("\n* ", ": ")
                 :replace("* ", "")
                 :strip();
-            return $err("${method}(): ${error_message}");
+            return $err("${method}(): ${err_msg}");
         }
 
         if self.debug {
-            $eprintln(stderr_output:strip());
+            $eprintln($str(err_buf):strip());
             $eprintln("-" * term_width());
         }
 
-        var headers = extract_response_headers(stderr_output);
-        return make_response(headers, stdout_output);
+        var headers = err_buf
+            :to_str()
+            :lines()
+            :filter(def(line) { return line:starts_with("< "); })
+            :map(def(line) { return line:slice(2):strip(); })
+            :filter(def(line) { return !line:is_empty(); })
+            :to_vec();
+
+        return make_response(headers, out_buf);
     }
 
     def make_query_string() -> str {

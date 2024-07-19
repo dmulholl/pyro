@@ -364,10 +364,10 @@ Responses
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Response</span> <span class="p">{</span>
     <span class="c1"># The response&#39;s HTTP status code.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">status</span><span class="p">:</span> <span class="nx">i64</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">code</span><span class="p">:</span> <span class="nx">i64</span><span class="p">;</span>
 
     <span class="c1"># The response&#39;s body.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">body</span><span class="p">:</span> <span class="nx">str</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">body</span><span class="p">:</span> <span class="nx">buf</span><span class="p">;</span>
 
     <span class="c1"># The response&#39;s headers, including the status line.</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">raw_headers</span><span class="p">:</span> <span class="nx">str</span><span class="p">;</span>
