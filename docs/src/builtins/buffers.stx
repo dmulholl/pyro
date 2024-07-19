@@ -72,6 +72,10 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
 ### Methods
 
+[[ `:as_str() -> str` ]]
+
+    Returns a copy of the buffer's content as a string, leaving the buffer itself unchanged.
+
 [[ `:clear()` ]]
 
     Clears the buffer.

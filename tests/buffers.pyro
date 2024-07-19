@@ -62,8 +62,8 @@ def $test_write_with_buffer_arg() {
 
 def $test_stringification() {
     var buf = $buf();
+    assert buf:count() == 0;
     assert $str(buf) == "";
-    assert buf:to_str() == "";
 
     buf:write("foo");
     assert buf:count() == 3;
@@ -74,9 +74,52 @@ def $test_stringification() {
     assert $str(buf) == "foo";
     assert buf:count() == 3;
 
+    buf:write("bar");
+    assert buf:count() == 6;
+
+    assert $str(buf) == "foobar";
+    assert buf:count() == 6;
+}
+
+
+def $test_to_str() {
+    var buf = $buf();
+    assert buf:count() == 0;
+    assert buf:to_str() == "";
+
+    buf:write("foo");
+    assert buf:count() == 3;
+
     assert buf:to_str() == "foo";
     assert buf:count() == 0;
-    assert $str(buf) == "";
+
+    buf:write("foobar");
+    assert buf:count() == 6;
+
+    assert buf:to_str() == "foobar";
+    assert buf:count() == 0;
+}
+
+
+def $test_as_str() {
+    var buf = $buf();
+    assert buf:count() == 0;
+    assert buf:as_str() == "";
+
+    buf:write("foo");
+    assert buf:count() == 3;
+
+    assert buf:as_str() == "foo";
+    assert buf:count() == 3;
+
+    assert buf:as_str() == "foo";
+    assert buf:count() == 3;
+
+    buf:write("bar");
+    assert buf:count() == 6;
+
+    assert buf:as_str() == "foobar";
+    assert buf:count() == 6;
 }
 
 

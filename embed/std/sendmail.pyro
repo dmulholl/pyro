@@ -58,7 +58,7 @@ pub class Email {
     pub def send() -> err? {
         var msg = self:make_message();
         if $is_err(msg) {
-            return $err("send(): ${msg}")
+            return $err("send(): ${msg}");
         }
 
         var result = try $run("sendmail", ["-i", "-t"], msg);
@@ -68,7 +68,7 @@ pub class Email {
 
         var (exit_code, _, err_buf) = result;
         if exit_code != 0 {
-            return $err("send(): ${err_buf:to_str():strip()}")
+            return $err("send(): ${err_buf:to_str():strip()}");
         }
     }
 

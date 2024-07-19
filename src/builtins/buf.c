@@ -104,17 +104,30 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue buf_to_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroBuf* buf = PYRO_AS_BUF(args[-1]);
+
     PyroStr* string = PyroBuf_to_str(buf, vm);
     if (!string) {
         pyro_panic(vm, "to_str(): out of memory");
         return pyro_null();
     }
+
+    return pyro_obj(string);
+}
+
+
+static PyroValue buf_as_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroStr* string = pyro_stringify_value(vm, args[-1]);
+    if (vm->halt_flag) {
+        return pyro_null();
+    }
+
     return pyro_obj(string);
 }
 
 
 static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroBuf* buf = PYRO_AS_BUF(args[-1]);
+
     if (PYRO_IS_I64(args[0])) {
         int64_t index = args[0].as.i64;
         if (index >= 0 && (size_t)index < buf->count) {
@@ -123,6 +136,7 @@ static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
         pyro_panic(vm, "get(): invalid argument [index], out of range");
         return pyro_null();
     }
+
     pyro_panic(vm, "get(): invalid argument [index], expected an integer");
     return pyro_null();
 }
@@ -238,6 +252,7 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
 
     // Methods -- public.
     pyro_define_pub_method(vm, vm->class_buf, "to_str", buf_to_str, 0);
+    pyro_define_pub_method(vm, vm->class_buf, "as_str", buf_as_str, 0);
     pyro_define_pub_method(vm, vm->class_buf, "count", buf_count, 0);
     pyro_define_pub_method(vm, vm->class_buf, "get", buf_get, 1);
     pyro_define_pub_method(vm, vm->class_buf, "set", buf_set, 2);

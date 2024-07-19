@@ -522,11 +522,13 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
             if (buf->count == 0) {
                 return vm->empty_string;
             }
+
             PyroStr* string = PyroStr_copy((char*)buf->bytes, buf->count, false, vm);
             if (!string) {
                 pyro_panic(vm, "out of memory");
                 return NULL;
             }
+
             return string;
         }
 
