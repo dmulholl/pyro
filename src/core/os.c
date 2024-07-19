@@ -213,9 +213,9 @@ static int read_from_fd(PyroVM* vm, int fd, PyroBuf** output) {
 }
 
 
-bool pyro_exec_cmd(
+bool pyro_run_executable(
     PyroVM* vm,
-    const char* cmd,
+    const char* path,
     char* const argv[],
     const uint8_t* stdin_input,
     size_t stdin_input_length,
@@ -225,13 +225,13 @@ bool pyro_exec_cmd(
 ) {
     int child_stdin_pipe[2];
     if (pipe(child_stdin_pipe) == -1) {
-        pyro_panic(vm, "exec: %s: failed to create child's stdin pipe", cmd);
+        pyro_panic(vm, "exec: %s: failed to create child's stdin pipe", path);
         return false;
     }
 
     int child_stdout_pipe[2];
     if (pipe(child_stdout_pipe) == -1) {
-        pyro_panic(vm, "exec: %s: failed to create child's stdout pipe", cmd);
+        pyro_panic(vm, "exec: %s: failed to create child's stdout pipe", path);
         close(child_stdin_pipe[0]);
         close(child_stdin_pipe[1]);
         return false;
@@ -239,7 +239,7 @@ bool pyro_exec_cmd(
 
     int child_stderr_pipe[2];
     if (pipe(child_stderr_pipe) == -1) {
-        pyro_panic(vm, "exec: %s: failed to create child's stderr pipe", cmd);
+        pyro_panic(vm, "exec: %s: failed to create child's stderr pipe", path);
         close(child_stdin_pipe[0]);
         close(child_stdin_pipe[1]);
         close(child_stdout_pipe[0]);
@@ -264,9 +264,9 @@ bool pyro_exec_cmd(
         close(child_stderr_pipe[1]);
 
         // A call to execvp() only returns if it fails.
-        execvp(cmd, argv);
+        execvp(path, argv);
         char* err_msg = strerror(errno);
-        pyro_stderr_write_f(vm, "exec: %s: %s\n", cmd, err_msg);
+        pyro_stderr_write_f(vm, "exec: %s: %s\n", path, err_msg);
         exit(1);
     }
 
@@ -279,7 +279,7 @@ bool pyro_exec_cmd(
         // Write the input string to the child's stdin pipe.
         if (stdin_input_length > 0 && stdin_input != NULL) {
             if (!write_to_fd(child_stdin_pipe[1], stdin_input, stdin_input_length)) {
-                pyro_panic(vm, "exec: %s: error while writing to child's stdin pipe", cmd);
+                pyro_panic(vm, "exec: %s: error while writing to child's stdin pipe", path);
                 close(child_stdin_pipe[1]);
                 close(child_stdout_pipe[0]);
                 close(child_stderr_pipe[0]);
@@ -296,7 +296,7 @@ bool pyro_exec_cmd(
             close(child_stderr_pipe[0]);
             return false;
         } else if (out_result == 2) {
-            pyro_panic(vm, "exec: %s: error while reading from child's stdout pipe", cmd);
+            pyro_panic(vm, "exec: %s: error while reading from child's stdout pipe", path);
             close(child_stdout_pipe[0]);
             close(child_stderr_pipe[0]);
             return false;
@@ -310,7 +310,7 @@ bool pyro_exec_cmd(
             close(child_stderr_pipe[0]);
             return false;
         } else if (err_result == 2) {
-            pyro_panic(vm, "exec: %s: error while reading from child's stderr pipe", cmd);
+            pyro_panic(vm, "exec: %s: error while reading from child's stderr pipe", path);
             close(child_stderr_pipe[0]);
             return false;
         }
@@ -326,7 +326,7 @@ bool pyro_exec_cmd(
     }
 
     // If child_pid < 0, we're in the parent and the attempt to fork() failed.
-    pyro_panic(vm, "exec: %s: fork() failed", cmd);
+    pyro_panic(vm, "exec: %s: fork() failed", path);
     close(child_stdin_pipe[0]);
     close(child_stdin_pipe[1]);
     close(child_stdout_pipe[0]);

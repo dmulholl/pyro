@@ -87,22 +87,6 @@ All superglobals live in the `$` namespace so they won't interfere with your own
 
 
 
-[[ `$cmd(path: str) -> tup[i64, str, str]` <br> `$cmd(path: str, args: vec[str]|tup[str]) -> tup[i64, str, str]` <br> `$cmd(path: str, args: vec[str]|tup[str], input: str|buf) -> tup[i64, str, str]` ]]
-
-    Runs an executable file.
-
-    * If `path` contains a `/` character, it will be treated as a filepath. Otherwise, the directories specified by the `PATH` environment variable will be searched for the named file.
-    * If an `args` vector or tuple is specified, its entries will be appended to the program's argument list. (The program's argument list automatically gets `path` as its first entry.) Arguments are passed directly to the program and don't need to be shell-escaped.
-    * If an `input` string or buffer is specified, its content will be written to the program's `stdin` stream.
-
-    Returns a three-item tuple containing the program's exit code as an integer, its `stdout` output as a string, and its `stderr` output as a string.
-
-    Returns a non-zero exit code and `stderr` error message if the program was not found.
-
-    This function will panic if an OS error occurs while forking the process.
-
-
-
 [[ `$debug(arg: any) -> str` ]]
 
     Returns a string representing `arg` suitable for use in debugging.
@@ -537,6 +521,23 @@ All superglobals live in the `$` namespace so they won't interfere with your own
     Reads the content of the file at `path` and returns it as a string.
 
     Panics if the argument is invalid, if the file cannot be opened, if an I/O read error occurs, or if sufficient memory cannot be allocated for the string.
+
+
+
+[[ `$run(path: str) -> tup[i64, buf, buf]` <br> `$run(path: str, args: vec[str]|tup[str]) -> tup[i64, buf, buf]` <br> `$run(path: str, args: vec[str]|tup[str], input: str|buf) -> tup[i64, buf, buf]` ]]
+
+    Runs an executable file.
+
+    * If `path` contains a `/` character, it will be treated as a filepath. Otherwise, the directories specified by the `PATH` environment variable will be searched for the named file.
+    * If an `args` vector or tuple is specified, its entries will be appended to the executable's argument list. (The executable's argument list automatically gets `path` as its first entry.) Arguments are passed directly to the executable and don't need to be shell-escaped.
+    * If an `input` string or buffer is specified, its content will be written to the executable's `stdin` stream.
+
+    Returns a three-item tuple containing the executable's exit code as an integer, its `stdout` output as a buffer, and its `stderr` output as a buffer.
+    (Note that you can efficiently convert a buffer to a string using the buffer's `:to_str()` method.)
+
+    Returns a non-zero exit code and `stderr` error message if the executable file could not be found.
+
+    This function will panic if an OS error occurs while forking the process.
 
 
 

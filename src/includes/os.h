@@ -44,23 +44,23 @@ bool pyro_setenv(const char* name, const char* value);
 // Wrapper for POSIX chdir(). Returns true on success, false on failure.
 bool pyro_chdir(const char* path);
 
-// Executes [cmd] via execvp().
-// - [cmd] is a null-terminated string specifying an executable file.
-// - If [cmd] contains a '/', it will be treated as a filepath.
-// - If [cmd] does not contain a '/', it will be searched for on PATH.
+// Executes [path] via execvp().
+// - [path] is a null-terminated string specifying an executable file.
+// - If [path] contains a '/', it will be treated as a filepath.
+// - If [path] does not contain a '/', it will be searched for on PATH.
 // - [argv] is null-terminated array of null-terminated strings.
-// - The first entry of [argv] should be [cmd].
+// - The first entry of [argv] should be [path].
 // - If [stdin_input_length > 0], [stdin_input] will be written to the program's
 //   standard input stream.
 // - Returns the program's stdout output as [stdout_output].
 // - Returns the program's stderr output as [stderr_output].
 // - Returns the program's exit code as [exit_code].
-// - If [cmd] is not found, the exit code will be non-zero and [stderr_ouput]
+// - If [path] is not found, the exit code will be non-zero and [stderr_ouput]
 //   will contain an error message.
 // If the return value is false, the function has panicked.
-bool pyro_exec_cmd(
+bool pyro_run_executable(
     PyroVM* vm,
-    const char* cmd,
+    const char* path,
     char* const argv[],
     const uint8_t* stdin_input,
     size_t stdin_input_length,
