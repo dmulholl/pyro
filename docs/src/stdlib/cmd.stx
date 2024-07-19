@@ -9,8 +9,6 @@ Convenience functions for running common system binaries.
 
 * Arguments are passed directly to the binary and don't need to be shell-escaped.
 
-* To run an arbitrary binary, use the `run()` function.
-
 
 
 ### Functions
@@ -77,11 +75,3 @@ Convenience functions for running common system binaries.
         rm -rf <path>
 
     Panics if the `rm` binary cannot be found or if it exits with a non-zero status code.
-
-
-
-[[ `run(name: str, *args: str) -> str` ]]
-
-    Runs the named command with the specified arguments and returns its standard output as a string.
-
-    Panics if the binary cannot be found or if it exits with a non-zero status code.

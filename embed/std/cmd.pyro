@@ -1,51 +1,30 @@
-pub def run(name: str, *args: str) -> str {
-    assert $is_str(name), "run(): invalid argument [name], expected a string, found ${$type(name)}";
-
-    let result = try $cmd(name, args);
-    if $is_err(result) {
-        $panic("run(): ${result}");
-    }
-
-    let (exit_code, std_out, std_err) = result;
-    if exit_code != 0 {
-        $panic("run(): ${std_err:strip()}");
-    }
-
-    return std_out;
-}
-
-
 pub def mkdir(path: str) {
     assert $is_str(path), "mkdir(): invalid argument, expected a string, found ${$type(path)}";
 
-    let result = try $cmd("mkdir", ("-p", path));
+    let result = try $run("mkdir", ("-p", path));
     if $is_err(result) {
         $panic("mkdir(): ${result}");
     }
 
-    let (exit_code, std_out, std_err) = result;
+    let (exit_code, out_buf, err_buf) = result;
     if exit_code != 0 {
-        $panic("mkdir(): ${std_err:strip()}");
+        $panic("mkdir(): ${err_buf:to_str():strip()}");
     }
-
-    return std_out;
 }
 
 
 pub def rm(path: str) {
     assert $is_str(path), "rm(): invalid argument, expected a string, found ${$type(path)}";
 
-    let result = try $cmd("rm", ("-rf", path));
+    let result = try $run("rm", ("-rf", path));
     if $is_err(result) {
         $panic("rm(): ${result}");
     }
 
-    let (exit_code, std_out, std_err) = result;
+    let (exit_code, out_buf, err_buf) = result;
     if exit_code != 0 {
-        $panic("rm(): ${std_err:strip()}");
+        $panic("rm(): ${err_buf:to_str():strip()}");
     }
-
-    return std_out;
 }
 
 
@@ -53,17 +32,15 @@ pub def mv(src: str, dst: str) {
     assert $is_str(src), "mv(): invalid argument [src], expected a string, found ${$type(src)}";
     assert $is_str(dst), "mv(): invalid argument [dst], expected a string, found ${$type(dst)}";
 
-    let result = try $cmd("mv", ("-f", src, dst));
+    let result = try $run("mv", ("-f", src, dst));
     if $is_err(result) {
         $panic("mv(): ${result}");
     }
 
-    let (exit_code, std_out, std_err) = result;
+    let (exit_code, out_buf, err_buf) = result;
     if exit_code != 0 {
-        $panic("mv(): ${std_err:strip()}");
+        $panic("mv(): ${err_buf:to_str():strip()}");
     }
-
-    return std_out;
 }
 
 
@@ -71,45 +48,43 @@ pub def cp(src: str, dst: str) {
     assert $is_str(src), "cp(): invalid argument [src], expected a string, found ${$type(src)}";
     assert $is_str(dst), "cp(): invalid argument [dst], expected a string, found ${$type(dst)}";
 
-    let result = try $cmd("cp", ("-rf", src, dst));
+    let result = try $run("cp", ("-rf", src, dst));
     if $is_err(result) {
         $panic("cp(): ${result}");
     }
 
-    let (exit_code, std_out, std_err) = result;
+    let (exit_code, out_buf, err_buf) = result;
     if exit_code != 0 {
-        $panic("cp(): ${std_err:strip()}");
+        $panic("cp(): ${err_buf:to_str():strip()}");
     }
-
-    return std_out;
 }
 
 
 pub def git(*args: str) -> str {
-    let result = try $cmd("git", args);
+    let result = try $run("git", args);
     if $is_err(result) {
         $panic("git(): ${result}");
     }
 
-    let (exit_code, std_out, std_err) = result;
+    let (exit_code, out_buf, err_buf) = result;
     if exit_code != 0 {
-        $panic("git(): ${std_err:strip()}");
+        $panic("git(): ${err_buf:to_str():strip()}");
     }
 
-    return std_out;
+    return out_buf:to_str();
 }
 
 
 pub def make(*args: str) -> str {
-    let result = try $cmd("make", args);
+    let result = try $run("make", args);
     if $is_err(result) {
         $panic("make(): ${result}");
     }
 
-    let (exit_code, std_out, std_err) = result;
+    let (exit_code, out_buf, err_buf) = result;
     if exit_code != 0 {
-        $panic("make(): ${std_err:strip()}");
+        $panic("make(): ${err_buf:to_str():strip()}");
     }
 
-    return std_out;
+    return out_buf:to_str();
 }
