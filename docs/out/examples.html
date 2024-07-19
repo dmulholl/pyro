@@ -157,16 +157,20 @@ The <code>$()</code> function runs a shell command and returns its output as a s
 <span class="kd">var</span> <span class="nx">current_directory</span> <span class="p">=</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
 </pre>
 <p>
-The <code>$shell()</code> function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a string, and its <code>stderr</code> output as a string:
+The <code>$shell()</code> function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a buffer, and its <code>stderr</code> output as a buffer, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">exit_code</span><span class="p">,</span> <span class="nx">std_output</span><span class="p">,</span> <span class="nx">err_output</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">out_buf</span><span class="p">,</span> <span class="nx">err_buf</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
 </pre>
 <p>
-You can provide an input string to <code>$shell()</code> which will be written to the command's <code>stdin</code>:
+You can provide an input string to <code>$shell()</code> which will be written to the command's <code>stdin</code> stream, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;cat&quot;</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
+<span class="kd">with</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">out_buf</span><span class="p">,</span> <span class="nx">err_buf</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;cat&quot;</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">assert</span> <span class="nx">code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">assert</span> <span class="nx">out_buf</span><span class="p">:</span><span class="nx">to_str</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;foo bar&quot;</span><span class="p">;</span>
+    <span class="k">assert</span> <span class="nx">err_buf</span><span class="p">:</span><span class="nx">to_str</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
 </pre>
 <h3 id="fibonacci-numbers">
 Fibonacci numbers

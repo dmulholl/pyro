@@ -13,7 +13,7 @@ Make a simple `GET` request:
 ::: code pyro
     import std::curl;
 
-    var response = curl::GET("http://example.com/");
+    let response = curl::GET("http://example.com/");
 
 
 ### GET request with parameters
@@ -23,7 +23,7 @@ Make a `GET` request with a URL-encoded query string:
 ::: code pyro
     import std::curl;
 
-    var response = curl::Request()
+    let response = curl::Request()
         :url("http://example.com/")
         :param("foo", 123)
         :param("bar", 456)
@@ -37,7 +37,7 @@ Make a simple `POST` request:
 ::: code pyro
     import std::curl;
 
-    var response = curl::POST("http://example.com/", "body");
+    let response = curl::POST("http://example.com/", "body");
 
 
 ### POST request with parameters
@@ -47,7 +47,7 @@ Make a `POST` request with an `application/x-www-form-urlencoded` body:
 ::: code pyro
     import std::curl;
 
-    var response = curl::Request()
+    let response = curl::Request()
         :url("http://example.com/")
         :param("foo", 123)
         :param("bar", 456)
@@ -61,9 +61,8 @@ Make a `POST` request with a JSON body:
 ::: code pyro
     import std::curl;
 
-    var response = curl::Request()
+    let response = curl::Request()
         :url("http://example.com/")
         :header("Content-Type: application/json")
         :body(`{"foo": 123, "bar": 456}`)
         :POST();
-
