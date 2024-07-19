@@ -64,8 +64,8 @@ bool pyro_exec_cmd(
     char* const argv[],
     const uint8_t* stdin_input,
     size_t stdin_input_length,
-    PyroStr** stdout_output,
-    PyroStr** stderr_output,
+    PyroBuf** stdout_output,
+    PyroBuf** stderr_output,
     int* exit_code
 );
 

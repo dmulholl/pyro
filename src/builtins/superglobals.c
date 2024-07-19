@@ -466,8 +466,8 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
         return pyro_null();
     }
 
-    PyroStr* stdout_output;
-    PyroStr* stderr_output;
+    PyroBuf* stdout_output;
+    PyroBuf* stderr_output;
     int exit_code;
 
     char* command = PYRO_AS_STR(args[0])->bytes;
@@ -489,7 +489,13 @@ static PyroValue fn_shell_shortcut(PyroVM* vm, size_t arg_count, PyroValue* args
         return pyro_null();
     }
 
-    return pyro_obj(stdout_output);
+    PyroStr* string = PyroBuf_to_str(stdout_output, vm);
+    if (!string) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    return pyro_obj(string);
 }
 
 
@@ -497,8 +503,8 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
     char* command;
     uint8_t* stdin_input = NULL;
     size_t stdin_input_length = 0;
-    PyroStr* stdout_output;
-    PyroStr* stderr_output;
+    PyroBuf* stdout_output;
+    PyroBuf* stderr_output;
     int exit_code;
 
     if (arg_count == 0 || arg_count > 2) {
@@ -535,6 +541,18 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
+    PyroStr* stdout_string = PyroBuf_to_str(stdout_output, vm);
+    if (!stdout_string) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    PyroStr* stderr_string = PyroBuf_to_str(stderr_output, vm);
+    if (!stderr_string) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
     PyroTup* tup = PyroTup_new(3, vm);
     if (!tup) {
         pyro_panic(vm, "out of memory");
@@ -542,8 +560,8 @@ static PyroValue fn_shell(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     tup->values[0] = pyro_i64(exit_code);
-    tup->values[1] = pyro_obj(stdout_output);
-    tup->values[2] = pyro_obj(stderr_output);
+    tup->values[1] = pyro_obj(stdout_string);
+    tup->values[2] = pyro_obj(stderr_string);
 
     return pyro_obj(tup);
 }
@@ -558,8 +576,8 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
     char** argv = NULL;
     uint8_t* stdin_input = NULL;
     size_t stdin_input_length = 0;
-    PyroStr* stdout_output;
-    PyroStr* stderr_output;
+    PyroBuf* stdout_output;
+    PyroBuf* stderr_output;
     int exit_code;
 
     if (arg_count == 0 || arg_count > 3) {
@@ -655,6 +673,18 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
+    PyroStr* stdout_string = PyroBuf_to_str(stdout_output, vm);
+    if (!stdout_string) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    PyroStr* stderr_string = PyroBuf_to_str(stderr_output, vm);
+    if (!stderr_string) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
     PyroTup* tup = PyroTup_new(3, vm);
     if (!tup) {
         pyro_panic(vm, "out of memory");
@@ -662,8 +692,8 @@ static PyroValue fn_cmd(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     tup->values[0] = pyro_i64(exit_code);
-    tup->values[1] = pyro_obj(stdout_output);
-    tup->values[2] = pyro_obj(stderr_output);
+    tup->values[1] = pyro_obj(stdout_string);
+    tup->values[2] = pyro_obj(stderr_string);
 
     return pyro_obj(tup);
 }

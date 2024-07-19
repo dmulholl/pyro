@@ -219,8 +219,8 @@ bool pyro_exec_cmd(
     char* const argv[],
     const uint8_t* stdin_input,
     size_t stdin_input_length,
-    PyroStr** stdout_output,
-    PyroStr** stderr_output,
+    PyroBuf** stdout_output,
+    PyroBuf** stderr_output,
     int* exit_code
 ) {
     int child_stdin_pipe[2];
@@ -289,8 +289,7 @@ bool pyro_exec_cmd(
         close(child_stdin_pipe[1]);
 
         // Read the child's stdout pipe.
-        PyroBuf* out_buf;
-        int out_result = read_from_fd(vm, child_stdout_pipe[0], &out_buf);
+        int out_result = read_from_fd(vm, child_stdout_pipe[0], stdout_output);
         if (out_result == 1) {
             pyro_panic(vm, "out of memory");
             close(child_stdout_pipe[0]);
@@ -305,8 +304,7 @@ bool pyro_exec_cmd(
         close(child_stdout_pipe[0]);
 
         // Read the child's stderr pipe.
-        PyroBuf* err_buf;
-        int err_result = read_from_fd(vm, child_stderr_pipe[0], &err_buf);
+        int err_result = read_from_fd(vm, child_stderr_pipe[0], stderr_output);
         if (err_result == 1) {
             pyro_panic(vm, "out of memory");
             close(child_stderr_pipe[0]);
@@ -323,20 +321,6 @@ bool pyro_exec_cmd(
             waitpid(child_pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
 
-        PyroStr* out_str = PyroBuf_to_str(out_buf, vm);
-        if (!out_str) {
-            pyro_panic(vm, "out of memory");
-            return false;
-        }
-
-        PyroStr* err_str = PyroBuf_to_str(err_buf, vm);
-        if (!err_str) {
-            pyro_panic(vm, "out of memory");
-            return false;
-        }
-
-        *stdout_output = out_str;
-        *stderr_output = err_str;
         *exit_code = status;
         return true;
     }
