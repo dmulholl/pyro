@@ -1660,7 +1660,11 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                pyro_panic(vm,
+                    "receiver of type %s has no '%s' method",
+                    pyro_get_type_name(vm, receiver)->bytes,
+                    method_name->bytes
+                );
                 break;
             }
 
@@ -1690,13 +1694,17 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_MOD(receiver)) {
                     pyro_panic(vm,
-                        "invalid method name '%s': receiver is a module, did you mean to use '::'?",
+                        "invalid method name '%s': the receiver is a module, did you mean to use '::'?",
                         method_name->bytes
                     );
                     break;
                 }
 
-                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                pyro_panic(vm,
+                    "receiver of type %s has no '%s' method",
+                    pyro_get_type_name(vm, receiver)->bytes,
+                    method_name->bytes
+                );
                 break;
             }
 
@@ -1769,7 +1777,11 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                pyro_panic(vm,
+                    "receiver of type %s has no '%s' method",
+                    pyro_get_type_name(vm, receiver)->bytes,
+                    method_name->bytes
+                );
                 break;
             }
 
@@ -1821,13 +1833,17 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_MOD(receiver)) {
                     pyro_panic(vm,
-                        "invalid method name '%s': receiver is a module, did you mean to use '::'?",
+                        "invalid method name '%s': the receiver is a module, did you mean to use '::'?",
                         method_name->bytes
                     );
                     break;
                 }
 
-                pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                pyro_panic(vm,
+                    "receiver of type %s has no '%s' method",
+                    pyro_get_type_name(vm, receiver)->bytes,
+                    method_name->bytes
+                );
                 break;
             }
 
@@ -2915,6 +2931,93 @@ static void run(PyroVM* vm) {
                     break;
                 }
                 vm->stack_top[-1] = pyro_obj(string);
+                break;
+            }
+
+            // This is an optimized opcode for calling the receiver's count() method.
+            // Before: [ ... ][ receiver ]
+            // After:  [ ... ][ return_value ]
+            case PYRO_OPCODE_CALL_COUNT: {
+                PyroValue receiver = vm->stack_top[-1];
+
+                if (PYRO_IS_OBJ(receiver)) {
+                    switch (receiver.as.obj->type) {
+                        case PYRO_OBJECT_STR: {
+                            PyroStr* str = (PyroStr*)receiver.as.obj;
+                            vm->stack_top[-1] = pyro_i64(str->count);
+                            break;
+                        }
+
+                        case PYRO_OBJECT_BUF: {
+                            PyroBuf* buf = (PyroBuf*)receiver.as.obj;
+                            vm->stack_top[-1] = pyro_i64(buf->count);
+                            break;
+                        }
+
+                        case PYRO_OBJECT_TUP: {
+                            PyroTup* tup = (PyroTup*)receiver.as.obj;
+                            vm->stack_top[-1] = pyro_i64(tup->count);
+                            break;
+                        }
+
+                        case PYRO_OBJECT_VEC:
+                        case PYRO_OBJECT_VEC_AS_STACK: {
+                            PyroVec* vec = (PyroVec*)receiver.as.obj;
+                            vm->stack_top[-1] = pyro_i64(vec->count);
+                            break;
+                        }
+
+                        case PYRO_OBJECT_MAP:
+                        case PYRO_OBJECT_MAP_AS_SET: {
+                            PyroMap* map = (PyroMap*)receiver.as.obj;
+                            vm->stack_top[-1] = pyro_i64(map->live_entry_count);
+                            break;
+                        }
+
+                        case PYRO_OBJECT_QUEUE: {
+                            PyroQueue* queue = (PyroQueue*)receiver.as.obj;
+                            vm->stack_top[-1] = pyro_i64(queue->count);
+                            break;
+                        }
+
+                        default: {
+                            PyroStr* method_name = PyroStr_COPY("count");
+                            PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
+
+                            if (PYRO_IS_NATIVE_FN(method)) {
+                                call_native_fn(vm, PYRO_AS_NATIVE_FN(method), 0);
+                                break;
+                            }
+
+                            if (PYRO_IS_CLOSURE(method)) {
+                                call_closure(vm, PYRO_AS_CLOSURE(method), 0);
+                                break;
+                            }
+
+                            if (!PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                                pyro_panic(vm, "the receiver's 'count' method is private");
+                                break;
+                            }
+
+                            if (PYRO_IS_MOD(receiver)) {
+                                pyro_panic(vm, "invalid method name 'count': the receiver is a module, did you mean to use '::'?");
+                                break;
+                            }
+
+                            pyro_panic(vm,
+                                "receiver of type %s has no 'count' method",
+                                pyro_get_type_name(vm, receiver)->bytes
+                            );
+                            break;
+                        }
+                    }
+                    break;
+                }
+
+                pyro_panic(vm,
+                    "receiver of type %s has no 'count' method",
+                    pyro_get_type_name(vm, receiver)->bytes
+                );
                 break;
             }
 

@@ -1127,6 +1127,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_IS_I64:
         case PYRO_OPCODE_IS_F64:
         case PYRO_OPCODE_MAKE_STR:
+        case PYRO_OPCODE_CALL_COUNT:
             return 0;
 
         case PYRO_OPCODE_CALL_VALUE:

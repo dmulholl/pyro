@@ -1599,19 +1599,32 @@ static void parse_call_expr(Parser* parser, bool can_assign) {
         }
 
         else if (match(parser, TOKEN_COLON)) {
-            consume(parser, TOKEN_IDENTIFIER, "expected a method name after ':'");
+            if (!consume(parser, TOKEN_IDENTIFIER, "expected a method name after ':'")) {
+                break;
+            }
+
             uint16_t index = make_string_constant_from_identifier(parser, &parser->previous_token);
+
+            bool is_count_method = false;
+            if (parser->previous_token.length == 5 && memcmp(parser->previous_token.start, "count", 5) == 0) {
+                is_count_method = true;
+            }
+
             if (match(parser, TOKEN_LEFT_PAREN)) {
-                bool unpack_last_argument;
-                uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
-                if (unpack_last_argument) {
-                    PyroOpcode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD_WITH_UNPACK : PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK;
-                    emit_u8_u16be(parser, opcode, index);
-                    emit_byte(parser, arg_count);
+                if (is_count_method && last_token_type != TOKEN_SELF && match(parser, TOKEN_RIGHT_PAREN)) {
+                    emit_byte(parser, PYRO_OPCODE_CALL_COUNT);
                 } else {
-                    PyroOpcode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD : PYRO_OPCODE_CALL_PUB_METHOD;
-                    emit_u8_u16be(parser, opcode, index);
-                    emit_byte(parser, arg_count);
+                    bool unpack_last_argument;
+                    uint8_t arg_count = parse_argument_list(parser, &unpack_last_argument);
+                    if (unpack_last_argument) {
+                        PyroOpcode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD_WITH_UNPACK : PYRO_OPCODE_CALL_PUB_METHOD_WITH_UNPACK;
+                        emit_u8_u16be(parser, opcode, index);
+                        emit_byte(parser, arg_count);
+                    } else {
+                        PyroOpcode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_CALL_METHOD : PYRO_OPCODE_CALL_PUB_METHOD;
+                        emit_u8_u16be(parser, opcode, index);
+                        emit_byte(parser, arg_count);
+                    }
                 }
             } else {
                 PyroOpcode opcode = (last_token_type == TOKEN_SELF) ? PYRO_OPCODE_GET_METHOD : PYRO_OPCODE_GET_PUB_METHOD;
