@@ -201,11 +201,13 @@ pub class Request {
 
         args += self.custom_args;
 
-        var url = self.url;
-        if self.params:count() > 0 {
-            url += "?" + self:make_query_string();
-        }
-        args:append(url);
+        args:append(
+            if self.params:count() > 0 {
+                "${self.url}?${self:make_query_string()}"
+            } else {
+                self.url
+            }
+        );
 
         if self.debug {
             $eprintln("-" * term_width());
@@ -259,11 +261,13 @@ pub class Request {
 
         args += self.custom_args;
 
-        var url = self.url;
-        if self.params:count() > 0 {
-            url += "?" + self:make_query_string();
-        }
-        args:append(url);
+        args:append(
+            if self.params:count() > 0 {
+                "${self.url}?${self:make_query_string()}"
+            } else {
+                self.url
+            }
+        );
 
         if self.debug {
             $eprintln("-" * term_width());
@@ -289,7 +293,7 @@ pub class Request {
         }
 
         if self.debug {
-            $eprintln($str(err_buf):strip());
+            $eprintln(err_buf:as_str():strip());
             $eprintln("-" * term_width());
         }
 
@@ -357,7 +361,7 @@ pub class Request {
         }
 
         if self.debug {
-            $eprintln($str(err_buf):strip());
+            $eprintln(err_buf:as_str():strip());
             $eprintln("-" * term_width());
         }
 
