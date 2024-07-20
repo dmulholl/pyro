@@ -163,10 +163,6 @@ PyroClass* PyroClass_new(PyroVM* vm) {
     class->default_field_values = NULL;
     class->static_methods = NULL;
     class->static_fields = NULL;
-    class->all_instance_methods_cached_name = NULL;
-    class->all_instance_methods_cached_value = pyro_null();
-    class->pub_instance_methods_cached_name = NULL;
-    class->pub_instance_methods_cached_value = pyro_null();
     class->init_method = pyro_null();
 
     class->all_instance_methods = PyroMap_new(vm);

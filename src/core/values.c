@@ -24,13 +24,8 @@ PyroValue pyro_get_method(PyroVM* vm, PyroValue receiver, PyroStr* method_name) 
 
     PyroClass* class = pyro_get_class(vm, receiver);
     if (class) {
-        if (class->all_instance_methods_cached_name == method_name) {
-            return class->all_instance_methods_cached_value;
-        }
         PyroValue method;
         if (PyroMap_fast_get(class->all_instance_methods, method_name, &method, vm)) {
-            class->all_instance_methods_cached_name = method_name;
-            class->all_instance_methods_cached_value = method;
             return method;
         }
     }
@@ -50,13 +45,8 @@ PyroValue pyro_get_pub_method(PyroVM* vm, PyroValue receiver, PyroStr* method_na
 
     PyroClass* class = pyro_get_class(vm, receiver);
     if (class) {
-        if (class->pub_instance_methods_cached_name == method_name) {
-            return class->pub_instance_methods_cached_value;
-        }
         PyroValue method;
         if (PyroMap_fast_get(class->pub_instance_methods, method_name, &method, vm)) {
-            class->pub_instance_methods_cached_name = method_name;
-            class->pub_instance_methods_cached_value = method;
             return method;
         }
     }

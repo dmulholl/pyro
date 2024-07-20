@@ -332,12 +332,6 @@ struct PyroClass {
     PyroMap* static_methods;
     PyroMap* static_fields;
 
-    // Cached results from the last method lookups.
-    PyroStr* all_instance_methods_cached_name;
-    PyroValue all_instance_methods_cached_value;
-    PyroStr* pub_instance_methods_cached_name;
-    PyroValue pub_instance_methods_cached_value;
-
     // If the class has an $init() method, we cache it here to avoid map lookups.
     PyroValue init_method;
 };
