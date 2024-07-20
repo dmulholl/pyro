@@ -2981,8 +2981,7 @@ static void run(PyroVM* vm) {
                         }
 
                         default: {
-                            PyroStr* method_name = PyroStr_COPY("count");
-                            PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
+                            PyroValue method = pyro_get_pub_method(vm, receiver, vm->str_count);
 
                             if (PYRO_IS_NATIVE_FN(method)) {
                                 call_native_fn(vm, PYRO_AS_NATIVE_FN(method), 0);
@@ -2994,7 +2993,7 @@ static void run(PyroVM* vm) {
                                 break;
                             }
 
-                            if (!PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                            if (!PYRO_IS_NULL(pyro_get_method(vm, receiver, vm->str_count))) {
                                 pyro_panic(vm, "the receiver's 'count' method is private");
                                 break;
                             }

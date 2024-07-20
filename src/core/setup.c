@@ -137,6 +137,7 @@ PyroVM* pyro_new_vm(void) {
     vm->str_op_unary_tilde = NULL;
     vm->trace_execution = false;
     vm->str_enum = NULL;
+    vm->str_count = NULL;
 
     // Initialize the PRNG.
     pyro_xoshiro256ss_init(&vm->prng_state, pyro_random_seed());
@@ -246,6 +247,7 @@ PyroVM* pyro_new_vm(void) {
     vm->str_rop_binary_greater_greater = PyroStr_COPY("$rop_binary_greater_greater");
     vm->str_op_unary_tilde = PyroStr_COPY("$op_unary_tilde");
     vm->str_enum = PyroStr_COPY("enum");
+    vm->str_count = PyroStr_COPY("count");
 
     if (vm->memory_allocation_failed) {
         pyro_free_vm(vm);
