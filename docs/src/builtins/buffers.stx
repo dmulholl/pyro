@@ -94,6 +94,14 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     Returns `true` if the buffer is empty.
 
+[[ `:resize(new_size: i64, fill_value: i64|rune = 0)` ]]
+
+    Resizes the buffer.
+
+    * If `new_size` is negative, it specifies a number of bytes to trim from the end of the buffer.
+    * If `new_size` is positive and smaller than the current buffer size, the buffer will be truncated to `new_size` bytes.
+    * If `new_size` is positive and bigger than the current buffer size, the buffer will be extended to `new_size` bytes by appending `fill_value`, which must be an integer in the range `[0, 255]`.
+
 [[ `:set(index: i64, value: i64|rune)` ]]
 
     Sets the byte value at `index` to `value` where `value` is an integer in the range `[0, 255]`.

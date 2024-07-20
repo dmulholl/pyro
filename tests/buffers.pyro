@@ -172,3 +172,51 @@ def $test_out_of_bounds_indexing() {
     assert $is_err(try buf:get(123));
     assert $is_err(try buf:set(123, 0));
 }
+
+
+def $test_resize() {
+    var buf = $buf("foobar");
+    assert buf:count() == 6;
+    assert buf:as_str() == "foobar";
+
+    buf:resize(-1);
+    assert buf:count() == 5;
+    assert buf:as_str() == "fooba";
+
+    buf:resize(-2);
+    assert buf:count() == 3;
+    assert buf:as_str() == "foo";
+
+    assert $is_err(try buf:resize(-99));
+
+    buf:resize(0);
+    assert buf:count() == 0;
+    assert buf:as_str() == "";
+
+    buf:resize(0);
+    assert buf:count() == 0;
+    assert buf:as_str() == "";
+
+    buf:write("foobar");
+    assert buf:count() == 6;
+    assert buf:as_str() == "foobar";
+
+    buf:resize(3);
+    assert buf:count() == 3;
+    assert buf:as_str() == "foo";
+
+    buf:resize(6);
+    assert buf:count() == 6;
+    assert buf:as_str() == "foo\0\0\0";
+
+    buf:resize(12, 'X');
+    assert buf:count() == 12;
+    assert buf:as_str() == "foo\0\0\0XXXXXX";
+
+    buf:resize(18, 97);
+    assert buf:count() == 18;
+    assert buf:as_str() == "foo\0\0\0XXXXXXaaaaaa";
+
+    assert $is_err(try buf:resize(24, 999));
+    assert $is_err(try buf:resize(24, -123));
+}

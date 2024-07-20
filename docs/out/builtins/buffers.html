@@ -215,6 +215,27 @@ Returns <code>true</code> if the buffer is empty.
 </div>
 <div>
 <dt>
+<code>:resize(new_size: i64, fill_value: i64|rune = 0)</code>
+</dt>
+<dd>
+<p>
+Resizes the buffer.
+</p>
+<ul>
+<li>
+If <code>new_size</code> is negative, it specifies a number of bytes to trim from the end of the buffer.
+</li>
+<li>
+If <code>new_size</code> is positive and smaller than the current buffer size, the buffer will be truncated to <code>new_size</code> bytes.
+</li>
+<li>
+If <code>new_size</code> is positive and bigger than the current buffer size, the buffer will be extended to <code>new_size</code> bytes by appending <code>fill_value</code>, which must be an integer in the range <code>[0, 255]</code>.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
 <code>:set(index: i64, value: i64|rune)</code>
 </dt>
 <dd>

@@ -241,6 +241,75 @@ static PyroValue buf_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue buf_resize(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroBuf* buf = PYRO_AS_BUF(args[-1]);
+
+    if (arg_count == 0 || arg_count > 2) {
+        pyro_panic(vm, "resize(): expected 1 or 2 arguments, found %zu", arg_count);
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm,
+            "resize(): invalid argument [new_size], expected an i64, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
+        return pyro_null();
+    }
+
+    int64_t new_size = args[0].as.i64;
+    uint8_t fill_value = 0;
+
+    if (arg_count == 2) {
+        if (PYRO_IS_I64(args[1]) && args[1].as.i64 >= 0 && args[1].as.i64 <= 255) {
+            fill_value = (uint8_t)args[1].as.i64;
+        } else if (PYRO_IS_RUNE(args[1]) && args[1].as.u32 <= 255) {
+            fill_value = (uint8_t)args[1].as.u32;
+        } else {
+            pyro_panic(vm, "resize(): invalid argument [fill_value], expected an integer in the range [0,255]");
+            return pyro_null();
+        }
+    }
+
+    if (new_size < 0) {
+        if (new_size == INT64_MIN) {
+            pyro_panic(vm, "resize(): invalid argument [new_size], out of range");
+            return pyro_null();
+        }
+
+        size_t bytes_to_truncate = (size_t)(new_size * -1);
+        if (bytes_to_truncate > buf->count) {
+            pyro_panic(vm, "resize(): invalid argument [new_size], out of range");
+            return pyro_null();
+        }
+
+        buf->count -= bytes_to_truncate;
+        return pyro_null();
+    }
+
+    size_t new_count = (size_t)new_size;
+
+    if (new_count <= buf->count) {
+        buf->count = new_count;
+        return pyro_null();
+    }
+
+    if (new_count > buf->capacity) {
+        if (!PyroBuf_resize_capacity(buf, new_count + 1, vm)) {
+            pyro_panic(vm, "out of memory");
+            return pyro_null();
+        }
+    }
+
+    for (size_t index = buf->count; index < new_count; index++) {
+        buf->bytes[index] = fill_value;
+    }
+
+    buf->count = new_count;
+    return pyro_null();
+}
+
+
 void pyro_load_builtin_type_buf(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$buf", fn_buf, -1);
@@ -260,4 +329,5 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_buf, "write", buf_write, -1);
     pyro_define_pub_method(vm, vm->class_buf, "is_empty", buf_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_buf, "clear", buf_clear, 0);
+    pyro_define_pub_method(vm, vm->class_buf, "resize", buf_resize, -1);
 }
