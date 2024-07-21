@@ -1,0 +1,36 @@
+import std::fs;
+
+with result = $run("pwd") {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && fs::is_dir(result[1]:to_str():strip());
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
+
+with result = $run("/bin/sh", ("-c", `echo "foobar"`)) {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str():strip() == "foobar";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
+
+with result = $run("/bin/sh", ("-c", "cat"), "foobar") {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str() == "foobar";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
+
+with result = $run("cat", (), "foobar") {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str() == "foobar";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
+
+with result = $run("cat", (), $buf("foobar")) {
+    assert $is_tup(result);
+    assert $is_i64(result[0]) && result[0] == 0;
+    assert $is_buf(result[1]) && result[1]:to_str() == "foobar";
+    assert $is_buf(result[2]) && result[2]:to_str() == "";
+}
