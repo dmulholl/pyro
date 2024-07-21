@@ -237,65 +237,65 @@ class Lexer {
         }
 
         if self.index >= self.count {
-            return $tup("EOF", self.index, 0);
+            return ("EOF", self.index, 0);
         }
 
         if self.input:match("null", self.index) {
-            var token = $tup("NULL", self.index, 4);
+            var token = ("NULL", self.index, 4);
             self.index += 4;
             return token;
         }
 
         if self.input:match("true", self.index) {
-            var token = $tup("TRUE", self.index, 4);
+            var token = ("TRUE", self.index, 4);
             self.index += 4;
             return token;
         }
 
         if self.input:match("false", self.index) {
-            var token = $tup("FALSE", self.index, 5);
+            var token = ("FALSE", self.index, 5);
             self.index += 5;
             return token;
         }
 
         if self.input:match("[", self.index) {
-            var token = $tup("LEFT_BRACKET", self.index, 1);
+            var token = ("LEFT_BRACKET", self.index, 1);
             self.index += 1;
             return token;
         }
 
         if self.input:match("]", self.index) {
-            var token = $tup("RIGHT_BRACKET", self.index, 1);
+            var token = ("RIGHT_BRACKET", self.index, 1);
             self.index += 1;
             return token;
         }
 
         if self.input:match("{", self.index) {
-            var token = $tup("LEFT_BRACE", self.index, 1);
+            var token = ("LEFT_BRACE", self.index, 1);
             self.index += 1;
             return token;
         }
 
         if self.input:match("}", self.index) {
-            var token = $tup("RIGHT_BRACE", self.index, 1);
+            var token = ("RIGHT_BRACE", self.index, 1);
             self.index += 1;
             return token;
         }
 
         if self.input:match("-", self.index) {
-            var token = $tup("MINUS", self.index, 1);
+            var token = ("MINUS", self.index, 1);
             self.index += 1;
             return token;
         }
 
         if self.input:match(",", self.index) {
-            var token = $tup("COMMA", self.index, 1);
+            var token = ("COMMA", self.index, 1);
             self.index += 1;
             return token;
         }
 
         if self.input:match(":", self.index) {
-            var token = $tup("COLON", self.index, 1);
+            var token = ("COLON", self.index, 1);
             self.index += 1;
             return token;
         }

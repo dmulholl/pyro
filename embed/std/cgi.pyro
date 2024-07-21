@@ -2,15 +2,16 @@ import std::json;
 import std::url;
 
 pub class Request {
-    var body: str?;
     var params: map[str, vec[str]];
+    var body: str;
 
     def $init() {
         self.params = $map();
+        self.body = $stdin:read_string();
 
         if $env("REQUEST_METHOD") in ("POST", "PUT", "PATCH", "DELETE") {
             if $env("CONTENT_TYPE") == "application/x-www-form-urlencoded" {
-                self:unpack_url_encoded_string(self:body());
+                self:unpack_url_encoded_string(self.body);
             }
         }
 
@@ -20,15 +21,7 @@ pub class Request {
         }
     }
 
-    def $str() {
-        return $str(self.params);
-    }
-
     pub def body() -> str {
-        if $is_str(self.body) {
-            return self.body;
-        }
-        self.body = $stdin:read_string();
         return self.body;
     }
 
@@ -52,8 +45,8 @@ pub class Request {
         return self.params;
     }
 
-    pub def json() -> any {
-        return try json::from_json(self:body());
+    pub def from_json() -> map|vec|str|i64|f64|bool|null|err {
+        return json::from_json(self.body);
     }
 
     def unpack_url_encoded_string(input: str) {
@@ -126,15 +119,12 @@ pub class Response {
     }
 
     pub def send() {
-        var response = $buf();
-
         for header in self.headers {
-            var line = header:strip():replace("\r", "\\r"):replace("\n", "\\n");
-            response:write("{}\r\n", line);
+            let line = header:strip():replace("\r", "\\r"):replace("\n", "\\n");
+            $print("{}\r\n", line);
         }
 
-        response:write("\r\n");
-        response:write($str(self.body):strip());
-        $println(response);
+        $print("\r\n");
+        $print(self.body);
     }
 }

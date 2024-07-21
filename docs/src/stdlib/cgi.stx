@@ -27,7 +27,7 @@ The `Request` class has the following methods:
 
     Returns `true` if at least one parameter value for `key` was found, where `key` is a query-string or form parameter.
 
-[[ `:json() -> map|vec|str|i64|f64|bool|null|err` ]]
+[[ `:from_json() -> map|vec|str|i64|f64|bool|null|err` ]]
 
    Attempts to parse the request's body as JSON, returning the result.
    Returns an `err` if the body is not valid JSON.
