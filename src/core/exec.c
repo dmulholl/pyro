@@ -1718,7 +1718,11 @@ static void run(PyroVM* vm) {
 
                 PyroValue method;
                 if (!PyroMap_fast_get(superclass->all_instance_methods, method_name, &method, vm)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    pyro_panic(vm,
+                        "superclass %s has no method '%s'",
+                        superclass->name->bytes,
+                        method_name->bytes
+                    );
                     break;
                 }
 
@@ -1885,7 +1889,11 @@ static void run(PyroVM* vm) {
 
                 PyroValue method;
                 if (!PyroMap_fast_get(superclass->all_instance_methods, method_name, &method, vm)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    pyro_panic(vm,
+                        "superclass %s has no method '%s'",
+                        superclass->name->bytes,
+                        method_name->bytes
+                    );
                     break;
                 }
 
