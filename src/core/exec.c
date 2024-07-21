@@ -1694,7 +1694,7 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_MOD(receiver)) {
                     pyro_panic(vm,
-                        "invalid method name '%s': the receiver is a module, did you mean to use '::'?",
+                        "receiver has no '%s' method: the receiver is a module, did you mean to use '::'?",
                         method_name->bytes
                     );
                     break;
@@ -1833,7 +1833,7 @@ static void run(PyroVM* vm) {
 
                 if (PYRO_IS_MOD(receiver)) {
                     pyro_panic(vm,
-                        "invalid method name '%s': the receiver is a module, did you mean to use '::'?",
+                        "receiver has no '%s' method: the receiver is a module, did you mean to use '::'?",
                         method_name->bytes
                     );
                     break;
@@ -2999,7 +2999,7 @@ static void run(PyroVM* vm) {
                             }
 
                             if (PYRO_IS_MOD(receiver)) {
-                                pyro_panic(vm, "invalid method name 'count': the receiver is a module, did you mean to use '::'?");
+                                pyro_panic(vm, "receiver has no 'count' method: the receiver is a module, did you mean to use '::'?");
                                 break;
                             }
 
