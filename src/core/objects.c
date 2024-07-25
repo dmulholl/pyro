@@ -1173,6 +1173,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_SET_PUB_FIELD:
         case PYRO_OPCODE_SET_GLOBAL:
         case PYRO_OPCODE_CONCAT_STRINGS:
+        case PYRO_OPCODE_MAKE_OBJECT:
             return 2;
 
         case PYRO_OPCODE_CALL_METHOD:

@@ -1655,6 +1655,58 @@ static void parse_call_expr(Parser* parser, bool can_assign) {
 }
 
 
+static void parse_as_expr(Parser* parser, bool can_assign) {
+    parse_call_expr(parser, can_assign);
+
+    if (!match(parser, TOKEN_AS)) {
+        return;
+    }
+
+    if (!consume(parser, TOKEN_LEFT_BRACE, "expected an object literal after 'as'")) {
+        return;
+    }
+
+    uint16_t count = 0;
+
+    do {
+        if (check(parser, TOKEN_RIGHT_BRACE)) {
+            break;
+        }
+
+        if (!consume(parser, TOKEN_IDENTIFIER, "expected field name in object literal")) {
+            return;
+        }
+
+        Token name = parser->previous_token;
+        uint16_t index = make_string_constant_from_identifier(parser, &name);
+        emit_load_value_from_constant_table_at_index(parser, index);
+
+        if (!consume(parser, TOKEN_COLON, "expected ':' after field name in object literal")) {
+            return;
+        }
+
+        parse_expression(parser, false);
+        count++;
+    } while (match(parser, TOKEN_COMMA));
+
+    if (!consume(parser, TOKEN_RIGHT_BRACE, "expected '}' after object literal")) {
+        return;
+    }
+
+    emit_byte(parser, PYRO_OPCODE_MAKE_OBJECT);
+    emit_u16be(parser, count);
+}
+
+
+static void parse_power_expr(Parser* parser, bool can_assign) {
+    parse_as_expr(parser, can_assign);
+    if (match(parser, TOKEN_STAR_STAR)) {
+        parse_unary_expr(parser, false);
+        emit_byte(parser, PYRO_OPCODE_BINARY_STAR_STAR);
+    }
+}
+
+
 static void parse_try_expr(Parser* parser) {
     FnCompiler fn_compiler;
     if (!init_fn_compiler(parser, &fn_compiler, TYPE_TRY_EXPR, make_syntoken("try"))) {
@@ -1671,15 +1723,6 @@ static void parse_try_expr(Parser* parser) {
     for (size_t i = 0; i < fn->upvalue_count; i++) {
         emit_byte(parser, fn_compiler.upvalues[i].is_local ? 1 : 0);
         emit_byte(parser, fn_compiler.upvalues[i].index);
-    }
-}
-
-
-static void parse_power_expr(Parser* parser, bool can_assign) {
-    parse_call_expr(parser, can_assign);
-    if (match(parser, TOKEN_STAR_STAR)) {
-        parse_unary_expr(parser, false);
-        emit_byte(parser, PYRO_OPCODE_BINARY_STAR_STAR);
     }
 }
 

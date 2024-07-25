@@ -1,0 +1,200 @@
+assert $is_err(try 123 as {});
+assert $is_err(try "foobar" as {});
+assert $is_err(try "foobar" as {foo: 123, bar: 456});
+
+class Object {
+    pub var foo = 123;
+    pub var bar = 456;
+    pub var baz = 789;
+}
+
+assert $is_err(try Object as {bam: 999});
+
+{
+    var obj = Object as {};
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, Object);
+    assert obj.foo == 123;
+    assert obj.bar == 456;
+    assert obj.baz == 789;
+}
+
+{
+    var obj = Object as {
+        foo: 111,
+        baz: 333,
+    };
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, Object);
+    assert obj.foo == 111;
+    assert obj.bar == 456;
+    assert obj.baz == 333;
+}
+
+{
+    var obj = Object as {
+        foo: 111,
+        bar: 222,
+        baz: Object as {
+            foo: "abc",
+            bar: "def",
+        },
+    };
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, Object);
+    assert obj.foo == 111;
+    assert obj.bar == 222;
+
+    assert $is_instance(obj.baz);
+    assert $is_instance_of_class(obj.baz, Object);
+    assert obj.baz.foo == "abc";
+    assert obj.baz.bar == "def";
+    assert obj.baz.baz == 789;
+}
+
+class ObjectWithPrivateFields {
+    var foo = 123;
+    pub var bar = 456;
+    pub var baz = 789;
+}
+
+assert $is_err(try ObjectWithPrivateFields as {foo: 111});
+
+{
+    var obj = ObjectWithPrivateFields as {};
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, ObjectWithPrivateFields);
+    assert obj.bar == 456;
+    assert obj.baz == 789;
+}
+
+{
+    var obj = ObjectWithPrivateFields as {
+        bar: 222,
+        baz: 333,
+    };
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, ObjectWithPrivateFields);
+    assert obj.bar == 222;
+    assert obj.baz == 333;
+}
+
+class ObjectWithInit {
+    pub var foo = 123;
+    pub var bar = 456;
+    pub var baz = 789;
+
+    def $init() {
+        self.foo = 999;
+    }
+}
+
+{
+    var obj = ObjectWithInit as {};
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, ObjectWithInit);
+    assert obj.foo == 999;
+    assert obj.bar == 456;
+    assert obj.baz == 789;
+}
+
+{
+    var obj = ObjectWithInit as {
+        bar: 222,
+        baz: 333,
+    };
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, ObjectWithInit);
+    assert obj.foo == 999;
+    assert obj.bar == 222;
+    assert obj.baz == 333;
+}
+
+{
+    var obj = ObjectWithInit as {
+        foo: 111,
+        bar: 222,
+        baz: 333,
+    };
+
+    assert $is_instance(obj);
+    assert $is_instance_of_class(obj, ObjectWithInit);
+    assert obj.foo == 111;
+    assert obj.bar == 222;
+    assert obj.baz == 333;
+}
+
+class ObjectWithMultiArgInit {
+    pub var foo = 123;
+    pub var bar = 456;
+    pub var baz = 789;
+
+    def $init(arg1, arg2) {
+        self.foo = arg1;
+        self.bar = arg2;
+    }
+}
+
+assert $is_err(try ObjectWithMultiArgInit as {});
+assert $is_err(try ObjectWithMultiArgInit as {baz: 999});
+
+class ObjectWithMethod {
+    pub var foo = 123;
+    var bar = 456;
+
+    pub def value() {
+        return self.foo + self.bar;
+    }
+}
+
+{
+    var obj = ObjectWithMethod as {};
+    assert obj:value() == 579;
+}
+
+{
+    var obj = ObjectWithMethod as {
+        foo: 111,
+    };
+
+    assert obj:value() == 567;
+}
+
+import lib1;
+
+{
+    var person = lib1::Person as {
+        name: "Dave",
+        age: 42,
+        occupation: "software engineer",
+    };
+
+    assert $is_instance(person);
+    assert $is_instance_of_class(person, lib1::Person);
+    assert person.name == "Dave";
+    assert person.age == 42;
+    assert person.occupation == "software engineer";
+}
+
+var person_class = lib1::Person;
+
+{
+    var person = person_class as {
+        name: "Dave",
+        age: 43,
+        occupation: "pointy-headed manager",
+    };
+
+    assert $is_instance(person);
+    assert $is_instance_of_class(person, lib1::Person);
+    assert person.name == "Dave";
+    assert person.age == 43;
+    assert person.occupation == "pointy-headed manager";
+}

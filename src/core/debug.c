@@ -426,6 +426,9 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
         case PYRO_OPCODE_MAKE_MAP:
             return u16_instruction(vm, "MAKE_MAP", fn, ip);
 
+        case PYRO_OPCODE_MAKE_OBJECT:
+            return u16_instruction(vm, "MAKE_OBJECT", fn, ip);
+
         case PYRO_OPCODE_MAKE_SET:
             return u16_instruction(vm, "MAKE_SET", fn, ip);
 

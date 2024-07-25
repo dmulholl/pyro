@@ -3028,6 +3028,59 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Initializes an instance from an object literal.
+            // Before: [ ... ][ class ][ name1 ][ value1 ][ name2 ][ value2 ]
+            // After:  [ ... ][ instance ]
+            case PYRO_OPCODE_MAKE_OBJECT: {
+                uint16_t count = READ_BE_U16();
+                PyroValue class_value = vm->stack_top[(int)count * -2 - 1];
+
+                if (!PYRO_IS_CLASS(class_value)) {
+                    pyro_panic(vm,
+                        "invalid type: expected class in object literal expression, found %s",
+                        pyro_get_type_name(vm, class_value)->bytes
+                    );
+                    break;
+                }
+
+                if (!pyro_push(vm, class_value)) break;
+                call_value(vm, 0);
+                if (PYRO_IS_CLOSURE(PYRO_AS_CLASS(class_value)->init_method)) {
+                    run(vm);
+                }
+                if (vm->panic_flag) break;
+
+                PyroInstance* instance = PYRO_AS_INSTANCE(vm->stack_top[-1]);
+
+                for (int i = (int)count * -2 - 1; i < -1; i += 2) {
+                    PyroValue field_name = vm->stack_top[i];
+                    PyroValue field_value = vm->stack_top[i + 1];
+                    PyroValue field_index;
+
+                    if (PyroMap_fast_get(instance->obj.class->pub_field_indexes, PYRO_AS_STR(field_name), &field_index, vm)) {
+                        instance->fields[field_index.as.i64] = field_value;
+                    } else if (PyroMap_fast_get(instance->obj.class->all_field_indexes, PYRO_AS_STR(field_name), &field_index, vm)) {
+                        pyro_panic(vm,
+                            "in object literal: field '%s' in class %s is private",
+                            PYRO_AS_STR(field_name)->bytes,
+                            PYRO_AS_CLASS(class_value)->name->bytes
+                        );
+                        break;
+                    } else {
+                        pyro_panic(vm,
+                            "in object literal: class %s has no field '%s'",
+                            PYRO_AS_CLASS(class_value)->name->bytes,
+                            PYRO_AS_STR(field_name)->bytes
+                        );
+                        break;
+                    }
+                }
+
+                vm->stack_top[(int)count * -2 - 2] = pyro_obj(instance);
+                vm->stack_top -= (count * 2 + 1);
+                break;
+            }
+
             default:
                 pyro_panic(vm, "invalid opcode");
                 break;

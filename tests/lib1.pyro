@@ -7,3 +7,9 @@ pub def get_mod_name() {
 pub def add(a, b) {
     return a + b;
 }
+
+pub class Person {
+    pub var name;
+    pub var age;
+    pub var occupation;
+}
