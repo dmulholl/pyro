@@ -87,6 +87,9 @@
 <a href="#inheritance">Inheritance</a>
 </li>
 <li>
+<a href="#object-literals">Object Literals</a>
+</li>
+<li>
 <a href="#indexing">Indexing</a>
 </li>
 <li>
@@ -304,6 +307,37 @@ A class can inherit from a superclass using the <code>extends</code> keyword, e.
 Subclass methods override superclass methods as you'd expect.
 A subclass can use the <code>super</code> keyword to access an overridden superclass method.
 </p>
+<h3 id="object-literals">
+Object Literals
+</h3>
+<p>
+You can create an instance of a class using object-literal syntax, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">bar</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">obj</span> <span class="p">=</span> <span class="nx">Object</span> <span class="kn">as</span> <span class="p">{</span>
+    <span class="nx">foo</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="nx">bar</span><span class="p">:</span> <span class="mi">456</span><span class="p">,</span>
+<span class="p">};</span>
+</pre>
+<ul>
+<li>
+You can only set public field values in an object literal.
+</li>
+<li>
+Uninitialized fields retain their default value.
+</li>
+<li>
+If the class has a zero-argument <code>$init()</code> method, it will be called automatically before the object literal values are applied.
+</li>
+<li>
+You can't use an object literal for a class with a non-zero-argument <code>$init()</code> method.
+</li>
+</ul>
 <h3 id="indexing">
 Indexing
 </h3>

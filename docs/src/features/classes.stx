@@ -207,6 +207,28 @@ A subclass can use the `super` keyword to access an overridden superclass method
 
 
 
+### Object Literals
+
+You can create an instance of a class using object-literal syntax, e.g.
+
+::: code pyro
+    class Object {
+        pub var foo;
+        pub var bar;
+    }
+
+    var obj = Object as {
+        foo: 123,
+        bar: 456,
+    };
+
+* You can only set public field values in an object literal.
+* Uninitialized fields retain their default value.
+* If the class has a zero-argument `$init()` method, it will be called automatically before the object literal values are applied.
+* You can't use an object literal for a class with a non-zero-argument `$init()` method.
+
+
+
 ### Indexing
 
 You can add indexing support to a class by implementing `$get(key)` and/or `$set(key, value)` methods.
