@@ -574,6 +574,6 @@ You can implement the `$`-prefixed methods listed below to overload operators or
 
 [[ `:$str() -> str` ]]
 
-    This method should return the instance's default string representation.
+    If implemented, this method returns the instance's default string representation.
 
     The output of this method is used by the `$str()` function.
