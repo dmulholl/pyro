@@ -25,7 +25,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.18.1</p>
+                <p class="version">Version 0.18.2</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -221,17 +221,21 @@ The logger's default logging-level is <code>Level::Info</code>.
     <span class="c1"># Defaults to the standard output stream.</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">output_file</span><span class="p">:</span> <span class="nx">file</span><span class="p">;</span>
 
-    <span class="c1"># Set to true to show microseconds in timestamps.</span>
-    <span class="c1"># Defaults to false.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_microseconds</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
-
     <span class="c1"># Set to true to show milliseconds in timestamps.</span>
     <span class="c1"># Defaults to false.</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_milliseconds</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
 
+    <span class="c1"># Set to true to show microseconds in timestamps.</span>
+    <span class="c1"># Defaults to false.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_microseconds</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+
     <span class="c1"># Set to true to show UTC timestamps.</span>
     <span class="c1"># Defaults to false (i.e. shows local time).</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_utc</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+
+    <span class="c1"># Set to true to show the timezone offset.</span>
+    <span class="c1"># Defaults to false.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_tz_offset</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <p>
