@@ -94,17 +94,21 @@ Use a `Logger` instance to customize the logging-level and destination file.
         # Defaults to the standard output stream.
         pub var output_file: file;
 
-        # Set to true to show microseconds in timestamps.
-        # Defaults to false.
-        pub var show_microseconds: bool;
-
         # Set to true to show milliseconds in timestamps.
         # Defaults to false.
         pub var show_milliseconds: bool;
 
+        # Set to true to show microseconds in timestamps.
+        # Defaults to false.
+        pub var show_microseconds: bool;
+
         # Set to true to show UTC timestamps.
         # Defaults to false (i.e. shows local time).
         pub var show_utc: bool;
+
+        # Set to true to show the timezone offset.
+        # Defaults to false.
+        pub var show_tz_offset: bool;
     }
 
 `Logger` instances have the following methods:
