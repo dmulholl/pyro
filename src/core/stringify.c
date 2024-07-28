@@ -67,6 +67,41 @@ static PyroStr* make_debug_string_for_string(PyroVM* vm, PyroStr* input_string) 
 }
 
 
+// Returns a quoted, escaped string. Panics and returns NULL if memory allocation fails.
+static PyroStr* make_debug_string_for_bytes(PyroVM* vm, uint8_t* bytes, size_t num_bytes) {
+    PyroBuf* buf = PyroBuf_new(vm);
+    if (!buf) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    if (!PyroBuf_append_byte(buf, '"', vm)) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_bytes; i++) {
+        if (!PyroBuf_append_hex_escaped_byte(buf, bytes[i], vm)) {
+            pyro_panic(vm, "out of memory");
+            return NULL;
+        }
+    }
+
+    if (!PyroBuf_append_byte(buf, '"', vm)) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    PyroStr* string = PyroBuf_to_str(buf, vm);
+    if (!string) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    return string;
+}
+
+
 // Returns a <buf "content"> string containing a quoted, escaped string representation of the
 // buffer's content. Panics and returns NULL if memory allocation fails.
 static PyroStr* make_debug_string_for_buf(PyroVM* vm, PyroBuf* buf) {
@@ -75,14 +110,8 @@ static PyroStr* make_debug_string_for_buf(PyroVM* vm, PyroBuf* buf) {
     }
 
     if (buf->count > 8) {
-        PyroStr* content_string = PyroStr_copy((char*)buf->bytes, 8, false, vm);
-        if (!content_string) {
-            pyro_panic(vm, "out of memory");
-            return NULL;
-        }
-
-        PyroStr* debug_string = make_debug_string_for_string(vm, content_string);
-        if (!debug_string) {
+        PyroStr* string = make_debug_string_for_bytes(vm, buf->bytes, 8);
+        if (!string) {
             return NULL;
         }
 
@@ -90,24 +119,18 @@ static PyroStr* make_debug_string_for_buf(PyroVM* vm, PyroBuf* buf) {
 
         return pyro_sprintf_to_obj(vm,
             "<buf %s + %zu byte%s>",
-            debug_string->bytes,
+            string->bytes,
             num_remaining_bytes,
             num_remaining_bytes == 1 ? "" : "s"
         );
     }
 
-    PyroStr* content_string = PyroStr_copy((char*)buf->bytes, buf->count, false, vm);
-    if (!content_string) {
-        pyro_panic(vm, "out of memory");
+    PyroStr* string = make_debug_string_for_bytes(vm, buf->bytes, buf->count);
+    if (!string) {
         return NULL;
     }
 
-    PyroStr* debug_string = make_debug_string_for_string(vm, content_string);
-    if (!debug_string) {
-        return NULL;
-    }
-
-    return pyro_sprintf_to_obj(vm, "<buf %s>", debug_string->bytes);
+    return pyro_sprintf_to_obj(vm, "<buf %s>", string->bytes);
 }
 
 

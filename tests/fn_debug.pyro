@@ -63,9 +63,11 @@ var foo = Foo();
 assert $debug(foo) == "[foo]";
 
 assert $debug($buf()) == `<buf "">`;
-assert $debug($buf("abc")) == `<buf "abc">`;
-assert $debug($buf("abcdefgh")) == `<buf "abcdefgh">`;
-assert $debug($buf("abcdefghi")) == `<buf "abcdefgh" + 1 byte>`;
-assert $debug($buf("abcdefghij")) == `<buf "abcdefgh" + 2 bytes>`;
-assert $debug($buf("abcdefghijklmnop")) == `<buf "abcdefgh" + 8 bytes>`;
-assert $debug($buf("ab\ncd\0ef\tghijklmnop")) == `<buf "ab\ncd\0ef" + 11 bytes>`;
+assert $debug($buf("abc")) == `<buf "\x61\x62\x63">`;
+assert $debug($buf("abcdefgh")) == `<buf "\x61\x62\x63\x64\x65\x66\x67\x68">`;
+assert $debug($buf("abcdefghi")) == `<buf "\x61\x62\x63\x64\x65\x66\x67\x68" + 1 byte>`;
+assert $debug($buf("abcdefghij")) == `<buf "\x61\x62\x63\x64\x65\x66\x67\x68" + 2 bytes>`;
+assert $debug($buf("abcdefghijklmnop")) == `<buf "\x61\x62\x63\x64\x65\x66\x67\x68" + 8 bytes>`;
+assert $debug($buf("ab\0cd\nef\tghijklmnop")) == `<buf "\x61\x62\x00\x63\x64\x0A\x65\x66" + 11 bytes>`;
+assert $debug($buf("a\0b\nc\tde")) == `<buf "\x61\x00\x62\x0A\x63\x09\x64\x65">`;
+assert $debug($buf("a\0b\nc\tdefgh")) == `<buf "\x61\x00\x62\x0A\x63\x09\x64\x65" + 3 bytes>`;
