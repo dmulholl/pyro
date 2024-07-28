@@ -97,8 +97,8 @@ static void write_msg(
         localtime_r(&timestamp_now_seconds, &tm);
     }
 
-    char* timestamp_str = "0000-00-00 00:00:00";
-    char* tz_offset_str = "+00:00";
+    char* timestamp_str = "XXXX-XX-XX XX:XX:XX";
+    char* tz_offset_str = "+XX:XX";
 
     char timestamp_buf[128];
     char tz_offset_buf[8];
@@ -206,16 +206,6 @@ static PyroValue fn_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (PYRO_IS_I64(instance->fields[0])) {
-        int64_t logging_level = instance->fields[0].as.i64;
-
-        if (PYRO_STD_LOG_LEVEL_DEBUG >= logging_level) {
-            write_msg(vm, "debug()", "DEBUG", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], instance->fields[5], arg_count, args);
-        }
-
-        return pyro_null();
-    }
-
     if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
         if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[6])) {
             int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
@@ -235,16 +225,6 @@ static PyroValue logger_debug(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
-
-    if (PYRO_IS_I64(instance->fields[0])) {
-        int64_t logging_level = instance->fields[0].as.i64;
-
-        if (PYRO_STD_LOG_LEVEL_INFO >= logging_level) {
-            write_msg(vm, "info()", "INFO", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], instance->fields[5], arg_count, args);
-        }
-
-        return pyro_null();
-    }
 
     if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
         if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[6])) {
@@ -266,16 +246,6 @@ static PyroValue logger_info(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (PYRO_IS_I64(instance->fields[0])) {
-        int64_t logging_level = instance->fields[0].as.i64;
-
-        if (PYRO_STD_LOG_LEVEL_WARN >= logging_level) {
-            write_msg(vm, "warn()", "WARN", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], instance->fields[5], arg_count, args);
-        }
-
-        return pyro_null();
-    }
-
     if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
         if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[6])) {
             int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
@@ -296,16 +266,6 @@ static PyroValue logger_warn(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
-    if (PYRO_IS_I64(instance->fields[0])) {
-        int64_t logging_level = instance->fields[0].as.i64;
-
-        if (PYRO_STD_LOG_LEVEL_ERROR >= logging_level) {
-            write_msg(vm, "error()", "ERROR", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], instance->fields[5], arg_count, args);
-        }
-
-        return pyro_null();
-    }
-
     if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
         if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[6])) {
             int64_t logging_level = PYRO_AS_ENUM_MEMBER(instance->fields[0])->value.as.i64;
@@ -325,19 +285,6 @@ static PyroValue logger_error(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 static PyroValue logger_fatal(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
-
-    if (PYRO_IS_I64(instance->fields[0])) {
-        int64_t logging_level = instance->fields[0].as.i64;
-
-        if (PYRO_STD_LOG_LEVEL_FATAL >= logging_level) {
-            write_msg(vm, "fatal()", "FATAL", instance->fields[1], instance->fields[2], instance->fields[3], instance->fields[4], instance->fields[5], arg_count, args);
-            vm->halt_flag = true;
-            vm->exit_flag = true;
-            vm->exit_code = 1;
-        }
-
-        return pyro_null();
-    }
 
     if (PYRO_IS_ENUM_MEMBER(instance->fields[0])) {
         if (PYRO_AS_ENUM_MEMBER(instance->fields[0])->enum_type == PYRO_AS_ENUM_TYPE(instance->fields[6])) {
@@ -418,11 +365,4 @@ void pyro_load_stdlib_module_log(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_method(vm, logger_class, "warn", logger_warn, -1);
     pyro_define_pub_method(vm, logger_class, "error", logger_error, -1);
     pyro_define_pub_method(vm, logger_class, "fatal", logger_fatal, -1);
-
-    // Deprecated.
-    pyro_define_pub_member(vm, module, "DEBUG", pyro_i64(PYRO_STD_LOG_LEVEL_DEBUG));
-    pyro_define_pub_member(vm, module, "INFO", pyro_i64(PYRO_STD_LOG_LEVEL_INFO));
-    pyro_define_pub_member(vm, module, "WARN", pyro_i64(PYRO_STD_LOG_LEVEL_WARN));
-    pyro_define_pub_member(vm, module, "ERROR", pyro_i64(PYRO_STD_LOG_LEVEL_ERROR));
-    pyro_define_pub_member(vm, module, "FATAL", pyro_i64(PYRO_STD_LOG_LEVEL_FATAL));
 }
