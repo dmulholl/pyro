@@ -61,3 +61,11 @@ class Foo {
 
 var foo = Foo();
 assert $debug(foo) == "[foo]";
+
+assert $debug($buf()) == `<buf "">`;
+assert $debug($buf("abc")) == `<buf "abc">`;
+assert $debug($buf("abcdefgh")) == `<buf "abcdefgh">`;
+assert $debug($buf("abcdefghi")) == `<buf "abcdefgh" + 1 byte>`;
+assert $debug($buf("abcdefghij")) == `<buf "abcdefgh" + 2 bytes>`;
+assert $debug($buf("abcdefghijklmnop")) == `<buf "abcdefgh" + 8 bytes>`;
+assert $debug($buf("ab\ncd\0ef\tghijklmnop")) == `<buf "ab\ncd\0ef" + 11 bytes>`;

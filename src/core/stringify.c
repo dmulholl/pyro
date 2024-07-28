@@ -71,16 +71,38 @@ static PyroStr* make_debug_string_for_string(PyroVM* vm, PyroStr* input_string) 
 // buffer's content. Panics and returns NULL if memory allocation fails.
 static PyroStr* make_debug_string_for_buf(PyroVM* vm, PyroBuf* buf) {
     if (buf->count == 0) {
-        return pyro_sprintf_to_obj(vm, "<buf>");
+        return pyro_sprintf_to_obj(vm, "<buf \"\">");
     }
 
-    PyroStr* raw_content = PyroStr_copy((char*)buf->bytes, buf->count, false, vm);
-    if (!raw_content) {
+    if (buf->count > 8) {
+        PyroStr* content_string = PyroStr_copy((char*)buf->bytes, 8, false, vm);
+        if (!content_string) {
+            pyro_panic(vm, "out of memory");
+            return NULL;
+        }
+
+        PyroStr* debug_string = make_debug_string_for_string(vm, content_string);
+        if (!debug_string) {
+            return NULL;
+        }
+
+        size_t num_remaining_bytes = buf->count - 8;
+
+        return pyro_sprintf_to_obj(vm,
+            "<buf %s + %zu byte%s>",
+            debug_string->bytes,
+            num_remaining_bytes,
+            num_remaining_bytes == 1 ? "" : "s"
+        );
+    }
+
+    PyroStr* content_string = PyroStr_copy((char*)buf->bytes, buf->count, false, vm);
+    if (!content_string) {
         pyro_panic(vm, "out of memory");
         return NULL;
     }
 
-    PyroStr* debug_string = make_debug_string_for_string(vm, raw_content);
+    PyroStr* debug_string = make_debug_string_for_string(vm, content_string);
     if (!debug_string) {
         return NULL;
     }
