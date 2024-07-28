@@ -2,6 +2,7 @@ import std::csrng;
 
 assert $is_module(csrng);
 assert $is_func(csrng::rand_bytes);
+assert $is_func(csrng::rand_i64);
 
 assert $is_err(try csrng::rand_bytes());
 assert $is_err(try csrng::rand_bytes("foo"));
@@ -30,4 +31,8 @@ with buf = csrng::rand_bytes(32) {
 with buf = csrng::rand_bytes(64) {
     assert $is_buf(buf);
     assert buf:count() == 64;
+}
+
+with result = csrng::rand_i64() {
+    assert $is_i64(result);
 }

@@ -8,7 +8,10 @@ This module contains utilities for generating cryptographically-secure random nu
 
 ### Functions
 
-
 [[ `rand_bytes(n: i64) -> buf` ]]
 
     Returns a buffer containing `n` random bytes from the operating system's source of cryptographically-secure random numbers.
+
+[[ `rand_i64() -> i64` ]]
+
+    Returns a random `i64` value generated using the operating system's source of cryptographically-secure random numbers.
