@@ -80,4 +80,7 @@ bool pyro_file_is_terminal(FILE* file);
 // not connected to a terminal.
 bool pyro_get_terminal_size(FILE* file, int64_t* width, int64_t* height);
 
+// Reads [num_bytes] from the operating system's cryptographically-secure random number source.
+PyroBuf* pyro_csrng_rand_bytes(PyroVM* vm, size_t num_bytes, const char* err_prefix);
+
 #endif

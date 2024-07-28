@@ -33,6 +33,10 @@ All standard library modules are submodules of the root module `std`.
 
     Useful constants.
 
+[[ [csrng](@root/stdlib/csrng//) ]]
+
+    Utilities for generating cryptographically-secure random numbers.
+
 [[ [fs](@root/stdlib/fs//) ]]
 
     File system utilities.

@@ -1,0 +1,14 @@
+---
+title: <code>std::csrng</code>
+meta_title: Pyro Standard Library &mdash; std::csrng
+---
+
+This module contains utilities for generating cryptographically-secure random numbers.
+
+
+### Functions
+
+
+[[ `rand_bytes(n: i64) -> buf` ]]
+
+    Returns a buffer containing `n` random bytes from the operating system's source of cryptographically-secure random numbers.

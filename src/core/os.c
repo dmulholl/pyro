@@ -398,3 +398,40 @@ bool pyro_get_terminal_size(FILE* file, int64_t* width, int64_t* height) {
 
     return false;
 }
+
+
+PyroBuf* pyro_csrng_rand_bytes(PyroVM* vm, size_t num_bytes, const char* err_prefix) {
+    if (num_bytes == 0) {
+        PyroBuf* buf = PyroBuf_new(vm);
+        if (!buf) {
+            pyro_panic(vm, "%s: out of memory", err_prefix);
+            return NULL;
+        }
+
+        return buf;
+    }
+
+    FILE* file = fopen("/dev/urandom", "rb");
+    if (file == NULL) {
+        pyro_panic(vm, "%s: unable to open file '/dev/urandom'", err_prefix);
+        return NULL;
+    }
+
+    PyroBuf* buf = PyroBuf_new_with_capacity(num_bytes, vm);
+    if (!buf) {
+        fclose(file);
+        pyro_panic(vm, "%s: out of memory", err_prefix);
+        return NULL;
+    }
+
+    size_t num_bytes_read = fread(buf->bytes, sizeof(uint8_t), num_bytes, file);
+    if (num_bytes_read < num_bytes) {
+        fclose(file);
+        pyro_panic(vm, "%s: error reading file '/dev/urandom'", err_prefix);
+        return NULL;
+    }
+
+    fclose(file);
+    buf->count = num_bytes_read;
+    return buf;
+}

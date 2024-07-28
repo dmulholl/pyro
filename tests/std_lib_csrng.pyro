@@ -1,0 +1,33 @@
+import std::csrng;
+
+assert $is_module(csrng);
+assert $is_func(csrng::rand_bytes);
+
+assert $is_err(try csrng::rand_bytes());
+assert $is_err(try csrng::rand_bytes("foo"));
+assert $is_err(try csrng::rand_bytes(-123));
+
+with buf = csrng::rand_bytes(0) {
+    assert $is_buf(buf);
+    assert buf:count() == 0;
+}
+
+with buf = csrng::rand_bytes(8) {
+    assert $is_buf(buf);
+    assert buf:count() == 8;
+}
+
+with buf = csrng::rand_bytes(16) {
+    assert $is_buf(buf);
+    assert buf:count() == 16;
+}
+
+with buf = csrng::rand_bytes(32) {
+    assert $is_buf(buf);
+    assert buf:count() == 32;
+}
+
+with buf = csrng::rand_bytes(64) {
+    assert $is_buf(buf);
+    assert buf:count() == 64;
+}
