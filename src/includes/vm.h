@@ -76,7 +76,7 @@ struct PyroVM {
     PyroValue* stack_top;
     PyroValue* stack_max;
 
-    // PRNG state.
+    // State for the global psuedo-random number generator.
     pyro_xoshiro256ss_state_t prng_state;
 
     // Stores global functions and variables, available in all modules.

@@ -139,9 +139,6 @@ PyroVM* pyro_new_vm(void) {
     vm->str_enum = NULL;
     vm->str_count = NULL;
 
-    // Initialize the PRNG.
-    pyro_xoshiro256ss_init(&vm->prng_state, pyro_random_seed());
-
     // We need to initialize these classes before we create any objects.
     vm->class_buf = PyroClass_new(vm);
     vm->class_err = PyroClass_new(vm);
@@ -284,6 +281,15 @@ PyroVM* pyro_new_vm(void) {
         pyro_free_vm(vm);
         return NULL;
     }
+
+    // Initialize the global psuedo-random number generator.
+    PyroBuf* buf = pyro_csrng_rand_bytes(vm, 8, "initializing prng");
+    if (vm->halt_flag) {
+        pyro_free_vm(vm);
+        return NULL;
+    }
+
+    pyro_xoshiro256ss_init(&vm->prng_state, *((uint64_t*)buf->bytes));
 
     // Load builtins.
     pyro_load_superglobals(vm);
