@@ -198,3 +198,29 @@ var person_class = lib1::Person;
     assert person.age == 43;
     assert person.occupation == "pointy-headed manager";
 }
+
+import std::log;
+
+{
+    var logger = log::Logger as {};
+
+    assert logger.logging_level == log::Level::Info;
+    assert logger.show_milliseconds == false;
+    assert logger.show_microseconds == false;
+    assert logger.show_utc == false;
+    assert logger.show_tz_offset == false;
+}
+
+{
+    var logger = log::Logger as {
+        logging_level: log::Level::Debug,
+        show_microseconds: true,
+        show_tz_offset: true,
+    };
+
+    assert logger.logging_level == log::Level::Debug;
+    assert logger.show_milliseconds == false;
+    assert logger.show_microseconds == true;
+    assert logger.show_utc == false;
+    assert logger.show_tz_offset == true;
+}

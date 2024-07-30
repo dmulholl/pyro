@@ -74,7 +74,7 @@ def restore_stashed_import_roots(stashed_roots) {
     }
 }
 
-def run_tests_debug_mode() {
+def run_tests_in_debug_mode() {
     for filepath in $args {
         if !fs::is_file(filepath) {
             $exit("error: invalid path '${filepath}'");
@@ -183,7 +183,7 @@ def run_tests() {
 }
 
 if DEBUG {
-    run_tests_debug_mode();
+    run_tests_in_debug_mode();
 } else {
     run_tests();
 }
