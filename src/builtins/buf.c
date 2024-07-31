@@ -86,11 +86,14 @@ static PyroValue buf_write_byte(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (args[0].as.u32 <= 255) {
             byte_value = (uint8_t)args[0].as.u32;
         } else {
-            pyro_panic(vm, "write_byte(): invalid argument [byte], char (%d) is out of range", args[0].as.u32);
+            pyro_panic(vm, "write_byte(): invalid argument [byte], rune (%d) is out of range", args[0].as.u32);
             return pyro_null();
         }
     } else {
-        pyro_panic(vm, "write_byte(): invalid argument [byte]");
+        pyro_panic(vm,
+            "write_byte(): invalid argument [byte], expected an i64 or rune, got %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
 
