@@ -17,6 +17,10 @@ All standard library modules are submodules of the root module `std`.
 
     A library for parsing command line arguments.
 
+[[ [base64](@root/stdlib/base64//) ]]
+
+    Functions for encoding and decoding base64.
+
 [[ [cmd](@root/stdlib/cmd//) ]]
 
     Convenience functions for running common system binaries.

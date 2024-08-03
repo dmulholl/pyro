@@ -1,0 +1,18 @@
+---
+title: <code>std::base64</code>
+meta_title: Pyro Standard Library &mdash; std::base64
+---
+
+This module contains utility functions for working with HTML.
+
+
+### Functions
+
+
+[[ `from_base64(input: buf|str) -> buf` ]]
+
+    Decodes `input` from base64.
+
+[[ `to_base64(input: buf|str) -> buf` ]]
+
+    Encodes `input` to base64.
