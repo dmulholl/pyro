@@ -131,17 +131,25 @@ static PyroValue buf_as_str(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue buf_get(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroBuf* buf = PYRO_AS_BUF(args[-1]);
 
-    if (PYRO_IS_I64(args[0])) {
-        int64_t index = args[0].as.i64;
-        if (index >= 0 && (size_t)index < buf->count) {
-            return pyro_i64(buf->bytes[index]);
-        }
-        pyro_panic(vm, "get(): invalid argument [index], out of range");
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm,
+            "get(): invalid argument [index], expected i64, got %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
 
-    pyro_panic(vm, "get(): invalid argument [index], expected an integer");
-    return pyro_null();
+    int64_t index = args[0].as.i64;
+    if (index < 0) {
+        index += buf->count;
+    }
+
+    if (index < 0 || (size_t)index >= buf->count) {
+        pyro_panic(vm, "get(): index %" PRId64 " is out of range", index);
+        return pyro_null();
+    }
+
+    return pyro_i64(buf->bytes[index]);
 }
 
 
@@ -149,13 +157,20 @@ static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroBuf* buf = PYRO_AS_BUF(args[-1]);
 
     if (!PYRO_IS_I64(args[0])) {
-        pyro_panic(vm, "set(): invalid argument [index], expected an integer");
+        pyro_panic(vm,
+            "set(): invalid argument [index], expected i64, got %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
 
     int64_t index = args[0].as.i64;
+    if (index < 0) {
+        index += buf->count;
+    }
+
     if (index < 0 || (size_t)index >= buf->count) {
-        pyro_panic(vm, "set(): invalid argument [index], integer is out of range");
+        pyro_panic(vm, "set(): index %" PRId64 " is out of range", index);
         return pyro_null();
     }
 
@@ -171,11 +186,14 @@ static PyroValue buf_set(PyroVM* vm, size_t arg_count, PyroValue* args) {
         if (args[1].as.u32 <= 255) {
             byte_value = (uint8_t)args[1].as.u32;
         } else {
-            pyro_panic(vm, "set(): invalid argument [value], char (%d) is out of range", args[1].as.u32);
+            pyro_panic(vm, "set(): invalid argument [value], rune (%d) is out of range", args[1].as.u32);
             return pyro_null();
         }
     } else {
-        pyro_panic(vm, "set(): invalid argument [value], expected an integer");
+        pyro_panic(vm,
+            "set(): invalid argument [value], expected an i64 or rune, got %s",
+            pyro_get_type_name(vm, args[1])->bytes
+        );
         return pyro_null();
     }
 
@@ -327,6 +345,7 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_buf, "as_str", buf_as_str, 0);
     pyro_define_pub_method(vm, vm->class_buf, "count", buf_count, 0);
     pyro_define_pub_method(vm, vm->class_buf, "get", buf_get, 1);
+    pyro_define_pub_method(vm, vm->class_buf, "byte", buf_get, 1);
     pyro_define_pub_method(vm, vm->class_buf, "set", buf_set, 2);
     pyro_define_pub_method(vm, vm->class_buf, "write_byte", buf_write_byte, 1);
     pyro_define_pub_method(vm, vm->class_buf, "write", buf_write, -1);

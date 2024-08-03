@@ -22,10 +22,12 @@ assert foo:count() == 0;
 foo:write_byte(0x64);
 assert foo:count() == 1;
 assert foo:get(0) == 0x64;
+assert foo:byte(0) == 0x64;
 
 foo:set(0, 0x65);
 assert foo:count() == 1;
 assert foo:get(0) == 0x65;
+assert foo:byte(0) == 0x65;
 
 assert foo[0] == 0x65;
 foo[0] = 0x66;
@@ -219,4 +221,27 @@ def $test_resize() {
 
     assert $is_err(try buf:resize(24, 999));
     assert $is_err(try buf:resize(24, -123));
+}
+
+
+def $test_negative_indexes() {
+    var buf = $buf("foobar");
+
+    assert buf[-1] == 'r';
+    assert buf[-2] == 'a';
+    assert buf[-3] == 'b';
+
+    assert buf:get(-1) == 'r';
+    assert buf:get(-2) == 'a';
+    assert buf:get(-3) == 'b';
+
+    buf[-1] = 'z';
+    buf[-2] = 'y';
+    buf[-3] = 'x';
+    assert buf:as_str() == "fooxyz";
+
+    buf:set(-1, 'c');
+    buf:set(-2, 'b');
+    buf:set(-3, 'a');
+    assert buf:as_str() == "fooabc";
 }

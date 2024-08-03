@@ -115,7 +115,16 @@ You can index into a buffer to get or set byte values, e.g.
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;coobar&quot;</span><span class="p">;</span>
 </pre>
 <p>
-Indices are zero-based. Indexing is equivalent to using the buffer's <code>:get()</code> and <code>:set()</code> methods, e.g.
+Indices are zero-based. A negative index counts backwards from the end of the buffer, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;r&#39;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;b&#39;</span><span class="p">;</span>
+</pre>
+<p>
+Indexing is equivalent to using the buffer's <code>:get()</code> and <code>:set()</code> methods, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
@@ -170,6 +179,16 @@ Returns a copy of the buffer's content as a string, leaving the buffer itself un
 </div>
 <div>
 <dt>
+<code>:byte(index: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+This is an alias for <code>:get()</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:clear()</code>
 </dt>
 <dd>
@@ -196,11 +215,9 @@ Returns the number of bytes in the buffer.
 <p>
 Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
 </p>
-<ul>
-<li>
-Panics if <code>index</code> isn't an integer or is out of range.
-</li>
-</ul>
+<p>
+A negative index counts backwards from the end of the buffer.
+</p>
 </dd>
 </div>
 <div>
@@ -240,16 +257,11 @@ If <code>new_size</code> is positive and bigger than the current buffer size, th
 </dt>
 <dd>
 <p>
-Sets the byte value at <code>index</code> to <code>value</code> where <code>value</code> is an integer in the range <code>[0, 255]</code>.
+Sets the byte value at <code>index</code> to <code>value</code>, where <code>value</code> is an integer in the range <code>[0, 255]</code>.
 </p>
-<ul>
-<li>
-Panics if <code>index</code> isn't an integer or is out of range.
-</li>
-<li>
-Panics if <code>value</code> isn't an integer or is out of range.
-</li>
-</ul>
+<p>
+A negative index counts backwards from the end of the buffer.
+</p>
 </dd>
 </div>
 <div>

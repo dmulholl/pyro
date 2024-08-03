@@ -32,7 +32,15 @@ You can index into a buffer to get or set byte values, e.g.
     assert buf[0] == 99;
     assert $str(buf) == "coobar";
 
-Indices are zero-based. Indexing is equivalent to using the buffer's `:get()` and `:set()` methods, e.g.
+Indices are zero-based. A negative index counts backwards from the end of the buffer, e.g.
+
+::: code pyro
+    var buf = $buf("foobar");
+    assert buf[-1] == 'r';
+    assert buf[-2] == 'a';
+    assert buf[-3] == 'b';
+
+Indexing is equivalent to using the buffer's `:get()` and `:set()` methods, e.g.
 
 ::: code pyro
     var buf = $buf("foobar");
@@ -76,6 +84,10 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     Returns a copy of the buffer's content as a string, leaving the buffer itself unchanged.
 
+[[ `:byte(index: i64) -> i64` ]]
+
+    This is an alias for `:get()`.
+
 [[ `:clear()` ]]
 
     Clears the buffer.
@@ -88,7 +100,7 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     Returns the byte value at `index` as an integer in the range `[0, 255]`.
 
-    * Panics if `index` isn't an integer or is out of range.
+    A negative index counts backwards from the end of the buffer.
 
 [[ `:is_empty() -> bool` ]]
 
@@ -104,10 +116,9 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
 [[ `:set(index: i64, value: i64|rune)` ]]
 
-    Sets the byte value at `index` to `value` where `value` is an integer in the range `[0, 255]`.
+    Sets the byte value at `index` to `value`, where `value` is an integer in the range `[0, 255]`.
 
-    * Panics if `index` isn't an integer or is out of range.
-    * Panics if `value` isn't an integer or is out of range.
+    A negative index counts backwards from the end of the buffer.
 
 [[ `:to_str() -> str` ]]
 
