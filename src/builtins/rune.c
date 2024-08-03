@@ -12,7 +12,11 @@ static PyroValue fn_rune(PyroVM* vm, size_t arg_count, PyroValue* args) {
         }
     }
 
-    pyro_panic(vm, "$rune(): invalid argument");
+    pyro_panic(vm,
+        "$rune(): invalid argument: expected i64, got %s",
+        pyro_get_type_name(vm, args[0])->bytes
+    );
+
     return pyro_null();
 }
 
