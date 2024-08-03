@@ -1,0 +1,341 @@
+import std::base64;
+
+# -----------------------------
+#  Test marshalling to base64.
+# -----------------------------
+
+# Test base64::to_base64() with buffer input.
+with buf = base64::to_base64($buf("Man")) {
+    assert buf:to_str() == "TWFu";
+}
+
+with buf = base64::to_base64($buf("Ma")) {
+    assert buf:to_str() == "TWE=";
+}
+
+with buf = base64::to_base64($buf("M")) {
+    assert buf:to_str() == "TQ==";
+}
+
+with buf = base64::to_base64($buf("ManMan")) {
+    assert buf:to_str() == "TWFuTWFu";
+}
+
+with buf = base64::to_base64($buf("ManMa")) {
+    assert buf:to_str() == "TWFuTWE=";
+}
+
+with buf = base64::to_base64($buf("ManM")) {
+    assert buf:to_str() == "TWFuTQ==";
+}
+
+with buf = base64::to_base64($buf(3, 0)) {
+    assert buf:to_str() == "AAAA";
+}
+
+with buf = base64::to_base64($buf(2, 0)) {
+    assert buf:to_str() == "AAA=";
+}
+
+with buf = base64::to_base64($buf(1, 0)) {
+    assert buf:to_str() == "AA==";
+}
+
+with buf = base64::to_base64($buf("The quick brown fox jumps over the lazy dog.")) {
+    assert buf:to_str() == "VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=";
+}
+
+# Test base64::to_base64() with string input.
+with buf = base64::to_base64("Man") {
+    assert buf:to_str() == "TWFu";
+}
+
+with buf = base64::to_base64("Ma") {
+    assert buf:to_str() == "TWE=";
+}
+
+with buf = base64::to_base64("M") {
+    assert buf:to_str() == "TQ==";
+}
+
+with buf = base64::to_base64("ManMan") {
+    assert buf:to_str() == "TWFuTWFu";
+}
+
+with buf = base64::to_base64("ManMa") {
+    assert buf:to_str() == "TWFuTWE=";
+}
+
+with buf = base64::to_base64("ManM") {
+    assert buf:to_str() == "TWFuTQ==";
+}
+
+with buf = base64::to_base64("\0\0\0") {
+    assert buf:to_str() == "AAAA";
+}
+
+with buf = base64::to_base64("\0\0") {
+    assert buf:to_str() == "AAA=";
+}
+
+with buf = base64::to_base64("\0") {
+    assert buf:to_str() == "AA==";
+}
+
+with buf = base64::to_base64("The quick brown fox jumps over the lazy dog.") {
+    assert buf:to_str() == "VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=";
+}
+
+# ---------------------------------
+#  Test unmarshalling from base64.
+# ---------------------------------
+
+# Test base64::from_base64() with buffer input.
+with buf = base64::from_base64($buf("TWFu")) {
+    assert buf:to_str() == "Man";
+}
+
+with buf = base64::from_base64($buf("TWE=")) {
+    assert buf:to_str() == "Ma";
+}
+
+with buf = base64::from_base64($buf("TWE")) {
+    assert buf:to_str() == "Ma";
+}
+
+with buf = base64::from_base64($buf("TQ==")) {
+    assert buf:to_str() == "M";
+}
+
+with buf = base64::from_base64($buf("TQ")) {
+    assert buf:to_str() == "M";
+}
+
+with buf = try base64::from_base64($buf("T")) {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64($buf("~WFu")) {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64($buf("T~Fu")) {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64($buf("TW~u")) {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64($buf("TWF~")) {
+    assert $is_err(buf);
+}
+
+with buf = base64::from_base64($buf("TWFuTWFu")) {
+    assert buf:to_str() == "ManMan";
+}
+
+with buf = base64::from_base64($buf("TWFuTWE=")) {
+    assert buf:to_str() == "ManMa";
+}
+
+with buf = base64::from_base64($buf("TWFuTWE")) {
+    assert buf:to_str() == "ManMa";
+}
+
+with buf = base64::from_base64($buf("TWFuTQ==")) {
+    assert buf:to_str() == "ManM";
+}
+
+with buf = base64::from_base64($buf("TWFuTQ")) {
+    assert buf:to_str() == "ManM";
+}
+
+with buf = try base64::from_base64($buf("TWFuT")) {
+    assert $is_err(buf);
+}
+
+with buf = base64::from_base64($buf("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=")) {
+    assert buf:to_str() == "The quick brown fox jumps over the lazy dog.";
+}
+
+with buf = try base64::from_base64($buf("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=.")) {
+    assert $is_err(buf);
+}
+
+# Test base64::from_base64() with string input.
+with buf = base64::from_base64("TWFu") {
+    assert buf:to_str() == "Man";
+}
+
+with buf = base64::from_base64("TWE=") {
+    assert buf:to_str() == "Ma";
+}
+
+with buf = base64::from_base64("TWE") {
+    assert buf:to_str() == "Ma";
+}
+
+with buf = base64::from_base64("TQ==") {
+    assert buf:to_str() == "M";
+}
+
+with buf = base64::from_base64("TQ") {
+    assert buf:to_str() == "M";
+}
+
+with buf = try base64::from_base64("T") {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64("~WFu") {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64("T~Fu") {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64("TW~u") {
+    assert $is_err(buf);
+}
+
+with buf = try base64::from_base64("TWF~") {
+    assert $is_err(buf);
+}
+
+with buf = base64::from_base64("TWFuTWFu") {
+    assert buf:to_str() == "ManMan";
+}
+
+with buf = base64::from_base64("TWFuTWE=") {
+    assert buf:to_str() == "ManMa";
+}
+
+with buf = base64::from_base64("TWFuTWE") {
+    assert buf:to_str() == "ManMa";
+}
+
+with buf = base64::from_base64("TWFuTQ==") {
+    assert buf:to_str() == "ManM";
+}
+
+with buf = base64::from_base64("TWFuTQ") {
+    assert buf:to_str() == "ManM";
+}
+
+with buf = try base64::from_base64("TWFuT") {
+    assert $is_err(buf);
+}
+
+with buf = base64::from_base64("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=") {
+    assert buf:to_str() == "The quick brown fox jumps over the lazy dog.";
+}
+
+with buf = try base64::from_base64("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4=#") {
+    assert $is_err(buf);
+}
+
+# ----------------------
+#  Test round-tripping.
+# ----------------------
+
+with buf = $buf("Man") {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf("Ma") {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf("M") {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf("ManMan") {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf("ManMa") {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf("ManM") {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf(3, 0) {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf(2, 0) {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf(1, 0) {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with buf = $buf("The quick brown fox jumps over the lazy dog.") {
+    let encoded = base64::to_base64(buf);
+    assert base64::from_base64(encoded):to_str() == buf:to_str();
+}
+
+with str = "Man" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "Ma" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "M" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "ManMan" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "ManMa" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "ManM" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "\0\0\0" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "\0\0" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "\0" {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}
+
+with str = "The quick brown fox jumps over the lazy dog." {
+    let encoded = base64::to_base64(str);
+    assert base64::from_base64(encoded):to_str() == str;
+}

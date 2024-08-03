@@ -1,0 +1,386 @@
+# ------------------------------------------
+#  Initialize the encoding/decoding tables.
+# ------------------------------------------
+
+# Initialize the RFC-4648 encoding table.
+let bin2rune_rfc4648 = {
+    0b111110 = '+',
+    0b111111 = '/',
+};
+
+# Runes: A-Z.
+for i in $range(0, 26) {
+    bin2rune_rfc4648[i] = $rune($i64('A') + i);
+}
+
+# Runes: a-z.
+for i in $range(26, 52) {
+    bin2rune_rfc4648[i] = $rune($i64('a') + i - 26);
+}
+
+# Runes: 0-9.
+for i in $range(52, 62) {
+    bin2rune_rfc4648[i] = $rune($i64('0') + i - 52);
+}
+
+# Initialize the RFC-4648 decoding table.
+let rune2bin_rfc4648 = {};
+
+for (key, value) in bin2rune_rfc4648 {
+    rune2bin_rfc4648[value] = key;
+}
+
+# ----------------------
+#  Supported encodings.
+# ----------------------
+
+enum Encoding {
+    RFC4648 = (bin2rune_rfc4648, rune2bin_rfc4648),
+}
+
+# -----------------------------------
+#  Marshall input buf/str to base64.
+# -----------------------------------
+
+def to_base64_buf(input: buf, encoding: Encoding) -> buf {
+    assert $is_buf(input), "to_base64_buf(): invalid argument, expected a buffer";
+    assert $is_enum_member_of_type(encoding, Encoding), "to_base64_buf(): invalid argument, expected an Encoding enum member";
+
+    let map = encoding:value()[0];
+    let count = input:count();
+    var output = $buf();
+    var index = 0;
+
+    while index < count {
+        let remaining = count - index;
+
+        if remaining >= 3 {
+            let key1 = (input[index] & 0b11111100) >> 2;
+            output:write_byte(map[key1]);
+
+            let key2 = ((input[index] & 0b00000011) << 4) | ((input[index + 1] & 0b11110000) >> 4);
+            output:write_byte(map[key2]);
+
+            let key3 = ((input[index + 1] & 0b00001111) << 2) | ((input[index + 2] & 0b11000000) >> 6);
+            output:write_byte(map[key3]);
+
+            let key4 = input[index + 2] & 0b00111111;
+            output:write_byte(map[key4]);
+
+            index += 3;
+            continue;
+        }
+
+        if remaining == 2 {
+            let key1 = (input[index] & 0b11111100) >> 2;
+            output:write_byte(map[key1]);
+
+            let key2 = ((input[index] & 0b00000011) << 4) | ((input[index + 1] & 0b11110000) >> 4);
+            output:write_byte(map[key2]);
+
+            let key3 = ((input[index + 1] & 0b00001111) << 2);
+            output:write_byte(map[key3]);
+
+            output:write_byte('=');
+
+            index += 2;
+            continue;
+        }
+
+        let key1 = (input[index] & 0b11111100) >> 2;
+        output:write_byte(map[key1]);
+
+        let key2 = ((input[index] & 0b00000011) << 4);
+        output:write_byte(map[key2]);
+
+        output:write_byte('=');
+        output:write_byte('=');
+
+        index += 1;
+    }
+
+    return output;
+}
+
+def to_base64_str(input: str, encoding: Encoding) -> buf {
+    assert $is_str(input), "to_base64_str(): invalid argument, expected a string";
+    assert $is_enum_member_of_type(encoding, Encoding), "to_base64_str(): invalid argument, expected an Encoding enum member";
+
+    let map = encoding:value()[0];
+    let count = input:count();
+    var output = $buf();
+    var index = 0;
+
+    while index < count {
+        let remaining = count - index;
+
+        if remaining >= 3 {
+            let key1 = (input:byte(index) & 0b11111100) >> 2;
+            output:write_byte(map[key1]);
+
+            let key2 = ((input:byte(index) & 0b00000011) << 4) | ((input:byte(index + 1) & 0b11110000) >> 4);
+            output:write_byte(map[key2]);
+
+            let key3 = ((input:byte(index + 1) & 0b00001111) << 2) | ((input:byte(index + 2) & 0b11000000) >> 6);
+            output:write_byte(map[key3]);
+
+            let key4 = input:byte(index + 2) & 0b00111111;
+            output:write_byte(map[key4]);
+
+            index += 3;
+            continue;
+        }
+
+        if remaining == 2 {
+            let key1 = (input:byte(index) & 0b11111100) >> 2;
+            output:write_byte(map[key1]);
+
+            let key2 = ((input:byte(index) & 0b00000011) << 4) | ((input:byte(index + 1) & 0b11110000) >> 4);
+            output:write_byte(map[key2]);
+
+            let key3 = ((input:byte(index + 1) & 0b00001111) << 2);
+            output:write_byte(map[key3]);
+
+            output:write_byte('=');
+
+            index += 2;
+            continue;
+        }
+
+        let key1 = (input:byte(index) & 0b11111100) >> 2;
+        output:write_byte(map[key1]);
+
+        let key2 = ((input:byte(index) & 0b00000011) << 4);
+        output:write_byte(map[key2]);
+
+        output:write_byte('=');
+        output:write_byte('=');
+
+        index += 1;
+    }
+
+    return output;
+}
+
+pub def to_base64(input: buf|str) -> buf {
+    if $is_buf(input) {
+        assert input:count() > 0, "to_base64(): input buffer is empty";
+        return to_base64_buf(input, Encoding::RFC4648);
+    }
+
+    if $is_str(input) {
+        assert input:count() > 0, "to_base64(): input string is empty";
+        return to_base64_str(input, Encoding::RFC4648);
+    }
+
+    $panic("to_base64(): invalid argument [input], expected a buffer or string, got ${$type(input)}");
+}
+
+# ---------------------------------
+#  Unmarshall input base64 to buf.
+# ---------------------------------
+
+def decode_4_bytes(output: buf, map: map[rune, i64], start_index: i64, byte1: i64, byte2: i64, byte3: i64, byte4: i64) {
+    let bin1 = map[byte1];
+    if $is_err(bin1) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte1)), start_index);
+    }
+
+    let bin2 = map[byte2];
+    if $is_err(bin2) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte2)), start_index + 1);
+    }
+
+    let bin3 = map[byte3];
+    if $is_err(bin3) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte3)), start_index + 2);
+    }
+
+    let bin4 = map[byte4];
+    if $is_err(bin4) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte4)), start_index + 3);
+    }
+
+    let out_byte1 = (bin1 << 2) | (bin2 >> 4);
+    let out_byte2 = ((bin2 & 0b00001111) << 4) | ((bin3 & 0b00111100) >> 2);
+    let out_byte3 = ((bin3 & 0b00000011) << 6) | bin4;
+
+    output:write_byte(out_byte1);
+    output:write_byte(out_byte2);
+    output:write_byte(out_byte3);
+}
+
+def decode_3_bytes(output: buf, map: map[rune, i64], start_index: i64, byte1: i64, byte2: i64, byte3: i64) {
+    let bin1 = map[byte1];
+    if $is_err(bin1) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte1)), start_index);
+    }
+
+    let bin2 = map[byte2];
+    if $is_err(bin2) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte2)), start_index + 1);
+    }
+
+    let bin3 = map[byte3];
+    if $is_err(bin3) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte3)), start_index + 2);
+    }
+
+    let out_byte1 = (bin1 << 2) | (bin2 >> 4);
+    let out_byte2 = ((bin2 & 0b00001111) << 4) | ((bin3 & 0b00111100) >> 2);
+
+    output:write_byte(out_byte1);
+    output:write_byte(out_byte2);
+}
+
+def decode_2_bytes(output: buf, map: map[rune, i64], start_index: i64, byte1: i64, byte2: i64) {
+    let bin1 = map[byte1];
+    if $is_err(bin1) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte1)), start_index);
+    }
+
+    let bin2 = map[byte2];
+    if $is_err(bin2) {
+        $panic("invalid base64: unexpected character {} at byte index {}", $debug($rune(byte2)), start_index + 1);
+    }
+
+    let out_byte1 = (bin1 << 2) | (bin2 >> 4);
+
+    output:write_byte(out_byte1);
+}
+
+def from_base64_buf(input: buf, encoding: Encoding) -> buf {
+    assert $is_buf(input), "from_base64_buf(): invalid argument, expected a buffer";
+    assert $is_enum_member_of_type(encoding, Encoding), "from_base64_buf(): invalid argument, expected an Encoding enum member";
+
+    let map = encoding:value()[1];
+    let count = input:count();
+    var output = $buf();
+    var index = 0;
+
+    while index < count {
+        let remaining = count - index;
+
+        if remaining >= 4 {
+            if remaining == 4 && input[count - 1] == '=' {
+                if input[count - 2] == '=' {
+                    decode_2_bytes(output, map, index, input[index], input[index + 1]);
+                    index += 4;
+                    continue;
+                }
+
+                decode_3_bytes(output, map, index, input[index], input[index + 1], input[index + 2]);
+                index += 4;
+                continue;
+            }
+
+            decode_4_bytes(output, map, index, input[index], input[index + 1], input[index + 2], input[index + 3]);
+            index += 4;
+            continue;
+        }
+
+        if remaining == 3 {
+            if input[count - 1] == '=' {
+                decode_2_bytes(output, map, index, input[index], input[index + 1]);
+                index += 3;
+                continue;
+            }
+
+            decode_3_bytes(output, map, index, input[index], input[index + 1], input[index + 2]);
+            index += 3;
+            continue;
+        }
+
+        if remaining == 2 {
+            decode_2_bytes(output, map, index, input[index], input[index + 1]);
+            index += 2;
+            continue;
+        }
+
+        let trailing_character = $debug($rune(input[count - 1]));
+        $panic("invalid base64: unexpected trailing character {}", trailing_character);
+    }
+
+    return output;
+}
+
+def from_base64_str(input: str, encoding: Encoding) -> buf {
+    assert $is_str(input), "from_base64_str(): invalid argument, expected a string";
+    assert $is_enum_member_of_type(encoding, Encoding), "from_base64_str(): invalid argument, expected an Encoding enum member";
+
+    let map = encoding:value()[1];
+    let count = input:count();
+    var output = $buf();
+    var index = 0;
+
+    while index < count {
+        let remaining = count - index;
+
+        if remaining >= 4 {
+            if remaining == 4 && input:byte(count - 1) == '=' {
+                if input:byte(count - 2) == '=' {
+                    decode_2_bytes(output, map, index, input:byte(index), input:byte(index + 1));
+                    index += 4;
+                    continue;
+                }
+
+                decode_3_bytes(output, map, index, input:byte(index), input:byte(index + 1), input:byte(index + 2));
+                index += 4;
+                continue;
+            }
+
+            decode_4_bytes(output, map, index, input:byte(index), input:byte(index + 1), input:byte(index + 2), input:byte(index + 3));
+            index += 4;
+            continue;
+        }
+
+        if remaining == 3 {
+            if input:byte(count - 1) == '=' {
+                decode_2_bytes(output, map, index, input:byte(index), input:byte(index + 1));
+                index += 3;
+                continue;
+            }
+
+            decode_3_bytes(output, map, index, input:byte(index), input:byte(index + 1), input:byte(index + 2));
+            index += 3;
+            continue;
+        }
+
+        if remaining == 2 {
+            decode_2_bytes(output, map, index, input:byte(index), input:byte(index + 1));
+            index += 2;
+            continue;
+        }
+
+        let trailing_character = $debug($rune(input:byte(count - 1)));
+        $panic("invalid base64: unexpected trailing character {}", trailing_character);
+    }
+
+    return output;
+}
+
+pub def from_base64(input: buf|str) -> buf {
+    if $is_buf(input) {
+        assert input:count() > 0, "from_base64(): input buffer is empty";
+
+        let result = try from_base64_buf(input, Encoding::RFC4648);
+        if $is_err(result) {
+            $panic("from_base64(): {result}");
+        }
+
+        return result;
+    }
+
+    if $is_str(input) {
+        assert input:count() > 0, "from_base64(): input string is empty";
+
+        let result = try from_base64_str(input, Encoding::RFC4648);
+        if $is_err(result) {
+            $panic("from_base64(): {result}");
+        }
+
+        return result;
+    }
+
+    $panic("from_base64(): invalid argument [input], expected a buffer or string, got ${$type(input)}");
+}
