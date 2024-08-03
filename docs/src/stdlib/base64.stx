@@ -3,7 +3,7 @@ title: <code>std::base64</code>
 meta_title: Pyro Standard Library &mdash; std::base64
 ---
 
-This module contains utility functions for working with HTML.
+This module contains functions for encoding and decoding base64.
 
 
 ### Functions
