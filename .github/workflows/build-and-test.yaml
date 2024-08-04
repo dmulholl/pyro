@@ -13,6 +13,11 @@ jobs:
       - name: Build Debug Binary
         run: make debug
 
-      - name: Run Test Suite
+      - name: Run Test Suite With Debug Binary
         run: ./build/debug/pyro test tests/*.pyro
 
+      - name: Build Release Binary
+        run: make release
+
+      - name: Run Test Suite With Release Binary
+        run: ./build/release/pyro test tests/*.pyro
