@@ -339,3 +339,21 @@ with str = "The quick brown fox jumps over the lazy dog." {
     let encoded = base64::to_base64(str);
     assert base64::from_base64(encoded):to_str() == str;
 }
+
+with buf = $buf() {
+    for i in $range(256) {
+        buf:write_byte(i);
+    }
+
+    let input = buf:to_str();
+
+    with encoded1 = base64::to_base64(input) {
+        with encoded2 = base64::to_base64(encoded1) {
+            with decoded1 = base64::from_base64(encoded2) {
+                with decoded2 = base64::from_base64(decoded1) {
+                    assert decoded2:to_str() == input;
+                }
+            }
+        }
+    }
+}
