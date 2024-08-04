@@ -183,7 +183,13 @@ Returns a copy of the buffer's content as a string, leaving the buffer itself un
 </dt>
 <dd>
 <p>
-This is an alias for <code>:get()</code>.
+Returns the byte value at <code>index</code> as an integer in the range <code>[0, 255]</code>.
+</p>
+<p>
+A negative index counts backwards from the end of the buffer.
+</p>
+<p>
+(This method is an alias for <code>:get()</code>. It's defined so buffers and strings expose a common interface for addressing byte values.)
 </p>
 </dd>
 </div>
@@ -295,10 +301,7 @@ Calling this method with more than one argument is equivalent to calling <code>$
 </li>
 </ul>
 <p>
-Returns the number of bytes written.
-</p>
-<p>
-This method will panic if an error occurs while formatting the string or if memory allocation fails.
+Returns the number of bytes written to the buffer.
 </p>
 </dd>
 </div>

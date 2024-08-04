@@ -86,7 +86,11 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
 [[ `:byte(index: i64) -> i64` ]]
 
-    This is an alias for `:get()`.
+    Returns the byte value at `index` as an integer in the range `[0, 255]`.
+
+    A negative index counts backwards from the end of the buffer.
+
+    (This method is an alias for `:get()`. It's defined so buffers and strings expose a common interface for addressing byte values.)
 
 [[ `:clear()` ]]
 
@@ -133,9 +137,7 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
     * Otherwise, calling this method with a single argument is equivalent to calling `$str()` on that argument first and writing the resulting string.
     * Calling this method with more than one argument is equivalent to calling `$fmt()` on those arguments first and writing the resulting string.
 
-    Returns the number of bytes written.
-
-    This method will panic if an error occurs while formatting the string or if memory allocation fails.
+    Returns the number of bytes written to the buffer.
 
 [[ `:write_byte(byte: i64|rune)` ]]
 
