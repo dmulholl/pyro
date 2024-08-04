@@ -11,8 +11,8 @@ This module contains functions for encoding and decoding base64.
 
 [[ `from_base64(input: buf|str) -> buf` ]]
 
-    Decodes `input` from base64.
+    Decodes from base64.
 
 [[ `to_base64(input: buf|str) -> buf` ]]
 
-    Encodes `input` to base64.
+    Encodes to base64.
