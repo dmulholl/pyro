@@ -88,7 +88,7 @@ You can index into a tuple to get (but not set) entries, e.g.
     assert tup[1] == "bar";
     assert tup[2] == "baz";
 
-Indices are zero-based. A negative index counts backwards from the end of the vector, e.g.
+Indices are zero-based. A negative index counts backwards from the end of the tuple, e.g.
 
 ::: code pyro
     var tup = ("foo", "bar", "baz");
