@@ -116,7 +116,7 @@ int pyro_cli_run_repl(ArgParser* parser) {
     pyro_append_import_root(vm, ".", 1);
 
     char* version = pyro_get_version_string();
-    printf("%s -- Type 'exit' to quit.\n", version);
+    printf("%s -- You're in the Pyro REPL, type 'exit' to quit.\n", version);
     free(version);
 
     char* buffer = NULL;
