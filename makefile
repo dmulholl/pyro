@@ -206,7 +206,7 @@ check-compiled-module:
 # -------- #
 
 docker-build: ## Builds the Pyro Docker image.
-	docker build -t pyro .
+	docker build --platform linux/amd64 -t pyro .
 
 docker-run: ## Runs a Bash shell in the Pyro Docker image.
 docker-run: docker-build
