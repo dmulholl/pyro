@@ -1,7 +1,7 @@
 #include "../includes/pyro.h"
 
 
-static int64_t pyro_write_n(PyroVM* vm, PyroFile* file, const char* string, size_t count) {
+static int64_t pyro_write_n(PyroFile* file, const char* string, size_t count) {
     if (!file || count == 0) {
         return 0;
     }
@@ -18,7 +18,7 @@ static int64_t pyro_write_n(PyroVM* vm, PyroFile* file, const char* string, size
 }
 
 
-static int64_t pyro_write_fv(PyroVM* vm, PyroFile* file, const char* format_string, va_list args) {
+static int64_t pyro_write_fv(PyroFile* file, const char* format_string, va_list args) {
     if (!file) {
         return 0;
     }
@@ -33,31 +33,31 @@ static int64_t pyro_write_fv(PyroVM* vm, PyroFile* file, const char* format_stri
 
 
 int64_t pyro_stdout_write(PyroVM* vm, const char* string) {
-    return pyro_write_n(vm, vm->stdout_file, string, strlen(string));
+    return pyro_write_n(vm->stdout_file, string, strlen(string));
 }
 
 
 int64_t pyro_stdout_write_n(PyroVM* vm, const char* string, size_t count) {
-    return pyro_write_n(vm, vm->stdout_file, string, count);
+    return pyro_write_n(vm->stdout_file, string, count);
 }
 
 
 int64_t pyro_stdout_write_s(PyroVM* vm, PyroStr* string) {
-    return pyro_write_n(vm, vm->stdout_file, string->bytes, string->count);
+    return pyro_write_n(vm->stdout_file, string->bytes, string->count);
 }
 
 
 int64_t pyro_stdout_write_f(PyroVM* vm, const char* format_string, ...) {
     va_list args;
     va_start(args, format_string);
-    int64_t result = pyro_write_fv(vm, vm->stdout_file, format_string, args);
+    int64_t result = pyro_write_fv(vm->stdout_file, format_string, args);
     va_end(args);
     return result;
 }
 
 
 int64_t pyro_stdout_write_fv(PyroVM* vm, const char* format_string, va_list args) {
-    return pyro_write_fv(vm, vm->stdout_file, format_string, args);
+    return pyro_write_fv(vm->stdout_file, format_string, args);
 }
 
 
@@ -69,31 +69,31 @@ void pyro_stdout_flush(PyroVM* vm) {
 
 
 int64_t pyro_stderr_write(PyroVM* vm, const char* string) {
-    return pyro_write_n(vm, vm->stderr_file, string, strlen(string));
+    return pyro_write_n(vm->stderr_file, string, strlen(string));
 }
 
 
 int64_t pyro_stderr_write_n(PyroVM* vm, const char* string, size_t count) {
-    return pyro_write_n(vm, vm->stderr_file, string, count);
+    return pyro_write_n(vm->stderr_file, string, count);
 }
 
 
 int64_t pyro_stderr_write_s(PyroVM* vm, PyroStr* string) {
-    return pyro_write_n(vm, vm->stderr_file, string->bytes, string->count);
+    return pyro_write_n(vm->stderr_file, string->bytes, string->count);
 }
 
 
 int64_t pyro_stderr_write_f(PyroVM* vm, const char* format_string, ...) {
     va_list args;
     va_start(args, format_string);
-    int64_t result = pyro_write_fv(vm, vm->stderr_file, format_string, args);
+    int64_t result = pyro_write_fv(vm->stderr_file, format_string, args);
     va_end(args);
     return result;
 }
 
 
 int64_t pyro_stderr_write_fv(PyroVM* vm, const char* format_string, va_list args) {
-    return pyro_write_fv(vm, vm->stderr_file, format_string, args);
+    return pyro_write_fv(vm->stderr_file, format_string, args);
 }
 
 
