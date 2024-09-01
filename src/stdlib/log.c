@@ -122,49 +122,53 @@ static void write_msg(
     if (show_microseconds.as.boolean) {
         int result = fprintf(
             PYRO_AS_FILE(file)->stream,
-            "[%5s]  %s.%06d%s  %s\n",
+            "[%5s]  %s.%06d%s  ",
             log_level_name,
             timestamp_str,
             (int)microseconds,
-            show_tz_offset.as.boolean ? tz_offset_str : "",
-            message->bytes
+            show_tz_offset.as.boolean ? tz_offset_str : ""
         );
 
         if (result < 0) {
             pyro_panic(vm, "%s: failed to write log message", err_prefix);
+            return;
         }
-
-        return;
-    }
-
-    if (show_milliseconds.as.boolean) {
+    } else if (show_milliseconds.as.boolean) {
         int result = fprintf(
             PYRO_AS_FILE(file)->stream,
-            "[%5s]  %s.%03d%s  %s\n",
+            "[%5s]  %s.%03d%s  ",
             log_level_name,
             timestamp_str,
             (int)milliseconds,
-            show_tz_offset.as.boolean ? tz_offset_str : "",
-            message->bytes
+            show_tz_offset.as.boolean ? tz_offset_str : ""
         );
 
         if (result < 0) {
             pyro_panic(vm, "%s: failed to write log message", err_prefix);
         }
+    } else {
+        int result = fprintf(
+            PYRO_AS_FILE(file)->stream,
+            "[%5s]  %s%s  ",
+            log_level_name,
+            timestamp_str,
+            show_tz_offset.as.boolean ? tz_offset_str : ""
+        );
 
-        return;
+        if (result < 0) {
+            pyro_panic(vm, "%s: failed to write log message", err_prefix);
+        }
     }
 
-    int result = fprintf(
-        PYRO_AS_FILE(file)->stream,
-        "[%5s]  %s%s  %s\n",
-        log_level_name,
-        timestamp_str,
-        show_tz_offset.as.boolean ? tz_offset_str : "",
-        message->bytes
-    );
+    if (message->count > 0) {
+        size_t result = fwrite(message->bytes, 1, message->count, PYRO_AS_FILE(file)->stream);
+        if (result < message->count) {
+            pyro_panic(vm, "%s: failed to write log message", err_prefix);
+        }
+    }
 
-    if (result < 0) {
+    size_t result = fwrite("\n", 1, 1, PYRO_AS_FILE(file)->stream);
+    if (result < 1) {
         pyro_panic(vm, "%s: failed to write log message", err_prefix);
     }
 }
