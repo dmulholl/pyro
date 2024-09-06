@@ -1,0 +1,111 @@
+def panics() {
+    $panic("oh no!");
+}
+
+def add(a, b) {
+    return a + b;
+}
+
+{
+    var result = try 123;
+    assert result == 123;
+}
+
+{
+    var result = try 123 !! 456;
+    assert result == 123;
+}
+
+{
+    var result = try add(1, 2);
+    assert result == 3;
+}
+
+{
+    var result = try (1 + 2);
+    assert result == 3;
+}
+
+{
+    var result = try panics();
+    assert $is_err(result);
+    assert $str(result) == "oh no!";
+    assert $debug(result) == `<err "oh no!">`;
+}
+
+{
+    var result = try panics() !! "fallback";
+    assert result == "fallback";
+}
+
+{
+    var result = try add(123, "foobar");
+    assert $is_err(result);
+}
+
+{
+    var result = try (123 + "foobar");
+    assert $is_err(result);
+}
+
+{
+    var result = try add(123, "foobar") !! "fallback";
+    assert result == "fallback";
+}
+
+{
+    var result = try (123 + "foobar") !! "fallback";
+    assert result == "fallback";
+}
+
+{
+    var result = try try try 123;
+    assert result == 123;
+}
+
+{
+    var result = try try try 123 !! 456;
+    assert result == 123;
+}
+
+{
+    var result = try try try add(1, 2);
+    assert result == 3;
+}
+
+{
+    var result = try try try (1 + 2);
+    assert result == 3;
+}
+
+{
+    var result = try try try panics();
+    assert $is_err(result);
+    assert $str(result) == "oh no!";
+    assert $debug(result) == `<err "oh no!">`;
+}
+
+{
+    var result = try try try panics() !! "fallback";
+    assert result == "fallback";
+}
+
+{
+    var result = try try try add(123, "foobar");
+    assert $is_err(result);
+}
+
+{
+    var result = try try try (123 + "foobar");
+    assert $is_err(result);
+}
+
+{
+    var result = try try try add(123, "foobar") !! "fallback";
+    assert result == "fallback";
+}
+
+{
+    var result = try try try (123 + "foobar") !! "fallback";
+    assert result == "fallback";
+}
