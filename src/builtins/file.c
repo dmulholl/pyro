@@ -76,9 +76,15 @@ static PyroValue file_flush(PyroVM* vm, size_t arg_count, PyroValue* args) {
 static PyroValue file_close(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
 
-    if (file->stream) {
-        fclose(file->stream);
-        file->stream = NULL;
+    if (!file->stream) {
+        return pyro_null();
+    }
+
+    int result = fclose(file->stream);
+    file->stream = NULL;
+
+    if (result != 0) {
+        pyro_panic(vm, "close(): error closing file: %s", strerror(errno));
     }
 
     return pyro_null();

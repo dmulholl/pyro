@@ -50,10 +50,12 @@ The file object's `close()` method will be called when the `with` block exits, e
 
 [[ `:close()` ]]
 
-    Closes the file stream.
+    Closes the `file`.
     You can safely call `close()` on a `file` multiple times.
 
-    If the file hasn't been explicitly closed by calling this method, it will be automatically closed by the garbage collector before the file object is destroyed.
+    Panics if calling the C function `fclose()` on the underlying file stream returns an error.
+
+    If the `file` hasn't been explicitly closed by calling this method, it will be automatically closed by the garbage collector before the `file` object is destroyed.
 
 [[ `:flush()` ]]
 

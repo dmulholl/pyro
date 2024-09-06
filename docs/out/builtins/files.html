@@ -175,11 +175,14 @@ Methods
 </dt>
 <dd>
 <p>
-Closes the file stream.
+Closes the <code>file</code>.
 You can safely call <code>close()</code> on a <code>file</code> multiple times.
 </p>
 <p>
-If the file hasn't been explicitly closed by calling this method, it will be automatically closed by the garbage collector before the file object is destroyed.
+Panics if calling the C function <code>fclose()</code> on the underlying file stream returns an error.
+</p>
+<p>
+If the <code>file</code> hasn't been explicitly closed by calling this method, it will be automatically closed by the garbage collector before the <code>file</code> object is destroyed.
 </p>
 </dd>
 </div>
