@@ -2663,7 +2663,7 @@ static void run(PyroVM* vm) {
                 size_t stashed_call_stack_count = vm->call_stack_count;
 
                 vm->try_depth++;
-                call_closure(vm, PYRO_AS_CLOSURE(vm->stack_top[-1]), 0);
+                push_call_frame(vm, PYRO_AS_CLOSURE(vm->stack_top[-1]), vm->stack_top - 1);
                 run(vm);
                 vm->try_depth--;
 
