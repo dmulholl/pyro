@@ -60,8 +60,26 @@ def time_function(file_name, func_name, func, is_first) {
     }
 
     var mean_time_s = times:iter():sum() / times:count();
-    var mean_time_ms = mean_time_s * 1000;
-    echo "    mean: ${mean_time_ms;.3f} ms";
+
+    if mean_time_s >= 1.0 {
+        echo "    mean: ${mean_time_s;.3f} s";
+        return;
+    }
+
+    if mean_time_s >= 0.001 {
+        let mean_time_ms = mean_time_s * 1_000;
+        echo "    mean: ${mean_time_ms;.3f} ms";
+        return;
+    }
+
+    if mean_time_s >= 0.000_001 {
+        let mean_time_us = mean_time_s * 1_000_000;
+        echo "    mean: ${mean_time_us;.3f} us";
+        return;
+    }
+
+    let mean_time_ns = mean_time_s * 1_000_000_000;
+    echo "    mean: ${mean_time_ns;.0f} ns";
 }
 
 if NUM_RUNS < 1 {
