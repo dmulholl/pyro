@@ -12,7 +12,7 @@ A utility module for writing CGI scripts in Pyro.
 
 [[ `Request() -> Request` ]]
 
-    Utility class for processing CGI requests.
+    A utility class for handling CGI requests.
 
     * Automatically parses parameter values from the request's query string.
     * Automatically parses parameter values from the request's body if the `Content-Type` header is `application/x-www-form-urlencoded`.
@@ -54,7 +54,7 @@ The `Request` class has the following methods:
 
 [[ `Response() -> Response` ]]
 
-    Utility class for processing CGI responses.
+    A utility class for handling CGI responses.
 
 The `Response` class has the following methods:
 
