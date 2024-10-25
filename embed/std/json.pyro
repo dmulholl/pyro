@@ -215,7 +215,7 @@ class Lexer {
     }
 
     pub def next() -> Token {
-        while self.index < self.count && self.input[self.index]:is_ws() {
+        while self.index < self.count && self.input[self.index]:is_ascii_ws() {
             self.index += 1;
         }
 
@@ -231,7 +231,7 @@ class Lexer {
                 }
             }
 
-            while self.index < self.count && self.input[self.index]:is_ws() {
+            while self.index < self.count && self.input[self.index]:is_ascii_ws() {
                 self.index += 1;
             }
         }

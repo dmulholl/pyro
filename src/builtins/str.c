@@ -1370,7 +1370,6 @@ void pyro_load_builtin_type_str(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_str, "lines", str_lines, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_utf8_ws", str_is_utf8_ws, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_ws", str_is_ascii_ws, 0);
-    pyro_define_pub_method(vm, vm->class_str, "is_ws", str_is_ascii_ws, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_decimal", str_is_ascii_decimal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_octal", str_is_ascii_octal, 0);
     pyro_define_pub_method(vm, vm->class_str, "is_ascii_hex", str_is_ascii_hex, 0);
@@ -1380,4 +1379,5 @@ void pyro_load_builtin_type_str(PyroVM* vm) {
     // Deprecated.
     pyro_define_pub_method(vm, vm->class_str, "to_lower", str_to_ascii_lower, 0);
     pyro_define_pub_method(vm, vm->class_str, "to_upper", str_to_ascii_upper, 0);
+    pyro_define_pub_method(vm, vm->class_str, "is_ws", str_is_ascii_ws, 0);
 }
