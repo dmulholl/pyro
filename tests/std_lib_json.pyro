@@ -251,6 +251,13 @@ assert from_json(`"foo bar"`) == `foo bar`;
 assert from_json(`"foo \n bar"`) == "foo \n bar";
 assert from_json(`"foo \r\n\t bar"`) == "foo \r\n\t bar";
 
+assert from_json(`"\""`) == `"`;
+assert from_json(`"\"\""`) == `""`;
+assert from_json(`"\\"`) == `\`;
+assert from_json(`"\\\\"`) == `\\`;
+assert from_json(`"\/"`) == `/`;
+assert from_json(`"\/\/"`) == `//`;
+
 assert $debug(from_json(`"foo bar"`)) == `"foo bar"`;
 assert $debug(from_json(`"foo \n bar"`)) == `"foo \n bar"`;
 assert $debug(from_json(`"foo \r\n\t bar"`)) == `"foo \r\n\t bar"`;
