@@ -525,7 +525,7 @@ class Parser {
 
     def parse_number(start_index: i64, length: i64) -> i64|f64 {
         var literal = self.input:slice(start_index, length);
-        if "." in literal || 'e' in literal {
+        if "." in literal || "e" in literal {
             var result = try $f64(literal);
             if $is_err(result) {
                 $panic("invalid number: unable to parse '{}' as f64", literal);
