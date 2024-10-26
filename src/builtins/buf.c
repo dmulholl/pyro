@@ -422,7 +422,7 @@ static PyroValue buf_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue buf_to_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue buf_as_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroBuf* buf = PYRO_AS_BUF(args[-1]);
     if (buf->count == 0) {
         return pyro_obj(vm->empty_string);
@@ -510,6 +510,6 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_buf, "resize", buf_resize, -1);
     pyro_define_pub_method(vm, vm->class_buf, "match", buf_match, 2);
     pyro_define_pub_method(vm, vm->class_buf, "slice", buf_slice, -1);
-    pyro_define_pub_method(vm, vm->class_buf, "to_hex", buf_to_hex, 0);
+    pyro_define_pub_method(vm, vm->class_buf, "as_hex", buf_as_hex, 0);
     pyro_define_pub_method(vm, vm->class_buf, "contains", buf_contains, 1);
 }

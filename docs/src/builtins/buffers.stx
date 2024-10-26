@@ -80,6 +80,10 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
 ### Methods
 
+[[ `:as_hex() -> str` ]]
+
+    Returns a copy of the buffer's content as a hex-escaped string, leaving the buffer itself unchanged.
+
 [[ `:as_str() -> str` ]]
 
     Returns a copy of the buffer's content as a string, leaving the buffer itself unchanged.
@@ -143,10 +147,6 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
     If `length` is omitted, copies to the end of the source buffer.
 
     Panics if either argument is out of range.
-
-[[ `:to_hex() -> str` ]]
-
-    Returns a string containing hex-escaped byte values from the buffer.
 
 [[ `:to_str() -> str` ]]
 

@@ -171,6 +171,16 @@ Methods
 <dl>
 <div>
 <dt>
+<code>:as_hex() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns a copy of the buffer's content as a hex-escaped string, leaving the buffer itself unchanged.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:as_str() -&gt; str</code>
 </dt>
 <dd>
@@ -310,16 +320,6 @@ If <code>length</code> is omitted, copies to the end of the source buffer.
 </p>
 <p>
 Panics if either argument is out of range.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:to_hex() -&gt; str</code>
-</dt>
-<dd>
-<p>
-Returns a string containing hex-escaped byte values from the buffer.
 </p>
 </dd>
 </div>
