@@ -64,6 +64,9 @@ def $test_multiplication_by_int() {
     assert 'x' * 3 == "xxx";
     assert '🔥' * 3 == "🔥🔥🔥";
     assert $is_err(try ('x' * -3));
+
+    assert 3 * 'x' == "xxx";
+    assert $is_err(try (-3 * 'x'));
 }
 
 

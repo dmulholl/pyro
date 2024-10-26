@@ -216,8 +216,21 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
                     }
                     return pyro_i64(result);
                 }
-                case PYRO_VALUE_F64:
+                case PYRO_VALUE_F64: {
                     return pyro_f64((double)left.as.i64 * right.as.f64);
+                }
+                case PYRO_VALUE_RUNE: {
+                    if (left.as.i64 >= 0) {
+                        PyroStr* result = PyroStr_concat_n_codepoints_as_utf8(right.as.u32, left.as.i64, vm);
+                        if (!result) {
+                            pyro_panic(vm, "out of memory");
+                            return pyro_null();
+                        }
+                        return pyro_obj(result);
+                    }
+                    pyro_panic(vm, "cannot multiply a rune by a negative integer");
+                    return pyro_null();
+                }
                 default:
                     break;
             }
