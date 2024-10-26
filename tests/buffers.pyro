@@ -340,3 +340,47 @@ def $test_slice_with_missing_length() {
 def $test_to_hex() {
     assert $buf("foo"):to_hex() == `\x66\x6F\x6F`;
 }
+
+
+def $test_contains_string() {
+    var buf = $buf("foobar");
+
+    assert buf:contains("foobar");
+    assert buf:contains("foo");
+    assert buf:contains("bar");
+    assert !buf:contains("xxx");
+    assert !buf:contains("foobarfoobar");
+
+    assert !$buf():contains("xxx");
+
+    assert buf:contains("");
+    assert $buf():contains("");
+
+    assert "foobar" in buf;
+    assert "foo" in buf;
+    assert "bar" in buf;
+    assert "" in buf;
+    assert !("xxx" in buf);
+}
+
+
+def $test_contains_buffer() {
+    var buf = $buf("foobar");
+
+    assert buf:contains($buf("foobar"));
+    assert buf:contains($buf("foo"));
+    assert buf:contains($buf("bar"));
+    assert !buf:contains($buf("xxx"));
+    assert !buf:contains($buf("foobarfoobar"));
+
+    assert !$buf():contains($buf("xxx"));
+
+    assert buf:contains($buf());
+    assert $buf():contains($buf());
+
+    assert $buf("foobar") in buf;
+    assert $buf("foo") in buf;
+    assert $buf("bar") in buf;
+    assert $buf() in buf;
+    assert !($buf("xxx") in buf);
+}

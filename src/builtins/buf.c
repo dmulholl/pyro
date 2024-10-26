@@ -451,6 +451,41 @@ static PyroValue buf_to_hex(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue buf_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroBuf* buf = PYRO_AS_BUF(args[-1]);
+
+    void* target;
+    size_t target_count;
+
+    if (PYRO_IS_BUF(args[0])) {
+        target = PYRO_AS_BUF(args[0])->bytes;
+        target_count = PYRO_AS_BUF(args[0])->count;
+    } else if (PYRO_IS_STR(args[0])) {
+        target = PYRO_AS_STR(args[0])->bytes;
+        target_count = PYRO_AS_STR(args[0])->count;
+    } else {
+        pyro_panic(vm, "contains(): invalid argument [target], expected a string or buffer");
+        return pyro_null();
+    }
+
+    if (buf->count < target_count) {
+        return pyro_bool(false);
+    }
+
+    size_t index = 0;
+    size_t last_possible_match_index = buf->count - target_count;
+
+    while (index <= last_possible_match_index) {
+        if (memcmp(&buf->bytes[index], target, target_count) == 0) {
+            return pyro_bool(true);
+        }
+        index++;
+    }
+
+    return pyro_bool(false);
+}
+
+
 void pyro_load_builtin_type_buf(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$buf", fn_buf, -1);
@@ -459,6 +494,7 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
     // Methods -- private.
     pyro_define_pri_method(vm, vm->class_buf, "$get", buf_get, 1);
     pyro_define_pri_method(vm, vm->class_buf, "$set", buf_set, 2);
+    pyro_define_pri_method(vm, vm->class_buf, "$contains", buf_contains, 1);
 
     // Methods -- public.
     pyro_define_pub_method(vm, vm->class_buf, "to_str", buf_to_str, 0);
@@ -475,4 +511,5 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_buf, "match", buf_match, 2);
     pyro_define_pub_method(vm, vm->class_buf, "slice", buf_slice, -1);
     pyro_define_pub_method(vm, vm->class_buf, "to_hex", buf_to_hex, 0);
+    pyro_define_pub_method(vm, vm->class_buf, "contains", buf_contains, 1);
 }

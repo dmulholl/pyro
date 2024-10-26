@@ -96,6 +96,10 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     Clears the buffer.
 
+[[ `:contains(target: buf|str) -> bool` ]]
+
+    Returns `true` if the buffer contains `target`.
+
 [[ `:count() -> i64` ]]
 
     Returns the number of bytes in the buffer.
