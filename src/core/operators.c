@@ -231,6 +231,21 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
                     pyro_panic(vm, "cannot multiply a rune by a negative integer");
                     return pyro_null();
                 }
+                case PYRO_VALUE_OBJ: {
+                    if (PYRO_IS_STR(right)) {
+                        if (left.as.i64 >= 0) {
+                            PyroStr* result = PyroStr_concat_n_copies(PYRO_AS_STR(right), left.as.i64, vm);
+                            if (!result) {
+                                pyro_panic(vm, "out of memory");
+                                return pyro_null();
+                            }
+                            return pyro_obj(result);
+                        }
+                        pyro_panic(vm, "cannot multiply a string by a negative integer");
+                        return pyro_null();
+                    }
+                    break;
+                }
                 default:
                     break;
             }
