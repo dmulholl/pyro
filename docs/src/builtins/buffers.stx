@@ -146,7 +146,7 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
 [[ `:to_hex() -> str` ]]
 
-    Returns a string containing hex-escaped byte values from buffer.
+    Returns a string containing hex-escaped byte values from the buffer.
 
 [[ `:to_str() -> str` ]]
 
