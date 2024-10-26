@@ -458,6 +458,6 @@ This is equivalent to calling the string's `:contains()` method.
 
 [[ `:to_hex() -> str` ]]
 
-    Returns a new string containing the hex-escaped byte values from the orginal string ---
+    Returns a new string containing the hex-escaped byte values from the original string ---
     e.g. ``<code>`foo`</code>`` becomes ``<code>`\x66\x6F\x6F`</code>``.
     Useful for inspecting and debugging Unicode.

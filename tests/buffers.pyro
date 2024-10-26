@@ -335,3 +335,8 @@ def $test_slice_with_missing_length() {
     assert $is_err(try buf:slice(7));
     assert $is_err(try $buf():slice(-1));
 }
+
+
+def $test_to_hex() {
+    assert $buf("foo"):to_hex() == `\x66\x6F\x6F`;
+}

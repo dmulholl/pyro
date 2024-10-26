@@ -140,6 +140,10 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     Panics if either argument is out of range.
 
+[[ `:to_hex() -> str` ]]
+
+    Returns a string containing hex-escaped byte values from buffer.
+
 [[ `:to_str() -> str` ]]
 
     Converts the content of the buffer into a string, leaving a valid but empty buffer object behind.
