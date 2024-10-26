@@ -112,7 +112,7 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
 [[ `:match(target: buf|str, index: i64) -> bool` ]]
 
-    Returns `true` if content of the buffer or string `target` matches at byte index `index`.
+    Returns `true` if `target` matches at byte index `index`.
 
 [[ `:resize(new_size: i64, fill_value: i64|rune = 0)` ]]
 
@@ -127,6 +127,18 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
     Sets the byte value at `index` to `value`, where `value` is an integer in the range `[0, 255]`.
 
     A negative index counts backwards from the end of the buffer.
+
+[[ `:slice(start_index: i64) -> buf` <br> `:slice(start_index: i64, length: i64) -> buf` ]]
+
+    Copies a slice of the source buffer and returns it as a new buffer.
+    The source buffer is left unchanged.
+    The slice starts at byte index `start_index` and contains `length` bytes.
+
+    If `start_index` is negative, counts backwards from the end of the buffer --- i.e. a `start_index` of `-1` refers to to the last byte in the buffer.
+
+    If `length` is omitted, copies to the end of the source buffer.
+
+    Panics if either argument is out of range.
 
 [[ `:to_str() -> str` ]]
 

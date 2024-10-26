@@ -367,6 +367,61 @@ static PyroValue buf_match(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue buf_slice(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroBuf* buf = PYRO_AS_BUF(args[-1]);
+
+    if (!(arg_count == 1 || arg_count == 2)) {
+        pyro_panic(vm, "slice(): expected 1 or 2 arguments, found %zu", arg_count);
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm, "slice(): invalid argument [start_index], expected an integer");
+        return pyro_null();
+    }
+
+    size_t start_index;
+    if (args[0].as.i64 >= 0 && (size_t)args[0].as.i64 <= buf->count) {
+        start_index = (size_t)args[0].as.i64;
+    } else if (args[0].as.i64 < 0 && (size_t)(args[0].as.i64 * -1) <= buf->count) {
+        start_index = (size_t)((int64_t)buf->count + args[0].as.i64);
+    } else {
+        pyro_panic(vm, "slice(): invalid argument [start_index], out of range");
+        return pyro_null();
+    }
+
+    size_t length = buf->count - start_index;
+    if (arg_count == 2) {
+        if (!PYRO_IS_I64(args[1])) {
+            pyro_panic(vm, "slice(): invalid argument [length], expected an integer");
+            return pyro_null();
+        }
+        if (args[1].as.i64 < 0) {
+            pyro_panic(vm, "slice(): invalid argument [length], expected a positive integer");
+            return pyro_null();
+        }
+        if (start_index + (size_t)args[1].as.i64 > buf->count) {
+            pyro_panic(vm, "slice(): invalid argument [length], out of range");
+            return pyro_null();
+        }
+        length = (size_t)args[1].as.i64;
+    }
+
+    PyroBuf* new_buf = PyroBuf_new_with_capacity(length, vm);
+    if (!new_buf) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    if (length > 0) {
+        memcpy(new_buf->bytes, &buf->bytes[start_index], length);
+        new_buf->count = length;
+    }
+
+    return pyro_obj(new_buf);
+}
+
+
 void pyro_load_builtin_type_buf(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$buf", fn_buf, -1);
@@ -389,4 +444,5 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_buf, "clear", buf_clear, 0);
     pyro_define_pub_method(vm, vm->class_buf, "resize", buf_resize, -1);
     pyro_define_pub_method(vm, vm->class_buf, "match", buf_match, 2);
+    pyro_define_pub_method(vm, vm->class_buf, "slice", buf_slice, -1);
 }

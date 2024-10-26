@@ -293,3 +293,45 @@ def $test_match_with_buf() {
     assert !$buf():match($buf("xxx"), 1);
     assert !$buf():match($buf("xxx"), 2);
 }
+
+
+def $test_slice() {
+    var buf = $buf("foobar");
+
+    assert buf:slice(0, 0):to_str() == "";
+    assert buf:slice(0, 3):to_str() == "foo";
+    assert buf:slice(3, 3):to_str() == "bar";
+    assert buf:slice(6, 0):to_str() == "";
+    assert buf:slice(0, buf:count()):to_str() == "foobar";
+
+    assert $is_err(try buf:slice(0, 7));
+    assert $is_err(try buf:slice(3, 7));
+    assert $is_err(try buf:slice(6, 1));
+    assert $is_err(try $buf():slice(0, 1));
+}
+
+
+def $test_slice_with_negative_start_index() {
+    var buf = $buf("foobar");
+
+    assert buf:slice(-1, 1):to_str() == "r";
+    assert buf:slice(-2, 2):to_str() == "ar";
+
+    assert $is_err(try buf:slice(-1, 2));
+    assert $is_err(try $buf():slice(-1, 1));
+}
+
+
+def $test_slice_with_missing_length() {
+    var buf = $buf("foobar");
+
+    assert buf:slice(0):to_str() == "foobar";
+    assert buf:slice(3):to_str() == "bar";
+    assert buf:slice(6):to_str() == "";
+
+    assert buf:slice(-1):to_str() == "r";
+    assert buf:slice(-3):to_str() == "bar";
+
+    assert $is_err(try buf:slice(7));
+    assert $is_err(try $buf():slice(-1));
+}

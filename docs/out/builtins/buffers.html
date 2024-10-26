@@ -240,6 +240,16 @@ Returns <code>true</code> if the buffer is empty.
 </div>
 <div>
 <dt>
+<code>:match(target: buf|str, index: i64) -&gt; bool</code>
+</dt>
+<dd>
+<p>
+Returns <code>true</code> if <code>target</code> matches at byte index <code>index</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>:resize(new_size: i64, fill_value: i64|rune = 0)</code>
 </dt>
 <dd>
@@ -269,6 +279,27 @@ Sets the byte value at <code>index</code> to <code>value</code>, where <code>val
 </p>
 <p>
 A negative index counts backwards from the end of the buffer.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:slice(start_index: i64) -&gt; buf</code> <br> <code>:slice(start_index: i64, length: i64) -&gt; buf</code>
+</dt>
+<dd>
+<p>
+Copies a slice of the source buffer and returns it as a new buffer.
+The source buffer is left unchanged.
+The slice starts at byte index <code>start_index</code> and contains <code>length</code> bytes.
+</p>
+<p>
+If <code>start_index</code> is negative, counts backwards from the end of the buffer &mdash; i.e. a <code>start_index</code> of <code>-1</code> refers to to the last byte in the buffer.
+</p>
+<p>
+If <code>length</code> is omitted, copies to the end of the source buffer.
+</p>
+<p>
+Panics if either argument is out of range.
 </p>
 </dd>
 </div>
