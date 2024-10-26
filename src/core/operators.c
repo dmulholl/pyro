@@ -237,25 +237,33 @@ PyroValue pyro_op_binary_star(PyroVM* vm, PyroValue left, PyroValue right) {
         }
 
         case PYRO_VALUE_RUNE: {
-            if (PYRO_IS_I64(right) && right.as.i64 >= 0) {
-                PyroStr* result = PyroStr_concat_n_codepoints_as_utf8(left.as.u32, right.as.i64, vm);
-                if (!result) {
-                    pyro_panic(vm, "out of memory");
-                    return pyro_null();
+            if (PYRO_IS_I64(right)) {
+                if (right.as.i64 >= 0) {
+                    PyroStr* result = PyroStr_concat_n_codepoints_as_utf8(left.as.u32, right.as.i64, vm);
+                    if (!result) {
+                        pyro_panic(vm, "out of memory");
+                        return pyro_null();
+                    }
+                    return pyro_obj(result);
                 }
-                return pyro_obj(result);
+                pyro_panic(vm, "cannot multiply a rune by a negative integer");
+                return pyro_null();
             }
             break;
         }
 
         case PYRO_VALUE_OBJ: {
-            if (PYRO_IS_STR(left) && PYRO_IS_I64(right) && right.as.i64 >= 0) {
-                PyroStr* result = PyroStr_concat_n_copies(PYRO_AS_STR(left), right.as.i64, vm);
-                if (!result) {
-                    pyro_panic(vm, "out of memory");
-                    return pyro_null();
+            if (PYRO_IS_STR(left) && PYRO_IS_I64(right)) {
+                if (right.as.i64 >= 0) {
+                    PyroStr* result = PyroStr_concat_n_copies(PYRO_AS_STR(left), right.as.i64, vm);
+                    if (!result) {
+                        pyro_panic(vm, "out of memory");
+                        return pyro_null();
+                    }
+                    return pyro_obj(result);
                 }
-                return pyro_obj(result);
+                pyro_panic(vm, "cannot multiply a string by a negative integer");
+                return pyro_null();
             }
             break;
         }

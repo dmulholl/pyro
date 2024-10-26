@@ -431,6 +431,7 @@ def $test_multiplication_by_int() {
     assert "" * 3 == "";
     assert "foo" * 0 == "";
     assert "foo" * 3 == "foofoofoo";
+    assert $is_err(try ("foo" * -3));
 }
 
 
