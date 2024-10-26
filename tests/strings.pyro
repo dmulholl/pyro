@@ -176,12 +176,21 @@ def $test_match() {
     assert str:match("foobar", 0);
     assert str:match("foo", 0);
     assert str:match("oob", 1);
+    assert str:match("oba", 2);
     assert str:match("bar", 3);
 
-    assert !str:match("fooX", 0);
-    assert !str:match("Xfoo", 0);
+    assert !str:match("foox", 0);
+    assert !str:match("xfoo", 0);
+    assert !str:match("foobarxyz", 0);
+    assert !str:match("foobarxyz", 1);
+
+    assert str:match("", 0);
+    assert str:match("", 1);
+    assert str:match("", 2);
 
     assert !"":match("xxx", 0);
+    assert !"":match("xxx", 1);
+    assert !"":match("xxx", 2);
 }
 
 

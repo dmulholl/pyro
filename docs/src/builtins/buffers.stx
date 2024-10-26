@@ -110,6 +110,10 @@ Calling the buffer's `:to_str()` method converts its content into a string, leav
 
     Returns `true` if the buffer is empty.
 
+[[ `:match(target: buf|str, index: i64) -> bool` ]]
+
+    Returns `true` if content of the buffer or string `target` matches at byte index `index`.
+
 [[ `:resize(new_size: i64, fill_value: i64|rune = 0)` ]]
 
     Resizes the buffer.

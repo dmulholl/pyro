@@ -331,6 +331,42 @@ static PyroValue buf_resize(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue buf_match(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroBuf* buf = PYRO_AS_BUF(args[-1]);
+
+    void* target;
+    size_t target_count;
+
+    if (PYRO_IS_BUF(args[0])) {
+        target = PYRO_AS_BUF(args[0])->bytes;
+        target_count = PYRO_AS_BUF(args[0])->count;
+    } else if (PYRO_IS_STR(args[0])) {
+        target = PYRO_AS_STR(args[0])->bytes;
+        target_count = PYRO_AS_STR(args[0])->count;
+    } else {
+        pyro_panic(vm, "match(): invalid argument [target], expected a string or buffer");
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[1]) || args[1].as.i64 < 0) {
+        pyro_panic(vm, "match(): invalid argument [index], expected a positive integer");
+        return pyro_null();
+    }
+    size_t index = (size_t)args[1].as.i64;
+
+    if (index + target_count > buf->count) {
+        return pyro_bool(false);
+    }
+
+    // Returns 0 if [count] is zero.
+    if (memcmp(&buf->bytes[index], target, target_count) == 0) {
+        return pyro_bool(true);
+    }
+
+    return pyro_bool(false);
+}
+
+
 void pyro_load_builtin_type_buf(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$buf", fn_buf, -1);
@@ -352,4 +388,5 @@ void pyro_load_builtin_type_buf(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_buf, "is_empty", buf_is_empty, 0);
     pyro_define_pub_method(vm, vm->class_buf, "clear", buf_clear, 0);
     pyro_define_pub_method(vm, vm->class_buf, "resize", buf_resize, -1);
+    pyro_define_pub_method(vm, vm->class_buf, "match", buf_match, 2);
 }

@@ -788,6 +788,7 @@ static PyroValue str_match(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_bool(false);
     }
 
+    // Returns 0 if [count] is zero.
     if (memcmp(&str->bytes[index], target->bytes, target->count) == 0) {
         return pyro_bool(true);
     }

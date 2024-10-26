@@ -245,3 +245,51 @@ def $test_negative_indexes() {
     buf:set(-3, 'a');
     assert buf:as_str() == "fooabc";
 }
+
+
+def $test_match_with_str() {
+    var buf = $buf("foobar");
+
+    assert buf:match("foobar", 0);
+    assert buf:match("foo", 0);
+    assert buf:match("oob", 1);
+    assert buf:match("oba", 2);
+    assert buf:match("bar", 3);
+
+    assert !buf:match("foox", 0);
+    assert !buf:match("xfoo", 0);
+    assert !buf:match("foobarxyz", 0);
+    assert !buf:match("foobarxyz", 1);
+
+    assert buf:match("", 0);
+    assert buf:match("", 1);
+    assert buf:match("", 2);
+
+    assert !$buf():match("xxx", 0);
+    assert !$buf():match("xxx", 1);
+    assert !$buf():match("xxx", 2);
+}
+
+
+def $test_match_with_buf() {
+    var buf = $buf("foobar");
+
+    assert buf:match($buf("foobar"), 0);
+    assert buf:match($buf("foo"), 0);
+    assert buf:match($buf("oob"), 1);
+    assert buf:match($buf("oba"), 2);
+    assert buf:match($buf("bar"), 3);
+
+    assert !buf:match($buf("foox"), 0);
+    assert !buf:match($buf("xfoo"), 0);
+    assert !buf:match($buf("foobarxyz"), 0);
+    assert !buf:match($buf("foobarxyz"), 1);
+
+    assert buf:match($buf(), 0);
+    assert buf:match($buf(), 1);
+    assert buf:match($buf(), 2);
+
+    assert !$buf():match($buf("xxx"), 0);
+    assert !$buf():match($buf("xxx"), 1);
+    assert !$buf():match($buf("xxx"), 2);
+}
