@@ -8,3 +8,46 @@ assert math::abs(1.0) == 1.0;
 assert math::abs(-1.0) == 1.0;
 
 assert $is_err(try math::abs(constants::i64_min));
+
+with result = try math::div(5, 0) {
+    assert $is_err(result);
+}
+
+with (numerator, denominator) = (5, 3) {
+    var (quotient, remainder) = math::div(numerator, denominator);
+    assert quotient == 1;
+    assert remainder == 2;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (5, -3) {
+    var (quotient, remainder) = math::div(numerator, denominator);
+    assert quotient == -1;
+    assert remainder == 2;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (-5, 3) {
+    var (quotient, remainder) = math::div(numerator, denominator);
+    assert quotient == -1;
+    assert remainder == -2;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (-5, -3) {
+    var (quotient, remainder) = math::div(numerator, denominator);
+    assert quotient == 1;
+    assert remainder == -2;
+    assert quotient * denominator + remainder == numerator;
+}
+
+loop var numerator = -10; numerator <= 10; numerator += 1 {
+    loop var denominator = -3; denominator <= 3; denominator += 1 {
+        if denominator == 0 {
+            continue;
+        }
+
+        var (quotient, remainder) = math::div(numerator, denominator);
+        assert quotient * denominator + remainder == numerator;
+    }
+}

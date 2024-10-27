@@ -51,6 +51,20 @@ This module provides a Pyro interface to the C standard library's mathematical f
     Returns the cosine of `x`, where `x` is in radians.
 
 
+[[ `div(numerator: i64, denominator: i64) -> (i64, i64)` ]]
+
+    Computes the quotient and remainder of the integer division `numerator/denominator`.
+
+    Returns the result as a two-item `(quotient, remainder)` tuple.
+
+    The quotient is rounded toward zero. The result satisfies the condition:
+
+    ::: code Pyro
+        assert quotient * denominator + remainder == numerator;
+
+    Panics if the `denominator` is zero.
+
+
 [[ `exp(x: i64|f64) -> f64` ]]
 
     Returns `e` to the power of `x`.

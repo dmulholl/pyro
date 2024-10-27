@@ -155,6 +155,28 @@ Returns the cosine of <code>x</code>, where <code>x</code> is in radians.
 </div>
 <div>
 <dt>
+<code>div(numerator: i64, denominator: i64) -&gt; (i64, i64)</code>
+</dt>
+<dd>
+<p>
+Computes the quotient and remainder of the integer division <code>numerator/denominator</code>.
+</p>
+<p>
+Returns the result as a two-item <code>(quotient, remainder)</code> tuple.
+</p>
+<p>
+The quotient is rounded toward zero. The result satisfies the condition:
+</p>
+<pre class="lang-Pyro pygments" data-lang="Pyro">
+<span class="k">assert</span> <span class="nx">quotient</span> <span class="o">*</span> <span class="nx">denominator</span> <span class="o">+</span> <span class="nx">remainder</span> <span class="o">==</span> <span class="nx">numerator</span><span class="p">;</span>
+</pre>
+<p>
+Panics if the <code>denominator</code> is zero.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>exp(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
