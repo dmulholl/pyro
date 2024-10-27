@@ -27,7 +27,7 @@
                 <p class="tagline">A dynamically-typed, garbage-collected scripting language.</p>
             
             
-                <p class="version">Version 0.18.18</p>
+                <p class="version">Version 0.18.19</p>
             
             <nav class="menu">
                 <input id="menu-check" type="checkbox"/>
@@ -86,11 +86,11 @@ Returns an <code>err</code> if <code>json</code> is not valid JSON.
 </div>
 <div>
 <dt>
-<code>from_json(json: str, strict: bool = false) -&gt; map|vec|str|i64|f64|bool|null|err</code>
+<code>from_json(json: buf|str, strict: bool = false) -&gt; map|vec|str|i64|f64|bool|null|err</code>
 </dt>
 <dd>
 <p>
-Unmarshalls the input JSON string.
+Unmarshalls the input JSON.
 </p>
 <ul>
 <li>
@@ -106,7 +106,7 @@ comments beginning with <code>//</code>.
 Set <code>strict</code> to <code>true</code> to parse the input in strict mode.
 </p>
 <p>
-Returns an <code>err</code> if <code>json</code> is not a valid JSON string.
+Returns an <code>err</code> if <code>json</code> does not contain valid JSON.
 </p>
 </dd>
 </div>
