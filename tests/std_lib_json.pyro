@@ -321,6 +321,101 @@ assert $is_err(from_json(`'foo'`));
 assert $is_err(from_json(`123 456`));
 
 # ------------------------------------ #
+#  Unmarshall from JSON: buffer input  #
+# ------------------------------------ #
+
+assert from_json($buf(`null`)) == null;
+assert from_json($buf(`true`)) == true;
+assert from_json($buf(`false`)) == false ;
+assert from_json($buf(`-1`)) == -1 ;
+assert from_json($buf(`0`)) == 0 ;
+assert from_json($buf(`1`)) == 1 ;
+assert from_json($buf(`123`)) == 123 ;
+assert from_json($buf(`-1.0`)) == -1.0 ;
+assert from_json($buf(`0.0`)) == 0.0 ;
+assert from_json($buf(`1.0`)) == 1.0 ;
+assert from_json($buf(`1.25`)) == 1.25;
+assert from_json($buf(`1e3`)) == 1000.0;
+assert from_json($buf(`1e6`)) == 1000000.0;
+assert from_json($buf(`1e-3`)) == 0.001;
+
+assert from_json($buf(`"foo bar"`)) == `foo bar`;
+assert from_json($buf(`"foo \n bar"`)) == "foo \n bar";
+assert from_json($buf(`"foo \r\n\t bar"`)) == "foo \r\n\t bar";
+
+assert from_json($buf(`"\""`)) == `"`;
+assert from_json($buf(`"\"\""`)) == `""`;
+assert from_json($buf(`"\\"`)) == `\`;
+assert from_json($buf(`"\\\\"`)) == `\\`;
+assert from_json($buf(`"\/"`)) == `/`;
+assert from_json($buf(`"\/\/"`)) == `//`;
+
+assert from_json($buf(`"\u20AC"`)) == "€";
+
+with input = $buf(`[]`) {
+    var output = from_json(input);
+    assert $is_vec(output);
+    assert output:is_empty();
+}
+
+with input = $buf(`[123, 1.25, "foo"]`) {
+    var output = from_json(input);
+    assert $is_vec(output);
+    assert output[0] == 123;
+    assert output[1] == 1.25;
+    assert output[2] == "foo";
+}
+
+with input = $buf(`[123, 1.25, "foo", [1, 2, 3]]`) {
+    var output = from_json(input);
+    assert $is_vec(output);
+    assert output[0] == 123;
+    assert output[1] == 1.25;
+    assert output[2] == "foo";
+    assert $is_vec(output[3]);
+    assert output[3][0] == 1;
+    assert output[3][1] == 2;
+    assert output[3][2] == 3;
+}
+
+with input = $buf(`{}`) {
+    var output = from_json(input);
+    assert $is_map(output);
+    assert output:is_empty();
+}
+
+with input = $buf(`{"foo": 123, "bar": 456}`) {
+    var output = from_json(input);
+    assert $is_map(output);
+    assert output["foo"] ==  123;
+    assert output["bar"] ==  456;
+}
+
+with input = $buf(`{"foo": [1, 2, 3], "bar": [4, 5, 6]}`) {
+    var output = from_json(input);
+    assert $is_map(output);
+    assert $is_vec(output["foo"]);
+    assert $is_vec(output["bar"]);
+}
+
+with input = $buf(`[{"foo": 123, "bar": 456}, {"bam": 789, "baz": 987}]`) {
+    var output = from_json(input);
+    assert $is_vec(output);
+    assert output[0]["foo"] == 123;
+    assert output[1]["baz"] == 987;
+}
+
+assert $is_err(from_json($buf(``)));
+assert $is_err(from_json($buf(`foo`)));
+assert $is_err(from_json($buf(`&`)));
+assert $is_err(from_json($buf(`123.456.789`)));
+assert $is_err(from_json($buf(`"`)));
+assert $is_err(from_json($buf(`"foo`)));
+assert $is_err(from_json($buf(`'foo'`)));
+assert $is_err(from_json($buf(`123 456`)));
+assert $is_err(from_json($buf("\x01")));
+
+# ------------------------------------ #
 #  Unmarshall from JSON: strict=false  #
 # ------------------------------------ #
 

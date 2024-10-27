@@ -16,9 +16,9 @@ This module contains utility functions for working with JSON.
     Returns an `err` if `json` is not valid JSON.
 
 
-[[ `from_json(json: str, strict: bool = false) -> map|vec|str|i64|f64|bool|null|err` ]]
+[[ `from_json(json: buf|str, strict: bool = false) -> map|vec|str|i64|f64|bool|null|err` ]]
 
-    Unmarshalls the input JSON string.
+    Unmarshalls the input JSON.
 
     * A JSON object is unmarshalled as a `map`.
     * A JSON array is unmarshalled as a `vec`.
@@ -27,7 +27,7 @@ This module contains utility functions for working with JSON.
     comments beginning with `//`.
     Set `strict` to `true` to parse the input in strict mode.
 
-    Returns an `err` if `json` is not a valid JSON string.
+    Returns an `err` if `json` does not contain valid JSON.
 
 
 [[ `to_json(arg: any, indent: i64 = 0) -> str|err` ]]

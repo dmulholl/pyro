@@ -201,13 +201,22 @@ pub def to_json(arg: any, indent: i64 = 0) -> str|err {
 typedef Token tup[str, i64, i64];
 
 
+# JSON whitespace characters.
+let json_whitespace = {
+    0x09, # horizontal tab
+    0x0A, # line feed
+    0x0D, # carriage return
+    0x20, # space
+};
+
+
 class Lexer {
-    var input: str;
+    var input: str|buf;
     var count: i64;
     var index: i64;
     var strict: bool;
 
-    def $init(input: str, strict: bool) {
+    def $init(input: str|buf, strict: bool) {
         self.input = input;
         self.count = input:count();
         self.index = 0;
@@ -215,7 +224,7 @@ class Lexer {
     }
 
     pub def next() -> Token {
-        while self.index < self.count && self.input[self.index]:is_ascii_ws() {
+        while self.index < self.count && self.input:byte(self.index) in json_whitespace {
             self.index += 1;
         }
 
@@ -226,12 +235,12 @@ class Lexer {
 
             while self.index < self.count {
                 self.index += 1;
-                if self.input[self.index - 1] == "\n" {
+                if self.input:byte(self.index - 1) == '\n' {
                     break;
                 }
             }
 
-            while self.index < self.count && self.input[self.index]:is_ascii_ws() {
+            while self.index < self.count && self.input:byte(self.index) in json_whitespace {
                 self.index += 1;
             }
         }
@@ -258,49 +267,49 @@ class Lexer {
             return token;
         }
 
-        if self.input:match("[", self.index) {
+        if self.input:byte(self.index) == '[' {
             var token = ("LEFT_BRACKET", self.index, 1);
             self.index += 1;
             return token;
         }
 
-        if self.input:match("]", self.index) {
+        if self.input:byte(self.index) == ']' {
             var token = ("RIGHT_BRACKET", self.index, 1);
             self.index += 1;
             return token;
         }
 
-        if self.input:match("{", self.index) {
+        if self.input:byte(self.index) == '{' {
             var token = ("LEFT_BRACE", self.index, 1);
             self.index += 1;
             return token;
         }
 
-        if self.input:match("}", self.index) {
+        if self.input:byte(self.index) == '}' {
             var token = ("RIGHT_BRACE", self.index, 1);
             self.index += 1;
             return token;
         }
 
-        if self.input:match("-", self.index) {
+        if self.input:byte(self.index) == '-' {
             var token = ("MINUS", self.index, 1);
             self.index += 1;
             return token;
         }
 
-        if self.input:match(",", self.index) {
+        if self.input:byte(self.index) == ',' {
             var token = ("COMMA", self.index, 1);
             self.index += 1;
             return token;
         }
 
-        if self.input:match(":", self.index) {
+        if self.input:byte(self.index) == ':' {
             var token = ("COLON", self.index, 1);
             self.index += 1;
             return token;
         }
 
-        if self.input:match("\"", self.index) {
+        if self.input:byte(self.index) == '"' {
             return self:read_string();
         }
 
@@ -309,15 +318,14 @@ class Lexer {
         }
 
         var next_byte = self.input:byte(self.index);
-        var next_char = self.input[self.index];
 
-        if next_byte == '\'' {
-            $panic("unexpected character ' at byte index: {}", self.index);
-        } else if next_byte >= 32 && next_byte <= 123 {
-            $panic("unexpected character '{}' at byte index: {}", next_char, self.index);
+        var byte_repr = if next_byte >= 32 && next_byte <= 123 {
+            $str(next_byte)
         } else {
-            $panic("unexpected byte value '{}' at byte index: {}", next_char:to_hex(), self.index);
-        }
+            $str(next_byte):to_hex()
+        };
+
+        $panic("unexpected character {} at byte index: {}", byte_repr, self.index);
     }
 
     def read_string() -> Token {
@@ -325,9 +333,11 @@ class Lexer {
         var start_index = self.index;
 
         while self.index < self.count {
-            if self.input:match("\\", self.index) {
+            var next = self.input:byte(self.index);
+
+            if next == '\\' {
                 self.index += 2;
-            } else if self.input:match("\"", self.index) {
+            } else if next == '"' {
                 break;
             } else {
                 self.index += 1;
@@ -350,14 +360,17 @@ class Lexer {
 
         while self.index < self.count {
             var next = self.input:byte(self.index);
+
             if next >= '0' && next <= '9' {
                 self.index += 1;
                 continue;
             }
+
             if next == '.' || next == 'e' || next == '+' || next == '-' {
                 self.index += 1;
                 continue;
             }
+
             break;
         }
 
@@ -368,12 +381,12 @@ class Lexer {
 
 
 class Parser {
-    var input: str;
+    var input: str|buf;
     var strict: bool;
     var lexer: Lexer;
     var next_token: Token;
 
-    def $init(input: str, strict: bool) {
+    def $init(input: str|buf, strict: bool) {
         self.input = input;
         self.strict = strict;
         self.lexer = Lexer(input, strict);
@@ -524,20 +537,23 @@ class Parser {
     }
 
     def parse_number(start_index: i64, length: i64) -> i64|f64 {
-        var literal = self.input:slice(start_index, length);
+        var literal = $str(self.input:slice(start_index, length));
+
         if "." in literal || "e" in literal {
             var result = try $f64(literal);
             if $is_err(result) {
                 $panic("invalid number: unable to parse '{}' as f64", literal);
             }
-            return result;
-        } else {
-            var result = try $i64(literal);
-            if $is_err(result) {
-                $panic("invalid number: unable to parse '{}' as i64", literal);
-            }
+
             return result;
         }
+
+        var result = try $i64(literal);
+        if $is_err(result) {
+            $panic("invalid number: unable to parse '{}' as i64", literal);
+        }
+
+        return result;
     }
 
     def parse_string(start_index: i64, length: i64) -> str {
@@ -596,14 +612,19 @@ class Parser {
 
             if self.input:match(`\u`, index) {
                 if end - index < 6 {
-                    $panic(`invalid unicode escape sequence, requires 4 hex digits`);
-                } else {
-                    var hex_digits_as_str = self.input:slice(index + 2, 4);
-                    var int_value = $i64("0x" + hex_digits_as_str);
-                    var rune = $rune(int_value);
-                    buf:write($str(rune));
-                    index += 6;
+                    $panic("invalid unicode escape sequence, requires 4 hex digits");
                 }
+
+                var hex_digits = $str(self.input:slice(index + 2, 4));
+
+                if !hex_digits:is_ascii_hex() {
+                    $panic("invalid unicode escape sequence, must contain 4 hex digits: {}", hex_digits);
+                }
+
+                var int_value = $i64("0x" + hex_digits);
+                buf:write($rune(int_value));
+
+                index += 6;
                 continue;
             }
 
@@ -616,13 +637,13 @@ class Parser {
 }
 
 
-pub def from_json(json: str, strict: bool = false) -> map|vec|str|i64|f64|bool|null|err {
-    if !$is_str(json) {
-        return $err("from_json(): invalid argument, expected a string: found {}", $type(json));
+pub def from_json(json: buf|str, strict: bool = false) -> map|vec|str|i64|f64|bool|null|err {
+    if !$is_str(json) && !$is_buf(json) {
+        return $err("from_json(): invalid argument, expected a string or buffer: found {}", $type(json));
     }
 
     if json:count() == 0 {
-        return $err("from_json(): invalid argument, empty string");
+        return $err("from_json(): invalid argument, empty input");
     }
 
     var result = try Parser(json, strict):parse();
