@@ -573,13 +573,13 @@ PyroValue pyro_op_binary_percent(PyroVM* vm, PyroValue left, PyroValue right) {
             switch (right.type) {
                 case PYRO_VALUE_I64:
                     if (right.as.i64 == 0) {
-                        pyro_panic(vm, "modulo by zero");
+                        pyro_panic(vm, "division by zero");
                         return pyro_null();
                     }
                     return pyro_i64(left.as.i64 % right.as.i64);
                 case PYRO_VALUE_F64:
                     if (right.as.f64 == 0.0) {
-                        pyro_panic(vm, "modulo by zero");
+                        pyro_panic(vm, "division by zero");
                         return pyro_null();
                     }
                     return pyro_f64(fmod((double)left.as.i64, right.as.f64));
@@ -593,13 +593,13 @@ PyroValue pyro_op_binary_percent(PyroVM* vm, PyroValue left, PyroValue right) {
             switch (right.type) {
                 case PYRO_VALUE_I64:
                     if (right.as.i64 == 0) {
-                        pyro_panic(vm, "modulo by zero");
+                        pyro_panic(vm, "division by zero");
                         return pyro_null();
                     }
                     return pyro_f64(fmod(left.as.f64, (double)right.as.i64));
                 case PYRO_VALUE_F64:
                     if (right.as.f64 == 0.0) {
-                        pyro_panic(vm, "modulo by zero");
+                        pyro_panic(vm, "division by zero");
                         return pyro_null();
                     }
                     return pyro_f64(fmod(left.as.f64, right.as.f64));
