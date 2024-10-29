@@ -18,7 +18,7 @@ assert $is_err(try (1.0 / 0.0));
 
 assert !$is_err(try (i64_min / -1));
 
-# Truncated division.
+# Truncated division -- rounds the quotient toward zero.
 assert 10 // 5 == 2;
 assert 10 // 5.0 == 2.0;
 assert 10.0 // 5 == 2.0;
@@ -36,16 +36,25 @@ assert $is_err(try (1.0 // 0.0));
 
 assert $is_err(try (i64_min // -1));
 
+assert -1 // 10 == 0;
+assert 1 // -10 == 0;
+assert -10 // 3 == -3;
+assert 10 // -3 == -3;
+
 assert 5 // 3 == 1;
 assert 5 // -3 == -1;
 assert -5 // 3 == -1;
 assert -5 // -3 == 1;
 
-# The // operator rounds toward zero.
-assert -1 // 10 == 0;
-assert 1 // -10 == 0;
-assert -10 // 3 == -3;
-assert 10 // -3 == -3;
+assert 5.0 // 3.0 == 1.0;
+assert 5.0 // -3.0 == -1.0;
+assert -5.0 // 3.0 == -1.0;
+assert -5.0 // -3.0 == 1.0;
+
+assert 1.25 // 1.0 == 1.0;
+assert 1.25 // -1.0 == -1.0;
+assert -1.25 // 1.0 == -1.0;
+assert -1.25 // -1.0 == 1.0;
 
 # Remainder operator.
 assert 0 rem 1 == 0;
@@ -131,6 +140,16 @@ loop var numerator = -10; numerator <= 10; numerator += 1 {
         assert quotient * denominator + remainder == numerator;
     }
 }
+
+assert 5.0 rem 3.0 == 2.0;
+assert 5.0 rem -3.0 == 2.0;
+assert -5.0 rem 3.0 == -2.0;
+assert -5.0 rem -3.0 == -2.0;
+
+assert 1.25 rem 1.0 == 0.25;
+assert 1.25 rem -1.0 == 0.25;
+assert -1.25 rem 1.0 == -0.25;
+assert -1.25 rem -1.0 == -0.25;
 
 # Modulo operator.
 assert 0 mod 1 == 0;
