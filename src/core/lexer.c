@@ -164,6 +164,10 @@ static TokenType get_identifier_type(Lexer* lexer) {
             if (check_keyword(lexer, "loop")) return TOKEN_LOOP;
             break;
 
+        case 'm':
+            if (check_keyword(lexer, "mod")) return TOKEN_MOD;
+            break;
+
         case 'n':
             if (check_keyword(lexer, "null")) return TOKEN_NULL;
             break;
@@ -174,6 +178,7 @@ static TokenType get_identifier_type(Lexer* lexer) {
             break;
 
         case 'r':
+            if (check_keyword(lexer, "rem")) return TOKEN_REM;
             if (check_keyword(lexer, "return")) return TOKEN_RETURN;
             break;
 

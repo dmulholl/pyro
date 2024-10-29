@@ -37,6 +37,14 @@ PyroValue pyro_op_binary_caret(PyroVM* vm, PyroValue left, PyroValue right);
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_binary_percent(PyroVM* vm, PyroValue left, PyroValue right);
 
+// Returns [left] rem [right]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+PyroValue pyro_op_binary_rem(PyroVM* vm, PyroValue left, PyroValue right);
+
+// Returns [left] mod [right]. Panics if the operation is not defined for the operand types.
+// This function can call into Pyro code and can set the panic or exit flags.
+PyroValue pyro_op_binary_mod(PyroVM* vm, PyroValue left, PyroValue right);
+
 // Returns [left] ** [right]. Panics if the operation is not defined for the operand types.
 // This function can call into Pyro code and can set the panic or exit flags.
 PyroValue pyro_op_binary_star_star(PyroVM* vm, PyroValue left, PyroValue right);

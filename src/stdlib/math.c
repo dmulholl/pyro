@@ -301,7 +301,9 @@ static PyroValue fn_floor_div(PyroVM* vm, size_t arg_count, PyroValue* args) {
         tup->values[0] = pyro_i64(div_result.quot);
     }
 
-    tup->values[1] = pyro_i64(((numerator % denominator) + denominator) % denominator);
+    tup->values[1] = pyro_i64(
+        pyro_modulo(numerator, denominator)
+    );
 
     return pyro_obj(tup);
 }
@@ -329,11 +331,8 @@ static PyroValue fn_modulo(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
-    int64_t numerator = args[0].as.i64;
-    int64_t denominator = args[1].as.i64;
-
     return pyro_i64(
-        ((numerator % denominator) + denominator) % denominator
+        pyro_modulo(args[0].as.i64, args[1].as.i64)
     );
 }
 

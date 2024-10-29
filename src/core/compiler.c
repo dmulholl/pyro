@@ -1789,6 +1789,12 @@ static void parse_multiplicative_expr(Parser* parser, bool can_assign) {
         } else if (match(parser, TOKEN_PERCENT)) {
             parse_bitwise_expr(parser, false);
             emit_byte(parser, PYRO_OPCODE_BINARY_PERCENT);
+        } else if (match(parser, TOKEN_MOD)) {
+            parse_bitwise_expr(parser, false);
+            emit_byte(parser, PYRO_OPCODE_BINARY_MOD);
+        } else if (match(parser, TOKEN_REM)) {
+            parse_bitwise_expr(parser, false);
+            emit_byte(parser, PYRO_OPCODE_BINARY_REM);
         } else {
             break;
         }

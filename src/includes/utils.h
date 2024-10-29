@@ -214,4 +214,9 @@ static inline bool pyro_ckd_mul(int64_t* result, int64_t a, int64_t b) {
     #endif
 }
 
+// Returns the remainder left behind after floored division. This corresponds to the output of the modulo operation in mathematics.
+static inline int64_t pyro_modulo(int64_t numerator, int64_t denominator) {
+    return ((numerator % denominator) + denominator) % denominator;
+}
+
 #endif

@@ -540,6 +540,34 @@ static void run(PyroVM* vm) {
                 break;
             }
 
+            // Implements the expression: [left_operand rem right_operand].
+            // Before: [ ... ][ left_operand ][ right_operand ]
+            // After:  [ ... ][ result ]
+            case PYRO_OPCODE_BINARY_REM: {
+                PyroValue result = pyro_op_binary_rem(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top[-2] = result;
+                vm->stack_top--;
+                break;
+            }
+
+            // Implements the expression: [left_operand mod right_operand].
+            // Before: [ ... ][ left_operand ][ right_operand ]
+            // After:  [ ... ][ result ]
+            case PYRO_OPCODE_BINARY_MOD: {
+                PyroValue result = pyro_op_binary_mod(
+                    vm,
+                    vm->stack_top[-2],
+                    vm->stack_top[-1]
+                );
+                vm->stack_top[-2] = result;
+                vm->stack_top--;
+                break;
+            }
+
             // Implements the expression: [left_operand & right_operand].
             // Before: [ ... ][ left_operand ][ right_operand ]
             // After:  [ ... ][ result ]
@@ -805,7 +833,6 @@ static void run(PyroVM* vm) {
                 pyro_panic(vm, "%s", error_message->bytes);
                 break;
             }
-
 
             // Implements the expression: [callee(arg1, arg2, arg3, ...)].
             // Before: [ ... ][ callee ][ arg1 ][ arg2 ][ arg3 ]
