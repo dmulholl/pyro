@@ -36,6 +36,11 @@ assert $is_err(try (1.0 // 0.0));
 
 assert $is_err(try (i64_min // -1));
 
+assert 5 // 3 == 1;
+assert 5 // -3 == -1;
+assert -5 // 3 == -1;
+assert -5 // -3 == 1;
+
 # The // operator rounds toward zero.
 assert -1 // 10 == 0;
 assert -10 // 3 == -3;

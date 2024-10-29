@@ -9,33 +9,34 @@ assert math::abs(-1.0) == 1.0;
 
 assert $is_err(try math::abs(constants::i64_min));
 
-with result = try math::div(5, 0) {
-    assert $is_err(result);
-}
+# Truncated-integer-division.
+assert $is_err(try math::trunc_div(5, 0));
+assert $is_err(try math::trunc_div(5.0, 1));
+assert $is_err(try math::trunc_div(5, 1.0));
 
 with (numerator, denominator) = (5, 3) {
-    var (quotient, remainder) = math::div(numerator, denominator);
+    var (quotient, remainder) = math::trunc_div(numerator, denominator);
     assert quotient == 1;
     assert remainder == 2;
     assert quotient * denominator + remainder == numerator;
 }
 
 with (numerator, denominator) = (5, -3) {
-    var (quotient, remainder) = math::div(numerator, denominator);
+    var (quotient, remainder) = math::trunc_div(numerator, denominator);
     assert quotient == -1;
     assert remainder == 2;
     assert quotient * denominator + remainder == numerator;
 }
 
 with (numerator, denominator) = (-5, 3) {
-    var (quotient, remainder) = math::div(numerator, denominator);
+    var (quotient, remainder) = math::trunc_div(numerator, denominator);
     assert quotient == -1;
     assert remainder == -2;
     assert quotient * denominator + remainder == numerator;
 }
 
 with (numerator, denominator) = (-5, -3) {
-    var (quotient, remainder) = math::div(numerator, denominator);
+    var (quotient, remainder) = math::trunc_div(numerator, denominator);
     assert quotient == 1;
     assert remainder == -2;
     assert quotient * denominator + remainder == numerator;
@@ -47,7 +48,68 @@ loop var numerator = -10; numerator <= 10; numerator += 1 {
             continue;
         }
 
-        var (quotient, remainder) = math::div(numerator, denominator);
+        var (quotient, remainder) = math::trunc_div(numerator, denominator);
         assert quotient * denominator + remainder == numerator;
     }
 }
+
+assert math::trunc_div(-1, 10) == (0, -1);
+assert math::trunc_div(-10, 3) == (-3, -1);
+
+# Floored-integer division.
+assert $is_err(try math::floor_div(5, 0));
+assert $is_err(try math::floor_div(5.0, 1));
+assert $is_err(try math::floor_div(5, 1.0));
+
+with (numerator, denominator) = (5, 3) {
+    var (quotient, remainder) = math::floor_div(numerator, denominator);
+    assert quotient == 1;
+    assert remainder == 2;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (5, -3) {
+    var (quotient, remainder) = math::floor_div(numerator, denominator);
+    assert quotient == -2;
+    assert remainder == -1;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (-5, 3) {
+    var (quotient, remainder) = math::floor_div(numerator, denominator);
+    assert quotient == -2;
+    assert remainder == 1;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (-5, -3) {
+    var (quotient, remainder) = math::floor_div(numerator, denominator);
+    assert quotient == 1;
+    assert remainder == -2;
+    assert quotient * denominator + remainder == numerator;
+}
+
+loop var numerator = -10; numerator <= 10; numerator += 1 {
+    loop var denominator = -3; denominator <= 3; denominator += 1 {
+        if denominator == 0 {
+            continue;
+        }
+
+        var (quotient, remainder) = math::floor_div(numerator, denominator);
+        assert quotient * denominator + remainder == numerator;
+    }
+}
+
+assert math::floor_div(-1, 10) == (-1, 9);
+assert math::floor_div(-10, 3) == (-4, 2);
+
+# Modulo.
+assert $is_err(try math::modulo(5, 0));
+assert $is_err(try math::modulo(5.0, 1));
+assert $is_err(try math::modulo(5, 1.0));
+
+assert math::modulo(5, 3) == 2;
+assert math::modulo(5, -3) == -1;
+assert math::modulo(-5, 3) == 1;
+assert math::modulo(-5, -3) == -2;
+assert math::modulo(-1, 10) == 9;

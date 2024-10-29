@@ -64,7 +64,7 @@
                 <hr>
             </header>
             <p>
-This module provides a Pyro interface to the C standard library's mathematical functions.
+This module contains mathematical functions.
 </p>
 <h3 id="functions">
 Functions
@@ -155,28 +155,6 @@ Returns the cosine of <code>x</code>, where <code>x</code> is in radians.
 </div>
 <div>
 <dt>
-<code>div(numerator: i64, denominator: i64) -&gt; (i64, i64)</code>
-</dt>
-<dd>
-<p>
-Computes the quotient and remainder of the integer division <code>numerator/denominator</code>.
-</p>
-<p>
-Returns the result as a two-item <code>(quotient, remainder)</code> tuple.
-</p>
-<p>
-The quotient is rounded toward zero. The result satisfies the condition:
-</p>
-<pre class="lang-Pyro pygments" data-lang="Pyro">
-<span class="k">assert</span> <span class="nx">quotient</span> <span class="o">*</span> <span class="nx">denominator</span> <span class="o">+</span> <span class="nx">remainder</span> <span class="o">==</span> <span class="nx">numerator</span><span class="p">;</span>
-</pre>
-<p>
-Panics if the <code>denominator</code> is zero.
-</p>
-</dd>
-</div>
-<div>
-<dt>
 <code>exp(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
@@ -192,6 +170,27 @@ Returns <code>e</code> to the power of <code>x</code>.
 <dd>
 <p>
 Returns the highest integer value less than or equal to <code>x</code> as a float.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>floor_div(numerator: i64, denominator: i64) -&gt; (i64, i64)</code>
+</dt>
+<dd>
+<p>
+Computes the quotient and remainder of the floored-integer division <code>numerator/denominator</code>.
+In floored-integer division, the quotient is rounded toward negative infinity.
+</p>
+<p>
+Returns the result as a two-item <code>(quotient, remainder)</code> tuple.
+The result satisfies the condition:
+</p>
+<pre class="lang-Pyro pygments" data-lang="Pyro">
+<span class="k">assert</span> <span class="nx">quotient</span> <span class="o">*</span> <span class="nx">denominator</span> <span class="o">+</span> <span class="nx">remainder</span> <span class="o">==</span> <span class="nx">numerator</span><span class="p">;</span>
+</pre>
+<p>
+Panics if the <code>denominator</code> is zero.
 </p>
 </dd>
 </div>
@@ -237,6 +236,19 @@ Returns the base-10 logarithm of <code>x</code>.
 </div>
 <div>
 <dt>
+<code>modulo(x: i64, y: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the result of the integer operation <code>x modulo y</code>.
+</p>
+<p>
+Panics if <code>y</code> is zero.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>sin(x: i64|f64) -&gt; f64</code>
 </dt>
 <dd>
@@ -262,6 +274,27 @@ Returns the square root of <code>x</code>.
 <dd>
 <p>
 Returns the tangent of <code>x</code>, where <code>x</code> is in radians.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>trunc_div(numerator: i64, denominator: i64) -&gt; (i64, i64)</code>
+</dt>
+<dd>
+<p>
+Computes the quotient and remainder of the truncated-integer division <code>numerator/denominator</code>.
+In truncated-integer division, the quotient is rounded toward zero.
+</p>
+<p>
+Returns the result as a two-item <code>(quotient, remainder)</code> tuple.
+The result satisfies the condition:
+</p>
+<pre class="lang-Pyro pygments" data-lang="Pyro">
+<span class="k">assert</span> <span class="nx">quotient</span> <span class="o">*</span> <span class="nx">denominator</span> <span class="o">+</span> <span class="nx">remainder</span> <span class="o">==</span> <span class="nx">numerator</span><span class="p">;</span>
+</pre>
+<p>
+Panics if the <code>denominator</code> is zero.
 </p>
 </dd>
 </div>

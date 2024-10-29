@@ -3,7 +3,7 @@ title: <code>std::math</code>
 meta_title: Pyro Standard Library &mdash; std::math
 ---
 
-This module provides a Pyro interface to the C standard library's mathematical functions.
+This module contains mathematical functions.
 
 
 ### Functions
@@ -51,20 +51,6 @@ This module provides a Pyro interface to the C standard library's mathematical f
     Returns the cosine of `x`, where `x` is in radians.
 
 
-[[ `div(numerator: i64, denominator: i64) -> (i64, i64)` ]]
-
-    Computes the quotient and remainder of the integer division `numerator/denominator`.
-
-    Returns the result as a two-item `(quotient, remainder)` tuple.
-
-    The quotient is rounded toward zero. The result satisfies the condition:
-
-    ::: code Pyro
-        assert quotient * denominator + remainder == numerator;
-
-    Panics if the `denominator` is zero.
-
-
 [[ `exp(x: i64|f64) -> f64` ]]
 
     Returns `e` to the power of `x`.
@@ -73,6 +59,20 @@ This module provides a Pyro interface to the C standard library's mathematical f
 [[ `floor(x: i64|f64) -> f64` ]]
 
     Returns the highest integer value less than or equal to `x` as a float.
+
+
+[[ `floor_div(numerator: i64, denominator: i64) -> (i64, i64)` ]]
+
+    Computes the quotient and remainder of the floored-integer division `numerator/denominator`.
+    In floored-integer division, the quotient is rounded toward negative infinity.
+
+    Returns the result as a two-item `(quotient, remainder)` tuple.
+    The result satisfies the condition:
+
+    ::: code Pyro
+        assert quotient * denominator + remainder == numerator;
+
+    Panics if the `denominator` is zero.
 
 
 [[ `ln(x: i64|f64) -> f64` ]]
@@ -95,6 +95,13 @@ This module provides a Pyro interface to the C standard library's mathematical f
     Returns the base-10 logarithm of `x`.
 
 
+[[ `modulo(x: i64, y: i64) -> i64` ]]
+
+    Returns the result of the integer operation `x modulo y`.
+
+    Panics if `y` is zero.
+
+
 [[ `sin(x: i64|f64) -> f64` ]]
 
     Returns the sine of `x`, where `x` is in radians.
@@ -108,3 +115,17 @@ This module provides a Pyro interface to the C standard library's mathematical f
 [[ `tan(x: i64|f64) -> f64` ]]
 
     Returns the tangent of `x`, where `x` is in radians.
+
+
+[[ `trunc_div(numerator: i64, denominator: i64) -> (i64, i64)` ]]
+
+    Computes the quotient and remainder of the truncated-integer division `numerator/denominator`.
+    In truncated-integer division, the quotient is rounded toward zero.
+
+    Returns the result as a two-item `(quotient, remainder)` tuple.
+    The result satisfies the condition:
+
+    ::: code Pyro
+        assert quotient * denominator + remainder == numerator;
+
+    Panics if the `denominator` is zero.

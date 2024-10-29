@@ -225,7 +225,7 @@ static PyroValue fn_floor(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue fn_div(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue fn_trunc_div(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm,
             "div(): invalid argument [numerator]: expected i64, found %s",
@@ -262,6 +262,82 @@ static PyroValue fn_div(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_floor_div(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm,
+            "floor_div(): invalid argument [numerator]: expected i64, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[1])) {
+        pyro_panic(vm,
+            "floor_div(): invalid argument [denominator]: expected i64, found %s",
+            pyro_get_type_name(vm, args[1])->bytes
+        );
+        return pyro_null();
+    }
+
+    if (args[1].as.i64 == 0) {
+        pyro_panic(vm, "floor_div(): invalid argument [denominator]: value cannot be zero");
+        return pyro_null();
+    }
+
+    int64_t numerator = args[0].as.i64;
+    int64_t denominator = args[1].as.i64;
+
+    PyroTup* tup = PyroTup_new(2, vm);
+    if (!tup) {
+        pyro_panic(vm, "out of memory");
+        return pyro_null();
+    }
+
+    lldiv_t div_result = lldiv(numerator, denominator);
+
+    if (div_result.rem != 0 && ((numerator < 0) ^ (denominator < 0))) {
+        tup->values[0] = pyro_i64(div_result.quot - 1);
+    } else {
+        tup->values[0] = pyro_i64(div_result.quot);
+    }
+
+    tup->values[1] = pyro_i64(((numerator % denominator) + denominator) % denominator);
+
+    return pyro_obj(tup);
+}
+
+
+static PyroValue fn_modulo(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm,
+            "modulo(): invalid argument [x]: expected i64, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[1])) {
+        pyro_panic(vm,
+            "modulo(): invalid argument [y]: expected i64, found %s",
+            pyro_get_type_name(vm, args[1])->bytes
+        );
+        return pyro_null();
+    }
+
+    if (args[1].as.i64 == 0) {
+        pyro_panic(vm, "modulo(): invalid argument [y]: value cannot be zero");
+        return pyro_null();
+    }
+
+    int64_t numerator = args[0].as.i64;
+    int64_t denominator = args[1].as.i64;
+
+    return pyro_i64(
+        ((numerator % denominator) + denominator) % denominator
+    );
+}
+
+
 void pyro_load_stdlib_module_math(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "abs", fn_abs, 1);
     pyro_define_pub_member_fn(vm, module, "acos", fn_acos, 1);
@@ -280,5 +356,7 @@ void pyro_load_stdlib_module_math(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "cbrt", fn_cbrt, 1);
     pyro_define_pub_member_fn(vm, module, "ceil", fn_ceil, 1);
     pyro_define_pub_member_fn(vm, module, "floor", fn_floor, 1);
-    pyro_define_pub_member_fn(vm, module, "div", fn_div, 2);
+    pyro_define_pub_member_fn(vm, module, "trunc_div", fn_trunc_div, 2);
+    pyro_define_pub_member_fn(vm, module, "floor_div", fn_floor_div, 2);
+    pyro_define_pub_member_fn(vm, module, "modulo", fn_modulo, 2);
 }
