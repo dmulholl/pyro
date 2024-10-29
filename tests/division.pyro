@@ -151,6 +151,42 @@ assert 1.25 rem -1.0 == 0.25;
 assert -1.25 rem 1.0 == -0.25;
 assert -1.25 rem -1.0 == -0.25;
 
+with (numerator, denominator) = (1.25, 1.0) {
+    let quotient = numerator // denominator;
+    let remainder = numerator rem denominator;
+
+    assert quotient == 1.0;
+    assert remainder == 0.25;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (1.25, -1.0) {
+    let quotient = numerator // denominator;
+    let remainder = numerator rem denominator;
+
+    assert quotient == -1.0;
+    assert remainder == 0.25;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (-1.25, 1.0) {
+    let quotient = numerator // denominator;
+    let remainder = numerator rem denominator;
+
+    assert quotient == -1.0;
+    assert remainder == -0.25;
+    assert quotient * denominator + remainder == numerator;
+}
+
+with (numerator, denominator) = (-1.25, -1.0) {
+    let quotient = numerator // denominator;
+    let remainder = numerator rem denominator;
+
+    assert quotient == 1.0;
+    assert remainder == -0.25;
+    assert quotient * denominator + remainder == numerator;
+}
+
 # Modulo operator.
 assert 0 mod 1 == 0;
 assert 1 mod 1 == 0;
