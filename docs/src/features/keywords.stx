@@ -47,7 +47,9 @@ The following keywords are reserved for future use:
 * `implements`
 * `interface`
 * `match`
+* `mod`
 * `reimport`
+* `rem`
 * `run`
 * `select`
 * `struct`

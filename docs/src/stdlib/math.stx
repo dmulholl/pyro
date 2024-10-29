@@ -129,3 +129,5 @@ This module contains mathematical functions.
         assert quotient * denominator + remainder == numerator;
 
     Panics if the `denominator` is zero.
+
+    Truncated division is Pyro's default --- i.e. this function returns the same values as the `//` and `%` operators.
