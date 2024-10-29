@@ -74,6 +74,8 @@ This module contains mathematical functions.
 
     Panics if the `denominator` is zero.
 
+    This function returns the same remainder as the `mod` operator.
+
 
 [[ `ln(x: i64|f64) -> f64` ]]
 
@@ -130,4 +132,4 @@ This module contains mathematical functions.
 
     Panics if the `denominator` is zero.
 
-    Truncated division is Pyro's default --- i.e. this function returns the same values as the `//` and `%` operators.
+    This function returns the same quotient as the `//` operator and the same remainder as the `rem` operator.

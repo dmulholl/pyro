@@ -162,7 +162,7 @@ Left
 Multiplication
 </td>
 <td>
-<code>*</code> <code>/</code> <code>//</code> <code>%</code>
+<code>*</code> <code>/</code> <code>//</code> <code>%</code> <code>mod</code> <code>rem</code>
 </td>
 <td>
 Left
@@ -286,25 +286,30 @@ Truncating division. Returns an integer if both operands are integers or a float
 </tr>
 <tr>
 <td>
-<code>%</code>
-</td>
-<td>
-Remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
-</td>
-</tr>
-<tr>
-<td>
 <code>**</code>
 </td>
 <td>
 Power operator. Both operands are converted to floats and the result is a float.
 </td>
 </tr>
+<tr>
+<td>
+<code>mod</code>
+</td>
+<td>
+Modulo operator. Both operands must be integers.
+</td>
+</tr>
+<tr>
+<td>
+<code>rem</code>
+</td>
+<td>
+Remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
+</td>
+</tr>
 </tbody>
 </table>
-<p>
-Pyro also has a set of builtin functions for performing <a href="../features/checked-arithmetic.html">checked arithmetic</a> with integers.
-</p>
 <p>
 You can <a href="../tutorials/operator-overloading.html">overload</a> the mathematical operators to customize their behaviour for your own types.
 </p>
@@ -522,6 +527,12 @@ The following operators can be <a href="../tutorials/operator-overloading.html">
 </li>
 <li>
 <code>&gt;&gt;</code>
+</li>
+<li>
+<code>mod</code>
+</li>
+<li>
+<code>rem</code>
 </li>
 </ul>
 <p>

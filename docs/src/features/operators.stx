@@ -19,7 +19,7 @@ Operator precedence in the table below goes from high at the top to low at the b
     Power            |   `**`                                            |   Right
     Unary            |   `!` `+` `-` `~` `try`                           |   Right
     Bitwise          |   `&` <code>&#124;</code> `^` `>>` `<<`           |   Left
-    Multiplication   |   `*` `/` `//` `%`                                |   Left
+    Multiplication   |   `*` `/` `//` `%` `mod` `rem`                    |   Left
     Addition         |   `+` `-`                                         |   Left
     Comparison       |   `>` `>=` `<` `<=` `in`                          |   Left
     Equality         |   `==` `!=`                                       |   Left
@@ -41,10 +41,9 @@ Note that conditional expressions using the ternary operator `? :|` can't be nes
     `*`       | Multiplication. Returns an integer if both operands are integers or a float if either or both are floats.
     `/`       | Floating-point division. Both operands will be converted to floats and the result will be a float.
     `//`      | Truncating division. Returns an integer if both operands are integers or a float if either or both are floats.
-    `%`       | Remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
     `**`      | Power operator. Both operands are converted to floats and the result is a float.
-
-Pyro also has a set of builtin functions for performing [checked arithmetic](@root/features/checked-arithmetic//) with integers.
+    `mod`     | Modulo operator. Both operands must be integers.
+    `rem`     | Remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
 
 You can [overload](@root/tutorials/operator-overloading//) the mathematical operators to customize their behaviour for your own types.
 
@@ -192,5 +191,7 @@ The following operators can be [overloaded](@root/tutorials/operator-overloading
 * `~`
 * `<<`
 * `>>`
+* `mod`
+* `rem`
 
 You can overload these operators using the `$`-prefixed methods listed [here](@root/features/classes//#dollar-methods).
