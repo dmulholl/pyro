@@ -22,9 +22,11 @@ The following keywords are reserved by the language and cannot be used as identi
 * `in`
 * `let`
 * `loop`
+* `mod`
 * `null`
 * `pri`
 * `pub`
+* `rem`
 * `return`
 * `self`
 * `static`
@@ -47,9 +49,7 @@ The following keywords are reserved for future use:
 * `implements`
 * `interface`
 * `match`
-* `mod`
 * `reimport`
-* `rem`
 * `run`
 * `select`
 * `struct`
