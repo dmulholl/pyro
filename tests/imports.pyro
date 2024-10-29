@@ -10,10 +10,10 @@ assert l5::mod_name == "lib5";
 assert l5::get_mod_name() == "lib5";
 assert l5::add(1, 2) == 3;
 
-import lib5::mod as l5_mod;
+import lib5::module as l5_mod;
 assert $is_module(l5_mod);
-assert l5_mod::mod_name == "lib5::mod";
-assert l5_mod::get_mod_name() == "lib5::mod";
+assert l5_mod::mod_name == "lib5::module";
+assert l5_mod::get_mod_name() == "lib5::module";
 assert l5_mod::add(1, 2) == 3;
 
 import lib5::child as l5_child;
@@ -22,10 +22,10 @@ assert l5_child::mod_name == "lib5::child";
 assert l5_child::get_mod_name() == "lib5::child";
 assert l5_child::add(1, 2) == 3;
 
-import lib5::child::mod as l5_child_mod;
+import lib5::child::module as l5_child_mod;
 assert $is_module(l5_child_mod);
-assert l5_child_mod::mod_name == "lib5::child::mod";
-assert l5_child_mod::get_mod_name() == "lib5::child::mod";
+assert l5_child_mod::mod_name == "lib5::child::module";
+assert l5_child_mod::get_mod_name() == "lib5::child::module";
 assert l5_child_mod::add(1, 2) == 3;
 
 import lib5::child::grandchild as l5_child_grandchild;
@@ -34,34 +34,34 @@ assert l5_child_grandchild::mod_name == "lib5::child::grandchild";
 assert l5_child_grandchild::get_mod_name() == "lib5::child::grandchild";
 assert l5_child_grandchild::add(1, 2) == 3;
 
-import lib5::child::grandchild::mod as l5_child_grandchild_mod;
+import lib5::child::grandchild::module as l5_child_grandchild_mod;
 assert $is_module(l5_child_grandchild_mod);
-assert l5_child_grandchild_mod::mod_name == "lib5::child::grandchild::mod";
-assert l5_child_grandchild_mod::get_mod_name() == "lib5::child::grandchild::mod";
+assert l5_child_grandchild_mod::mod_name == "lib5::child::grandchild::module";
+assert l5_child_grandchild_mod::get_mod_name() == "lib5::child::grandchild::module";
 assert l5_child_grandchild_mod::add(1, 2) == 3;
 
 with func = def() { import lib1; return lib1; } {
-    var mod = func();
-    assert $is_module(mod);
-    assert mod::mod_name == "lib1";
-    assert mod::get_mod_name() == "lib1";
-    assert mod::add(1, 2) == 3;
+    var module = func();
+    assert $is_module(module);
+    assert module::mod_name == "lib1";
+    assert module::get_mod_name() == "lib1";
+    assert module::add(1, 2) == 3;
 }
 
 with func = def() { import lib5; return lib5; } {
-    var mod = func();
-    assert $is_module(mod);
-    assert mod::mod_name == "lib5";
-    assert mod::get_mod_name() == "lib5";
-    assert mod::add(1, 2) == 3;
+    var module = func();
+    assert $is_module(module);
+    assert module::mod_name == "lib5";
+    assert module::get_mod_name() == "lib5";
+    assert module::add(1, 2) == 3;
 }
 
-with func = def() { import lib5::child::grandchild::mod; return mod; } {
-    var mod = func();
-    assert $is_module(mod);
-    assert mod::mod_name == "lib5::child::grandchild::mod";
-    assert mod::get_mod_name() == "lib5::child::grandchild::mod";
-    assert mod::add(1, 2) == 3;
+with func = def() { import lib5::child::grandchild::module; return module; } {
+    var module = func();
+    assert $is_module(module);
+    assert module::mod_name == "lib5::child::grandchild::module";
+    assert module::get_mod_name() == "lib5::child::grandchild::module";
+    assert module::add(1, 2) == 3;
 }
 
 with func = def() { import foo; return foo; } {

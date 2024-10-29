@@ -1,4 +1,4 @@
-pub var mod_name = "lib5::child::grandchild::mod";
+pub var mod_name = "lib5::module";
 
 pub def get_mod_name() {
     return mod_name;

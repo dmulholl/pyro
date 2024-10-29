@@ -12,10 +12,10 @@ assert lib5::mod_name == "lib5";
 assert lib5::get_mod_name() == "lib5";
 assert lib5::add(1, 2) == 3;
 
-var lib5_mod = $import("lib5::mod");
+var lib5_mod = $import("lib5::module");
 assert $is_module(lib5);
-assert lib5_mod::mod_name == "lib5::mod";
-assert lib5_mod::get_mod_name() == "lib5::mod";
+assert lib5_mod::mod_name == "lib5::module";
+assert lib5_mod::get_mod_name() == "lib5::module";
 assert lib5_mod::add(1, 2) == 3;
 
 var lib5_child = $import("lib5::child");
@@ -24,10 +24,10 @@ assert lib5_child::mod_name == "lib5::child";
 assert lib5_child::get_mod_name() == "lib5::child";
 assert lib5_child::add(1, 2) == 3;
 
-var lib5_child_mod = $import("lib5::child::mod");
+var lib5_child_mod = $import("lib5::child::module");
 assert $is_module(lib5_child_mod);
-assert lib5_child_mod::mod_name == "lib5::child::mod";
-assert lib5_child_mod::get_mod_name() == "lib5::child::mod";
+assert lib5_child_mod::mod_name == "lib5::child::module";
+assert lib5_child_mod::get_mod_name() == "lib5::child::module";
 assert lib5_child_mod::add(1, 2) == 3;
 
 var lib5_child_grandchild = $import("lib5::child::grandchild");
@@ -36,49 +36,49 @@ assert lib5_child_grandchild::mod_name == "lib5::child::grandchild";
 assert lib5_child_grandchild::get_mod_name() == "lib5::child::grandchild";
 assert lib5_child_grandchild::add(1, 2) == 3;
 
-var lib5_child_grandchild_mod = $import("lib5::child::grandchild::mod");
+var lib5_child_grandchild_mod = $import("lib5::child::grandchild::module");
 assert $is_module(lib5_child_grandchild_mod);
-assert lib5_child_grandchild_mod::mod_name == "lib5::child::grandchild::mod";
-assert lib5_child_grandchild_mod::get_mod_name() == "lib5::child::grandchild::mod";
+assert lib5_child_grandchild_mod::mod_name == "lib5::child::grandchild::module";
+assert lib5_child_grandchild_mod::get_mod_name() == "lib5::child::grandchild::module";
 assert lib5_child_grandchild_mod::add(1, 2) == 3;
 
-with mod = $import("lib1") {
-    assert $is_module(mod);
-    assert mod::mod_name == "lib1";
-    assert mod::get_mod_name() == "lib1";
-    assert mod::add(1, 2) == 3;
+with module = $import("lib1") {
+    assert $is_module(module);
+    assert module::mod_name == "lib1";
+    assert module::get_mod_name() == "lib1";
+    assert module::add(1, 2) == 3;
 }
 
-with mod = $import("lib5::child::grandchild::mod") {
-    assert $is_module(mod);
-    assert mod::mod_name == "lib5::child::grandchild::mod";
-    assert mod::get_mod_name() == "lib5::child::grandchild::mod";
-    assert mod::add(1, 2) == 3;
+with module = $import("lib5::child::grandchild::module") {
+    assert $is_module(module);
+    assert module::mod_name == "lib5::child::grandchild::module";
+    assert module::get_mod_name() == "lib5::child::grandchild::module";
+    assert module::add(1, 2) == 3;
 }
 
-with mod = try $import("lib1") {
-    assert $is_module(mod);
-    assert mod::mod_name == "lib1";
-    assert mod::get_mod_name() == "lib1";
-    assert mod::add(1, 2) == 3;
+with module = try $import("lib1") {
+    assert $is_module(module);
+    assert module::mod_name == "lib1";
+    assert module::get_mod_name() == "lib1";
+    assert module::add(1, 2) == 3;
 }
 
-with mod = try $import("lib5::child::grandchild::mod") {
-    assert $is_module(mod);
-    assert mod::mod_name == "lib5::child::grandchild::mod";
-    assert mod::get_mod_name() == "lib5::child::grandchild::mod";
-    assert mod::add(1, 2) == 3;
+with module = try $import("lib5::child::grandchild::module") {
+    assert $is_module(module);
+    assert module::mod_name == "lib5::child::grandchild::module";
+    assert module::get_mod_name() == "lib5::child::grandchild::module";
+    assert module::add(1, 2) == 3;
 }
 
-with mod = try $import("foo") {
-    assert $is_err(mod);
+with module = try $import("foo") {
+    assert $is_err(module);
 }
 
-with mod = try $import("foo::bar") {
-    assert $is_err(mod);
+with module = try $import("foo::bar") {
+    assert $is_err(module);
 }
 
 with dirpath = fs::dirname($filepath) {
-    let mod = $import(fs::join(dirpath, "lib_add.pyro"));
-    assert mod::add(1, 2) == 3;
+    let module = $import(fs::join(dirpath, "lib_add.pyro"));
+    assert module::add(1, 2) == 3;
 }
