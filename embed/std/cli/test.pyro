@@ -127,7 +127,7 @@ def run_tests() {
         if $is_err(result) {
             $print("\r{}  {}  {}\n", grey("["), red("FAIL"), grey("]"));
             if VERBOSE {
-                $print(grey("            line ${result["line"]}: ${result}\n"));
+                $print(grey("            ${result["source"]}:${result["line"]}: ${result}\n"));
             }
             files_failed += 1;
             restore_stashed_import_roots(stashed_roots);
@@ -147,7 +147,7 @@ def run_tests() {
                     funcs_failed += 1;
                     $print("            {}\n", red("× ${name}()"));
                     if VERBOSE {
-                        $print(grey("              line ${result["line"]}: ${result}\n"));
+                        $print(grey("              ${result["source"]}:${result["line"]}: ${result}\n"));
                     }
                 } else {
                     funcs_passed += 1;
