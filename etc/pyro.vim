@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" v0.7.3
+" Version: v8.
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -24,6 +24,7 @@ syn keyword pyroKeyword pub pri static
 syn keyword pyroKeyword if else for while in loop
 syn keyword pyroKeyword return break continue
 syn keyword pyroKeyword try echo
+syn keyword pyroKeyword mod rem
 syn keyword pyroAssert assert
 syn keyword pyroImport import as
 syn keyword pyroConstant true false null self super
