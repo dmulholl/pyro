@@ -179,13 +179,13 @@ def marshall_value(containers: stack, buf: buf, value: any, indent: i64, current
 }
 
 
-pub def to_json(arg: any, indent: i64 = 0) -> str|err {
+pub def to_json(arg: any, indent: i64 = 0) -> str {
     var containers = $stack();
     var buf = $buf();
 
     var result = try marshall_value(containers, buf, arg, indent, 0);
     if $is_err(result) {
-        return $err("to_json(): {}", result);
+        $panic("to_json(): {}", result);
     }
 
     return buf:to_str();
@@ -320,9 +320,9 @@ class Lexer {
         var next_byte = self.input:byte(self.index);
 
         var byte_repr = if next_byte >= 32 && next_byte <= 123 {
-            $str(next_byte)
+            $str($rune(next_byte))
         } else {
-            $str(next_byte):to_hex()
+            "\\x${next_byte;02X}"
         };
 
         $panic("unexpected character {} at byte index: {}", byte_repr, self.index);
@@ -637,18 +637,18 @@ class Parser {
 }
 
 
-pub def from_json(json: buf|str, strict: bool = false) -> map|vec|str|i64|f64|bool|null|err {
+pub def from_json(json: buf|str, strict: bool = false) -> map|vec|str|i64|f64|bool|null {
     if !$is_str(json) && !$is_buf(json) {
-        return $err("from_json(): invalid argument, expected a string or buffer: found {}", $type(json));
+        $panic("from_json(): invalid argument, expected a string or buffer: found {}", $type(json));
     }
 
     if json:count() == 0 {
-        return $err("from_json(): invalid argument, empty input");
+        $panic("from_json(): invalid argument, empty input");
     }
 
     var result = try Parser(json, strict):parse();
     if $is_err(result) {
-        return $err("from_json(): {}", result);
+        $panic("from_json(): {}", result);
     }
 
     return result;
@@ -730,12 +730,12 @@ pub def format(json: str, indent: i64 = 2) -> str {
 
     var value = try from_json(json);
     if $is_err(value) {
-        return $err("format(): argument [json] is not valid JSON: {}", value);
+        $panic("format(): argument [json] is not valid JSON: {}", value);
     }
 
     var result = try format_value(buf, value, indent, 0);
     if $is_err(result) {
-        return $err("format(): {}", result);
+        $panic("format(): {}", result);
     }
 
     return buf:to_str();

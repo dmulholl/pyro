@@ -8,15 +8,15 @@ This module contains utility functions for working with JSON.
 
 ### Functions
 
-[[ `format(json: str, indent: i64 = 2) -> str|err` ]]
+[[ `format(json: str, indent: i64 = 2) -> str` ]]
 
     Formats a string of JSON.
     The `indent` argument specifies the number of spaces per level of indentation.
 
-    Returns an `err` if `json` is not valid JSON.
+    Panics if `json` does not contain valid JSON.
 
 
-[[ `from_json(json: buf|str, strict: bool = false) -> map|vec|str|i64|f64|bool|null|err` ]]
+[[ `from_json(json: buf|str, strict: bool = false) -> map|vec|str|i64|f64|bool|null` ]]
 
     Unmarshalls the input JSON.
 
@@ -27,10 +27,10 @@ This module contains utility functions for working with JSON.
     comments beginning with `//`.
     Set `strict` to `true` to parse the input in strict mode.
 
-    Returns an `err` if `json` does not contain valid JSON.
+    Panics if `json` does not contain valid JSON.
 
 
-[[ `to_json(arg: any, indent: i64 = 0) -> str|err` ]]
+[[ `to_json(arg: any, indent: i64 = 0) -> str` ]]
 
     Marshalls the Pyro value `arg` to JSON, returning the result as a string.
     The `indent` argument specifies the number of spaces per level of indentation.
@@ -48,4 +48,4 @@ This module contains utility functions for working with JSON.
     * An object with a `:$json()` method that returns a string containing JSON.
     * Any object whose public field values can be marshalled as JSON.
 
-    Returns an `err` if `arg` cannot be marshalled as JSON.
+    Panics if `arg` cannot be marshalled as JSON.

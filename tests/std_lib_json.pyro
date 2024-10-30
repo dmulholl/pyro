@@ -88,9 +88,9 @@ assert to_json(baz1) == `{"foo": 1, "bar": 2, "baz": 3}`;
 var baz2 = Baz("A", "B", "C", "D");
 assert to_json(baz2) == `{"foo": "A", "bar": "B", "baz": "C"}`;
 
-assert $is_err(to_json($stdin));
-assert $is_err(to_json($err()));
-assert $is_err(to_json('a'));
+assert $is_err(try to_json($stdin));
+assert $is_err(try to_json($err()));
+assert $is_err(try to_json('a'));
 
 # ----------------------------------- #
 #  Marshall to JSON: cycle detection  #
@@ -98,24 +98,24 @@ assert $is_err(to_json('a'));
 
 var map1 = $map();
 map1:set("itself", map1);
-assert $is_err(to_json(map1));
+assert $is_err(try to_json(map1));
 
 var map2 = $map();
 map2:set("list", ["foo", map2, "bar"]);
-assert $is_err(to_json(map2));
+assert $is_err(try to_json(map2));
 
 var vec1 = $vec();
 vec1:append(vec1);
-assert $is_err(to_json(vec1));
+assert $is_err(try to_json(vec1));
 
 var vec2 = $vec();
 vec2:append({"list" = ["foo", vec2, "bar"]});
-assert $is_err(to_json(vec2));
+assert $is_err(try to_json(vec2));
 
 var vec_in_tup = $vec();
 var tup = $tup("foo", vec_in_tup, "bar");
 vec_in_tup:append(tup);
-assert $is_err(to_json(tup));
+assert $is_err(try to_json(tup));
 
 class Object {
     pub var object: Object;
@@ -124,11 +124,11 @@ class Object {
 
 var obj1 = Object();
 obj1.object = obj1;
-assert $is_err(to_json(obj1));
+assert $is_err(try to_json(obj1));
 
 var obj2 = Object();
 obj2.list = ["foo", obj2, "bar"];
-assert $is_err(to_json(obj2));
+assert $is_err(try to_json(obj2));
 
 # --------------------------- #
 #  Marshall to indented JSON  #
@@ -310,15 +310,15 @@ assert $is_vec(output7);
 assert output7[0]["foo"] == 123;
 assert output7[1]["baz"] == 987;
 
-assert $is_err(from_json(``));
-assert $is_err(from_json(`foo`));
-assert $is_err(from_json(`&`));
-assert $is_err(from_json("\x01"));
-assert $is_err(from_json(`123.456.789`));
-assert $is_err(from_json(`"`));
-assert $is_err(from_json(`"foo`));
-assert $is_err(from_json(`'foo'`));
-assert $is_err(from_json(`123 456`));
+assert $is_err(try from_json(``));
+assert $is_err(try from_json(`foo`));
+assert $is_err(try from_json(`&`));
+assert $is_err(try from_json("\x01"));
+assert $is_err(try from_json(`123.456.789`));
+assert $is_err(try from_json(`"`));
+assert $is_err(try from_json(`"foo`));
+assert $is_err(try from_json(`'foo'`));
+assert $is_err(try from_json(`123 456`));
 
 # ------------------------------------ #
 #  Unmarshall from JSON: buffer input  #
@@ -405,15 +405,15 @@ with input = $buf(`[{"foo": 123, "bar": 456}, {"bam": 789, "baz": 987}]`) {
     assert output[1]["baz"] == 987;
 }
 
-assert $is_err(from_json($buf(``)));
-assert $is_err(from_json($buf(`foo`)));
-assert $is_err(from_json($buf(`&`)));
-assert $is_err(from_json($buf(`123.456.789`)));
-assert $is_err(from_json($buf(`"`)));
-assert $is_err(from_json($buf(`"foo`)));
-assert $is_err(from_json($buf(`'foo'`)));
-assert $is_err(from_json($buf(`123 456`)));
-assert $is_err(from_json($buf("\x01")));
+assert $is_err(try from_json($buf(``)));
+assert $is_err(try from_json($buf(`foo`)));
+assert $is_err(try from_json($buf(`&`)));
+assert $is_err(try from_json($buf(`123.456.789`)));
+assert $is_err(try from_json($buf(`"`)));
+assert $is_err(try from_json($buf(`"foo`)));
+assert $is_err(try from_json($buf(`'foo'`)));
+assert $is_err(try from_json($buf(`123 456`)));
+assert $is_err(try from_json($buf("\x01")));
 
 # ------------------------------------ #
 #  Unmarshall from JSON: strict=false  #
@@ -425,7 +425,7 @@ var unmarshal_unstrict = `
   "number": 123,
   "string": "foobar",
   "list1": [123, 456, 789,],
-  "list2" [
+  "list2": [
     "foo",
     // this is another comment
     "bar",
@@ -449,7 +449,7 @@ var unmarshal_strict_pass = `
   "number": 123,
   "string": "foobar",
   "list1": [123, 456, 789],
-  "list2" [
+  "list2": [
     "foo",
     "bar"
   ],
@@ -468,7 +468,7 @@ var unmarshal_strict_fail = `
   "number": 123,
   "string": "foobar",
   "list1": [123, 456, 789,],
-  "list2" [
+  "list2": [
     "foo",
     // this is another comment
     "bar",
@@ -481,7 +481,7 @@ var unmarshal_strict_fail = `
   },
 }
 `;
-assert $is_err(from_json(unmarshal_strict_fail, true));
+assert $is_err(try from_json(unmarshal_strict_fail, true));
 
 var unmarshal_strict_has_comment_1 = `
 // this is a comment
@@ -489,7 +489,7 @@ var unmarshal_strict_has_comment_1 = `
   "number": 123
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_comment_1, true));
+assert $is_err(try from_json(unmarshal_strict_has_comment_1, true));
 
 var unmarshal_strict_has_comment_2 = `
 {
@@ -497,7 +497,7 @@ var unmarshal_strict_has_comment_2 = `
   "number": 123
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_comment_2, true));
+assert $is_err(try from_json(unmarshal_strict_has_comment_2, true));
 
 var unmarshal_strict_has_comment_3 = `
 {
@@ -509,14 +509,14 @@ var unmarshal_strict_has_comment_3 = `
   ]
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_comment_3, true));
+assert $is_err(try from_json(unmarshal_strict_has_comment_3, true));
 
 var unmarshal_strict_has_trailing_comma_1 = `
 {
   "number": 123,
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_trailing_comma_1, true));
+assert $is_err(try from_json(unmarshal_strict_has_trailing_comma_1, true));
 
 var unmarshal_strict_has_trailing_comma_2 = `
 {
@@ -524,7 +524,7 @@ var unmarshal_strict_has_trailing_comma_2 = `
   "list": [123, 456,]
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_trailing_comma_2, true));
+assert $is_err(try from_json(unmarshal_strict_has_trailing_comma_2, true));
 
 var unmarshal_strict_has_trailing_comma_3 = `
 {
@@ -532,7 +532,7 @@ var unmarshal_strict_has_trailing_comma_3 = `
   "list": [123, 456],
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_trailing_comma_3, true));
+assert $is_err(try from_json(unmarshal_strict_has_trailing_comma_3, true));
 
 var unmarshal_strict_has_trailing_comma_4 = `
 {
@@ -541,7 +541,7 @@ var unmarshal_strict_has_trailing_comma_4 = `
   "object": {"foo": 123, "bar": 456,}
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_trailing_comma_4, true));
+assert $is_err(try from_json(unmarshal_strict_has_trailing_comma_4, true));
 
 var unmarshal_strict_has_trailing_comma_5 = `
 {
@@ -550,7 +550,7 @@ var unmarshal_strict_has_trailing_comma_5 = `
   "object": {"foo": 123, "bar": 456},
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_trailing_comma_5, true));
+assert $is_err(try from_json(unmarshal_strict_has_trailing_comma_5, true));
 
 var unmarshal_strict_has_trailing_comma_6 = `
 {
@@ -559,23 +559,23 @@ var unmarshal_strict_has_trailing_comma_6 = `
   "object": {"foo": 123, "bar": 456,},
 }
 `;
-assert $is_err(from_json(unmarshal_strict_has_trailing_comma_6, true));
+assert $is_err(try from_json(unmarshal_strict_has_trailing_comma_6, true));
 
 # ---------------- #
 #  Pretty Printer  #
 # ---------------- #
 
 var input = ``;
-assert $is_err(format(input));
+assert $is_err(try format(input));
 
 input = `[`;
-assert $is_err(format(input));
+assert $is_err(try format(input));
 
 input = `[1, 2, 3`;
-assert $is_err(format(input));
+assert $is_err(try format(input));
 
 input = `foo`;
-assert $is_err(format(input));
+assert $is_err(try format(input));
 
 input = `123`;
 assert format(input) == `123`;
