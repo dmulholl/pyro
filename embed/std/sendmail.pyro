@@ -55,20 +55,20 @@ pub class Email {
         return self;
     }
 
-    pub def send() -> err? {
+    pub def send() {
         var msg = self:make_message();
         if $is_err(msg) {
-            return $err("send(): ${msg}");
+            $panic("send(): ${msg}");
         }
 
         var result = try $run("sendmail", ["-i", "-t"], msg);
         if $is_err(result) {
-            return $err("send(): ${result}");
+            $panic("send(): ${result}");
         }
 
         var (exit_code, _, err_buf) = result;
         if exit_code != 0 {
-            return $err("send(): ${err_buf:to_str():strip()}");
+            $panic("send(): ${err_buf:to_str():strip()}");
         }
     }
 

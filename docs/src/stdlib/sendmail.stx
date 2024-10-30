@@ -29,10 +29,7 @@ A library for sending email using the system's `sendmail` binary.
     echo email;
 
     # Send the email.
-    var result = email:send();
-    if $is_err(result) {
-        echo result;
-    }
+    email:send();
 
 
 
@@ -68,11 +65,11 @@ A library for sending email using the system's `sendmail` binary.
 
     Returns `self` to allow chaining.
 
-[[ `:send() -> err?` ]]
+[[ `:send()` ]]
 
     Sends the email.
 
-    Returns an `err` if the attempt to send the email fails.
+    Panics if the email cannot be sent.
 
 [[ `:subject(text: str) -> Email` ]]
 
