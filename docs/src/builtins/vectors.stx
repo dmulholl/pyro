@@ -251,8 +251,7 @@ The result is a new vector containing the combined entries from the input vector
 
 [[ `:shuffle() -> vec` ]]
 
-    Shuffles the vector in-place.
-    Uses Fisher-Yates/Durstenfeld shuffling and random numbers from the `std::prng` module.
+    Shuffles the vector in-place using Fisher-Yates/Durstenfeld shuffling.
     Returns the vector to enable chaining.
 
 [[ `:slice(start_index: i64) -> vec` <br> `:slice(start_index: i64, length: i64) -> vec` ]]
