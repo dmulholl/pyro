@@ -72,7 +72,7 @@ Functions
 <dl>
 <div>
 <dt>
-<code>format(json: str, indent: i64 = 2) -&gt; str|err</code>
+<code>format(json: str, indent: i64 = 2) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -80,13 +80,13 @@ Formats a string of JSON.
 The <code>indent</code> argument specifies the number of spaces per level of indentation.
 </p>
 <p>
-Returns an <code>err</code> if <code>json</code> is not valid JSON.
+Panics if <code>json</code> does not contain valid JSON.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>from_json(json: buf|str, strict: bool = false) -&gt; map|vec|str|i64|f64|bool|null|err</code>
+<code>from_json(json: buf|str, strict: bool = false) -&gt; map|vec|str|i64|f64|bool|null</code>
 </dt>
 <dd>
 <p>
@@ -106,13 +106,13 @@ comments beginning with <code>//</code>.
 Set <code>strict</code> to <code>true</code> to parse the input in strict mode.
 </p>
 <p>
-Returns an <code>err</code> if <code>json</code> does not contain valid JSON.
+Panics if <code>json</code> does not contain valid JSON.
 </p>
 </dd>
 </div>
 <div>
 <dt>
-<code>to_json(arg: any, indent: i64 = 0) -&gt; str|err</code>
+<code>to_json(arg: any, indent: i64 = 0) -&gt; str</code>
 </dt>
 <dd>
 <p>
@@ -155,7 +155,7 @@ Any object whose public field values can be marshalled as JSON.
 </li>
 </ul>
 <p>
-Returns an <code>err</code> if <code>arg</code> cannot be marshalled as JSON.
+Panics if <code>arg</code> cannot be marshalled as JSON.
 </p>
 </dd>
 </div>

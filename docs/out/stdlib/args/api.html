@@ -165,43 +165,6 @@ Returns the parser to enable chaining.
 </p>
 </dd>
 </div>
-<div>
-<dt>
-<code>:error_format(fmt_string: str) -&gt; ArgParser</code>
-</dt>
-<dd>
-<p>
-Sets the format string for error messages printed to <code>stderr</code>.
-</p>
-<p>
-The default format string is <code>&quot;error: {}&quot;</code>. The <code>{}</code> placeholder contains the content of the error message.
-</p>
-<p>
-Returns the parser to enable chaining.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:exit_on_error(enable: bool) -&gt; ArgParser</code>
-</dt>
-<dd>
-<p>
-Toggles the <code>exit_on_error</code> flag.
-</p>
-<ul>
-<li>
-If this boolean flag is <code>true</code> (the default), the <code>:parse()</code> method will exit with an error message and a non-zero status code if the command-line arguments are invalid or if a callback function for a command panics.
-</li>
-<li>
-If this boolean flag is <code>false</code>, the <code>:parse()</code> method will return an <code>err</code> instead of exiting.
-</li>
-</ul>
-<p>
-Returns the parser to enable chaining.
-</p>
-</dd>
-</div>
 </dl>
 <h3 id="registering-flags-and-options">
 Registering Flags and Options
@@ -268,33 +231,18 @@ Call the <code>:parse()</code> method on the root <code>ArgParser</code> instanc
 <dl>
 <div>
 <dt>
-<code>:parse() -&gt; ArgParser|err</code>
+<code>:parse(args: iterable?[str] = null) -&gt; err?</code>
 </dt>
 <dd>
 <p>
-Parses the program's command line arguments.
-Returns the parser to enable chaining.
+Parses a sequence of string arguments.
+If <code>args</code> is omitted, this method defaults to parsing the program's command line arguments.
 </p>
-<ul>
-<li>
-If <code>exit_on_error</code> is <code>true</code>, exits with an error message if the command line arguments are invalid or if a command callback panics.
-</li>
-<li>
-If <code>exit_on_error</code> is <code>false</code>, returns an <code>err</code> if the command line arguments are invalid or if a command callback panics.
-</li>
-</ul>
+<p>
+Returns an <code>err</code> if parsing fails, otherwise <code>null</code>.
+</p>
 <p>
 You only need to call this method on the root <code>ArgParser</code> instance; arguments for commands will be parsed automatically.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>:parse_args(args: vec[str]|tup[str]) -&gt; ArgParser|err</code>
-</dt>
-<dd>
-<p>
-Like <code>:parse()</code> but parses a <code>vec</code> or <code>tup</code> of string arguments instead of the program's command line arguments.
 </p>
 </dd>
 </div>
@@ -369,7 +317,7 @@ Positional arguments are appended to the parser's <code>.args</code> vector.
 </dt>
 <dd>
 <p>
-Stores positonal arguments as a <code>vec</code> of strings.
+Stores positional arguments as a vector of strings.
 </p>
 </dd>
 </div>
@@ -416,9 +364,6 @@ Sets the callback function for a command parser.
 If the command is found, this function will be called with the command's name and <code>ArgParser</code> instance as arguments.
 </p>
 <p>
-The callback function's return value will be stored in the parent's <code>.command_return_value</code> field.
-</p>
-<p>
 Returns the parser to enable chaining.
 </p>
 </dd>
@@ -448,16 +393,6 @@ If a command was found, this field stores the command name, otherwise <code>null
 <dd>
 <p>
 If a command was found, this field stores the command's <code>ArgParser</code> instance, otherwise <code>null</code>.
-</p>
-</dd>
-</div>
-<div>
-<dt>
-<code>.command_return_value: any</code>
-</dt>
-<dd>
-<p>
-If a command was found, and if that command had a callback function, this field stores the callback function's return value, otherwise <code>null</code>.
 </p>
 </dd>
 </div>

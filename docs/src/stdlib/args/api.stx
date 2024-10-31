@@ -44,24 +44,6 @@ You can customize an `ArgParser` using the methods below:
 
     Returns the parser to enable chaining.
 
-[[ `:error_format(fmt_string: str) -> ArgParser` ]]
-
-    Sets the format string for error messages printed to `stderr`.
-
-    The default format string is `"error: {}"`. The `{}` placeholder contains the content of the error message.
-
-    Returns the parser to enable chaining.
-
-[[ `:exit_on_error(enable: bool) -> ArgParser` ]]
-
-    Toggles the `exit_on_error` flag.
-
-    * If this boolean flag is `true` (the default), the `:parse()` method will exit with an error message and a non-zero status code if the command-line arguments are invalid or if a callback function for a command panics.
-
-    * If this boolean flag is `false`, the `:parse()` method will return an `err` instead of exiting.
-
-    Returns the parser to enable chaining.
-
 
 
 ### Registering Flags and Options
@@ -98,20 +80,14 @@ You can register flags and options on an `ArgParser` using the methods below:
 
 Call the `:parse()` method on the root `ArgParser` instance to parse the program's command line arguments:
 
-[[ `:parse() -> ArgParser|err` ]]
+[[ `:parse(args: iterable?[str] = null) -> err?` ]]
 
-    Parses the program's command line arguments.
-    Returns the parser to enable chaining.
+    Parses a sequence of string arguments.
+    If `args` is omitted, this method defaults to parsing the program's command line arguments.
 
-    * If `exit_on_error` is `true`, exits with an error message if the command line arguments are invalid or if a command callback panics.
-
-    * If `exit_on_error` is `false`, returns an `err` if the command line arguments are invalid or if a command callback panics.
+    Returns an `err` if parsing fails, otherwise `null`.
 
     You only need to call this method on the root `ArgParser` instance; arguments for commands will be parsed automatically.
-
-[[ `:parse_args(args: vec[str]|tup[str]) -> ArgParser|err` ]]
-
-    Like `:parse()` but parses a `vec` or `tup` of string arguments instead of the program's command line arguments.
 
 
 
@@ -147,7 +123,7 @@ Positional arguments are appended to the parser's `.args` vector.
 
 [[ `.args: vec[str]` ]]
 
-    Stores positonal arguments as a `vec` of strings.
+    Stores positional arguments as a vector of strings.
 
 
 
@@ -172,8 +148,6 @@ Register a callback function for a command on the command's `ArgParser` instance
 
     If the command is found, this function will be called with the command's name and `ArgParser` instance as arguments.
 
-    The callback function's return value will be stored in the parent's `.command_return_value` field.
-
     Returns the parser to enable chaining.
 
 
@@ -189,7 +163,3 @@ If a command is found, the following fields are set on the command's parent `Arg
 [[ `.command_parser: ArgParser?` ]]
 
     If a command was found, this field stores the command's `ArgParser` instance, otherwise `null`.
-
-[[ `.command_return_value: any` ]]
-
-    If a command was found, and if that command had a callback function, this field stores the callback function's return value, otherwise `null`.

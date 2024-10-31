@@ -29,12 +29,15 @@ Here's an example of a simple argument parser:
     parser:option("count c", 0, $i64);
 
     # Parse the command line arguments.
-    parser:parse();
+    let result = parser:parse();
+    if $is_err(result) {
+        $exit("error: ${result}");
+    }
 
     # Dump the parser to stdout.
-    parser:print();
+    echo parser;
 
-Note that we can chain the calls to `helptext()`, `version()`,  `flag()`, `option()`, and `parse()`, e.g.
+Note that we can chain the calls to `helptext()`, `version()`,  `flag()`, and `option()`, e.g.
 
 ::: code pyro
     var parser = args::ArgParser()
@@ -42,8 +45,7 @@ Note that we can chain the calls to `helptext()`, `version()`,  `flag()`, `optio
         :version("1.0")
         :flag("flag f")
         :option("name n")
-        :option("count c", 0, $i64)
-        :parse();
+        :option("count c", 0, $i64);
 
 
 
@@ -57,7 +59,7 @@ Here's an example of an argument parser that registers a command:
     # Callback function for the 'boo' command.
     def cmd_boo(cmd_name, cmd_parser) {
         echo "---";
-        cmd_parser:print();
+        echo cmd_parser;
         echo "---";
     }
 
@@ -70,7 +72,7 @@ Here's an example of an argument parser that registers a command:
     var cmd_parser = parser:command("boo");
     cmd_parser:helptext("Usage: foo boo...");
 
-    # We can register flags and options on the command.
+    # We can register flags and options for the command.
     cmd_parser:flag("flag f");
     cmd_parser:option("opt o");
 
@@ -78,10 +80,13 @@ Here's an example of an argument parser that registers a command:
     cmd_parser:callback(cmd_boo);
 
     # Parse the command line arguments.
-    parser:parse();
+    let result = parser:parse();
+    if $is_err(result) {
+        $exit("error: ${result}");
+    }
 
     # Dump the parser to stdout.
-    parser:print();
+    echo parser;
 
 Note that we can chain the calls to the command parser's `helptext()`, `flag()`, `option()`, and `callback()` methods, e.g.
 

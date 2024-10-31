@@ -93,7 +93,6 @@ Options
 Options can have an unlimited number of long-form aliases and single-character shortcuts: <code>--option</code>, <code>-o</code>.
 </p>
 <p>
-Options can have string, integer, or floating-point values.
 Option values can be separated by either a space, <code>--option 123</code>, or an equals symbol, <code>--option=123</code>. Either syntax can be used with shortcuts: <code>-o 123</code>, <code>-o=123</code>.
 </p>
 <p>
@@ -109,7 +108,7 @@ Options can be treated as singular or multivalued as circumstances require. Each
 For example, in the command below:
 </p>
 <pre>
-$ my_app --foo 123 --foo 456
+$ app --foo 123 --foo 456
 </pre>
 <p>
 the value of the option <code>foo</code> is <code>456</code> but the list <code>[123, 456]</code> is also available for use if required.
@@ -136,10 +135,10 @@ Quoted Values
 Note that you can use quotes to surround argument and option values containing spaces, e.g.
 </p>
 <pre>
-$ my_app "arg 1" "arg 2"
-$ my_app --option "value with spaces"
-$ my_app --option="value with spaces"
-$ my_app -o="value with spaces"
+$ app "arg 1" "arg 2"
+$ app --option "value with spaces"
+$ app --option="value with spaces"
+$ app -o="value with spaces"
 </pre>
 <p>
 This isn't a feature of the library &mdash; the quotes are processed by the shell and the library only sees the resulting string values, including spaces.
@@ -151,13 +150,13 @@ Commands
 This library supports git-style command interfaces with arbitrarily-nested commands. Commands have builtin support for an automatic <code>--help</code> flag and an automatic <code>help &lt;cmd&gt;</code> command, i.e. the commands
 </p>
 <pre>
-$ my_app &lt;cmd&gt; --help
+$ app &lt;cmd&gt; --help
 </pre>
 <p>
 and
 </p>
 <pre>
-$ my_app help &lt;cmd&gt;
+$ app help &lt;cmd&gt;
 </pre>
 <p>
 are functionally identical and will both print the help text registered with the command.

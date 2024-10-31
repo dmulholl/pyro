@@ -90,10 +90,7 @@ Example
 <span class="k">echo</span> <span class="nx">email</span><span class="p">;</span>
 
 <span class="c1"># Send the email.</span>
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">email</span><span class="p">:</span><span class="nx">send</span><span class="p">();</span>
-<span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nx">result</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="nx">email</span><span class="p">:</span><span class="nx">send</span><span class="p">();</span>
 </pre>
 <h3 id="classes">
 Classes
@@ -157,14 +154,14 @@ Returns <code>self</code> to allow chaining.
 </div>
 <div>
 <dt>
-<code>:send() -&gt; err?</code>
+<code>:send()</code>
 </dt>
 <dd>
 <p>
 Sends the email.
 </p>
 <p>
-Returns an <code>err</code> if the attempt to send the email fails.
+Panics if the email cannot be sent.
 </p>
 </dd>
 </div>
