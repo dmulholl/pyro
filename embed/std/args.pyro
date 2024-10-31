@@ -1,8 +1,9 @@
 class ArgStream {
-    var args: vec|tup;
+    var args: vec;
     var index: i64 = 0;
 
-    def $init(args: vec|tup) {
+    def $init(args: vec) {
+        assert $is_vec(args);
         self.args = args;
     }
 
@@ -39,18 +40,19 @@ class Option {
         self.values = $vec();
     }
 
-    pub def try_append_value(value: str) -> bool {
+    pub def append_value(value: str) {
         if self.parser {
-            var parsed_value = try self.parser(value);
-            if $is_err(parsed_value) {
-                return false;
-            } else {
-                self.values:append(parsed_value);
-                return true;
+            let result = try self.parser(value);
+            if $is_err(result) {
+                $panic("invalid option value ${value}: ${result}");
             }
+
+            self.values:append(result);
+            return;
         }
+
         self.values:append(value);
-        return true;
+        return;
     }
 
     pub def found() -> bool {
@@ -79,9 +81,6 @@ pub class ArgParser {
     pub var args: vec[str];
     pub var command_name: str?;
     pub var command_parser: ArgParser?;
-    pub var command_return_value: any;
-    pub var exit_on_error: bool = true;
-    pub var enable_help_command: bool = false;
 
     var helptext: str?;
     var version: str?;
@@ -89,7 +88,7 @@ pub class ArgParser {
     var flags: map[str, Flag];
     var commands: map[str, ArgParser];
     var callback: callable?(str, ArgParser);
-    var error_format_string: str = "error: {}";
+    var enable_help_command: bool = false;
 
     def $init() {
         self.options = $map();
@@ -131,16 +130,6 @@ pub class ArgParser {
 
     pub def enable_help_command(enable: bool) -> ArgParser {
         self.enable_help_command = enable;
-        return self;
-    }
-
-    pub def error_format(fmt_string: str) -> ArgParser {
-        self.error_format_string = fmt_string;
-        return self;
-    }
-
-    pub def exit_on_error(enable: bool) -> ArgParser {
-        self.exit_on_error = enable;
         return self;
     }
 
@@ -209,26 +198,30 @@ pub class ArgParser {
     #  Parsing machinery.  #
     # -------------------- #
 
-    pub def parse() -> ArgParser|err {
-        if $args:count() > 1 {
-            var args = $args:slice(1);
-            return self:parse_args(args);
-        }
-        return self;
-    }
-
-    pub def parse_args(args: vec[str]|tup[str]) -> ArgParser|err {
-        var arg_stream = ArgStream(args);
-
-        if var result = try self:parse_stream(arg_stream); $is_err(result) {
-            if self.exit_on_error {
-                $eprintln(self.error_format_string, result);
-                $exit(1);
+    pub def parse(args: iterable?[str] = null) -> err? {
+        if args {
+            if !$is_iterable(args) {
+                $panic("parse(): invalid argument [args], expected an iterable");
             }
-            return result;
+
+            for arg in args {
+                if !$is_str(arg) {
+                    $panic("parse(): invalid argument [args], expected an iterable of strings");
+                }
+            }
+
+            let arg_vec = $iter(args):to_vec();
+            let arg_stream = ArgStream(arg_vec);
+
+            return try self:parse_stream(arg_stream);
         }
 
-        return self;
+        if $args:count() < 2 {
+            return null;
+        }
+
+        let arg_stream = ArgStream($args:slice(1));
+        return try self:parse_stream(arg_stream);
     }
 
     def parse_stream(stream: ArgStream) {
@@ -270,7 +263,7 @@ pub class ArgParser {
 
                 var cmd_callback = $field(self.command_parser, "callback");
                 if (cmd_callback) {
-                    self.command_return_value = cmd_callback(arg, self.command_parser);
+                    cmd_callback(arg, self.command_parser);
                 }
             }
 
@@ -301,13 +294,11 @@ pub class ArgParser {
         var name = arg:slice(0, index);
         var value = arg:slice(index + 1);
 
-        if self.options:contains(name) {
-            if !self.options[name]:try_append_value(value) {
-                $panic("invalid option value '{}'", value);
-            }
-        } else {
+        if !self.options:contains(name) {
             $panic("'{}' is not a recognised option name", name);
         }
+
+        self.options[name]:append_value(value);
     }
 
     # Parse a long-form option, i.e. an option beginning with a double dash.
@@ -317,9 +308,7 @@ pub class ArgParser {
         } else if self.options:contains(arg) {
             if stream:has_next() {
                 var value = stream:next();
-                if !self.options[arg]:try_append_value(value) {
-                    $panic("invalid option value '{}'", value);
-                }
+                self.options[arg]:append_value(value);
             } else {
                 $panic("option --{} requires an argument", arg);
             }
@@ -340,9 +329,7 @@ pub class ArgParser {
             } else if self.options:contains(char) {
                 if stream:has_next() {
                     var value = stream:next();
-                    if !self.options[char]:try_append_value(value) {
-                        $panic("invalid option value '{}'", value);
-                    }
+                    self.options[char]:append_value(value);
                 } else if arg:byte_count() > 1 {
                     $panic("option '{}' in -{} requires an argument", char, arg);
                 } else {
@@ -366,51 +353,55 @@ pub class ArgParser {
 
     pub def exit_with_help() {
         if self.helptext {
-            $println(self.helptext:strip());
+            echo self.helptext:strip();
         }
         $exit(0);
     }
 
     pub def exit_with_version() {
         if self.version {
-            $println(self.version:strip());
+            echo self.version:strip();
         }
         $exit(0);
     }
 
-    pub def print() {
-        $println("Flags:");
+    def $str() {
+        let buf = $buf();
+
+        buf:write("Flags:\n");
         if self.flags:count() > 0 {
             for (name, flag) in self.flags {
-                $println("  {}: {}", name, flag:count());
+                buf:write("  {}: {}\n", name, flag:count());
             }
         } else {
-            $println(" [none]");
+            buf:write(" [none]\n");
         }
 
-        $println("\nOptions:");
+        buf:write("\nOptions:\n");
         if self.options:count() > 0 {
             for (name, option) in self.options {
-                $println("  {}: ({}) {}", name, $debug(option.default), option:values());
+                buf:write("  {}: ({}) {}\n", name, $debug(option.default), option:values());
             }
         } else {
-            $println(" [none]");
+            buf:write(" [none]\n");
         }
 
-        $println("\nArguments:");
+        buf:write("\nArguments:\n");
         if self.args:count() > 0 {
             for arg in self.args {
-                $println("  {}", arg);
+                buf:write("  {}\n", arg);
             }
         } else {
-            $println("  [none]");
+            buf:write("  [none]\n");
         }
 
-        $println("\nCommand:");
+        buf:write("\nCommand:\n");
         if self.command_name {
-            $println("  {}", self.command_name);
+            buf:write("  {}\n", self.command_name);
         } else {
-            $println("  [none]");
+            buf:write("  [none]\n");
         }
+
+        return buf:to_str():strip();
     }
 }

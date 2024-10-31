@@ -325,7 +325,7 @@ static PyroValue fn_f64(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 if (pyro_parse_string_as_float(string->bytes, string->count, &value)) {
                     return pyro_f64(value);
                 }
-                pyro_panic(vm, "$f64(): invalid argument, unable to parse string");
+                pyro_panic(vm, "$f64(): invalid argument, unable to parse string as float");
                 return pyro_null();
             }
             pyro_panic(vm, "$f64(): invalid argument");
@@ -369,7 +369,7 @@ static PyroValue fn_i64(PyroVM* vm, size_t arg_count, PyroValue* args) {
                 if (pyro_parse_string_as_int(string->bytes, string->count, &value)) {
                     return pyro_i64(value);
                 }
-                pyro_panic(vm, "$i64(): invalid argument, unable to parse string");
+                pyro_panic(vm, "$i64(): invalid argument, unable to parse string as integer");
                 return pyro_null();
             }
             pyro_panic(vm, "$i64(): invalid argument");
