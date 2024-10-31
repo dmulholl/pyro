@@ -311,7 +311,25 @@ Remainder operator. Returns an integer if both operands are integers or a float 
 </tbody>
 </table>
 <p>
-You can <a href="../tutorials/operator-overloading.html">overload</a> the mathematical operators to customize their behaviour for your own types.
+You can <a href="../tutorials/operator-overloading.html">overload</a> these mathematical operators to customize their behaviour for your own types.
+</p>
+<p>
+Note that Pyro has two remainder operators for integer division, <code>rem</code> and <code>mod</code>.
+</p>
+<ul>
+<li>
+<p>
+The <code>rem</code> operator returns the remainder left behind by truncated-division. It works like the <code>%</code> operator in C.
+</p>
+</li>
+<li>
+<p>
+The <code>mod</code> operator returns the remainder left behind by floored-division. It works like the <code>%</code> operator in Python and corresponds to the <i>modulo</i> operation in mathematics.
+</p>
+</li>
+</ul>
+<p>
+Note that Pyro panics on signed-integer overflow &mdash; i.e. a mathematical operation on <code>i64</code> values that would result in signed-integer overflow (undefined behaviour in C) will instead produce a panic.
 </p>
 <h3 id="equality-comparison-operators">
 Equality &amp; Comparison Operators

@@ -45,7 +45,15 @@ Note that conditional expressions using the ternary operator `? :|` can't be nes
     `mod`     | Modulo operator. Both operands must be integers.
     `rem`     | Remainder operator. Returns an integer if both operands are integers or a float if either or both are floats.
 
-You can [overload](@root/tutorials/operator-overloading//) the mathematical operators to customize their behaviour for your own types.
+You can [overload](@root/tutorials/operator-overloading//) these mathematical operators to customize their behaviour for your own types.
+
+Note that Pyro has two remainder operators for integer division, `rem` and `mod`.
+
+(*) The `rem` operator returns the remainder left behind by truncated-division. It works like the `%` operator in C.
+
+(*) The `mod` operator returns the remainder left behind by floored-division. It works like the `%` operator in Python and corresponds to the *modulo* operation in mathematics.
+
+Note that Pyro panics on signed-integer overflow --- i.e. a mathematical operation on `i64` values that would result in signed-integer overflow (undefined behaviour in C) will instead produce a panic.
 
 
 
