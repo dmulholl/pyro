@@ -30,7 +30,7 @@ Here, `value` is a new local variable valid inside the scope of the `if` stateme
 
 The syntax is:
 
-    if var <variable-declaration>; <expression> {
+    if [let|var] <variable-declaration>; <expression> {
         ...
     }
 

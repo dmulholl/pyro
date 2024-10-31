@@ -14,7 +14,7 @@ Here's an example of a simple argument parser:
     import std::args;
 
     # Initialize a new argument parser.
-    var parser = args::ArgParser();
+    let parser = args::ArgParser();
     parser:helptext("Usage: foo...");
     parser:version("1.0");
 
@@ -29,8 +29,7 @@ Here's an example of a simple argument parser:
     parser:option("count c", 0, $i64);
 
     # Parse the command line arguments.
-    let result = parser:parse();
-    if $is_err(result) {
+    if let result = parser:parse(); $is_err(result) {
         $exit("error: ${result}");
     }
 
@@ -64,12 +63,12 @@ Here's an example of an argument parser that registers a command:
     }
 
     # Initialize a new argument parser.
-    var parser = args::ArgParser();
+    let parser = args::ArgParser();
     parser:helptext("Usage: foo...");
     parser:version("1.0");
 
     # Register a command 'boo'.
-    var cmd_parser = parser:command("boo");
+    let cmd_parser = parser:command("boo");
     cmd_parser:helptext("Usage: foo boo...");
 
     # We can register flags and options for the command.
@@ -80,8 +79,7 @@ Here's an example of an argument parser that registers a command:
     cmd_parser:callback(cmd_boo);
 
     # Parse the command line arguments.
-    let result = parser:parse();
-    if $is_err(result) {
+    if let result = parser:parse(); $is_err(result) {
         $exit("error: ${result}");
     }
 

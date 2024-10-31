@@ -29,12 +29,13 @@ Here we're setting a default value of `"output.mp3"` for the `--out/-o` option -
 That's it, we're done specifying our interface. Now we can parse the program's command line arguments:
 
 ::: code pyro
-    let result = parser:parse();
-    if $is_err(result) {
+    if let result = parser:parse(); $is_err(result) {
         $exit("error: ${result}");
     }
 
-This will exit with a suitable error message for the user if anything goes wrong. Now we can check if the `--quiet` flag was found:
+This will exit with a suitable error message for the user if anything goes wrong.
+
+Now we can check if the `--quiet` flag was found:
 
 ::: code pyro
     if parser:found("quiet") {

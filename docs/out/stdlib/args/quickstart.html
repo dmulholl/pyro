@@ -95,13 +95,15 @@ Here we're setting a default value of <code>&quot;output.mp3&quot;</code> for th
 That's it, we're done specifying our interface. Now we can parse the program's command line arguments:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span>
-<span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: ${result}&quot;</span><span class="p">);</span>
 <span class="p">}</span>
 </pre>
 <p>
-This will exit with a suitable error message for the user if anything goes wrong. Now we can check if the <code>--quiet</code> flag was found:
+This will exit with a suitable error message for the user if anything goes wrong.
+</p>
+<p>
+Now we can check if the <code>--quiet</code> flag was found:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">if</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">found</span><span class="p">(</span><span class="s">&quot;quiet&quot;</span><span class="p">)</span> <span class="p">{</span>

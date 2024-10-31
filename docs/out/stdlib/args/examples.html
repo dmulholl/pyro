@@ -81,7 +81,7 @@ Here's an example of a simple argument parser:
 <span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">args</span><span class="p">;</span>
 
 <span class="c1"># Initialize a new argument parser.</span>
-<span class="kd">var</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">();</span>
 <span class="nx">parser</span><span class="p">:</span><span class="nx">helptext</span><span class="p">(</span><span class="s">&quot;Usage: foo...&quot;</span><span class="p">);</span>
 <span class="nx">parser</span><span class="p">:</span><span class="nx">version</span><span class="p">(</span><span class="s">&quot;1.0&quot;</span><span class="p">);</span>
 
@@ -96,8 +96,7 @@ Here's an example of a simple argument parser:
 <span class="nx">parser</span><span class="p">:</span><span class="nx">option</span><span class="p">(</span><span class="s">&quot;count c&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">$i64</span><span class="p">);</span>
 
 <span class="c1"># Parse the command line arguments.</span>
-<span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span>
-<span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: ${result}&quot;</span><span class="p">);</span>
 <span class="p">}</span>
 
@@ -132,12 +131,12 @@ Here's an example of an argument parser that registers a command:
 <span class="p">}</span>
 
 <span class="c1"># Initialize a new argument parser.</span>
-<span class="kd">var</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">parser</span> <span class="p">=</span> <span class="nx">args</span><span class="p">::</span><span class="nx">ArgParser</span><span class="p">();</span>
 <span class="nx">parser</span><span class="p">:</span><span class="nx">helptext</span><span class="p">(</span><span class="s">&quot;Usage: foo...&quot;</span><span class="p">);</span>
 <span class="nx">parser</span><span class="p">:</span><span class="nx">version</span><span class="p">(</span><span class="s">&quot;1.0&quot;</span><span class="p">);</span>
 
 <span class="c1"># Register a command &#39;boo&#39;.</span>
-<span class="kd">var</span> <span class="nx">cmd_parser</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">command</span><span class="p">(</span><span class="s">&quot;boo&quot;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">cmd_parser</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">command</span><span class="p">(</span><span class="s">&quot;boo&quot;</span><span class="p">);</span>
 <span class="nx">cmd_parser</span><span class="p">:</span><span class="nx">helptext</span><span class="p">(</span><span class="s">&quot;Usage: foo boo...&quot;</span><span class="p">);</span>
 
 <span class="c1"># We can register flags and options for the command.</span>
@@ -148,8 +147,7 @@ Here's an example of an argument parser that registers a command:
 <span class="nx">cmd_parser</span><span class="p">:</span><span class="nx">callback</span><span class="p">(</span><span class="nx">cmd_boo</span><span class="p">);</span>
 
 <span class="c1"># Parse the command line arguments.</span>
-<span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span>
-<span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">parser</span><span class="p">:</span><span class="nx">parse</span><span class="p">();</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: ${result}&quot;</span><span class="p">);</span>
 <span class="p">}</span>
 
