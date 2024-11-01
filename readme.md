@@ -5,7 +5,8 @@
 [3]: https://www.dmulholl.com/docs/pyro/master/tour.html
 
 
-Pyro is a dynamically-typed, garbage-collected scripting language implemented in C. This means that it lives in roughly the same neighbourhood in programming language space as languages like Python or Ruby.
+Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
+Think Python if Guido had been a fan of lexical-scoping, curly braces, and semicolons.
 
 ```ruby
 def fib(n) {
