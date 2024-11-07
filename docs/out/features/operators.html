@@ -217,7 +217,7 @@ Left
 Conditional
 </td>
 <td>
-<code>? :&#124;</code>
+<code>:? :&#124;</code>
 </td>
 <td>
 None
@@ -237,7 +237,7 @@ Right
 </tbody>
 </table>
 <p>
-Note that conditional expressions using the ternary operator <code>? :|</code> can't be nested. (Checkmate, Satan.)
+Note that conditional expressions using the ternary operator <code>:? :|</code> can't be nested. (Checkmate, Satan.)
 </p>
 <h3 id="mathematical-operators">
 Mathematical Operators
@@ -409,14 +409,17 @@ Note that you can chain multiple <code>&amp;&amp;</code> expressions, e.g.
 The Conditional Operator
 </h3>
 <p>
-The conditional or ternary operator takes three operands. It looks like this:
+The conditional operator (a.k.a the "ternary" operator) takes three operands:
 </p>
-<pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">condition</span> <span class="o">?</span> <span class="nx">expr1</span> <span class="p">:</span><span class="o">|</span> <span class="nx">expr2</span><span class="p">;</span>
+<pre>
+&lt;condition&gt; :? &lt;value-if-true&gt; :| &lt;value-if-false&gt;
 </pre>
 <p>
-The value of the conditional expression is <code>expr1</code> if <code>condition</code> evaluates as <i>truthy</i>, otherwise <code>expr2</code>.
+For example:
 </p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="nx">value</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">:</span><span class="o">?</span> <span class="s">&quot;big&quot;</span> <span class="p">:</span><span class="o">|</span> <span class="s">&quot;small&quot;</span><span class="p">;</span>
+</pre>
 <h3 id="the-null-coalescing-operator">
 The Null-coalescing Operator
 </h3>

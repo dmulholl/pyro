@@ -24,11 +24,10 @@ Operator precedence in the table below goes from high at the top to low at the b
     Comparison       |   `>` `>=` `<` `<=` `in`                          |   Left
     Equality         |   `==` `!=`                                       |   Left
     Logical          |   `&&` <code>&#124;&#124;</code> `??` `!!`        |   Left
-    Conditional      |   <code>? :&#124;</code>                          |   None
+    Conditional      |   <code>:? :&#124;</code>                         |   None
     Assignment       |   `=` `+=` `-=`                                   |   Right
 
-
-Note that conditional expressions using the ternary operator `? :|` can't be nested. (Checkmate, Satan.)
+Note that conditional expressions using the ternary operator `:? :|` can't be nested. (Checkmate, Satan.)
 
 
 
@@ -111,12 +110,15 @@ Note that you can chain multiple `&&` expressions, e.g.
 
 ### The Conditional Operator
 
-The conditional or ternary operator takes three operands. It looks like this:
+The conditional operator (a.k.a the "ternary" operator) takes three operands:
+
+::: code
+    <condition> :? <value-if-true> :| <value-if-false>
+
+For example:
 
 ::: code pyro
-    var value = condition ? expr1 :| expr2;
-
-The value of the conditional expression is `expr1` if `condition` evaluates as *truthy*, otherwise `expr2`.
+    echo value > 100 :? "big" :| "small";
 
 
 
