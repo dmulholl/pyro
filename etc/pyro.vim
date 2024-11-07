@@ -1,5 +1,5 @@
 " Syntax definition file for the Pyro programming language.
-" Version: v8.
+" Version: v9.
 
 " Comments.
 syn match pyroComment "#.*$"
@@ -46,6 +46,10 @@ syn match pyroOperator "??"
 syn match pyroOperator "!!"
 syn match pyroOperator "!="
 syn match pyroOperator "=="
+syn match pyroOperator ":?"
+syn match pyroOperator ":|"
+syn match pyroOperator "<<"
+syn match pyroOperator ">>"
 
 " Default highlighting styles.
 hi def link pyroComment Comment
