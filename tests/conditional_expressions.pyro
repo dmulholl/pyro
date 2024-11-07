@@ -1,0 +1,7 @@
+with result = 100 > 10 :? "true branch" :| "false branch" {
+    assert result == "true branch";
+}
+
+with result = 100 > 1000 :? "true branch" :| "false branch" {
+    assert result == "false branch";
+}

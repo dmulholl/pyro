@@ -1896,12 +1896,14 @@ static void parse_logical_expr(Parser* parser, bool can_assign) {
 
 static void parse_conditional_expr(Parser* parser, bool can_assign) {
     parse_logical_expr(parser, can_assign);
-    if (match(parser, TOKEN_HOOK)) {
+
+    // Matching on TOKEN_HOOK is deprecated.
+    if (match(parser, TOKEN_HOOK) || match(parser, TOKEN_COLON_HOOK)) {
         size_t jump_to_false_branch = emit_jump(parser, PYRO_OPCODE_JUMP_IF_FALSE);
         emit_byte(parser, PYRO_OPCODE_POP);
         parse_logical_expr(parser, false);
         size_t jump_to_end = emit_jump(parser, PYRO_OPCODE_JUMP);
-        consume(parser, TOKEN_COLON_BAR, "expected ':|' after condition");
+        consume(parser, TOKEN_COLON_BAR, "expected ':|' in conditional expression");
         patch_jump(parser, jump_to_false_branch);
         emit_byte(parser, PYRO_OPCODE_POP);
         parse_logical_expr(parser, false);

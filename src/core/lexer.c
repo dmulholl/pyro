@@ -636,6 +636,7 @@ Token pyro_next_token(Lexer* lexer) {
         case ':':
             if (match_char(lexer, ':')) return make_token(lexer, TOKEN_COLON_COLON);
             if (match_char(lexer, '|')) return make_token(lexer, TOKEN_COLON_BAR);
+            if (match_char(lexer, '?')) return make_token(lexer, TOKEN_COLON_HOOK);
             return make_token(lexer, TOKEN_COLON);
 
         case '-':
