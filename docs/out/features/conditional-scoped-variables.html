@@ -76,7 +76,7 @@
 Pyro supports conditional-scoped variable declarations inside <code>if</code> statements, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">if</span> <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_value</span><span class="p">();</span> <span class="nx">value</span> <span class="o">!=</span> <span class="kc">null</span> <span class="p">{</span>
+<span class="k">if</span> <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">get_value</span><span class="p">();</span> <span class="nx">value</span> <span class="o">!=</span> <span class="kc">null</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;value: ${value}&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
@@ -84,9 +84,9 @@ Pyro supports conditional-scoped variable declarations inside <code>if</code> st
 Here, <code>value</code> is a new local variable valid inside the scope of the <code>if</code> statement, including any <code>else if</code> or <code>else</code> clauses, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">if</span> <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">get_number</span><span class="p">();</span> <span class="nx">value</span> <span class="p">&gt;</span> <span class="mi">1000</span> <span class="p">{</span>
+<span class="k">if</span> <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">get_number</span><span class="p">();</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;very big number: ${value}&quot;</span><span class="p">;</span>
-<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;big number: ${value}&quot;</span><span class="p">;</span>
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;small number: ${value}&quot;</span><span class="p">;</span>
@@ -113,7 +113,7 @@ Unpacking
 You can use variable-unpacking syntax inside an <code>if</code> statement, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">if</span> <span class="kd">var</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">=</span> <span class="nx">get_location</span><span class="p">();</span> <span class="nx">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">y</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">{</span>
+<span class="k">if</span> <span class="kd">var</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">=</span> <span class="nx">get_location</span><span class="p">();</span> <span class="nx">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">y</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;correct location&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>

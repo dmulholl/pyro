@@ -126,9 +126,9 @@ Both can contain arbitrary byte sequences, including literal newlines.
 Regular string literals use double quotes:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;a string&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s">&quot;a string&quot;</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;a string</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="s">&quot;a string</span>
 <span class="s">with multiple</span>
 <span class="s">lines&quot;</span><span class="p">;</span>
 </pre>
@@ -247,9 +247,9 @@ tab
 Raw string literals use backticks:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">`a raw string`</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s">`a raw string`</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">`a raw string</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="s">`a raw string</span>
 <span class="s">with multiple</span>
 <span class="s">lines`</span><span class="p">;</span>
 </pre>
@@ -263,7 +263,7 @@ String Interpolation
 You can interpolate the value of an expression into a double-quoted string using <code>${}</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc xyz def`</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value:to_upper()} def&quot;</span> <span class="o">==</span> <span class="s">`abc XYZ def`</span><span class="p">;</span>
 </pre>
@@ -272,7 +272,7 @@ You can interpolate the value of any expression into a string using <code>${}</c
 If the value of the expression isn't a string, it will be automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on the value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc 123 def`</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value + 1} def&quot;</span> <span class="o">==</span> <span class="s">`abc 124 def`</span><span class="p">;</span>
 </pre>
@@ -280,7 +280,7 @@ If the value of the expression isn't a string, it will be automatically stringif
 You can backslash-escape a <code>$</code> symbol in a double-quoted string to prevent it being treated as the opening of an interpolated expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc \${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc ${value} def`</span><span class="p">;</span>
 </pre>
 <p>
@@ -290,7 +290,7 @@ Interpolated expressions can be nested arbitrarily &mdash; i.e. an interpolated 
 You can format the value of an interpolated expression by supplying a format-specifier after a semicolon, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;${value;05d}&quot;</span> <span class="o">==</span> <span class="s">`00123`</span><span class="p">;</span>
 </pre>
 <p>
@@ -303,8 +303,8 @@ Equality
 Strings compare as equal using the <code>==</code> operator if they have the same content, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <h3 id="comparisons">
@@ -314,14 +314,14 @@ Comparisons
 You can compare strings using the comparison operators, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="o">&lt;</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Strings are compared lexicographically by byte value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;a&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aa&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="s">&quot;aa&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aaa&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;a&quot;</span> <span class="o">&lt;</span> <span class="s">&quot;aa&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;aa&quot;</span> <span class="o">&lt;</span> <span class="s">&quot;aaa&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="concatenating">
 Concatenating

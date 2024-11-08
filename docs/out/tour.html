@@ -148,7 +148,7 @@ Comments begin with a <code>#</code> symbol and run to the end of the line:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="c1"># Full line comment.</span>
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span> <span class="c1"># Partial line comment.</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span> <span class="c1"># Partial line comment.</span>
 </pre>
 <h3 id="variables">
 Variables
@@ -157,7 +157,7 @@ Variables
 Variables are declared using the <code>var</code> keyword:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
 Variables must be declared before use. If an initial value isn't specified, the variable gets the default value <code>null</code>, e.g.
@@ -171,16 +171,16 @@ You can declare multiple variables in a single statement, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">baz</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span> <span class="nx">bam</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">baz</span> <span class="o">=</span> <span class="mi">123</span><span class="p">,</span> <span class="nx">bam</span> <span class="o">=</span> <span class="mi">456</span><span class="p">;</span>
 </pre>
 <p>
 Variables have lexical scope and declarations inside blocks will shadow outer declarations, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 
 <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">456</span><span class="p">;</span>
     <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -199,14 +199,14 @@ Constants
 Use the <code>let</code> keyword to declare a constant, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
 Constants work just like variables, but can only be assigned a value in their declaration statement, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
-<span class="nx">value</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
+<span class="kd">let</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="nx">value</span> <span class="o">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
 </pre>
 <p>
 You can learn more about constants <a href="features/constants.html">here</a>.
@@ -290,24 +290,24 @@ Remainder operator. Returns an integer if both operands are integers or a float 
 Integer literals can use binary, octal, decimal, or hex notation:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">a</span> <span class="p">=</span> <span class="mb">0b101</span><span class="p">;</span>      <span class="c1"># a == 5</span>
-<span class="kd">var</span> <span class="nx">b</span> <span class="p">=</span> <span class="mo">0o101</span><span class="p">;</span>      <span class="c1"># b == 65</span>
-<span class="kd">var</span> <span class="nx">c</span> <span class="p">=</span> <span class="mi">101</span><span class="p">;</span>        <span class="c1"># c == 101</span>
-<span class="kd">var</span> <span class="nx">d</span> <span class="p">=</span> <span class="mh">0x101</span><span class="p">;</span>      <span class="c1"># d == 257</span>
+<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="mb">0b101</span><span class="p">;</span>      <span class="c1"># a == 5</span>
+<span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="mo">0o101</span><span class="p">;</span>      <span class="c1"># b == 65</span>
+<span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="mi">101</span><span class="p">;</span>        <span class="c1"># c == 101</span>
+<span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="mh">0x101</span><span class="p">;</span>      <span class="c1"># d == 257</span>
 </pre>
 <p>
 Integer literals can use underscores to improve readability:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123_456</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="mb">0b1010_0101</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">123_456</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="mb">0b1010_0101</span><span class="p">;</span>
 </pre>
 <p>
 Float literals require a decimal point and can also use underscores to improve readability:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mf">1.0</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">pi</span> <span class="p">=</span> <span class="mf">3.141_592_654</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">pi</span> <span class="o">=</span> <span class="mf">3.141_592_654</span><span class="p">;</span>
 </pre>
 <h3 id="strings">
 Strings
@@ -316,7 +316,7 @@ Strings
 A <a href="builtins/strings.html">string</a>, <code>str</code>, is an immutable array of bytes.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">string</span> <span class="p">=</span> <span class="s">&quot;hello pyro&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="s">&quot;hello pyro&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but the string type itself is agnostic about its encoding &mdash; a string can contain any sequence of byte values including null bytes or invalid UTF-8.
@@ -334,9 +334,9 @@ A <a href="builtins/runes.html">rune</a>, <code>rune</code>, is an unsigned 32-b
 Rune literals use single quotes:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">r1</span> <span class="p">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">r2</span> <span class="p">=</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">r3</span> <span class="p">=</span> <span class="sc">&#39;🔥&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r1</span> <span class="o">=</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r2</span> <span class="o">=</span> <span class="sc">&#39;€&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">r3</span> <span class="o">=</span> <span class="sc">&#39;🔥&#39;</span><span class="p">;</span>
 </pre>
 <p>
 You can find a full description of the rune type <a href="builtins/runes.html">here</a>.
@@ -377,7 +377,7 @@ Uninitialized variables have the default value <code>null</code>.
 You can use the null-coalescing operator <code>??</code> to supply a default value in place of a <code>null</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Functions which don't explicitly specify a return value have the default return value <code>null</code>.
@@ -400,24 +400,24 @@ Numerical types (i.e. <code>i64</code>, <code>f64</code>, and <code>rune</code>)
 <a href="builtins/strings.html">Strings</a> compare as equal if they have the same content, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
 <a href="builtins/tuples.html">Tuples</a> compare as equal if they have the same length and their elements are equal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
 <a href="builtins/sets.html">Sets</a> compare as equal if they are set-equivalent, i.e. if they contain the same items in any order, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">};</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">};</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">};</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
@@ -426,8 +426,8 @@ By default, all other objects compare as equal only if they are the same object,
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Object</span> <span class="p">{}</span>
 
-<span class="kd">var</span> <span class="nx">obj1</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">obj2</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">obj1</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">obj2</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
 
 <span class="k">assert</span> <span class="nx">obj1</span> <span class="o">==</span> <span class="nx">obj1</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">obj1</span> <span class="o">!=</span> <span class="nx">obj2</span><span class="p">;</span>
@@ -442,27 +442,27 @@ Comparisons
 You can use the comparison operators (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>) with any combination of numerical types, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="mf">2.0</span> <span class="p">&gt;</span> <span class="mi">1</span><span class="p">;</span>
-<span class="k">assert</span> <span class="sc">&#39;a&#39;</span> <span class="p">&gt;</span> <span class="mi">42</span><span class="p">;</span>
+<span class="k">assert</span> <span class="mf">2.0</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">assert</span> <span class="sc">&#39;a&#39;</span> <span class="o">&gt;</span> <span class="mi">42</span><span class="p">;</span>
 </pre>
 <p>
 The comparison operators also work with <a href="builtins/strings.html">strings</a>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;abc&quot;</span> <span class="o">&lt;</span> <span class="s">&quot;def&quot;</span><span class="p">;</span>
 </pre>
 <p>
 <a href="builtins/strings.html">Strings</a> are compared lexicographically by byte value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="s">&quot;a&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aa&quot;</span><span class="p">;</span>
-<span class="k">assert</span> <span class="s">&quot;aa&quot;</span> <span class="p">&lt;</span> <span class="s">&quot;aaa&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;a&quot;</span> <span class="o">&lt;</span> <span class="s">&quot;aa&quot;</span><span class="p">;</span>
+<span class="k">assert</span> <span class="s">&quot;aa&quot;</span> <span class="o">&lt;</span> <span class="s">&quot;aaa&quot;</span><span class="p">;</span>
 </pre>
 <p>
 You can use the comparison operators directly on <a href="builtins/tuples.html">tuples</a>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="k">assert</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
 </pre>
 <p>
 <a href="builtins/tuples.html">Tuples</a> are compared lexicographically by element.
@@ -532,7 +532,7 @@ Pyro has support for three different looping constructs.
 The simplest is the infinite loop:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
 <span class="k">loop</span> <span class="p">{</span>
     <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
@@ -547,7 +547,7 @@ The simplest is the infinite loop:
 The <code>loop</code> statement also supports C-style loops with an initializer, a condition, and an incrementing expression:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">loop</span> <span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">{</span>
+<span class="k">loop</span> <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
@@ -555,7 +555,7 @@ The <code>loop</code> statement also supports C-style loops with an initializer,
 The <code>for</code> keyword in Pyro is used for looping over <a href="features/iterators.html">iterators</a>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
 
 <span class="k">for</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">vec</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">item</span><span class="p">;</span>
@@ -565,9 +565,9 @@ The <code>for</code> keyword in Pyro is used for looping over <a href="features/
 Finally, Pyro supports <code>while</code> loops:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<span class="k">while</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span> <span class="p">{</span>
+<span class="k">while</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="p">{</span>
     <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -583,7 +583,7 @@ Conditions
 Conditional statements in Pyro look like this:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">if</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
+<span class="k">if</span> <span class="nx">money</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;we have lots of money&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
@@ -599,9 +599,9 @@ if &lt;expression&gt; {
 As you'd expect, <code>if</code> statements support optional <code>else if</code> and <code>else</code> clauses:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">if</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
+<span class="k">if</span> <span class="nx">money</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;we have lots of money&quot;</span><span class="p">;</span>
-<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">money</span> <span class="p">&gt;</span> <span class="mi">10</span> <span class="p">{</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">money</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;we have some money&quot;</span><span class="p">;</span>
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;we&#39;re poor&quot;</span><span class="p">;</span>
@@ -636,11 +636,11 @@ An inner function declared inside an outer function can capture the outer functi
     <span class="k">return</span> <span class="nx">adder</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">adds_one</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">adds_one</span> <span class="o">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">adds_one</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">adds_one</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">adds_two</span> <span class="p">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">adds_two</span> <span class="o">=</span> <span class="nx">make_adder</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">adds_two</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
@@ -649,7 +649,7 @@ Functions are first-class citizens in Pyro, meaning you can pass them around jus
 You can also declare and use functions anonymously, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">add</span> <span class="p">=</span> <span class="kd">def</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="kd">def</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -668,10 +668,10 @@ Class definitions look like this:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">role</span> <span class="o">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
@@ -683,7 +683,7 @@ Class definitions look like this:
 Create an instance of a class by calling its name, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">person</span> <span class="p">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">person</span> <span class="o">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">person</span><span class="p">.</span><span class="nx">name</span> <span class="o">==</span> <span class="s">&quot;Dave&quot;</span><span class="p">;</span>
 </pre>
 <p>
@@ -699,7 +699,7 @@ Call a method on an instance using the method access operator, <code>:</code>, e
 Get or set an instance's fields using the field access operator, <code>.</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">person</span><span class="p">.</span><span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;pointy headed manager&quot;</span><span class="p">;</span>
+<span class="nx">person</span><span class="p">.</span><span class="nx">role</span> <span class="o">=</span> <span class="s">&quot;pointy headed manager&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">person</span><span class="p">:</span><span class="nx">info</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Dave is a pointy headed manager.&quot;</span><span class="p">;</span>
 </pre>
 <p>
@@ -715,7 +715,7 @@ Vectors
 Pyro has a builtin <a href="builtins/vectors.html">vector</a> type, <code>vec</code> &mdash; a dynamic array similar to a <code>list</code> in Python. You can create a <code>vec</code> using a vector-literal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">];</span>
 </pre>
 <p>
 Vectors use zero-based indices, e.g.
@@ -728,7 +728,7 @@ Vectors use zero-based indices, e.g.
 You can index into a vector to get or set entries, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
+<span class="nx">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
 </pre>
 <p>
@@ -748,9 +748,9 @@ Maps
 Pyro has a builtin <a href="builtins/maps.html">map</a> type, <code>map</code> &mdash; an ordered hash-map similar to a <code>dict</code> in Python. You can create a <code>map</code> using a map-literal, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span>
-    <span class="s">&quot;foo&quot;</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s">&quot;bar&quot;</span> <span class="p">=</span> <span class="mi">456</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;foo&quot;</span> <span class="o">=</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s">&quot;bar&quot;</span> <span class="o">=</span> <span class="mi">456</span><span class="p">,</span>
 <span class="p">};</span>
 </pre>
 <p>
@@ -760,7 +760,7 @@ You can index into a <code>map</code> to get or set entries, e.g.
 <span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;bar&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 
-<span class="nx">map</span><span class="p">[</span><span class="s">&quot;baz&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">789</span><span class="p">;</span>
+<span class="nx">map</span><span class="p">[</span><span class="s">&quot;baz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">789</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">map</span><span class="p">[</span><span class="s">&quot;baz&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
 </pre>
 <p>
@@ -773,7 +773,7 @@ Errors
 Pyro has a dedicated <a href="builtins/errors.html">error</a> type, <code>err</code>, which a function can return to indicate failure, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">str_len</span><span class="p">(</span><span class="nx">arg</span><span class="p">:</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-</span><span class="p">&gt;</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">err</span> <span class="p">{</span>
+<span class="kd">def</span> <span class="nx">str_len</span><span class="p">(</span><span class="nx">arg</span><span class="p">:</span> <span class="nx">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nx">i64</span><span class="o">|</span><span class="nx">err</span> <span class="p">{</span>
     <span class="k">if</span> <span class="nx">$is_str</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">arg</span><span class="p">:</span><span class="nx">byte_count</span><span class="p">();</span>
     <span class="p">}</span>
@@ -784,7 +784,7 @@ Pyro has a dedicated <a href="builtins/errors.html">error</a> type, <code>err</c
 You can check if a value is an <code>err</code> using the <code>$is_err()</code> function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">str_len</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">str_len</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
 
 <span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">$exit</span><span class="p">(</span><span class="s">&quot;error: ${result}&quot;</span><span class="p">);</span>
@@ -796,7 +796,7 @@ You can check if a value is an <code>err</code> using the <code>$is_err()</code>
 Alternatively, you can provide a default value for a function call that might fail using the error-coalescing operator <code>!!</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">str_len</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">str_len</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>
 </pre>
 <p>
 You can find a full description of the <code>err</code> type <a href="builtins/errors.html">here</a>.
@@ -814,7 +814,7 @@ An untrapped panic will cause the program to exit with an error message, a stack
 You can trap a panic using a <code>try</code> expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
 </pre>
 <p>
 A <code>try</code> expression returns the value of its operand if it evaluates without panicking or an <code>err</code> if it panics.
@@ -823,15 +823,15 @@ A <code>try</code> expression returns the value of its operand if it evaluates w
 <code>try</code> is a unary operator with the same precedence as <code>!</code> or <code>-</code> so you should wrap lower-precedence expressions in brackets, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>  <span class="c1"># 0.5</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">);</span>  <span class="c1"># err</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>  <span class="c1"># 0.5</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">);</span>  <span class="c1"># err</span>
 </pre>
 <p>
 You can use the error-coalescing operator <code>!!</code> to provide a default value for a panicking expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0.5</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0.5</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="k">try</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span><span class="p">)</span> <span class="o">!!</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># 0</span>
 </pre>
 <p>
 You can raise a panic from your own code by calling the <code>$panic()</code> function with an error message, e.g.
@@ -854,7 +854,7 @@ Assume we have a file called <code>math.pyro</code> containing math functions:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">math</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <p>
 Modules can contain submodules. Assume we have a directory called <code>math</code> containing a file called <code>trig.pyro</code>:
@@ -862,7 +862,7 @@ Modules can contain submodules. Assume we have a directory called <code>math</co
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <p>
 Modules are a big enough topic to deserve a page of their own which you can find <a href="features/modules.html">here</a>.
@@ -889,7 +889,7 @@ Unpacking
 You can unpack the values of a <a href="builtins/tuples.html">tuple</a> or <a href="builtins/vectors.html">vector</a> in a <code>var</code> declaration using <code>()</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="o">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
 
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
@@ -899,7 +899,7 @@ You can unpack the values of a <a href="builtins/tuples.html">tuple</a> or <a hr
 You can discard unwanted values by assigning them to the unnamed variable <code>_</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="o">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
 
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
@@ -908,7 +908,7 @@ You can discard unwanted values by assigning them to the unnamed variable <code>
 You can partially unpack the leading values, ignoring the remainder, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+<span class="kd">var</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">)</span> <span class="o">=</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
 
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
@@ -917,9 +917,9 @@ You can partially unpack the leading values, ignoring the remainder, e.g.
 Similarly, you can unpack the loop variable of a <code>for</code> loop if it's a tuple or vector, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">map</span> <span class="p">=</span> <span class="p">{</span>
-    <span class="s">&quot;foo&quot;</span> <span class="p">=</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s">&quot;bar&quot;</span> <span class="p">=</span> <span class="mi">456</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;foo&quot;</span> <span class="o">=</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s">&quot;bar&quot;</span> <span class="o">=</span> <span class="mi">456</span><span class="p">,</span>
 <span class="p">};</span>
 
 <span class="k">for</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="k">in</span> <span class="nx">map</span> <span class="p">{</span>

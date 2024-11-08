@@ -106,10 +106,10 @@ Returns the new string created by interpolating the argument values into the for
 A format string is a string containing <code>{}</code> placeholders, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="s">&quot;123 and 456&quot;</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{} and {}&quot;</span><span class="p">,</span> <span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="s">&quot;abc and def&quot;</span><span class="p">;</span>
 </pre>
 <p>
@@ -311,35 +311,35 @@ Here's a sample class with custom <code>:$str()</code>, <code>:$debug()</code>, 
 Calling <code>$str()</code> on an instance returns the output of its <code>:$str()</code> method, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">object</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;str&gt;&quot;</span><span class="p">;</span>
 </pre>
 <p>
 An empty format specifier in a format string is equivalent to calling <code>$str()</code> on the value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">object</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;str&gt;&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Calling <code>$debug()</code> on an instance returns the output of its <code>:$debug()</code> method, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">object</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">$debug</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;debug&gt;&quot;</span><span class="p">;</span>
 </pre>
 <p>
 A format specifier consisting of a single question mark is equivalent to calling <code>$debug()</code> on the value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">object</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{:?}&quot;</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;debug&gt;&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Otherwise, the format specifier gets passed to the value's <code>:$fmt()</code> method, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">object</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{:xyz}&quot;</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;&lt;xyz&gt;&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="string-interpolation">
@@ -352,7 +352,7 @@ In practice, many common use-cases for string-formatting can be handled by strin
 You can interpolate the value of an expression into a double-quoted string literal using <code>${}</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc xyz def`</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value:to_upper()} def&quot;</span> <span class="o">==</span> <span class="s">`abc XYZ def`</span><span class="p">;</span>
 </pre>
@@ -368,7 +368,7 @@ You can interpolate the value of any expression into a double-quoted string lite
 If the value of the expression isn't a string, it will be automatically stringified &mdash; this is equivalent to calling <code>$str()</code> on the value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc 123 def`</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value + 1} def&quot;</span> <span class="o">==</span> <span class="s">`abc 124 def`</span><span class="p">;</span>
 </pre>
@@ -376,7 +376,7 @@ If the value of the expression isn't a string, it will be automatically stringif
 You can backslash-escape a <code>$</code> symbol in a double-quoted string to prevent it being treated as the opening of an interpolated expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc \${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc ${value} def`</span><span class="p">;</span>
 </pre>
 <p>
@@ -386,7 +386,7 @@ Interpolated expressions can be nested arbitrarily &mdash; i.e. an interpolated 
 You can format the value of an interpolated expression by supplying a format-specifier after a semicolon, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;${value;05d}&quot;</span> <span class="o">==</span> <span class="s">`00123`</span><span class="p">;</span>
 </pre>
 <p>

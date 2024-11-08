@@ -146,7 +146,7 @@ assert &lt;expression&gt; [, &lt;error-message&gt;] ;
 Optionally, you can specify an error message in case the assertion fails, e.g.
 </p>
 <pre class="lang-Pyro pygments" data-lang="Pyro">
-<span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">get_result</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">get_result</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">result</span> <span class="o">==</span> <span class="mi">123</span><span class="p">,</span> <span class="s">&quot;unexpected result: ${result}&quot;</span><span class="p">;</span>
 </pre>
 <p>
@@ -154,8 +154,8 @@ Alternatively, you can make a test fail by calling the builtin <code>$panic()</c
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">$test_result_type</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">get_result</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">!</span><span class="nx">$is_i64</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">get_result</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">!</span><span class="nx">$is_i64</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;expected i64, got {}&quot;</span><span class="p">,</span> <span class="nx">$type</span><span class="p">(</span><span class="nx">result</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">}</span>

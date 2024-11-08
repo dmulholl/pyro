@@ -87,9 +87,9 @@ C-Style Loops
 A C-style loop has a single loop variable that's shared by every iteration of the loop, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">closures</span> <span class="p">=</span> <span class="p">[];</span>
+<span class="kd">var</span> <span class="nx">closures</span> <span class="o">=</span> <span class="p">[];</span>
 
-<span class="k">loop</span> <span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">{</span>
+<span class="k">loop</span> <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">{</span>
     <span class="nx">closures</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="kd">def</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
     <span class="p">});</span>
@@ -109,7 +109,7 @@ For-In Loops
 Each iteration of a for-in loop has its own independent loop variable that can be independently captured, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">closures</span> <span class="p">=</span> <span class="p">[];</span>
+<span class="kd">var</span> <span class="nx">closures</span> <span class="o">=</span> <span class="p">[];</span>
 
 <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">closures</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="kd">def</span><span class="p">()</span> <span class="p">{</span>
@@ -131,10 +131,10 @@ While Loops
 <code>while</code> loops don't support variable declarations, so there's no scope for ambiguity, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">closures</span> <span class="p">=</span> <span class="p">[];</span>
-<span class="kd">var</span> <span class="nx">i</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">closures</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<span class="k">while</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">3</span> <span class="p">{</span>
+<span class="k">while</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="p">{</span>
     <span class="nx">closures</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="kd">def</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
     <span class="p">});</span>

@@ -82,14 +82,14 @@
 Use the <code>let</code> keyword to declare a constant, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <p>
 Constants work just like variables, but can only be assigned a value in their declaration statement, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
-<span class="nx">value</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
+<span class="kd">let</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="nx">value</span> <span class="o">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
 </pre>
 <h3 id="shadowing">
 Shadowing
@@ -98,10 +98,10 @@ Shadowing
 Like variables, constants have lexical scope, and declarations inside inner blocks will shadow outer declarations, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 
 <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">456</span><span class="p">;</span>
     <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -111,12 +111,12 @@ Like variables, constants have lexical scope, and declarations inside inner bloc
 A variable-declaration can shadow a constant-declaration and vice versa, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 
 <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">456</span><span class="p">;</span>
     <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
-    <span class="nx">foo</span> <span class="p">=</span> <span class="mi">789</span><span class="p">;</span>
+    <span class="nx">foo</span> <span class="o">=</span> <span class="mi">789</span><span class="p">;</span>
     <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -129,7 +129,7 @@ Unpacking
 Like variables, constants support unpacking, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="p">=</span> <span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
+<span class="kd">let</span> <span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="nx">bar</span><span class="p">,</span> <span class="nx">baz</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">baz</span> <span class="o">==</span> <span class="mi">789</span><span class="p">;</span>
@@ -141,12 +141,12 @@ Mutable Objects
 A mutable object assigned to a constant remains mutable &mdash; i.e. the constant cannot be reassigned but the object itself can still be mutated, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">let</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">];</span>
+<span class="kd">let</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">];</span>
 
 <span class="nx">vec</span><span class="p">:</span><span class="nx">append</span><span class="p">(</span><span class="s">&quot;baz&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="s">&quot;baz&quot;</span> <span class="k">in</span> <span class="nx">vec</span><span class="p">;</span>
 
-<span class="nx">vec</span> <span class="p">=</span> <span class="p">[];</span> <span class="c1"># syntax error</span>
+<span class="nx">vec</span> <span class="o">=</span> <span class="p">[];</span> <span class="c1"># syntax error</span>
 </pre>
 <h3 id="constants-in-the-repl">
 Constants in the REPL

@@ -74,9 +74,9 @@ A module object, <code>module</code>, is created when you import a Pyro source f
 A module object can also be created by executing a string of source code using the <code>$exec()</code> function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">mod</span> <span class="p">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">&quot;pub var foo = 1 + 2;&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">$is_module</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+<span class="kd">var</span> <span class="k">mod</span> <span class="o">=</span> <span class="nx">$exec</span><span class="p">(</span><span class="s">&quot;pub var foo = 1 + 2;&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">$is_module</span><span class="p">(</span><span class="k">mod</span><span class="p">);</span>
+<span class="k">assert</span> <span class="k">mod</span><span class="p">::</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <p>
 A module contains <i>members</i> &mdash; its global variables, functions, and classes &mdash; which can be accessed using the member operator, <code>::</code>.
@@ -85,10 +85,10 @@ A module contains <i>members</i> &mdash; its global variables, functions, and cl
 A module object also has methods of its own, which can be accessed using the method operator, <code>:</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">has_member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
+<span class="k">assert</span> <span class="k">mod</span><span class="p">:</span><span class="nx">has_member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="k">mod</span><span class="p">:</span><span class="nx">member</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">globals</span> <span class="p">=</span> <span class="nx">mod</span><span class="p">:</span><span class="nx">globals</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">globals</span> <span class="o">=</span> <span class="k">mod</span><span class="p">:</span><span class="nx">globals</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">globals</span><span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">;</span>
 </pre>
 <p>

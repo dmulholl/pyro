@@ -82,7 +82,7 @@ An <code>enum</code> is an <i>enumerated type</i> &mdash; i.e. a type defined wi
     <span class="nx">Blue</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">color</span> <span class="p">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">color</span> <span class="o">==</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">color</span> <span class="o">!=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Blue</span><span class="p">;</span>
 </pre>
@@ -91,12 +91,12 @@ Optionally, each <code>enum</code> member can have an associated value, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span>
-    <span class="nx">Red</span> <span class="p">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
-    <span class="nx">Green</span> <span class="p">=</span> <span class="s">&quot;green&quot;</span><span class="p">,</span>
-    <span class="nx">Blue</span> <span class="p">=</span> <span class="s">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="nx">Red</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
+    <span class="nx">Green</span> <span class="o">=</span> <span class="s">&quot;green&quot;</span><span class="p">,</span>
+    <span class="nx">Blue</span> <span class="o">=</span> <span class="s">&quot;blue&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">color</span> <span class="p">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">color</span><span class="p">:</span><span class="nx">value</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;red&quot;</span><span class="p">;</span>
 </pre>
 <p>
@@ -104,11 +104,11 @@ A member's value is arbitrary and members with the same value remain unique and 
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span>
-    <span class="nx">Red</span> <span class="p">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
-    <span class="nx">Crimson</span> <span class="p">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
+    <span class="nx">Red</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
+    <span class="nx">Crimson</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">color</span> <span class="p">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">color</span> <span class="o">==</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">color</span> <span class="o">!=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Crimson</span><span class="p">;</span>
 </pre>
@@ -118,14 +118,14 @@ If a member doesn't have an explicitly assigned value, its associated value is <
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">enum</span> <span class="nx">Number</span> <span class="p">{</span>
     <span class="nx">Unknown</span><span class="p">,</span>
-    <span class="nx">One</span> <span class="p">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nx">Two</span> <span class="p">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">One</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">Two</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">Number</span><span class="p">::</span><span class="nx">One</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">Number</span><span class="p">::</span><span class="nx">One</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">foo</span><span class="p">:</span><span class="nx">value</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="nx">Number</span><span class="p">::</span><span class="nx">Unknown</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="nx">Number</span><span class="p">::</span><span class="nx">Unknown</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">bar</span><span class="p">:</span><span class="nx">value</span><span class="p">()</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
 </pre>
 <h3 id="enum-type-methods">

@@ -376,13 +376,13 @@ The value of the logical-OR expression <code>a || b</code> is the value of the f
 This means you can use the <code>||</code> operator to swap in a default value in place of a <i>falsey</i> expression, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Note that you can chain multiple <code>||</code> expressions, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">maybe_falsey</span><span class="p">()</span> <span class="o">||</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">||</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
 The value of the logical-AND expression <code>a &amp;&amp; b</code> is the value of the first operand if that operand is <i>falsey</i>, otherwise the value of the second operand.
@@ -418,7 +418,7 @@ The conditional operator (a.k.a the "ternary" operator) takes three operands:
 For example:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="k">echo</span> <span class="nx">value</span> <span class="p">&gt;</span> <span class="mi">100</span> <span class="p">:</span><span class="o">?</span> <span class="s">&quot;big&quot;</span> <span class="p">:</span><span class="o">|</span> <span class="s">&quot;small&quot;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="o">:?</span> <span class="s">&quot;big&quot;</span> <span class="o">:|</span> <span class="s">&quot;small&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="the-null-coalescing-operator">
 The Null-coalescing Operator
@@ -427,7 +427,7 @@ The Null-coalescing Operator
 The null-coalescing operator <code>??</code> lets you swap in a default value in place of a <code>null</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
 The value of the expression <code>a ?? b</code> is the value of the first operand if that operand is not <code>null</code>, otherwise the value of the second operand.
@@ -436,7 +436,7 @@ The value of the expression <code>a ?? b</code> is the value of the first operan
 You can chain multiple <code>??</code> expressions, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">maybe_null</span><span class="p">()</span> <span class="o">??</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">??</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="the-error-coalescing-operator">
 The Error-coalescing Operator
@@ -445,7 +445,7 @@ The Error-coalescing Operator
 The error-coalescing operator <code>!!</code> lets you swap in a default value in place of an error:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_error</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">maybe_error</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <p>
 The value of the expression <code>a !! b</code> is the value of the first operand if that operand is not an <code>err</code>, otherwise the value of the second operand.
@@ -454,7 +454,7 @@ The value of the expression <code>a !! b</code> is the value of the first operan
 You can chain multiple <code>!!</code> expressions, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">maybe_error</span><span class="p">()</span> <span class="o">!!</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">maybe_error</span><span class="p">()</span> <span class="o">!!</span> <span class="nx">get_fallback</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="assignment-operators">
 Assignment Operators
@@ -464,7 +464,7 @@ An assignment expression, <code>a = b</code>, returns the value assigned, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">foo</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="p">(</span><span class="nx">foo</span> <span class="p">=</span> <span class="mi">5</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="p">(</span><span class="nx">foo</span> <span class="o">=</span> <span class="mi">5</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">5</span><span class="p">;</span>
 </pre>
 <p>
@@ -477,7 +477,7 @@ Assignment using a compound assignment operator, e.g.
 is equivalent to the longform expression:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">foo</span> <span class="p">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="nx">bar</span><span class="p">;</span>
+<span class="nx">foo</span> <span class="o">=</span> <span class="nx">foo</span> <span class="o">+</span> <span class="nx">bar</span><span class="p">;</span>
 </pre>
 <p>
 Compound assignment operators cannot be overloaded independently of their base operators &mdash; i.e. overloading <code>+</code> automatically overloads <code>+=</code>;

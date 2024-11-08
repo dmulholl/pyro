@@ -134,7 +134,7 @@ String interpolation
 You can interpolate the value of an expression into a double-quoted string using <code>${}</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc xyz def`</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value:to_upper()} def&quot;</span> <span class="o">==</span> <span class="s">`abc XYZ def`</span><span class="p">;</span>
 </pre>
@@ -142,7 +142,7 @@ You can interpolate the value of an expression into a double-quoted string using
 The value doesn't have to be a string &mdash; if it isn't a string, it will be automatically <i>stringified</i>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value} def&quot;</span> <span class="o">==</span> <span class="s">`abc 123 def`</span><span class="p">;</span>
 <span class="k">assert</span> <span class="s">&quot;abc ${value + 1} def&quot;</span> <span class="o">==</span> <span class="s">`abc 124 def`</span><span class="p">;</span>
 </pre>
@@ -156,19 +156,19 @@ Run a shell command
 The <code>$()</code> function runs a shell command and returns its output as a string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">current_directory</span> <span class="p">=</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">current_directory</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
 </pre>
 <p>
 The <code>$shell()</code> function provides more control over input and output. It returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a buffer, and its <code>stderr</code> output as a buffer, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">out_buf</span><span class="p">,</span> <span class="nx">err_buf</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">out_buf</span><span class="p">,</span> <span class="nx">err_buf</span><span class="p">)</span> <span class="o">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;pwd&quot;</span><span class="p">);</span>
 </pre>
 <p>
 You can provide an input string to <code>$shell()</code> which will be written to the command's <code>stdin</code> stream, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">with</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">out_buf</span><span class="p">,</span> <span class="nx">err_buf</span><span class="p">)</span> <span class="p">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;cat&quot;</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">with</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">out_buf</span><span class="p">,</span> <span class="nx">err_buf</span><span class="p">)</span> <span class="o">=</span> <span class="nx">$shell</span><span class="p">(</span><span class="s">&quot;cat&quot;</span><span class="p">,</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">assert</span> <span class="nx">code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">assert</span> <span class="nx">out_buf</span><span class="p">:</span><span class="nx">to_str</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;foo bar&quot;</span><span class="p">;</span>
     <span class="k">assert</span> <span class="nx">err_buf</span><span class="p">:</span><span class="nx">to_str</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
@@ -182,7 +182,7 @@ Here's a Pyro implementation of the classic recursive algorithm for returning th
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="mi">2</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);</span>
@@ -195,14 +195,14 @@ Reading from standard input
 Read a single line from the standard input stream:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">line</span> <span class="p">=</span> <span class="nx">$input</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="nx">$input</span><span class="p">();</span>
 </pre>
 <p>
 Read a sequence of lines in a loop from the standard input stream:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="k">loop</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">line</span> <span class="p">=</span> <span class="nx">$input</span><span class="p">(</span><span class="s">&quot;&gt;&gt;&gt; &quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="nx">$input</span><span class="p">(</span><span class="s">&quot;&gt;&gt;&gt; &quot;</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="nx">line</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">line</span> <span class="o">==</span> <span class="s">&quot;exit&quot;</span> <span class="p">{</span>
         <span class="k">break</span><span class="p">;</span>
@@ -215,7 +215,7 @@ Read a sequence of lines in a loop from the standard input stream:
 The <code>$input()</code> function is provided for simple use-cases. You can also access the standard input stream as a <a href="builtins/files.html">file</a> using the <code>$stdin</code> <a href="superglobals.html">superglobal</a>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">input</span> <span class="p">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">input</span> <span class="o">=</span> <span class="nx">$stdin</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
 </pre>
 <h3 id="reading-from-a-file">
 Reading from a file
@@ -224,13 +224,13 @@ Reading from a file
 Read the content of a file into a string:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">string</span> <span class="p">=</span> <span class="nx">$read_file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">string</span> <span class="o">=</span> <span class="nx">$read_file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">);</span>
 </pre>
 <p>
 This is a convenience function &mdash; a <code>file</code> object provides more fine-grained control:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">with</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;input.txt&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="nx">file</span><span class="p">:</span><span class="nx">read_string</span><span class="p">();</span>
 <span class="p">}</span>
 </pre>
@@ -247,7 +247,7 @@ Write a string to a file:
 This is a convenience function &mdash; a <code>file</code> object provides more fine-grained control:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">with</span> <span class="nx">file</span> <span class="p">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">with</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">$file</span><span class="p">(</span><span class="s">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">file</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;Content for file...&quot;</span><span class="p">);</span>
 <span class="p">}</span>
 </pre>
@@ -260,10 +260,10 @@ The classic guess-a-random-number game:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">std</span><span class="p">::</span><span class="nx">prng</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">target</span> <span class="p">=</span> <span class="nx">prng</span><span class="p">::</span><span class="nx">rand_int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">prng</span><span class="p">::</span><span class="nx">rand_int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
 
 <span class="k">loop</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">guess</span> <span class="p">=</span> <span class="nx">$input</span><span class="p">(</span><span class="s">&quot;Enter a number between 1 and 10: &quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">guess</span> <span class="o">=</span> <span class="nx">$input</span><span class="p">(</span><span class="s">&quot;Enter a number between 1 and 10: &quot;</span><span class="p">);</span>
     <span class="k">if</span> <span class="nx">guess</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">guess</span> <span class="o">==</span> <span class="s">&quot;exit&quot;</span> <span class="p">{</span>
         <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span>
@@ -285,11 +285,11 @@ The classic interview question:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">fizzbuzz</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">$range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">i</span> <span class="err">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
             <span class="k">echo</span> <span class="s">&quot;fizzbuzz&quot;</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">i</span> <span class="err">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
             <span class="k">echo</span> <span class="s">&quot;fizz&quot;</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">i</span> <span class="err">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
             <span class="k">echo</span> <span class="s">&quot;buzz&quot;</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">echo</span> <span class="nx">i</span><span class="p">;</span>

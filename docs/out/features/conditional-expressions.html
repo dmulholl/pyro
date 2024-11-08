@@ -67,7 +67,7 @@
 Pyro supports conditional expressions using <code>if</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">size</span> <span class="p">=</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&lt;</span> <span class="mi">100</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="p">{</span>
     <span class="s">&quot;small&quot;</span>
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="s">&quot;large&quot;</span>
@@ -90,9 +90,9 @@ An <code>if</code> <i>expression</i> is different from an <code>if</code> <i>sta
 As you'd expect, <code>if</code> expressions support chained <code>else if</code> clauses, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">size</span> <span class="p">=</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&lt;</span> <span class="mi">100</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="p">{</span>
     <span class="s">&quot;small&quot;</span>
-<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">value</span> <span class="p">&lt;</span> <span class="mi">1000</span> <span class="p">{</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">&lt;</span> <span class="mi">1000</span> <span class="p">{</span>
     <span class="s">&quot;medium&quot;</span>
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="s">&quot;large&quot;</span>

@@ -107,8 +107,8 @@ Our complex number type needs to store two values &mdash; the <i>real</i> part a
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">im</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="p">=</span> <span class="nx">re</span><span class="p">;</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="p">=</span> <span class="nx">im</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">=</span> <span class="nx">re</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">=</span> <span class="nx">im</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre>
@@ -116,7 +116,7 @@ Our complex number type needs to store two values &mdash; the <i>real</i> part a
 Now we can create instances of <code>Complex</code> numbers, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">c</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">c</span><span class="p">.</span><span class="nx">re</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">c</span><span class="p">.</span><span class="nx">im</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;</span>
 </pre>
@@ -130,8 +130,8 @@ Equality
 By default, objects compare as equal using <code>==</code> only if they are <i>the same object</i>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c1</span> <span class="o">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c2</span> <span class="o">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 
 <span class="k">assert</span> <span class="nx">c1</span> <span class="o">==</span> <span class="nx">c1</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">c1</span> <span class="o">!=</span> <span class="nx">c2</span><span class="p">;</span>
@@ -157,8 +157,8 @@ We can overload the <code>==</code> operator for our custom <code>Complex</code>
 Now we can compare instances of our <code>Complex</code> number type directly, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">c1</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">c2</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c1</span> <span class="o">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c2</span> <span class="o">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 
 <span class="k">assert</span> <span class="nx">c1</span> <span class="o">==</span> <span class="nx">c2</span><span class="p">;</span>
 </pre>
@@ -198,7 +198,7 @@ Now we can add <code>Complex</code> numbers directly, e.g.
 Overloading the <code>+</code> operator automatically overloads the <code>+=</code> operator, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">c</span> <span class="p">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 <span class="nx">c</span> <span class="o">+=</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
 
 <span class="k">assert</span> <span class="nx">c</span> <span class="o">==</span> <span class="nx">Complex</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
@@ -238,8 +238,8 @@ We can overload the binary multiplication operator, <code>*</code>, for our <cod
 
     <span class="kd">def</span> <span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="nx">$is_instance_of_class</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">im</span> <span class="o">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">$panic</span><span class="p">(</span><span class="s">&quot;invalid operation&quot;</span><span class="p">);</span>
@@ -266,8 +266,8 @@ No problem &mdash; we can make our <code>$op_binary_star()</code> method a littl
 
     <span class="kd">def</span> <span class="nx">$op_binary_star</span><span class="p">(</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="nx">$is_instance_of_class</span><span class="p">(</span><span class="nx">other</span><span class="p">,</span> <span class="nx">Complex</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">re</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">im</span> <span class="p">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span> <span class="o">-</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">im</span> <span class="o">=</span> <span class="kc">self</span><span class="p">.</span><span class="nx">re</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">im</span> <span class="o">+</span> <span class="kc">self</span><span class="p">.</span><span class="nx">im</span> <span class="o">*</span> <span class="nx">other</span><span class="p">.</span><span class="nx">re</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">Complex</span><span class="p">(</span><span class="nx">re</span><span class="p">,</span> <span class="nx">im</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -333,7 +333,7 @@ An easy way to do this for our <code>Complex</code> number type is to <code>XOR<
     <span class="cp">...</span>
 
     <span class="kd">def</span> <span class="nx">$hash</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">$hash</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span><span class="p">)</span> <span class="p">^</span> <span class="nx">$hash</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">$hash</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">re</span><span class="p">)</span> <span class="o">^</span> <span class="nx">$hash</span><span class="p">(</span><span class="kc">self</span><span class="p">.</span><span class="nx">im</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="cp">...</span>

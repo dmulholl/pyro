@@ -117,13 +117,13 @@ Vector Literals
 You can create a vector using literal syntax, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
 </pre>
 <p>
 Trailing commas are allowed, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">&quot;foo&quot;</span><span class="p">,</span>
     <span class="s">&quot;bar&quot;</span><span class="p">,</span>
     <span class="s">&quot;baz&quot;</span><span class="p">,</span>
@@ -139,19 +139,19 @@ Indexing
 You can index into a vector to get or set entries, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;foo&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;bar&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
 
-<span class="nx">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="s">&quot;bam&quot;</span><span class="p">;</span>
+<span class="nx">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;bam&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;bam&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Indices are zero-based. A negative index counts backwards from the end of the vector, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">];</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;baz&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;bar&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">vec</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;foo&quot;</span><span class="p">;</span>
@@ -188,7 +188,7 @@ Concatenation
 You can concatenate vectors using the <code>+</code> operator, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">vec</span> <span class="p">=</span> <span class="p">[</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;ghi&quot;</span><span class="p">,</span> <span class="s">&quot;jkl&quot;</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">vec</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;ghi&quot;</span><span class="p">,</span> <span class="s">&quot;jkl&quot;</span><span class="p">];</span>
 </pre>
 <p>
 The result is a new vector containing the combined entries from the input vectors.

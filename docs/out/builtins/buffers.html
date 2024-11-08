@@ -108,11 +108,11 @@ Indexing
 You can index into a buffer to get or set byte values, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">buf</span> <span class="o">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">111</span><span class="p">;</span>
 
-<span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">99</span><span class="p">;</span>
+<span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">99</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;coobar&quot;</span><span class="p">;</span>
 </pre>
@@ -120,7 +120,7 @@ You can index into a buffer to get or set byte values, e.g.
 Indices are zero-based. A negative index counts backwards from the end of the buffer, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">buf</span> <span class="o">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;r&#39;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;b&#39;</span><span class="p">;</span>
@@ -129,7 +129,7 @@ Indices are zero-based. A negative index counts backwards from the end of the bu
 Indexing is equivalent to using the buffer's <code>:get()</code> and <code>:set()</code> methods, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">buf</span> <span class="o">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">102</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">111</span><span class="p">;</span>
 
@@ -141,7 +141,7 @@ Indexing is equivalent to using the buffer's <code>:get()</code> and <code>:set(
 Indexing into a buffer will panic if the index is out-of-range, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">buf</span> <span class="o">=</span> <span class="nx">$buf</span><span class="p">(</span><span class="s">&quot;foobar&quot;</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">buf</span><span class="p">[</span><span class="mi">123</span><span class="p">]);</span>
 </pre>
 <h3 id="string-building">
@@ -151,11 +151,11 @@ String Building
 Writing to a buffer and then converting it to a string is an efficient way of assembling a long string from multiple parts as it avoids the overhead of creating temporary strings along the way, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">buf</span> <span class="p">=</span> <span class="nx">$buf</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">buf</span> <span class="o">=</span> <span class="nx">$buf</span><span class="p">();</span>
 <span class="nx">buf</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
 <span class="nx">buf</span><span class="p">:</span><span class="nx">write</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">);</span>
 
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">to_str</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">to_str</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">result</span> <span class="o">==</span> <span class="s">&quot;foobar&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">buf</span><span class="p">:</span><span class="nx">is_empty</span><span class="p">();</span>
 </pre>

@@ -107,10 +107,10 @@ Class definitions look like this:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Person</span> <span class="p">{</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">name</span><span class="p">;</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">role</span> <span class="o">=</span> <span class="s">&quot;programmer&quot;</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="p">=</span> <span class="nx">name</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
@@ -122,7 +122,7 @@ Class definitions look like this:
 Create an instance of a class by calling its name:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">dave</span> <span class="p">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">dave</span> <span class="o">=</span> <span class="nx">Person</span><span class="p">(</span><span class="s">&quot;Dave&quot;</span><span class="p">);</span>
 </pre>
 <p>
 Arguments are passed to the optional <code>$init()</code> method.
@@ -134,7 +134,7 @@ Fields and Methods
 Get or set an instance's fields using the field access operator <code>.</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">dave</span><span class="p">.</span><span class="nx">role</span> <span class="p">=</span> <span class="s">&quot;pyro programmer&quot;</span><span class="p">;</span>
+<span class="nx">dave</span><span class="p">.</span><span class="nx">role</span> <span class="o">=</span> <span class="s">&quot;pyro programmer&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Call a method on an instance using the method access operator <code>:</code>, e.g.
@@ -150,20 +150,20 @@ Methods are bound to their instances and you can pass them around just like any 
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">get</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">set</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">value</span> <span class="p">=</span> <span class="nx">arg</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">arg</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">object</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">setter</span> <span class="p">=</span> <span class="nx">object</span><span class="p">:</span><span class="nx">set</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">getter</span> <span class="p">=</span> <span class="nx">object</span><span class="p">:</span><span class="nx">get</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">setter</span> <span class="o">=</span> <span class="nx">object</span><span class="p">:</span><span class="nx">set</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">getter</span> <span class="o">=</span> <span class="nx">object</span><span class="p">:</span><span class="nx">get</span><span class="p">;</span>
 
 <span class="nx">setter</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">getter</span><span class="p">()</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
@@ -223,7 +223,7 @@ Static fields and methods are defined on the class object itself:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
-    <span class="kd">static</span> <span class="kd">var</span> <span class="nx">count</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">static</span> <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
     <span class="kd">static</span> <span class="kd">def</span> <span class="nx">increment</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">Object</span><span class="p">.</span><span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
@@ -237,7 +237,7 @@ Static fields and methods are defined on the class object itself:
 Static members can't be accessed from instances of the class:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">obj</span> <span class="p">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">count</span><span class="p">);</span>
 <span class="k">assert</span> <span class="nx">$is_err</span><span class="p">(</span><span class="k">try</span> <span class="nx">obj</span><span class="p">:</span><span class="nx">increment</span><span class="p">());</span>
 </pre>
@@ -258,11 +258,11 @@ You can specify a default value for a field in a class definition, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">bar</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">baz</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">Foo</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">Foo</span><span class="p">();</span>
 <span class="k">assert</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
 </pre>
@@ -283,7 +283,7 @@ A class can inherit from a superclass using the <code>extends</code> keyword, e.
     <span class="kd">var</span> <span class="nx">color</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">color</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">color</span> <span class="p">=</span> <span class="nx">color</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">color</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
@@ -296,7 +296,7 @@ A class can inherit from a superclass using the <code>extends</code> keyword, e.
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">color</span><span class="p">,</span> <span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
         <span class="kc">super</span><span class="p">:</span><span class="nx">$init</span><span class="p">(</span><span class="nx">color</span><span class="p">);</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">radius</span> <span class="p">=</span> <span class="nx">radius</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">radius</span> <span class="o">=</span> <span class="nx">radius</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">info</span><span class="p">()</span> <span class="p">{</span>
@@ -321,7 +321,7 @@ You can create an instance of a class using object-literal syntax, e.g.
     <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">bar</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">obj</span> <span class="p">=</span> <span class="nx">Object</span> <span class="kn">as</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="nx">Object</span> <span class="kn">as</span> <span class="p">{</span>
     <span class="nx">foo</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
     <span class="nx">bar</span><span class="p">:</span> <span class="mi">456</span><span class="p">,</span>
 <span class="p">};</span>
@@ -350,7 +350,7 @@ You can add indexing support to a class by implementing <code>$get(key)</code> a
 Accessing an index, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
 </pre>
 <p>
 is equivalent to calling the instance's <code>$get(key)</code> method.
@@ -359,7 +359,7 @@ is equivalent to calling the instance's <code>$get(key)</code> method.
 Assigning to an index, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
 </pre>
 <p>
 is equivalent to calling the instance's <code>$set(key, value)</code> method.
@@ -437,7 +437,7 @@ This method should return a string representation of the instance formatted acco
 Implementing this method adds support for index-style read access to instances, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
 </pre>
 <p>
 Implementing a <code>:$set(key, value)</code> method adds support for index-style write access to instances.
@@ -1008,7 +1008,7 @@ This method will only be called if the value on the left does not have an <code>
 Implementing this method adds support for index-style write access to instances, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span><span class="p">;</span>
+<span class="nx">instance</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
 </pre>
 <p>
 Implementing a <code>:$get(key)</code> method adds support for index-style read access to instances.

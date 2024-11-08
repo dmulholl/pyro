@@ -87,11 +87,11 @@ We can illustrate the iterator protocol by creating a custom <code>Range</code> 
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Range</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">next</span> <span class="p">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">next</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">stop</span><span class="p">;</span>
 
     <span class="kd">def</span> <span class="nx">$init</span><span class="p">(</span><span class="nx">stop</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">stop</span> <span class="p">=</span> <span class="nx">stop</span><span class="p">;</span>
+        <span class="kc">self</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="nx">stop</span><span class="p">;</span>
     <span class="p">}</span>
 
     <span class="kd">def</span> <span class="nx">$iter</span><span class="p">()</span> <span class="p">{</span>
@@ -99,7 +99,7 @@ We can illustrate the iterator protocol by creating a custom <code>Range</code> 
     <span class="p">}</span>
 
     <span class="kd">def</span> <span class="nx">$next</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next</span> <span class="p">&lt;</span> <span class="kc">self</span><span class="p">.</span><span class="nx">stop</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next</span> <span class="o">&lt;</span> <span class="kc">self</span><span class="p">.</span><span class="nx">stop</span> <span class="p">{</span>
             <span class="kc">self</span><span class="p">.</span><span class="nx">next</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="k">return</span> <span class="kc">self</span><span class="p">.</span><span class="nx">next</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
         <span class="p">}</span>
@@ -143,7 +143,7 @@ First, let's define some callback functions:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">is_even</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">n</span> <span class="err">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kd">def</span> <span class="nx">square</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>

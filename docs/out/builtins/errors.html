@@ -107,7 +107,7 @@ You can use the <code>$is_err(arg)</code> function to check if a value is an <co
 Alternatively, you can use the error-coalescing operator <code>!!</code> to supply a default value for an operation that might return an error, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">might_fail</span><span class="p">()</span> <span class="o">!!</span> <span class="s">&quot;default&quot;</span><span class="p">;</span>
 </pre>
 <h3 id="error-messages">
 Error Messages
@@ -116,7 +116,7 @@ Error Messages
 Stringifying an <code>err</code> returns its <code>message</code> string, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">err</span> <span class="o">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;oh no!&quot;</span><span class="p">);</span>
 
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;oh no!&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">$fmt</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;oh no!&quot;</span><span class="p">;</span>
@@ -130,8 +130,8 @@ An <code>err</code> object contains a <code>details</code> map which you can use
 You can index into this <code>details</code> map directly on the <code>err</code> object itself, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;disaster strikes!&quot;</span><span class="p">);</span>
-<span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">err</span> <span class="o">=</span> <span class="nx">$err</span><span class="p">(</span><span class="s">&quot;disaster strikes!&quot;</span><span class="p">);</span>
+<span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 
 <span class="k">assert</span> <span class="nx">$str</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;disaster strikes!&quot;</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">err</span><span class="p">[</span><span class="s">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
@@ -140,7 +140,7 @@ You can index into this <code>details</code> map directly on the <code>err</code
 The <code>details</code> map of an <code>err</code> object returned by a panicking <code>try</code> expression contains <code>&quot;source&quot;</code> and <code>&quot;line&quot;</code> entries specifying the source ID and line number of the panic, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">result</span> <span class="p">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">try</span> <span class="nx">might_panic</span><span class="p">();</span>
 
 <span class="k">if</span> <span class="nx">$is_err</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s">&quot;source:&quot;</span><span class="p">,</span> <span class="nx">result</span><span class="p">[</span><span class="s">&quot;source&quot;</span><span class="p">];</span>

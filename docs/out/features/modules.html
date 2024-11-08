@@ -122,7 +122,7 @@ A module's top-level members (i.e. its global variables, functions, and classes)
 &mdash; use the <code>pub</code> keyword to make them public, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 
 <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">func</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s">&quot;hello world!&quot;</span><span class="p">;</span>
@@ -149,7 +149,7 @@ Modules can contain submodules. Assume we have a directory called <code>math</co
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">value</span> <span class="p">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">trig</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <p>
 The top-level module <code>math</code> can live alongside the directory that contains its submodules:
@@ -245,7 +245,7 @@ You can import a module under an alias using an <code>import ... as ...</code> s
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span> <span class="kn">as</span> <span class="nx">alias</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">alias</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">alias</span><span class="p">::</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <p>
 Submodules can similarly be aliased:
@@ -253,7 +253,7 @@ Submodules can similarly be aliased:
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kn">import</span> <span class="nx">math</span><span class="p">::</span><span class="nx">trig</span> <span class="kn">as</span> <span class="nx">alias</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">alias</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">alias</span><span class="p">::</span><span class="nx">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 </pre>
 <h3 id="importing-members">
 Importing Members
@@ -345,23 +345,23 @@ Pyro doesn't allow direct assignment to module members from outside the module, 
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="c1"># in module.pyro</span>
-<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 </pre>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="c1"># in script.pyro</span>
 <span class="kn">import</span> <span class="nx">module</span><span class="p">;</span>
 <span class="k">echo</span> <span class="nx">module</span><span class="p">::</span><span class="nx">number</span><span class="p">;</span>  <span class="c1"># okay</span>
-<span class="nx">module</span><span class="p">::</span><span class="nx">number</span> <span class="p">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
+<span class="nx">module</span><span class="p">::</span><span class="nx">number</span> <span class="o">=</span> <span class="mi">456</span><span class="p">;</span> <span class="c1"># syntax error</span>
 </pre>
 <p>
 If you want to allow assignment to a module member from outside the module, use a member function, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="c1"># in module.pyro</span>
-<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mi">123</span><span class="p">;</span>
+<span class="kd">pub</span> <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
 
 <span class="kd">pub</span> <span class="kd">def</span> <span class="nx">set_number</span><span class="p">(</span><span class="nx">new_value</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">number</span> <span class="p">=</span> <span class="nx">new_value</span><span class="p">;</span>
+    <span class="nx">number</span> <span class="o">=</span> <span class="nx">new_value</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <pre class="lang-pyro pygments" data-lang="pyro">
