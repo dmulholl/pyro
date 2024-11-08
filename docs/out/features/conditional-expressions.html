@@ -64,7 +64,13 @@
                 <hr>
             </header>
             <p>
-Pyro supports conditional expressions using <code>if</code>, e.g.
+Pyro supports two types of conditional expressions &mdash; <code>if</code> expressions and a ternary operator.
+</p>
+<h3 id="if-expressions">
+If Expressions
+</h3>
+<p>
+<code>if</code> expressions look like this:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="p">{</span>
@@ -77,14 +83,14 @@ Pyro supports conditional expressions using <code>if</code>, e.g.
 The syntax of an <code>if</code> expression is:
 </p>
 <pre>
-if &lt;condition-expression&gt; {
-    &lt;if-true-expression&gt;
+if &lt;condition&gt; {
+    &lt;value-if-true&gt;
 } else {
-    &lt;if-false-expression&gt;
+    &lt;value-if-false&gt;
 }
 </pre>
 <p>
-An <code>if</code> <i>expression</i> is different from an <code>if</code> <i>statement</i> &mdash; an <code>if</code> expression requires an <code>else</code> clause and the <code>{}</code> blocks must each contain a single expression.
+This <code>if</code> <i>expression</i> is different from an <code>if</code> <i>statement</i> &mdash; an <code>if</code> expression requires an <code>else</code> clause and the <code>{}</code> blocks must each contain a single expression. (Note the lack of trailing semicolons inside the <code>{}</code> blocks.)
 </p>
 <p>
 As you'd expect, <code>if</code> expressions support chained <code>else if</code> clauses, e.g.
@@ -97,6 +103,21 @@ As you'd expect, <code>if</code> expressions support chained <code>else if</code
 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="s">&quot;large&quot;</span>
 <span class="p">};</span>
+</pre>
+<h3 id="the-ternary-operator">
+The Ternary Operator
+</h3>
+<p>
+For simple use-cases, Pyro also supports a conditional or "ternary" operator, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="k">echo</span> <span class="nx">value</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="o">:?</span> <span class="s">&quot;small&quot;</span> <span class="o">:|</span> <span class="s">&quot;large&quot;</span><span class="p">;</span>
+</pre>
+<p>
+The syntax for the ternary operator is:
+</p>
+<pre>
+&lt;condition&gt; :? &lt;value-if-true&gt; :| &lt;value-if-false&gt;
 </pre>
         </article>
 

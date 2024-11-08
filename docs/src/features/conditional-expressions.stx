@@ -3,7 +3,12 @@ title: Conditional Expressions
 meta_title: Pyro &mdash; Conditional Expressions
 ---
 
-Pyro supports conditional expressions using `if`, e.g.
+Pyro supports two types of conditional expressions --- `if` expressions and a ternary operator.
+
+
+### If Expressions
+
+`if` expressions look like this:
 
 ::: code pyro
     var size = if value < 100 {
@@ -15,13 +20,13 @@ Pyro supports conditional expressions using `if`, e.g.
 The syntax of an `if` expression is:
 
 ::: code
-    if <condition-expression> {
-        <if-true-expression>
+    if <condition> {
+        <value-if-true>
     } else {
-        <if-false-expression>
+        <value-if-false>
     }
 
-An `if` *expression* is different from an `if` *statement* --- an `if` expression requires an `else` clause and the `{}` blocks must each contain a single expression.
+This `if` *expression* is different from an `if` *statement* --- an `if` expression requires an `else` clause and the `{}` blocks must each contain a single expression. (Note the lack of trailing semicolons inside the `{}` blocks.)
 
 As you'd expect, `if` expressions support chained `else if` clauses, e.g.
 
@@ -33,3 +38,16 @@ As you'd expect, `if` expressions support chained `else if` clauses, e.g.
     } else {
         "large"
     };
+
+
+### The Ternary Operator
+
+For simple use-cases, Pyro also supports a conditional or "ternary" operator, e.g.
+
+::: code pyro
+    echo value < 100 :? "small" :| "large";
+
+The syntax for the ternary operator is:
+
+::: code
+    <condition> :? <value-if-true> :| <value-if-false>
