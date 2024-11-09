@@ -90,7 +90,7 @@ if &lt;condition&gt; {
 }
 </pre>
 <p>
-This <code>if</code> <i>expression</i> is different from an <code>if</code> <i>statement</i> &mdash; an <code>if</code> expression requires an <code>else</code> clause and the <code>{}</code> blocks must each contain a single expression. (Note the lack of trailing semicolons inside the <code>{}</code> blocks.)
+An <code>if</code> <i>expression</i> is different from an <code>if</code> <i>statement</i> &mdash; an <code>if</code> expression requires an <code>else</code> clause and the <code>{}</code> blocks must each contain a single expression. (Note the lack of trailing semicolons inside the <code>{}</code> blocks.)
 </p>
 <p>
 As you'd expect, <code>if</code> expressions support chained <code>else if</code> clauses, e.g.
@@ -119,6 +119,9 @@ The syntax for the ternary operator is:
 <pre>
 &lt;condition&gt; :? &lt;value-if-true&gt; :| &lt;value-if-false&gt;
 </pre>
+<p>
+Conditional expressions using the ternary operator cannot be nested.
+</p>
         </article>
 
         

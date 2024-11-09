@@ -26,7 +26,7 @@ The syntax of an `if` expression is:
         <value-if-false>
     }
 
-This `if` *expression* is different from an `if` *statement* --- an `if` expression requires an `else` clause and the `{}` blocks must each contain a single expression. (Note the lack of trailing semicolons inside the `{}` blocks.)
+An `if` *expression* is different from an `if` *statement* --- an `if` expression requires an `else` clause and the `{}` blocks must each contain a single expression. (Note the lack of trailing semicolons inside the `{}` blocks.)
 
 As you'd expect, `if` expressions support chained `else if` clauses, e.g.
 
@@ -51,3 +51,5 @@ The syntax for the ternary operator is:
 
 ::: code
     <condition> :? <value-if-true> :| <value-if-false>
+
+Conditional expressions using the ternary operator cannot be nested.
