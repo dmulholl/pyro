@@ -338,9 +338,9 @@ Nullable Types
 You can indicate that a type is nullable &mdash; i.e. can be either the specified type or <code>null</code> &mdash; by appending a <code>?</code> to the type name, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span><span class="err">?</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">str</span><span class="err">?</span><span class="p">];</span>
-<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">map</span><span class="err">?</span><span class="p">[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">];</span>
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">i64</span><span class="p">?;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">vec</span><span class="p">[</span><span class="nx">str</span><span class="p">?];</span>
+<span class="kd">var</span> <span class="nx">baz</span><span class="p">:</span> <span class="nx">map</span><span class="p">?[</span><span class="nx">str</span><span class="p">,</span> <span class="nx">i64</span><span class="p">];</span>
 </pre>
 <ul>
 <li>
@@ -401,8 +401,8 @@ You can optionally specify the callable's parameter types, e.g.
 The <code>callable</code> type is nullable, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">callable</span><span class="err">?</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">callable</span><span class="err">?</span><span class="p">(</span><span class="nx">i64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nx">bool</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">foo</span><span class="p">:</span> <span class="nx">callable</span><span class="p">?;</span>
+<span class="kd">var</span> <span class="nx">bar</span><span class="p">:</span> <span class="nx">callable</span><span class="p">?(</span><span class="nx">i64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nx">bool</span><span class="p">;</span>
 </pre>
 <ul>
 <li>
