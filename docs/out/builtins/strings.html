@@ -120,7 +120,6 @@ String Literals
 </h3>
 <p>
 String literals come in two flavours &mdash; <i>regular</i> (double-quoted) and <i>raw</i> (backticked).
-Both can contain arbitrary byte sequences, including literal newlines.
 </p>
 <p>
 Regular string literals use double quotes:
@@ -130,7 +129,7 @@ Regular string literals use double quotes:
 
 <span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="s">&quot;a string</span>
 <span class="s">with multiple</span>
-<span class="s">lines&quot;</span><span class="p">;</span>
+<span class="s">linebreaks&quot;</span><span class="p">;</span>
 </pre>
 <p>
 Regular string literals process the following backslashed escapes:
@@ -251,7 +250,7 @@ Raw string literals use backticks:
 
 <span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="s">`a raw string</span>
 <span class="s">with multiple</span>
-<span class="s">lines`</span><span class="p">;</span>
+<span class="s">linebreaks`</span><span class="p">;</span>
 </pre>
 <p>
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.

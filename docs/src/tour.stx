@@ -656,8 +656,7 @@ This works because iterating over a `map` returns `(key, value)` tuples.
 
 ### Source Code
 
-Source code outside of string literals is assumed to be UTF-8 encoded.
-String literals can contain arbitrary byte sequences including null bytes and invalid UTF-8.
+Source code should be UTF-8 encoded.
 
 
 

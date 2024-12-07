@@ -23,7 +23,6 @@ Pyro strings have methods that let you manipulate them as ASCII or as UTF-8 but 
 ### String Literals
 
 String literals come in two flavours --- *regular* (double-quoted) and *raw* (backticked).
-Both can contain arbitrary byte sequences, including literal newlines.
 
 Regular string literals use double quotes:
 
@@ -32,7 +31,7 @@ Regular string literals use double quotes:
 
     var bar = "a string
     with multiple
-    lines";
+    linebreaks";
 
 Regular string literals process the following backslashed escapes:
 
@@ -58,7 +57,7 @@ Raw string literals use backticks:
 
     var bar = `a raw string
     with multiple
-    lines`;
+    linebreaks`;
 
 Raw string literals ignore backslashed escapes. The only character a raw string literal can't contain is a backtick as this would end the string.
 
