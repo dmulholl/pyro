@@ -17,6 +17,8 @@ def fib(n) {
 }
 ```
 
+Pyro is a classic braces-and-semicolons language. If you've used any C-family language before you should find it instantly intuitive.
+
 
 
 ## Getting Started
