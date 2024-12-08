@@ -468,6 +468,10 @@ static PyroValue buf_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
         return pyro_null();
     }
 
+    if (target_count == 0) {
+        return pyro_bool(true);
+    }
+
     if (buf->count < target_count) {
         return pyro_bool(false);
     }
