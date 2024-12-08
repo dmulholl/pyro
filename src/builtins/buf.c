@@ -464,7 +464,10 @@ static PyroValue buf_contains(PyroVM* vm, size_t arg_count, PyroValue* args) {
         target = PYRO_AS_STR(args[0])->bytes;
         target_count = PYRO_AS_STR(args[0])->count;
     } else {
-        pyro_panic(vm, "contains(): invalid argument [target], expected a string or buffer");
+        pyro_panic(vm,
+            "contains(): invalid argument [target], expected a string or buffer, found %s",
+            pyro_get_type_name(vm, args[0])->bytes
+        );
         return pyro_null();
     }
 
