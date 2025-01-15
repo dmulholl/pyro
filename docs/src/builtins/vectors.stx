@@ -70,6 +70,8 @@ Vectors are iterable, e.g.
         echo item;
     }
 
+The `:values()` method returns an iterator over the vector's values.
+
 
 
 ### Containment

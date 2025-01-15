@@ -51,6 +51,8 @@ Sets are iterable, e.g.
         echo item;
     }
 
+The `:values()` method returns an iterator over the set's values.
+
 
 
 ### Containment

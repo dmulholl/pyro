@@ -27,6 +27,8 @@ Queues are iterable, e.g.
         echo item;
     }
 
+The `:values()` method returns an iterator over the queue's values.
+
 
 
 ### Containment
