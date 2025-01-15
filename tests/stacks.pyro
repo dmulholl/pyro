@@ -34,17 +34,6 @@ assert foo:is_empty();
 assert !foo:contains("xyz");
 assert !("xyz" in foo);
 
-var bar = $stack();
-for i in $range(5) {
-    bar:push(i);
-}
-var index = 0;
-for item in bar {
-    assert item == index;
-    index += 1;
-}
-assert $is_iter(bar:values());
-
 def $test_clear() {
     var stack = $stack();
     assert stack:count() == 0;
@@ -60,4 +49,50 @@ def $test_clear() {
     stack:push("B");
     assert stack:pop() == "B";
     assert stack:pop() == "A";
+}
+
+def $test_iteration_order_with_for_loop() {
+    var stack = $stack();
+
+    stack:push('a');
+    stack:push('b');
+    stack:push('c');
+
+    var vec = [];
+
+    for value in stack {
+        vec:append(value);
+    }
+
+    assert vec[0] == 'c';
+    assert vec[1] == 'b';
+    assert vec[2] == 'a';
+}
+
+def $test_iteration_order_with_iter_function() {
+    var stack = $stack();
+
+    stack:push('a');
+    stack:push('b');
+    stack:push('c');
+
+    var vec = $iter(stack):to_vec();
+
+    assert vec[0] == 'c';
+    assert vec[1] == 'b';
+    assert vec[2] == 'a';
+}
+
+def $test_iteration_order_with_values_method() {
+    var stack = $stack();
+
+    stack:push('a');
+    stack:push('b');
+    stack:push('c');
+
+    var vec = stack:values():to_vec();
+
+    assert vec[0] == 'c';
+    assert vec[1] == 'b';
+    assert vec[2] == 'a';
 }

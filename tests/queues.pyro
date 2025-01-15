@@ -76,3 +76,49 @@ def $test_clear() {
     assert queue:dequeue() == 1;
     assert queue:dequeue() == 2;
 }
+
+def $test_iteration_order_with_for_loop() {
+    var queue = $queue();
+
+    queue:enqueue('a');
+    queue:enqueue('b');
+    queue:enqueue('c');
+
+    var vec = [];
+
+    for value in queue {
+        vec:append(value);
+    }
+
+    assert vec[0] == 'a';
+    assert vec[1] == 'b';
+    assert vec[2] == 'c';
+}
+
+def $test_iteration_order_with_iter_function() {
+    var queue = $queue();
+
+    queue:enqueue('a');
+    queue:enqueue('b');
+    queue:enqueue('c');
+
+    var vec = $iter(queue):to_vec();
+
+    assert vec[0] == 'a';
+    assert vec[1] == 'b';
+    assert vec[2] == 'c';
+}
+
+def $test_iteration_order_with_values_method() {
+    var queue = $queue();
+
+    queue:enqueue('a');
+    queue:enqueue('b');
+    queue:enqueue('c');
+
+    var vec = queue:values():to_vec();
+
+    assert vec[0] == 'a';
+    assert vec[1] == 'b';
+    assert vec[2] == 'c';
+}
