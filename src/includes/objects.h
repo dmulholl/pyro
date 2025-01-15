@@ -524,6 +524,7 @@ typedef enum {
     PYRO_ITER_STR_LINES,
     PYRO_ITER_TUP,
     PYRO_ITER_VEC,
+    PYRO_ITER_VEC_REVERSE_ORDER,
 } PyroIterType;
 
 typedef struct {

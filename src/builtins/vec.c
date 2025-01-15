@@ -430,7 +430,7 @@ static PyroValue vec_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
     PyroIter* iter = PyroIter_new((PyroObject*)vec, PYRO_ITER_VEC, vm);
     if (!iter) {
-        pyro_panic(vm, "iter(): out of memory");
+        pyro_panic(vm, "values(): out of memory");
         return pyro_null();
     }
 
@@ -700,6 +700,19 @@ static PyroValue vec_clear(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue stack_values(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroVec* vec = PYRO_AS_VEC(args[-1]);
+
+    PyroIter* iter = PyroIter_new((PyroObject*)vec, PYRO_ITER_VEC_REVERSE_ORDER, vm);
+    if (!iter) {
+        pyro_panic(vm, "values(): out of memory");
+        return pyro_null();
+    }
+
+    return pyro_obj(iter);
+}
+
+
 void pyro_load_builtin_type_vec(PyroVM* vm) {
     // Functions.
     pyro_define_superglobal_fn(vm, "$vec", fn_vec, -1);
@@ -744,7 +757,7 @@ void pyro_load_builtin_type_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_vec, "clear", vec_clear, 0);
 
     // Stack methods -- private.
-    pyro_define_pri_method(vm, vm->class_stack, "$iter", vec_values, 0);
+    pyro_define_pri_method(vm, vm->class_stack, "$iter", stack_values, 0);
     pyro_define_pri_method(vm, vm->class_stack, "$contains", vec_contains, 1);
 
     // Stack methods -- public.
@@ -755,9 +768,9 @@ void pyro_load_builtin_type_vec(PyroVM* vm) {
     pyro_define_pub_method(vm, vm->class_stack, "peek", stack_peek, 0);
     pyro_define_pub_method(vm, vm->class_stack, "clear", vec_clear, 0);
     pyro_define_pub_method(vm, vm->class_stack, "contains", vec_contains, 1);
-    pyro_define_pub_method(vm, vm->class_stack, "values", vec_values, 0);
+    pyro_define_pub_method(vm, vm->class_stack, "values", stack_values, 0);
 
     // Deprecated.
     pyro_define_pub_method(vm, vm->class_vec, "iter", vec_values, 0);
-    pyro_define_pub_method(vm, vm->class_stack, "iter", vec_values, 0);
+    pyro_define_pub_method(vm, vm->class_stack, "iter", stack_values, 0);
 }

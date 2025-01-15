@@ -1905,7 +1905,7 @@ PyroIter* PyroIter_new(PyroObject* source, PyroIterType iter_type, PyroVM* vm) {
     iter->next_queue_item = NULL;
     iter->container_version = 0;
 
-    if (iter_type == PYRO_ITER_VEC) {
+    if (iter_type == PYRO_ITER_VEC || iter_type == PYRO_ITER_VEC_REVERSE_ORDER) {
         iter->container_version = ((PyroVec*)source)->version;
     }
 
@@ -1932,10 +1932,6 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             PyroVec* vec = (PyroVec*)iter->source;
 
             if (vec->version != iter->container_version) {
-                if (vec->obj.type == PYRO_OBJECT_VEC_AS_STACK) {
-                    pyro_panic(vm, "stack was modified while iterating");
-                    return pyro_obj(vm->empty_error);
-                }
                 pyro_panic(vm, "vector was modified while iterating");
                 return pyro_obj(vm->empty_error);
             }
@@ -1947,6 +1943,27 @@ PyroValue PyroIter_next(PyroIter* iter, PyroVM* vm) {
             }
 
             return pyro_obj(vm->empty_error);
+        }
+
+        case PYRO_ITER_VEC_REVERSE_ORDER: {
+            PyroVec* vec = (PyroVec*)iter->source;
+
+            if (vec->version != iter->container_version) {
+                if (vec->obj.type == PYRO_OBJECT_VEC_AS_STACK) {
+                    pyro_panic(vm, "stack was modified while iterating");
+                    return pyro_obj(vm->empty_error);
+                }
+                pyro_panic(vm, "vector was modified while iterating");
+                return pyro_obj(vm->empty_error);
+            }
+
+            if (iter->next_index >= vec->count) {
+                return pyro_obj(vm->empty_error);
+            }
+
+            PyroValue result = vec->values[vec->count - iter->next_index - 1];
+            iter->next_index++;
+            return result;
         }
 
         case PYRO_ITER_TUP: {
