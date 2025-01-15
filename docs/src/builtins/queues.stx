@@ -3,6 +3,8 @@ title: Queues
 meta_title: Pyro &mdash; Queues
 ---
 
+[1]: @root/builtins/iterators//
+
 ::: insert toc
 ::: hr
 
@@ -27,7 +29,7 @@ Queues are iterable, e.g.
         echo item;
     }
 
-The `:values()` method returns an iterator over the queue's values.
+The `:values()` method returns an [iterator wrapper][1] over the queue's values.
 
 
 
@@ -80,4 +82,4 @@ This is equivalent to calling the queue's `:contains()` method.
 
 [[ `:values() -> iter` ]]
 
-    Returns an iterator over the queue's values.
+    Returns an [iterator wrapper][1] over the queue's values.

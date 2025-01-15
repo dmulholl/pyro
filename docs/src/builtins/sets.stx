@@ -3,6 +3,8 @@ title: Sets
 meta_title: Pyro &mdash; Sets
 ---
 
+[1]: @root/builtins/iterators//
+
 ::: insert toc
 ::: hr
 
@@ -51,7 +53,7 @@ Sets are iterable, e.g.
         echo item;
     }
 
-The `:values()` method returns an iterator over the set's values.
+The `:values()` method returns an [iterator wrapper][1] over the set's values.
 
 
 
@@ -181,4 +183,4 @@ Two sets `A` and `B` will compare as equal using the `==` operator, `A == B`, if
 
 [[ `:values() -> iter` ]]
 
-    Returns an iterator over the set's values.
+    Returns an [iterator wrapper][1] over the set's values.
