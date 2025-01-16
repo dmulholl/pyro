@@ -90,6 +90,7 @@ def $test_iteration_order_with_for_loop() {
         vec:append(value);
     }
 
+    assert vec:count() == 3;
     assert vec[0] == 'a';
     assert vec[1] == 'b';
     assert vec[2] == 'c';
@@ -104,6 +105,7 @@ def $test_iteration_order_with_iter_function() {
 
     var vec = $iter(queue):to_vec();
 
+    assert vec:count() == 3;
     assert vec[0] == 'a';
     assert vec[1] == 'b';
     assert vec[2] == 'c';
@@ -118,6 +120,7 @@ def $test_iteration_order_with_values_method() {
 
     var vec = queue:values():to_vec();
 
+    assert vec:count() == 3;
     assert vec[0] == 'a';
     assert vec[1] == 'b';
     assert vec[2] == 'c';

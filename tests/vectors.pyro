@@ -448,7 +448,7 @@ def $test_negative_indexing_with_set() {
 }
 
 
-def $test_append_multiple_values() {
+def $test_appending_multiple_values() {
     var vec = [];
     assert vec:count() == 0;
 
@@ -520,7 +520,7 @@ def $test_concatenation() {
 }
 
 
-def $test_append() {
+def $test_append_method() {
     with vec = [] {
         assert $is_vec(vec);
         assert vec:count() == 0;
@@ -626,4 +626,42 @@ def $test_append_values() {
         assert "def" in vec;
         assert "ghi" in vec;
     }
+}
+
+def $test_iteration_order_with_for_loop() {
+    var vec = ['a', 'b', 'c'];
+
+    var result = [];
+    for value in vec {
+        result:append(value);
+    }
+
+    assert result:count() == 3;
+    assert result[0] == 'a';
+    assert result[1] == 'b';
+    assert result[2] == 'c';
+}
+
+
+def $test_iteration_order_with_iter_function() {
+    var vec = ['a', 'b', 'c'];
+
+    var result = $iter(vec):to_vec();
+
+    assert result:count() == 3;
+    assert result[0] == 'a';
+    assert result[1] == 'b';
+    assert result[2] == 'c';
+}
+
+
+def $test_iteration_order_with_values_method() {
+    var vec = ['a', 'b', 'c'];
+
+    var result = vec:values():to_vec();
+
+    assert result:count() == 3;
+    assert result[0] == 'a';
+    assert result[1] == 'b';
+    assert result[2] == 'c';
 }

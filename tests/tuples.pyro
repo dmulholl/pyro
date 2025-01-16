@@ -232,3 +232,41 @@ def $test_concatenation() {
     assert t3[0] == "abc";
     assert t3[2] == "ghi";
 }
+
+def $test_iteration_order_with_for_loop() {
+    var tup = ('a', 'b', 'c');
+
+    var result = [];
+    for value in tup {
+        result:append(value);
+    }
+
+    assert result:count() == 3;
+    assert result[0] == 'a';
+    assert result[1] == 'b';
+    assert result[2] == 'c';
+}
+
+
+def $test_iteration_order_with_iter_function() {
+    var tup = ('a', 'b', 'c');
+
+    var result = $iter(tup):to_vec();
+
+    assert result:count() == 3;
+    assert result[0] == 'a';
+    assert result[1] == 'b';
+    assert result[2] == 'c';
+}
+
+
+def $test_iteration_order_with_values_method() {
+    var tup = ('a', 'b', 'c');
+
+    var result = tup:values():to_vec();
+
+    assert result:count() == 3;
+    assert result[0] == 'a';
+    assert result[1] == 'b';
+    assert result[2] == 'c';
+}
