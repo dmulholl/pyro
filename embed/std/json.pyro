@@ -15,7 +15,7 @@ def marshall_map(containers: stack, buf: buf, map: map, indent: i64, current_ind
 
     for (key, value) in map {
         if indent > 0 {
-            buf:write(is_first ? "\n" :| ",\n");
+            buf:write(is_first :? "\n" :| ",\n");
         } else if !is_first {
             buf:write(", ");
         }
@@ -54,7 +54,7 @@ def marshall_vec(containers: stack, buf: buf, vec: vec|tup, indent: i64, current
 
     for value in vec {
         if indent > 0 {
-            buf:write(is_first ? "\n" :| ",\n");
+            buf:write(is_first :? "\n" :| ",\n");
         } else if !is_first {
             buf:write(", ");
         }
@@ -112,7 +112,7 @@ def marshall_instance(containers: stack, buf: buf, obj: instance, indent: i64, c
 
     for field_name in $fields(obj) {
         if indent > 0 {
-            buf:write(is_first ? "\n" :| ",\n");
+            buf:write(is_first :? "\n" :| ",\n");
         } else if !is_first {
             buf:write(", ");
         }

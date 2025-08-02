@@ -1894,11 +1894,10 @@ static void parse_logical_expr(Parser* parser, bool can_assign) {
 }
 
 
-// Matching on TOKEN_HOOK is deprecated and will be removed in a future release.
 static void parse_conditional_expr(Parser* parser, bool can_assign) {
     parse_logical_expr(parser, can_assign);
 
-    if (match(parser, TOKEN_HOOK) || match(parser, TOKEN_COLON_HOOK)) {
+    if (match(parser, TOKEN_COLON_HOOK)) {
         size_t jump_to_false_branch = emit_jump(parser, PYRO_OPCODE_JUMP_IF_FALSE);
         emit_byte(parser, PYRO_OPCODE_POP);
         parse_logical_expr(parser, false);
@@ -1910,7 +1909,7 @@ static void parse_conditional_expr(Parser* parser, bool can_assign) {
         patch_jump(parser, jump_to_end);
     }
 
-    if (match(parser, TOKEN_HOOK) || match(parser, TOKEN_COLON_HOOK)) {
+    if (match(parser, TOKEN_COLON_HOOK)) {
         SYNTAX_ERROR_AT_PREVIOUS_TOKEN("the ternary operator cannot be nested");
     }
 }
