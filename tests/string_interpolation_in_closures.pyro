@@ -1,0 +1,26 @@
+var global_arg = "ggg";
+
+def func(arg) {
+    return "foo-${global_arg}-${arg}-bar";
+}
+
+assert func(123) == "foo-ggg-123-bar";
+assert func(456) == "foo-ggg-456-bar";
+
+def outer(outer_arg) {
+    def inner(inner_arg) {
+        return "foo-${global_arg}-${outer_arg}-${inner_arg}-bar";
+    }
+
+    return inner;
+}
+
+with inner = outer(123) {
+    assert inner(456) == "foo-ggg-123-456-bar";
+    assert inner(789) == "foo-ggg-123-789-bar";
+}
+
+with inner = outer("xyz") {
+    assert inner(456) == "foo-ggg-xyz-456-bar";
+    assert inner(789) == "foo-ggg-xyz-789-bar";
+}

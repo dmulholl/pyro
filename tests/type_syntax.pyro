@@ -35,7 +35,8 @@ var x: vec[i64|f64] | tup[i64|f64, i64|f64];
 # Parameters and return values.
 def func1(foo: i64, bar: str) {}
 def func2(foo: i64, bar: str) -> bool {}
-def func3() -> bool {}
+def func3(foo: i64 = 123, bar: str = "xyz") -> bool {}
+def func4() -> bool {}
 
 # Callables 1: no parameters.
 var c1: func;
