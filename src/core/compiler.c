@@ -1181,7 +1181,7 @@ static void parse_if_expr(Parser* parser, bool can_assign) {
 }
 
 
-// Try to optimize calls to superglobals like $is_err(), $is_str(), etc.
+// Optimize calls to common superglobals like $is_err(), $is_str(), etc.
 static bool try_parse_optimized_superglobal_call(Parser* parser) {
     if (!check(parser, TOKEN_LEFT_PAREN)) {
         return false;
@@ -1442,7 +1442,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
         Token name = parser->previous_token;
 
         if (*name.start == '$' && try_parse_optimized_superglobal_call(parser)) {
-            return  TOKEN_UNDEFINED;
+            return TOKEN_UNDEFINED;
         }
 
         parse_variable_expression(parser, can_assign);
@@ -1450,7 +1450,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
 
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
-            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a method declaration");
+            SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a class");
         } else if (parser->fn_compiler->type == TYPE_STATIC_METHOD) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' in a static method");
         }
