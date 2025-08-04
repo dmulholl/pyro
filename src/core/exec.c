@@ -2770,7 +2770,7 @@ static void run(PyroVM* vm) {
             // Wraps a PyroFn function in a PyroClosure object and pushes it onto the stack.
             // Before: [ ... ][ default_value1 ][ default_value2 ][ default_value3 ]
             // After:  [ ... ][ closure_object ]
-            case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
+            case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEFAULT_ARGS: {
                 PyroFn* fn = PYRO_AS_PYRO_FN(READ_CONSTANT());
                 PyroMod* module = frame->closure->module;
 

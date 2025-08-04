@@ -2596,7 +2596,7 @@ static void parse_with_stmt(Parser* parser) {
 
 
 // This helper parses a function definition, i.e. the bit after the name that looks like
-// (...){...}. It emits the bytecode to create an PyroClosure and leave it on top of the stack.
+// (...){...}. It emits the bytecode to create a PyroClosure and leave it on top of the stack.
 static void parse_function_definition(Parser* parser, FnType type, Token name) {
     FnCompiler fn_compiler;
     if (!init_fn_compiler(parser, &fn_compiler, type, name)) {
@@ -2656,9 +2656,9 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     // Add the function to the current function's constant table.
     uint16_t index = add_value_to_constant_table(parser, pyro_obj(fn));
 
-    // Emit the bytecode to load the function onto the stack as an PyroClosure.
+    // Emit the bytecode to load the function onto the stack as a PyroClosure.
     if (default_value_count > 0) {
-        emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS, index);
+        emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE_WITH_DEFAULT_ARGS, index);
         emit_byte(parser, default_value_count);
     } else {
         emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE, index);

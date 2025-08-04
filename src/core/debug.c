@@ -134,11 +134,11 @@ size_t pyro_disassemble_instruction(PyroVM* vm, PyroFn* fn, size_t ip) {
             return ip;
         }
 
-        case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
+        case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEFAULT_ARGS: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
             ip += 4;
 
-            pyro_stdout_write_f(vm, "%-32s %4d    ", "MAKE_CLOSURE_WITH_DEF_ARGS", const_index);
+            pyro_stdout_write_f(vm, "%-32s %4d    ", "MAKE_CLOSURE_WITH_DEFAULT_ARGS", const_index);
             pyro_dump_value(vm, fn->constants[const_index]);
             pyro_stdout_write_f(vm, "\n");
 

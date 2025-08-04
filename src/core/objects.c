@@ -1195,7 +1195,7 @@ size_t PyroFn_opcode_argcount(PyroFn* fn, size_t ip) {
         }
 
         // 2 bytes for the constant index, 1 byte for the value count, plus two for each upvalue.
-        case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEF_ARGS: {
+        case PYRO_OPCODE_MAKE_CLOSURE_WITH_DEFAULT_ARGS: {
             uint16_t const_index = (fn->code[ip + 1] << 8) | fn->code[ip + 2];
             PyroFn* closure_fn = PYRO_AS_PYRO_FN(fn->constants[const_index]);
             return 2 + 1 + closure_fn->upvalue_count * 2;
