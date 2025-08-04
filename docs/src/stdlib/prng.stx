@@ -10,8 +10,6 @@ The module-level functions use a global generator initialized with a random seed
 To generate a repeatable sequence of pseudo-random numbers, use a `Generator` instance with a known seed.
 
 
-
-
 ### Functions
 
 
@@ -25,7 +23,6 @@ To generate a repeatable sequence of pseudo-random numbers, use a `Generator` in
     Returns a uniformly-distributed random integer from the half-open interval `[0, n)` --- i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
 
 
-
 ### Classes
 
 [[ `Generator() -> Generator` ]]
@@ -34,7 +31,6 @@ To generate a repeatable sequence of pseudo-random numbers, use a `Generator` in
     The generator is automatically initialized with a random seed.
 
 `Generator` instances support the following methods:
-
 
 [[ `:rand_float() -> f64` ]]
 

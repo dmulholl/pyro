@@ -45,7 +45,6 @@ You can customize an `ArgParser` using the methods below:
     Returns the parser to enable chaining.
 
 
-
 ### Registering Flags and Options
 
 You can register flags and options on an `ArgParser` using the methods below:
@@ -75,7 +74,6 @@ You can register flags and options on an `ArgParser` using the methods below:
     Returns the parser to enable chaining.
 
 
-
 ### Parsing
 
 Call the `:parse()` method on the root `ArgParser` instance to parse the program's command line arguments:
@@ -88,7 +86,6 @@ Call the `:parse()` method on the root `ArgParser` instance to parse the program
     Returns an `err` if parsing fails, otherwise `null`.
 
     You only need to call this method on the root `ArgParser` instance; arguments for commands will be parsed automatically.
-
 
 
 ### Retrieving Flag and Option Values
@@ -116,7 +113,6 @@ You can use any of a flag or option's registered aliases or shortcuts as the `na
     If the option was not found, the vector will be empty.
 
 
-
 ### Positional Arguments
 
 Positional arguments are appended to the parser's `.args` vector.
@@ -124,7 +120,6 @@ Positional arguments are appended to the parser's `.args` vector.
 [[ `.args: vec[str]` ]]
 
     Stores positional arguments as a vector of strings.
-
 
 
 ### Command Setup
@@ -149,7 +144,6 @@ Register a callback function for a command on the command's `ArgParser` instance
     If the command is found, this function will be called with the command's name and `ArgParser` instance as arguments.
 
     Returns the parser to enable chaining.
-
 
 
 ### Command Inspection

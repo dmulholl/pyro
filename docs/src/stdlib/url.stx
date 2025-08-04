@@ -10,7 +10,7 @@ A utility module for handling URLs.
 
 ### Functions
 
-[[ `parse_query(query: str) -> err|map[str, vec[str]]` ]]
+[[ `parse_query(url: str) -> err|map[str, vec[str]]` ]]
 
     Parses a URL-encoded query string.
 

@@ -8,7 +8,6 @@ This module contains mathematical functions.
 
 ### Functions
 
-
 [[ `abs(x: i64|f64) -> i64|f64` ]]
 
     Returns the absolute value of `x`. The output type is the same as the input type.

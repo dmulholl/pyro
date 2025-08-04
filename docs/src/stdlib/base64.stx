@@ -8,7 +8,6 @@ This module contains functions for encoding and decoding base64.
 
 ### Functions
 
-
 [[ `from_base64(input: buf|str) -> buf` ]]
 
     Decodes from base64.

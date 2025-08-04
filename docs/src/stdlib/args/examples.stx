@@ -47,7 +47,6 @@ Note that we can chain the calls to `helptext()`, `version()`,  `flag()`, and `o
         :option("count c", 0, $i64);
 
 
-
 ### Command Parser
 
 Here's an example of an argument parser that registers a command:

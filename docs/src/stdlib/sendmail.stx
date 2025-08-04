@@ -32,7 +32,6 @@ A library for sending email using the system's `sendmail` binary.
     email:send();
 
 
-
 ### Classes
 
 [[ `Email() -> Email` ]]

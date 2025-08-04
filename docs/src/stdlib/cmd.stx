@@ -10,9 +10,7 @@ Convenience functions for running common system binaries.
 * Arguments are passed directly to the binary and don't need to be shell-escaped.
 
 
-
 ### Functions
-
 
 [[ `cp(src: str, dst: str)` ]]
 
@@ -24,7 +22,6 @@ Convenience functions for running common system binaries.
     Panics if the `cp` binary cannot be found or if it exits with a non-zero status code.
 
 
-
 [[ `git(*args: str) -> str` ]]
 
     Equivalent to running the `git` command with the specified arguments.
@@ -34,7 +31,6 @@ Convenience functions for running common system binaries.
     Panics if the `git` binary cannot be found or if it exits with a non-zero status code.
 
 
-
 [[ `make(*args: str) -> str` ]]
 
     Equivalent to running the `make` command with the specified arguments.
@@ -42,7 +38,6 @@ Convenience functions for running common system binaries.
     Returns the `make` command's standard output as a string.
 
     Panics if the `make` binary cannot be found or if it exits with a non-zero status code.
-
 
 
 [[ `mkdir(path: str)` ]]
@@ -55,7 +50,6 @@ Convenience functions for running common system binaries.
     Panics if the `mkdir` binary cannot be found or if it exits with a non-zero status code.
 
 
-
 [[ `mv(src: str, dst: str)` ]]
 
     Equivalent to running the `mv` command as:
@@ -64,7 +58,6 @@ Convenience functions for running common system binaries.
         mv -f <src> <dst>
 
     Panics if the `mv` binary cannot be found or if it exits with a non-zero status code.
-
 
 
 [[ `rm(path: str)` ]]
