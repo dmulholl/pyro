@@ -4,7 +4,7 @@ meta_title: Pyro &mdash; Superglobals
 ---
 
 Superglobals are variables and functions built into the language itself --- you don't need to import any libraries to use them.
-All superglobals live in the `$` namespace so they won't interfere with your own code.
+All superglobals live in the reserved `$` namespace so they won't interfere with your own code.
 
 ::: insert toc
 
