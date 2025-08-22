@@ -1020,6 +1020,7 @@ static void parse_map_or_set_literal(Parser* parser) {
 
 static void parse_vec_literal(Parser* parser) {
     uint16_t count = 0;
+
     do {
         if (check(parser, TOKEN_RIGHT_BRACKET)) {
             break;
@@ -1027,6 +1028,7 @@ static void parse_vec_literal(Parser* parser) {
         parse_expression(parser, true);
         count++;
     } while (match(parser, TOKEN_COMMA));
+
     consume(parser, TOKEN_RIGHT_BRACKET, "expected ']' after vector literal");
     emit_byte(parser, PYRO_OPCODE_MAKE_VEC);
     emit_u16be(parser, count);
