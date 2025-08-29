@@ -53,12 +53,13 @@ typedef struct {
 
 
 typedef enum {
-    TYPE_FUNCTION,
-    TYPE_INIT_METHOD,
-    TYPE_METHOD,
-    TYPE_STATIC_METHOD,
-    TYPE_MODULE,
-    TYPE_TRY_EXPR,
+    FN_TYPE_FUNCTION,
+    FN_TYPE_INIT_METHOD,
+    FN_TYPE_METHOD,
+    FN_TYPE_STATIC_METHOD,
+    FN_TYPE_MODULE,
+    FN_TYPE_TRY_EXPRESSION,
+    FN_TYPE_DEFAULT_VALUE_EXPRESSION,
 } FnType;
 
 
@@ -232,7 +233,7 @@ static void emit_u8_u16be(Parser* parser, uint8_t u8_arg, uint16_t u16_arg) {
 // Emits a naked return instruction -- i.e. a return with no value specified. Inside an $init()
 // method this returns the object instance being initialized, otherwise it returns null.
 static void emit_naked_return(Parser* parser) {
-    if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
+    if (parser->fn_compiler->type == FN_TYPE_INIT_METHOD) {
         emit_byte(parser, PYRO_OPCODE_GET_LOCAL_0);
     } else {
         emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
@@ -421,7 +422,7 @@ static bool init_fn_compiler(Parser* parser, FnCompiler* fn_compiler, FnType typ
     local->is_initialized = true;
     local->is_captured = false;
     local->is_constant = false;
-    if (type == TYPE_METHOD || type == TYPE_INIT_METHOD) {
+    if (type == FN_TYPE_METHOD || type == FN_TYPE_INIT_METHOD) {
         local->name.start = "self";
         local->name.length = 4;
     } else {
@@ -1063,7 +1064,28 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
 }
 
 
-static void parse_default_value_expression(Parser* parser, const char* value_type) {
+static void parse_default_argument_value_expression(Parser* parser) {
+    FnCompiler fn_compiler;
+    if (!init_fn_compiler(parser, &fn_compiler, FN_TYPE_DEFAULT_VALUE_EXPRESSION, make_syntoken("default-value-expression"))) {
+        return;
+    }
+
+    begin_scope(parser);
+    parse_expression(parser, false);
+    emit_byte(parser, PYRO_OPCODE_RETURN);
+
+    PyroFn* fn = end_fn_compiler(parser);
+    fn->is_default_value_expression = true;
+    emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE, add_value_to_constant_table(parser, pyro_obj(fn)));
+
+    for (size_t i = 0; i < fn->upvalue_count; i++) {
+        emit_byte(parser, fn_compiler.upvalues[i].is_local ? 1 : 0);
+        emit_byte(parser, fn_compiler.upvalues[i].index);
+    }
+}
+
+
+static void parse_default_field_value_expression(Parser* parser) {
     if (match(parser, TOKEN_TRUE)) {
         emit_byte(parser, PYRO_OPCODE_LOAD_TRUE);
     }
@@ -1128,10 +1150,9 @@ static void parse_default_value_expression(Parser* parser, const char* value_typ
 
     else {
         SYNTAX_ERROR_AT_NEXT_TOKEN(
-            "unexpected token '%.*s', a default %s value must be a simple literal",
+            "unexpected token '%.*s', a default field value must be a simple literal",
             parser->next_token.length,
-            parser->next_token.start,
-            value_type
+            parser->next_token.start
         );
     }
 }
@@ -1453,7 +1474,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     else if (match(parser, TOKEN_SELF)) {
         if (parser->class_compiler == NULL) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' outside a class");
-        } else if (parser->fn_compiler->type == TYPE_STATIC_METHOD) {
+        } else if (parser->fn_compiler->type == FN_TYPE_STATIC_METHOD) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'self' in a static method");
         }
         emit_load_named_variable(parser, parser->previous_token);
@@ -1462,7 +1483,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     else if (match(parser, TOKEN_SUPER)) {
         if (parser->class_compiler == NULL) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' outside a class");
-        } else if (parser->fn_compiler->type == TYPE_STATIC_METHOD) {
+        } else if (parser->fn_compiler->type == FN_TYPE_STATIC_METHOD) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a static method");
         } else if (!parser->class_compiler->has_superclass) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'super' in a class with no superclass");
@@ -1493,7 +1514,7 @@ static TokenType parse_primary_expr(Parser* parser, bool can_assign) {
     }
 
     else if (match(parser, TOKEN_DEF)) {
-        parse_function_definition(parser, TYPE_FUNCTION, make_syntoken("<lambda>"));
+        parse_function_definition(parser, FN_TYPE_FUNCTION, make_syntoken("function-expression"));
     }
 
     else if (match(parser, TOKEN_LEFT_BRACKET)) {
@@ -1711,7 +1732,7 @@ static void parse_power_expr(Parser* parser, bool can_assign) {
 
 static void parse_try_expr(Parser* parser) {
     FnCompiler fn_compiler;
-    if (!init_fn_compiler(parser, &fn_compiler, TYPE_TRY_EXPR, make_syntoken("try"))) {
+    if (!init_fn_compiler(parser, &fn_compiler, FN_TYPE_TRY_EXPRESSION, make_syntoken("try-expression"))) {
         return;
     }
 
@@ -2321,7 +2342,9 @@ static void parse_for_in_stmt(Parser* parser) {
 
     // Replace the object on top of the stack with the result of calling :$iter() on it.
     emit_byte(parser, PYRO_OPCODE_GET_ITERATOR);
-    add_local(parser, make_syntoken("*iterator*"));
+
+    // The iterator occupies a local variable slot so we need to declare a dummy variable here.
+    add_local(parser, make_syntoken("dummy-local-variable"));
 
     // This is the point in the bytecode the loop will jump back to.
     LoopCompiler loop;
@@ -2604,6 +2627,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
     if (!init_fn_compiler(parser, &fn_compiler, type, name)) {
         return;
     }
+
     begin_scope(parser);
     uint8_t default_value_count = 0;
 
@@ -2613,31 +2637,42 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
         if (check(parser, TOKEN_RIGHT_PAREN)) {
             break;
         }
+
         if (fn_compiler.fn->arity == 255) {
             SYNTAX_ERROR_AT_NEXT_TOKEN("too many parameters (max: 255)");
+            return;
         }
+
         if (fn_compiler.fn->is_variadic) {
             SYNTAX_ERROR_AT_NEXT_TOKEN("variadic parameter must be final parameter");
+            return;
         }
+
         if (match(parser, TOKEN_STAR)) {
             fn_compiler.fn->is_variadic = true;
         }
+
         uint16_t index = consume_variable_name(parser, "expected parameter name", false);
         define_variable(parser, index, PRIVATE, false);
         fn_compiler.fn->arity++;
+
         if (match(parser, TOKEN_COLON)) {
             parse_type(parser);
         }
+
         if (default_value_count > 0 && !check(parser, TOKEN_EQUAL)) {
             SYNTAX_ERROR_AT_NEXT_TOKEN("missing default value for parameter");
             return;
         }
+
         if (match(parser, TOKEN_EQUAL)) {
             if (fn_compiler.fn->is_variadic) {
                 SYNTAX_ERROR_AT_PREVIOUS_TOKEN("a variadic function cannot have default argument values");
+                return;
             }
+
             parser->fn_compiler = fn_compiler.enclosing;
-            parse_default_value_expression(parser, "argument");
+            parse_default_argument_value_expression(parser);
             parser->fn_compiler = &fn_compiler;
             default_value_count += 1;
         }
@@ -2676,7 +2711,7 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
 static void parse_function_declaration(Parser* parser, Access access) {
     uint16_t index = consume_variable_name(parser, "expected a function name", false);
     mark_local_as_initialized(parser, false);
-    parse_function_definition(parser, TYPE_FUNCTION, parser->previous_token);
+    parse_function_definition(parser, FN_TYPE_FUNCTION, parser->previous_token);
     define_variable(parser, index, access, false);
 }
 
@@ -2687,11 +2722,11 @@ static void parse_method_declaration(Parser* parser, Access access) {
 
     FnType type;
     if (access == STATIC) {
-        type = TYPE_STATIC_METHOD;
+        type = FN_TYPE_STATIC_METHOD;
     } else if (parser->previous_token.length == 5 && memcmp(parser->previous_token.start, "$init", 5) == 0) {
-        type = TYPE_INIT_METHOD;
+        type = FN_TYPE_INIT_METHOD;
     } else {
-        type = TYPE_METHOD;
+        type = FN_TYPE_METHOD;
     }
 
     parse_function_definition(parser, type, parser->previous_token);
@@ -2719,7 +2754,7 @@ static void parse_field_declaration(Parser* parser, Access access) {
             if (access == STATIC) {
                 parse_expression(parser, true);
             } else {
-                parse_default_value_expression(parser, "field");
+                parse_default_field_value_expression(parser);
             }
         } else {
             emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
@@ -2884,7 +2919,7 @@ static void parse_class_declaration(Parser* parser, Access access) {
 
 
 static void parse_return_stmt(Parser* parser) {
-    if (parser->fn_compiler->type == TYPE_MODULE) {
+    if (parser->fn_compiler->type == FN_TYPE_MODULE) {
         SYNTAX_ERROR_AT_PREVIOUS_TOKEN("can't return from module-level code");
         return;
     }
@@ -2894,7 +2929,7 @@ static void parse_return_stmt(Parser* parser) {
         return;
     }
 
-    if (parser->fn_compiler->type == TYPE_INIT_METHOD) {
+    if (parser->fn_compiler->type == FN_TYPE_INIT_METHOD) {
         SYNTAX_ERROR_AT_PREVIOUS_TOKEN("can't return a value from an initializer");
         return;
     }
@@ -2966,7 +3001,7 @@ static void parse_statement(Parser* parser) {
     }
 
     if (match(parser, TOKEN_PUB)) {
-        if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
+        if (parser->fn_compiler->type != FN_TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pub', only valid at global scope");
             return;
         }
@@ -2987,7 +3022,7 @@ static void parse_statement(Parser* parser) {
     }
 
     else if (match(parser, TOKEN_PRI)) {
-        if (parser->fn_compiler->type != TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
+        if (parser->fn_compiler->type != FN_TYPE_MODULE || parser->fn_compiler->scope_depth > 0) {
             SYNTAX_ERROR_AT_PREVIOUS_TOKEN("invalid use of 'pri', only valid at global scope");
             return;
         }
@@ -3171,7 +3206,7 @@ PyroFn* pyro_compile(PyroVM* vm, const char* src_code, size_t src_len, const cha
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
     FnCompiler fn_compiler;
-    if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, make_syntoken_from_basename(src_id))) {
+    if (!init_fn_compiler(&parser, &fn_compiler, FN_TYPE_MODULE, make_syntoken_from_basename(src_id))) {
         return NULL;
     }
 
@@ -3223,7 +3258,7 @@ PyroFn* pyro_compile_expression(PyroVM* vm, const char* src_code, size_t src_len
     pyro_init_lexer(&parser.lexer, vm, src_code, src_len, src_id);
 
     FnCompiler fn_compiler;
-    if (!init_fn_compiler(&parser, &fn_compiler, TYPE_MODULE, make_syntoken_from_basename(src_id))) {
+    if (!init_fn_compiler(&parser, &fn_compiler, FN_TYPE_MODULE, make_syntoken_from_basename(src_id))) {
         return NULL;
     }
 

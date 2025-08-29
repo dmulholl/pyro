@@ -262,6 +262,9 @@ typedef struct {
     size_t first_line_number;
     uint16_t* bpl;
     size_t bpl_capacity;
+
+    // True if the function is a wrapper around a default-value expression.
+    bool is_default_value_expression;
 } PyroFn;
 
 PyroFn* PyroFn_new(PyroVM* vm);

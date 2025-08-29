@@ -1,72 +1,285 @@
-def foo(arg = 123) {
-    return arg;
-}
-assert foo() == 123;
-assert foo(456) == 456;
-assert foo("abc") == "abc";
-assert $is_err(try foo(123, 456));
-
-
-def bar(arg1, arg2 = 123, arg3 = 456) {
-    return $tup(arg1, arg2, arg3);
-}
-assert bar(111) == $tup(111, 123, 456);
-assert bar(111, 222) == $tup(111, 222, 456);
-assert bar(111, 222, 333) == $tup(111, 222, 333);
-assert $is_err(try bar());
-assert $is_err(try bar(111, 222, 333, 444));
-
-
-def baz(arg1: i64, arg2: i64 = 123, arg3: i64 = 456) {
-    return $tup(arg1, arg2, arg3);
-}
-assert baz(111) == $tup(111, 123, 456);
-assert baz(111, 222) == $tup(111, 222, 456);
-assert baz(111, 222, 333) == $tup(111, 222, 333);
-assert $is_err(try baz());
-assert $is_err(try baz(111, 222, 333, 444));
-
-
 var global = "global";
+
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
+
+
+def fn01(arg1 = 123) {
+    return arg1;
+}
+
+assert fn01() == 123;
+assert fn01(111) == 111;
+assert $is_err(try fn01(111, 222));
+
+
+def fn02(arg1, arg2 = 123) {
+    return arg1, arg2;
+}
+
+assert $is_err(try fn02());
+assert fn02(111) == (111, 123);
+assert fn02(111, 222) == (111, 222);
+assert $is_err(try fn02(111, 222, 333));
+
+
+def fn03(arg1, arg2, arg3 = 123) {
+    return arg1, arg2, arg3;
+}
+
+assert $is_err(try fn03());
+assert $is_err(try fn03(111));
+assert fn03(111, 222) == (111, 222, 123);
+assert fn03(111, 222, 333) == (111, 222, 333);
+assert $is_err(try fn02(111, 222, 333, 444));
+
+
+def fn04(arg1, arg2 = 123, arg3 = 456) {
+    return arg1, arg2, arg3;
+}
+
+assert $is_err(try fn04());
+assert fn04(111) == (111, 123, 456);
+assert fn04(111, 222) == (111, 222, 456);
+assert fn04(111, 222, 333) == (111, 222, 333);
+assert $is_err(try fn04(111, 222, 333, 444));
+
+
+def fn05(arg1 = global) {
+    return arg1;
+}
+
+assert fn05() == "global";
+assert fn05(111) == 111;
+assert $is_err(try fn05(111, 222));
+
+
+var fn06;
+
 {
-    var local1 = 1 + 1 + 1;
-    var local2 = 2 + 2 + 2;
+    var local = "local-abc";
 
-    def func(arg1, arg2 = 2, arg3 = 3) {
-        var foo = 1 + 2 * 3 / 4 + 5;
-        var sum = arg1 + arg2 + arg3;
-        return $tup(arg1, arg2, arg3, sum);
+    def fn(arg1 = 123, arg2 = local, arg3 = global) {
+        return arg1, arg2, arg3;
     }
 
-    var stack_junk1 = 1 + 2 * 3 / 4 + 5 * 6 + 7 / 8 * 9;
-    assert func(1) == $tup(1, 2, 3, 6);
-    var stack_junk2 = 1 + 2 * 3 / 4 + 5 - 6 * 7 / 8 + 9;
-    assert func(1, 4) == $tup(1, 4, 3, 8);
-    var stack_junk3 = 1 + 2 * 3 / 4 + 5 ** 6 / 7 * 8 - 9;
-    assert func(1, 4, 6) == $tup(1, 4, 6, 11);
+    assert fn() == (123, "local-abc", "global");
+    assert fn(111) == (111, "local-abc", "global");
+    assert fn(111, 222) == (111, 222, "global");
+    assert fn(111, 222, 333) == (111, 222, 333);
 
-    assert local1 == 3;
-    assert local2 == 6;
+    fn06 = fn;
 }
-assert global == "global";
+
+assert fn06() == (123, "local-abc", "global");
+assert fn06(111) == (111, "local-abc", "global");
+assert fn06(111, 222) == (111, 222, "global");
+assert fn06(111, 222, 333) == (111, 222, 333);
 
 
-class Object {
-    pub def method1(arg = 123) {
-        return arg;
+def outer(outer_arg = "outer-abc") {
+    def inner(arg1 = 123, arg2 = outer_arg, arg3 = global) {
+        return arg1, arg2, arg3;
     }
 
-    pub def method2(arg1, arg2 = 123, arg3 = 456) {
-        return $tup(arg1, arg2, arg3);
-    }
+    return inner;
 }
-var obj = Object();
-assert obj:method1() == 123;
-assert obj:method1(456) == 456;
-assert obj:method1("abc") == "abc";
-assert $is_err(try obj:method1(123, 456));
-assert obj:method2(111) == $tup(111, 123, 456);
-assert obj:method2(111, 222) == $tup(111, 222, 456);
-assert obj:method2(111, 222, 333) == $tup(111, 222, 333);
-assert $is_err(try obj:method2());
-assert $is_err(try obj:method2(111, 222, 333, 444));
+
+var fn07 = outer();
+assert fn07() == (123, "outer-abc", "global");
+assert fn07(111) == (111, "outer-abc", "global");
+assert fn07(111, 222) == (111, 222, "global");
+assert fn07(111, 222, 333) == (111, 222, 333);
+
+var fn08 = outer("aaa");
+assert fn08() == (123, "aaa", "global");
+assert fn08(111) == (111, "aaa", "global");
+assert fn08(111, 222) == (111, 222, "global");
+assert fn08(111, 222, 333) == (111, 222, 333);
+
+
+var fn11;
+var fn12;
+
+{
+    var local = "local-def";
+
+    def outer(outer_arg = "outer-def") {
+        def inner(arg1 = 123, arg2 = outer_arg, arg3 = local, arg4 = global) {
+            return arg1, arg2, arg3, arg4;
+        }
+
+        return inner;
+    }
+
+    var fn09 = outer();
+    assert fn09() == (123, "outer-def", "local-def", "global");
+    assert fn09(111) == (111, "outer-def", "local-def", "global");
+    assert fn09(111, 222) == (111, 222, "local-def", "global");
+    assert fn09(111, 222, 333) == (111, 222, 333, "global");
+    assert fn09(111, 222, 333, 444) == (111, 222, 333, 444);
+
+    var fn10 = outer("bbb");
+    assert fn10() == (123, "bbb", "local-def", "global");
+    assert fn10(111) == (111, "bbb", "local-def", "global");
+    assert fn10(111, 222) == (111, 222, "local-def", "global");
+    assert fn10(111, 222, 333) == (111, 222, 333, "global");
+    assert fn10(111, 222, 333, 444) == (111, 222, 333, 444);
+
+    fn11 = outer();
+    fn12 = outer("ccc");
+}
+
+assert fn11() == (123, "outer-def", "local-def", "global");
+assert fn11(111) == (111, "outer-def", "local-def", "global");
+assert fn11(111, 222) == (111, 222, "local-def", "global");
+assert fn11(111, 222, 333) == (111, 222, 333, "global");
+assert fn11(111, 222, 333, 444) == (111, 222, 333, 444);
+
+assert fn12() == (123, "ccc", "local-def", "global");
+assert fn12(111) == (111, "ccc", "local-def", "global");
+assert fn12(111, 222) == (111, 222, "local-def", "global");
+assert fn12(111, 222, 333) == (111, 222, 333, "global");
+assert fn12(111, 222, 333, 444) == (111, 222, 333, 444);
+
+
+def fn13(arg1 = -123) {
+    return arg1;
+}
+
+assert fn13() == -123;
+assert fn13(111) == 111;
+assert $is_err(try fn13(111, 222));
+
+
+def fn14(arg1 = 123 + 456) {
+    return arg1;
+}
+
+assert fn14() == 579;
+assert fn14(111) == 111;
+assert $is_err(try fn14(111, 222));
+
+
+def fn15(arg1, arg2 = 123 + 456, arg3 = "abc" + "def") {
+    return arg1, arg2, arg3;
+}
+
+assert $is_err(try fn15());
+assert fn15(111) == (111, 579, "abcdef");
+assert fn15(111, 222) == (111, 222, "abcdef");
+assert fn15(111, 222, 333) == (111, 222, 333);
+assert $is_err(try fn15(111, 222, 333, 444));
+
+
+def fn16(arg1 = []) {
+    return arg1;
+}
+
+{
+    var v1 = fn16();
+    assert $is_vec(v1);
+    assert v1:count() == 0;
+
+    var v2 = fn16();
+    assert $is_vec(v2);
+    assert v2:count() == 0;
+
+    assert v1 != v2;
+
+    var v3 = fn16([111, 222]);
+    assert $is_vec(v3);
+    assert v3:count() == 2;
+    assert v3[0] == 111;
+    assert v3[1] == 222;
+
+    assert v1 != v2;
+    assert v2 != v3;
+    assert v3 == v3;
+}
+
+
+def fn17(arg1 = [123 + 456, global]) {
+    return arg1;
+}
+
+{
+    var v1 = fn17();
+    assert $is_vec(v1);
+    assert v1:count() == 2;
+    assert v1[0] == 579;
+    assert v1[1] == global;
+
+    var v2 = fn17();
+    assert $is_vec(v2);
+    assert v2:count() == 2;
+    assert v2[0] == 579;
+    assert v2[1] == global;
+
+    assert v1 == v1;
+    assert v2 == v2;
+    assert v1 != v2;
+}
+
+
+var fn18;
+
+{
+    var local = "local-ghi";
+
+    def fn(arg1 = [123 + 456, global, local]) {
+        return arg1;
+    }
+
+    var v1 = fn();
+    assert $is_vec(v1);
+    assert v1:count() == 3;
+    assert v1[0] == 579;
+    assert v1[1] == global;
+    assert v1[2] == local;
+
+    var v2 = fn();
+    assert $is_vec(v2);
+    assert v2:count() == 3;
+    assert v2[0] == 579;
+    assert v2[1] == global;
+    assert v1[2] == local;
+
+    assert v1 == v1;
+    assert v2 == v2;
+    assert v1 != v2;
+
+    fn18 = fn;
+}
+
+{
+    var v1 = fn18();
+    assert $is_vec(v1);
+    assert v1:count() == 3;
+    assert v1[0] == 579;
+    assert v1[1] == "global";
+    assert v1[2] == "local-ghi";
+
+    var v2 = fn18();
+    assert $is_vec(v2);
+    assert v2:count() == 3;
+    assert v2[0] == 579;
+    assert v2[1] == "global";
+    assert v1[2] == "local-ghi";
+
+    assert v1 == v1;
+    assert v2 == v2;
+    assert v1 != v2;
+}
+
+
+def fn19(arg1 = Color::Red) {
+    return arg1;
+}
+
+assert fn19() == Color::Red;
+assert fn19(Color::Green) == Color::Green;
+assert fn19(Color::Blue) == Color::Blue;

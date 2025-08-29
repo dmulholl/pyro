@@ -1,6 +1,10 @@
 #include "../includes/pyro.h"
 
 
+// Forward declarations.
+static void run(PyroVM* vm);
+
+
 // Pushes a new call frame onto the call stack.
 // - [frame_pointer] points to the frame's zeroth local variable slot on the value stack.
 // - If [closure] is a function, the zeroth local variable slot will be unused.
@@ -81,10 +85,22 @@ static void call_closure(PyroVM* vm, PyroClosure* closure, uint8_t arg_count) {
     if (arg_count < closure->fn->arity && arg_count + closure->default_values->count >= closure->fn->arity) {
         size_t num_args_to_push = closure->fn->arity - arg_count;
         size_t start_index = closure->default_values->count - num_args_to_push;
+
         for (size_t i = 0; i < num_args_to_push; i++) {
-            PyroValue arg = closure->default_values->values[start_index + i];
-            if (!pyro_push(vm, arg)) return;
+            PyroValue default_value = closure->default_values->values[start_index + i];
+            if (!pyro_push(vm, default_value)) return;
+
+            // If the default value is an expression, we need to evaluate it.
+            if (PYRO_IS_CLOSURE(default_value) && PYRO_AS_CLOSURE(default_value)->fn->is_default_value_expression) {
+                push_call_frame(vm, PYRO_AS_CLOSURE(default_value), vm->stack_top - 1);
+                run(vm);
+
+                if (vm->exit_flag) {
+                    return;
+                }
+            }
         }
+
         PyroValue* frame_pointer = vm->stack_top - arg_count - num_args_to_push - 1;
         push_call_frame(vm, closure, frame_pointer);
         return;

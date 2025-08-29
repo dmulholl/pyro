@@ -929,6 +929,7 @@ PyroFn* PyroFn_new(PyroVM* vm) {
     fn->upvalue_count = 0;
     fn->name = NULL;
     fn->source_id = NULL;
+    fn->is_default_value_expression = false;
 
     fn->code = NULL;
     fn->code_count = 0;
