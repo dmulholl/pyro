@@ -1,0 +1,237 @@
+var global = "global";
+
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
+
+
+class Object01 {};
+
+{
+    var obj1 = Object01();
+    var obj2 = Object01();
+
+    assert obj1 != obj2;
+}
+
+
+class Object02 {
+    pub var field1, field2;
+}
+
+{
+    var obj1 = Object02();
+    assert obj1.field1 == null;
+    assert obj1.field2 == null;
+
+    var obj2 = Object02();
+    assert obj2.field1 == null;
+    assert obj2.field2 == null;
+
+    assert obj1 != obj2;
+    assert obj1.field1 == obj2.field1;
+    assert obj1.field1 == obj2.field1;
+}
+
+
+class Object03 {
+    pub var field1, field2;
+
+    def $init() {
+        self.field1 = 123;
+        self.field2 = 456;
+    }
+}
+
+{
+    var obj1 = Object03();
+    assert obj1.field1 == 123;
+    assert obj1.field2 == 456;
+
+    var obj2 = Object03();
+    assert obj2.field1 == 123;
+    assert obj2.field2 == 456;
+
+    assert obj1 != obj2;
+    assert obj1.field1 == obj2.field1;
+    assert obj1.field1 == obj2.field1;
+}
+
+
+class Object04 {
+    pub var field1;
+    pub var field2 = 123;
+    pub var field3 = -123;
+    pub var field4 = 123 + 456;
+    pub var field5 = [];
+    pub var field6 = [123, global];
+    pub var field7 = global;
+    pub var field8 = Color::Red;
+}
+
+{
+    var obj1 = Object04();
+    assert obj1.field1 == null;
+    assert obj1.field2 == 123;
+    assert obj1.field3 == -123;
+    assert obj1.field4 == 579;
+    assert $is_vec(obj1.field5);
+    assert obj1.field5:count() == 0;
+    assert $is_vec(obj1.field6);
+    assert obj1.field6:count() == 2;
+    assert obj1.field6[0] == 123;
+    assert obj1.field6[1] == global;
+    assert obj1.field7 == global;
+    assert obj1.field8 == Color::Red;
+
+    var obj2 = Object04();
+    assert obj2.field1 == null;
+    assert obj2.field2 == 123;
+    assert obj2.field3 == -123;
+    assert obj2.field4 == 579;
+    assert $is_vec(obj2.field5);
+    assert obj2.field5:count() == 0;
+    assert $is_vec(obj2.field6);
+    assert obj2.field6:count() == 2;
+    assert obj2.field6[0] == 123;
+    assert obj2.field6[1] == global;
+    assert obj2.field7 == global;
+    assert obj2.field8 == Color::Red;
+
+    assert obj1 != obj2;
+    assert obj1.field1 == obj2.field1;
+    assert obj1.field2 == obj2.field2;
+    assert obj1.field3 == obj2.field3;
+    assert obj1.field4 == obj2.field4;
+    assert obj1.field5 != obj2.field5;
+    assert obj1.field6 != obj2.field6;
+    assert obj1.field7 == obj2.field7;
+    assert obj1.field8 == obj2.field8;
+}
+
+
+class Object05 {
+    pub var field1;
+    pub var field2 = 123;
+    pub var field3 = -123;
+    pub var field4 = 123 + 456;
+    pub var field5 = [];
+    pub var field6 = [123, global];
+    pub var field7 = global;
+    pub var field8 = Color::Red;
+
+    def $init() {
+        self.field1 = true;
+        self.field2 = 111;
+        self.field3 = -222;
+        self.field5 = [111, 222];
+        self.field6 = [];
+        self.field8 = Color::Green;
+    }
+}
+
+{
+    var obj1 = Object05();
+    assert obj1.field1 == true;
+    assert obj1.field2 == 111;
+    assert obj1.field3 == -222;
+    assert obj1.field4 == 579;
+    assert $is_vec(obj1.field5);
+    assert obj1.field5:count() == 2;
+    assert obj1.field5[0] == 111;
+    assert obj1.field5[1] == 222;
+    assert $is_vec(obj1.field6);
+    assert obj1.field6:count() == 0;
+    assert obj1.field7 == global;
+    assert obj1.field8 == Color::Green;
+
+    var obj2 = Object05();
+    assert obj2.field1 == true;
+    assert obj2.field2 == 111;
+    assert obj2.field3 == -222;
+    assert obj2.field4 == 579;
+    assert $is_vec(obj2.field5);
+    assert obj2.field5:count() == 2;
+    assert obj2.field5[0] == 111;
+    assert obj2.field5[1] == 222;
+    assert $is_vec(obj2.field6);
+    assert obj2.field6:count() == 0;
+    assert obj2.field7 == global;
+    assert obj2.field8 == Color::Green;
+
+    assert obj1 != obj2;
+    assert obj1.field1 == obj2.field1;
+    assert obj1.field2 == obj2.field2;
+    assert obj1.field3 == obj2.field3;
+    assert obj1.field4 == obj2.field4;
+    assert obj1.field5 != obj2.field5;
+    assert obj1.field6 != obj2.field6;
+    assert obj1.field7 == obj2.field7;
+    assert obj1.field8 == obj2.field8;
+}
+
+
+var Object06;
+
+{
+    var local = "local_abc";
+
+    class Object {
+        pub var field1;
+        pub var field2 = 123;
+        pub var field3 = -123;
+        pub var field4 = 123 + 456;
+        pub var field5 = [];
+        pub var field6 = [123, global];
+        pub var field7 = global;
+        pub var field8 = Color::Red;
+        pub var field9 = local;
+    }
+
+    Object06 = Object;
+}
+
+{
+    var obj1 = Object06();
+    assert obj1.field1 == null;
+    assert obj1.field2 == 123;
+    assert obj1.field3 == -123;
+    assert obj1.field4 == 579;
+    assert $is_vec(obj1.field5);
+    assert obj1.field5:count() == 0;
+    assert $is_vec(obj1.field6);
+    assert obj1.field6:count() == 2;
+    assert obj1.field6[0] == 123;
+    assert obj1.field6[1] == global;
+    assert obj1.field7 == global;
+    assert obj1.field8 == Color::Red;
+    assert obj1.field9 == "local_abc";
+
+    var obj2 = Object06();
+    assert obj2.field1 == null;
+    assert obj2.field2 == 123;
+    assert obj2.field3 == -123;
+    assert obj2.field4 == 579;
+    assert $is_vec(obj2.field5);
+    assert obj2.field5:count() == 0;
+    assert $is_vec(obj2.field6);
+    assert obj2.field6:count() == 2;
+    assert obj2.field6[0] == 123;
+    assert obj2.field6[1] == global;
+    assert obj2.field7 == global;
+    assert obj2.field8 == Color::Red;
+    assert obj2.field9 == "local_abc";
+
+    assert obj1 != obj2;
+    assert obj1.field1 == obj2.field1;
+    assert obj1.field2 == obj2.field2;
+    assert obj1.field3 == obj2.field3;
+    assert obj1.field4 == obj2.field4;
+    assert obj1.field5 != obj2.field5;
+    assert obj1.field6 != obj2.field6;
+    assert obj1.field7 == obj2.field7;
+    assert obj1.field8 == obj2.field8;
+    assert obj1.field9 == obj2.field9;
+}

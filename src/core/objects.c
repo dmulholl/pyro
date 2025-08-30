@@ -195,6 +195,7 @@ PyroInstance* PyroInstance_new(PyroVM* vm, PyroClass* class) {
     }
 
     instance->obj.class = class;
+
     if (num_fields > 0) {
         memcpy(instance->fields, class->default_field_values->values, sizeof(PyroValue) * num_fields);
     }

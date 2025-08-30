@@ -180,12 +180,33 @@ static void call_value(PyroVM* vm, uint8_t arg_count) {
 
         case PYRO_OBJECT_CLASS: {
             PyroClass* class = PYRO_AS_CLASS(callee);
+
             PyroInstance* instance = PyroInstance_new(vm, class);
             if (!instance) {
                 pyro_panic(vm, "out of memory");
                 return;
             }
+
             vm->stack_top[-arg_count - 1] = pyro_obj(instance);
+            size_t field_count = class->default_field_values->count;
+
+            for (size_t i = 0; i < field_count; i++) {
+                PyroValue default_value = class->default_field_values->values[i];
+
+                // If the default field value is an expression, we need to evaluate it.
+                if (PYRO_IS_CLOSURE(default_value) && PYRO_AS_CLOSURE(default_value)->fn->is_default_value_expression) {
+                    if (!pyro_push(vm, default_value)) return;
+
+                    push_call_frame(vm, PYRO_AS_CLOSURE(default_value), vm->stack_top - 1);
+                    run(vm);
+
+                    if (vm->exit_flag) {
+                        return;
+                    }
+
+                    instance->fields[i] = pyro_pop(vm);
+                }
+            }
 
             if (PYRO_IS_NULL(class->init_method)) {
                 if (arg_count > 0) {

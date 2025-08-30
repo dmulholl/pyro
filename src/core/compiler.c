@@ -1066,7 +1066,7 @@ static void parse_variable_expression(Parser* parser, bool can_assign) {
 
 static void parse_default_argument_value_expression(Parser* parser) {
     FnCompiler fn_compiler;
-    if (!init_fn_compiler(parser, &fn_compiler, FN_TYPE_DEFAULT_VALUE_EXPRESSION, make_syntoken("default-value-expression"))) {
+    if (!init_fn_compiler(parser, &fn_compiler, FN_TYPE_DEFAULT_VALUE_EXPRESSION, make_syntoken("default-argument-value-expression"))) {
         return;
     }
 
@@ -1086,74 +1086,22 @@ static void parse_default_argument_value_expression(Parser* parser) {
 
 
 static void parse_default_field_value_expression(Parser* parser) {
-    if (match(parser, TOKEN_TRUE)) {
-        emit_byte(parser, PYRO_OPCODE_LOAD_TRUE);
+    FnCompiler fn_compiler;
+    if (!init_fn_compiler(parser, &fn_compiler, FN_TYPE_DEFAULT_VALUE_EXPRESSION, make_syntoken("default-field-value-expression"))) {
+        return;
     }
 
-    else if (match(parser, TOKEN_FALSE)) {
-        emit_byte(parser, PYRO_OPCODE_LOAD_FALSE);
-    }
+    begin_scope(parser);
+    parse_expression(parser, false);
+    emit_byte(parser, PYRO_OPCODE_RETURN);
 
-    else if (match(parser, TOKEN_NULL)) {
-        emit_byte(parser, PYRO_OPCODE_LOAD_NULL);
-    }
+    PyroFn* fn = end_fn_compiler(parser);
+    fn->is_default_value_expression = true;
+    emit_u8_u16be(parser, PYRO_OPCODE_MAKE_CLOSURE, add_value_to_constant_table(parser, pyro_obj(fn)));
 
-    else if (match(parser, TOKEN_INT)) {
-        int64_t value = parse_int_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_i64(value));
-    }
-
-    else if (match(parser, TOKEN_HEX_INT)) {
-        int64_t value = parse_hex_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_i64(value));
-    }
-
-    else if (match(parser, TOKEN_BINARY_INT)) {
-        int64_t value = parse_binary_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_i64(value));
-    }
-
-    else if (match(parser, TOKEN_OCTAL_INT)) {
-        int64_t value = parse_octal_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_i64(value));
-    }
-
-    else if (match(parser, TOKEN_FLOAT)) {
-        double value = parse_float_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_f64(value));
-    }
-
-    else if (match(parser, TOKEN_RAW_STRING)) {
-        PyroStr* string = PyroStr_copy(
-            parser->previous_token.start,
-            parser->previous_token.length,
-            false,
-            parser->vm
-        );
-        emit_load_value_from_constant_table(parser, pyro_obj(string));
-    }
-
-    else if (match(parser, TOKEN_ESCAPED_STRING)) {
-        PyroStr* string = PyroStr_copy(
-            parser->previous_token.start,
-            parser->previous_token.length,
-            true,
-            parser->vm
-        );
-        emit_load_value_from_constant_table(parser, pyro_obj(string));
-    }
-
-    else if (match(parser, TOKEN_RUNE)) {
-        uint32_t codepoint = parse_rune_literal(parser);
-        emit_load_value_from_constant_table(parser, pyro_rune(codepoint));
-    }
-
-    else {
-        SYNTAX_ERROR_AT_NEXT_TOKEN(
-            "unexpected token '%.*s', a default field value must be a simple literal",
-            parser->next_token.length,
-            parser->next_token.start
-        );
+    for (size_t i = 0; i < fn->upvalue_count; i++) {
+        emit_byte(parser, fn_compiler.upvalues[i].is_local ? 1 : 0);
+        emit_byte(parser, fn_compiler.upvalues[i].index);
     }
 }
 
