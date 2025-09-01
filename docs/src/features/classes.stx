@@ -151,23 +151,22 @@ Note that you can't use the `self` or `super` keywords inside static methods.
 
 ### Field Initializers
 
-Uninitialized fields have the default value `null`.
-
-You can specify a default value for a field in a class definition, e.g.
+You can specify a default value for each field in a class definition.
+(Uninitialized fields have the default value `null`.)
 
 ::: code pyro
-    class Foo {
-        pub var bar = 123;
-        pub var baz;
+    class Object {
+        pub var foo = 123 + 456;
+        pub var bar;
     }
 
-    var foo = Foo();
-    assert foo.bar == 123;
-    assert foo.baz == null;
+    var obj = Object();
+    assert obj.foo == 579;
+    assert obj.bar == null;
 
-A default field value must be a simple literal --- one of `i64`, `f64`, `rune`, `str`, `bool`, or `null`.
+* Default-value expressions for static fields are evaluated when the class definition itself is evaluated.
 
-(This restriction only applies to instance fields. Static fields can be initialized to any value.)
+* Default-value expressions for public and private fields are evaluated each time a new instance is created, before the `$init()` method runs. They can capture local and global variables from the surrounding scope.
 
 
 

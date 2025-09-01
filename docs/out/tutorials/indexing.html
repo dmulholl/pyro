@@ -90,11 +90,7 @@ Here's the full code for our <code>ListMap</code>:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">ListMap</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">data</span><span class="p">;</span>
-
-    <span class="kd">def</span> <span class="nx">$init</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kc">self</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="kd">def</span> <span class="nx">$get</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="nx">key</span> <span class="k">in</span> <span class="kc">self</span><span class="p">.</span><span class="nx">data</span> <span class="p">{</span>

@@ -91,6 +91,9 @@
 <li>
 <a href="#multiple-return-values">Multiple Return Values</a>
 </li>
+<li>
+<a href="#notes">Notes</a>
+</li>
 </ul>
 <h3 id="function-definitions">
 Function Definitions
@@ -183,16 +186,16 @@ Default Argument Values
 You can specify default values for trailing arguments, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">func</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span> <span class="o">=</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="nx">arg3</span> <span class="o">=</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">$tup</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">);</span>
+<span class="kd">def</span> <span class="nx">func</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span> <span class="o">=</span> <span class="mi">123</span><span class="p">,</span> <span class="nx">arg3</span> <span class="o">=</span> <span class="s">&quot;foo&quot;</span> <span class="o">+</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="mi">222</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="s">&quot;foobar&quot;</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">func</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="mi">333</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="mi">333</span><span class="p">);</span>
 </pre>
 <p>
-A default argument value must be a simple literal &mdash; one of <code>i64</code>, <code>f64</code>, <code>rune</code>, <code>str</code>, <code>bool</code>, or <code>null</code>.
+Default-value expressions are evaluated when the function is called and can capture local and global variables from the surrounding scope.<sup class="footnote" id="fnref:1"><a href="#fn:1">1</a></sup>
 </p>
 <h3 id="variadic-functions">
 Variadic Functions
@@ -204,13 +207,13 @@ A variadic function is a function that accepts a variable number of arguments.
 To define a variadic function, prefix its final parameter with a <code>*</code>, e.g.
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">def</span> <span class="nx">vfunc</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="o">*</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">args</span><span class="p">;</span>
+<span class="kd">def</span> <span class="nx">variadic_func</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="o">*</span><span class="nx">vargs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">vargs</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">assert</span> <span class="nx">vfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">();</span>
-<span class="k">assert</span> <span class="nx">vfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
-<span class="k">assert</span> <span class="nx">vfunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">variadic_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">variadic_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">variadic_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
 </pre>
 <p>
 The variadic arguments are available inside the function as a tuple.
@@ -265,17 +268,15 @@ Functions can return multiple values, e.g.
     <span class="k">return</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">assert</span> <span class="nx">get_values</span><span class="p">()</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
+<span class="k">assert</span> <span class="nx">get_values</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
 </pre>
 <p>
 This is syntactic sugar for returning a tuple &mdash; i.e. it's equivalent to:
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">def</span> <span class="nx">get_values</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
 <span class="p">}</span>
-
-<span class="k">assert</span> <span class="nx">get_values</span><span class="p">()</span> <span class="o">==</span> <span class="nx">$tup</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">);</span>
 </pre>
 <p>
 You can unpack a tuple returned by a function in a <code>var</code> declaration using <code>()</code>, e.g.
@@ -285,6 +286,45 @@ You can unpack a tuple returned by a function in a <code>var</code> declaration 
 <span class="k">assert</span> <span class="nx">foo</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
 <span class="k">assert</span> <span class="nx">bar</span> <span class="o">==</span> <span class="mi">456</span><span class="p">;</span>
 </pre>
+<h3 id="notes">
+Notes
+</h3>
+<dl class="footnotes">
+<div id="fn:1">
+<dt>
+<a href="#fnref:1">
+1
+</a>
+</dt>
+<dd>
+<p>
+If you're familiar with Python, you'll recognise this as a classic footgun:
+</p>
+<pre class="lang-python pygments" data-lang="python">
+<span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="n">arg</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="o">...</span>
+</pre>
+<p>
+The problem is that, in Python, every call to this <code>fn</code> function will share a single instance of the default list argument, <code>[]</code>.
+</p>
+<p>
+In spite of its many similarities to Python, Pyro doesn't share this footgun. Take the similar-looking Pyro function:
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">def</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">arg</span> <span class="o">=</span> <span class="p">[])</span> <span class="p">{</span>
+    <span class="cp">...</span>
+<span class="p">}</span>
+</pre>
+<p>
+Every call to this Pyro function gets its own unique instance of the default vector argument, <code>[]</code>.
+</p>
+<p>
+This is because, in Python, default argument expressions are evaluated once when the function itself is evaluated.
+In Pyro, default argument expressions are evaluated every time the function is called.
+</p>
+</dd>
+</div>
+</dl>
         </article>
 
         

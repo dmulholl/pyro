@@ -251,27 +251,27 @@ Note that you can't use the <code>self</code> or <code>super</code> keywords ins
 Field Initializers
 </h3>
 <p>
-Uninitialized fields have the default value <code>null</code>.
-</p>
-<p>
-You can specify a default value for a field in a class definition, e.g.
+You can specify a default value for each field in a class definition.
+(Uninitialized fields have the default value <code>null</code>.)
 </p>
 <pre class="lang-pyro pygments" data-lang="pyro">
-<span class="kd">class</span> <span class="nx">Foo</span> <span class="p">{</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">baz</span><span class="p">;</span>
+<span class="kd">class</span> <span class="nx">Object</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="mi">123</span> <span class="o">+</span> <span class="mi">456</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">bar</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">Foo</span><span class="p">();</span>
-<span class="k">assert</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">==</span> <span class="mi">123</span><span class="p">;</span>
-<span class="k">assert</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="nx">Object</span><span class="p">();</span>
+<span class="k">assert</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">foo</span> <span class="o">==</span> <span class="mi">579</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">bar</span> <span class="o">==</span> <span class="kc">null</span><span class="p">;</span>
 </pre>
-<p>
-A default field value must be a simple literal &mdash; one of <code>i64</code>, <code>f64</code>, <code>rune</code>, <code>str</code>, <code>bool</code>, or <code>null</code>.
-</p>
-<p>
-(This restriction only applies to instance fields. Static fields can be initialized to any value.)
-</p>
+<ul>
+<li>
+Default-value expressions for static fields are evaluated when the class definition itself is evaluated.
+</li>
+<li>
+Default-value expressions for public and private fields are evaluated each time a new instance is created, before the <code>$init()</code> method runs. They can capture local and global variables from the surrounding scope.
+</li>
+</ul>
 <h3 id="inheritance">
 Inheritance
 </h3>

@@ -216,28 +216,22 @@ The logger's default logging-level is <code>Level::Info</code>.
 <pre class="lang-pyro pygments" data-lang="pyro">
 <span class="kd">class</span> <span class="nx">Logger</span> <span class="p">{</span>
     <span class="c1"># The logger&#39;s logging-level.</span>
-    <span class="c1"># Defaults to Level::Info.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">logging_level</span><span class="p">:</span> <span class="nx">Level</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">logging_level</span><span class="p">:</span> <span class="nx">Level</span> <span class="o">=</span> <span class="nx">Level</span><span class="p">::</span><span class="nx">Info</span><span class="p">;</span>
 
     <span class="c1"># The logger&#39;s output file.</span>
-    <span class="c1"># Defaults to the standard output stream.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">output_file</span><span class="p">:</span> <span class="nx">file</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">output_file</span><span class="p">:</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">$stdout</span><span class="p">;</span>
 
     <span class="c1"># Set to true to show milliseconds in timestamps.</span>
-    <span class="c1"># Defaults to false.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_milliseconds</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_milliseconds</span><span class="p">:</span> <span class="nx">bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
     <span class="c1"># Set to true to show microseconds in timestamps.</span>
-    <span class="c1"># Defaults to false.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_microseconds</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_microseconds</span><span class="p">:</span> <span class="nx">bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-    <span class="c1"># Set to true to show UTC timestamps.</span>
-    <span class="c1"># Defaults to false (i.e. shows local time).</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_utc</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+    <span class="c1"># Set to true to use UTC instead of local time.</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_utc</span><span class="p">:</span> <span class="nx">bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
     <span class="c1"># Set to true to show the timezone offset.</span>
-    <span class="c1"># Defaults to false.</span>
-    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_tz_offset</span><span class="p">:</span> <span class="nx">bool</span><span class="p">;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">show_tz_offset</span><span class="p">:</span> <span class="nx">bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 <span class="p">}</span>
 </pre>
 <p>

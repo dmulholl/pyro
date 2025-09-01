@@ -93,15 +93,36 @@ Functions can also capture global variables, e.g.
 You can specify default values for trailing arguments, e.g.
 
 ::: code pyro
-    def func(arg1, arg2 = "foo", arg3 = "bar") {
-        return $tup(arg1, arg2, arg3);
+    def func(arg1, arg2 = 123, arg3 = "foo" + "bar") {
+        return arg1, arg2, arg3;
     }
 
-    assert func(1) == $tup(1, "foo", "bar");
-    assert func(1, 2) == $tup(1, 2, "bar");
-    assert func(1, 2, 3) == $tup(1, 2, 3);
+    assert func(111) == (111, 123, "foobar");
+    assert func(111, 222) == (111, 222, "foobar");
+    assert func(111, 222, 333) == (111, 222, 333);
 
-A default argument value must be a simple literal --- one of `i64`, `f64`, `rune`, `str`, `bool`, or `null`.
+Default-value expressions are evaluated when the function is called and can capture local and global variables from the surrounding scope.[^]
+
+::: footnote
+    If you're familiar with Python, you'll recognise this as a classic footgun:
+
+    ::: code python
+        def fn(arg = []):
+            ...
+
+    The problem is that, in Python, every call to this `fn` function will share a single instance of the default list argument, `[]`.
+
+    In spite of its many similarities to Python, Pyro doesn't share this footgun. Take the similar-looking Pyro function:
+
+    ::: code pyro
+        def fn(arg = []) {
+            ...
+        }
+
+    Every call to this Pyro function gets its own unique instance of the default vector argument, `[]`.
+
+    This is because, in Python, default argument expressions are evaluated once when the function itself is evaluated.
+    In Pyro, default argument expressions are evaluated every time the function is called.
 
 
 
@@ -112,13 +133,13 @@ A variadic function is a function that accepts a variable number of arguments.
 To define a variadic function, prefix its final parameter with a `*`, e.g.
 
 ::: code pyro
-    def vfunc(arg1, arg2, *args) {
-        return args;
+    def variadic_func(arg1, arg2, *vargs) {
+        return vargs;
     }
 
-    assert vfunc(1, 2) == $tup();
-    assert vfunc(1, 2, 3) == $tup(3);
-    assert vfunc(1, 2, 3, 4) == $tup(3, 4);
+    assert variadic_func(1, 2) == $tup();
+    assert variadic_func(1, 2, 3) == $tup(3);
+    assert variadic_func(1, 2, 3, 4) == $tup(3, 4);
 
 The variadic arguments are available inside the function as a tuple.
 
@@ -171,16 +192,14 @@ Functions can return multiple values, e.g.
         return 123, 456;
     }
 
-    assert get_values() == $tup(123, 456);
+    assert get_values() == (123, 456);
 
 This is syntactic sugar for returning a tuple --- i.e. it's equivalent to:
 
 ::: code pyro
     def get_values() {
-        return $tup(123, 456);
+        return (123, 456);
     }
-
-    assert get_values() == $tup(123, 456);
 
 You can unpack a tuple returned by a function in a `var` declaration using `()`, e.g.
 
@@ -188,3 +207,8 @@ You can unpack a tuple returned by a function in a `var` declaration using `()`,
     var (foo, bar) = get_values();
     assert foo == 123;
     assert bar == 456;
+
+
+### Notes
+
+::: insert footnotes

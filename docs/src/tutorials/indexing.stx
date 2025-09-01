@@ -20,11 +20,7 @@ Here's the full code for our `ListMap`:
 
 ::: code pyro
     class ListMap {
-        var data;
-
-        def $init() {
-            self.data = {};
-        }
+        var data = {};
 
         def $get(key) {
             if key in self.data {

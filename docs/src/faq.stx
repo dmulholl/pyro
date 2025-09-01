@@ -31,7 +31,7 @@ Potentially, in the future.
 
 Right now, Pyro's code isn't organised in a way that would make it easy to embed, but that isn't a fundamental problem.
 
-Once the core language is mature, I'll work on making it easily embeddable so it can be used, like Lua, as a scripting language inside a larger application.
+Once the core language is mature, I plan to work on making it easily embeddable so it can be used, like Lua, as a scripting language inside a larger application.
 
 
 ### Does Pyro support compiled modules?
