@@ -235,3 +235,61 @@ var Object06;
     assert obj1.field8 == obj2.field8;
     assert obj1.field9 == obj2.field9;
 }
+
+
+class Object07 {
+    pub var field1 = 123 + 456;
+    pub var field2 = global;
+}
+
+{
+    var obj1 = Object07 as {};
+    assert obj1.field1 == 579;
+    assert obj1.field2 == "global";
+
+    var obj2 = Object07 as {
+        field1: 111,
+    };
+    assert obj2.field1 == 111;
+    assert obj2.field2 == "global";
+
+    var obj3 = Object07 as {
+        field1: 111,
+        field2: "foobar",
+    };
+    assert obj3.field1 == 111;
+    assert obj3.field2 == "foobar";
+
+    assert obj1 == obj1;
+    assert obj2 == obj2;
+    assert obj3 == obj3;
+    assert obj1 != obj2;
+    assert obj2 != obj3;
+    assert obj3 != obj1;
+}
+
+
+class Object08 {
+    pub var field1 = 123;
+    pub var field2 = 456;
+    pub var field3 = 789;
+
+    def $init() {
+        self.field2 = 222;
+        self.field3 = 333;
+    }
+}
+
+{
+    var obj1 = Object08();
+    assert obj1.field1 == 123;
+    assert obj1.field2 == 222;
+    assert obj1.field3 == 333;
+
+    var obj2 = Object08 as {
+        field3: 999,
+    };
+    assert obj2.field1 == 123;
+    assert obj2.field2 == 222;
+    assert obj2.field3 == 999;
+}
