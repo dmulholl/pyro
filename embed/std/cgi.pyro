@@ -32,8 +32,9 @@ pub class Request {
     pub def value(key: str) -> str|err {
         var values = self.params[key];
         if $is_err(values) {
-            return $err("value(): key '${key}' not found");
+            return $err("key '${key}' not found in request parameters");
         }
+
         return try values:last();
     }
 
@@ -46,7 +47,12 @@ pub class Request {
     }
 
     pub def from_json() -> map|vec|str|i64|f64|bool|null|err {
-        return json::from_json(self.body);
+        var result = try json::from_json(self.body);
+        if $is_err(result) {
+            return $err("request body is not valid json: ${result}");
+        }
+
+        return result;
     }
 
     def unpack_url_encoded_string(input: str) {
