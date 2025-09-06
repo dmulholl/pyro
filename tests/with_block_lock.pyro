@@ -1,0 +1,44 @@
+var num_locks = 0;
+
+class Lock {
+    def $enter() {
+        num_locks += 1;
+    }
+
+    def $exit() {
+        num_locks -= 1;
+    }
+}
+
+assert num_locks == 0;
+with lock = Lock() {
+    assert num_locks == 1;
+}
+assert num_locks == 0;
+
+
+assert num_locks == 0;
+with lock1 = Lock() {
+    assert num_locks == 1;
+    with lock2 = Lock() {
+        assert num_locks == 2;
+    }
+    assert num_locks == 1;
+}
+assert num_locks == 0;
+
+
+assert num_locks == 0;
+var lock = Lock();
+with l1 = lock {
+    assert num_locks == 1;
+}
+assert num_locks == 0;
+with l2 = lock {
+    assert num_locks == 1;
+    with l3 = lock {
+        assert num_locks == 2;
+    }
+    assert num_locks == 1;
+}
+assert num_locks == 0;

@@ -36,7 +36,7 @@ assert $is_err(try(baz += 1));
 var global = 0;
 
 class Object {
-    def $end_with() {
+    def $exit() {
         global += 1;
     }
 }

@@ -129,7 +129,8 @@ static void mark_roots(PyroVM* vm) {
     mark_object(vm, (PyroObject*)vm->str_module);
     mark_object(vm, (PyroObject*)vm->str_tup);
     mark_object(vm, (PyroObject*)vm->str_err);
-    mark_object(vm, (PyroObject*)vm->str_dollar_end_with);
+    mark_object(vm, (PyroObject*)vm->str_dollar_enter);
+    mark_object(vm, (PyroObject*)vm->str_dollar_exit);
     mark_object(vm, (PyroObject*)vm->str_source);
     mark_object(vm, (PyroObject*)vm->str_line);
     mark_object(vm, (PyroObject*)vm->str_op_binary_less_less);

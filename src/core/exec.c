@@ -379,9 +379,10 @@ static PyroMod* load_module(PyroVM* vm, PyroValue* names, size_t name_count) {
 }
 
 
-void call_end_with_method(PyroVM* vm, PyroValue receiver) {
-    PyroValue end_with_method = pyro_get_method(vm, receiver, vm->str_dollar_end_with);
-    if (PYRO_IS_NULL(end_with_method)) {
+// Called when exiting a with-block.
+void call_exit_method(PyroVM* vm, PyroValue receiver) {
+    PyroValue exit_method = pyro_get_method(vm, receiver, vm->str_dollar_exit);
+    if (PYRO_IS_NULL(exit_method)) {
         return;
     }
 
@@ -397,7 +398,7 @@ void call_end_with_method(PyroVM* vm, PyroValue receiver) {
     vm->exit_flag = false;
     vm->panic_flag = false;
 
-    pyro_call_method(vm, end_with_method, 0);
+    pyro_call_method(vm, exit_method, 0);
     bool had_exit = vm->exit_flag;
     bool had_panic = vm->panic_flag;
 
@@ -2212,7 +2213,7 @@ static void run(PyroVM* vm) {
 
                 while (vm->with_stack_count > frame->with_stack_count_on_entry) {
                     PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
-                    call_end_with_method(vm, receiver);
+                    call_exit_method(vm, receiver);
                     vm->with_stack_count--;
                 }
 
@@ -2244,7 +2245,7 @@ static void run(PyroVM* vm) {
 
                 while (vm->with_stack_count > frame->with_stack_count_on_entry) {
                     PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
-                    call_end_with_method(vm, receiver);
+                    call_exit_method(vm, receiver);
                     vm->with_stack_count--;
                 }
 
@@ -2870,9 +2871,23 @@ static void run(PyroVM* vm) {
             }
 
             // Pushes the value on top of the stack onto the with_stack.
-            // Before: [ ... ][ with_block_local ]
-            // After:  [ ... ][ with_block_local ]
+            // Before: [ ... ][ receiver ]
+            // After:  [ ... ][ receiver ]
             case PYRO_OPCODE_START_WITH: {
+                PyroValue receiver = vm->stack_top[-1];
+
+                PyroValue enter_method = pyro_get_method(vm, receiver, vm->str_dollar_enter);
+                if (!PYRO_IS_NULL(enter_method)) {
+                    if (!pyro_push(vm, receiver)) {
+                        return;
+                    }
+
+                    pyro_call_method(vm, enter_method, 0);
+                    if (vm->exit_flag) {
+                        return;
+                    }
+                }
+
                 if (vm->with_stack_count == vm->with_stack_capacity) {
                     size_t new_capacity = pyro_grow_capacity(vm->with_stack_capacity);
                     PyroValue* new_array = PYRO_REALLOCATE_ARRAY(vm, PyroValue, vm->with_stack, vm->with_stack_capacity, new_capacity);
@@ -2883,7 +2898,8 @@ static void run(PyroVM* vm) {
                     vm->with_stack_capacity = new_capacity;
                     vm->with_stack = new_array;
                 }
-                vm->with_stack[vm->with_stack_count++] = vm->stack_top[-1];
+
+                vm->with_stack[vm->with_stack_count++] = receiver;
                 break;
             }
 
@@ -2893,7 +2909,7 @@ static void run(PyroVM* vm) {
             // After:  [ ... ]
             case PYRO_OPCODE_END_WITH: {
                 PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
-                call_end_with_method(vm, receiver);
+                call_exit_method(vm, receiver);
                 vm->with_stack_count--;
                 break;
             }
@@ -3168,7 +3184,7 @@ static void run(PyroVM* vm) {
 
     while (vm->with_stack_count > with_stack_count_on_entry) {
         PyroValue receiver = vm->with_stack[vm->with_stack_count - 1];
-        call_end_with_method(vm, receiver);
+        call_exit_method(vm, receiver);
         vm->with_stack_count--;
     }
 

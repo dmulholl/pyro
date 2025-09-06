@@ -119,7 +119,8 @@ struct PyroVM {
     PyroStr* str_dollar_call;
     PyroStr* str_dollar_contains;
     PyroStr* str_dollar_debug;
-    PyroStr* str_dollar_end_with;
+    PyroStr* str_dollar_enter;
+    PyroStr* str_dollar_exit;
     PyroStr* str_dollar_fmt;
     PyroStr* str_dollar_get;
     PyroStr* str_dollar_hash;

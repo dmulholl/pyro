@@ -127,7 +127,8 @@ PyroVM* pyro_new_vm(void) {
     vm->with_stack = NULL;
     vm->with_stack_count = 0;
     vm->with_stack_capacity = 0;
-    vm->str_dollar_end_with = NULL;
+    vm->str_dollar_enter = NULL;
+    vm->str_dollar_exit = NULL;
     vm->panic_source_id = NULL;
     vm->panic_line_number = 0;
     vm->str_op_binary_less_less = NULL;
@@ -181,7 +182,8 @@ PyroVM* pyro_new_vm(void) {
     vm->str_dollar_call = PyroStr_COPY("$call");
     vm->str_dollar_contains = PyroStr_COPY("$contains");
     vm->str_dollar_debug = PyroStr_COPY("$debug");
-    vm->str_dollar_end_with = PyroStr_COPY("$end_with");
+    vm->str_dollar_enter = PyroStr_COPY("$enter");
+    vm->str_dollar_exit = PyroStr_COPY("$exit");
     vm->str_dollar_fmt = PyroStr_COPY("$fmt");
     vm->str_dollar_get = PyroStr_COPY("$get");
     vm->str_dollar_hash = PyroStr_COPY("$hash");
