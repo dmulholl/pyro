@@ -2521,8 +2521,8 @@ static void parse_while_statement(Parser* parser) {
 
 static void parse_with_statement(Parser* parser) {
     // Support unpacking syntax for up to [var_names_capacity] names.
-    const size_t var_names_capacity = 12;
-    Token var_names[12];
+    const size_t var_names_capacity = 16;
+    Token var_names[16];
     size_t var_names_count = 0;
     bool unpack_vars = false;
 
