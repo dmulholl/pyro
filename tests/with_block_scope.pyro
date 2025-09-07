@@ -1,20 +1,16 @@
 var foo = "abc";
-
 with foo = "def" {
     assert foo == "def";
 }
-
 assert foo == "abc";
 
 
 var bar = "abc";
-
 with bar = "def" {
     assert bar == "def";
     bar = "ghi";
     assert bar == "ghi";
 }
-
 assert bar == "abc";
 
 

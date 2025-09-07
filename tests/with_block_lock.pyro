@@ -42,3 +42,24 @@ with l2 = lock {
     assert num_locks == 1;
 }
 assert num_locks == 0;
+
+
+def fn() {
+    with lock = Lock() {
+        $panic("oh no!");
+    }
+}
+
+
+assert num_locks == 0;
+assert $is_err(try fn());
+assert num_locks == 0;
+
+
+assert num_locks == 0;
+with lock = Lock() {
+    assert num_locks == 1;
+    assert $is_err(try fn());
+    assert num_locks == 1;
+}
+assert num_locks == 0;
