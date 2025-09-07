@@ -167,7 +167,7 @@ static void mark_roots(PyroVM* vm) {
         mark_object(vm, (PyroObject*)upvalue);
     }
 
-    // Values on the 'with' stack with pending $end_with() method calls.
+    // Values on the 'with' stack with pending $exit() method calls.
     for (size_t i = 0; i < vm->with_stack_count; i++) {
         mark_value(vm, vm->with_stack[i]);
     }

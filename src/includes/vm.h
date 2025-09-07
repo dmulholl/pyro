@@ -220,7 +220,7 @@ struct PyroVM {
     // This flag is set to true if the VM executing in a REPL.
     bool in_repl;
 
-    // Stack of values with pending $end_with() method calls.
+    // Stack of with-block values with pending $exit() method calls.
     PyroValue* with_stack;
     size_t with_stack_count;
     size_t with_stack_capacity;

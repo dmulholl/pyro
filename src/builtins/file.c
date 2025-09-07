@@ -91,12 +91,18 @@ static PyroValue file_close(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
-static PyroValue file_end_with(PyroVM* vm, size_t arg_count, PyroValue* args) {
+static PyroValue file_exit(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroFile* file = PYRO_AS_FILE(args[-1]);
 
-    if (file->stream) {
-        fclose(file->stream);
-        file->stream = NULL;
+    if (!file->stream) {
+        return pyro_null();
+    }
+
+    int result = fclose(file->stream);
+    file->stream = NULL;
+
+    if (result != 0) {
+        pyro_panic(vm, "$exit(): error closing file: %s", strerror(errno));
     }
 
     return pyro_null();
@@ -443,7 +449,7 @@ void pyro_load_builtin_type_file(PyroVM* vm) {
     pyro_define_superglobal_fn(vm, "$is_file", fn_is_file, 1);
 
     // Methods -- private.
-    pyro_define_pri_method(vm, vm->class_file, "$end_with", file_end_with, 0);
+    pyro_define_pri_method(vm, vm->class_file, "$exit", file_exit, 0);
 
     // Methods -- public.
     pyro_define_pub_method(vm, vm->class_file, "close", file_close, 0);
