@@ -29,13 +29,13 @@ The file object's `close()` method will be called when the `with` block exits, e
 
 Inside the `with` block, `<name>` is a new local variable.
 
-If the value of `<expression>` has an `$end_with()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or exits early via a `break`, `continue`, or `return` statement.
+If the value of `<expression>` has an `$exit()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or exits early via a `break`, `continue`, or `return` statement.
 
 
 
 ### Custom Classes
 
-You can add support for `with` blocks to any object by defining an `$end_with()` method.
+You can add support for `with` blocks to any object by defining an `$exit()` method.
 
 As an example, let's create a custom wrapper for writable files:
 
@@ -47,7 +47,7 @@ As an example, let's create a custom wrapper for writable files:
             self.file = $file(path, "w");
         }
 
-        def $end_with() {
+        def $exit() {
             self.file:close();
         }
 
@@ -56,7 +56,7 @@ As an example, let's create a custom wrapper for writable files:
         }
     }
 
-Here the `$end_with()` method ensures that the file will be closed when the `with` block exits, even if the code inside the `with` block panics or returns early.
+Here the `$exit()` method ensures that the file will be closed when the `with` block exits, even if the code inside the `with` block panics or returns early.
 
 We can use our custom `WriteableFile` type like this:
 
@@ -75,7 +75,7 @@ In practice, Pyro's `file` type already has builtin support for `with` blocks so
 
 ### Variable Scoping
 
-You can use a `with` block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
+You can also use a `with` block as a scoping mechanism to define an explicit, limited scope for a variable declaration, e.g.
 
 ::: code pyro
     var foo = 123;
@@ -99,7 +99,9 @@ This is equivalent to wrapping the variable declaration in a `{}` block, e.g.
 
     assert foo == 123;
 
-You can use unpacking syntax for variable declarations in `with` blocks, e.g.
+Using a `with` block in this case just makes the limited scope more explicit.
+
+Note that you can use unpacking syntax for variable declarations in `with` blocks, e.g.
 
 ::: code pyro
     with (foo, bar) = $tup(123, 456) {

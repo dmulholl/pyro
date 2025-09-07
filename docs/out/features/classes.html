@@ -408,13 +408,25 @@ The output of this method is used by the <code>$debug()</code> function.
 </div>
 <div>
 <dt>
-<code>:$end_with()</code>
+<code>:$enter()</code>
 </dt>
 <dd>
 <p>
-This method will be called when a <code>with</code> block exits.
+This method will be called when the instance enters a <code>with</code> block.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:$exit()</code>
+</dt>
+<dd>
+<p>
+This method will be called when the instance exits a <code>with</code> block.
 The method will be called even if the code in the <code>with</code> block panics or returns early.
-Can be used to run clean-up code.
+</p>
+<p>
+This method can be used to run clean-up code for the instance.
 </p>
 </dd>
 </div>

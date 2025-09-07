@@ -272,11 +272,17 @@ You can implement the `$`-prefixed methods listed below to overload operators or
     The output of this method is used by the `$debug()` function.
 
 
-[[ `:$end_with()` ]]
+[[ `:$enter()` ]]
 
-    This method will be called when a `with` block exits.
+    This method will be called when the instance enters a `with` block.
+
+
+[[ `:$exit()` ]]
+
+    This method will be called when the instance exits a `with` block.
     The method will be called even if the code in the `with` block panics or returns early.
-    Can be used to run clean-up code.
+
+    This method can be used to run clean-up code for the instance.
 
 
 [[ `:$fmt(format_specifier: str) -> str` ]]
