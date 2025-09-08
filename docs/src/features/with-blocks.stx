@@ -12,10 +12,11 @@ File objects have builtin support for `with` blocks, e.g.
 
 ::: code pyro
     with file = $file("data.txt") {
-        do_stuff();
+        ...
     }
 
-The file object's `close()` method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
+Here, the `with` block ensures that the file object's `close()` method will be called when the `with` block exits, even if the code inside the `with` block panics or returns early.
+You don't need to explicitly call `close()` on the file object yourself.
 
 
 
@@ -27,15 +28,17 @@ The file object's `close()` method will be called when the `with` block exits, e
         ...
     }
 
-Inside the `with` block, `<name>` is a new local variable.
+(*) Inside the `with` block, `<name>` is a new local variable.
 
-If the value of `<expression>` has an `$exit()` method, this method will be called when the `with` block exits, even if the code inside the `with` block panics or exits early via a `break`, `continue`, or `return` statement.
+(*) If the value of `<expression>` has an `$enter()` method, this method will be called on the value before entering the `with` block.
+
+(*) If the value of `<expression>` has an `$exit()` method, this method will be called on the value when the `with` block exits, even if the code inside the `with` block panics or exits early via a `break`, `continue`, or `return` statement.
 
 
 
 ### Custom Classes
 
-You can add support for `with` blocks to any object by defining an `$exit()` method.
+You can add support for `with` blocks to any object by defining `$enter()` and/or `$exit()` methods.
 
 As an example, let's create a custom wrapper for writable files:
 
@@ -99,7 +102,7 @@ This is equivalent to wrapping the variable declaration in a `{}` block, e.g.
 
     assert foo == 123;
 
-Using a `with` block in this case just makes the limited scope more explicit.
+Using a `with` block in this case just makes the limited scope of the variable more explicit.
 
 Note that you can use unpacking syntax for variable declarations in `with` blocks, e.g.
 
