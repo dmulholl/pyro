@@ -21,3 +21,6 @@ jobs:
 
       - name: Run Test Suite With Release Binary
         run: ./build/release/pyro test tests/*.pyro
+
+      - name: Check Docker Version
+        run: docker --version
