@@ -2619,9 +2619,10 @@ static void parse_function_definition(Parser* parser, FnType type, Token name) {
                 return;
             }
 
-            parser->fn_compiler = fn_compiler.enclosing;
+            FnCompiler* current_compiler = parser->fn_compiler;
+            parser->fn_compiler = current_compiler->enclosing;
             parse_default_argument_value_expression(parser);
-            parser->fn_compiler = &fn_compiler;
+            parser->fn_compiler = current_compiler;
             default_value_count += 1;
         }
     } while (match(parser, TOKEN_COMMA));
