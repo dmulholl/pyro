@@ -1,6 +1,7 @@
 /build/
 /tests/compiled_module.so
 
-# Ignore everything in embed/ except the content of the std/ directory.
+# Ignore everything in embed/ except the content of the std/ directory and the readme file.
 /embed/*
 !/embed/std
+!/embed/readme.md
