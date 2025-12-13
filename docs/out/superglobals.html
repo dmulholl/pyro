@@ -161,14 +161,20 @@ Functions
 </dt>
 <dd>
 <p>
-Runs a shell command and returns its output as a string.
+This is a shortcut function for running a shell command.
 </p>
 <p>
-Panics if the command cannot be found or if the command exits with a non-zero status code.
+This function runs the shell command string <code>command</code> using the system's default <code>/bin/sh</code> shell, returning the command's <code>stdout</code> output as a string.
+It panics if the command cannot be found or if the command exits with a non-zero status code.
 </p>
-<p>
-This is a convenience shortcut for the <code>$shell()</code> function which provides more control over input and output.
-</p>
+<ul>
+<li>
+Use the superglobal <code>$shell()</code> function to run shell commands with more control over the command's inputs and outputs.
+</li>
+<li>
+Use the superglobal <code>$run()</code> function to run arbitrary executables with full control over the executable's inputs and outputs.
+</li>
+</ul>
 </dd>
 </div>
 <div>
@@ -1005,12 +1011,16 @@ Creates a new <a href="builtins/sets.html">set</a>.
 <p>
 Runs a shell command.
 </p>
+<p>
+This function runs the shell command string <code>command</code> using the system's default <code>/bin/sh</code> shell.
+It returns a non-zero exit code and a <code>stderr</code> error message if the command cannot be found.
+</p>
 <ul>
 <li>
-If an <code>input</code> string or buffer is specified, its content will be written to the command's <code>stdin</code> stream.
+Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a buffer, and its <code>stderr</code> output as a buffer.
 </li>
 <li>
-Returns a three-item tuple containing the command's exit code as an integer, its <code>stdout</code> output as a buffer, and its <code>stderr</code> output as a buffer.
+If an <code>input</code> string or buffer is specified, its content will be written to the command's <code>stdin</code> stream.
 </li>
 <li>
 This function will panic if an OS error occurs while forking the process.
@@ -1026,7 +1036,7 @@ This function is equivalent to running:
 /bin/sh -c &lt;command&gt;
 </pre>
 <p>
-Use the <code>$run()</code> function to run an executable file directly, bypassing the shell.
+Use the superglobal <code>$run()</code> function to run an executable file directly, bypassing the shell.
 </p>
 </dd>
 </div>

@@ -57,11 +57,14 @@ All superglobals live in the reserved `$` namespace so they won't interfere with
 
 [[ `$(command: str) -> str` ]]
 
-    Runs a shell command and returns its output as a string.
+    This is a shortcut function for running a shell command.
 
-    Panics if the command cannot be found or if the command exits with a non-zero status code.
+    This function runs the shell command string `command` using the system's default `/bin/sh` shell, returning the command's `stdout` output as a string.
+    It panics if the command cannot be found or if the command exits with a non-zero status code.
 
-    This is a convenience shortcut for the `$shell()` function which provides more control over input and output.
+    * Use the superglobal `$shell()` function to run shell commands with more control over the command's inputs and outputs.
+
+    * Use the superglobal `$run()` function to run arbitrary executables with full control over the executable's inputs and outputs.
 
 
 
@@ -557,8 +560,11 @@ All superglobals live in the reserved `$` namespace so they won't interfere with
 
     Runs a shell command.
 
-    * If an `input` string or buffer is specified, its content will be written to the command's `stdin` stream.
+    This function runs the shell command string `command` using the system's default `/bin/sh` shell.
+    It returns a non-zero exit code and a `stderr` error message if the command cannot be found.
+
     * Returns a three-item tuple containing the command's exit code as an integer, its `stdout` output as a buffer, and its `stderr` output as a buffer.
+    * If an `input` string or buffer is specified, its content will be written to the command's `stdin` stream.
     * This function will panic if an OS error occurs while forking the process.
 
     Note that you can efficiently convert an output buffer to a string using the buffer's `:to_str()` method.
@@ -568,7 +574,7 @@ All superglobals live in the reserved `$` namespace so they won't interfere with
     ::: code
         /bin/sh -c <command>
 
-    Use the `$run()` function to run an executable file directly, bypassing the shell.
+    Use the superglobal `$run()` function to run an executable file directly, bypassing the shell.
 
 
 

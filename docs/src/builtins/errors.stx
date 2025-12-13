@@ -36,8 +36,7 @@ Stringifying an `err` returns its `message` string, e.g.
     var err = $err("oh no!");
 
     assert $str(err) == "oh no!";
-    assert $fmt("{}", err) == "oh no!";
-    assert "${err}" == "oh no!";
+    assert err:message() == "oh no!";
 
 
 
@@ -47,11 +46,14 @@ An `err` object contains a `details` map which you can use to store arbitrary da
 You can index into this `details` map directly on the `err` object itself, e.g.
 
 ::: code pyro
-    var err = $err("disaster strikes!");
+    var err = $err("oh no!");
     err["code"] = 123;
 
-    assert $str(err) == "disaster strikes!";
+    assert $str(err) == "oh no!";
     assert err["code"] == 123;
+
+    var details = err:details();
+    assert details["code"] == 123;
 
 The `details` map of an `err` object returned by a panicking `try` expression contains `"source"` and `"line"` entries specifying the source ID and line number of the panic, e.g.
 
