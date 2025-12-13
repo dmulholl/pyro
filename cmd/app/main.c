@@ -25,9 +25,19 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
+    // Compile and execute the main.pyro code.
     pyro_exec_code(vm, (const char*)code->bytes, code->count, "main.pyro", NULL);
+    if (pyro_get_exit_flag(vm) || pyro_get_panic_flag(vm)) {
+        int exit_code = (int)pyro_get_exit_code(vm);
+        pyro_free_vm(vm);
+        return exit_code;
+    }
+
+    // Execute the $main() function if it exists.
+    pyro_run_main_func(vm);
 
     int exit_code = (int)pyro_get_exit_code(vm);
     pyro_free_vm(vm);
+
     return exit_code;
 }

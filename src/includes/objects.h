@@ -99,8 +99,8 @@ struct PyroMap {
 PyroMap* PyroMap_new(PyroVM* vm);
 PyroMap* PyroMap_new_as_set(PyroVM* vm);
 
-// Gets an entry from the map. This function can call into Pyro code via pyro_op_compare_eq()
-// and so can set the panic and/or exit flags.
+// Gets an entry from the map. Returns true if a matching entry is found. This function can call
+// into Pyro code via pyro_op_compare_eq() and so can set the panic and/or exit flags.
 bool PyroMap_get(PyroMap* map, PyroValue key, PyroValue* value, PyroVM* vm);
 
 // Adds a new entry to the map or updates an existing entry.
