@@ -142,11 +142,41 @@ Returns an iterator over the enum's members.
 </p>
 </dd>
 </div>
+<div>
+<dt>
+<code>:name() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the enum's name, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span> <span class="nx">Red</span><span class="p">,</span> <span class="nx">Green</span><span class="p">,</span> <span class="nx">Blue</span> <span class="p">}</span>
+<span class="k">assert</span> <span class="nx">Color</span><span class="p">:</span><span class="nx">name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Color&quot;</span><span class="p">;</span>
+</pre>
+</dd>
+</div>
 </dl>
 <h3 id="enum-member-methods">
 Enum Member Methods
 </h3>
 <dl>
+<div>
+<dt>
+<code>:name() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the member's name, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span> <span class="nx">Red</span><span class="p">,</span> <span class="nx">Green</span><span class="p">,</span> <span class="nx">Blue</span> <span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span><span class="p">:</span><span class="nx">name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Red&quot;</span><span class="p">;</span>
+</pre>
+</dd>
+</div>
 <div>
 <dt>
 <code>:type() -&gt; enum</code>
@@ -155,6 +185,22 @@ Enum Member Methods
 <p>
 Returns the member's <code>enum</code> type.
 </p>
+</dd>
+</div>
+<div>
+<dt>
+<code>:type_name() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the member's type name, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span> <span class="nx">Red</span><span class="p">,</span> <span class="nx">Green</span><span class="p">,</span> <span class="nx">Blue</span> <span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span><span class="p">:</span><span class="nx">type_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Color&quot;</span><span class="p">;</span>
+</pre>
 </dd>
 </div>
 <div>

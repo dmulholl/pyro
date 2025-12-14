@@ -60,21 +60,46 @@ If a member doesn't have an explicitly assigned value, its associated value is `
     assert bar:value() == null;
 
 
-
 ### Enum Type Methods
-
 
 [[ `:members() -> iter` ]]
 
     Returns an iterator over the enum's members.
 
+[[ `:name() -> str` ]]
+
+    Returns the enum's name, e.g.
+
+    ::: code pyro
+        enum Color { Red, Green, Blue }
+        assert Color:name() == "Color";
 
 
 ### Enum Member Methods
 
+[[ `:name() -> str` ]]
+
+    Returns the member's name, e.g.
+
+    ::: code pyro
+        enum Color { Red, Green, Blue }
+
+        var color = Color::Red;
+        assert color:name() == "Red";
+
 [[ `:type() -> enum` ]]
 
     Returns the member's `enum` type.
+
+[[ `:type_name() -> str` ]]
+
+    Returns the member's type name, e.g.
+
+    ::: code pyro
+        enum Color { Red, Green, Blue }
+
+        var color = Color::Red;
+        assert color:type_name() == "Color";
 
 [[ `:value() -> any` ]]
 
