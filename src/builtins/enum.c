@@ -14,6 +14,12 @@ static PyroValue enum_type_members(PyroVM* vm, size_t arg_count, PyroValue* args
 }
 
 
+static PyroValue enum_type_name(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroEnumType* enum_type = PYRO_AS_ENUM_TYPE(args[-1]);
+    return pyro_obj(enum_type->name);
+}
+
+
 static PyroValue enum_member_value(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroEnumMember* enum_member = PYRO_AS_ENUM_MEMBER(args[-1]);
     return enum_member->value;
@@ -23,6 +29,18 @@ static PyroValue enum_member_value(PyroVM* vm, size_t arg_count, PyroValue* args
 static PyroValue enum_member_type(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroEnumMember* enum_member = PYRO_AS_ENUM_MEMBER(args[-1]);
     return pyro_obj(enum_member->enum_type);
+}
+
+
+static PyroValue enum_member_name(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroEnumMember* enum_member = PYRO_AS_ENUM_MEMBER(args[-1]);
+    return pyro_obj(enum_member->name);
+}
+
+
+static PyroValue enum_member_type_name(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroEnumMember* enum_member = PYRO_AS_ENUM_MEMBER(args[-1]);
+    return pyro_obj(enum_member->enum_type->name);
 }
 
 
@@ -67,8 +85,11 @@ void pyro_load_builtin_type_enum(PyroVM* vm) {
     // Enum Type methods.
     pyro_define_pri_method(vm, vm->class_enum_type, "$iter", enum_type_members, 0);
     pyro_define_pub_method(vm, vm->class_enum_type, "members", enum_type_members, 0);
+    pyro_define_pub_method(vm, vm->class_enum_type, "name", enum_type_name, 0);
 
     // Enum Value methods.
     pyro_define_pub_method(vm, vm->class_enum_member, "value", enum_member_value, 0);
     pyro_define_pub_method(vm, vm->class_enum_member, "type", enum_member_type, 0);
+    pyro_define_pub_method(vm, vm->class_enum_member, "name", enum_member_name, 0);
+    pyro_define_pub_method(vm, vm->class_enum_member, "type_name", enum_member_type_name, 0);
 }

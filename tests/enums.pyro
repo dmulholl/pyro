@@ -5,6 +5,28 @@ enum Number {
     OtherTwo = 2,
 }
 
+assert Number:name() == "Number";
+
+assert Number::Undefined:name() == "Undefined";
+assert Number::One:name() == "One";
+assert Number::Two:name() == "Two";
+assert Number::OtherTwo:name() == "OtherTwo";
+
+assert Number::Undefined:type_name() == "Number";
+assert Number::One:type_name() == "Number";
+assert Number::Two:type_name() == "Number";
+assert Number::OtherTwo:type_name() == "Number";
+
+with number = Number::Undefined {
+    assert number:name() == "Undefined";
+    assert number:type_name() == "Number";
+}
+
+with number = Number::One {
+    assert number:name() == "One";
+    assert number:type_name() == "Number";
+}
+
 assert $type(Number) == "enum";
 
 assert $type(Number::Undefined) == "Number";
