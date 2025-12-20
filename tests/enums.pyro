@@ -17,6 +17,11 @@ assert Number::One:type_name() == "Number";
 assert Number::Two:type_name() == "Number";
 assert Number::OtherTwo:type_name() == "Number";
 
+assert Number::Undefined:full_name() == "Number::Undefined";
+assert Number::One:full_name() == "Number::One";
+assert Number::Two:full_name() == "Number::Two";
+assert Number::OtherTwo:full_name() == "Number::OtherTwo";
+
 with number = Number::Undefined {
     assert number:name() == "Undefined";
     assert number:type_name() == "Number";
