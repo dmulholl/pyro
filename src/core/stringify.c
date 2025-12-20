@@ -106,7 +106,7 @@ static PyroStr* make_debug_string_for_bytes(PyroVM* vm, uint8_t* bytes, size_t n
 // buffer's content. Panics and returns NULL if memory allocation fails.
 static PyroStr* make_debug_string_for_buf(PyroVM* vm, PyroBuf* buf) {
     if (buf->count == 0) {
-        return pyro_sprintf_to_pyrostr(vm, "<buf \"\">");
+        return pyro_copy_to_pyrostr(vm, "<buf \"\">");
     }
 
     if (buf->count > 8) {
@@ -504,16 +504,16 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
             return (PyroStr*)object;
 
         case PYRO_OBJECT_MODULE:
-            return pyro_sprintf_to_pyrostr(vm, "<module>");
+            return pyro_copy_to_pyrostr(vm, "<module>");
 
         case PYRO_OBJECT_UPVALUE:
-            return pyro_sprintf_to_pyrostr(vm, "<upvalue>");
+            return pyro_copy_to_pyrostr(vm, "<upvalue>");
 
         case PYRO_OBJECT_FILE: {
             PyroFile* file = (PyroFile*)object;
 
             if (file->stream == NULL) {
-                return pyro_sprintf_to_pyrostr(vm, "<file CLOSED>");
+                return pyro_copy_to_pyrostr(vm, "<file CLOSED>");
             }
 
             if (file->path) {
@@ -525,20 +525,20 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
             }
 
             if (file->stream == stdin) {
-                return pyro_sprintf_to_pyrostr(vm, "<file STDIN>");
+                return pyro_copy_to_pyrostr(vm, "<file STDIN>");
             }
             if (file->stream == stdout) {
-                return pyro_sprintf_to_pyrostr(vm, "<file STDOUT>");
+                return pyro_copy_to_pyrostr(vm, "<file STDOUT>");
             }
             if (file->stream == stderr) {
-                return pyro_sprintf_to_pyrostr(vm, "<file STDERR>");
+                return pyro_copy_to_pyrostr(vm, "<file STDERR>");
             }
 
-            return pyro_sprintf_to_pyrostr(vm, "<file>");
+            return pyro_copy_to_pyrostr(vm, "<file>");
         }
 
         case PYRO_OBJECT_FN:
-            return pyro_sprintf_to_pyrostr(vm, "<fn>");
+            return pyro_copy_to_pyrostr(vm, "<fn>");
 
         case PYRO_OBJECT_BOUND_METHOD: {
             PyroBoundMethod* bound_method = (PyroBoundMethod*)object;
@@ -550,12 +550,12 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
                 case PYRO_OBJECT_CLOSURE:
                     return pyro_sprintf_to_pyrostr(vm, "<method %s>", ((PyroClosure*)method)->fn->name->bytes);
                 default:
-                    return pyro_sprintf_to_pyrostr(vm, "<method>");
+                    return pyro_copy_to_pyrostr(vm, "<method>");
             }
         }
 
         case PYRO_OBJECT_ITER:
-            return pyro_sprintf_to_pyrostr(vm, "<iter>");
+            return pyro_copy_to_pyrostr(vm, "<iter>");
 
         case PYRO_OBJECT_QUEUE: {
             PyroQueue* queue = (PyroQueue*)object;
@@ -613,7 +613,7 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
             if (class->name) {
                 return pyro_sprintf_to_pyrostr(vm, "<class %s>", class->name->bytes);
             }
-            return pyro_sprintf_to_pyrostr(vm, "<class>");
+            return pyro_copy_to_pyrostr(vm, "<class>");
         }
 
         case PYRO_OBJECT_INSTANCE: {
@@ -636,13 +636,13 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
                 return pyro_sprintf_to_pyrostr(vm, "<instance %s>", instance->obj.class->name->bytes);
             }
 
-            return pyro_sprintf_to_pyrostr(vm, "<instance>");
+            return pyro_copy_to_pyrostr(vm, "<instance>");
         }
 
         case PYRO_OBJECT_ERR: {
             PyroErr* err = (PyroErr*)object;
             if (err->message == NULL || err->message->count == 0) {
-                return pyro_sprintf_to_pyrostr(vm, "<err>");
+                return pyro_copy_to_pyrostr(vm, "<err>");
             }
             return err->message;
         }
@@ -679,7 +679,7 @@ static PyroStr* stringify_object(PyroVM* vm, PyroObject* object) {
         }
 
         default:
-            return pyro_sprintf_to_pyrostr(vm, "<object>");
+            return pyro_copy_to_pyrostr(vm, "<object>");
     }
 }
 
@@ -783,6 +783,17 @@ PyroStr* pyro_sprintf_to_pyrostr(PyroVM* vm, const char* format_string, ...) {
 }
 
 
+PyroStr* pyro_copy_to_pyrostr(PyroVM* vm, const char* cstring) {
+    PyroStr* string = PyroStr_copy(cstring, strlen((cstring)), false, vm);
+    if (!string) {
+        pyro_panic(vm, "out of memory");
+        return NULL;
+    }
+
+    return string;
+}
+
+
 PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
     switch (value.type) {
         case PYRO_VALUE_BOOL:
@@ -816,7 +827,7 @@ PyroStr* pyro_stringify_value(PyroVM* vm, PyroValue value) {
         }
 
         default:
-            return pyro_sprintf_to_pyrostr(vm, "<value>");
+            return pyro_copy_to_pyrostr(vm, "<value>");
     }
 }
 
@@ -913,7 +924,7 @@ PyroStr* pyro_debugify_value(PyroVM* vm, PyroValue value) {
     if (PYRO_IS_ERR(value)) {
         PyroErr* err = PYRO_AS_ERR(value);
         if (err->message == NULL || err->message->count == 0) {
-            return pyro_sprintf_to_pyrostr(vm, "<err \"\">");
+            return pyro_copy_to_pyrostr(vm, "<err \"\">");
         }
 
         PyroStr* debug_message = make_debug_string_for_string(vm, err->message);

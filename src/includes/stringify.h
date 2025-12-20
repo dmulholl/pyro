@@ -17,6 +17,10 @@ char* pyro_sprintf(PyroVM* vm, const char* format_string, ...);
 // - Panics ard returns NULL if memory allocation fails.
 PyroStr* pyro_sprintf_to_pyrostr(PyroVM* vm, const char* format_string, ...);
 
+// Creates a new PyroStr instance by copying the content of the null-terminated C string.
+// - Panics ard returns NULL if memory allocation fails.
+PyroStr* pyro_copy_to_pyrostr(PyroVM* vm, const char* cstring);
+
 // Returns the default string representation of [value].
 // - Panics and returns NULL if an error occurs.
 // - This function can call into Pyro code and can therefore set the panic and/or exit flags.
