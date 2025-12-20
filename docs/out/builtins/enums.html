@@ -163,6 +163,22 @@ Enum Member Methods
 <dl>
 <div>
 <dt>
+<code>:full_name() -&gt; str</code>
+</dt>
+<dd>
+<p>
+Returns the member's full name, e.g.
+</p>
+<pre class="lang-pyro pygments" data-lang="pyro">
+<span class="kd">enum</span> <span class="nx">Color</span> <span class="p">{</span> <span class="nx">Red</span><span class="p">,</span> <span class="nx">Green</span><span class="p">,</span> <span class="nx">Blue</span> <span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">Color</span><span class="p">::</span><span class="nx">Red</span><span class="p">;</span>
+<span class="k">assert</span> <span class="nx">color</span><span class="p">:</span><span class="nx">full_name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Color::Red&quot;</span><span class="p">;</span>
+</pre>
+</dd>
+</div>
+<div>
+<dt>
 <code>:name() -&gt; str</code>
 </dt>
 <dd>

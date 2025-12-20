@@ -77,6 +77,16 @@ If a member doesn't have an explicitly assigned value, its associated value is `
 
 ### Enum Member Methods
 
+[[ `:full_name() -> str` ]]
+
+    Returns the member's full name, e.g.
+
+    ::: code pyro
+        enum Color { Red, Green, Blue }
+
+        var color = Color::Red;
+        assert color:full_name() == "Color::Red";
+
 [[ `:name() -> str` ]]
 
     Returns the member's name, e.g.
