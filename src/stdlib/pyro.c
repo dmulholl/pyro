@@ -64,7 +64,7 @@ static PyroValue fn_address(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     PyroObject* object = PYRO_AS_OBJ(args[0]);
-    PyroStr* string = pyro_sprintf_to_obj(vm, "0x%" PRIXPTR, (uintptr_t)object);
+    PyroStr* string = pyro_sprintf_to_pyrostr(vm, "0x%" PRIXPTR, (uintptr_t)object);
     if (!string) {
         return pyro_null();
     }

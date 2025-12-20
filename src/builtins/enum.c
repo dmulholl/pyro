@@ -41,7 +41,7 @@ static PyroValue enum_member_name(PyroVM* vm, size_t arg_count, PyroValue* args)
 static PyroValue enum_member_full_name(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroEnumMember* enum_member = PYRO_AS_ENUM_MEMBER(args[-1]);
 
-    PyroStr* full_name = pyro_sprintf_to_obj(vm,
+    PyroStr* full_name = pyro_sprintf_to_pyrostr(vm,
         "%s::%s",
         enum_member->enum_type->name->bytes,
         enum_member->name->bytes

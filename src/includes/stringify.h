@@ -15,7 +15,7 @@ char* pyro_sprintf(PyroVM* vm, const char* format_string, ...);
 // - [format_string] should be a C-style printf-compatible format string.
 // - Panics and returns NULL if a formatting error occurs.
 // - Panics ard returns NULL if memory allocation fails.
-PyroStr* pyro_sprintf_to_obj(PyroVM* vm, const char* format_string, ...);
+PyroStr* pyro_sprintf_to_pyrostr(PyroVM* vm, const char* format_string, ...);
 
 // Returns the default string representation of [value].
 // - Panics and returns NULL if an error occurs.
