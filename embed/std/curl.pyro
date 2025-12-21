@@ -73,6 +73,16 @@ pub class Response {
         self.body = $buf();
     }
 
+    def $str() {
+        let max_sample_count = 24;
+        let sample_count = self.body:count() < max_sample_count :? self.body:count() :| max_sample_count;
+
+        let sample = self.body:slice(0, sample_count):to_str();
+        let ellipsis = sample_count < self.body:count() :? "..." :| "";
+
+        return "<instance std::curl::Response ${self.code} ${sample;?}${ellipsis}>";
+    }
+
     pub def has_header(key: str) -> bool {
         return key:to_ascii_lower() in self.headers;
     }
