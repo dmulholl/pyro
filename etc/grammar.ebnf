@@ -16,7 +16,7 @@ statement = block
           | return_statement
           | expression_statement ;
 
-block = "{" ( statement )* "}" ;
+block = "{" statement* "}" ;
 
 declaration = variable_declaration | function_declaration | class_declaration ;
 
@@ -57,35 +57,35 @@ return_statement = "return" expression? ";" ;
 
 # Each rule matches expressions at its precedence level or higher.
 
-expression = assignment ;
+expression = assignment_expression ;
 
-assignment = ( call "." )? IDENTIFIER ( "=" | "+=" | "-=" ) assignment | conditional ;
+assignment_expression = ( call_expression "." )? IDENTIFIER ( "=" | "+=" | "-=" ) assignment_expression | conditional_expression ;
 
-conditional = logical ( "?" logical "|" logical )? ;
+conditional_expression = logical_expression ( "?" logical_expression "|" logical_expression )? ;
 
-logical = equivalence ( ( "and" | "or" ) equivalence )* ;
+logical_expression = equivalence_expression ( ( "and" | "or" ) equivalence_expression )* ;
 
-equivalence = comparative ( ( "!=" | "==" ) comparative )* ;
+equivalence_expression = comparative_expression ( ( "!=" | "==" ) comparative_expression )* ;
 
-comparative = additive ( ( ">" | ">=" | "<" | "<=" ) additive )* ;
+comparative_expression = additive_expression ( ( ">" | ">=" | "<" | "<=" ) additive_expression )* ;
 
-additive = multiplicative ( ( "-" | "+" ) multiplicative )* ;
+additive_expression = multiplicative_expression ( ( "-" | "+" ) multiplicative_expression )* ;
 
-multiplicative = unary ( ( "/" | "*" ) unary )* ;
+multiplicative_expression = unary_expression ( ( "/" | "*" ) unary_expression )* ;
 
-unary = ( "!" | "-" | "try" ) unary | power ;
+unary_expression = ( "!" | "-" | "try" ) unary_expression | power_expression ;
 
-power = call ( "^" unary ) ;
+power_expression = call_expression ( "^" unary_expression ) ;
 
-call = primary ( "(" arguments? ")" | ( "." | ":" ) IDENTIFIER )* ;
+call_expression = primary_expression ( "(" arguments? ")" | ( "." | ":" ) IDENTIFIER )* ;
 
-primary = "true" | "false" | "null" | "self"
-        | NUMBER | STRING | IDENTIFIER
-        | "(" expression ")"
-        | "super" ":" IDENTIFIER
-        | func_expr;
+primary_expression = "true" | "false" | "null" | "self"
+                   | NUMBER | STRING | IDENTIFIER
+                   | "(" expression ")"
+                   | "super" ":" IDENTIFIER
+                   | function_expression;
 
-func_expr = "def" "(" parameters? ")" block ;
+function_expression = "def" "(" parameters? ")" block ;
 
 arguments = expression ( "," expression )* ;
 
