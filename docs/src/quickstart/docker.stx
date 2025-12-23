@@ -11,7 +11,7 @@ meta_title: "Pyro &mdash; Quickstart: Docker"
 Run the pre-built Docker image:
 
 ::: code
-    docker run --rm -it dmulholl/pyro:latest
+    docker run --platform linux/amd64 --rm -it dmulholl/pyro:latest
 
 Running the Docker image automatically runs its installed Pyro binary.
 
@@ -38,7 +38,7 @@ Hit `Ctrl-D` or type `exit` and hit return to end the REPL session.
 Open a Bash shell in the pre-built Docker image:
 
 ::: code
-    docker run --rm -it dmulholl/pyro:latest bash
+    docker run --platform linux/amd64 --rm -it dmulholl/pyro:latest bash
 
 You'll find a ready-made test file in the home directory:
 

@@ -81,7 +81,7 @@ Running the REPL
 Run the pre-built Docker image:
 </p>
 <pre>
-docker run --rm -it dmulholl/pyro:latest
+docker run --platform linux/amd64 --rm -it dmulholl/pyro:latest
 </pre>
 <p>
 Running the Docker image automatically runs its installed Pyro binary.
@@ -113,7 +113,7 @@ Running a Script
 Open a Bash shell in the pre-built Docker image:
 </p>
 <pre>
-docker run --rm -it dmulholl/pyro:latest bash
+docker run --platform linux/amd64 --rm -it dmulholl/pyro:latest bash
 </pre>
 <p>
 You'll find a ready-made test file in the home directory:

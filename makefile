@@ -210,7 +210,7 @@ docker-build: ## Builds the Pyro Docker image.
 
 docker-run: ## Runs a Bash shell in the Pyro Docker image.
 docker-run: docker-build
-	docker run --rm -it -v .:/pyro pyro bash
+	docker run --platform linux/amd64 --rm -it -v .:/pyro pyro bash
 
 docker-push: ## Builds and pushes a new Docker image to the Docker Hub repository.
 docker-push: docker-build
