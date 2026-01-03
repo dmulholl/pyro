@@ -14,10 +14,23 @@ int pyro_cli_run_exec(ArgParser* parser) {
     pyro_cli_add_import_roots_from_environment(vm);
 
     const char* code = ap_get_str_value(parser, "exec");
-    pyro_exec_code(vm, code, strlen(code), "<exec>", NULL);
+    size_t code_length = strlen(code);
+
+    char* buffer = malloc(code_length + 2);
+    if (!buffer) {
+        fprintf(stderr, "error: out of memory\n");
+        return 1;
+    }
+
+    memcpy(buffer, code, code_length);
+    buffer[code_length] = ';';
+    buffer[code_length + 1] = '\0';
+
+    pyro_exec_code(vm, buffer, code_length + 1, "<exec>", NULL);
 
     int exit_code = (int)pyro_get_exit_code(vm);
     pyro_free_vm(vm);
+    free(buffer);
 
     return exit_code;
 }
