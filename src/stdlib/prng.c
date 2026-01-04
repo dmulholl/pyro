@@ -61,6 +61,36 @@ static PyroValue fn_rand_float(PyroVM* vm, size_t arg_count, PyroValue* args) {
 }
 
 
+static PyroValue fn_rand_float_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_F64(args[0])) {
+        pyro_panic(vm, "rand_float_in_range(): invalid argument [x], expected a float");
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_F64(args[1])) {
+        pyro_panic(vm, "rand_float_in_range(): invalid argument [y], expected a float");
+        return pyro_null();
+    }
+
+    double low = args[0].as.f64;
+    double high = args[1].as.f64;
+
+    if (low >= high) {
+        pyro_panic(vm, "rand_float_in_range(): invalid arguments, [x] must be less than [y]");
+        return pyro_null();
+    }
+
+    uint64_t rand_u64 = pyro_xoshiro256ss_next(&vm->prng_state);
+
+    // Generates a uniformly-distributed random double on the half-open interval [0.0, 1.0).
+    // The divisor is 2^53.
+    double rand_f64 = (rand_u64 >> 11) * (1.0/9007199254740992.0);
+
+    double delta = high - low;
+    return pyro_f64(low + delta * rand_f64);
+}
+
+
 static void free_xoshiro256ss_state(PyroVM* vm, void* pointer) {
     free(pointer);
     vm->bytes_allocated -= sizeof(pyro_xoshiro256ss_state_t);
@@ -164,6 +194,40 @@ static PyroValue generator_rand_float(PyroVM* vm, size_t arg_count, PyroValue* a
 }
 
 
+static PyroValue generator_rand_float_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
+    PyroResourcePointer* rp = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
+    pyro_xoshiro256ss_state_t* state = rp->pointer;
+
+    if (!PYRO_IS_F64(args[0])) {
+        pyro_panic(vm, "rand_float_in_range(): invalid argument [x], expected a float");
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_F64(args[1])) {
+        pyro_panic(vm, "rand_float_in_range(): invalid argument [y], expected a float");
+        return pyro_null();
+    }
+
+    double low = args[0].as.f64;
+    double high = args[1].as.f64;
+
+    if (low >= high) {
+        pyro_panic(vm, "rand_float_in_range(): invalid arguments, [x] must be less than [y]");
+        return pyro_null();
+    }
+
+    uint64_t rand_u64 = pyro_xoshiro256ss_next(state);
+
+    // Generates a uniformly-distributed random double on the half-open interval [0.0, 1.0).
+    // The divisor is 2^53.
+    double rand_f64 = (rand_u64 >> 11) * (1.0/9007199254740992.0);
+
+    double delta = high - low;
+    return pyro_f64(low + delta * rand_f64);
+}
+
+
 static PyroValue generator_seed(PyroVM* vm, size_t arg_count, PyroValue* args) {
     if (!PYRO_IS_I64(args[0])) {
         pyro_panic(vm, "seed(): invalid argument, expected an integer");
@@ -183,6 +247,7 @@ void pyro_load_stdlib_module_prng(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_member_fn(vm, module, "rand_int", fn_rand_int, -1);
     pyro_define_pub_member_fn(vm, module, "rand_int_in_range", fn_rand_int_in_range, 2);
     pyro_define_pub_member_fn(vm, module, "rand_float", fn_rand_float, 0);
+    pyro_define_pub_member_fn(vm, module, "rand_float_in_range", fn_rand_float_in_range, 2);
 
     PyroClass* generator_class = PyroClass_new(vm);
     if (!generator_class) {
@@ -198,5 +263,6 @@ void pyro_load_stdlib_module_prng(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_method(vm, generator_class, "rand_int", generator_rand_int, -1);
     pyro_define_pub_method(vm, generator_class, "rand_int_in_range", generator_rand_int_in_range, 2);
     pyro_define_pub_method(vm, generator_class, "rand_float", generator_rand_float, 0);
+    pyro_define_pub_method(vm, generator_class, "rand_float_in_range", generator_rand_float_in_range, 2);
     pyro_define_pub_method(vm, generator_class, "seed", generator_seed, 1);
 }

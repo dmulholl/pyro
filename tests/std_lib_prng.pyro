@@ -28,6 +28,21 @@ for _ in $range(100) {
     assert value >= 0.0 && value < 1.0;
 }
 
+for _ in $range(100) {
+    let value = prng::rand_float_in_range(10.0, 20.0);
+    assert value >= 10.0 && value < 20.0;
+}
+
+for _ in $range(100) {
+    let value = prng::rand_float_in_range(-20.0, -10.0);
+    assert value >= -20,0 && value < -10.0;
+}
+
+for _ in $range(100) {
+    let value = prng::rand_float_in_range(-10.0, 10.0);
+    assert value >= -10.0 && value < 10.0;
+}
+
 with generator = prng::Generator() {
     assert $is_instance_of(generator, prng::Generator);
     assert $is_i64(generator:rand_int());
@@ -56,5 +71,20 @@ with generator = prng::Generator() {
     for _ in $range(100) {
         let value = generator:rand_float();
         assert value >= 0.0 && value < 1.0;
+    }
+
+    for _ in $range(100) {
+        let value = generator:rand_float_in_range(10.0, 20.0);
+        assert value >= 10.0 && value < 20.0;
+    }
+
+    for _ in $range(100) {
+        let value = generator:rand_float_in_range(-20.0, -10.0);
+        assert value >= -20,0 && value < -10.0;
+    }
+
+    for _ in $range(100) {
+        let value = generator:rand_float_in_range(-10.0, 10.0);
+        assert value >= -10.0 && value < 10.0;
     }
 }
