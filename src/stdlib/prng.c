@@ -2,13 +2,52 @@
 
 
 static PyroValue fn_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
-        pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
+    if (arg_count == 0) {
+        uint64_t rand_u64 = pyro_xoshiro256ss_next(&vm->prng_state);
+        return pyro_i64((int64_t)rand_u64);
+    }
+
+    if (arg_count == 1) {
+        if (!PYRO_IS_I64(args[0]) || args[0].as.i64 <= 0) {
+            pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
+            return pyro_null();
+        }
+
+        uint64_t rand_u64 = pyro_xoshiro256ss_next_in_range(&vm->prng_state, (uint64_t)args[0].as.i64);
+        return pyro_i64((int64_t)rand_u64);
+    }
+
+    pyro_panic(vm, "rand_int(): expected 0 or 1 arguments, found %zu", arg_count);
+    return pyro_null();
+}
+
+
+static PyroValue fn_rand_int_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm, "rand_int_in_range(): invalid argument [n], expected an integer");
         return pyro_null();
     }
 
-    uint64_t rand_u64 = pyro_xoshiro256ss_next_in_range(&vm->prng_state, (uint64_t)args[0].as.i64);
-    return pyro_i64(rand_u64);
+    if (!PYRO_IS_I64(args[1])) {
+        pyro_panic(vm, "rand_int_in_range(): invalid argument [m], expected an integer");
+        return pyro_null();
+    }
+
+    int64_t low = args[0].as.i64;
+    int64_t high = args[1].as.i64;
+
+    if (low >= high) {
+        pyro_panic(vm, "rand_int_in_range(): invalid arguments, [n] must be less than [m]");
+        return pyro_null();
+    }
+
+    // This safely finds the absolute value of the difference without danger of overflowing.
+    uint64_t delta = (uint64_t)high - (uint64_t)low;
+
+    uint64_t rand_value_in_delta = pyro_xoshiro256ss_next_in_range(&vm->prng_state, delta);
+    int64_t result = (int64_t)((uint64_t)low + rand_value_in_delta);
+
+    return pyro_i64(result);
 }
 
 
@@ -54,17 +93,60 @@ static PyroValue generator_init(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 static PyroValue generator_rand_int(PyroVM* vm, size_t arg_count, PyroValue* args) {
-    if (!PYRO_IS_I64(args[0]) || args[0].as.i64 < 0) {
-        pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
-        return pyro_null();
-    }
-
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
     PyroResourcePointer* rp = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
     pyro_xoshiro256ss_state_t* state = rp->pointer;
 
-    uint64_t rand_u64 = pyro_xoshiro256ss_next_in_range(state, (uint64_t)args[0].as.i64);
-    return pyro_i64(rand_u64);
+    if (arg_count == 0) {
+        uint64_t rand_u64 = pyro_xoshiro256ss_next(state);
+        return pyro_i64((int64_t)rand_u64);
+    }
+
+    if (arg_count == 1) {
+        if (!PYRO_IS_I64(args[0]) || args[0].as.i64 <= 0) {
+            pyro_panic(vm, "rand_int(): invalid argument [n], expected a positive integer");
+            return pyro_null();
+        }
+
+        uint64_t rand_u64 = pyro_xoshiro256ss_next_in_range(state, (uint64_t)args[0].as.i64);
+        return pyro_i64((int64_t)rand_u64);
+    }
+
+    pyro_panic(vm, "rand_int(): expected 0 or 1 arguments, found %zu", arg_count);
+    return pyro_null();
+}
+
+
+static PyroValue generator_rand_int_in_range(PyroVM* vm, size_t arg_count, PyroValue* args) {
+    PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
+    PyroResourcePointer* rp = PYRO_AS_RESOURCE_POINTER(instance->fields[0]);
+    pyro_xoshiro256ss_state_t* state = rp->pointer;
+
+    if (!PYRO_IS_I64(args[0])) {
+        pyro_panic(vm, "rand_int_in_range(): invalid argument [n], expected an integer");
+        return pyro_null();
+    }
+
+    if (!PYRO_IS_I64(args[1])) {
+        pyro_panic(vm, "rand_int_in_range(): invalid argument [m], expected an integer");
+        return pyro_null();
+    }
+
+    int64_t low = args[0].as.i64;
+    int64_t high = args[1].as.i64;
+
+    if (low >= high) {
+        pyro_panic(vm, "rand_int_in_range(): invalid arguments, [n] must be less than [m]");
+        return pyro_null();
+    }
+
+    // This safely finds the absolute value of the difference without danger of overflowing.
+    uint64_t delta = (uint64_t)high - (uint64_t)low;
+
+    uint64_t rand_value_in_delta = pyro_xoshiro256ss_next_in_range(state, delta);
+    int64_t result = (int64_t)((uint64_t)low + rand_value_in_delta);
+
+    return pyro_i64(result);
 }
 
 
@@ -98,7 +180,8 @@ static PyroValue generator_seed(PyroVM* vm, size_t arg_count, PyroValue* args) {
 
 
 void pyro_load_stdlib_module_prng(PyroVM* vm, PyroMod* module) {
-    pyro_define_pub_member_fn(vm, module, "rand_int", fn_rand_int, 1);
+    pyro_define_pub_member_fn(vm, module, "rand_int", fn_rand_int, -1);
+    pyro_define_pub_member_fn(vm, module, "rand_int_in_range", fn_rand_int_in_range, 2);
     pyro_define_pub_member_fn(vm, module, "rand_float", fn_rand_float, 0);
 
     PyroClass* generator_class = PyroClass_new(vm);
@@ -112,7 +195,8 @@ void pyro_load_stdlib_module_prng(PyroVM* vm, PyroMod* module) {
     pyro_define_pub_field(vm, generator_class, "state", pyro_null());
 
     pyro_define_pri_method(vm, generator_class, "$init", generator_init, 0);
-    pyro_define_pub_method(vm, generator_class, "rand_int", generator_rand_int, 1);
+    pyro_define_pub_method(vm, generator_class, "rand_int", generator_rand_int, -1);
+    pyro_define_pub_method(vm, generator_class, "rand_int_in_range", generator_rand_int_in_range, 2);
     pyro_define_pub_method(vm, generator_class, "rand_float", generator_rand_float, 0);
     pyro_define_pub_method(vm, generator_class, "seed", generator_seed, 1);
 }

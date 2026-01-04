@@ -1,6 +1,6 @@
 import std::prng;
 
-assert $is_i64(prng::rand_int(10));
+assert $is_i64(prng::rand_int());
 assert $is_f64(prng::rand_float());
 
 for _ in $range(100) {
@@ -9,21 +9,52 @@ for _ in $range(100) {
 }
 
 for _ in $range(100) {
+    let value = prng::rand_int_in_range(10, 20);
+    assert value >= 10 && value < 20;
+}
+
+for _ in $range(100) {
+    let value = prng::rand_int_in_range(-20, -10);
+    assert value >= -20 && value < -10;
+}
+
+for _ in $range(100) {
+    let value = prng::rand_int_in_range(-10, 10);
+    assert value >= -10 && value < 10;
+}
+
+for _ in $range(100) {
     let value = prng::rand_float();
     assert value >= 0.0 && value < 1.0;
 }
 
-var generator = prng::Generator();
-assert $is_instance_of(generator, prng::Generator);
-assert $is_i64(generator:rand_int(10));
-assert $is_f64(generator:rand_float());
+with generator = prng::Generator() {
+    assert $is_instance_of(generator, prng::Generator);
+    assert $is_i64(generator:rand_int());
+    assert $is_f64(generator:rand_float());
 
-for _ in $range(100) {
-    let value = generator:rand_int(10);
-    assert value >= 0 && value < 10;
-}
+    for _ in $range(100) {
+        let value = generator:rand_int(10);
+        assert value >= 0 && value < 10;
+    }
 
-for _ in $range(100) {
-    let value = generator:rand_float();
-    assert value >= 0.0 && value < 1.0;
+    for _ in $range(100) {
+        let value = generator:rand_int_in_range(10, 20);
+        assert value >= 10 && value < 20;
+    }
+
+    for _ in $range(100) {
+        let value = generator:rand_int_in_range(-20, -10);
+        assert value >= -20 && value < -10;
+    }
+
+    for _ in $range(100) {
+        let value = generator:rand_int_in_range(-10, 10);
+        assert value >= -10 && value < 10;
+    }
+
+    for _ in $range(100) {
+        let value = generator:rand_float();
+        assert value >= 0.0 && value < 1.0;
+    }
 }
