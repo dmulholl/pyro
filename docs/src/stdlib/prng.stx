@@ -12,15 +12,24 @@ To generate a repeatable sequence of pseudo-random numbers, use a `Generator` in
 
 ### Functions
 
-
 [[ `rand_float() -> f64` ]]
 
     Returns a uniformly-distributed random float from the half-open interval `[0.0, 1.0)` --- i.e. the interval from zero up to but not including `1.0`.
 
 
-[[ `rand_int(n: i64) -> i64` ]]
+[[ `rand_int() -> i64` <br> `rand_int(n: i64) -> i64` ]]
 
-    Returns a uniformly-distributed random integer from the half-open interval `[0, n)` --- i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
+    Returns a uniformly-distributed random integer.
+
+    * If called with zero arguments, returns an integer from the full `i64` range.
+
+    * If called with a single positive integer argument `n`, returns an integer from the half-open interval `[0, n)` --- i.e. the interval from zero up to but not including `n`.
+
+
+[[ `rand_int_in_range(n: i64, m: i64) -> i64` ]]
+
+    Returns a uniformly-distributed random integer from the half-open interval `[n, m)` --- i.e. the interval from `n` up to but not including `m`.
+    The bounds can be positive, negative, or mixed, but `n` must be less than `m`.
 
 
 ### Classes
@@ -39,7 +48,17 @@ To generate a repeatable sequence of pseudo-random numbers, use a `Generator` in
 
 [[ `:rand_int(n: i64) -> i64` ]]
 
-    Returns a uniformly-distributed random integer from the half-open interval `[0, n)` --- i.e. the interval from zero up to but not including `n`, where `n` is a positive integer.
+    Returns a uniformly-distributed random integer.
+
+    * If called with zero arguments, returns an integer from the full `i64` range.
+
+    * If called with a single positive integer argument `n`, returns an integer from the half-open interval `[0, n)` --- i.e. the interval from zero up to but not including `n`.
+
+
+[[ `rand_int_in_range(n: i64, m: i64) -> i64` ]]
+
+    Returns a uniformly-distributed random integer from the half-open interval `[n, m)` --- i.e. the interval from `n` up to but not including `m`.
+    The bounds can be positive, negative, or mixed, but `n` must be less than `m`.
 
 
 [[ `:seed(n: i64)` ]]

@@ -88,11 +88,30 @@ Returns a uniformly-distributed random float from the half-open interval <code>[
 </div>
 <div>
 <dt>
-<code>rand_int(n: i64) -&gt; i64</code>
+<code>rand_int() -&gt; i64</code> <br> <code>rand_int(n: i64) -&gt; i64</code>
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random integer from the half-open interval <code>[0, n)</code> &mdash; i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
+Returns a uniformly-distributed random integer.
+</p>
+<ul>
+<li>
+If called with zero arguments, returns an integer from the full <code>i64</code> range.
+</li>
+<li>
+If called with a single positive integer argument <code>n</code>, returns an integer from the half-open interval <code>[0, n)</code> &mdash; i.e. the interval from zero up to but not including <code>n</code>.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>rand_int_in_range(n: i64, m: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random integer from the half-open interval <code>[n, m)</code> &mdash; i.e. the interval from <code>n</code> up to but not including <code>m</code>.
+The bounds can be positive, negative, or mixed, but <code>n</code> must be less than <code>m</code>.
 </p>
 </dd>
 </div>
@@ -133,7 +152,26 @@ Returns a uniformly-distributed random float from the half-open interval <code>[
 </dt>
 <dd>
 <p>
-Returns a uniformly-distributed random integer from the half-open interval <code>[0, n)</code> &mdash; i.e. the interval from zero up to but not including <code>n</code>, where <code>n</code> is a positive integer.
+Returns a uniformly-distributed random integer.
+</p>
+<ul>
+<li>
+If called with zero arguments, returns an integer from the full <code>i64</code> range.
+</li>
+<li>
+If called with a single positive integer argument <code>n</code>, returns an integer from the half-open interval <code>[0, n)</code> &mdash; i.e. the interval from zero up to but not including <code>n</code>.
+</li>
+</ul>
+</dd>
+</div>
+<div>
+<dt>
+<code>rand_int_in_range(n: i64, m: i64) -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random integer from the half-open interval <code>[n, m)</code> &mdash; i.e. the interval from <code>n</code> up to but not including <code>m</code>.
+The bounds can be positive, negative, or mixed, but <code>n</code> must be less than <code>m</code>.
 </p>
 </dd>
 </div>
