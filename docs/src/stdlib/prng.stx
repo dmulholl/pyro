@@ -17,6 +17,12 @@ To generate a repeatable sequence of pseudo-random numbers, use a `Generator` in
     Returns a uniformly-distributed random float from the half-open interval `[0.0, 1.0)` --- i.e. the interval from zero up to but not including `1.0`.
 
 
+[[ `rand_float_in_range(x: f64, y: f64) -> f64` ]]
+
+    Returns a uniformly-distributed random float from the half-open interval `[x, y)` --- i.e. the interval from `x` up to but not including `y`.
+    The bounds can be positive, negative, or mixed, but `x` must be less than `y`.
+
+
 [[ `rand_int() -> i64` <br> `rand_int(n: i64) -> i64` ]]
 
     Returns a uniformly-distributed random integer.
@@ -44,6 +50,12 @@ To generate a repeatable sequence of pseudo-random numbers, use a `Generator` in
 [[ `:rand_float() -> f64` ]]
 
     Returns a uniformly-distributed random float from the half-open interval `[0.0, 1.0)` --- i.e. the interval from zero up to but not including `1.0`.
+
+
+[[ `rand_float_in_range(x: f64, y: f64) -> f64` ]]
+
+    Returns a uniformly-distributed random float from the half-open interval `[x, y)` --- i.e. the interval from `x` up to but not including `y`.
+    The bounds can be positive, negative, or mixed, but `x` must be less than `y`.
 
 
 [[ `:rand_int(n: i64) -> i64` ]]

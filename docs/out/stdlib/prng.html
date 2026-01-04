@@ -88,6 +88,17 @@ Returns a uniformly-distributed random float from the half-open interval <code>[
 </div>
 <div>
 <dt>
+<code>rand_float_in_range(x: f64, y: f64) -&gt; f64</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random float from the half-open interval <code>[x, y)</code> &mdash; i.e. the interval from <code>x</code> up to but not including <code>y</code>.
+The bounds can be positive, negative, or mixed, but <code>x</code> must be less than <code>y</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
 <code>rand_int() -&gt; i64</code> <br> <code>rand_int(n: i64) -&gt; i64</code>
 </dt>
 <dd>
@@ -143,6 +154,17 @@ The generator is automatically initialized with a random seed.
 <dd>
 <p>
 Returns a uniformly-distributed random float from the half-open interval <code>[0.0, 1.0)</code> &mdash; i.e. the interval from zero up to but not including <code>1.0</code>.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>rand_float_in_range(x: f64, y: f64) -&gt; f64</code>
+</dt>
+<dd>
+<p>
+Returns a uniformly-distributed random float from the half-open interval <code>[x, y)</code> &mdash; i.e. the interval from <code>x</code> up to but not including <code>y</code>.
+The bounds can be positive, negative, or mixed, but <code>x</code> must be less than <code>y</code>.
 </p>
 </dd>
 </div>
