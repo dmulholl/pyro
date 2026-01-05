@@ -133,12 +133,14 @@ Classes
 <dl>
 <div>
 <dt>
-<code>Generator() -&gt; Generator</code>
+<code>Generator() -&gt; Generator</code> <br> <code>Generator(seed: i64) -&gt; Generator</code>
 </dt>
 <dd>
 <p>
 Returns a new pseudo-random number generator.
-The generator is automatically initialized with a random seed.
+</p>
+<p>
+If no seed value is specified, the generator will be automatically initialized with a random seed.
 </p>
 </dd>
 </div>

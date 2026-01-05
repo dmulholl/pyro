@@ -40,10 +40,12 @@ To generate a repeatable sequence of pseudo-random numbers, use a `Generator` in
 
 ### Classes
 
-[[ `Generator() -> Generator` ]]
+[[ `Generator() -> Generator` <br> `Generator(seed: i64) -> Generator` ]]
 
     Returns a new pseudo-random number generator.
-    The generator is automatically initialized with a random seed.
+
+    If no seed value is specified, the generator will be automatically initialized with a random seed.
+
 
 `Generator` instances support the following methods:
 
