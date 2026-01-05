@@ -100,6 +100,23 @@ static void free_xoshiro256ss_state(PyroVM* vm, void* pointer) {
 static PyroValue generator_init(PyroVM* vm, size_t arg_count, PyroValue* args) {
     PyroInstance* instance = PYRO_AS_INSTANCE(args[-1]);
 
+    if (arg_count > 1) {
+        pyro_panic(vm, "Generator(): too many arguments, expected 0 or 1, found %zu", arg_count);
+        return pyro_null();
+    }
+
+    uint64_t seed;
+
+    if (arg_count == 0) {
+        seed = pyro_random_seed();
+    } else {
+        if (!PYRO_IS_I64(args[0])) {
+            pyro_panic(vm, "Generator(): invalid argument, expected an integer");
+            return pyro_null();
+        }
+        seed = args[0].as.u64;
+    }
+
     pyro_xoshiro256ss_state_t* state = malloc(sizeof(pyro_xoshiro256ss_state_t));
     if (!state) {
         pyro_panic(vm, "out of memory");
@@ -107,7 +124,7 @@ static PyroValue generator_init(PyroVM* vm, size_t arg_count, PyroValue* args) {
     }
 
     vm->bytes_allocated += sizeof(pyro_xoshiro256ss_state_t);
-    pyro_xoshiro256ss_init(state, pyro_random_seed());
+    pyro_xoshiro256ss_init(state, seed);
 
     PyroResourcePointer* rp = PyroResourcePointer_new(state, free_xoshiro256ss_state, vm);
     if (!rp) {
@@ -259,7 +276,7 @@ void pyro_load_stdlib_module_prng(PyroVM* vm, PyroMod* module) {
 
     pyro_define_pub_field(vm, generator_class, "state", pyro_null());
 
-    pyro_define_pri_method(vm, generator_class, "$init", generator_init, 0);
+    pyro_define_pri_method(vm, generator_class, "$init", generator_init, -1);
     pyro_define_pub_method(vm, generator_class, "rand_int", generator_rand_int, -1);
     pyro_define_pub_method(vm, generator_class, "rand_int_in_range", generator_rand_int_in_range, 2);
     pyro_define_pub_method(vm, generator_class, "rand_float", generator_rand_float, 0);
