@@ -15,19 +15,19 @@ A module object, `module`, is created when you import a Pyro source file using a
 A module object can also be created by executing a string of source code using the `$exec()` function, e.g.
 
 ::: code pyro
-    var mod = $exec("pub var foo = 1 + 2;");
-    assert $is_module(mod);
-    assert mod::foo == 3;
+    var module = $exec("pub var foo = 1 + 2;");
+    assert $is_module(module);
+    assert module::foo == 3;
 
 A module contains *members* --- its global variables, functions, and classes --- which can be accessed using the member operator, `::`.
 
 A module object also has methods of its own, which can be accessed using the method operator, `:`, e.g.
 
 ::: code pyro
-    assert mod:has_member("foo");
-    assert mod:member("foo") == 3;
+    assert module:has_member("foo");
+    assert module:member("foo") == 3;
 
-    var globals = mod:globals();
+    var globals = module:globals();
     assert globals["foo"] == 3;
 
 You can learn more about importing modules [here][1].
