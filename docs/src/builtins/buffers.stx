@@ -15,7 +15,7 @@ A byte buffer, `buf`, is a dynamic array of bytes.
 
     * If called with zero arguments, creates a new empty buffer.
     * If called with a single string argument, creates a new buffer containing a copy of the string's bytes.
-    * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `value` is an integer value in the range `[0, 255]`.
+    * If called with two arguments, creates a new buffer with the specified initial size and fill value, where `size` is a positive integer and `fill_value` is an integer value in the range `[0, 255]`.
 
 
 
