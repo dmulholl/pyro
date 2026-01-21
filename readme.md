@@ -8,14 +8,14 @@
 Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
 Think Python if Guido had been a fan of lexical-scoping, curly braces, and semicolons.
 
-```ruby
+~~~ruby
 def fib(n) {
     if n < 2 {
         return n;
     }
     return fib(n - 1) + fib(n - 2);
 }
-```
+~~~
 
 Pyro is a classic braces-and-semicolons language. If you've used any C-family language before you should find it instantly intuitive.
 
