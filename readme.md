@@ -8,7 +8,7 @@
 Pyro is a dynamically-typed, garbage-collected scripting language implemented in C.
 Think Python if Guido had been a fan of lexical-scoping, curly braces, and semicolons.
 
-~~~ruby
+~~~ ruby
 def fib(n) {
     if n < 2 {
         return n;
