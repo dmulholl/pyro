@@ -5,7 +5,7 @@ var url_reserved_bytes = url_reserved_chars:bytes():to_set();
 
 pub def url_encode(input: str) -> str {
     if !$is_str(input) {
-        $panic("url_encode(): invalid argument [input], expected a string");
+        $panic("url_encode(): invalid argument type, expected a string, got ${$type(input)}");
     }
 
     var buf = $buf();
@@ -26,7 +26,7 @@ pub def url_encode(input: str) -> str {
 
 pub def url_decode(input: str) -> str|err {
     if !$is_str(input) {
-        $panic("url_decode(): invalid argument [input], expected a string");
+        $panic("url_decode(): invalid argument type, expected a string, got ${$type(input)}");
     }
 
     var index = 0;
@@ -71,7 +71,7 @@ pub def url_decode(input: str) -> str|err {
 
 pub def parse_query(url: str) -> err|map[str, vec[str]] {
     if !$is_str(url) {
-        $panic("parse_query(): invalid argument [url], expected a string");
+        $panic("parse_query(): invalid argument type, expected a string, got ${$type(url)}");
     }
 
     var query = url:contains("?") :? url:split("?")[1] :| url;
