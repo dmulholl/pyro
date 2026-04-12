@@ -69,12 +69,12 @@ pub def url_decode(input: str) -> str|err {
 }
 
 
-pub def parse_query(url: str) -> err|map[str, vec[str]] {
-    if !$is_str(url) {
-        $panic("parse_query(): invalid argument type, expected a string, got ${$type(url)}");
+pub def parse_query(input: str) -> err|map[str, vec[str]] {
+    if !$is_str(input) {
+        $panic("parse_query(): invalid argument type, expected a string, got ${$type(input)}");
     }
 
-    var query = url:contains("?") :? url:split("?")[1] :| url;
+    var query = input:contains("?") :? input:split("?")[1] :| input;
     var data = $map();
 
     for element in query:split("&") {

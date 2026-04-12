@@ -3,14 +3,14 @@ title: <code>std::url</code>
 meta_title: Pyro Standard Library &mdash; std::url
 ---
 
-A utility module for handling URLs.
+A utility module for working with URLs.
 
 ::: insert toc
 
 
 ### Functions
 
-[[ `parse_query(url: str) -> err|map[str, vec[str]]` ]]
+[[ `parse_query(input: str) -> err|map[str, vec[str]]` ]]
 
     Parses a URL-encoded query string.
 
