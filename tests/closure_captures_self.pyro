@@ -1,0 +1,35 @@
+class Object {
+    var value = 0;
+
+    pub def set_value(value) {
+        self.value = value;
+    }
+
+    pub def get_value() {
+        return self.value;
+    }
+
+    pub def get_closure() {
+        return def() {
+            return self.value;
+        };
+    }
+}
+
+var obj = Object();
+assert obj:get_value() == 0;
+
+var closure = obj:get_closure();
+assert closure() == 0;
+
+obj:set_value(123);
+assert obj:get_value() == 123;
+assert closure() == 123;
+
+obj:set_value(456);
+assert obj:get_value() == 456;
+assert closure() == 456;
+
+obj:set_value(789);
+assert obj:get_value() == 789;
+assert closure() == 789;
