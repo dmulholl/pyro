@@ -1164,6 +1164,9 @@ static void run(PyroVM* vm) {
                         vm->stack_top[-2] = value;
                         vm->stack_top--;
                         break;
+                    } else if (PyroMap_fast_get(instance->obj.class->all_field_indexes, field_name, &field_index, vm)) {
+                        pyro_panic(vm, "field '%s' is private", field_name->bytes);
+                        break;
                     }
                 }
 
