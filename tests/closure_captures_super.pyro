@@ -1,0 +1,29 @@
+class Parent {
+    var value = 123;
+
+    pub def get_value() {
+        return self.value;
+    }
+
+    pub def set_value(value) {
+        self.value = value;
+    }
+}
+
+class Child extends Parent {
+    pub def get_closure() {
+        return def() {
+            return super:get_value();
+        };
+    }
+}
+
+var obj = Child();
+assert obj:get_value() == 123;
+
+var closure = obj:get_closure();
+assert closure() == 123;
+
+obj:set_value(456);
+assert obj:get_value() == 456;
+assert closure() == 456;
