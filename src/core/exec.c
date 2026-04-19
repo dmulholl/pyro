@@ -1066,10 +1066,13 @@ static void run(PyroVM* vm) {
                         // Replace the class with the field value.
                         vm->stack_top[-1] = value;
                         break;
+                    } else {
+                        pyro_panic(vm, "%s has no static field '%s'", class->name->bytes, field_name->bytes);
+                        break;
                     }
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
+                pyro_panic(vm, "%s has no field '%s'", pyro_get_type_name(vm, receiver)->bytes, field_name->bytes);
                 break;
             }
 
@@ -1100,18 +1103,13 @@ static void run(PyroVM* vm) {
                         // Replace the class with the field value.
                         vm->stack_top[-1] = value;
                         break;
+                    } else {
+                        pyro_panic(vm, "%s has no static field '%s'", class->name->bytes, field_name->bytes);
+                        break;
                     }
                 }
 
-                if (PYRO_IS_MOD(receiver)) {
-                    pyro_panic(vm,
-                        "invalid field name '.%s'; receiver is a module, did you mean to use '::'?",
-                        field_name->bytes
-                    );
-                    break;
-                }
-
-                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
+                pyro_panic(vm, "%s has no field '%s'", pyro_get_type_name(vm, receiver)->bytes, field_name->bytes);
                 break;
             }
 
@@ -1141,10 +1139,13 @@ static void run(PyroVM* vm) {
                         vm->stack_top[-2] = value;
                         vm->stack_top--;
                         break;
+                    } else {
+                        pyro_panic(vm, "%s has no static field '%s'", class->name->bytes, field_name->bytes);
+                        break;
                     }
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
+                pyro_panic(vm, "%s has no field '%s'", pyro_get_type_name(vm, receiver)->bytes, field_name->bytes);
                 break;
             }
 
@@ -1177,10 +1178,13 @@ static void run(PyroVM* vm) {
                         vm->stack_top[-2] = value;
                         vm->stack_top--;
                         break;
+                    } else {
+                        pyro_panic(vm, "%s has no static field '%s'", class->name->bytes, field_name->bytes);
+                        break;
                     }
                 }
 
-                pyro_panic(vm, "invalid field name '%s'", field_name->bytes);
+                pyro_panic(vm, "%s has no field '%s'", pyro_get_type_name(vm, receiver)->bytes, field_name->bytes);
                 break;
             }
 
@@ -1549,25 +1553,29 @@ static void run(PyroVM* vm) {
                 }
 
                 if (PYRO_IS_INSTANCE(receiver)) {
+                    PyroInstance* instance = PYRO_AS_INSTANCE(receiver);
                     pyro_panic(vm,
-                        "invalid member access '%s': receiver is an object instance, did you mean to use ':'?",
+                        "receiver (instance of type %s) has no member '%s'",
+                        instance->obj.class->name->bytes,
                         member_name->bytes
                     );
                     break;
                 }
 
                 if (PYRO_IS_CLASS(receiver)) {
+                    PyroClass* class = PYRO_AS_CLASS(receiver);
                     pyro_panic(vm,
-                        "invalid member access '%s': receiver is a class, did you mean to use ':'?",
+                        "receiver (class of type %s) has no member '%s'",
+                        class->name->bytes,
                         member_name->bytes
                     );
                     break;
                 }
 
                 pyro_panic(vm,
-                    "invalid member access '%s': invalid receiver type: %s",
-                    member_name->bytes,
-                    pyro_get_type_name(vm, receiver)->bytes
+                    "receiver of type %s has no member '%s'",
+                    pyro_get_type_name(vm, receiver)->bytes,
+                    member_name->bytes
                 );
 
                 break;
@@ -1582,7 +1590,11 @@ static void run(PyroVM* vm) {
 
                 PyroValue method = pyro_get_method(vm, receiver, method_name);
                 if (PYRO_IS_NULL(method)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    pyro_panic(vm,
+                        "receiver of type %s has no method '%s'",
+                        pyro_get_type_name(vm, receiver)->bytes,
+                        method_name->bytes
+                    );
                     break;
                 }
 
@@ -1605,18 +1617,15 @@ static void run(PyroVM* vm) {
 
                 PyroValue method = pyro_get_pub_method(vm, receiver, method_name);
                 if (PYRO_IS_NULL(method)) {
-                    if (PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
-                        if (PYRO_IS_MOD(receiver)) {
-                            pyro_panic(vm,
-                                "invalid method name '%s': receiver is a module, did you mean to use '::'?",
-                                method_name->bytes
-                            );
-                            break;
-                        }
-                        pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    if (!PYRO_IS_NULL(pyro_get_method(vm, receiver, method_name))) {
+                        pyro_panic(vm, "method '%s' is private", method_name->bytes);
                         break;
                     }
-                    pyro_panic(vm, "method '%s' is private", method_name->bytes);
+                    pyro_panic(vm,
+                        "receiver of type %s has no method '%s'",
+                        pyro_get_type_name(vm, receiver)->bytes,
+                        method_name->bytes
+                    );
                     break;
                 }
 
@@ -1640,7 +1649,7 @@ static void run(PyroVM* vm) {
 
                 PyroValue method;
                 if (!PyroMap_fast_get(superclass->all_instance_methods, method_name, &method, vm)) {
-                    pyro_panic(vm, "invalid method name '%s'", method_name->bytes);
+                    pyro_panic(vm, "superclass %s has no method '%s'", superclass->name->bytes, method_name->bytes);
                     break;
                 }
 
@@ -1729,7 +1738,7 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_panic(vm,
-                    "receiver of type %s has no '%s' method",
+                    "receiver of type %s has no method '%s'",
                     pyro_get_type_name(vm, receiver)->bytes,
                     method_name->bytes
                 );
@@ -1760,16 +1769,8 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                if (PYRO_IS_MOD(receiver)) {
-                    pyro_panic(vm,
-                        "receiver has no '%s' method: the receiver is a module, did you mean to use '::'?",
-                        method_name->bytes
-                    );
-                    break;
-                }
-
                 pyro_panic(vm,
-                    "receiver of type %s has no '%s' method",
+                    "receiver of type %s has no method '%s'",
                     pyro_get_type_name(vm, receiver)->bytes,
                     method_name->bytes
                 );
@@ -1850,7 +1851,7 @@ static void run(PyroVM* vm) {
                 }
 
                 pyro_panic(vm,
-                    "receiver of type %s has no '%s' method",
+                    "receiver of type %s has no method '%s'",
                     pyro_get_type_name(vm, receiver)->bytes,
                     method_name->bytes
                 );
@@ -1903,16 +1904,8 @@ static void run(PyroVM* vm) {
                     break;
                 }
 
-                if (PYRO_IS_MOD(receiver)) {
-                    pyro_panic(vm,
-                        "receiver has no '%s' method: the receiver is a module, did you mean to use '::'?",
-                        method_name->bytes
-                    );
-                    break;
-                }
-
                 pyro_panic(vm,
-                    "receiver of type %s has no '%s' method",
+                    "receiver of type %s has no method '%s'",
                     pyro_get_type_name(vm, receiver)->bytes,
                     method_name->bytes
                 );
