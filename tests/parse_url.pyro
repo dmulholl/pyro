@@ -1,0 +1,553 @@
+import std::url::{URL, parse_url};
+
+assert $is_err(try parse_url(1234));
+assert $is_err(try parse_url(true));
+
+assert $is_err(parse_url(""));
+assert $is_err(parse_url("foo"));
+assert $is_err(parse_url("ht,tp://example.com"));
+assert $is_err(parse_url("ht\ttp://example.com"));
+assert $is_err(parse_url("http://[ipv6"));
+assert $is_err(parse_url("http://exam,ple.com"));
+assert $is_err(parse_url("http://example.com:"));
+assert $is_err(parse_url("http://example.com:/"));
+assert $is_err(parse_url("http://example.com:?"));
+assert $is_err(parse_url("http://example.com/path#fragment?query"));
+
+with result = parse_url("foo:") {
+    assert result == URL as {
+        scheme: "foo",
+        path: "",
+    };
+}
+
+with result = parse_url("foo:bar") {
+    assert result == URL as {
+        scheme: "foo",
+        path: "bar",
+    };
+}
+
+with result = parse_url("foo://bar") {
+    assert result == URL as {
+        scheme: "foo",
+        host: "bar",
+        path: "",
+    };
+}
+
+with result = parse_url("foo://bar/") {
+    assert result == URL as {
+        scheme: "foo",
+        host: "bar",
+        path: "/",
+    };
+}
+
+with result = parse_url("foo://bar:8080/") {
+    assert result == URL as {
+        scheme: "foo",
+        host: "bar",
+        port: "8080",
+        path: "/",
+    };
+}
+
+with result = parse_url("foo://bar:8080/baz") {
+    assert result == URL as {
+        scheme: "foo",
+        host: "bar",
+        port: "8080",
+        path: "/baz",
+    };
+}
+
+with result = parse_url("foo://bar:8080/baz?bam") {
+    assert result == URL as {
+        scheme: "foo",
+        host: "bar",
+        port: "8080",
+        path: "/baz",
+        query: "bam",
+    };
+}
+
+with result = parse_url("foo://bar:8080/baz?bam#bop") {
+    assert result == URL as {
+        scheme: "foo",
+        host: "bar",
+        port: "8080",
+        path: "/baz",
+        query: "bam",
+        fragment: "bop",
+    };
+}
+
+with result = parse_url("http://example.com") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        path: "",
+    };
+}
+
+with result = parse_url("http://example.com:8080") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        port: "8080",
+        path: "",
+    };
+}
+
+with result = parse_url("http://example.com/") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        path: "/",
+    };
+}
+
+with result = parse_url("http://example.com:8080/") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        port: "8080",
+        path: "/",
+    };
+}
+
+with result = parse_url("http://subdomain.example.com") {
+    assert result == URL as {
+        scheme: "http",
+        host: "subdomain.example.com",
+        path: "",
+    };
+}
+
+with result = parse_url("http://subdomain.example.com/") {
+    assert result == URL as {
+        scheme: "http",
+        host: "subdomain.example.com",
+        path: "/",
+    };
+}
+
+with result = parse_url("http://username@example.com") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        host: "example.com",
+        path: "",
+    };
+}
+
+with result = parse_url("http://username@example.com:8080") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        host: "example.com",
+        port: "8080",
+        path: "",
+    };
+}
+
+with result = parse_url("http://username:@example.com") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "",
+        host: "example.com",
+        path: "",
+    };
+}
+
+with result = parse_url("http://username:@example.com:8080") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "",
+        host: "example.com",
+        port: "8080",
+        path: "",
+    };
+}
+
+with result = parse_url("http://username:password@example.com") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/path1/path2/path3.html") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/path1/path2/path3.html",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/path1/path2/path3.html") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/path1/path2/path3.html",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/path1/path2/path3.html?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/path1/path2/path3.html",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/path1/path2/path3.html?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/path1/path2/path3.html",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://username:password@example.com?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://example.com?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        path: "",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://example.com:8080?foo=bar&baz=bam") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        port: "8080",
+        path: "",
+        query: "foo=bar&baz=bam",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/path1/path2/path3.html#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/path1/path2/path3.html",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/path1/path2/path3.html#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/path1/path2/path3.html",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://example.com#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        path: "",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://example.com:8080#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        port: "8080",
+        path: "",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/path1/path2/path3.html?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/path1/path2/path3.html",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/path1/path2/path3.html?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/path1/path2/path3.html",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com/?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "/",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080/?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "/",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        path: "",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@example.com:8080?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "example.com",
+        port: "8080",
+        path: "",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://example.com?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        path: "",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://example.com:8080?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        host: "example.com",
+        port: "8080",
+        path: "",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://username:password@[ipv6addr]:8080/path.html?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        scheme: "http",
+        username: "username",
+        password: "password",
+        host: "[ipv6addr]",
+        port: "8080",
+        path: "/path.html",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}
+
+with result = parse_url("http://[ipv6addr]/") {
+    assert result == URL as {
+        scheme: "http",
+        host: "[ipv6addr]",
+        path: "/",
+    };
+}
+
+with result = parse_url("http://[ipv6addr]") {
+    assert result == URL as {
+        scheme: "http",
+        host: "[ipv6addr]",
+        path: "",
+    };
+}
+
+with result = parse_url("mailto:johndoe@example.com") {
+    assert result == URL as {
+        scheme: "mailto",
+        path: "johndoe@example.com",
+    };
+}
+
+with result = parse_url("/path1/path2/path3.html?foo=bar&baz=bam#fragment") {
+    assert result == URL as {
+        path: "/path1/path2/path3.html",
+        query: "foo=bar&baz=bam",
+        fragment: "fragment",
+    };
+}

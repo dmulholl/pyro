@@ -1,6 +1,61 @@
+import std::pretty;
+
 # Ref: https://en.wikipedia.org/wiki/URL_encoding
-var url_reserved_chars = " !\"#$%&'()*+,/:;=?@[]";
-var url_reserved_bytes = url_reserved_chars:bytes():to_set();
+let url_reserved_chars = " !\"#$%&'()*+,/:;=?@[]";
+let url_reserved_bytes = url_reserved_chars:bytes():to_set();
+
+# Valid bytes in the scheme element of a URL.
+let valid_scheme_bytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-.":bytes():to_set();
+
+# Valid bytes in the host element of a URL.
+let valid_host_bytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.":bytes():to_set();
+
+
+def $main() {
+    for arg in $args:values():skip_first(1) {
+        echo pretty::print(parse_url(arg));
+    }
+}
+
+
+pub class URL {
+    pub var scheme: str?;
+    pub var username: str?;
+    pub var password: str?;
+    pub var host: str?;
+    pub var port: str?;
+    pub var path: str?;
+    pub var query: str?;
+    pub var fragment: str?;
+
+    pub def port_number() -> i64 {
+        if $is_null(self.port) {
+            $panic("port is null");
+        }
+
+        if self.port:is_empty() {
+            $panic("port is empty");
+        }
+
+        return $i64(self.port);
+    }
+
+    def $op_binary_equals_equals(other: any) -> bool {
+        if !$is_instance_of_class(other, URL) {
+            return false;
+        }
+
+        return
+            self.scheme == other.scheme &&
+            self.username == other.username &&
+            self.password == other.password &&
+            self.host == other.host &&
+            self.port == other.port &&
+            self.path == other.path &&
+            self.query == other.query &&
+            self.fragment == other.fragment;
+    }
+}
 
 
 pub def url_encode(input: str) -> str {
@@ -101,4 +156,228 @@ pub def parse_query(input: str) -> err|map[str, vec[str]] {
     }
 
     return data;
+}
+
+
+# Ref: https://www.rfc-editor.org/rfc/rfc3986.txt
+pub def parse_url(input: str) -> URL|err {
+    if !$is_str(input) {
+        $panic("parse_url(): invalid argument type, expected a string, got ${$type(input)}");
+    }
+
+    if input:is_empty() {
+        return $err("invalid url: input is an empty string");
+    }
+
+    var url = URL();
+
+    if input:starts_with("/") {
+        return parse_path_query_fragment(url, input, 0);
+    }
+
+    return parse_absolute_url(url, input);
+}
+
+
+def parse_absolute_url(url: URL, input: str) -> URL| err {
+    assert input:count() > 0;
+
+    let count = input:count();
+    var next_index = 0;
+    var has_authority = false;
+
+    # Parse the scheme.
+    loop {
+        var next_byte = input:byte(next_index);
+
+        if next_byte == ':' {
+            if next_index == 0 {
+                return $err("invalid url: scheme is empty");
+            }
+
+            url.scheme = input:slice(0, next_index);
+            next_index += 1;
+            break;
+        }
+
+        if !valid_scheme_bytes:contains(next_byte) {
+            return $err("invalid url: scheme contains invalid character: ${describe_byte(next_byte)}");
+        }
+
+        next_index += 1;
+
+        if next_index == count {
+            return $err("invalid url: failed to parse scheme, unexpected end of input");
+        }
+    }
+
+    # Parse the authority, if present.
+    if input:match("//", next_index) {
+        has_authority = true;
+        next_index += 2;
+
+        # The next slash, question-mark, or hash-symbol terminates the authority.
+        var end_of_authority_index = count;
+
+        if let hash_index = input:index_of("#", next_index); !$is_err(hash_index) {
+            end_of_authority_index = hash_index;
+        }
+
+        if let hook_index = input:index_of("?", next_index); !$is_err(hook_index) && hook_index < end_of_authority_index {
+            end_of_authority_index = hook_index;
+        }
+
+        if let slash_index = input:index_of("/", next_index); !$is_err(slash_index) && slash_index < end_of_authority_index {
+            end_of_authority_index = slash_index;
+        }
+
+        # Parse the userinfo, if present.
+        if let at_index = input:index_of("@", next_index); !$is_err(at_index) && at_index < end_of_authority_index {
+            if let colon_index = input:index_of(":", next_index); !$is_err(colon_index) && colon_index < at_index {
+                url.username = input:slice(next_index, colon_index - next_index);
+                url.password = input:slice(colon_index + 1, at_index - (colon_index + 1));
+            } else {
+                url.username = input:slice(next_index, at_index - next_index);
+            }
+            next_index = at_index + 1;
+        }
+
+        # Parse the host.
+        var has_port = false;
+        var start_index = next_index;
+
+        if input:match("[", next_index) {
+            # Parse an IPv6 address in square brackets.
+            let bracket_index = input:index_of("]");
+
+            if $is_err(bracket_index) || bracket_index >= end_of_authority_index {
+                return $err("invalid url: failed to parse host: missing ]");
+            }
+
+            url.host = input:slice(start_index, bracket_index + 1 - start_index);
+            next_index = bracket_index + 1;
+
+            if input:match(":", next_index) {
+                has_port = true;
+            }
+        } else {
+            # Parse an IPv4 address or a hostname.
+            loop {
+                if next_index == end_of_authority_index {
+                    url.host = input:slice(start_index, next_index - start_index);
+                    break;
+                }
+
+                var next_byte = input:byte(next_index);
+
+                if next_byte == ':' {
+                    has_port = true;
+                    url.host = input:slice(start_index, next_index - start_index);
+                    break;
+                }
+
+                if !valid_host_bytes:contains(next_byte) {
+                    return $err("invalid url: host contains invalid character: ${describe_byte(next_byte)}");
+                }
+
+                next_index += 1;
+            }
+        }
+
+        # Parse the port number, if present.
+        if has_port {
+            next_index += 1;
+            start_index = next_index;
+
+            while next_index < count {
+                let next_byte = input:byte(next_index);
+
+                if next_byte < '0' || next_byte > '9' {
+                    break;
+                }
+
+                next_index += 1;
+            }
+
+            url.port = input:slice(start_index, next_index - start_index);
+
+            if url.port:is_empty() {
+                return $err("invalid url: empty port");
+            }
+        }
+    }
+
+    if next_index == count {
+        url.path = "";
+        return url;
+    }
+
+    # If an authority component is defined, the path component must either be empty or begin with a slash.
+    if has_authority {
+        let next_byte = input:byte(next_index);
+
+        if next_byte != '/' && next_byte != '?' && next_byte != '#' {
+            return $err("invalid url: path component must be empty or begin with / when an authority component is specified");
+        }
+    }
+
+    return parse_path_query_fragment(url, input, next_index);
+}
+
+
+def parse_path_query_fragment(url: URL, input: str, start_index: i64) -> URL| err {
+    assert start_index <= input:count();
+
+    let query_index = input:index_of("?", start_index);
+    let fragment_index = input:index_of("#", start_index);
+
+    # path?query#fragment
+    if !$is_err(query_index) && !$is_err(fragment_index) {
+        if fragment_index < query_index {
+            return $err("invalid url: fragment-separator (#) cannot precede query-separator (?)");
+        }
+        url.path = input:slice(start_index, query_index - start_index);
+        url.query = input:slice(query_index + 1, fragment_index - (query_index + 1));
+        url.fragment = input:slice(fragment_index + 1);
+        return url;
+    }
+
+    # path?query
+    if !$is_err(query_index) {
+        url.path = input:slice(start_index, query_index - start_index);
+        url.query = input:slice(query_index + 1);
+        return url;
+    }
+
+    # path#fragment
+    if !$is_err(fragment_index) {
+        url.path = input:slice(start_index, fragment_index - start_index);
+        url.fragment = input:slice(fragment_index + 1);
+        return url;
+    }
+
+    # path
+    url.path = input:slice(start_index);
+    return url;
+}
+
+
+def describe_byte(byte_value: i64) -> str {
+    if byte_value < 32 || byte_value > 127 {
+        return "byte value 0x${byte_value;02X}";
+    }
+
+    if byte_value == ' ' {
+        return "space";
+    }
+
+    if byte_value == '\'' {
+        return "single-quote";
+    }
+
+    if byte_value == '"' {
+        return "double-quote";
+    }
+
+    return $str($rune(byte_value));
 }
