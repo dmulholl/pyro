@@ -68,16 +68,64 @@ A utility module for working with URLs.
 </p>
 <ul class="stx-toc">
 <li>
+<a href="#classes">Classes</a>
+</li>
+<li>
 <a href="#functions">Functions</a>
 </li>
 </ul>
+<h3 id="classes">
+Classes
+</h3>
+<dl>
+<div>
+<dt>
+<code>URL() -&gt; URL</code>
+</dt>
+<dd>
+<p>
+Returns a new <code>URL</code> instance.
+</p>
+</dd>
+</div>
+</dl>
+<p>
+<code>URL</code> instances have the following public fields:
+</p>
+<pre class="lang-Pyro pygments" data-lang="Pyro">
+<span class="kd">class</span> <span class="nx">URL</span> <span class="p">{</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">scheme</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">username</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">password</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">host</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">port</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">path</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">query</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+    <span class="kd">pub</span> <span class="kd">var</span> <span class="nx">fragment</span><span class="p">:</span> <span class="nx">str</span><span class="p">?;</span>
+<span class="p">}</span>
+</pre>
+<p>
+<code>URL</code> instances have the following public methods:
+</p>
+<dl>
+<div>
+<dt>
+<code>:port_number() -&gt; i64</code>
+</dt>
+<dd>
+<p>
+Returns the port number as an integer.
+</p>
+</dd>
+</div>
+</dl>
 <h3 id="functions">
 Functions
 </h3>
 <dl>
 <div>
 <dt>
-<code>parse_query(input: str) -&gt; err|map[str, vec[str]]</code>
+<code>parse_query(input: str) -&gt; map[str, vec[str]]|err</code>
 </dt>
 <dd>
 <p>
@@ -93,6 +141,19 @@ Returns an <code>err</code> if the query string is invalidly-encoded.
 </ul>
 <p>
 The input can be a full URL &mdash; everything up to the first <code>?</code> will be ignored.
+</p>
+</dd>
+</div>
+<div>
+<dt>
+<code>parse_url(input: str) -&gt; URL|err</code>
+</dt>
+<dd>
+<p>
+Parses a URL into its component parts. Returns an <code>err</code> if the input is not a valid URL.
+</p>
+<p>
+This function can parse both absolute URLs and site-relative URLs beginning with a <code>/</code>.
 </p>
 </dd>
 </div>

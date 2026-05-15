@@ -8,9 +8,36 @@ A utility module for working with URLs.
 ::: insert toc
 
 
+### Classes
+
+[[ `URL() -> URL` ]]
+
+    Returns a new `URL` instance.
+
+`URL` instances have the following public fields:
+
+::: code Pyro
+    class URL {
+        pub var scheme: str?;
+        pub var username: str?;
+        pub var password: str?;
+        pub var host: str?;
+        pub var port: str?;
+        pub var path: str?;
+        pub var query: str?;
+        pub var fragment: str?;
+    }
+
+`URL` instances have the following public methods:
+
+[[ `:port_number() -> i64` ]]
+
+    Returns the port number as an integer.
+
+
 ### Functions
 
-[[ `parse_query(input: str) -> err|map[str, vec[str]]` ]]
+[[ `parse_query(input: str) -> map[str, vec[str]]|err` ]]
 
     Parses a URL-encoded query string.
 
@@ -18,6 +45,12 @@ A utility module for working with URLs.
     * Returns an `err` if the query string is invalidly-encoded.
 
     The input can be a full URL --- everything up to the first `?` will be ignored.
+
+[[ `parse_url(input: str) -> URL|err` ]]
+
+    Parses a URL into its component parts. Returns an `err` if the input is not a valid URL.
+
+    This function can parse both absolute URLs and site-relative URLs beginning with a `/`.
 
 [[ `url_decode(input: str) -> str|err` ]]
 
