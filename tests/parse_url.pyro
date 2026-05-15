@@ -12,6 +12,7 @@ assert $is_err(parse_url("http://exam,ple.com"));
 assert $is_err(parse_url("http://example.com:"));
 assert $is_err(parse_url("http://example.com:/"));
 assert $is_err(parse_url("http://example.com:?"));
+assert $is_err(parse_url("http://example.com:8080x"));
 assert $is_err(parse_url("http://example.com/path#fragment?query"));
 
 with result = parse_url("foo:") {
