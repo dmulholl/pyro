@@ -51,6 +51,8 @@ with result = parse_url("foo://bar:8080/") {
         port: "8080",
         path: "/",
     };
+
+    assert result:port_number() == 8080;
 }
 
 with result = parse_url("foo://bar:8080/baz") {
