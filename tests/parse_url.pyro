@@ -516,7 +516,7 @@ with result = parse_url("http://username:password@[ipv6addr]:8080/path.html?foo=
         scheme: "http",
         username: "username",
         password: "password",
-        host: "[ipv6addr]",
+        host: "ipv6addr",
         port: "8080",
         path: "/path.html",
         query: "foo=bar&baz=bam",
@@ -527,7 +527,7 @@ with result = parse_url("http://username:password@[ipv6addr]:8080/path.html?foo=
 with result = parse_url("http://[ipv6addr]/") {
     assert result == URL as {
         scheme: "http",
-        host: "[ipv6addr]",
+        host: "ipv6addr",
         path: "/",
     };
 }
@@ -535,7 +535,7 @@ with result = parse_url("http://[ipv6addr]/") {
 with result = parse_url("http://[ipv6addr]") {
     assert result == URL as {
         scheme: "http",
-        host: "[ipv6addr]",
+        host: "ipv6addr",
         path: "",
     };
 }

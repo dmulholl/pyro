@@ -254,7 +254,7 @@ def parse_absolute_url(url: URL, input: str) -> URL| err {
                 return $err("invalid url: failed to parse host: missing ]");
             }
 
-            url.host = input:slice(start_index, bracket_index + 1 - start_index);
+            url.host = input:slice(start_index + 1, bracket_index - start_index - 1);
             next_index = bracket_index + 1;
 
             if input:match(":", next_index) {
