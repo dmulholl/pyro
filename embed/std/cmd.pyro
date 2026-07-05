@@ -61,6 +61,10 @@ pub def cp(src: str, dst: str) {
 
 
 pub def git(*args: str) -> str {
+    for arg in args {
+        assert $is_str(arg), "git(): invalid argument, expected a string, found ${$type(arg)}";
+    }
+
     let result = try $run("git", args);
     if $is_err(result) {
         $panic("git(): ${result}");
@@ -76,6 +80,10 @@ pub def git(*args: str) -> str {
 
 
 pub def make(*args: str) -> str {
+    for arg in args {
+        assert $is_str(arg), "make(): invalid argument, expected a string, found ${$type(arg)}";
+    }
+
     let result = try $run("make", args);
     if $is_err(result) {
         $panic("make(): ${result}");
@@ -84,6 +92,27 @@ pub def make(*args: str) -> str {
     let (exit_code, out_buf, err_buf) = result;
     if exit_code != 0 {
         $panic("make(): ${err_buf:to_str():strip()}");
+    }
+
+    return out_buf:to_str();
+}
+
+
+pub def run(path: str, *args: str) -> str {
+    assert $is_str(path), "run(): invalid argument [path], expected a string, found ${$type(path)}";
+
+    for arg in args {
+        assert $is_str(arg), "run(): invalid argument, expected a string, found ${$type(arg)}";
+    }
+
+    let result = try $run(path, args);
+    if $is_err(result) {
+        $panic("run(): ${result}");
+    }
+
+    let (exit_code, out_buf, err_buf) = result;
+    if exit_code != 0 {
+        $panic("run(): ${err_buf:to_str():strip()}");
     }
 
     return out_buf:to_str();
