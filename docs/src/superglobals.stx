@@ -542,6 +542,8 @@ All superglobals live in the reserved `$` namespace so they won't interfere with
 
     This function will panic if an OS error occurs while forking the process.
 
+    The standard library's `std::cmd::run()` function is a convenience wrapper for simple use cases.
+
 
 
 [[ `$rune(arg: i64) -> rune` ]]

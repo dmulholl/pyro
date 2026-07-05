@@ -9,6 +9,8 @@ Convenience functions for running common system binaries.
 
 * Arguments are passed directly to the binary and don't need to be shell-escaped.
 
+The `run()` function can be used to run an arbitrary executable, returning its output as a string.
+
 
 ### Functions
 
@@ -68,3 +70,13 @@ Convenience functions for running common system binaries.
         rm -rf <path>
 
     Panics if the `rm` binary cannot be found or if it exits with a non-zero status code.
+
+
+[[ `run(path: str, *args: str) -> str` ]]
+
+    Runs an arbitrary executable with the specified arguments and returns its `stdout` output as a string.
+
+    * If `path` contains a `/` character, it will be treated as a filepath. Otherwise, the directories specified by the `PATH` environment variable will be searched for the named file.
+    * Panics if the executable cannot be found or if it exits with a non-zero status code.
+
+    This function is a convenience wrapper for the superglobal `$run()` function.
